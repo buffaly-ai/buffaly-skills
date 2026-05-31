@@ -32,6 +32,40 @@
       "RelatedWikiSlugs": [
         "how-to/tailscale-exposure"
       ]
+    },
+    {
+      "SkillName": "DllEchoSample",
+      "Title": "DLL Echo Sample",
+      "Description": "Validates installation of a DLL-backed Buffaly skill from the official Skill Directory.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "test dll backed skill",
+        "run dll echo sample",
+        "validate skill directory dll support"
+      ],
+      "Path": "skills/DllEchoSample",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "4e51fee36dc25ab6bf5c19aefcf2868aa0ef726b47790942fadce79388566460"
+        },
+        {
+          "Path": "Actions.pts",
+          "Sha256": "a574d1b380ae038d43686c71c5f527dcce95d13b922012c21becdbe3adea38c1"
+        },
+        {
+          "Path": "lib/Buffaly.SkillSamples.dll",
+          "Sha256": "f4c73ab5488839e1975a4ccbc0275d3bbd6249232fee7a42c8d9af705431dd68"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [
+        "reference/skill-directory"
+      ],
+      "Prerequisites": [
+        "Buffaly Skill Directory enabled"
+      ]
     }
   ]
 }

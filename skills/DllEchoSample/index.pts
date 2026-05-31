@@ -1,0 +1,17 @@
+reference "lib/Buffaly.SkillSamples.dll" Buffaly.SkillSamples;
+import Buffaly.SkillSamples Buffaly.SkillSamples.SkillDirectorySampleFacade SkillDirectorySampleFacade;
+
+prototype DllEchoSampleSkillAction : OpsAction
+{
+	Description = @"Base action type for DLL echo sample skill tools.";
+}
+
+[SemanticEntity("dll echo sample skill")]
+[SemanticEntity("skill directory dll sample")]
+prototype DllEchoSampleSkill : SkillEntity, CoreEntity
+{
+	Description = "Validates installation of a DLL-backed Buffaly skill from the official Skill Directory.";
+	ActionRoot = DllEchoSampleSkillAction;
+}
+
+include "Actions.pts";

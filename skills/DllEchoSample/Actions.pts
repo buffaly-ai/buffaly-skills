@@ -1,0 +1,11 @@
+[SemanticProgram.InfinitivePhrase("to run the skill directory dll echo sample")]
+[SemanticProgram.InfinitivePhrase("to test a dll backed skill from the skill directory")]
+prototype ToRunSkillDirectoryDllEchoSample : DllEchoSampleSkillAction
+{
+	Description = @"value - text to echo through the installed sample DLL.";
+
+	function Execute(string value) : string
+	{
+		return SkillDirectorySampleFacade.Echo(value);
+	}
+}
