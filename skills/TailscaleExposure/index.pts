@@ -1,0 +1,14 @@
+prototype TailscaleExposureSkillAction : OpsAction
+{
+	Description = @"Base action type for Tailscale exposure skill tools.";
+}
+
+[SemanticEntity("tailscale exposure skill")]
+[SemanticEntity("tailscale buffaly exposure skill")]
+prototype TailscaleExposureSkill : SkillEntity, CoreEntity
+{
+	Description = "Guide and validation helpers for exposing a Buffaly instance through Tailscale.";
+	ActionRoot = TailscaleExposureSkillAction;
+}
+
+include "Actions.pts";

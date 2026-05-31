@@ -1,0 +1,37 @@
+{
+  "SchemaVersion": 1,
+  "Skills": [
+    {
+      "Title": "Tailscale Exposure",
+      "Phrases": [
+        "expose Buffaly through Tailscale",
+        "set up Tailscale",
+        "make Buffaly reachable",
+        "plan Tailscale exposure"
+      ],
+      "EntryPoint": "index.pts",
+      "Path": "skills/TailscaleExposure",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "5ec985e0446b4006882aed5bec7e0b50521d0fb26fe9b834b86c305bead03f42"
+        },
+        {
+          "Path": "Actions.pts",
+          "Sha256": "087a8dee47d693c7da41d50ebefe215bce3f21dcf6bb82522c7da3fd3b14d22b"
+        }
+      ],
+      "Version": "0.1.0",
+      "Description": "Guide and validation helpers for exposing a Buffaly instance through Tailscale.",
+      "Prerequisites": [
+        "Tailscale account",
+        "Tailscale installed on the Buffaly host"
+      ],
+      "SkillName": "TailscaleExposure",
+      "RelatedWikiSlugs": [
+        "how-to/tailscale-exposure"
+      ]
+    }
+  ]
+}

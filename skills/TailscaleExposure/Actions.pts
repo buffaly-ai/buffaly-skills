@@ -1,0 +1,16 @@
+[SemanticProgram.InfinitivePhrase("to explain tailscale exposure for buffaly")]
+[SemanticProgram.InfinitivePhrase("to plan exposing buffaly through tailscale")]
+prototype ToExplainTailscaleExposureForBuffaly : TailscaleExposureSkillAction
+{
+	Description = @"Return a concise checklist for exposing a local Buffaly instance through Tailscale. This action does not change network settings.";
+
+	function Execute() : string
+	{
+		return @"Tailscale exposure checklist:
+1. Confirm Tailscale is installed and authenticated on the Buffaly host.
+2. Confirm the Buffaly local HTTPS site is reachable on the host.
+3. Confirm the host has a stable Tailscale machine name or MagicDNS name.
+4. Test access from another device on the same tailnet.
+5. Do not publish secrets or public firewall rules as part of this validation.";
+	}
+}
