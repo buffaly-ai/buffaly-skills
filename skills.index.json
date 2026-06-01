@@ -2,38 +2,6 @@
   "SchemaVersion": 1,
   "Skills": [
     {
-      "Title": "Tailscale Exposure",
-      "Phrases": [
-        "expose Buffaly through Tailscale",
-        "set up Tailscale",
-        "make Buffaly reachable",
-        "plan Tailscale exposure"
-      ],
-      "EntryPoint": "index.pts",
-      "Path": "skills/TailscaleExposure",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "b59d0f6ffbd46a8d1f0424f3ea0e1f0fe2dbd67b644898275e156e44e80daca0"
-        },
-        {
-          "Path": "Actions.pts",
-          "Sha256": "a413b8883e812d6c839a91eaeb597a939b00976f7f9bd76d9bc884851bd11bf2"
-        }
-      ],
-      "Version": "0.1.0",
-      "Description": "Guide and validation helpers for exposing a Buffaly instance through Tailscale.",
-      "Prerequisites": [
-        "Tailscale account",
-        "Tailscale installed on the Buffaly host"
-      ],
-      "SkillName": "TailscaleExposure",
-      "RelatedWikiSlugs": [
-        "how-to/tailscale-exposure"
-      ]
-    },
-    {
       "SkillName": "DllEchoSample",
       "Title": "DLL Echo Sample",
       "Description": "Validates installation of a DLL-backed Buffaly skill from the official Skill Directory.",
@@ -65,6 +33,64 @@
       ],
       "Prerequisites": [
         "Buffaly Skill Directory enabled"
+      ]
+    },
+    {
+      "SkillName": "SkillPublishingSmokeTest",
+      "Title": "Skill Publishing Smoke Test",
+      "Description": "SkillPublishing Smoke Test",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [],
+      "Path": "skills/SkillPublishingSmokeTest",
+      "Files": [
+        {
+          "Path": "Actions.pts",
+          "Sha256": "eb7608a40ceaa6a5538c1bf60cb7784bda498cb7f7df00c45c97718233643705"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "d374bd6ab3bb9dfac080a1d20c4e0fcf91442b8a3dfe96b282c07bdbf7cf7156"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "3aaf3e38a5d1bbab2bc77743a769e06d90935689fc6b23814c200bdd5b8f775f"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "TailscaleExposure",
+      "Title": "Tailscale Exposure",
+      "Description": "Guide and validation helpers for exposing a Buffaly instance through Tailscale.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "expose Buffaly through Tailscale",
+        "set up Tailscale",
+        "make Buffaly reachable",
+        "plan Tailscale exposure"
+      ],
+      "Path": "skills/TailscaleExposure",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "b59d0f6ffbd46a8d1f0424f3ea0e1f0fe2dbd67b644898275e156e44e80daca0"
+        },
+        {
+          "Path": "Actions.pts",
+          "Sha256": "a413b8883e812d6c839a91eaeb597a939b00976f7f9bd76d9bc884851bd11bf2"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [
+        "how-to/tailscale-exposure"
+      ],
+      "Prerequisites": [
+        "Tailscale account",
+        "Tailscale installed on the Buffaly host"
       ]
     }
   ]

@@ -1,0 +1,11 @@
+[SemanticProgram.InfinitivePhrase("to run the skill publishing smoke test")]
+prototype ToRunSkillPublishingSmokeTest : OpsAction
+{
+	Description = @"Returns a deterministic smoke-test message for SkillPublishing validation.";
+
+	function Execute() : string
+	{
+		return "SkillPublishing smoke test v2";
+	}
+}
+
