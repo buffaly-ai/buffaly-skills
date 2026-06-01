@@ -1,0 +1,26 @@
+prototype OrganizationStatuses_GetOrganizationStatus : FairPathJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FairPath.Business.OrganizationStatuses.GetOrganizationStatus(OrganizationStatusID). Returns raw response JSON string.";
+
+	function Execute(FairPathJsonWsService service, int OrganizationStatusID) : string
+	{
+		if (service == null) return "Error: FairPathJsonWsService binding is required.";
+		if (OrganizationStatusID <= 0) return "Error: OrganizationStatusID must be > 0.";
+		JsonObject args = new JsonObject();
+		args["OrganizationStatusID"] = OrganizationStatusID;
+		return service.CallBusinessRoute("organization-statuses/get-organization-status", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list fairpath organization statuses via jsonws")]
+[SemanticProgram.InfinitivePhrase("to get fairpath organization statuses via jsonws")]
+prototype OrganizationStatuses_GetOrganizationStatuses : FairPathJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FairPath.Business.OrganizationStatuses.GetOrganizationStatuses(). Returns raw response JSON string.";
+
+	function Execute(FairPathJsonWsService service) : string
+	{
+		if (service == null) return "Error: FairPathJsonWsService binding is required.";
+		return service.CallBusinessRoute("organization-statuses/get-organization-statuses", new JsonObject());
+	}
+}

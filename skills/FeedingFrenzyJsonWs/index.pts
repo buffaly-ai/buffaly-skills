@@ -1,0 +1,116 @@
+import Buffaly.Agent.Tools.Http Buffaly.Agent.Tools.Http.JsonWsHelper JsonWsHelper;
+import BasicUtilities BasicUtilities.JsonObject JsonObject;
+import BasicUtilities BasicUtilities.StringUtil StringUtil;
+
+prototype FeedingFrenzyJsonWsSkillAction : OpsAction
+{
+	Description = @"Base action type for Feeding Frenzy JSON WS service tools.";
+}
+
+[SemanticEntity("feeding frenzy json ws skill")]
+prototype FeedingFrenzyJsonWsSkill : SkillEntity
+{
+	Description = "Feeding Frenzy JSON web service skill mirroring the direct FeedingFrenzy surface through remote/local route bindings.";
+	ActionRoot = FeedingFrenzyJsonWsSkillAction;
+}
+
+prototype FeedingFrenzyJsonWsService : Service
+{
+	ServiceName = "FeedingFrenzyJsonWsService";
+	Scope = "per-binding";
+	Description = @"Feeding Frenzy route-based JSON service. Remote and Local bindings are provided as partials. Token is auto-resolved from TokenKey.";
+
+	String BaseUrl = new String();
+	String BusinessApiPrefix = "api/feedingfrenzy.admin.business";
+	String UiApiPrefix = "api/feedingfrenzy.admin.ui";
+	String TokenKey = "FeedingFrenzy.ApiKey";
+
+	function Initialize() : string
+	{
+		if (StringUtil.IsEmpty(this.BaseUrl))
+			return "Error: FeedingFrenzyJsonWsService.BaseUrl must be set on the binding.";
+		return "FeedingFrenzyJsonWsService initialized (BaseUrl = " + this.BaseUrl + ").";
+	}
+
+	function CallBusinessRoute(string routePath, JsonObject args) : string
+	{
+		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
+		return JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.BusinessApiPrefix, routePath, this.TokenKey, normalizedArgs);
+	}
+
+	function CallUiRoute(string routePath, JsonObject args) : string
+	{
+		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
+		return JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.UiApiPrefix, routePath, this.TokenKey, normalizedArgs);
+	}
+}
+
+[SemanticEntity("feeding frenzy remote json ws service")]
+[SemanticEntity("remote feeding frenzy json ws")]
+partial prototype FeedingFrenzyJsonWsService#Remote : FeedingFrenzyJsonWsService
+{
+	BaseUrl = "https://ff.medek.ai";
+	TokenKey = "FeedingFrenzy.ApiKey";
+	Description = "Remote Feeding Frenzy JSON service binding.";
+}
+
+[SemanticEntity("feeding frenzy local json ws service")]
+[SemanticEntity("local feeding frenzy json ws")]
+partial prototype FeedingFrenzyJsonWsService#Local : FeedingFrenzyJsonWsService
+{
+	BaseUrl = "http://feedingfrenzy.local";
+	TokenKey = "FeedingFrenzy.Local.ApiKey";
+	Description = "Local Feeding Frenzy JSON service binding.";
+}
+
+[SemanticProgram.InfinitivePhrase("to get feeding frenzy lead by id")]
+prototype ToGetFeedingFrenzyLeadById : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"service - required FeedingFrenzyJsonWsService binding. leadID - numeric LeadID.";
+
+	function Execute(FeedingFrenzyJsonWsService service, int leadID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["LeadID"] = leadID;
+		return service.CallBusinessRoute("leads/get-lead", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to search feeding frenzy leads by email")]
+prototype ToSearchFeedingFrenzyLeadsByEmail : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"service - required FeedingFrenzyJsonWsService binding. email - email address to search.";
+
+	function Execute(FeedingFrenzyJsonWsService service, string email) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["Email"] = email;
+		return service.CallBusinessRoute("leads/get-leads-by-email", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get feeding frenzy leads by import key")]
+prototype ToGetFeedingFrenzyLeadsByImportKey : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"service - required FeedingFrenzyJsonWsService binding. importKey - import key to search.";
+
+	function Execute(FeedingFrenzyJsonWsService service, string importKey) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["ImportKey"] = importKey;
+		return service.CallBusinessRoute("leads/get-leads-by-import-key", args);
+	}
+}
+
+include "Leads.pts";
+include "LeadAutomation.pts";
+include "LeadStatuses.pts";
+include "LeadSubStatuses.pts";
+include "Sources.pts";
+include "Tags.pts";
+include "SalesRepresentatives.pts";
+include "LeadsAdmin.pts";
+include "SalesRepresentativesAdmin.pts";

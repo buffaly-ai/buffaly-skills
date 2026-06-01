@@ -1,0 +1,191 @@
+prototype LeadsAdmin_GetDetails : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int LeadID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["LeadID"] = LeadID.ToString();
+		return service.CallUiRoute("leads-admin/get-details", args);
+	}
+}
+
+prototype LeadsAdmin_GetGridCount : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, string Search) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["Search"] = Search;
+		return service.CallUiRoute("leads-admin/get-grid-count", args);
+	}
+}
+
+prototype LeadsAdmin_GetUnassignedGridCount : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, string Search) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["Search"] = Search;
+		return service.CallUiRoute("leads-admin/get-unassigned-grid-count", args);
+	}
+}
+
+prototype LeadsAdmin_GetMessagesByPhone : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, string Phone) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["Phone"] = Phone;
+		return service.CallUiRoute("leads-admin/get-messages-by-phone", args);
+	}
+}
+
+prototype LeadsAdmin_GetGridBySalesRepresentativeID : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeID, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["SalesRepresentativeID"] = SalesRepresentativeID.ToString();
+		args["Search"] = Search;
+		args["SortColumn"] = SortColumn;
+		args["SortAscending"] = SortAscending ? "true" : "false";
+		args["SkipRows"] = SkipRows.ToString();
+		args["NumRows"] = NumRows.ToString();
+		return service.CallUiRoute("leads-admin/get-grid-by-sales-representative-id", args);
+	}
+}
+
+prototype LeadsAdmin_GetGridBySalesRepresentativeIDHtml : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeID, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["SalesRepresentativeID"] = SalesRepresentativeID.ToString();
+		args["Search"] = Search;
+		args["SortColumn"] = SortColumn;
+		args["SortAscending"] = SortAscending ? "true" : "false";
+		args["SkipRows"] = SkipRows.ToString();
+		args["NumRows"] = NumRows.ToString();
+		return service.CallUiRoute("leads-admin/get-grid-by-sales-representative-id-html", args);
+	}
+}
+
+prototype LeadsAdmin_GetGridByStatusID : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int LeadStatusID, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["LeadStatusID"] = LeadStatusID.ToString();
+		args["Search"] = Search;
+		args["SortColumn"] = SortColumn;
+		args["SortAscending"] = SortAscending ? "true" : "false";
+		args["SkipRows"] = SkipRows.ToString();
+		args["NumRows"] = NumRows.ToString();
+		return service.CallUiRoute("leads-admin/get-grid-by-status-id", args);
+	}
+}
+
+prototype LeadsAdmin_GetGridByStatusIDHtml : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int LeadStatusID, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["LeadStatusID"] = LeadStatusID.ToString();
+		args["Search"] = Search;
+		args["SortColumn"] = SortColumn;
+		args["SortAscending"] = SortAscending ? "true" : "false";
+		args["SkipRows"] = SkipRows.ToString();
+		args["NumRows"] = NumRows.ToString();
+		return service.CallUiRoute("leads-admin/get-grid-by-status-id-html", args);
+	}
+}
+
+prototype LeadsAdmin_GetGridByTagID : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int TagID, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["TagID"] = TagID.ToString();
+		args["Search"] = Search;
+		args["SortColumn"] = SortColumn;
+		args["SortAscending"] = SortAscending ? "true" : "false";
+		args["SkipRows"] = SkipRows.ToString();
+		args["NumRows"] = NumRows.ToString();
+		return service.CallUiRoute("leads-admin/get-grid-by-tag-id", args);
+	}
+}
+
+prototype LeadsAdmin_GetGridByTagIDHtml : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int TagID, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["TagID"] = TagID.ToString();
+		args["Search"] = Search;
+		args["SortColumn"] = SortColumn;
+		args["SortAscending"] = SortAscending ? "true" : "false";
+		args["SkipRows"] = SkipRows.ToString();
+		args["NumRows"] = NumRows.ToString();
+		return service.CallUiRoute("leads-admin/get-grid-by-tag-id-html", args);
+	}
+}
+
+prototype LeadsAdmin_GetGridByStatusIDSalesRepresentativeIDHtml : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int LeadStatusID, int SalesRepresentativeID, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["LeadStatusID"] = LeadStatusID.ToString();
+		args["SalesRepresentativeID"] = SalesRepresentativeID.ToString();
+		args["Search"] = Search;
+		args["SortColumn"] = SortColumn;
+		args["SortAscending"] = SortAscending ? "true" : "false";
+		args["SkipRows"] = SkipRows.ToString();
+		args["NumRows"] = NumRows.ToString();
+		return service.CallUiRoute("leads-admin/get-grid-by-status-id-sales-representative-id-html", args);
+	}
+}
+
+prototype LeadsAdmin_GetGridByTagIDSalesRepresentativeIDHtml : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int TagID, int SalesRepresentativeID, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["TagID"] = TagID.ToString();
+		args["SalesRepresentativeID"] = SalesRepresentativeID.ToString();
+		args["Search"] = Search;
+		args["SortColumn"] = SortColumn;
+		args["SortAscending"] = SortAscending ? "true" : "false";
+		args["SkipRows"] = SkipRows.ToString();
+		args["NumRows"] = NumRows.ToString();
+		return service.CallUiRoute("leads-admin/get-grid-by-tag-id-sales-representative-id-html", args);
+	}
+}
+
+prototype LeadsAdmin_GetGridByTagIDStatusIDSalesRepresentativeIDHtml : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int TagID, int LeadStatusID, int SalesRepresentativeID, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["TagID"] = TagID.ToString();
+		args["LeadStatusID"] = LeadStatusID.ToString();
+		args["SalesRepresentativeID"] = SalesRepresentativeID.ToString();
+		args["Search"] = Search;
+		args["SortColumn"] = SortColumn;
+		args["SortAscending"] = SortAscending ? "true" : "false";
+		args["SkipRows"] = SkipRows.ToString();
+		args["NumRows"] = NumRows.ToString();
+		return service.CallUiRoute("leads-admin/get-grid-by-tag-id-status-id-sales-representative-id-html", args);
+	}
+}

@@ -1,0 +1,58 @@
+[SemanticProgram.InfinitivePhrase("to list fairpath organizations via jsonws")]
+[SemanticProgram.InfinitivePhrase("to get fairpath organizations via jsonws")]
+prototype Organizations_GetOrganizations : FairPathJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FairPath.Business.Organizations.GetOrganizations(). Returns raw response JSON string.";
+
+	function Execute(FairPathJsonWsService service) : string
+	{
+		if (service == null) return "Error: FairPathJsonWsService binding is required.";
+		return service.CallBusinessRoute("organizations/get-organizations", new JsonObject());
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get fairpath organization by id via jsonws")]
+prototype Organizations_GetOrganization : FairPathJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FairPath.Business.Organizations.GetOrganization(OrganizationID). Returns raw response JSON string.";
+
+	function Execute(FairPathJsonWsService service, int OrganizationID) : string
+	{
+		if (service == null) return "Error: FairPathJsonWsService binding is required.";
+		if (OrganizationID <= 0) return "Error: OrganizationID must be > 0.";
+		JsonObject args = new JsonObject();
+		args["OrganizationID"] = OrganizationID;
+		return service.CallBusinessRoute("organizations/get-organization", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get fairpath organization by name via jsonws")]
+[SemanticProgram.InfinitivePhrase("to find fairpath organization by name via jsonws")]
+prototype Organizations_GetOrganizationByOrganizationName : FairPathJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FairPath.Business.Organizations.GetOrganizationByOrganizationName(OrganizationName). Returns raw response JSON string.";
+
+	function Execute(FairPathJsonWsService service, string OrganizationName) : string
+	{
+		if (service == null) return "Error: FairPathJsonWsService binding is required.";
+		if (StringUtil.IsEmpty(OrganizationName)) return "Error: OrganizationName is required.";
+		JsonObject args = new JsonObject();
+		args["OrganizationName"] = OrganizationName;
+		return service.CallBusinessRoute("organizations/get-organization-by-organization-name", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get fairpath organizations by status via jsonws")]
+prototype Organizations_GetOrganizationsByStatus : FairPathJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FairPath.Business.Organizations.GetOrganizationsByStatus(OrganizationStatusID). Returns raw response JSON string.";
+
+	function Execute(FairPathJsonWsService service, int OrganizationStatusID) : string
+	{
+		if (service == null) return "Error: FairPathJsonWsService binding is required.";
+		if (OrganizationStatusID <= 0) return "Error: OrganizationStatusID must be > 0.";
+		JsonObject args = new JsonObject();
+		args["OrganizationStatusID"] = OrganizationStatusID;
+		return service.CallBusinessRoute("organizations/get-organizations-by-status", args);
+	}
+}

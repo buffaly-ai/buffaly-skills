@@ -1,0 +1,13 @@
+[SemanticProgram.InfinitivePhrase("to list fairpath patient import statuses via jsonws")]
+[SemanticProgram.InfinitivePhrase("to get fairpath patient import statuses via jsonws")]
+prototype PatientImportStatuses_GetPatientImportStatuses : FairPathJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over the conventional FairPath staging PatientImportStatuses list route. Returns raw response JSON string.";
+	InfinitivePhrase = "to list fairpath patient import statuses via jsonws";
+
+	function Execute(FairPathJsonWsService service) : string
+	{
+		if (service == null) return "Error: FairPathJsonWsService binding is required.";
+		return service.CallStagingBusinessRoute("patient-import-statuses/get-patient-import-statuses", new JsonObject());
+	}
+}

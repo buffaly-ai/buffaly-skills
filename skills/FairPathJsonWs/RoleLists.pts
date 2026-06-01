@@ -1,0 +1,11 @@
+prototype Roles_GetRoles : FairPathJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over the conventional FairPath.Business.Roles.GetRoles() route. Returns raw response JSON string.";
+	InfinitivePhrase = "to list fairpath roles via jsonws";
+
+	function Execute(FairPathJsonWsService service) : string
+	{
+		if (service == null) return "Error: FairPathJsonWsService binding is required.";
+		return service.CallBusinessRoute("roles/get-roles", new JsonObject());
+	}
+}

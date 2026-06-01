@@ -1,0 +1,43 @@
+prototype LeadAutomation_GetLeadsBySearch : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.LeadAutomation.GetLeadsBySearch(Search). Returns raw response JSON string.";
+
+	function Execute(FeedingFrenzyJsonWsService service, string Search) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["Search"] = Search;
+		return service.CallBusinessRoute("lead-automation/get-leads-by-search", args);
+	}
+}
+
+prototype LeadAutomation_GetLeadsByTagName : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.LeadAutomation.GetLeadsByTagName(TagName, Search, SortColumn, SortAscending, SkipRows, NumRows). Returns raw response JSON string.";
+
+	function Execute(FeedingFrenzyJsonWsService service, string TagName, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["TagName"] = TagName;
+		args["Search"] = Search;
+		args["SortColumn"] = SortColumn;
+		args["SortAscending"] = SortAscending;
+		args["SkipRows"] = SkipRows;
+		args["NumRows"] = NumRows;
+		return service.CallBusinessRoute("lead-automation/get-leads-by-tag-name", args);
+	}
+}
+
+prototype LeadAutomation_GetLeadAndNotesAsMarkdown : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.LeadAutomation.GetLeadAndNotesAsMarkdown(LeadID). Returns raw response JSON string.";
+
+	function Execute(FeedingFrenzyJsonWsService service, int LeadID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["LeadID"] = LeadID;
+		return service.CallBusinessRoute("lead-automation/get-lead-and-notes-as-markdown", args);
+	}
+}

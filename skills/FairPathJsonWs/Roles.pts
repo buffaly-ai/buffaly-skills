@@ -1,0 +1,15 @@
+[SemanticProgram.InfinitivePhrase("to get fairpath role by name via jsonws")]
+[SemanticProgram.InfinitivePhrase("to find fairpath role by name via jsonws")]
+prototype Roles_GetRoleByRoleName : FairPathJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FairPath.Business.Roles.GetRoleByRoleName(RoleName). Returns raw response JSON string.";
+
+	function Execute(FairPathJsonWsService service, string RoleName) : string
+	{
+		if (service == null) return "Error: FairPathJsonWsService binding is required.";
+		if (StringUtil.IsEmpty(RoleName)) return "Error: RoleName is required.";
+		JsonObject args = new JsonObject();
+		args["RoleName"] = RoleName;
+		return service.CallBusinessRoute("roles/get-role-by-role-name", args);
+	}
+}

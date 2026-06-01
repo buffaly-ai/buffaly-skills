@@ -1,0 +1,134 @@
+prototype SalesRepresentatives_CopySalesRepresentative : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["SalesRepresentativeID"] = SalesRepresentativeID;
+		return service.CallBusinessRoute("sales-representatives/copy-sales-representative", args);
+	}
+}
+
+prototype SalesRepresentatives_GetSalesRepresentative : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["SalesRepresentativeID"] = SalesRepresentativeID;
+		return service.CallBusinessRoute("sales-representatives/get-sales-representative", args);
+	}
+}
+
+prototype SalesRepresentatives_GetSalesRepresentativeByUserID : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int UserID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["UserID"] = UserID;
+		return service.CallBusinessRoute("sales-representatives/get-sales-representative-by-user-id", args);
+	}
+}
+
+prototype SalesRepresentatives_GetSalesRepresentatives : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		return service.CallBusinessRoute("sales-representatives/get-sales-representatives", new JsonObject());
+	}
+}
+
+prototype SalesRepresentatives_GetSalesRepresentativesBySalesRepresentativeTypeID : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeTypeID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["SalesRepresentativeTypeID"] = SalesRepresentativeTypeID;
+		return service.CallBusinessRoute("sales-representatives/get-sales-representatives-by-sales-representative-type-id", args);
+	}
+}
+
+prototype SalesRepresentatives_InsertSalesRepresentative : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, string Notes, bool IsEnabled, string Data, string Name, string Email, string Phone, int SalesRepresentativeTypeID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["Notes"] = Notes;
+		args["IsEnabled"] = IsEnabled;
+		args["Data"] = Data;
+		args["Name"] = Name;
+		args["Email"] = Email;
+		args["Phone"] = Phone;
+		args["SalesRepresentativeTypeID"] = SalesRepresentativeTypeID;
+		return service.CallBusinessRoute("sales-representatives/insert-sales-representative", args);
+	}
+}
+
+prototype SalesRepresentatives_MarkSalesRepresentativeAsEnabled : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["SalesRepresentativeID"] = SalesRepresentativeID;
+		return service.CallBusinessRoute("sales-representatives/mark-sales-representative-as-enabled", args);
+	}
+}
+
+prototype SalesRepresentatives_MarkSalesRepresentativeAsNotEnabled : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["SalesRepresentativeID"] = SalesRepresentativeID;
+		return service.CallBusinessRoute("sales-representatives/mark-sales-representative-as-not-enabled", args);
+	}
+}
+
+prototype SalesRepresentatives_RemoveSalesRepresentative : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["SalesRepresentativeID"] = SalesRepresentativeID;
+		return service.CallBusinessRoute("sales-representatives/remove-sales-representative", args);
+	}
+}
+
+prototype SalesRepresentatives_UpdateSalesRepresentative : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeID, string Notes, bool IsEnabled, string Data, string FirstName, string LastName, string Email, string Phone, int SalesRepresentativeTypeID, int UserID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["SalesRepresentativeID"] = SalesRepresentativeID;
+		args["Notes"] = Notes;
+		args["IsEnabled"] = IsEnabled;
+		args["Data"] = Data;
+		args["FirstName"] = FirstName;
+		args["LastName"] = LastName;
+		args["Email"] = Email;
+		args["Phone"] = Phone;
+		args["SalesRepresentativeTypeID"] = SalesRepresentativeTypeID;
+		args["UserID"] = UserID;
+		return service.CallBusinessRoute("sales-representatives/update-sales-representative", args);
+	}
+}
+
+prototype SalesRepresentatives_UpdateSalesRepresentativeData : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeID, string Data) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["SalesRepresentativeID"] = SalesRepresentativeID;
+		args["Data"] = Data;
+		return service.CallBusinessRoute("sales-representatives/update-sales-representative-data", args);
+	}
+}

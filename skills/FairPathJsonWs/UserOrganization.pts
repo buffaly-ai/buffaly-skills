@@ -1,0 +1,33 @@
+[SemanticProgram.InfinitivePhrase("to get fairpath user organization by email via jsonws")]
+[SemanticProgram.InfinitivePhrase("to find fairpath user organization by email via jsonws")]
+prototype Users_GetUserOrganizationByEmail : FairPathJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FairPath.Business.Users.GetUserByEmail(Email). Returns raw response JSON string.";
+	InfinitivePhrase = "to get fairpath user organization by email via jsonws";
+
+	function Execute(FairPathJsonWsService service, string Email) : string
+	{
+		if (service == null) return "Error: FairPathJsonWsService binding is required.";
+		if (StringUtil.IsEmpty(Email)) return "Error: Email is required.";
+		JsonObject args = new JsonObject();
+		args["Email"] = Email;
+		return service.CallBusinessRoute("users/get-user-by-email", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get fairpath users by organization name via jsonws")]
+[SemanticProgram.InfinitivePhrase("to list fairpath users in organization by name via jsonws")]
+prototype Users_GetUsersByOrganizationName : FairPathJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FairPath.Business.Organizations.GetOrganizationByOrganizationName(OrganizationName). Returns raw response JSON string.";
+	InfinitivePhrase = "to get fairpath users by organization name via jsonws";
+
+	function Execute(FairPathJsonWsService service, string OrganizationName) : string
+	{
+		if (service == null) return "Error: FairPathJsonWsService binding is required.";
+		if (StringUtil.IsEmpty(OrganizationName)) return "Error: OrganizationName is required.";
+		JsonObject args = new JsonObject();
+		args["OrganizationName"] = OrganizationName;
+		return service.CallBusinessRoute("organizations/get-organization-by-organization-name", args);
+	}
+}

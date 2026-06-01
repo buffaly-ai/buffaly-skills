@@ -1,0 +1,138 @@
+prototype SalesRepresentativesAdmin_GetDetails : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, string SalesRepresentativeID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["SalesRepresentativeID"] = SalesRepresentativeID;
+		return service.CallUiRoute("sales-representatives-admin/get-details", args);
+	}
+}
+
+prototype SalesRepresentativesAdmin_GetDropDown : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, string Name, string Value, string FieldName, string PreOptions) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["Name"] = Name;
+		args["Value"] = Value;
+		args["FieldName"] = FieldName;
+		args["PreOptions"] = PreOptions;
+		return service.CallUiRoute("sales-representatives-admin/get-drop-down", args);
+	}
+}
+
+prototype SalesRepresentativesAdmin_GetEdit : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, string SalesRepresentativeID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["SalesRepresentativeID"] = SalesRepresentativeID;
+		return service.CallUiRoute("sales-representatives-admin/get-edit", args);
+	}
+}
+
+prototype SalesRepresentativesAdmin_GetGrid : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, string Search, string SortColumn, string SortAscending, string SkipRows, string NumRows) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["Search"] = Search;
+		args["SortColumn"] = SortColumn;
+		args["SortAscending"] = SortAscending;
+		args["SkipRows"] = SkipRows;
+		args["NumRows"] = NumRows;
+		return service.CallUiRoute("sales-representatives-admin/get-grid", args);
+	}
+}
+
+prototype SalesRepresentativesAdmin_GetGridBySalesRepresentativeTypeID : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, string SalesRepresentativeTypeID, string Search, string SortColumn, string SortAscending, string SkipRows, string NumRows) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["SalesRepresentativeTypeID"] = SalesRepresentativeTypeID;
+		args["Search"] = Search;
+		args["SortColumn"] = SortColumn;
+		args["SortAscending"] = SortAscending;
+		args["SkipRows"] = SkipRows;
+		args["NumRows"] = NumRows;
+		return service.CallUiRoute("sales-representatives-admin/get-grid-by-sales-representative-type-id", args);
+	}
+}
+
+prototype SalesRepresentativesAdmin_GetGridBySalesRepresentativeTypeIDCount : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, string SalesRepresentativeTypeID, string Search) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["SalesRepresentativeTypeID"] = SalesRepresentativeTypeID;
+		args["Search"] = Search;
+		return service.CallUiRoute("sales-representatives-admin/get-grid-by-sales-representative-type-id-count", args);
+	}
+}
+
+prototype SalesRepresentativesAdmin_GetGridBySalesRepresentativeTypeIDHtml : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, string SalesRepresentativeTypeID, string Search, string SortColumn, string SortAscending, string SkipRows, string NumRows) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["SalesRepresentativeTypeID"] = SalesRepresentativeTypeID;
+		args["Search"] = Search;
+		args["SortColumn"] = SortColumn;
+		args["SortAscending"] = SortAscending;
+		args["SkipRows"] = SkipRows;
+		args["NumRows"] = NumRows;
+		return service.CallUiRoute("sales-representatives-admin/get-grid-by-sales-representative-type-id-html", args);
+	}
+}
+
+prototype SalesRepresentativesAdmin_GetGridCount : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, string Search) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["Search"] = Search;
+		return service.CallUiRoute("sales-representatives-admin/get-grid-count", args);
+	}
+}
+
+prototype SalesRepresentativesAdmin_GetGridHtml : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, string Search, string SortColumn, string SortAscending, string SkipRows, string NumRows) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["Search"] = Search;
+		args["SortColumn"] = SortColumn;
+		args["SortAscending"] = SortAscending;
+		args["SkipRows"] = SkipRows;
+		args["NumRows"] = NumRows;
+		return service.CallUiRoute("sales-representatives-admin/get-grid-html", args);
+	}
+}
+
+prototype SalesRepresentativesAdmin_GetInsert : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		return service.CallUiRoute("sales-representatives-admin/get-insert", new JsonObject());
+	}
+}
+
+prototype SalesRepresentativesAdmin_Initialize : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		return service.CallUiRoute("sales-representatives-admin/initialize", new JsonObject());
+	}
+}

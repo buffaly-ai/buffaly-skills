@@ -1,0 +1,30 @@
+prototype Sources_GetSource : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int SourceID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["SourceID"] = SourceID;
+		return service.CallBusinessRoute("sources/get-source", args);
+	}
+}
+
+prototype Sources_GetSources : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		return service.CallBusinessRoute("sources/get-sources", new JsonObject());
+	}
+}
+
+prototype Sources_GetSourceBySourceName : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, string SourceName) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["SourceName"] = SourceName;
+		return service.CallBusinessRoute("sources/get-source-by-source-name", args);
+	}
+}

@@ -1,0 +1,83 @@
+import Buffaly.Agent.Tools.Http Buffaly.Agent.Tools.Http.JsonWsHelper JsonWsHelper;
+import BasicUtilities BasicUtilities.JsonObject JsonObject;
+import BasicUtilities BasicUtilities.StringUtil StringUtil;
+
+prototype FairPathJsonWsSkillAction : OpsAction
+{
+	Description = @"Base action type for FairPath JSON WS service tools.";
+}
+
+[SemanticEntity("fairpath json ws skill")]
+[SemanticEntity("fairpath json web service skill")]
+prototype FairPathJsonWsSkill : SkillEntity
+{
+	Description = "FairPath JSON web service skill mirroring selected FairPath business surfaces through remote/local route bindings.";
+	ActionRoot = FairPathJsonWsSkillAction;
+}
+
+prototype FairPathJsonWsService : Service
+{
+	ServiceName = "FairPathJsonWsService";
+	Scope = "per-binding";
+	Description = @"FairPath route-based JSON service. Remote and local bindings are provided as partials. Token is auto-resolved from TokenKey.";
+
+	String BaseUrl = new String();
+	String BusinessApiPrefix = "api/fairpath.business";
+	String StagingBusinessApiPrefix = "api/fairpath.staging.business";
+	String BusinessAdminApiPrefix = "api/fairpath.business.admin.api";
+	String TokenKey = "FairPath.AuthorizationToken";
+
+	function Initialize() : string
+	{
+		if (StringUtil.IsEmpty(this.BaseUrl))
+			return "Error: FairPathJsonWsService.BaseUrl must be set on the binding.";
+		return "FairPathJsonWsService initialized (BaseUrl = " + this.BaseUrl + ").";
+	}
+
+	function CallBusinessRoute(string routePath, JsonObject args) : string
+	{
+		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
+		return JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.BusinessApiPrefix, routePath, this.TokenKey, normalizedArgs);
+	}
+
+	function CallStagingBusinessRoute(string routePath, JsonObject args) : string
+	{
+		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
+		return JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.StagingBusinessApiPrefix, routePath, this.TokenKey, normalizedArgs);
+	}
+
+	function CallBusinessAdminRoute(string routePath, JsonObject args) : string
+	{
+		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
+		return JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.BusinessAdminApiPrefix, routePath, this.TokenKey, normalizedArgs);
+	}
+}
+
+[SemanticEntity("if.fairpath.ai json ws service")]
+[SemanticEntity("remote fairpath json ws service")]
+[SemanticEntity("fairpath production json ws service")]
+partial prototype FairPathJsonWsService#If_Fairpath_Ai : FairPathJsonWsService
+{
+	BaseUrl = "https://if.fairpath.ai";
+	TokenKey = "FairPath.AuthorizationToken";
+	Description = "Remote FairPath production JSON service binding.";
+}
+
+[SemanticEntity("localhost fairpath json ws service")]
+[SemanticEntity("local fairpath json ws service")]
+partial prototype FairPathJsonWsService#Localhost_5266 : FairPathJsonWsService
+{
+	BaseUrl = "http://localhost:5266";
+	TokenKey = "FairPath.AuthorizationToken";
+	Description = "Local FairPath development JSON service binding.";
+}
+
+include "OrganizationStatuses.pts";
+include "Organizations.pts";
+include "Users.pts";
+include "Roles.pts";
+
+include "UserOrganization.pts";
+include "RoleLists.pts";
+include "PatientStatuses.pts";
+include "PatientImportStatuses.pts";

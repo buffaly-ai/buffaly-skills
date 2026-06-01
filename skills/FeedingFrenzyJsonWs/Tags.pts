@@ -1,0 +1,41 @@
+prototype Tags_GetTag : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int TagID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["TagID"] = TagID;
+		return service.CallBusinessRoute("tags/get-tag", args);
+	}
+}
+
+prototype Tags_GetTags : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		return service.CallBusinessRoute("tags/get-tags", new JsonObject());
+	}
+}
+
+prototype Tags_GetTagByTagName : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, string TagName) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["TagName"] = TagName;
+		return service.CallBusinessRoute("tags/get-tag-by-tag-name", args);
+	}
+}
+
+prototype Tags_GetTagsBySalesRepresentativeID : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["SalesRepresentativeID"] = SalesRepresentativeID;
+		return service.CallBusinessRoute("tags/get-tags-by-sales-representative-id", args);
+	}
+}

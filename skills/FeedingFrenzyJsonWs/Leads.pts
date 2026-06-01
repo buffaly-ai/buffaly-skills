@@ -1,0 +1,170 @@
+prototype Leads_GetLead : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.GetLead(LeadID). Returns raw response JSON string.";
+
+	function Execute(FeedingFrenzyJsonWsService service, int LeadID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["LeadID"] = LeadID;
+		return service.CallBusinessRoute("leads/get-lead", args);
+	}
+}
+
+prototype Leads_GetLeadsByCampaignID : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.GetLeadsByCampaignID(CampaignID). Returns raw response JSON string.";
+
+	function Execute(FeedingFrenzyJsonWsService service, int CampaignID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["CampaignID"] = CampaignID;
+		return service.CallBusinessRoute("leads/get-leads-by-campaign-id", args);
+	}
+}
+
+prototype Leads_GetLeadsBySourceID : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.GetLeadsBySourceID(SourceID). Returns raw response JSON string.";
+
+	function Execute(FeedingFrenzyJsonWsService service, int SourceID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["SourceID"] = SourceID;
+		return service.CallBusinessRoute("leads/get-leads-by-source-id", args);
+	}
+}
+
+prototype Leads_GetLeadsByImportKey : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.GetLeadsByImportKey(ImportKey). Returns raw response JSON string.";
+
+	function Execute(FeedingFrenzyJsonWsService service, string ImportKey) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["ImportKey"] = ImportKey;
+		return service.CallBusinessRoute("leads/get-leads-by-import-key", args);
+	}
+}
+
+prototype Leads_GetLeadsByLeadStatusID : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.GetLeadsByLeadStatusID(LeadStatusID). Returns raw response JSON string.";
+
+	function Execute(FeedingFrenzyJsonWsService service, int LeadStatusID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["LeadStatusID"] = LeadStatusID;
+		return service.CallBusinessRoute("leads/get-leads-by-lead-status-id", args);
+	}
+}
+
+prototype Leads_GetLeadsBySalesRepresentativeID : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.GetLeadsBySalesRepresentativeID(SalesRepresentativeID). Returns raw response JSON string.";
+
+	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["SalesRepresentativeID"] = SalesRepresentativeID;
+		return service.CallBusinessRoute("leads/get-leads-by-sales-representative-id", args);
+	}
+}
+
+prototype Leads_GetLeadsByLeadSubStatusID : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.GetLeadsByLeadSubStatusID(LeadSubStatusID). Returns raw response JSON string.";
+
+	function Execute(FeedingFrenzyJsonWsService service, int LeadSubStatusID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["LeadSubStatusID"] = LeadSubStatusID;
+		return service.CallBusinessRoute("leads/get-leads-by-lead-sub-status-id", args);
+	}
+}
+
+prototype Leads_GetLeadsByEmail : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.GetLeadsByEmail(Email). Returns raw response JSON string.";
+
+	function Execute(FeedingFrenzyJsonWsService service, string Email) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["Email"] = Email;
+		return service.CallBusinessRoute("leads/get-leads-by-email", args);
+	}
+}
+
+prototype Leads_GetLeadsByPhone : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.GetLeadsByPhone(Phone). Returns raw response JSON string.";
+
+	function Execute(FeedingFrenzyJsonWsService service, string Phone) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["Phone"] = Phone;
+		return service.CallBusinessRoute("leads/get-leads-by-phone", args);
+	}
+}
+
+prototype Leads_Leads_GetUnassigned_Sp_PagingSp : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.Leads_GetUnassigned_Sp_PagingSp(SalesRepresentativeID, Search, SortColumn, SortAscending, SkipRows, NumRows). Returns raw response JSON string.";
+
+	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeID, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["SalesRepresentativeID"] = SalesRepresentativeID;
+		args["Search"] = Search;
+		args["SortColumn"] = SortColumn;
+		args["SortAscending"] = SortAscending;
+		args["SkipRows"] = SkipRows;
+		args["NumRows"] = NumRows;
+		return service.CallBusinessRoute("leads/leads-_-get-unassigned-_-sp-_-paging-sp", args);
+	}
+}
+
+prototype Leads_Leads_GetUnassigned_Sp_CountSp : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.Leads_GetUnassigned_Sp_CountSp(SalesRepresentativeID, Search). Returns raw response JSON string.";
+
+	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeID, string Search) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["SalesRepresentativeID"] = SalesRepresentativeID;
+		args["Search"] = Search;
+		return service.CallBusinessRoute("leads/leads-_-get-unassigned-_-sp-_-count-sp", args);
+	}
+}
+
+prototype Leads_GetPotentialDuplicates : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.GetPotentialDuplicates(rowLead), adapted to accept leadID and resolve the row through the published GetLead route before calling the duplicate route. Returns raw response JSON string.";
+
+	function Execute(FeedingFrenzyJsonWsService service, int LeadID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject getLeadArgs = new JsonObject();
+		getLeadArgs["LeadID"] = LeadID;
+		string leadResponse = service.CallBusinessRoute("leads/get-lead", getLeadArgs);
+		JsonObject leadRoot = new JsonObject(leadResponse);
+		JsonObject rowLead = leadRoot.GetJsonObjectOrDefault("Result");
+		if (rowLead == null)
+			rowLead = leadRoot.GetJsonObjectOrDefault("Data");
+		if (rowLead == null)
+			rowLead = leadRoot;
+		JsonObject args = new JsonObject();
+		args["rowLead"] = rowLead;
+		return service.CallBusinessRoute("leads/get-potential-duplicates", args);
+	}
+}

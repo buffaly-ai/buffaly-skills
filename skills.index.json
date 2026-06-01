@@ -36,6 +36,202 @@
       ]
     },
     {
+      "SkillName": "FairPathJsonWs",
+      "Title": "FairPath JsonWs",
+      "Description": "FairPath JSON web service wrappers for selected route-based business and admin surfaces.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "fairpath json ws",
+        "fairpath json web service",
+        "call fairpath service",
+        "list fairpath organizations",
+        "get fairpath users",
+        "fairpath route wrappers"
+      ],
+      "Path": "skills/FairPathJsonWs",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "06db273fe17dec345c68408653834ac8b0726facdfd8a9b2487e9da04afcd7f3"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "3ad22391efaa458da633fb0521a50c913b6ed69081921bcd302990e9a4a7c69b"
+        },
+        {
+          "Path": "Organizations.pts",
+          "Sha256": "3f84aff3b8cc85af581ff18890abe95a29fe794a7cb2f191ba226e7a128fac6c"
+        },
+        {
+          "Path": "Organizations.pts.md",
+          "Sha256": "1181842c6e00811869511dd939a3ae28315bcd18f76aebe63c3530e25971138d"
+        },
+        {
+          "Path": "OrganizationStatuses.pts",
+          "Sha256": "08b08d901ef1cd70e9a281e3a9b7e3350e676ad8198fddc772bf14f88eef4fe3"
+        },
+        {
+          "Path": "OrganizationStatuses.pts.md",
+          "Sha256": "ceec57700323fd132409f346120b3f0a3202fcea4d37af3462c65cc3d3faf574"
+        },
+        {
+          "Path": "PatientImportStatuses.pts",
+          "Sha256": "1eb9702d7198be5cada96a79de26db6576b280b1a9188e01e3cdab2ae3371e5a"
+        },
+        {
+          "Path": "PatientStatuses.pts",
+          "Sha256": "3f84d79ff75c7072bb953d122c4106d0922639577564bdf942dc7f2e21231fbf"
+        },
+        {
+          "Path": "RoleLists.pts",
+          "Sha256": "3ceab00a81fff068fd2e7c19ffaa897b5004c0d6f03d83aef1004b9102f18f5d"
+        },
+        {
+          "Path": "Roles.pts",
+          "Sha256": "82949a45859f13573f157b7328ef6978e4f89a79beceb9a8feca8681217da090"
+        },
+        {
+          "Path": "Roles.pts.md",
+          "Sha256": "5ee965c1b29bfdb6a2f92f05fb1dbb5b3d02c220e5174c35a673fc33efbb4976"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "fd365def497510ca234830b5d19f425a27a43262ca87f895ca456fbeeb7df426"
+        },
+        {
+          "Path": "UserOrganization.pts",
+          "Sha256": "9798ac2e717089d3d2909fed6b92b0885331f37e1b5bade40fead5551f89ae40"
+        },
+        {
+          "Path": "Users.pts",
+          "Sha256": "9ed7959a4e2c85b56ebcc19474cbcaa89cb0c0b2972c8a84c38275b6966291ea"
+        },
+        {
+          "Path": "Users.pts.md",
+          "Sha256": "0c8b33e04a988a514cb2542141e6addb787ac438ea19da69c7fd8a29d8e6bd29"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [
+        "reference/skill-directory"
+      ],
+      "Prerequisites": [
+        "Configured FairPath.AuthorizationToken UserSecrets value for protected remote calls",
+        "Network access to the configured FairPath service endpoint"
+      ]
+    },
+    {
+      "SkillName": "FeedingFrenzyJsonWs",
+      "Title": "Feeding Frenzy JsonWs",
+      "Description": "Feeding Frenzy JSON web service wrappers for selected lead, source, tag, and sales representative surfaces.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "feeding frenzy json ws",
+        "feeding frenzy json web service",
+        "call feeding frenzy service",
+        "search feeding frenzy leads",
+        "feeding frenzy route wrappers",
+        "get feeding frenzy lead"
+      ],
+      "Path": "skills/FeedingFrenzyJsonWs",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "c2d05d2d00ee299f9b57d62942d02695dccc8687c6315b0613fec2faae8732f0"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "6587eb232c0b82dbc706cb7e42963e92ce12cc8dcb2d41c38d8a4c8c78b3276e"
+        },
+        {
+          "Path": "LeadAutomation.pts",
+          "Sha256": "3f41b530c7d76f54682a6e982a05e3f2f9e3474a494723d5d6d54eed747ae27e"
+        },
+        {
+          "Path": "LeadAutomation.pts.md",
+          "Sha256": "2430896a8a9ff8594949081bf72ccf216ae0607a8e3496560468ce8d1bc049b4"
+        },
+        {
+          "Path": "Leads.pts",
+          "Sha256": "1f1475915de235ddb9d2ebfe9284b5b9a2513bd9f41354141db165494f7ccfb6"
+        },
+        {
+          "Path": "Leads.pts.md",
+          "Sha256": "733c62ff3f76cb9b3b45784efc5ffed0bf0b167a727069b6f706f6bcd0c8a807"
+        },
+        {
+          "Path": "LeadsAdmin.pts",
+          "Sha256": "f78e8a9c025affce324d140135d14e444ecaa7c79713bcc4ce1d8401c2555ce1"
+        },
+        {
+          "Path": "LeadsAdmin.pts.md",
+          "Sha256": "5dcb5787cb1768758a55cc712ada5ad797db0fd4b1b7cab7d672b41841f3a943"
+        },
+        {
+          "Path": "LeadStatuses.pts",
+          "Sha256": "7620ea3bae70c2f75d0426f24a300fad71c1b60184fcdb0b41c277a41aa6e9ee"
+        },
+        {
+          "Path": "LeadStatuses.pts.md",
+          "Sha256": "787e367a730989a5617be0f899efefb30c2c33c3f2af3f2be411ea5ba9474cfa"
+        },
+        {
+          "Path": "LeadSubStatuses.pts",
+          "Sha256": "90711603bade6627d5d2426dcda6e262e678968d59c56df36abc4e69d7ec5cea"
+        },
+        {
+          "Path": "LeadSubStatuses.pts.md",
+          "Sha256": "86d056e37620473984f1ba3ce3729800176ad53fa24605688404d1169eabefeb"
+        },
+        {
+          "Path": "SalesRepresentatives.pts",
+          "Sha256": "f4ff93cd42789e3335412fa46c61953882699c32724dde1199753b7f4c121ffd"
+        },
+        {
+          "Path": "SalesRepresentatives.pts.md",
+          "Sha256": "4e88fc339c0c4de8dd4c70af6e38683eaf67fc95e9adb862406bc2263b558a58"
+        },
+        {
+          "Path": "SalesRepresentativesAdmin.pts",
+          "Sha256": "77729c273380d53563099e6f544748df03e8174e6aa97fc85caa2f431fb744f6"
+        },
+        {
+          "Path": "SalesRepresentativesAdmin.pts.md",
+          "Sha256": "682343bd79b26a483202d4fc69aa8322da262c1cee5e449ccfb6b36f8aaf2268"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "39807643781e56d46e8d1925a17b4e9939fd9ea49fa4002e353dc96b9683bdaf"
+        },
+        {
+          "Path": "Sources.pts",
+          "Sha256": "1e4b454d71653cad5aa8931fc85cd079c9a43f8dec6ef5ee89edfa9bf37e45d2"
+        },
+        {
+          "Path": "Sources.pts.md",
+          "Sha256": "021078815b53e6cfbd9ba9a46d0901648d6ab785aceaaa6bc749c0645692c749"
+        },
+        {
+          "Path": "Tags.pts",
+          "Sha256": "1b57f872de99174b808aec5b4965cb4164a7c70224e06940660dc31df1016f30"
+        },
+        {
+          "Path": "Tags.pts.md",
+          "Sha256": "9502b03e2ac4605eae401a50e58527db048a31ce2d1ab124b248fdc5ed4ad1f1"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [
+        "reference/skill-directory"
+      ],
+      "Prerequisites": [
+        "Configured FeedingFrenzy.ApiKey or FeedingFrenzy.Local.ApiKey UserSecrets value for protected calls",
+        "Network access to the configured Feeding Frenzy service endpoint"
+      ]
+    },
+    {
       "SkillName": "FFmpeg",
       "Title": "FFmpeg Media Tools",
       "Description": "FFmpeg and ffprobe media recording, validation, transformation, and session artifact publishing actions.",
