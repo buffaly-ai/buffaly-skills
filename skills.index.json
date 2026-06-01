@@ -37,11 +37,22 @@
     },
     {
       "SkillName": "FFmpeg",
-      "Title": "F Fmpeg",
-      "Description": "FFmpegSkill",
+      "Title": "FFmpeg Media Tools",
+      "Description": "FFmpeg and ffprobe media recording, validation, transformation, and session artifact publishing actions.",
       "Version": "0.1.0",
       "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [],
+      "Phrases": [
+        "ffmpeg media tools",
+        "record desktop video",
+        "record browser demo",
+        "probe media file",
+        "normalize video for web",
+        "extract video thumbnail",
+        "trim video artifact",
+        "compress video artifact",
+        "create video contact sheet",
+        "add text overlay to video"
+      ],
       "Path": "skills/FFmpeg",
       "Files": [
         {
@@ -58,8 +69,13 @@
         }
       ],
       "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [],
-      "Prerequisites": []
+      "RelatedWikiSlugs": [
+        "reference/skill-directory"
+      ],
+      "Prerequisites": [
+        "FFmpeg installed on the host",
+        "ffmpeg and ffprobe available at C:\\ffmpeg\\bin or provided explicitly"
+      ]
     },
     {
       "SkillName": "SkillPublishingSmokeTest",
