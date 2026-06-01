@@ -36,6 +36,32 @@
       ]
     },
     {
+      "SkillName": "FFmpeg",
+      "Title": "F Fmpeg",
+      "Description": "FFmpegSkill",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [],
+      "Path": "skills/FFmpeg",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "3e9eb47017f3e29b2a5c09dc9fa4167db109263f4ce10098a25e0e81e5f81b1c"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "049223f23c43d830db7e0b9e300005f57bd9cf00ff35dda4ff9248cd4d865b44"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "b1e84d361ddc99d1b543a7e1f2f6582f756de735ba9ce78a9df924e34e3cc86a"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
       "SkillName": "SkillPublishingSmokeTest",
       "Title": "Skill Publishing Smoke Test",
       "Description": "SkillPublishing Smoke Test",

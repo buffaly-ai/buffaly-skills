@@ -1,0 +1,298 @@
+[SemanticEntity("ffmpeg skill")]
+prototype FFmpegSkill : SkillEntity, CoreEntity
+{
+	Description = "FFmpeg and ffprobe media recording, validation, transformation, and session artifact publishing actions.";
+	ActionRoot = FFmpegSkillAction;
+}
+
+prototype FFmpegSkillAction : OpsAction
+{
+	Description = @"Base action type for FFmpeg-backed media tools.";
+}
+
+function ToFFmpegArtifactRef(string sessionDirectory, string fileName) : string
+{
+	string normalizedDirectory = sessionDirectory.Replace("\\", "/");
+	return "[[file:" + normalizedDirectory + "/" + fileName + "|" + fileName + "]]";
+}
+
+function ToFFmpegQuoted(string value) : string
+{
+	return "\"" + value + "\"";
+}
+
+
+function ToFFmpegIntText(int value) : string
+{
+	return JsonUtil.ToStringExt(value).ToString();
+}
+
+function ToFFmpegVerifyArtifactCommand(string artifactFile) : string
+{
+	return "if not exist " + ToFFmpegQuoted(artifactFile) + " exit /b 2";
+}
+
+function ToFFmpegDefaultExe(string ffmpegPath) : string
+{
+	if (StringUtil.IsEmpty(ffmpegPath))
+	{
+		return @"C:\ffmpeg\bin\ffmpeg.exe";
+	}
+
+	return ffmpegPath;
+}
+
+function ToFFmpegDefaultProbeExe(string ffprobePath) : string
+{
+	if (StringUtil.IsEmpty(ffprobePath))
+	{
+		return @"C:\ffmpeg\bin\ffprobe.exe";
+	}
+
+	return ffprobePath;
+}
+
+[SemanticProgram.InfinitivePhrase("to get ffmpeg version")]
+[SemanticProgram.InfinitivePhrase("to verify ffmpeg is installed")]
+prototype ToGetFFmpegVersion : FFmpegSkillAction
+{
+	Description = @"ffmpegPath - optional absolute path to ffmpeg.exe. Defaults to C:\ffmpeg\bin\ffmpeg.exe.";
+
+	function Execute(string ffmpegPath) : string
+	{
+		string exe = ToFFmpegDefaultExe(ffmpegPath);
+		return SystemOperations.RunCommandLineWithTimeout(exe, "-version", 15);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to probe a media file with ffprobe")]
+[SemanticProgram.InfinitivePhrase("to validate a video artifact")]
+prototype ToProbeFFmpegMediaFile : FFmpegSkillAction
+{
+	Description = @"filePath - media file to inspect.
+ffprobePath - optional absolute path to ffprobe.exe. Defaults to C:\ffmpeg\bin\ffprobe.exe.
+Returns ffprobe JSON for duration, size, and streams.";
+
+	function Execute(string filePath, string ffprobePath) : string
+	{
+		string exe = ToFFmpegDefaultProbeExe(ffprobePath);
+		string args = "-v error -show_entries format=duration,size -show_streams -of json " + ToFFmpegQuoted(filePath);
+		return SystemOperations.RunCommandLineWithTimeout(exe, args, 30);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to record desktop video artifact with ffmpeg")]
+prototype ToRecordFFmpegDesktopVideoArtifact : FFmpegSkillAction
+{
+	Description = @"durationSeconds - recording length.
+outputFileName - target .mp4 file name.
+tempDirectory - working output directory.
+sessionDirectory - current session artifact directory.
+openUrl - optional URL to open at recording start.
+overlayText - optional text burned into the video.
+ffmpegPath - optional absolute path to ffmpeg.exe.
+ffprobePath - optional absolute path to ffprobe.exe.
+Records the desktop with gdigrab, forces browser-safe MP4 dimensions, copies the MP4 into the session directory, validates with ffprobe, and returns a semantic file ref.";
+
+	function Execute(int durationSeconds, string outputFileName, string tempDirectory, string sessionDirectory, string openUrl, string overlayText, string ffmpegPath, string ffprobePath) : string
+	{
+		string exe = ToFFmpegDefaultExe(ffmpegPath);
+		string probe = ToFFmpegDefaultProbeExe(ffprobePath);
+		string tempFile = tempDirectory + @"\" + outputFileName;
+		string artifactFile = sessionDirectory + @"\" + outputFileName;
+		string durationText = ToFFmpegIntText(durationSeconds);
+		string videoFilter = "scale=trunc(iw/2)*2:trunc(ih/2)*2";
+
+		if (!StringUtil.IsEmpty(overlayText))
+		{
+			videoFilter = videoFilter + ",drawtext=text='" + overlayText + "':x=24:y=24:fontsize=36:fontcolor=white:box=1:boxcolor=black@0.55";
+		}
+
+		string prepareCommand = "if not exist " + ToFFmpegQuoted(tempDirectory) + " mkdir " + ToFFmpegQuoted(tempDirectory) + " & if not exist " + ToFFmpegQuoted(sessionDirectory) + " mkdir " + ToFFmpegQuoted(sessionDirectory) + " & del " + ToFFmpegQuoted(tempFile) + " 2>nul";
+		string prepareResult = SystemOperations.RunCommandLineWithTimeout(@"C:\Windows\System32\cmd.exe", "/c " + ToFFmpegQuoted(prepareCommand), 30);
+		string launchResult = "No URL launched.";
+		if (!StringUtil.IsEmpty(openUrl))
+		{
+			launchResult = SystemOperations.RunCommandLineWithTimeout(@"C:\Windows\System32\cmd.exe", "/c start \"\" " + ToFFmpegQuoted(openUrl), 15);
+		}
+
+		string captureArgs = "-hide_banner -y -f gdigrab -framerate 30";
+		string durationArgs = "-t " + durationText;
+		string inputArgs = "-i desktop";
+		string filterArgs = "-vf " + ToFFmpegQuoted(videoFilter);
+		string encodeArgs = "-c:v libx264 -preset veryfast -pix_fmt yuv420p";
+		string ffmpegArgs = captureArgs + " " + durationArgs + " " + inputArgs + " " + filterArgs + " " + encodeArgs + " " + ToFFmpegQuoted(tempFile);
+		string recordResult = SystemOperations.RunCommandLineWithTimeout(exe, ffmpegArgs, 60);
+		string copyCommand = "copy /Y " + ToFFmpegQuoted(tempFile) + " " + ToFFmpegQuoted(artifactFile);
+		string copyResult = SystemOperations.RunCommandLineWithTimeout(@"C:\Windows\System32\cmd.exe", "/c " + ToFFmpegQuoted(copyCommand), 30);
+		string probeArgs = "-v error -show_entries format=duration,size -show_streams -of json " + ToFFmpegQuoted(artifactFile);
+		string probeResult = SystemOperations.RunCommandLineWithTimeout(probe, probeArgs, 30);
+
+		return "Recording complete.\n\nVideo artifact:\n" + ToFFmpegArtifactRef(sessionDirectory, outputFileName) + "\n\nprepare output:\n" + prepareResult + "\n\nlaunch output:\n" + launchResult + "\n\nffmpeg output:\n" + recordResult + "\n\ncopy output:\n" + copyResult + "\n\nffprobe output:\n" + probeResult;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to record browser demo video artifact with ffmpeg")]
+prototype ToRecordFFmpegBrowserDemoArtifact : FFmpegSkillAction
+{
+	Description = @"url - URL to open before/during recording.
+durationSeconds - recording length.
+outputFileName/tempDirectory/sessionDirectory/overlayText/ffmpegPath/ffprobePath - same as ToRecordFFmpegDesktopVideoArtifact.
+This FFmpeg-specific action records the desktop while launching a browser URL for simple Buffaly demos.";
+
+	function Execute(string url, int durationSeconds, string outputFileName, string tempDirectory, string sessionDirectory, string overlayText, string ffmpegPath, string ffprobePath) : string
+	{
+		return ToRecordFFmpegDesktopVideoArtifact.Execute(durationSeconds, outputFileName, tempDirectory, sessionDirectory, url, overlayText, ffmpegPath, ffprobePath);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to normalize video for web playback with ffmpeg")]
+prototype ToNormalizeFFmpegVideoForWebArtifact : FFmpegSkillAction
+{
+	Description = @"sourceVideoPath - input video.
+outputFileName - browser-safe MP4 artifact name.
+tempDirectory/sessionDirectory - output locations.
+ffmpegPath/ffprobePath - optional tool paths.
+Converts to H.264 MP4 yuv420p with even dimensions and validates output.";
+
+	function Execute(string sourceVideoPath, string outputFileName, string tempDirectory, string sessionDirectory, string ffmpegPath, string ffprobePath) : string
+	{
+		string exe = ToFFmpegDefaultExe(ffmpegPath);
+		string probe = ToFFmpegDefaultProbeExe(ffprobePath);
+		string tempFile = tempDirectory + @"\" + outputFileName;
+		string artifactFile = sessionDirectory + @"\" + outputFileName;
+		string command = "if not exist " + ToFFmpegQuoted(tempDirectory) + " mkdir " + ToFFmpegQuoted(tempDirectory) + " & " + ToFFmpegQuoted(exe) + " -hide_banner -y -i " + ToFFmpegQuoted(sourceVideoPath) + " -vf " + ToFFmpegQuoted("scale=trunc(iw/2)*2:trunc(ih/2)*2") + " -c:v libx264 -preset veryfast -pix_fmt yuv420p -c:a aac " + ToFFmpegQuoted(tempFile) + " & copy /Y " + ToFFmpegQuoted(tempFile) + " " + ToFFmpegQuoted(artifactFile);
+		string result = SystemOperations.RunCommandLineWithTimeout(@"C:\Windows\System32\cmd.exe", "/c " + ToFFmpegQuoted(command), 120);
+		string probeResult = SystemOperations.RunCommandLineWithTimeout(probe, "-v error -show_entries format=duration,size -show_streams -of json " + ToFFmpegQuoted(artifactFile), 30);
+		return "Normalized video artifact:\n" + ToFFmpegArtifactRef(sessionDirectory, outputFileName) + "\n\nffmpeg output:\n" + result + "\n\nffprobe output:\n" + probeResult;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to extract video thumbnail artifact with ffmpeg")]
+prototype ToExtractFFmpegVideoThumbnailArtifact : FFmpegSkillAction
+{
+	Description = @"sourceVideoPath - input video.
+timestampSeconds - frame timestamp.
+outputFileName - image artifact name, usually .jpg or .png.
+tempDirectory/sessionDirectory - output locations.
+ffmpegPath - optional ffmpeg.exe path.";
+
+	function Execute(string sourceVideoPath, int timestampSeconds, string outputFileName, string tempDirectory, string sessionDirectory, string ffmpegPath) : string
+	{
+		string exe = ToFFmpegDefaultExe(ffmpegPath);
+		string tempFile = tempDirectory + @"\" + outputFileName;
+		string artifactFile = sessionDirectory + @"\" + outputFileName;
+		string timestampText = ToFFmpegIntText(timestampSeconds);
+		string prepareCommand = "if not exist " + ToFFmpegQuoted(tempDirectory) + " mkdir " + ToFFmpegQuoted(tempDirectory) + " & if not exist " + ToFFmpegQuoted(sessionDirectory) + " mkdir " + ToFFmpegQuoted(sessionDirectory) + " & del " + ToFFmpegQuoted(tempFile) + " 2>nul & del " + ToFFmpegQuoted(artifactFile) + " 2>nul";
+		string prepareResult = SystemOperations.RunCommandLineWithTimeout(@"C:\Windows\System32\cmd.exe", "/c " + ToFFmpegQuoted(prepareCommand), 30);
+		string ffmpegArgs = "-hide_banner -y -ss " + timestampText + " -i " + ToFFmpegQuoted(sourceVideoPath) + " -frames:v 1 -update 1 " + ToFFmpegQuoted(tempFile);
+		string result = SystemOperations.RunCommandLineWithTimeout(exe, ffmpegArgs, 60);
+		string copyCommand = "copy /Y " + ToFFmpegQuoted(tempFile) + " " + ToFFmpegQuoted(artifactFile);
+		string copyResult = SystemOperations.RunCommandLineWithTimeout(@"C:\Windows\System32\cmd.exe", "/c " + ToFFmpegQuoted(copyCommand), 30);
+		string verifyCommand = "dir " + ToFFmpegQuoted(artifactFile);
+		string verifyResult = SystemOperations.RunCommandLineWithTimeout(@"C:\Windows\System32\cmd.exe", "/c " + ToFFmpegQuoted(verifyCommand), 30);
+		return "Thumbnail artifact:\n" + ToFFmpegArtifactRef(sessionDirectory, outputFileName) + "\n\nprepare output:\n" + prepareResult + "\n\nffmpeg output:\n" + result + "\n\ncopy output:\n" + copyResult + "\n\nverify output:\n" + verifyResult;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to trim video artifact with ffmpeg")]
+prototype ToTrimFFmpegVideoArtifact : FFmpegSkillAction
+{
+	Description = @"sourceVideoPath - input video.
+startSeconds - start time.
+durationSeconds - clip length.
+outputFileName/tempDirectory/sessionDirectory/ffmpegPath/ffprobePath - output and tool paths.";
+
+	function Execute(string sourceVideoPath, int startSeconds, int durationSeconds, string outputFileName, string tempDirectory, string sessionDirectory, string ffmpegPath, string ffprobePath) : string
+	{
+		string exe = ToFFmpegDefaultExe(ffmpegPath);
+		string probe = ToFFmpegDefaultProbeExe(ffprobePath);
+		string tempFile = tempDirectory + @"\" + outputFileName;
+		string artifactFile = sessionDirectory + @"\" + outputFileName;
+		string command = "if not exist " + ToFFmpegQuoted(tempDirectory) + " mkdir " + ToFFmpegQuoted(tempDirectory) + " & " + ToFFmpegQuoted(exe) + " -hide_banner -y -ss " + ToFFmpegIntText(startSeconds) + " -t " + ToFFmpegIntText(durationSeconds) + " -i " + ToFFmpegQuoted(sourceVideoPath) + " -c:v libx264 -preset veryfast -pix_fmt yuv420p -c:a aac " + ToFFmpegQuoted(tempFile) + " & copy /Y " + ToFFmpegQuoted(tempFile) + " " + ToFFmpegQuoted(artifactFile);
+		string result = SystemOperations.RunCommandLineWithTimeout(@"C:\Windows\System32\cmd.exe", "/c " + ToFFmpegQuoted(command), 120);
+		string probeResult = SystemOperations.RunCommandLineWithTimeout(probe, "-v error -show_entries format=duration,size -show_streams -of json " + ToFFmpegQuoted(artifactFile), 30);
+		return "Trimmed video artifact:\n" + ToFFmpegArtifactRef(sessionDirectory, outputFileName) + "\n\nffmpeg output:\n" + result + "\n\nffprobe output:\n" + probeResult;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to compress video artifact with ffmpeg")]
+prototype ToCompressFFmpegVideoArtifact : FFmpegSkillAction
+{
+	Description = @"sourceVideoPath - input video.
+crf - H.264 quality value; 23 balanced, higher is smaller.
+maxWidth - optional max width; use 0 to preserve.
+outputFileName/tempDirectory/sessionDirectory/ffmpegPath/ffprobePath - output and tool paths.";
+
+	function Execute(string sourceVideoPath, int crf, int maxWidth, string outputFileName, string tempDirectory, string sessionDirectory, string ffmpegPath, string ffprobePath) : string
+	{
+		string exe = ToFFmpegDefaultExe(ffmpegPath);
+		string probe = ToFFmpegDefaultProbeExe(ffprobePath);
+		string tempFile = tempDirectory + @"\" + outputFileName;
+		string artifactFile = sessionDirectory + @"\" + outputFileName;
+		string filter = "scale=trunc(iw/2)*2:trunc(ih/2)*2";
+		if (maxWidth > 0)
+		{
+			filter = "scale='min(" + ToFFmpegIntText(maxWidth) + ",iw)':-2";
+		}
+		string command = "if not exist " + ToFFmpegQuoted(tempDirectory) + " mkdir " + ToFFmpegQuoted(tempDirectory) + " & " + ToFFmpegQuoted(exe) + " -hide_banner -y -i " + ToFFmpegQuoted(sourceVideoPath) + " -vf " + ToFFmpegQuoted(filter) + " -c:v libx264 -preset veryfast -crf " + ToFFmpegIntText(crf) + " -pix_fmt yuv420p -c:a aac " + ToFFmpegQuoted(tempFile) + " & copy /Y " + ToFFmpegQuoted(tempFile) + " " + ToFFmpegQuoted(artifactFile);
+		string result = SystemOperations.RunCommandLineWithTimeout(@"C:\Windows\System32\cmd.exe", "/c " + ToFFmpegQuoted(command), 120);
+		string probeResult = SystemOperations.RunCommandLineWithTimeout(probe, "-v error -show_entries format=duration,size -show_streams -of json " + ToFFmpegQuoted(artifactFile), 30);
+		return "Compressed video artifact:\n" + ToFFmpegArtifactRef(sessionDirectory, outputFileName) + "\n\nffmpeg output:\n" + result + "\n\nffprobe output:\n" + probeResult;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create video contact sheet artifact with ffmpeg")]
+prototype ToCreateFFmpegContactSheetArtifact : FFmpegSkillAction
+{
+	Description = @"sourceVideoPath - input video.
+fps - sampling rate such as 1 for one frame per second.
+columns - tile columns.
+rows - tile rows; use at least 1.
+outputFileName/tempDirectory/sessionDirectory/ffmpegPath - output and tool paths.";
+
+	function Execute(string sourceVideoPath, int fps, int columns, int rows, string outputFileName, string tempDirectory, string sessionDirectory, string ffmpegPath) : string
+	{
+		string exe = ToFFmpegDefaultExe(ffmpegPath);
+		string tempFile = tempDirectory + @"\" + outputFileName;
+		string artifactFile = sessionDirectory + @"\" + outputFileName;
+		string fpsText = ToFFmpegIntText(fps);
+		string columnsText = ToFFmpegIntText(columns);
+		string rowsText = ToFFmpegIntText(rows);
+		string filter = "fps=" + fpsText + ",scale=320:-1,tile=" + columnsText + "x" + rowsText;
+		string prepareCommand = "if not exist " + ToFFmpegQuoted(tempDirectory) + " mkdir " + ToFFmpegQuoted(tempDirectory) + " & if not exist " + ToFFmpegQuoted(sessionDirectory) + " mkdir " + ToFFmpegQuoted(sessionDirectory) + " & del " + ToFFmpegQuoted(tempFile) + " 2>nul & del " + ToFFmpegQuoted(artifactFile) + " 2>nul";
+		string prepareResult = SystemOperations.RunCommandLineWithTimeout(@"C:\Windows\System32\cmd.exe", "/c " + ToFFmpegQuoted(prepareCommand), 30);
+		string ffmpegArgs = "-hide_banner -y -i " + ToFFmpegQuoted(sourceVideoPath) + " -vf " + ToFFmpegQuoted(filter) + " -frames:v 1 -update 1 " + ToFFmpegQuoted(tempFile);
+		string result = SystemOperations.RunCommandLineWithTimeout(exe, ffmpegArgs, 120);
+		string copyCommand = "copy /Y " + ToFFmpegQuoted(tempFile) + " " + ToFFmpegQuoted(artifactFile);
+		string copyResult = SystemOperations.RunCommandLineWithTimeout(@"C:\Windows\System32\cmd.exe", "/c " + ToFFmpegQuoted(copyCommand), 30);
+		string verifyCommand = "dir " + ToFFmpegQuoted(artifactFile);
+		string verifyResult = SystemOperations.RunCommandLineWithTimeout(@"C:\Windows\System32\cmd.exe", "/c " + ToFFmpegQuoted(verifyCommand), 30);
+		return "Contact sheet artifact:\n" + ToFFmpegArtifactRef(sessionDirectory, outputFileName) + "\n\nprepare output:\n" + prepareResult + "\n\nffmpeg output:\n" + result + "\n\ncopy output:\n" + copyResult + "\n\nverify output:\n" + verifyResult;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to add text overlay to video artifact with ffmpeg")]
+prototype ToAddFFmpegTextOverlayArtifact : FFmpegSkillAction
+{
+	Description = @"sourceVideoPath - input video.
+overlayText - text to burn into top-left corner.
+outputFileName/tempDirectory/sessionDirectory/ffmpegPath/ffprobePath - output and tool paths.";
+
+	function Execute(string sourceVideoPath, string overlayText, string outputFileName, string tempDirectory, string sessionDirectory, string ffmpegPath, string ffprobePath) : string
+	{
+		string exe = ToFFmpegDefaultExe(ffmpegPath);
+		string probe = ToFFmpegDefaultProbeExe(ffprobePath);
+		string tempFile = tempDirectory + @"\" + outputFileName;
+		string artifactFile = sessionDirectory + @"\" + outputFileName;
+		string filter = "scale=trunc(iw/2)*2:trunc(ih/2)*2,drawtext=text='" + overlayText + "':x=24:y=24:fontsize=36:fontcolor=white:box=1:boxcolor=black@0.55";
+		string command = "if not exist " + ToFFmpegQuoted(tempDirectory) + " mkdir " + ToFFmpegQuoted(tempDirectory) + " & " + ToFFmpegQuoted(exe) + " -hide_banner -y -i " + ToFFmpegQuoted(sourceVideoPath) + " -vf " + ToFFmpegQuoted(filter) + " -c:v libx264 -preset veryfast -pix_fmt yuv420p -c:a aac " + ToFFmpegQuoted(tempFile) + " & copy /Y " + ToFFmpegQuoted(tempFile) + " " + ToFFmpegQuoted(artifactFile);
+		string result = SystemOperations.RunCommandLineWithTimeout(@"C:\Windows\System32\cmd.exe", "/c " + ToFFmpegQuoted(command), 120);
+		string probeResult = SystemOperations.RunCommandLineWithTimeout(probe, "-v error -show_entries format=duration,size -show_streams -of json " + ToFFmpegQuoted(artifactFile), 30);
+		return "Overlay video artifact:\n" + ToFFmpegArtifactRef(sessionDirectory, outputFileName) + "\n\nffmpeg output:\n" + result + "\n\nffprobe output:\n" + probeResult;
+	}
+}
+
+
+
+
