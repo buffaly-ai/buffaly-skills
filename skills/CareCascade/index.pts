@@ -1,0 +1,166 @@
+prototype CareCascadeSkillAction : OpsAction
+{
+	Description = @"Base action type for CareCascade MedOnt ICD-10 JsonWS tools.";
+}
+[SemanticEntity("CareCascade skill")]
+[SemanticEntity("CareCascade MedOnt ICD-10 skill")]
+prototype CareCascadeSkill : SkillEntity
+{
+	EntityName = "CareCascade skill, CareCascade MedOnt ICD-10 skill";
+	Description = @"CareCascade MedOnt ICD-10 API tools. The skill calls the published JsonWS route service at api.carecascade.com for text search, hierarchy search, code details, and specialty capability mapping. Tools read CareCascade.ApiKey from UserSecrets through the service TokenKey, even though the API is currently open.";
+	ActionRoot = CareCascadeSkillAction;
+}
+[SemanticEntity("CareCascade ICD-10 JsonWS service")]
+prototype CareCascadeIcd10JsonWsService : Service
+{
+	String BaseUrl = "https://api.carecascade.com";
+
+	String ApiPrefix = "api/buffaly.medont";
+
+	String ServiceRoute = "icd-10-codes-service";
+
+	String TokenKey = "CareCascade.ApiKey";
+
+	function Initialize() : string
+	{
+		if (StringUtil.IsEmpty(this.BaseUrl))
+		{
+			return "Error: CareCascadeIcd10JsonWsService.BaseUrl must be set on the binding.";
+		}
+		return "CareCascadeIcd10JsonWsService initialized (BaseUrl = " + this.BaseUrl + ").";
+	}
+
+	function CallIcd10Route(string routePath, JsonObject args) : string
+	{
+		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
+		return JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.ApiPrefix, this.ServiceRoute + "/" + routePath, this.TokenKey, normalizedArgs);
+	}
+	ServiceName = "CareCascadeIcd10JsonWsService";
+	Scope = "per-binding";
+	Description = @"CareCascade MedOnt ICD-10 route-based JsonWS service. Uses JsonMethod request shape: Method plus parameters in the JSON body. Token is resolved from TokenKey and sent by JsonWsHelper when configured.";
+}
+
+[SemanticEntity("published CareCascade ICD-10 JsonWS service")]
+[SemanticEntity("api.carecascade.com ICD-10 service")]
+partial prototype CareCascadeIcd10JsonWsService#Published : CareCascadeIcd10JsonWsService
+{
+	BaseUrl = "https://api.carecascade.com";
+	ApiPrefix = "api/buffaly.medont";
+	ServiceRoute = "icd-10-codes-service";
+	TokenKey = "CareCascade.ApiKey";
+	Description = @"Published CareCascade MedOnt ICD-10 API binding. Verified 2026-06-04 with JsonWS headers and Method body shape.";
+}
+
+[SemanticProgram.InfinitivePhrase("to search CareCascade ICD-10 codes by text")]
+[SemanticProgram.InfinitivePhrase("to get ICD-10 codes from CareCascade by search text")]
+[SemanticProgram.InfinitivePhrase("to find ICD-10 codes for a diagnosis")]
+[SemanticProgram.InfinitivePhrase("to search ICD-10 codes by diagnosis text")]
+[SemanticProgram.InfinitivePhrase("to map condition text to ICD-10 code candidates")]
+[SemanticProgram.InfinitivePhrase("to look up diagnosis codes from condition text")]
+[SemanticProgram.InfinitivePhrase("to enrich patient import diagnoses with ICD-10 candidates")]
+[SemanticProgram.InfinitivePhrase("to start care management eligibility review from diagnosis text")]
+[SemanticProgram.InfinitivePhrase("to prepare diagnosis text for RPM CCM RTM eligibility review")]
+[SemanticProgram.InfinitivePhrase("to normalize patient condition text into diagnosis code options")]
+prototype ToSearchCareCascadeIcd10Codes : CareCascadeSkillAction
+{
+	function Execute(CareCascadeIcd10JsonWsService service, string searchText) : string
+	{
+		if (service == null)
+		{
+			return "Error: CareCascadeIcd10JsonWsService binding is required.";
+		}
+		if (StringUtil.IsEmpty(searchText))
+		{
+			return "Error: searchText is required.";
+		}
+		JsonObject args = new JsonObject();
+		args["Method"] = "GetICDCodesBySearch";
+		args["Search"] = searchText;
+		return service.CallIcd10Route("get-icd-codes-by-search", args);
+	}
+	Description = @"service - CareCascadeIcd10JsonWsService binding, normally CareCascadeIcd10JsonWsService#Published. searchText - condition or diagnosis text such as Diabetes. Calls GetICDCodesBySearch and returns raw JSON array of ICD-10 candidates with Code, Description, Includes, and Children. Use this as the first step for free-text diagnosis enrichment before selecting a code for eligibility checks.";
+}
+
+
+[SemanticProgram.InfinitivePhrase("to search CareCascade ICD-10 codes with hierarchy")]
+[SemanticProgram.InfinitivePhrase("to get hierarchical ICD-10 search results from CareCascade")]
+[SemanticProgram.InfinitivePhrase("to find ICD-10 diagnosis codes with hierarchy")]
+[SemanticProgram.InfinitivePhrase("to search diagnosis codes with ICD-10 hierarchy")]
+[SemanticProgram.InfinitivePhrase("to get parent and child ICD-10 matches for a condition")]
+[SemanticProgram.InfinitivePhrase("to review ICD-10 code family matches for diagnosis text")]
+prototype ToSearchCareCascadeIcd10CodesWithHierarchy : CareCascadeSkillAction
+{
+	function Execute(CareCascadeIcd10JsonWsService service, string searchText) : string
+	{
+		if (service == null)
+		{
+			return "Error: CareCascadeIcd10JsonWsService binding is required.";
+		}
+		if (StringUtil.IsEmpty(searchText))
+		{
+			return "Error: searchText is required.";
+		}
+		JsonObject args = new JsonObject();
+		args["Method"] = "GetICDCodesBySearchWithHierarchy";
+		args["Search"] = searchText;
+		return service.CallIcd10Route("get-icd-codes-by-search-with-hierarchy", args);
+	}
+	Description = @"service - CareCascadeIcd10JsonWsService binding, normally CareCascadeIcd10JsonWsService#Published. searchText - condition or diagnosis text such as Hypertension. Calls GetICDCodesBySearchWithHierarchy and returns raw JSON array where parent results may contain Children.";
+}
+
+[SemanticProgram.InfinitivePhrase("to get CareCascade ICD-10 code details")]
+[SemanticProgram.InfinitivePhrase("to resolve ICD-10 code details with CareCascade")]
+[SemanticProgram.InfinitivePhrase("to get ICD-10 code details")]
+[SemanticProgram.InfinitivePhrase("to resolve diagnosis code details")]
+[SemanticProgram.InfinitivePhrase("to describe an ICD-10 code")]
+[SemanticProgram.InfinitivePhrase("to validate an ICD-10 diagnosis code")]
+prototype ToGetCareCascadeIcd10CodeDetails : CareCascadeSkillAction
+{
+	function Execute(CareCascadeIcd10JsonWsService service, string icd10Code) : string
+	{
+		if (service == null)
+		{
+			return "Error: CareCascadeIcd10JsonWsService binding is required.";
+		}
+		if (StringUtil.IsEmpty(icd10Code))
+		{
+			return "Error: icd10Code is required.";
+		}
+		JsonObject args = new JsonObject();
+		args["Method"] = "GetICDCodeByCodeDetails";
+		args["strCode"] = icd10Code;
+		return service.CallIcd10Route("get-icd-code-by-code-details", args);
+	}
+	Description = @"service - CareCascadeIcd10JsonWsService binding, normally CareCascadeIcd10JsonWsService#Published. icd10Code - ICD-10 code such as E11.9. Calls GetICDCodeByCodeDetails and returns raw JSON object with Code, Description, Includes, and Children.";
+}
+
+[SemanticProgram.InfinitivePhrase("to get CareCascade ICD-10 specialty capability")]
+[SemanticProgram.InfinitivePhrase("to map ICD-10 code to RPM CCM RTM capability with CareCascade")]
+[SemanticProgram.InfinitivePhrase("to check RPM CCM RTM eligibility for an ICD-10 code")]
+[SemanticProgram.InfinitivePhrase("to map diagnosis code to remote patient monitoring programs")]
+[SemanticProgram.InfinitivePhrase("to determine chronic care management eligibility from ICD-10")]
+[SemanticProgram.InfinitivePhrase("to evaluate APCM RPM CCM RTM flags for a diagnosis code")]
+[SemanticProgram.InfinitivePhrase("to classify an ICD-10 code for care management services")]
+[SemanticProgram.InfinitivePhrase("to route a patient diagnosis code to care management programs")]
+[SemanticProgram.InfinitivePhrase("to score a patient diagnosis code for RPM enrollment")]
+[SemanticProgram.InfinitivePhrase("to identify care program eligibility from a diagnosis code")]
+[SemanticProgram.InfinitivePhrase("to check patient diagnosis code eligibility for APCM RPM CCM RTM")]
+prototype ToGetCareCascadeIcd10SpecialtyCapability : CareCascadeSkillAction
+{
+	function Execute(CareCascadeIcd10JsonWsService service, string icd10Code) : string
+	{
+		if (service == null)
+		{
+			return "Error: CareCascadeIcd10JsonWsService binding is required.";
+		}
+		if (StringUtil.IsEmpty(icd10Code))
+		{
+			return "Error: icd10Code is required.";
+		}
+		JsonObject args = new JsonObject();
+		args["Method"] = "GetSpecialtyCapability";
+		args["ICDCode"] = icd10Code;
+		return service.CallIcd10Route("get-specialty-capability", args);
+	}
+	Description = @"service - CareCascadeIcd10JsonWsService binding, normally CareCascadeIcd10JsonWsService#Published. icd10Code - ICD-10 code such as E11.9. Calls GetSpecialtyCapability and returns raw JSON object with AllowAPCM, AllowRTM, AllowCCM, AllowRPM and count fields. Use this after a diagnosis code is already selected or imported.";
+}
