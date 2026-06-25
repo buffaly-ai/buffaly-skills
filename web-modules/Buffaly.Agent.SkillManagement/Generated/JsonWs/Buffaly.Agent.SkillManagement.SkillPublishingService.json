@@ -1,0 +1,38 @@
+{
+	"Assembly":"Buffaly.Agent.SkillManagement, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+	"Type":"Buffaly.Agent.SkillManagement.SkillPublishingService",
+	"KebabName":"skill-publishing-service",
+	"Methods":[{
+			"IsStatic":"true",
+			"IsReturnTypeArray":"false",
+			"KebabName":"preview-publish-skill-to-buffaly-skill-repository",
+			"Parameters":[{
+					"Type":"PreviewPublishSkillRequestContract",
+					"IsNullable":"false",
+					"Name":"request",
+					"IsArray":"false",
+					"IsEnum":"false"
+				}],
+			"ReturnType":"PreviewPublishSkillResponseContract",
+			"UrlName":null,
+			"Name":"PreviewPublishSkillToBuffalySkillRepository",
+			"DataObject":{}
+		},
+		{
+			"IsStatic":"true",
+			"IsReturnTypeArray":"false",
+			"KebabName":"publish-skill-to-buffaly-skill-repository",
+			"Parameters":[{
+					"Type":"PublishSkillRequestContract",
+					"IsNullable":"false",
+					"Name":"request",
+					"IsArray":"false",
+					"IsEnum":"false"
+				}],
+			"ReturnType":"PublishSkillResponseContract",
+			"UrlName":null,
+			"Name":"PublishSkillToBuffalySkillRepository",
+			"DataObject":{}
+		}],
+	"Namespace":"Buffaly.Agent.SkillManagement"
+}

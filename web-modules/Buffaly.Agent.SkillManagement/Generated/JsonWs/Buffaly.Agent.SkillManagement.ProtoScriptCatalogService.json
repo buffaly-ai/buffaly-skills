@@ -1,0 +1,76 @@
+{
+  "Assembly": "Buffaly.Agent.SkillManagement, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+  "Type": "Buffaly.Agent.SkillManagement.ProtoScriptCatalogService",
+  "KebabName": "proto-script-catalog-service",
+  "Methods": [
+    {
+      "IsStatic": "true",
+      "IsReturnTypeArray": "false",
+      "KebabName": "get-catalog-snapshot",
+      "Parameters": [
+        {
+          "Type": "String",
+          "IsNullable": "true",
+          "Name": "projectName",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "ReturnType": "String",
+      "UrlName": null,
+      "Name": "GetCatalogSnapshot",
+      "DataObject": {}
+    },
+    {
+      "IsStatic": "true",
+      "IsReturnTypeArray": "false",
+      "KebabName": "get-source-preview",
+      "Parameters": [
+        {
+          "Type": "String",
+          "IsNullable": "true",
+          "Name": "projectName",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "Type": "String",
+          "IsNullable": "true",
+          "Name": "prototypeName",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "ReturnType": "SourcePreviewDto",
+      "UrlName": null,
+      "Name": "GetSourcePreview",
+      "DataObject": {}
+    },
+    {
+      "IsStatic": "true",
+      "IsReturnTypeArray": "false",
+      "KebabName": "get-object-catalog-json",
+      "Parameters": [
+        {
+          "Type": "String",
+          "IsNullable": "true",
+          "Name": "projectName",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "Type": "String",
+          "IsNullable": "true",
+          "Name": "rootPrototypeName",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "ReturnType": "String",
+      "UrlName": null,
+      "Name": "GetObjectCatalogJson",
+      "DataObject": {}
+    }
+  ],
+  "Namespace": "Buffaly.Agent.SkillManagement"
+}
