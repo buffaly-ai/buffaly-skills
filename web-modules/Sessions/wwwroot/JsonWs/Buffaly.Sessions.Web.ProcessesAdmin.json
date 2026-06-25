@@ -1,0 +1,22 @@
+﻿{
+  "Assembly": "Buffaly.Sessions.Web",
+  "Type": "Buffaly.Sessions.Web.ProcessesAdmin",
+  "KebabName": "buffaly-sessions-web-processes-admin",
+  "Methods": [
+    { "IsStatic": "true", "IsReturnTypeArray": "false", "KebabName": "get-grid-html", "Parameters": [
+      { "Type":"String", "IsNullable":"true", "Name":"Search", "IsArray":"false", "IsEnum":"false" },
+      { "Type":"String", "IsNullable":"true", "Name":"SortColumn", "IsArray":"false", "IsEnum":"false" },
+      { "Type":"Boolean", "IsNullable":"false", "Name":"SortAscending", "IsArray":"false", "IsEnum":"false" },
+      { "Type":"Int32", "IsNullable":"false", "Name":"SkipRows", "IsArray":"false", "IsEnum":"false" },
+      { "Type":"Int32", "IsNullable":"false", "Name":"NumRows", "IsArray":"false", "IsEnum":"false" }
+    ], "ReturnType":"String", "UrlName":null, "Name":"GetGridHtml", "DataObject":{} },
+    { "IsStatic": "true", "IsReturnTypeArray": "false", "KebabName": "get-grid-count", "Parameters": [
+      { "Type":"String", "IsNullable":"true", "Name":"Search", "IsArray":"false", "IsEnum":"false" },
+      { "Type":"String", "IsNullable":"true", "Name":"SortColumn", "IsArray":"false", "IsEnum":"false" },
+      { "Type":"Boolean", "IsNullable":"false", "Name":"SortAscending", "IsArray":"false", "IsEnum":"false" },
+      { "Type":"Int32", "IsNullable":"false", "Name":"SkipRows", "IsArray":"false", "IsEnum":"false" },
+      { "Type":"Int32", "IsNullable":"false", "Name":"NumRows", "IsArray":"false", "IsEnum":"false" }
+    ], "ReturnType":"Int32", "UrlName":null, "Name":"GetGridCount", "DataObject":{} }
+  ],
+  "Namespace": "Buffaly.Sessions.Web"
+}

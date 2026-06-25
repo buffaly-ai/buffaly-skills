@@ -1,0 +1,454 @@
+<%
+class SessionArtifactsAdmin
+{
+			
+	(function GetDetails SessionArtifactID
+	{
+		(declare SessionArtifact (SessionArtifacts.GetSessionArtifact (SessionArtifactID)))
+		
+		(returnex{%>
+			<table class="Inputs table table-condensed">
+				<colgroup>
+					<col class="col-md-4">
+					<col class="col-md-8">
+				</colgroup>			
+			
+						<tr>
+							<td class="InputLabel">
+								Session Artifact ID
+							</td>
+							<td>								
+									<%SessionArtifact.SessionArtifactID%>								
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="InputLabel">
+								Session ID
+							</td>
+							<td>								
+									<%SessionArtifact.SessionID%>								
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="InputLabel">
+								Source Message ID
+							</td>
+							<td>								
+									<%SessionArtifact.SourceMessageID%>								
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="InputLabel">
+								Artifact Type
+							</td>
+							<td>								
+									<%SessionArtifact.ArtifactType%>								
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="InputLabel">
+								Artifact Name
+							</td>
+							<td>								
+									<%SessionArtifact.ArtifactName%>								
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="InputLabel">
+								File Path
+							</td>
+							<td>								
+									<%SessionArtifact.FilePath%>								
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="InputLabel">
+								Summary
+							</td>
+							<td>								
+									<%SessionArtifact.Summary%>								
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="InputLabel">
+								Content Data
+							</td>
+							<td>
+								<div style="max-width: 800px; white-space: pre-wrap; overflow-wrap: anywhere;">
+									<%SessionArtifact.ContentData%>
+								</div>
+							</td>
+						</tr>
+						
+					
+						<tr>
+							<td class="InputLabel">
+								Mime Type
+							</td>
+							<td>								
+									<%SessionArtifact.MimeType%>								
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="InputLabel">
+								Date Created
+							</td>
+							<td>								
+									<span class="DateOnly"><%SessionArtifact.DateCreated%></span>								
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="InputLabel">
+								Last Updated
+							</td>
+							<td>								
+									<span class="DateOnly"><%SessionArtifact.LastUpdated%></span>								
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="InputLabel">
+								Data
+							</td>
+							<td>
+								<div style="max-width: 800px; white-space: pre-wrap; overflow-wrap: anywhere;">
+									<%SessionArtifact.Data%>
+								</div>
+							</td>
+						</tr>
+						
+											
+			</table>
+		<%})
+	})		
+			
+		
+	(function GetDropDown
+	{
+		(return (GetDropDown SessionArtifactName SessionArtifactID))
+	})
+
+	(function GetDropDownWithNull
+	{
+		(return (GetDropDown SessionArtifactName SessionArtifactID  SessionArtifactID "<option value=''>None</option>"))
+	})
+	
+	(function GetDropDown Name Value
+	{
+		(return (GetDropDown (Name) (Value) (Value)))
+	})			
+	
+	(function GetDropDown Name Value FieldName
+	{
+		(return (GetDropDown (Name) (Value) (FieldName) ''))
+	})			
+	
+	(function GetDropDown Name Value FieldName PreOptions
+	{
+		(ado.view Options GetSessionArtifactsSp)
+		(returnex {%>
+			<select kcs:FieldName="<%FieldName%>" class="form-control">
+				<%PreOptions%>
+				<%Options.each Option{%>
+				<option value="<%Option.get (Value)%>"><%Option.get (Name)%></option>
+				<%}%>
+			</select>
+		<%})
+	})	
+		
+	(function GetEdit SessionArtifactID
+	{
+		(returnex{%>
+			<div class="form-horizontal row-border Inputs" kcs:ObjectName="SessionArtifact">
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Session Artifact ID
+					</label>
+					<div class="col-sm-6">
+												
+								
+								<input type="text" kcs:FieldName="SessionArtifactID" class="InputString form-control" readonly="readonly" value="<%SessionArtifactID%>"/>							
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Session ID
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="text" id="hdnSessionID" kcs:FieldName="SessionID" />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Source Message ID
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="text" id="hdnSourceMessageID" kcs:FieldName="SourceMessageID" />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Artifact Type
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="text" id="txtArtifactType" kcs:FieldName="ArtifactType" class="InputString form-control" maxlength="255" />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Artifact Name
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="text" id="txtArtifactName" kcs:FieldName="ArtifactName" class="InputString form-control" maxlength="255" />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						File Path
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="text" id="txtFilePath" kcs:FieldName="FilePath" class="InputString form-control" maxlength="255" />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Summary
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<textarea id="txtSummary" kcs:FieldName="Summary" class="InputText form-control"></textarea>
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Content Data
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<textarea kcs:FieldName="ContentData" class="InputData form-control"></textarea>
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Mime Type
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="text" id="txtMimeType" kcs:FieldName="MimeType" class="InputString form-control" maxlength="255" />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Data
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<textarea kcs:FieldName="Data" class="InputData form-control"></textarea>
+							
+						
+					</div>
+				</div>
+				
+									
+			</div>
+		<%})
+	})			
+		
+	(function GetInsert
+	{
+		(returnex{%> 
+			<div class="form-horizontal row-border Inputs" kcs:ObjectName="SessionArtifact">
+
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Session ID
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="text" id="hdnSessionID" kcs:FieldName="SessionID" />
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Source Message ID
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="text" id="hdnSourceMessageID" kcs:FieldName="SourceMessageID" />
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Artifact Type
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="text" id="txtArtifactType" kcs:FieldName="ArtifactType" class="InputString form-control" maxlength="255" />
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Artifact Name
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="text" id="txtArtifactName" kcs:FieldName="ArtifactName" class="InputString form-control" maxlength="255" />
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						File Path
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="text" id="txtFilePath" kcs:FieldName="FilePath" class="InputString form-control" maxlength="255" />
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Summary
+					</label>
+					<div class="col-sm-6">
+						
+							<textarea id="txtSummary" kcs:FieldName="Summary" class="InputText form-control"></textarea>
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Content Data
+					</label>
+					<div class="col-sm-6">
+						
+							<textarea kcs:FieldName="ContentData" class="InputData form-control"></textarea>
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Mime Type
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="text" id="txtMimeType" kcs:FieldName="MimeType" class="InputString form-control" maxlength="255" />
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Data
+					</label>
+					<div class="col-sm-6">
+						
+							<textarea kcs:FieldName="Data" class="InputData form-control"></textarea>
+						
+					</div>
+				</div>
+				
+									
+			</div>
+		<%})
+	})			
+		
+}%>

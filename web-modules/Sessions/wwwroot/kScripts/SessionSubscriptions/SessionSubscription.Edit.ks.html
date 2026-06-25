@@ -1,0 +1,10 @@
+<%using SimpleObjectEdit.ks.html%>
+<%using SessionSubscriptionsAdmin.ks.html%>
+
+<%SimpleObjectEditPage.MetadataFile SessionSubscriptions.Meta.json%>
+
+<%redefinefunction SimpleObjectEditPage.Object
+{
+	(return (SessionSubscriptions.GetSessionSubscription (ObjectID)))
+}%>
+

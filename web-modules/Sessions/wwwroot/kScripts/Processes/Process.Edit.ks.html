@@ -1,0 +1,39 @@
+<%using SimpleObjectEdit.ks.html%>
+<%using ProcessesAdmin.ks.html%>
+<%SimpleObjectEditPage.MetadataFile Processes.Meta.json%>
+
+<%redefinefunction SimpleObjectEditPage.AdditionalScripts
+{
+	(returnex{%>
+		<script type="text/javascript">
+			Page.AddOnload(function () {
+				if (typeof Processes === "undefined" || !Processes.UpdateProcessObject)
+					window.Processes = createProcessApiFallback();
+
+				function createProcessApiFallback() {
+					return {
+						UpdateProcessObject: function (process, callback) {
+							postProcessApi("update-process", process, callback);
+						}
+					};
+				}
+
+				function postProcessApi(methodName, payload, callback) {
+					fetch("/api/buffaly.sessions/processes/" + methodName, {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(payload)
+					}).then(function (response) {
+						if (!response.ok)
+							throw new Error(methodName + " failed with HTTP " + response.status);
+						return response.text();
+					}).then(function (text) {
+						if (callback)
+							callback(text === "" ? null : JSON.parse(text));
+					}).catch(Page.HandleUnexpectedError);
+				}
+			});
+		</script>
+	<%})
+}%>
+

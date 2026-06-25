@@ -1,0 +1,34 @@
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE Specific_Name = 'Turns_GetCountBySessionID_Sp')
+BEGIN
+	DROP PROCEDURE Turns_GetCountBySessionID_Sp
+END
+GO
+
+SET ANSI_NULLS OFF
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+CREATE PROCEDURE [dbo].[Turns_GetCountBySessionID_Sp]
+	@SessionID [int]
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	SELECT
+		COUNT(*) AS TotalTurns
+	FROM
+	(
+		SELECT
+			m.TurnID
+		FROM Messages m WITH (NOLOCK)
+		WHERE
+			m.SessionID = @SessionID
+			AND NULLIF(LTRIM(RTRIM(m.TurnID)), '') IS NOT NULL
+		GROUP BY
+			m.TurnID
+		HAVING
+			SUM(CASE WHEN m.Role = N'User' THEN 1 ELSE 0 END) > 0
+	) t
+END
+GO

@@ -1,0 +1,548 @@
+﻿<%using application.ks%>
+
+<%class SimpleApiHarnessPage
+{
+	(declare Metadata
+		{
+			ObjectName : "",
+			ObjectsName : "",
+
+			FriendlyObjectName : "",
+			FriendlyObjectsName : "",
+
+			ObjectsUrl : "",
+			DetailsUrl : "",
+			EditUrl : "",
+			InsertUrl : "",
+
+			UINamespace : "",
+			BusinessNamespace: ""
+		}
+	)
+
+	(function MetadataFile File
+	{
+		(Metadata (json (include (File))))
+	})
+
+	(function ObjectName
+	{
+		(return (Metadata.ObjectName))
+	})
+
+	(function ObjectsName
+	{
+		(return (Metadata.ObjectsName))
+	})
+
+	(function FriendlyObjectName
+	{
+		(return (Metadata.FriendlyObjectName))
+	})
+
+	(function FriendlyObjectsName
+	{
+		(return (Metadata.FriendlyObjectsName))
+	})
+
+	(function ObjectsUrl
+	{
+		(return (Metadata.ObjectsUrl))
+	})
+
+	(function DetailsUrl
+	{
+		(return (Metadata.DetailsUrl))
+	})
+
+	(function InsertUrl
+	{
+		(return (Metadata.InsertUrl))
+	})
+
+	(function EditUrl
+	{
+		(return (Metadata.EditUrl))
+	})
+
+
+	(function Title
+	{
+		(returnex{%><%Application.Title%> - New <%FriendlyObjectName%><%})
+	})
+
+	(function InsertPanel
+	{
+		(return ((concat (ObjectsName) Admin.GetInsert)))
+	})
+
+	(function QuickHelp
+	{
+		(returnex{%>
+			Create a new <%FriendlyObjectName%> using this form. Enter the information and click
+			"Save" when complete.
+		<%})
+	})
+
+	(function MainPanelTitle
+	{
+		(returnex{%>
+			<%FriendlyObjectsName%>
+		<%})
+	})
+
+	(function Breadcrumbs
+	{
+		(returnex{%>
+<ol class="breadcrumb">
+	<li><a href="/default.aspx">Main</a></li>
+	<li><a href="<%ObjectsUrl%>"><%FriendlyObjectsName%></a></li>
+	<li>New <%FriendlyObjectName%></li>
+</ol>
+
+		<%})
+	})
+
+	(function MainPanelTabs
+	{
+		(returnex{%>
+
+		<%})
+	})
+
+	(function MainPanelContent
+	{
+		(returnex{%>
+
+<div class="row">
+	<div class="col-sm-12">
+		<div class="card panel-primary">
+			<div class="card-header">
+				<h4>Add <%FriendlyObjectName%></h4>
+
+			</div>
+			<div class="card-body" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px;" id="div<%ObjectName%>">
+
+				<h3>Create <%FriendlyObjectName%></h3>
+				<p>Create the <%FriendlyObjectName%> below and click "Save" when done making changes.</p>
+				<br>
+
+				<%InsertPanel%>
+
+
+			</div>
+			<div class="card-footer">
+				<div class="row">
+					<div class="col-sm-6 col-sm-offset-3">
+						<div class="btn-toolbar">
+							<%CommandButtons%>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+		<%})
+	})
+
+	(function CommandButtons
+	{
+		(returnex{%>
+<button id="btnUpdate<%ObjectName%>" value="Save <%FriendlyObjectName%>" onclick="OnUpdate<%ObjectName%>()" class="Save btn-primary btn">Save</button>
+<button id="btnCancel<%ObjectName%>" value="Cancel" onclick="OnCancel<%ObjectName%>()" class="Cancel btn-secondary btn">Cancel</button>
+
+		<%})
+	})
+
+	(function AdditionalScripts
+	{
+			(returnex{%>
+
+
+			<%})
+
+	})
+
+(function ChatWithApiWindow sApi sJs
+{
+	(returnex{%>
+<div class="card border-primary border">
+  <div class="card-header">
+    <h4>Chat with API</h4>
+  </div>
+  <div class="card-body" style="border-radius: 0;">
+    <p>Ask the API Agent to help write your integration code here. It knows all about the APIs and how to call them.</p>
+    <div class="row">
+      <!-- Directive Column -->
+      <div class="col-sm-9">
+        <label for="txtDirective" class="form-label">Directive</label>
+        <!-- Updated directive textarea with increased height -->
+        <textarea id="txtDirective" kcs:FieldName="Directive" class="form-control input-prompt" 
+                  style="width: 100%; height: 200px; white-space: pre-wrap; resize: vertical;"></textarea>
+
+        <!-- Toolbar for Directive actions using Bootstrap grid -->
+        <div class="row mt-2">
+          <div class="col-12">
+            <label for="ddlModel" class="form-label">Choose Model</label>
+            <select class="form-select form-select-sm form-control" id="ddlModel" style="max-width: 150px;">
+              <option value="o3-mini">o3-mini</option>
+              <option value="gpt-4o-mini">gpt-4o-mini</option>
+              <option value="gpt-4o">gpt-4</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-4">
+            <button value="" onclick="OnExecuteDirective(this)" class="btn btn-primary btn-sm w-100">
+              <i class="fas fa-play"></i> GO!
+            </button>
+          </div>
+          <div class="col-4">
+            <button value="" onclick="OnRefineCode(this)" class="btn btn-primary-alt btn-sm w-100">
+              <i class="fas fa-sync"></i> Refine
+            </button>
+          </div>
+          <div class="col-4">
+            <button class="btn btn-secondary btn-sm w-100" onclick="ClearDirective()" title="Clear Directive">
+              <i class="fas fa-trash-alt"></i> Clear
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Code Column -->
+      <div class="col-sm-9">
+        <div>
+          <div class="mb-3">
+            <label for="txtCode" class="form-label" id="lblResultType">JavaScript</label>
+            <textarea id="txtCode" kcs:FieldName="Query" class="form-control InputJavascript" 
+                      style="width: 100%; height:200px; white-space: pre;"></textarea>
+            <div id="divOffset"></div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6 d-flex align-items-center">
+              <!-- Thumbs Up Button -->
+              <button value="" onclick="OnThumbsUp(this)" class="btn btn-primary me-2" title="This is a good response, save it.">
+                <i class="fas fa-thumbs-up"></i>
+              </button>
+              <!-- Clear Code Button (icon only) -->
+              <button class="btn btn-secondary me-2" onclick="ClearCode()" title="Clear Code">
+                <i class="fas fa-eraser"></i>
+              </button>
+              <!-- (The integrated copy toolbar for CodeMirror appears above the editor) -->
+            </div>
+            <div class="col-sm-9">
+              <div id="divDescription"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer">
+    <div class="row">
+      <div class="col-6 col-offset-3">
+        <div class="btn-toolbar">
+          <!-- Additional buttons or controls can be added here -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  Page.PreserveViewState();
+
+document.addEventListener('contextmenu', function(e) {
+  try {
+    if (e.target.closest('.CodeMirror')) {
+      e.preventDefault();
+    }
+  } catch (err) {
+    console.error("Error in global contextmenu handler:", err);
+  }
+});
+
+
+  async function getFileContents(sFile) {
+    try {
+      const response = await fetch(sFile);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const text = await response.text();
+      return text;
+    } catch (error) {
+      console.error("Error fetching file:", error);
+      return null;
+    }
+  }
+
+  // Helper functions to show/hide a loader overlay on the CodeMirror editor.
+function showCodeLoader() {
+  const editorWrapper = window.editor.getWrapperElement();
+  let loader = document.getElementById('codeLoaderOverlay');
+  if (!loader) {
+    loader = document.createElement('div');
+    loader.id = 'codeLoaderOverlay';
+    // Use Bootstrap spinner with a margin to separate the text
+    loader.innerHTML =  '<i class="fas fa-spinner fa-spin"></i> Loading...';
+    editorWrapper.style.position = 'relative';
+    loader.style.position = 'absolute';
+    loader.style.top = '0';
+    loader.style.left = '0';
+    loader.style.width = '100%';
+    loader.style.height = '100%';
+    loader.style.background = 'rgba(255, 255, 255, 0.85)';
+    loader.style.display = 'flex';
+    loader.style.alignItems = 'center';
+    loader.style.justifyContent = 'center';
+    loader.style.fontSize = '16px';
+    loader.style.zIndex = '1000';
+    loader.style.transition = 'opacity 0.3s ease';
+    editorWrapper.appendChild(loader);
+  } else {
+    loader.style.display = 'flex';
+  }
+}
+
+  function hideCodeLoader() {
+    const loader = document.getElementById('codeLoaderOverlay');
+    if (loader) {
+      loader.style.display = 'none';
+    }
+  }
+
+  // Helper function to animate code typing into the CodeMirror editor.
+  function animateCodeInEditor(newCode) {
+    const editor = window.editor;
+    if (!editor) return;
+    
+    editor.setValue("");
+    let currentPos = 0;
+    const totalLength = newCode.length;
+    
+    const interval = setInterval(() => {
+      if (currentPos < totalLength) {
+        if (currentPos === 0) {
+          hideCodeLoader();
+        }
+        editor.replaceRange(newCode[currentPos], {line: editor.lastLine(), ch: editor.getLine(editor.lastLine()).length});
+        currentPos++;
+      } else {
+        clearInterval(interval);
+        editor.save();
+      }
+    }, 10);
+  }
+
+  async function OnExecuteDirective(sender) {
+    const originalContent = sender.innerHTML;
+    sender.disabled = true;
+    sender.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Thinking...';
+    
+    window.editor.setValue("");
+    showCodeLoader();
+    
+    let iFragmentID = await RebuildApiFragment();
+    
+    APIWorkbench.InterpretDirective(iFragmentID,
+      ControlUtil.GetValue('txtDirective'),
+      ControlUtil.GetValue("ddlModel"),
+      null,
+      function (oResult) {
+        ControlUtil.SetValue('txtCode', oResult.Javascript);
+        animateCodeInEditor(oResult.Javascript);
+        if (!StringUtil.IsEmpty(oResult.Message)) {
+          UserMessages.DisplayNow(oResult.Message, "Info");
+        }
+        sender.disabled = false;
+        sender.innerHTML = originalContent;
+      });
+  }
+
+  async function OnRefineCode(sender) {
+    const originalContent = sender.innerHTML;
+    sender.disabled = true;
+    sender.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refining...';
+    
+    window.editor.setValue("");
+    showCodeLoader();
+    
+    let iFragmentID = await RebuildApiFragment();
+    
+    APIWorkbench.RefineCode(iFragmentID,
+      ControlUtil.GetValue('txtDirective'),
+      ControlUtil.GetValue("txtCode"),
+      ControlUtil.GetValue("ddlModel"),
+      null,
+      function (oResult) {
+        ControlUtil.SetValue('txtCode', oResult.Javascript);
+        animateCodeInEditor(oResult.Javascript);
+        if (!StringUtil.IsEmpty(oResult.Message)) {
+          UserMessages.DisplayNow(oResult.Message, "Info");
+        }
+        sender.disabled = false;
+        sender.innerHTML = originalContent;
+      });
+  }
+
+  async function RebuildApiFragment() {
+    let sFile = "<%sJs%>";
+    let sExistingCode = ControlUtil.GetValue('txtCode');
+    let sFileContents = await getFileContents(sFile);
+    
+    var sCode = "";
+    $$("code").forEach(x => { sCode += x.innerHTML; });
+    
+    sCode += "## Helper File\n" + sFileContents;
+    
+    let iFragmentID = FragmentsHelper.InsertOrUpdateFragment("<%sApi%>", sCode);
+    return iFragmentID;
+  }
+
+  function OnThumbsUp(sender) {
+    let sCode = ControlUtil.GetValue('txtCode');
+    let sDirective = ControlUtil.GetValue('txtDirective');
+    
+    APIWorkbench.SaveDirectiveAndImplementation(sDirective, sCode, function (oResult) {
+      UserMessages.DisplayNow("Saved", "Success");
+    });
+  }
+
+  // Clear the Directive textarea
+  function ClearDirective() {
+    document.getElementById('txtDirective').value = "";
+  }
+
+  // Clear the CodeMirror editor and underlying textarea
+  function ClearCode() {
+    if (window.editor) {
+      window.editor.setValue("");
+      window.editor.save();
+    }
+  }
+  
+  // Function to add a toolbar with a Copy button above the CodeMirror editor
+  function addEditorToolbar(editor) {
+    const wrapper = editor.getWrapperElement();
+    const toolbar = document.createElement('div');
+    toolbar.style.cssText = 'padding: 4px; background: #f5f5f5; border-bottom: 1px solid #ccc;';
+    toolbar.className = 'cm-toolbar';
+    
+    const copyBtn = document.createElement('button');
+    copyBtn.type = 'button';
+    copyBtn.className = 'btn btn-secondary btn-sm';
+    copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+    copyBtn.onclick = async function() {
+      const code = editor.getValue();
+      try {
+        await navigator.clipboard.writeText(code);
+        UserMessages.DisplayNow("Code copied to clipboard", "Success");
+      } catch (err) {
+        console.error("Failed to copy: ", err);
+        UserMessages.DisplayNow("Failed to copy code", "Error");
+      }
+    };
+
+    toolbar.appendChild(copyBtn);
+    // Insert the toolbar above the editor wrapper
+    wrapper.parentNode.insertBefore(toolbar, wrapper);
+  }
+</script>
+
+<link rel="stylesheet" href="/js/plugins/codemirror/lib/codemirror.css">
+
+<script src="/js/plugins/codemirror/lib/codemirror.js"></script>
+<script src="/js/plugins/codemirror/mode/xml/xml.js"></script>
+<script src="/js/plugins/codemirror/mode/javascript/javascript.js"></script>
+<script src="/js/plugins/codemirror/mode/css/css.js"></script>
+<script src="/js/plugins/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+
+<style>
+  .CodeMirror {
+    border: 1px solid #eee;
+    height: auto;
+    background-color: #fff7e6;
+  }
+  /* Updated styling for the directive textarea */
+  .input-prompt {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff7e6;
+  }
+</style>
+
+<script>
+  Page.AddOnload(() => {
+    OnEditCode();
+  });
+
+    function OnEditCode() {
+
+    window.editor = CodeMirror.fromTextArea(document.getElementById('txtCode'), {
+        mode: "javascript",
+	    indentWithTabs: true,
+	    smartIndent: true,
+	    lineNumbers: true,
+	    matchBrackets: true,
+	    autofocus: true,
+    });
+
+    window.editor.on('change', function (cm) {
+      cm.save();
+    });
+
+    window.editor.on('keydown', function (cm, event) {
+      if (event.ctrlKey && event.code === 'Space') {
+        event.preventDefault();
+      }
+    });
+
+    addEditorToolbar(window.editor);
+  }
+
+  function OnEditDirective() {
+    window.directiveEditor = CodeMirror.fromTextArea(document.getElementById('txtDirective'), {
+      mode: "markdown",
+      lineNumbers: true,
+      matchBrackets: true,
+      indentWithTabs: true,
+      autofocus: false,
+      lineWrapping: true,
+      extraKeys: { "Ctrl-S": function(cm) { cm.execCommand("save"); } }
+    });
+
+    window.directiveEditor.setSize(null, 200);
+    
+    window.directiveEditor.on('change', function(cm) {
+      cm.save();
+    });
+
+    const directiveWrapper = window.directiveEditor && window.directiveEditor.getWrapperElement();
+    if (directiveWrapper) {
+      directiveWrapper.addEventListener('contextmenu', function(e) {
+        //e.preventDefault();
+      });
+    }
+
+  }
+</script>
+
+<%})
+})
+
+(function BottomScripts
+{
+	(returnex{%>
+	<script type="text/javascript" src="/js/kcs/JsonMethod.js"></script>
+	<script type="text/javascript" src="/JsonWs/FairPath.Admin.Business.Services.FragmentsHelper.ashx.js"></script>
+	<script type="text/javascript" src="/JsonWs/FairPath.Admin.Business.Tools.APIWorkbench.ashx.js"></script>
+	<%})
+})
+}%>
+

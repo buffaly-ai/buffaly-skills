@@ -1,0 +1,42 @@
+<%using SimpleObjectDetails.ks.html%>
+<%using ProcessesAdmin.ks.html%>
+<%SimpleObjectDetailsPage.MetadataFile Processes.Meta.json%>
+
+<%redefinefunction SimpleObjectDetailsPage.AdditionalCommands
+{
+	(returnex{%>
+		<button type="button" onclick="OnEnableProcess()" class="btn btn-success m-1 waves-effect waves-light"><i class="fa fa-check"></i> Enable</button>
+		<button type="button" onclick="OnDisableProcess()" class="btn btn-warning m-1 waves-effect waves-light"><i class="fa fa-ban"></i> Disable</button>
+	<%})
+}%>
+
+<%redefinefunction SimpleObjectDetailsPage.AdditionalScripts
+{
+	(returnex{%>
+		<script type="text/javascript">
+			function OnEnableProcess() {
+				markProcessEnabled(true);
+			}
+
+			function OnDisableProcess() {
+				markProcessEnabled(false);
+			}
+
+			function markProcessEnabled(enable) {
+				var processID = Number(iProcessID || iObjectID);
+				var methodName = enable ? "enable-process" : "disable-process";
+				fetch("/api/buffaly.sessions/processes/" + methodName, {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ processID: processID })
+				}).then(function (response) {
+					if (!response.ok)
+						throw new Error(methodName + " failed with HTTP " + response.status);
+					UserMessages.Display(enable ? "Process enabled" : "Process disabled", "Success");
+					Page.Reload();
+				}).catch(Page.HandleUnexpectedError);
+			}
+		</script>
+	<%})
+}%>
+

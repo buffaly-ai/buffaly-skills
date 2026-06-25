@@ -1,0 +1,28 @@
+<%using SimpleObjectDetails.ks.html%>
+<%using SessionsAdmin.ks.html%>
+<%SimpleObjectDetailsPage.MetadataFile Sessions.Meta.json%>
+
+<%redefinefunction SimpleObjectDetailsPage.DetailsTabs
+{
+	(declare tabs [])
+
+	(declare tabMessages {Title : "Messages", ControlID : "tab-Messages", Content : "" })
+	(tabMessages.Content (GetRelatedObjectTab Messages "Messages" true))
+	(tabs.push (tabMessages))
+
+	(declare tabSessionArtifacts {Title : "Session Artifacts", ControlID : "tab-SessionArtifacts", Content : "" })
+	(tabSessionArtifacts.Content (GetRelatedObjectTab SessionArtifacts "Session Artifacts" true))
+	(tabs.push (tabSessionArtifacts))
+
+	(return (GetTabs (tabs)))		
+}%>
+
+<%redefinefunction SimpleObjectDetailsPage.AdditionalScripts
+{
+	(return
+		(concat
+			(GetRelatedObjectTabInitializer Messages {AllowSearch: true, MetaFile:'Messages/Messages.Meta.json', JsonWsGridMethod:'GetGridBySessionIDHtml', JsonWsCountMethod:'GetGridBySessionIDCount', ObjectIDName:'SessionID' })
+			(GetRelatedObjectTabInitializer SessionArtifacts {AllowSearch: true, MetaFile:'SessionArtifacts/SessionArtifacts.Meta.json', JsonWsGridMethod:'GetGridBySessionIDHtml', JsonWsCountMethod:'GetGridBySessionIDCount', ObjectIDName:'SessionID' })
+		)
+	)
+}%>

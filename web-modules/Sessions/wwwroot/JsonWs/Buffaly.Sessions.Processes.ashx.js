@@ -1,0 +1,28 @@
+﻿var ProcessesValidatorsFields = {
+	ProcessID : {Validators : [Validators.ID], InvalidMessage: "Invalid Process ID. " + ValidatorDescriptions.ID() },
+	ProcessName : {Validators : [Validators.String], InvalidMessage: "Invalid ProcessName. " + ValidatorDescriptions.Length(1, 255) },
+	Url : {Validators : [Validators.String], InvalidMessage: "Invalid Url. " + ValidatorDescriptions.Length(0, 255) },
+	Action : {Validators : [Validators.String], InvalidMessage: "Invalid Action. " + ValidatorDescriptions.Length(0, 255) },
+	RunData : {Validators : [Validators.Text], InvalidMessage: "Invalid RunData. " + ValidatorDescriptions.Length(0, 4000) },
+	IsRunning : {Validators : [Validators.Boolean], InvalidMessage: "Invalid IsRunning. " + ValidatorDescriptions.Boolean() },
+	RunStarted : {Validators : [Validators.Date], InvalidMessage: "Invalid RunStarted. " + ValidatorDescriptions.Date() },
+	RunEnded : {Validators : [Validators.Date], InvalidMessage: "Invalid RunEnded. " + ValidatorDescriptions.Date() },
+	RunEvery : {Validators : [Validators.Number], InvalidMessage: "Invalid RunEvery. " + ValidatorDescriptions.Number() },
+	IsEnabled : {Validators : [Validators.Boolean], InvalidMessage: "Invalid IsEnabled. " + ValidatorDescriptions.Boolean() },
+	MaximumRunTime : {Validators : [Validators.Integer], InvalidMessage: "Invalid MaximumRunTime. " + ValidatorDescriptions.Integer() },
+	IsTimedOut : {Validators : [Validators.Boolean], InvalidMessage: "Invalid IsTimedOut. " + ValidatorDescriptions.Boolean() }
+};
+class ProcessesService { constructor({ baseUrl = "/api/buffaly.sessions/processes", authToken = null } = {}) { this.Url = baseUrl; this.AuthToken = authToken; } _validate(oObject, validatorSchema, onValidationErrorCallback) { if (oObject.IsValidated == null || !oObject.IsValidated) { if (!Validators.Validate(oObject, validatorSchema)) { var oError = { Error: "Invalid data", Data: oObject }; if (onValidationErrorCallback != null) onValidationErrorCallback(oError); else if (Page.HandleValidationErrors) Page.HandleValidationErrors(oError); throw "Invalid data"; } } }
+GetProcess(ProcessID, Callback){ return this.GetProcessObject({ ProcessID:ProcessID }, Callback); }
+GetProcessObject(oObject, Callback){ this._validate(oObject, ProcessesValidators.GetProcess, this.GetProcess.onValidationError); return this._invoke(this.Url + "/get-process", "GetProcess", { ProcessID: oObject.ProcessID }, this.GetProcess, Callback); }
+CopyProcess(ProcessID, Callback){ return this.CopyProcessObject({ ProcessID:ProcessID }, Callback); }
+CopyProcessObject(oObject, Callback){ this._validate(oObject, ProcessesValidators.CopyProcess, this.CopyProcess.onValidationError); return this._invoke(this.Url + "/copy-process", "CopyProcess", { ProcessID: oObject.ProcessID }, this.CopyProcess, Callback); }
+RemoveProcess(ProcessID, Callback){ return this.RemoveProcessObject({ ProcessID:ProcessID }, Callback); }
+RemoveProcessObject(oObject, Callback){ this._validate(oObject, ProcessesValidators.RemoveProcess, this.RemoveProcess.onValidationError); return this._invoke(this.Url + "/remove-process", "RemoveProcess", { ProcessID: oObject.ProcessID }, this.RemoveProcess, Callback); }
+InsertProcess(ProcessName,Url,Action,RunData,IsRunning,RunStarted,RunEnded,RunEvery,IsEnabled,MaximumRunTime,IsTimedOut,Callback){ return this.InsertProcessObject({ ProcessName,Url,Action,RunData,IsRunning,RunStarted,RunEnded,RunEvery,IsEnabled,MaximumRunTime,IsTimedOut }, Callback); }
+InsertProcessObject(oObject, Callback){ this._validate(oObject, ProcessesValidators.InsertProcess, this.InsertProcess.onValidationError); return this._invoke(this.Url + "/insert-process", "InsertProcess", oObject, this.InsertProcess, Callback); }
+UpdateProcess(ProcessID,ProcessName,Url,Action,RunData,IsRunning,RunStarted,RunEnded,RunEvery,IsEnabled,MaximumRunTime,IsTimedOut,Callback){ return this.UpdateProcessObject({ ProcessID,ProcessName,Url,Action,RunData,IsRunning,RunStarted,RunEnded,RunEvery,IsEnabled,MaximumRunTime,IsTimedOut }, Callback); }
+UpdateProcessObject(oObject, Callback){ this._validate(oObject, ProcessesValidators.UpdateProcess, this.UpdateProcess.onValidationError); return this._invoke(this.Url + "/update-process", "UpdateProcess", oObject, this.UpdateProcess, Callback); }}
+Object.assign(ProcessesService.prototype, JsonWsProxyBase);
+var ProcessesValidators = { GetProcess : { ProcessID : ProcessesValidatorsFields.ProcessID }, CopyProcess : { ProcessID : ProcessesValidatorsFields.ProcessID }, RemoveProcess : { ProcessID : ProcessesValidatorsFields.ProcessID }, InsertProcess : { ProcessName:ProcessesValidatorsFields.ProcessName, Url:ProcessesValidatorsFields.Url, Action:ProcessesValidatorsFields.Action, RunData:ProcessesValidatorsFields.RunData, IsRunning:ProcessesValidatorsFields.IsRunning, RunStarted:ProcessesValidatorsFields.RunStarted, RunEnded:ProcessesValidatorsFields.RunEnded, RunEvery:ProcessesValidatorsFields.RunEvery, IsEnabled:ProcessesValidatorsFields.IsEnabled, MaximumRunTime:ProcessesValidatorsFields.MaximumRunTime, IsTimedOut:ProcessesValidatorsFields.IsTimedOut }, UpdateProcess : { ProcessID:ProcessesValidatorsFields.ProcessID, ProcessName:ProcessesValidatorsFields.ProcessName, Url:ProcessesValidatorsFields.Url, Action:ProcessesValidatorsFields.Action, RunData:ProcessesValidatorsFields.RunData, IsRunning:ProcessesValidatorsFields.IsRunning, RunStarted:ProcessesValidatorsFields.RunStarted, RunEnded:ProcessesValidatorsFields.RunEnded, RunEvery:ProcessesValidatorsFields.RunEvery, IsEnabled:ProcessesValidatorsFields.IsEnabled, MaximumRunTime:ProcessesValidatorsFields.MaximumRunTime, IsTimedOut:ProcessesValidatorsFields.IsTimedOut } };
+var Processes = new ProcessesService();

@@ -1,0 +1,14 @@
+﻿{
+  "Assembly": "Buffaly.Business",
+  "Type": "Buffaly.Sessions.Messages",
+  "KebabName": "buffaly-sessions-messages",
+  "Methods": [
+    { "IsStatic": "true", "IsReturnTypeArray": "false", "KebabName": "copy-message", "Parameters": [
+      { "Type":"Int32", "IsNullable":"false", "Name":"MessageID", "IsArray":"false", "IsEnum":"false" }
+    ], "ReturnType":"Int32", "UrlName":null, "Name":"CopyMessage", "DataObject":{} },
+    { "IsStatic": "true", "IsReturnTypeArray": "false", "KebabName": "get-message", "Parameters": [
+      { "Type":"Int32", "IsNullable":"false", "Name":"MessageID", "IsArray":"false", "IsEnum":"false" }
+    ], "ReturnType":"MessagesRow", "UrlName":null, "Name":"GetMessage", "DataObject":{} }
+  ],
+  "Namespace": "Buffaly.Sessions"
+}

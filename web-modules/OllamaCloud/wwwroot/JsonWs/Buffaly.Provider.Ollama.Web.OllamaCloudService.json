@@ -1,0 +1,38 @@
+{
+	"Assembly": "Buffaly.Provider.Ollama.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+	"Type": "Buffaly.Provider.Ollama.Web.OllamaCloudService",
+	"KebabName": "ollama-cloud-service",
+	"Methods": [
+		{
+			"IsStatic": "true",
+			"IsReturnTypeArray": "true",
+			"KebabName": "get-cloud-models",
+			"Parameters": [ { "Type": "String", "IsNullable": "true", "Name": "apiKey", "IsArray": "false", "IsEnum": "false" } ],
+			"ReturnType": "OllamaCloudModelContract",
+			"UrlName": null,
+			"Name": "GetCloudModels",
+			"DataObject": {}
+		},
+		{
+			"IsStatic": "true",
+			"IsReturnTypeArray": "false",
+			"KebabName": "validate-api-key",
+			"Parameters": [ { "Type": "String", "IsNullable": "false", "Name": "apiKey", "IsArray": "false", "IsEnum": "false" } ],
+			"ReturnType": "Boolean",
+			"UrlName": null,
+			"Name": "ValidateApiKey",
+			"DataObject": {}
+		},
+		{
+			"IsStatic": "true",
+			"IsReturnTypeArray": "false",
+			"KebabName": "get-default-endpoint",
+			"Parameters": [],
+			"ReturnType": "OllamaCloudEndpointDefaultsContract",
+			"UrlName": null,
+			"Name": "GetDefaultEndpoint",
+			"DataObject": {}
+		}
+	],
+	"Namespace": "Buffaly.Provider.Ollama.Web"
+}

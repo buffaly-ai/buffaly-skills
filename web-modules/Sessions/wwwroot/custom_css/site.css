@@ -1,0 +1,287 @@
+
+.hidden { display: none !important;}
+
+.NoWrap {
+	white-space: nowrap;
+}
+
+.Hidden {
+        display: none !important;
+}
+
+
+.patient-notes-grid .notes-cell,
+.patient-notes-grid .notes-cell * {
+	overflow-wrap: anywhere;
+	word-break: break-word;
+}
+
+.patient-notes-grid .notes-cell pre {
+	white-space: pre-wrap;
+}
+
+.patient-notes-grid .notes-cell img {
+	max-width: 100%;
+	height: auto;
+	display: block;
+}
+
+.SemiTransparent {
+	background: #FFF;
+	opacity: .90;
+	filter: alpha(opacity = 95);
+}
+
+.Transparent {
+	background: #FFF;
+	opacity: .50;
+	filter: alpha(opacity = 50);
+}
+
+.Raised {
+	border-top: solid 1px #CCC;
+	border-left: solid 1px #CCC;
+	border-bottom: solid 2px black;
+	border-right: solid 2px black;
+}
+
+.Modal {
+	z-index: 2;
+	overflow: visible;
+	padding: 0px;
+	background: #FFF;
+}
+
+.Group {
+	white-space: nowrap;
+}
+
+.DropDownText {
+	width: 100px;
+	padding: 2px;
+	margin: 2px;
+	position: relative;
+}
+
+.DropDownButton {
+	position: relative;
+	left: -22px;
+	border: none;
+	vertical-align: text-bottom;
+	background-image: url('../images/ddl.gif');
+	width: 20px;
+	height: 20px;
+	top: 3px;
+	padding: 0px !important;
+}
+/*.DropDownButton:hover,.DropDownButton:active {}*/
+
+.DropDownList {
+	width: 133px;
+	padding: 0px;
+	margin: 0px;
+}
+
+.Sortable {
+	cursor: pointer;
+}
+
+
+.InputLabel, .DisplayLabel {
+	font-weight: bold;
+}
+
+td.InputLabel {
+	text-align: right;
+}
+
+.Selected {
+	font-weight: bold;
+}
+
+	.Selected td {
+		font-weight: bold;
+	}
+
+
+
+
+.GridFooterRow > div{
+	padding: 10px;
+	font-weight: bold !important;
+}
+
+.GridPageSizeInput {
+	transition: background-color 0.35s ease;
+}
+
+.GridPageSizeInputUpdated {
+	background-color: #e6f2ff;
+	box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.15);
+}
+
+/*
+.Grid {
+	width: 100%;
+	font-weight: bold;
+}
+
+	.Grid th {
+		white-space: nowrap;
+		padding: 10px;
+		font-weight: bold;
+	}
+
+	.Grid td {
+		padding: 5px;
+		text-align: center;
+		font-weight: normal;
+	}
+
+.GridHeader td {
+	white-space: nowrap;
+	padding: 10px;
+	font-weight: bold;
+}
+	*/
+.GridFirst, .GridLast, .GridNext, .GridPrev {
+	cursor: pointer;
+	padding: 5px;
+}
+	.GridFirst:hover, .GridLast:hover, .GridNext:hover, .GridPrev :hover {
+		border: solid 1px blue;
+	}
+
+
+.Selected td {
+	font-weight: bold;
+}
+.SearchFound {
+	font-weight: bold;
+	border: 1px solid #888;
+	background-color: #c2def5; /* Sky blue */
+	color: #222;
+	padding: 1px 0px;
+	border-radius: 4px;
+	box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* The container for the notes */
+.notes-summary {
+	position: relative;
+	/* This is the starting, collapsed height */
+	max-height: 4.5em;
+	overflow: hidden;
+	/* This creates a smooth animation */
+	transition: max-height 0.35s ease-out;
+}
+
+	/* THIS IS THE MISSING PIECE: 
+       The style for the expanded state */
+	.notes-summary.expanded {
+		max-height: 1000px; /* A large height to show all content */
+	}
+
+	/* The "fade out" effect at the bottom */
+	.notes-summary::after {
+		content: '';
+		position: absolute;
+		bottom: 0;
+		right: 0;
+		width: 100%;
+		height: 1.5em;
+		/* Change 'white' to your page's background color if needed */
+		background: linear-gradient(to bottom, transparent, white 70%);
+	}
+
+	/* Hide the fade effect when the note is expanded */
+	.notes-summary.expanded::after {
+		display: none;
+	}
+
+/* The "Read more..." link */
+.notes-indicator {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	/* Add this line to bring the link to the top */
+	z-index: 1;
+	/* The background color here should match your page's background */
+	background: white;
+	padding-left: 5px;
+	font-weight: bold;
+	color: #0d6efd;
+	cursor: pointer;
+}
+/* Reduce spacing around the main page title row */
+#divPageTitle {
+        margin-top: 8px;
+        margin-bottom: 0px;
+}
+
+#divPageTitle .page-title-box {
+        padding-top: 8px;
+        padding-bottom: 8px;
+        margin-bottom: 0;
+}
+
+#divPageTitle .page-title {
+        margin-bottom: 0;
+        line-height: 1.4;
+}
+
+#divPageTitle .page-title-right {
+        margin-top: 0;
+}
+
+/* Treat the theme's condensed sidebar state as fully hidden for Sessions Web. */
+body.sessions-sidebar-hidden .left-side-menu,
+body[data-leftbar-size="condensed"] .left-side-menu,
+body[data-leftbar-size="sm"] .left-side-menu,
+body[data-leftbar-size="small"] .left-side-menu {
+	display: none !important;
+	width: 0 !important;
+}
+
+body.sessions-sidebar-hidden .content-page,
+body[data-leftbar-size="condensed"] .content-page,
+body[data-leftbar-size="sm"] .content-page,
+body[data-leftbar-size="small"] .content-page {
+	margin-left: 0 !important;
+}
+
+body.sessions-sidebar-hidden .footer,
+body[data-leftbar-size="condensed"] .footer,
+body[data-leftbar-size="sm"] .footer,
+body[data-leftbar-size="small"] .footer {
+	left: 0 !important;
+}
+
+body.sessions-sidebar-hidden .navbar-custom {
+	left: 0 !important;
+	z-index: 1050 !important;
+}
+
+body.sessions-sidebar-hidden .logo-box {
+	display: block !important;
+	visibility: visible !important;
+	width: 240px !important;
+}
+
+body.sessions-sidebar-hidden .logo span.logo-lg {
+	display: block !important;
+}
+
+body.sessions-sidebar-hidden .logo span.logo-sm {
+	display: none !important;
+}
+
+body.sessions-sidebar-hidden .button-menu-mobile {
+	display: inline-block !important;
+	visibility: visible !important;
+	pointer-events: auto !important;
+	position: static !important;
+	z-index: 1060 !important;
+	background: #fff !important;
+	color: #334155 !important;
+}

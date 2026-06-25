@@ -1,0 +1,620 @@
+<%
+class SessionsAdmin
+{
+			
+	(function GetDetails SessionID
+	{
+		(declare Session (Sessions.GetSession (SessionID)))
+		
+		(returnex{%>
+			<table class="Inputs table table-condensed">
+				<colgroup>
+					<col class="col-md-4">
+					<col class="col-md-8">
+				</colgroup>			
+			
+						<tr>
+							<td class="InputLabel">
+								Session ID
+							</td>
+							<td>								
+									<%Session.SessionID%>								
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="InputLabel">
+								Session Key
+							</td>
+							<td>								
+									<%Session.SessionKey%>								
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="InputLabel">
+								Agent Name
+							</td>
+							<td>								
+									<%Session.AgentName%>								
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="InputLabel">
+								Project Name
+							</td>
+							<td>								
+									<%Session.ProjectName%>								
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="InputLabel">
+								Project File Path
+							</td>
+							<td>								
+									<%Session.ProjectFilePath%>								
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="InputLabel">
+								Provider
+							</td>
+							<td>								
+									<%Session.Provider%>								
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="InputLabel">
+								Model Name
+							</td>
+							<td>								
+									<%Session.ModelName%>								
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="InputLabel">
+								Reasoning Level
+							</td>
+							<td>								
+									<%Session.ReasoningLevel%>								
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="InputLabel">
+								Is Archived
+							</td>
+							<td>								
+									<%if (Session.IsArchived) Yes No%>								
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="InputLabel">
+								Prompt Context
+							</td>
+							<td>								
+									<%Session.PromptContext%>								
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="InputLabel">
+								Date Created
+							</td>
+							<td>								
+									<span class="DateOnly"><%Session.DateCreated%></span>								
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="InputLabel">
+								Last Updated
+							</td>
+							<td>								
+									<span class="DateOnly"><%Session.LastUpdated%></span>								
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="InputLabel">
+								Data
+							</td>
+							<td>											
+							</td>
+						</tr>					
+	 						<%Session.DataObject.each o{%>
+							<tr>
+								<td class="InputLabel">
+									&nbsp;&nbsp;<%FormatUtil.InsertSpacesInWords (o)%>
+								</td>
+								<td>
+									<div style="max-width: 600px;">
+										<%Session.DataObject.get (o)%>
+									</div>									
+								</td>
+							</tr><%}%>
+						
+					
+						<tr>
+							<td class="InputLabel">
+								Session Name
+							</td>
+							<td>								
+									<%Session.SessionName%>								
+							</td>
+						</tr>
+					
+						
+						
+                        
+						<tr>
+							<td class="InputLabel">
+								Parent Session ID
+							</td>
+							<td>                               
+                                <a href="session?SessionID=<%Session.ParentSessionID%>">
+                                    <%ifneq  (Session.ParentSession) ""{%>
+                                        
+                                            <%Session.ParentSession.SessionKey%>
+                                        
+                                    <%}%>
+                                </a>								
+							</td>
+						</tr>
+											
+			</table>
+		<%})
+	})		
+			
+		
+	(function GetDropDown
+	{
+		(return (GetDropDown SessionKey SessionID))
+	})
+
+	(function GetDropDownWithNull
+	{
+		(return (GetDropDown SessionKey SessionID  SessionID "<option value=''>None</option>"))
+	})
+	
+	(function GetDropDown Name Value
+	{
+		(return (GetDropDown (Name) (Value) (Value)))
+	})			
+	
+	(function GetDropDown Name Value FieldName
+	{
+		(return (GetDropDown (Name) (Value) (FieldName) ''))
+	})			
+	
+	(function GetDropDown Name Value FieldName PreOptions
+	{
+		(ado.view Options GetSessionsSp)
+		(returnex {%>
+			<select kcs:FieldName="<%FieldName%>" class="form-control">
+				<%PreOptions%>
+				<%Options.each Option{%>
+				<option value="<%Option.get (Value)%>"><%Option.get (Name)%></option>
+				<%}%>
+			</select>
+		<%})
+	})	
+		
+	(function GetEdit SessionID
+	{
+		(returnex{%>
+			<div class="form-horizontal row-border Inputs" kcs:ObjectName="Session">
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Session ID
+					</label>
+					<div class="col-sm-6">
+												
+								
+								<input type="text" kcs:FieldName="SessionID" class="InputString form-control" readonly="readonly" value="<%SessionID%>"/>							
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Session Key
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="text" id="txtSessionKey" kcs:FieldName="SessionKey" class="InputString form-control" maxlength="255" />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Agent Name
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="text" id="txtAgentName" kcs:FieldName="AgentName" class="InputString form-control" maxlength="255" />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Project Name
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="text" id="txtProjectName" kcs:FieldName="ProjectName" class="InputString form-control" maxlength="255" />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Project File Path
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="text" id="txtProjectFilePath" kcs:FieldName="ProjectFilePath" class="InputString form-control" maxlength="255" />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Provider
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="text" id="txtProvider" kcs:FieldName="Provider" class="InputString form-control" maxlength="255" />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Model Name
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="text" id="txtModelName" kcs:FieldName="ModelName" class="InputString form-control" maxlength="255" />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Reasoning Level
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="text" id="txtReasoningLevel" kcs:FieldName="ReasoningLevel" class="InputString form-control" maxlength="255" />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Prompt Context
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<textarea id="txtPromptContext" kcs:FieldName="PromptContext" class="InputText form-control"></textarea>
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Data
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<textarea kcs:FieldName="Data" class="InputData form-control"></textarea>
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Session Name
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="text" id="txtSessionName" kcs:FieldName="SessionName" class="InputString form-control" maxlength="255" />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Session
+					</label>
+					<div class="col-sm-6">
+						      						                   
+							
+                            
+							    <%using Sessions\SessionsAdmin.ks.html%>
+							    
+								    <%SessionsAdmin.GetDropDown SessionKey SessionID ParentSessionID '<option value="">None</option>'%>							
+							    
+                            
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Is Archived
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="checkbox" id="chkIsArchived" kcs:FieldName="IsArchived"  />
+							
+						
+					</div>
+				</div>
+				
+									
+			</div>
+		<%})
+	})			
+		
+		
+		
+	(function GetGridHtml  Search SortColumn SortAscending SkipRows NumRows
+	{
+		(declare oSessions (Sessions.GetSessionsSp_PagingSp  (Search) (SortColumn) (SortAscending) (SkipRows) (NumRows)))
+		(return (GetGridHtmlInternal (oSessions))) 		
+	})
+		
+	(function GetGridCount  Search
+	
+	{
+		(ado.row Sessions GetSessionsSp_CountSp  (Search))
+		(return (Sessions.get Total))
+	})
+
+	
+	(function GetGridHtmlInternal Sessions
+	{
+		(returnex{%>
+			<table class="Grid">
+				<tr>			
+			
+					<th kcs:SortColumn="SessionID">
+						Session ID
+					</th>
+					<th kcs:SortColumn="SessionKey">
+						Session Key
+					</th>
+					<th kcs:SortColumn="AgentName">
+						Agent Name
+					</th>
+					<th kcs:SortColumn="ProjectName">
+						Project Name
+					</th>
+					<th kcs:SortColumn="ModelName">
+						Model Name
+					</th>
+					<th kcs:SortColumn="LastUpdated">
+						Last Updated
+					</th>						
+				</tr>
+			<%Sessions.each Session{%> 
+				<tr kcs:RowKey="<%Session.get SessionID%>" >
+								
+			
+					<td>
+						<%Session.SessionID%>
+					</td>
+					
+					<td>
+						<%Session.SessionKey%>
+					</td>
+					
+					<td>
+						<%Session.AgentName%>
+					</td>
+					
+					<td>
+						<%Session.ProjectName%>
+					</td>
+					
+					<td>
+						<%Session.ModelName%>
+					</td>
+					
+					<td>
+						<span class="DateOnly"><%Session.LastUpdated%></span>
+					</td>
+											
+				</tr><%}%>
+				<%GridFooter%>
+			</table>
+		<%})
+	})
+		
+		
+	(function GetInsert
+	{
+		(returnex{%> 
+			<div class="form-horizontal row-border Inputs" kcs:ObjectName="Session">
+
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Session Key
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="text" id="txtSessionKey" kcs:FieldName="SessionKey" class="InputString form-control" maxlength="255" />
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Agent Name
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="text" id="txtAgentName" kcs:FieldName="AgentName" class="InputString form-control" maxlength="255" />
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Project Name
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="text" id="txtProjectName" kcs:FieldName="ProjectName" class="InputString form-control" maxlength="255" />
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Project File Path
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="text" id="txtProjectFilePath" kcs:FieldName="ProjectFilePath" class="InputString form-control" maxlength="255" />
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Provider
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="text" id="txtProvider" kcs:FieldName="Provider" class="InputString form-control" maxlength="255" />
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Model Name
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="text" id="txtModelName" kcs:FieldName="ModelName" class="InputString form-control" maxlength="255" />
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Reasoning Level
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="text" id="txtReasoningLevel" kcs:FieldName="ReasoningLevel" class="InputString form-control" maxlength="255" />
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Prompt Context
+					</label>
+					<div class="col-sm-6">
+						
+							<textarea id="txtPromptContext" kcs:FieldName="PromptContext" class="InputText form-control"></textarea>
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Data
+					</label>
+					<div class="col-sm-6">
+						
+							<textarea kcs:FieldName="Data" class="InputData form-control"></textarea>
+						
+					</div>
+				</div>
+				
+									
+			</div>
+		<%})
+	})			
+		
+}%>

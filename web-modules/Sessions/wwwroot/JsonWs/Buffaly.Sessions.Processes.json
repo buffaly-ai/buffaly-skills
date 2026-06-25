@@ -1,0 +1,22 @@
+﻿{
+  "Assembly": "Buffaly.Business",
+  "Type": "Buffaly.Sessions.Processes",
+  "KebabName": "buffaly-sessions-processes",
+  "Methods": [
+    { "IsStatic": "true", "IsReturnTypeArray": "false", "KebabName": "add-external-scheduled-task", "Parameters": [ { "Type":"AddExternalScheduledTaskContract", "IsNullable":"false", "Name":"contract", "IsArray":"false", "IsEnum":"false" } ], "ReturnType":"ScheduledProcessDetailsContract", "UrlName":null, "Name":"AddExternalScheduledTask", "DataObject":{} },
+    { "IsStatic": "true", "IsReturnTypeArray": "false", "KebabName": "add-recurring-process", "Parameters": [ { "Type":"AddRecurringProcessContract", "IsNullable":"false", "Name":"contract", "IsArray":"false", "IsEnum":"false" } ], "ReturnType":"ScheduledProcessDetailsContract", "UrlName":null, "Name":"AddRecurringProcess", "DataObject":{} },
+    { "IsStatic": "true", "IsReturnTypeArray": "false", "KebabName": "copy-process", "Parameters": [ { "Type":"Int32", "IsNullable":"false", "Name":"ProcessID", "IsArray":"false", "IsEnum":"false" } ], "ReturnType":"Int32", "UrlName":null, "Name":"CopyProcess", "DataObject":{} },
+    { "IsStatic": "true", "IsReturnTypeArray": "false", "KebabName": "disable-process", "Parameters": [ { "Type":"Int32", "IsNullable":"false", "Name":"processID", "IsArray":"false", "IsEnum":"false" } ], "ReturnType":"ScheduledProcessDetailsContract", "UrlName":null, "Name":"DisableProcess", "DataObject":{} },
+    { "IsStatic": "true", "IsReturnTypeArray": "false", "KebabName": "enable-process", "Parameters": [ { "Type":"Int32", "IsNullable":"false", "Name":"processID", "IsArray":"false", "IsEnum":"false" } ], "ReturnType":"ScheduledProcessDetailsContract", "UrlName":null, "Name":"EnableProcess", "DataObject":{} },
+    { "IsStatic": "true", "IsReturnTypeArray": "false", "KebabName": "get-process", "Parameters": [ { "Type":"Int32", "IsNullable":"false", "Name":"ProcessID", "IsArray":"false", "IsEnum":"false" } ], "ReturnType":"ProcessesRow", "UrlName":null, "Name":"GetProcess", "DataObject":{} },
+    { "IsStatic": "true", "IsReturnTypeArray": "false", "KebabName": "get-process-details", "Parameters": [ { "Type":"Int32", "IsNullable":"false", "Name":"processID", "IsArray":"false", "IsEnum":"false" } ], "ReturnType":"ScheduledProcessDetailsContract", "UrlName":null, "Name":"GetProcessDetails", "DataObject":{} },
+    { "IsStatic": "true", "IsReturnTypeArray": "false", "KebabName": "get-process-details-by-name", "Parameters": [ { "Type":"String", "IsNullable":"false", "Name":"processName", "IsArray":"false", "IsEnum":"false" } ], "ReturnType":"ScheduledProcessDetailsContract", "UrlName":null, "Name":"GetProcessDetailsByName", "DataObject":{} },
+    { "IsStatic": "true", "IsReturnTypeArray": "false", "KebabName": "list-processes", "Parameters": [], "ReturnType":"ProcessesDataTable", "UrlName":null, "Name":"ListProcesses", "DataObject":{} },
+    { "IsStatic": "true", "IsReturnTypeArray": "false", "KebabName": "list-recurring-processes", "Parameters": [], "ReturnType":"ProcessesDataTable", "UrlName":null, "Name":"ListRecurringProcesses", "DataObject":{} },
+    { "IsStatic": "true", "IsReturnTypeArray": "false", "KebabName": "list-scheduled-tasks", "Parameters": [], "ReturnType":"ProcessesDataTable", "UrlName":null, "Name":"ListScheduledTasks", "DataObject":{} },
+    { "IsStatic": "true", "IsReturnTypeArray": "false", "KebabName": "remove-process", "Parameters": [ { "Type":"Int32", "IsNullable":"false", "Name":"ProcessID", "IsArray":"false", "IsEnum":"false" } ], "ReturnType":"Void", "UrlName":null, "Name":"RemoveProcess", "DataObject":{} },
+    { "IsStatic": "true", "IsReturnTypeArray": "false", "KebabName": "trigger-scheduled-process", "Parameters": [ { "Type":"TriggerScheduledProcessContract", "IsNullable":"false", "Name":"contract", "IsArray":"false", "IsEnum":"false" } ], "ReturnType":"TriggerScheduledProcessResult", "UrlName":null, "Name":"TriggerScheduledProcess", "DataObject":{} },
+    { "IsStatic": "true", "IsReturnTypeArray": "false", "KebabName": "validate-process-configuration", "Parameters": [ { "Type":"Int32", "IsNullable":"false", "Name":"processID", "IsArray":"false", "IsEnum":"false" } ], "ReturnType":"ValidateScheduledProcessResult", "UrlName":null, "Name":"ValidateProcessConfiguration", "DataObject":{} }
+  ],
+  "Namespace": "Buffaly.Sessions"
+}

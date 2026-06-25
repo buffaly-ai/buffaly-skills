@@ -1,0 +1,787 @@
+<%
+class ProcessesAdmin
+{
+			
+	(function GetDetails ProcessID
+	{
+		(declare Process (Processes.GetProcess (ProcessID)))
+		
+		(returnex{%>
+			<div class="process-details">
+				<style>
+					.process-details-section { margin-bottom: 1.25rem; }
+					.process-details-section h5 { margin: 0 0 .5rem 0; font-size: 1rem; font-weight: 600; }
+					.process-details-section .table { margin-bottom: 0; }
+					.process-details-raw pre { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: .25rem; max-height: 480px; overflow: auto; padding: .75rem; white-space: pre-wrap; }
+				</style>
+
+				<div class="process-details-section">
+					<h5>Process Identity</h5>
+					<table class="Inputs table table-condensed">
+						<colgroup><col class="col-md-4"><col class="col-md-8"></colgroup>
+						<tr><td class="InputLabel">Process ID</td><td><%Process.ProcessID%></td></tr>
+						<tr><td class="InputLabel">Process Name</td><td><%Process.ProcessName%></td></tr>
+						<tr><td class="InputLabel">Url</td><td><%Process.Url%></td></tr>
+						<tr><td class="InputLabel">Action</td><td><%Process.Action%></td></tr>
+						<tr><td class="InputLabel">Enabled</td><td><%if (Process.IsEnabled) Yes No%></td></tr>
+						<tr><td class="InputLabel">Running</td><td><%if (Process.IsRunning) Yes No%></td></tr>
+						<tr><td class="InputLabel">Timed Out</td><td><%if (Process.IsTimedOut) Yes No%></td></tr>
+					</table>
+				</div>
+
+				<div class="process-details-section">
+					<h5>Schedule / Trigger</h5>
+					<table class="Inputs table table-condensed">
+						<colgroup><col class="col-md-4"><col class="col-md-8"></colgroup>
+						<tr><td class="InputLabel">Run Every</td><td><%Process.RunEvery%></td></tr>
+						<tr><td class="InputLabel">Run Every Type</td><td><%Process.RunEveryType%></td></tr>
+						<tr><td class="InputLabel">Maximum Run Time</td><td><%Process.MaximumRunTime%></td></tr>
+						<tr class="js-run-data-row" data-run-data-key="TriggerMode"><td class="InputLabel">Trigger Mode</td><td></td></tr>
+						<tr class="js-run-data-row" data-run-data-key="ExternalTriggerKey"><td class="InputLabel">External Trigger Key</td><td></td></tr>
+					</table>
+				</div>
+
+				<div class="process-details-section">
+					<h5>Handler</h5>
+					<table class="Inputs table table-condensed">
+						<colgroup><col class="col-md-4"><col class="col-md-8"></colgroup>
+						<tr class="js-run-data-row" data-run-data-key="HandlerAssembly"><td class="InputLabel">Handler Assembly</td><td></td></tr>
+						<tr class="js-run-data-row" data-run-data-key="HandlerType"><td class="InputLabel">Handler Type</td><td></td></tr>
+						<tr><td class="InputLabel">Handler Category</td><td id="processHandlerCategory"></td></tr>
+						<tr><td class="InputLabel">Friendly Label</td><td id="processHandlerFriendlyLabel"></td></tr>
+					</table>
+				</div>
+
+				<div class="process-details-section">
+					<h5>Runtime State</h5>
+					<table class="Inputs table table-condensed">
+						<colgroup><col class="col-md-4"><col class="col-md-8"></colgroup>
+						<tr><td class="InputLabel">Run Started</td><td><%Process.RunStarted%></td></tr>
+						<tr><td class="InputLabel">Run Ended</td><td><%Process.RunEnded%></td></tr>
+						<tr class="js-run-data-row" data-run-data-key="LastDecision"><td class="InputLabel">Last Decision</td><td></td></tr>
+						<tr class="js-run-data-row" data-run-data-key="RunCount"><td class="InputLabel">Run Count</td><td></td></tr>
+						<tr class="js-run-data-row" data-run-data-key="TriggeredCount"><td class="InputLabel">Triggered Count</td><td></td></tr>
+						<tr class="js-run-data-row" data-run-data-key="LastRunUtc"><td class="InputLabel">Last Run Utc</td><td></td></tr>
+						<tr class="js-run-data-row" data-run-data-key="LastDeletedCount"><td class="InputLabel">Last Deleted Count</td><td></td></tr>
+						<tr class="js-run-data-row" data-run-data-key="LastMatchedLineCount"><td class="InputLabel">Last Matched Line Count</td><td></td></tr>
+						<tr class="js-run-data-row" data-run-data-key="LastChildSessionKey"><td class="InputLabel">Last Child Session Key</td><td></td></tr>
+						<tr><td class="InputLabel">Date Created</td><td><span class="DateOnly"><%Process.DateCreated%></span></td></tr>
+						<tr><td class="InputLabel">Last Updated</td><td><span class="DateOnly"><%Process.LastUpdated%></span></td></tr>
+					</table>
+				</div>
+
+				<div class="process-details-section process-details-raw">
+					<details>
+						<summary>Raw RunData JSON</summary>
+						<pre id="processRunDataRaw"><%Process.RunData%></pre>
+					</details>
+				</div>
+			</div>
+			<script type="text/javascript">
+				Page.AddOnload(function () {
+					var rawElement = document.getElementById("processRunDataRaw");
+					var runData = {};
+					try {
+						runData = JSON.parse(rawElement.textContent || "{}");
+						rawElement.textContent = JSON.stringify(runData, null, 4);
+					}
+					catch (err) {
+						rawElement.textContent = rawElement.textContent || "";
+					}
+
+					document.querySelectorAll(".js-run-data-row").forEach(function (row) {
+						var key = row.getAttribute("data-run-data-key");
+						var value = runData[key];
+						if ((value === undefined || value === null || value === "") && runData.State)
+							value = runData.State[key];
+						if (value !== undefined && value !== null && value !== "")
+							row.children[1].textContent = typeof value === "object" ? JSON.stringify(value) : value;
+						else
+							row.style.display = "none";
+					});
+
+					var handlerAssembly = runData.HandlerAssembly || "";
+					var handlerType = runData.HandlerType || "";
+					document.getElementById("processHandlerCategory").textContent = handlerAssembly == "Buffaly.Agent.ScheduledProcesses.dll" ? "Prompt scheduled task" : (handlerAssembly == "Buffaly.Agent.ScheduledProcesses.Examples.dll" ? "Example/local handler" : (handlerAssembly ? "Scheduled process handler" : ""));
+					document.getElementById("processHandlerFriendlyLabel").textContent = handlerType.split(".").pop() || "";
+				});
+			</script>
+		<%})
+	})		
+			
+		
+	(function GetDropDown
+	{
+		(return (GetDropDown ProcessName ProcessID))
+	})
+
+	(function GetDropDownWithNull
+	{
+		(return (GetDropDown ProcessName ProcessID  ProcessID "<option value=''>None</option>"))
+	})
+	
+	(function GetDropDown Name Value
+	{
+		(return (GetDropDown (Name) (Value) (Value)))
+	})			
+	
+	(function GetDropDown Name Value FieldName
+	{
+		(return (GetDropDown (Name) (Value) (FieldName) ''))
+	})			
+	
+	(function GetDropDown Name Value FieldName PreOptions
+	{
+		(ado.view Options GetProcessesSp)
+		(returnex {%>
+			<select kcs:FieldName="<%FieldName%>" class="form-control">
+				<%PreOptions%>
+				<%Options.each Option{%>
+				<option value="<%Option.get (Value)%>"><%Option.get (Name)%></option>
+				<%}%>
+			</select>
+		<%})
+	})	
+		
+	(function GetEdit ProcessID
+	{
+		(returnex{%>
+			<div class="form-horizontal row-border Inputs" kcs:ObjectName="Process">
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Process ID
+					</label>
+					<div class="col-sm-6">
+												
+								
+								<input type="text" kcs:FieldName="ProcessID" class="InputString form-control" readonly="readonly" value="<%ProcessID%>"/>							
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Process Name
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="text" id="txtProcessName" kcs:FieldName="ProcessName" class="InputString form-control" maxlength="255" />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Url
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="text" id="txtUrl" kcs:FieldName="Url" class="InputUrl form-control" maxlength="512" />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Action
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="text" id="txtAction" kcs:FieldName="Action" class="InputString form-control" maxlength="255" />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Run Data
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<textarea kcs:FieldName="RunData" class="InputData form-control"></textarea>
+							
+						
+					</div>
+				</div>
+				
+							
+				
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						RunData Helpers
+					</label>
+					<div class="col-sm-6">
+						<p class="help-block">These helpers edit common RunData keys while preserving unknown JSON fields.</p>
+						<input type="text" id="txtRunDataHandlerAssembly" class="InputString form-control" placeholder="HandlerAssembly" />
+						<br />
+						<input type="text" id="txtRunDataHandlerType" class="InputString form-control" placeholder="HandlerType" />
+						<br />
+						<input type="text" id="txtRunDataSessionKey" class="InputString form-control" placeholder="SessionKey" />
+						<br />
+						<input type="text" id="txtRunDataPromptContext" class="InputString form-control" placeholder="PromptContext" />
+						<br />
+						<textarea id="txtRunDataInstruction" class="InputString form-control" placeholder="Instruction" rows="4"></textarea>
+						<br />
+						<input type="text" id="txtRunDataExternalTriggerKey" class="InputString form-control" placeholder="ExternalTriggerKey" />
+						<br />
+						<label><input type="checkbox" id="chkRunDataCreateChildSession" /> Create Child Session</label>
+						<hr />
+						<input type="text" id="txtRunDataLogDirectory" class="InputString form-control" placeholder="LogDirectory" />
+						<br />
+						<input type="text" id="txtRunDataFilePattern" class="InputString form-control" placeholder="FilePattern" />
+						<br />
+						<input type="number" id="txtRunDataOlderThanHours" class="InputInteger form-control" placeholder="OlderThanHours" />
+						<br />
+						<input type="number" id="txtRunDataMaxFiles" class="InputInteger form-control" placeholder="MaxFiles / cap" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Running
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="checkbox" id="chkIsRunning" kcs:FieldName="IsRunning"  />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Run Started
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="datetime" id="txtRunStarted" kcs:FieldName="RunStarted" class="InputDateTime form-control" maxlength="20" />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Run Ended
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="datetime" id="txtRunEnded" kcs:FieldName="RunEnded" class="InputDateTime form-control" maxlength="20" />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Run Every
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="number" id="txtRunEvery" kcs:FieldName="RunEvery" class="InputDecimal form-control" maxlength="18" /> 
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Enabled
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="checkbox" id="chkIsEnabled" kcs:FieldName="IsEnabled"  />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Maximum Run Time
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="number" id="txtMaximumRunTime"  kcs:FieldName="MaximumRunTime" maxlength="10"  class="InputInteger form-control" maxlength="14"   />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Timed Out
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="checkbox" id="chkIsTimedOut" kcs:FieldName="IsTimedOut"  />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Run Every Type
+					</label>
+					<div class="col-sm-6">
+												
+							
+								<input type="text" id="txtRunEveryType" kcs:FieldName="RunEveryType" class="InputString form-control" maxlength="255" />
+							
+						
+					</div>
+				</div>
+				
+							
+				
+				
+									
+			</div>
+
+			<script type="text/javascript">
+				Page.AddOnload(function () {
+					var runDataTextArea = document.querySelector("#divProcess textarea[kcs\\:FieldName='RunData']");
+					var saveButton = document.getElementById("btnUpdate");
+					var textFields = {
+						HandlerAssembly: document.getElementById("txtRunDataHandlerAssembly"),
+						HandlerType: document.getElementById("txtRunDataHandlerType"),
+						SessionKey: document.getElementById("txtRunDataSessionKey"),
+						PromptContext: document.getElementById("txtRunDataPromptContext"),
+						Instruction: document.getElementById("txtRunDataInstruction"),
+						ExternalTriggerKey: document.getElementById("txtRunDataExternalTriggerKey"),
+						LogDirectory: document.getElementById("txtRunDataLogDirectory"),
+						FilePattern: document.getElementById("txtRunDataFilePattern")
+					};
+					var numberFields = {
+						OlderThanHours: document.getElementById("txtRunDataOlderThanHours"),
+						MaxFiles: document.getElementById("txtRunDataMaxFiles")
+					};
+					var createChildSession = document.getElementById("chkRunDataCreateChildSession");
+
+					function readRunData() {
+						if (!runDataTextArea || StringUtil.IsEmpty(runDataTextArea.value))
+							return {};
+						return JSON.parse(runDataTextArea.value);
+					}
+
+					function writeRunData(runData) {
+						runDataTextArea.value = JSON.stringify(runData, null, 4);
+						runDataTextArea.dispatchEvent(new Event("change", { bubbles: true }));
+					}
+
+					function bindRunDataHelpers() {
+						var runData = readRunData();
+						Object.keys(textFields).forEach(function (key) {
+							if (textFields[key])
+								textFields[key].value = runData[key] || "";
+						});
+						Object.keys(numberFields).forEach(function (key) {
+							if (numberFields[key] && runData[key] !== undefined && runData[key] !== null)
+								numberFields[key].value = runData[key];
+						});
+						if (createChildSession)
+							createChildSession.checked = runData.CreateChildSession === true;
+					}
+
+					function syncRunDataHelpers() {
+						var runData = readRunData();
+						Object.keys(textFields).forEach(function (key) {
+							if (textFields[key] && textFields[key].value !== "")
+								runData[key] = textFields[key].value;
+						});
+						Object.keys(numberFields).forEach(function (key) {
+							if (numberFields[key] && numberFields[key].value !== "")
+								runData[key] = Number(numberFields[key].value);
+						});
+						if (createChildSession)
+							runData.CreateChildSession = createChildSession.checked;
+						writeRunData(runData);
+					}
+
+					setTimeout(bindRunDataHelpers, 0);
+					saveButton.addEventListener("click", syncRunDataHelpers, true);
+				});
+			</script>
+		<%})
+	})			
+		
+		
+		
+	(function GetGridHtml  Search SortColumn SortAscending SkipRows NumRows
+	{
+		(declare oProcesses (Processes.GetProcessesSp_PagingSp  (Search) (SortColumn) (SortAscending) (SkipRows) (NumRows)))
+		(return (GetGridHtmlInternal (oProcesses))) 		
+	})
+		
+	(function GetGridCount  Search
+	
+	{
+		(ado.row Processes GetProcessesSp_CountSp  (Search))
+		(return (Processes.get Total))
+	})
+
+	
+	(function GetGridHtmlInternal Processes
+	{
+		(returnex{%>
+			<table class="Grid">
+				<tr>			
+			
+					<th kcs:SortColumn="ProcessID">
+						Process ID
+					</th>
+					<th kcs:SortColumn="ProcessName">
+						Process Name
+					</th>
+					<th kcs:SortColumn="Url">
+						Url
+					</th>
+					<th kcs:SortColumn="Action">
+						Action
+					</th>
+					<th>
+						Type
+					</th>
+					<th kcs:SortColumn="IsRunning">
+						Running
+					</th>
+					<th kcs:SortColumn="RunStarted">
+						Run Started
+					</th>
+					<th kcs:SortColumn="RunEnded">
+						Run Ended
+					</th>
+					<th kcs:SortColumn="RunEvery">
+						Run Every
+					</th>
+					<th kcs:SortColumn="IsEnabled">
+						Enabled
+					</th>
+					<th kcs:SortColumn="LastUpdated">
+						Last Updated
+					</th>
+					<th kcs:SortColumn="MaximumRunTime">
+						Maximum Run Time
+					</th>
+					<th kcs:SortColumn="IsTimedOut">
+						Timed Out
+					</th>
+					<th kcs:SortColumn="RunEveryType">
+						Run Every Type
+					</th>						
+				</tr>
+			<%Processes.each Process{%> 
+				<tr kcs:RowKey="<%Process.get ProcessID%>" >
+								
+			
+					<td>
+						<%Process.ProcessID%>
+					</td>
+					
+					<td>
+						<%Process.ProcessName%>
+					</td>
+					
+					<td>
+						<%Process.Url%>
+					</td>
+					
+					<td>
+						<%Process.Action%>
+					</td>
+
+					<td>
+						<%ifeq (Process.Action) "ExternalScheduledTask" {%>
+							<span class="badge badge-info">Scheduled Task</span>
+						<%}{%>
+							<%ifeq (Process.Action) "IntervalSystemProcess" {%>
+								<span class="badge badge-primary">Interval</span>
+							<%}{%>
+								<span class="badge badge-secondary">Other</span>
+							<%}%>
+						<%}%>
+					</td>
+					
+					<td>
+						<%if (Process.IsRunning) Yes No%>
+					</td>
+					
+					<td>
+						<%Process.RunStarted%>
+					</td>
+					
+					<td>
+						<%Process.RunEnded%>
+					</td>
+					
+					<td>
+						<%Process.RunEvery%>
+					</td>
+					
+					<td>
+						<%if (Process.IsEnabled) Yes No%>
+					</td>
+					
+					<td>
+						<span class="DateOnly"><%Process.LastUpdated%></span>
+					</td>
+					
+					<td>
+						<%Process.MaximumRunTime%>
+					</td>
+					
+					<td>
+						<%if (Process.IsTimedOut) Yes No%>
+					</td>
+					
+					<td>
+						<%Process.RunEveryType%>
+					</td>
+											
+				</tr><%}%>
+				<%GridFooter%>
+			</table>
+		<%})
+	})
+		
+		
+	(function GetInsert
+	{
+		(returnex{%> 
+			<div class="form-horizontal row-border Inputs" kcs:ObjectName="Process">
+
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Process Name
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="text" id="txtProcessName" kcs:FieldName="ProcessName" class="InputString form-control" maxlength="255" />
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Url
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="text" id="txtUrl" kcs:FieldName="Url" class="InputUrl form-control" maxlength="512" />
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Action
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="text" id="txtAction" kcs:FieldName="Action" class="InputString form-control" maxlength="255" />
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Run Data
+					</label>
+					<div class="col-sm-6">
+						
+							<textarea kcs:FieldName="RunData" class="InputData form-control"></textarea>
+						
+					</div>
+				</div>
+				
+			
+				
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						RunData Helpers
+					</label>
+					<div class="col-sm-6">
+						<p class="help-block">These helpers edit common RunData keys while preserving unknown JSON fields.</p>
+						<input type="text" id="txtRunDataHandlerAssembly" class="InputString form-control" placeholder="HandlerAssembly" />
+						<br />
+						<input type="text" id="txtRunDataHandlerType" class="InputString form-control" placeholder="HandlerType" />
+						<br />
+						<input type="text" id="txtRunDataSessionKey" class="InputString form-control" placeholder="SessionKey" />
+						<br />
+						<input type="text" id="txtRunDataPromptContext" class="InputString form-control" placeholder="PromptContext" />
+						<br />
+						<textarea id="txtRunDataInstruction" class="InputString form-control" placeholder="Instruction" rows="4"></textarea>
+						<br />
+						<input type="text" id="txtRunDataExternalTriggerKey" class="InputString form-control" placeholder="ExternalTriggerKey" />
+						<br />
+						<label><input type="checkbox" id="chkRunDataCreateChildSession" /> Create Child Session</label>
+						<hr />
+						<input type="text" id="txtRunDataLogDirectory" class="InputString form-control" placeholder="LogDirectory" />
+						<br />
+						<input type="text" id="txtRunDataFilePattern" class="InputString form-control" placeholder="FilePattern" />
+						<br />
+						<input type="number" id="txtRunDataOlderThanHours" class="InputInteger form-control" placeholder="OlderThanHours" />
+						<br />
+						<input type="number" id="txtRunDataMaxFiles" class="InputInteger form-control" placeholder="MaxFiles / cap" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Running
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="checkbox" id="chkIsRunning" kcs:FieldName="IsRunning"  />
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Run Started
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="datetime" id="txtRunStarted" kcs:FieldName="RunStarted" class="InputDateTime form-control" maxlength="20" />
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Run Ended
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="datetime" id="txtRunEnded" kcs:FieldName="RunEnded" class="InputDateTime form-control" maxlength="20" />
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Run Every
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="number" id="txtRunEvery" kcs:FieldName="RunEvery" class="InputDecimal form-control" maxlength="18" /> 
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Enabled
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="checkbox" id="chkIsEnabled" kcs:FieldName="IsEnabled" checked=checked />
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Maximum Run Time
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="number" id="txtMaximumRunTime"  kcs:FieldName="MaximumRunTime" maxlength="10"  class="InputInteger form-control" maxlength="14"   />
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Timed Out
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="checkbox" id="chkIsTimedOut" kcs:FieldName="IsTimedOut"  />
+						
+					</div>
+				</div>
+				
+			
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						Run Every Type
+					</label>
+					<div class="col-sm-6">
+						
+							<input type="text" id="txtRunEveryType" kcs:FieldName="RunEveryType" class="InputString form-control" maxlength="255" />
+						
+					</div>
+				</div>
+				
+			
+				
+				
+									
+			</div>
+		<%})
+	})			
+		
+}%>
