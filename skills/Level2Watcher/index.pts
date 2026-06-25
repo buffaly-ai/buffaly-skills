@@ -1,0 +1,195 @@
+import Buffaly.Agent.Host Buffaly.Agent.Host.BuffalyArtifacts BuffalyArtifacts;
+import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.SessionTools SessionTools;
+import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.Level2WatcherTools Level2WatcherTools;
+import BasicUtilities BasicUtilities.JsonUtil JsonUtil;
+
+prototype Level2WatcherSkillAction : OpsAction
+{
+	Description = @"Base action type for Level2 watcher supervisory tools.";
+}
+
+[SemanticEntity("level2 watcher skill")]
+prototype Level2WatcherSkill : SkillEntity, CoreEntity, Level2ObserverEntityRoot
+{
+	Description = "Level2 watcher supervisory actions for callback digestion and watcher-specific behavior.";
+	ActionRoot = Level2WatcherSkillAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to dispatch one supervisory callback event")]
+[SemanticProgram.InfinitivePhrase("to handle one session event callback payload")]
+prototype ToDispatchSupervisoryEvent : Level2WatcherSkillAction, Level2ObserverActionRoot
+{
+	Description = @"callbackJson - canonical SessionEventCallback JSON payload. Returns compact callback summary text for supervisory handling.";
+
+	function Execute(string callbackJson) : string
+	{
+		if (StringUtil.IsEmpty(callbackJson) || StringUtil.IsEmpty(callbackJson.Trim()))
+		{
+			return "Error: callbackJson is required.";
+		}
+		return Level2WatcherTools.RenderLevel2WatcherCallbackDigestTool(callbackJson);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get the observed session key for this level2 watcher")]
+[SemanticProgram.InfinitivePhrase("to get the subscribed source session key for this watcher")]
+[SemanticProgram.InfinitivePhrase("to find the session this level2 watcher is supervising")]
+prototype ToGetObservedSessionKey : Level2WatcherSkillAction, Level2ObserverActionRoot
+{
+	Description = @"Returns the canonical observed session key stored on the current watcher session user state.";
+
+	function Execute() : string
+	{
+		if (UserState == null)
+		{
+			return "Error: user state is not available.";
+		}
+		string observedSessionKey = UserState.GetStringOrNull("ObservedSessionKey");
+		if (StringUtil.IsEmpty(observedSessionKey))
+		{
+			return "Error: observed session key is not available in current session user state.";
+		}
+		return observedSessionKey;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to send a message to the subscribed session for this watcher")]
+[SemanticProgram.InfinitivePhrase("to message the observed source session from this level2 watcher")]
+[SemanticProgram.InfinitivePhrase("to send guidance to the currently supervised level1 session")]
+[SemanticProgram.InfinitivePhrase("to send a message to observed session and return immediately")]
+prototype ToSendMessageToObservedSessionAndReturn : Level2WatcherSkillAction, Level2ObserverActionRoot
+{
+	Description = @"instruction - message text to send to the observed/subscribed source session. Preferred watcher nudge path for normal Level2 guidance when you want to message the supervised/observed session and return immediately. Automatically prepends [label: Level 2] when no supported label is already present. Prefer this over generic cross-session send tools for normal watcher-to-observed guidance.";
+
+	function Execute(string instruction) : string
+	{
+		string observedSessionKey = ToGetObservedSessionKey.Execute();
+		string labeledInstruction = instruction;
+		if (StringUtil.IsEmpty(labeledInstruction) == false && StringUtil.IsEmpty(labeledInstruction.Trim()) == false)
+		{
+			string trimmedInstruction = labeledInstruction.Trim();
+			bool hasLabel = StringUtil.InString(trimmedInstruction, "[label:") == 0;
+			bool hasTimelineLabel = StringUtil.InString(trimmedInstruction, "[timeline-label:") == 0;
+			if (hasLabel == false && hasTimelineLabel == false)
+			{
+				labeledInstruction = "[label: Level 2]\n\n" + trimmedInstruction;
+			}
+			else
+			{
+				labeledInstruction = trimmedInstruction;
+			}
+		}
+		SessionTools.SendToSessionTool(observedSessionKey, labeledInstruction);
+		return "Guidance delivered to observed session. End cycle now.";
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get level1 session plan markdown by source session key")]
+[SemanticProgram.InfinitivePhrase("to read level1 plan markdown for supervisory verification")]
+[SemanticProgram.InfinitivePhrase("to fetch source session plan artifact for level2")]
+prototype ToGetLevel1SessionPlanMarkdownBySourceSessionKey : Level2WatcherSkillAction, Level2ObserverActionRoot
+{
+	Description = @"sourceSessionKey - the supervised Level1 session key. Returns get-session-artifact-text payload for Plan.md from that source session.";
+
+	function Execute(string sourceSessionKey) : string
+	{
+		if (StringUtil.IsEmpty(sourceSessionKey) || StringUtil.IsEmpty(sourceSessionKey.Trim()))
+		{
+			return "Error: sourceSessionKey is required.";
+		}
+		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionArtifactText(sourceSessionKey.Trim(), "Plan.md")).ToString();
+	}
+}
+[SemanticProgram.InfinitivePhrase("to get level1 session scratch markdown by source session key")]
+[SemanticProgram.InfinitivePhrase("to read level1 scratch markdown for supervisory verification")]
+[SemanticProgram.InfinitivePhrase("to fetch source session scratch artifact for level2")]
+prototype ToGetLevel1SessionScratchMarkdownBySourceSessionKey : Level2WatcherSkillAction, Level2ObserverActionRoot
+{
+	Description = @"sourceSessionKey - the supervised Level1 session key. Returns get-session-artifact-text payload for Scratch.md from that source session.";
+
+	function Execute(string sourceSessionKey) : string
+	{
+		if (StringUtil.IsEmpty(sourceSessionKey) || StringUtil.IsEmpty(sourceSessionKey.Trim()))
+		{
+			return "Error: sourceSessionKey is required.";
+		}
+		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionArtifactText(sourceSessionKey.Trim(), "Scratch.md")).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list level1 task artifact file names by source session key")]
+[SemanticProgram.InfinitivePhrase("to list source session task artifacts for level2")]
+[SemanticProgram.InfinitivePhrase("to list observed session task artifacts")]
+prototype ToListLevel1SessionTaskArtifactNamesBySourceSessionKey : Level2WatcherSkillAction, Level2ObserverActionRoot
+{
+	Description = @"sourceSessionKey - the supervised Level1 session key. Returns JSON array of root-level task artifact file names matching task-*.md from that source session.";
+
+	function Execute(string sourceSessionKey) : string
+	{
+		if (StringUtil.IsEmpty(sourceSessionKey) || StringUtil.IsEmpty(sourceSessionKey.Trim()))
+		{
+			return "Error: sourceSessionKey is required.";
+		}
+		if (sourceSessionKey.Contains("/") || sourceSessionKey.Contains("\\"))
+		{
+			return "Error: sourceSessionKey cannot contain path separator characters.";
+		}
+
+		string escapedSourceSessionKey = sourceSessionKey.Trim().Replace("'", "''");
+		string sessionDirectory = ToGetCurrentSessionDirectorySafe();
+		string sessionsRoot = "C:/dev/Buffaly.Sessions/OpsAgent";
+		if (StringUtil.IsEmpty(sessionDirectory) == false)
+		{
+			string parent = Path.GetDirectoryName(sessionDirectory);
+			if (StringUtil.IsEmpty(parent) == false)
+			{
+				sessionsRoot = parent.Replace("\\", "/");
+			}
+		}
+		string escapedSessionsRootPath = sessionsRoot.Replace("'", "''");
+		string psScript =
+			"$root = '" + escapedSessionsRootPath + "'\n" +
+			"$sessionKey = '" + escapedSourceSessionKey + "'\n" +
+			"$sessionPath = Join-Path $root $sessionKey\n" +
+			"if ((Test-Path -LiteralPath $sessionPath) -eq $false) { return '[]' }\n" +
+			"$files = Get-ChildItem -LiteralPath $sessionPath -File -Filter 'task-*.md' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name\n" +
+			"if ($files -eq $null) { return '[]' }\n" +
+			"return ($files | Sort-Object | ConvertTo-Json -Compress)";
+
+		return SystemOperations.RunPowerShell(psScript).Trim();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get level1 task markdown by source session key")]
+[SemanticProgram.InfinitivePhrase("to read source session task artifact markdown for level2")]
+[SemanticProgram.InfinitivePhrase("to fetch source session task artifact for level2")]
+prototype ToGetLevel1SessionTaskMarkdownBySourceSessionKey : Level2WatcherSkillAction, Level2ObserverActionRoot
+{
+	Description = @"sourceSessionKey - the supervised Level1 session key. taskArtifactFileName - root-level task artifact file name (task-*.md). Returns get-session-artifact-text payload for that task artifact from the source session.";
+
+	function Execute(string sourceSessionKey, string taskArtifactFileName) : string
+	{
+		if (StringUtil.IsEmpty(sourceSessionKey) || StringUtil.IsEmpty(sourceSessionKey.Trim()))
+		{
+			return "Error: sourceSessionKey is required.";
+		}
+		if (StringUtil.IsEmpty(taskArtifactFileName) || StringUtil.IsEmpty(taskArtifactFileName.Trim()))
+		{
+			return "Error: taskArtifactFileName is required.";
+		}
+
+		string normalizedTaskFileName = taskArtifactFileName.Trim();
+		if (normalizedTaskFileName.StartsWith("task-") == false || normalizedTaskFileName.EndsWith(".md") == false)
+		{
+			return "Error: taskArtifactFileName must match task-*.md.";
+		}
+		if (normalizedTaskFileName.Contains("/") || normalizedTaskFileName.Contains("\\") || normalizedTaskFileName.Contains(".."))
+		{
+			return "Error: taskArtifactFileName must be a root-level task file name.";
+		}
+
+		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionArtifactText(sourceSessionKey.Trim(), normalizedTaskFileName)).ToString();
+	}
+}
+
+

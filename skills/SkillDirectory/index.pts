@@ -1,0 +1,79 @@
+prototype SkillDirectorySkillAction : OpsAction
+{
+	Description = @"Base action type for official Buffaly Skill Directory tools.";
+}
+
+[SemanticEntity("skill directory skill")]
+prototype SkillDirectorySkill : SkillEntity
+{
+	Description = "Search, inspect, preview, and explicitly install official remote Buffaly skills.";
+	ActionRoot = SkillDirectorySkillAction;
+}
+
+function ToCallSkillDirectoryService(string routePath, string methodName, JsonObject request) : string
+{
+	JsonObject args = new JsonObject();
+	args["request"] = request;
+	return JsonWsHelper.CallInternalJsonWsSecure(routePath, methodName, "WorkerFeature.InternalAuthToken", args);
+}
+
+[SemanticProgram.InfinitivePhrase("to search the Buffaly Skill Directory")]
+[SemanticProgram.InfinitivePhrase("to find installable Buffaly skills")]
+[SemanticProgram.InfinitivePhrase("to list remote Buffaly skills")]
+prototype ToSearchBuffalySkillDirectory : SkillDirectorySkillAction
+{
+	Description = @"searchText - optional text to match against official remote skills. Use an empty string to list all official skills.";
+
+	function Execute(string searchText) : string
+	{
+		JsonObject request = new JsonObject();
+		request["SearchText"] = searchText;
+		return ToCallSkillDirectoryService("/api/buffaly.agent.skillmanagement/skill-directory-service/search-remote-skills", "SearchRemoteSkills", request);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get a Buffaly Skill Directory entry")]
+[SemanticProgram.InfinitivePhrase("to inspect a remote Buffaly skill")]
+prototype ToGetBuffalySkillDirectoryEntry : SkillDirectorySkillAction
+{
+	Description = @"skillName - exact SkillName from the official Skill Directory entry.";
+
+	function Execute(string skillName) : string
+	{
+		JsonObject request = new JsonObject();
+		request["SkillName"] = skillName;
+		return ToCallSkillDirectoryService("/api/buffaly.agent.skillmanagement/skill-directory-service/get-remote-skill", "GetRemoteSkill", request);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to preview installing a Buffaly skill")]
+[SemanticProgram.InfinitivePhrase("to check installing a remote Buffaly skill")]
+[SemanticProgram.InfinitivePhrase("to dry run Buffaly skill install")]
+prototype ToPreviewBuffalySkillDirectoryInstall : SkillDirectorySkillAction
+{
+	Description = @"skillName - exact remote SkillName. replaceExisting - true only when intentionally replacing an existing local skill folder. This does not install or run anything.";
+
+	function Execute(string skillName, bool replaceExisting) : string
+	{
+		JsonObject request = new JsonObject();
+		request["SkillName"] = skillName;
+		request["ReplaceExisting"] = replaceExisting;
+		return ToCallSkillDirectoryService("/api/buffaly.agent.skillmanagement/skill-directory-service/preview-remote-skill-install", "PreviewRemoteSkillInstall", request);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to install a Buffaly skill from the Skill Directory")]
+[SemanticProgram.InfinitivePhrase("to install a remote Buffaly skill")]
+prototype ToInstallBuffalySkillFromDirectory : SkillDirectorySkillAction
+{
+	Description = @"skillName - exact remote SkillName. replaceExisting - true only when intentionally replacing an existing local skill folder. enableAfterInstall - true to add the installed skill to Skills/index.pts after download. Installation writes supported package files but does not execute the skill.";
+
+	function Execute(string skillName, bool replaceExisting, bool enableAfterInstall) : string
+	{
+		JsonObject request = new JsonObject();
+		request["SkillName"] = skillName;
+		request["ReplaceExisting"] = replaceExisting;
+		request["EnableAfterInstall"] = enableAfterInstall;
+		return ToCallSkillDirectoryService("/api/buffaly.agent.skillmanagement/skill-directory-service/install-remote-skill", "InstallRemoteSkill", request);
+	}
+}

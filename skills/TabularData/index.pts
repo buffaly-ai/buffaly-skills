@@ -1,0 +1,168 @@
+reference Buffaly.Agent.Tools.TabularData Buffaly.Agent.Tools.TabularData;
+
+import System.Data System.Data.DataTable DataTable;
+import Buffaly.Agent.Tools.TabularData Buffaly.Agent.Tools.TabularData.TabularDataFunctions TabularDataFunctions;
+import Buffaly.Agent.Tools.TabularData Buffaly.Agent.Tools.TabularData.CsvDataSourceFunctions CsvDataSourceFunctions;
+
+prototype TabularDataSkillAction : OpsAction
+{
+	Description = @"Base action type for native DataTable tabular data tools.";
+}
+
+prototype CsvDataSourceSkillAction : OpsAction
+{
+	Description = @"Base action type for CSV source tools that produce native DataTable objects.";
+}
+
+[SemanticEntity("csv data source skill")]
+prototype CsvDataSourceSkill : SkillEntity
+{
+	Description = "CSV source actions that load CSV data into native DataTable objects for downstream TabularDataSkill operations.";
+	ActionRoot = CsvDataSourceSkillAction;
+}
+
+[SemanticEntity("tabular data skill")]
+prototype TabularDataSkill : SkillEntity
+{
+	Description = "Reusable native DataTable transformation, paging, and ProtoScriptPreviewGrid adapter actions.";
+	ActionRoot = TabularDataSkillAction;
+}
+
+prototype TabularDataGrid : SemanticEntityBase
+{
+	Description = @"Renderer-facing native DataTable preview methods for ProtoScriptPreviewGrid validation.";
+
+	function Ping() : string
+	{
+		return @"{""Columns"":[{""Key"":""status"",""Label"":""Status""}],""Rows"":[{""status"":""ok""}]}";
+	}
+
+	function PingDll() : string
+	{
+		return TabularDataFunctions.PingGridJson();
+	}
+
+	function PreviewSample(string requestJson) : string
+	{
+		return TabularDataFunctions.PreviewSampleGridJson(requestJson);
+	}
+
+	function PreviewNativeDataTable(DataTable table, int offset, int limit) : string
+	{
+		return TabularDataFunctions.ToPreviewGridPageJson(table, offset, limit);
+	}
+}
+prototype CsvDataSourceGrid : SemanticEntityBase
+{
+	Description = @"Renderer-facing CSV source preview methods that compose CSV loading with TabularData preview JSON.";
+
+	function PreviewCsvFile(string path, int offset, int limit) : string
+	{
+		DataTable table = CsvDataSourceFunctions.LoadCsvFile(path);
+		return TabularDataFunctions.ToPreviewGridPageJson(table, offset, limit);
+	}
+
+	function PreviewCsvUrl(string url, int offset, int limit) : string
+	{
+		DataTable table = CsvDataSourceFunctions.LoadCsvUrl(url);
+		return TabularDataFunctions.ToPreviewGridPageJson(table, offset, limit);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to load a csv file as a native datatable")]
+prototype ToLoadCsvFileAsDataTable : CsvDataSourceSkillAction
+{
+	Description = @"path - disk path to a CSV file. Returns a native DataTable reference for typed chaining.";
+
+	function Execute(string path) : Prototype
+	{
+		return CsvDataSourceFunctions.LoadCsvFile(path);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to download a csv url as a native datatable")]
+prototype ToLoadCsvUrlAsDataTable : CsvDataSourceSkillAction
+{
+	Description = @"url - CSV URL to download directly into memory. Returns a native DataTable reference for typed chaining.";
+
+	function Execute(string url) : Prototype
+	{
+		return CsvDataSourceFunctions.LoadCsvUrl(url);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to describe a native datatable")]
+prototype ToDescribeDataTable : TabularDataSkillAction
+{
+	Description = @"table - native DataTable reference. Returns compact schema/count JSON without full rows.";
+
+	function Execute(DataTable table) : string
+	{
+		return TabularDataFunctions.Describe(table);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get native datatable schema json")]
+prototype ToGetDataTableSchemaJson : TabularDataSkillAction
+{
+	Description = @"table - native DataTable reference. Returns schema JSON without full rows.";
+
+	function Execute(DataTable table) : string
+	{
+		return TabularDataFunctions.GetSchemaJson(table);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to select native datatable columns")]
+prototype ToSelectDataTableColumns : TabularDataSkillAction
+{
+	Description = @"table - native DataTable reference. columnsJson - JSON string array of exact column names, for example [""source"",""title"",""meetingDate""]. Returns a native DataTable reference.";
+
+	function Execute(DataTable table, string columnsJson) : Prototype
+	{
+		return TabularDataFunctions.SelectColumns(table, columnsJson);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to filter native datatable rows")]
+prototype ToFilterDataTableRows : TabularDataSkillAction
+{
+	Description = @"table - native DataTable reference. filtersJson - JSON array of filter specs using PascalCase properties, for example [{""Column"":""title"",""Operator"":""Contains"",""Value"":""FairPath""}]. Operators: Equals, NotEquals, Contains, StartsWith, EndsWith, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, IsNull, IsNotNull. Multiple filters are ANDed. Returns a native DataTable reference.";
+
+	function Execute(DataTable table, string filtersJson) : Prototype
+	{
+		return TabularDataFunctions.FilterRows(table, filtersJson);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to sort native datatable rows")]
+prototype ToSortDataTableRows : TabularDataSkillAction
+{
+	Description = @"table - native DataTable reference. sortJson - JSON array of sort specs using PascalCase properties, for example [{""Column"":""meetingDate"",""Direction"":""Descending""},{""Column"":""title"",""Direction"":""Ascending""}]. Direction must be Ascending or Descending. Multiple sort items are applied in order. Returns a native DataTable reference.";
+
+	function Execute(DataTable table, string sortJson) : Prototype
+	{
+		return TabularDataFunctions.SortRows(table, sortJson);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to preview a native datatable page")]
+prototype ToPreviewDataTablePage : TabularDataSkillAction
+{
+	Description = @"table - native DataTable reference. offset - zero-based row offset. limit - page size. Returns ProtoScriptPreviewGrid JSON text for that page.";
+
+	function Execute(DataTable table, int offset, int limit) : string
+	{
+		return TabularDataFunctions.ToPreviewGridPageJson(table, offset, limit);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to preview a native datatable")]
+prototype ToPreviewDataTable : TabularDataSkillAction
+{
+	Description = @"table - native DataTable reference. maxRows - maximum preview rows. Returns ProtoScriptPreviewGrid JSON text.";
+
+	function Execute(DataTable table, int maxRows) : string
+	{
+		return TabularDataFunctions.ToPreviewGridJson(table, maxRows);
+	}
+}

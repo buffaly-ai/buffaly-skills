@@ -1,0 +1,40 @@
+<div class="secret-collector-shell">
+	<section class="secret-card" aria-labelledby="secretCollectorTitle">
+		<div class="secret-card-header">
+			<div>
+				<p class="secret-kicker">Secure UserSecrets storage</p>
+				<h1 id="secretCollectorTitle" data-site-title>Enter a secure secret</h1>
+				<p class="secret-copy">Buffaly requires a sensitive value and has paused working. This information will not be provided to the model.</p>
+			</div>
+			<span class="secret-status-pill" data-status-pill>Ready</span>
+		</div>
+		<div class="secret-explainer" role="note">
+			<strong>What happens here?</strong>
+			<ul>
+				<li>The secret value is sent directly to Buffaly UserSecrets secure storage.</li>
+				<li>The AI model and timeline receive only non-secret confirmation such as the key name.</li>
+				<li>If the key already exists, saving updates the stored value.</li>
+				<li>Click <strong>Done</strong> or <strong>Cancel</strong> to unblock Buffaly and close this popup.</li>
+			</ul>
+		</div>
+		<ol class="secret-steps" aria-label="Secret entry steps">
+			<li><span>1</span> Confirm the key</li>
+			<li><span>2</span> Paste the private value</li>
+			<li><span>3</span> Save, then click Done</li>
+		</ol>
+		<form data-secret-form class="secret-form" autocomplete="off">
+			<label class="secret-field"><span data-key-label>Secret key</span><input name="Key" type="text" required placeholder="Example: OpenAI.ApiKey" autocomplete="off" /></label>
+			<p class="secret-field-help" data-key-help>The key is a non-secret name Buffaly can reference later. If this key already exists, saving will update its value.</p>
+			<label class="secret-field"><span>Label or note <em>(optional, non-secret)</em></span><input name="Label" type="text" placeholder="Example: OpenAI API key for development" autocomplete="off" /></label>
+			<div class="secret-field"><label for="secretCollectorValue">Private value</label><span class="secret-password-row"><input id="secretCollectorValue" name="Value" type="password" required placeholder="Paste the secret value here" autocomplete="new-password" /><button type="button" class="secret-visibility-button" data-toggle-visibility aria-label="Show private value" title="Show private value">👁</button></span></div>
+			<p class="secret-field-help">Do not paste this value into chat. It will be cleared from this form after a successful save.</p>
+			<div class="secret-actions">
+				<button type="submit" class="secret-button primary">Save / update secret</button>
+				<button type="button" class="secret-button" data-clear>Clear private value</button>
+				<button type="button" class="secret-button" data-cancel>Cancel</button>
+				<button type="button" class="secret-button ghost" data-exit>Done</button>
+			</div>
+		</form>
+		<div class="secret-result" data-result hidden></div>
+	</section>
+</div>

@@ -1,0 +1,86 @@
+include "LlmBase.pts";
+include "ProviderModelOntology.pts";
+include "ProviderModelActions.pts";
+include "PromptActions.pts";
+include "RuntimeProfiles.pts";
+
+prototype LlmRuntimeProfilesIncludeMarker : SemanticEntityBase
+{
+	EntityName = "llm runtime profiles include marker";
+}
+
+
+
+
+[SemanticProgram.InfinitivePhrase("to download chatgpt shared conversation messages")]
+[SemanticProgram.InfinitivePhrase("to extract messages from a chatgpt shared url")]
+[SemanticProgram.InfinitivePhrase("to parse a chatgpt share link into json messages")]
+prototype ToDownloadChatGptSharedConversationMessages : LlmSkillAction
+{
+	Description = @"Downloads a ChatGPT shared conversation page and extracts message blocks to JSON.
+shareUrl - required absolute ChatGPT share URL (https://chatgpt.com/s/...).
+outputDirectory - optional directory for output files; defaults to current project directory when empty.
+outputFileName - optional JSON output file name; defaults to chatgpt_shared_messages.json when empty.
+Returns JSON with output paths, chunk count, message count, and extracted messages.
+Notes: extraction is best-effort and depends on payload shape exposed by the share page.";
+
+	function Execute(string shareUrl, string outputDirectory, string outputFileName) : string
+	{
+		if (StringUtil.IsEmpty(shareUrl))
+		{
+			return "Error: shareUrl is required.";
+		}
+
+		string root = outputDirectory;
+		if (StringUtil.IsEmpty(root))
+		{
+			root = _opsAgent.GetCurrentProjectDirectory();
+		}
+		if (StringUtil.IsEmpty(root))
+		{
+			return "Error: outputDirectory is required when current project directory is unavailable.";
+		}
+
+		string fileName = outputFileName;
+		if (StringUtil.IsEmpty(fileName))
+		{
+			fileName = "chatgpt_shared_messages.json";
+		}
+
+		string rootEscaped = root.Replace("'", "''");
+		string shareUrlEscaped = shareUrl.Replace("'", "''");
+		string fileNameEscaped = fileName.Replace("'", "''");
+
+		string script =
+			"$ErrorActionPreference='Stop'\n" +
+			"$url='" + shareUrlEscaped + "'\n" +
+			"$root='" + rootEscaped + "'\n" +
+			"$jsonName='" + fileNameEscaped + "'\n" +
+			"New-Item -ItemType Directory -Force -Path $root | Out-Null\n" +
+			"$htmlPath=Join-Path $root 'chatgpt_shared_raw.html'\n" +
+			"$decodedPath=Join-Path $root 'chatgpt_shared_stream_decoded.txt'\n" +
+			"$jsonPath=Join-Path $root $jsonName\n" +
+			"$r=Invoke-WebRequest -Uri $url -Headers @{ 'User-Agent'='Mozilla/5.0' }\n" +
+			"$c=$r.Content\n" +
+			"$c | Set-Content -Path $htmlPath -Encoding UTF8\n" +
+			"$q=[char]34\n" +
+			"$needle='window.__reactRouterContext.streamController.enqueue(' + $q\n" +
+			"$endNeedle=$q + ');'\n" +
+			"$parts=$c.Split([string[]]@($needle), [System.StringSplitOptions]::None)\n" +
+			"$chunks=@()\n" +
+			"for($i=1;$i -lt $parts.Count;$i++){ $end=$parts[$i].IndexOf($endNeedle); if($end -gt 0){ $enc=$parts[$i].Substring(0,$end); $chunks += [regex]::Unescape($enc) } }\n" +
+			"$all=$chunks -join [Environment]::NewLine\n" +
+			"$all | Set-Content -Path $decodedPath -Encoding UTF8\n" +
+			"$msgs=@()\n" +
+			"$roleSplit=$q + 'role' + $q + ',' + $q\n" +
+			"$segments=$all.Split([string[]]@($roleSplit), [System.StringSplitOptions]::None)\n" +
+			"for($j=1;$j -lt $segments.Count;$j++){ $seg=$segments[$j]; $roleEnd=$seg.IndexOf($q); if($roleEnd -lt 0){ continue }; $role=$seg.Substring(0,$roleEnd); $ctMarker=$q + 'create_time' + $q + ','; $ctPos=$seg.IndexOf($ctMarker); $ctime=''; if($ctPos -ge 0){ $ctStart=$ctPos+$ctMarker.Length; $ctEnd=$seg.IndexOf(',', $ctStart); if($ctEnd -gt $ctStart){ $ctime=$seg.Substring($ctStart, $ctEnd-$ctStart) } }; $pMarker=$q + 'parts' + $q + ',['; $pPos=$seg.IndexOf($pMarker); $text=''; if($pPos -ge 0){ $tStart=$seg.IndexOf($q, $pPos + $pMarker.Length); if($tStart -ge 0){ $k=$tStart+1; $sb=New-Object System.Text.StringBuilder; $esc=$false; while($k -lt $seg.Length){ $ch=$seg[$k]; if($esc){ [void]$sb.Append($ch); $esc=$false; $k++; continue }; if([int][char]$ch -eq 92){ $esc=$true; $k++; continue }; if($ch -eq $q){ break }; [void]$sb.Append($ch); $k++ }; $text=[regex]::Unescape($sb.ToString()) } }; if($role -eq 'assistant' -or $role -eq 'user' -or $role -eq 'system' -or $role -eq 'tool'){ $msgs += [pscustomobject]@{ index=$msgs.Count; role=$role; create_time=$ctime; text=$text } } }\n" +
+			"$result=[pscustomobject]@{ shareUrl=$url; htmlPath=$htmlPath; decodedPath=$decodedPath; jsonPath=$jsonPath; enqueueChunks=$chunks.Count; messageCount=$msgs.Count; messages=$msgs }\n" +
+			"$result | ConvertTo-Json -Depth 8 | Set-Content -Path $jsonPath -Encoding UTF8\n" +
+			"$result | ConvertTo-Json -Depth 8";
+
+		return SystemOperations.RunPowerShell(script, 120);
+	}
+}
+
+

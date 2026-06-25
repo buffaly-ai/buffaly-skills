@@ -1,0 +1,139 @@
+import Buffaly.Agent.Wiki Buffaly.Agent.Wiki.WikiModule WikiModule;
+import Buffaly.Agent.Wiki Buffaly.Agent.Wiki.WikiService WikiServiceApi;
+import Buffaly.Agent.Wiki Buffaly.Agent.Wiki.ListWikiArticlesRequestContract ListWikiArticlesRequestContract;
+import Buffaly.Agent.Wiki Buffaly.Agent.Wiki.ListWikiArticlesResponseContract ListWikiArticlesResponseContract;
+import Buffaly.Agent.Wiki Buffaly.Agent.Wiki.GetWikiArticleRequestContract GetWikiArticleRequestContract;
+import Buffaly.Agent.Wiki Buffaly.Agent.Wiki.GetWikiArticleResponseContract GetWikiArticleResponseContract;
+import Buffaly.Agent.Wiki Buffaly.Agent.Wiki.SearchBuffalyDocsRequestContract SearchBuffalyDocsRequestContract;
+import Buffaly.Agent.Wiki Buffaly.Agent.Wiki.SearchBuffalyDocsResponseContract SearchBuffalyDocsResponseContract;
+import Buffaly.Agent.Wiki Buffaly.Agent.Wiki.GetBuffalyDocRequestContract GetBuffalyDocRequestContract;
+import Buffaly.Agent.Wiki Buffaly.Agent.Wiki.GetBuffalyDocResponseContract GetBuffalyDocResponseContract;
+import Buffaly.Agent.Wiki Buffaly.Agent.Wiki.SearchWikiRequestContract SearchWikiRequestContract;
+import Buffaly.Agent.Wiki Buffaly.Agent.Wiki.SearchWikiResponseContract SearchWikiResponseContract;
+
+prototype WikiSkillAction : OpsAction
+{
+	Description = @"Base action type for direct wiki service tools.";
+}
+
+prototype WikiService : Service
+{
+	ServiceName = "WikiService";
+	Scope = "singleton";
+	
+	function Initialize() : string
+	{
+		WikiModule.Configure(RuntimeInstallRootFeature.GetRequiredAgentWebWikiRootPath());
+		return "Wiki initialized.";
+	}
+
+	[SemanticProgram.InfinitivePhrase("to get wiki root path")]
+	[SemanticProgram.InfinitivePhrase("to resolve wiki root path")]
+	prototype ToGetWikiRootPath : WikiSkillAction
+	{
+		Description = @"Return the configured wiki root path.";
+
+		function Execute() : string
+		{
+			return WikiServiceApi.ListArticles(new ListWikiArticlesRequestContract()).WikiRootPath;
+		}
+	}
+
+	[SemanticProgram.InfinitivePhrase("to get wiki article path")]
+	[SemanticProgram.InfinitivePhrase("to resolve wiki article path")]
+	prototype ToGetWikiArticlePath : WikiSkillAction
+	{
+		Description = @"articleSlugOrPath - wiki article slug or relative path to resolve.";
+
+		function Execute(string articleSlugOrPath) : string
+		{
+			return WikiServiceApi.GetArticle(new GetWikiArticleRequestContract
+			{
+				Slug = articleSlugOrPath
+			}).FullPath;
+		}
+	}
+
+	[SemanticProgram.InfinitivePhrase("to list wiki articles")]
+	[SemanticProgram.InfinitivePhrase("to list wiki article paths")]
+	prototype ToListWikiArticlePaths : WikiSkillAction
+	{
+		Description = @"Return the authoritative wiki article listing contract.";
+
+		function Execute() : ListWikiArticlesResponseContract
+		{
+			return WikiServiceApi.ListArticles(new ListWikiArticlesRequestContract());
+		}
+	}
+
+	[SemanticProgram.InfinitivePhrase("to read wiki article")]
+	[SemanticProgram.InfinitivePhrase("to get wiki article content")]
+	prototype ToReadWikiArticle : WikiSkillAction
+	{
+		Description = @"articleSlugOrPath - wiki article slug or relative path to read.";
+
+		function Execute(string articleSlugOrPath) : GetWikiArticleResponseContract
+		{
+			return WikiServiceApi.GetArticle(new GetWikiArticleRequestContract
+			{
+				Slug = articleSlugOrPath
+			});
+		}
+	}
+
+	[SemanticProgram.InfinitivePhrase("to search wiki")]
+	[SemanticProgram.InfinitivePhrase("to find wiki articles")]
+	prototype ToSearchWiki : WikiSkillAction
+	{
+		Description = @"searchText - wiki query text. maxResults - maximum number of results to return.";
+
+		function Execute(string searchText, int maxResults) : SearchWikiResponseContract
+		{
+			return WikiServiceApi.Search(new SearchWikiRequestContract
+			{
+				SearchText = searchText,
+				MaxResults = maxResults
+			});
+		}
+	}
+
+	[SemanticProgram.InfinitivePhrase("to search Buffaly docs")]
+	[SemanticProgram.InfinitivePhrase("to find official Buffaly documentation")]
+	prototype ToSearchBuffalyDocs : WikiSkillAction
+	{
+		Description = @"searchText - Buffaly docs query text. maxResults - maximum number of results to return.";
+
+		function Execute(string searchText, int maxResults) : SearchBuffalyDocsResponseContract
+		{
+			return WikiServiceApi.SearchBuffalyDocs(new SearchBuffalyDocsRequestContract
+			{
+				SearchText = searchText,
+				MaxResults = maxResults
+			});
+		}
+	}
+
+	[SemanticProgram.InfinitivePhrase("to read Buffaly doc")]
+	[SemanticProgram.InfinitivePhrase("to fetch official Buffaly documentation")]
+	prototype ToReadBuffalyDoc : WikiSkillAction
+	{
+		Description = @"slugOrUrl - official Buffaly docs slug or https://buffa.ly/docs URL to read.";
+
+		function Execute(string slugOrUrl) : GetBuffalyDocResponseContract
+		{
+			return WikiServiceApi.GetBuffalyDoc(new GetBuffalyDocRequestContract
+			{
+				SlugOrUrl = slugOrUrl
+			});
+		}
+	}
+}
+
+[SemanticEntity("wiki skill")]
+[SemanticEntity("buffaly wiki skill")]
+prototype WikiSkill : SkillEntity
+{
+	EntityName = "wiki skill, buffaly wiki skill";
+	Description = "Wiki article generation, refresh, and cross-linking workflows for the Buffaly markdown wiki.";
+	ActionRoot = WikiSkillAction;
+}

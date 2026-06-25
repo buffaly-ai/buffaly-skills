@@ -1,0 +1,255 @@
+import Buffaly.Agent.Tools.Process Buffaly.Agent.Tools.Process.GitHubSkillFacade GitHubSkillFacade;
+
+prototype GitHubSkillAction : OpsAction
+{
+	Description = @"Base action type for GitHub and git repository handoff tools.";
+}
+
+[SemanticEntity("github skill")]
+prototype GitHubSkill : SkillEntity
+{
+	Description = "Thin ProtoScript handoff for GitHub organization, repository, issue, commit comment, and local git operations.";
+	ActionRoot = GitHubSkillAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to get github auth status")]
+prototype ToGetGitHubAuthStatus : GitHubSkillAction
+{
+	Description = @"Returns the current GitHub authentication status.";
+
+	function Execute() : string
+	{
+		return GitHubSkillFacade.GetGitHubAuthStatus();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list github repositories for an organization")]
+prototype ToListGitHubReposForOrg : GitHubSkillAction
+{
+	Description = @"orgName - GitHub organization name. Returns repositories available for the organization.";
+
+	function Execute(string orgName) : string
+	{
+		return GitHubSkillFacade.ListGitHubReposForOrg(orgName);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to check github organization access")]
+prototype ToCheckGitHubOrgAccess : GitHubSkillAction
+{
+	Description = @"orgName - GitHub organization name. Returns access status for the organization.";
+
+	function Execute(string orgName) : string
+	{
+		return GitHubSkillFacade.CheckGitHubOrgAccess(orgName);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create a private github repository in an organization")]
+prototype ToCreatePrivateGitHubRepoInOrg : GitHubSkillAction
+{
+	Description = @"orgName - GitHub organization name. repoName - repository name to create as private.";
+
+	function Execute(string orgName, string repoName) : string
+	{
+		return GitHubSkillFacade.CreatePrivateGitHubRepoInOrg(orgName, repoName);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get github commit comments")]
+prototype ToGetGitHubCommitComments : GitHubSkillAction
+{
+	Description = @"orgName/repoName - repository owner and name. commitSha - commit SHA to read comments for.";
+
+	function Execute(string orgName, string repoName, string commitSha) : string
+	{
+		return GitHubSkillFacade.GetGitHubCommitComments(orgName, repoName, commitSha);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to add github commit comment")]
+prototype ToAddGitHubCommitComment : GitHubSkillAction
+{
+	Description = @"orgName/repoName - repository owner and name. commitSha - commit SHA. commentBody - comment text. agentSessionName - originating agent session name.";
+
+	function Execute(string orgName, string repoName, string commitSha, string commentBody, string agentSessionName) : string
+	{
+		return GitHubSkillFacade.AddGitHubCommitComment(orgName, repoName, commitSha, commentBody, agentSessionName);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create github issue")]
+prototype ToCreateGitHubIssue : GitHubSkillAction
+{
+	Description = @"orgName/repoName - repository owner and name. title/body - issue content. labelsCsv/assigneesCsv - comma-separated labels and assignees. agentSessionName - originating agent session name.";
+
+	function Execute(string orgName, string repoName, string title, string body, string labelsCsv, string assigneesCsv, string agentSessionName) : string
+	{
+		return GitHubSkillFacade.CreateGitHubIssue(orgName, repoName, title, body, labelsCsv, assigneesCsv, agentSessionName);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list github issues")]
+prototype ToListGitHubIssues : GitHubSkillAction
+{
+	Description = @"orgName/repoName - repository owner and name. state, labelsCsv, and assignee filter returned issues.";
+
+	function Execute(string orgName, string repoName, string state, string labelsCsv, string assignee) : string
+	{
+		return GitHubSkillFacade.ListGitHubIssues(orgName, repoName, state, labelsCsv, assignee);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get github issue")]
+prototype ToGetGitHubIssue : GitHubSkillAction
+{
+	Description = @"orgName/repoName - repository owner and name. issueNumber - issue number to read.";
+
+	function Execute(string orgName, string repoName, int issueNumber) : string
+	{
+		return GitHubSkillFacade.GetGitHubIssue(orgName, repoName, issueNumber);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to update github issue")]
+prototype ToUpdateGitHubIssue : GitHubSkillAction
+{
+	Description = @"orgName/repoName - repository owner and name. issueNumber - issue number. title/body update content. addLabelsCsv/addAssigneesCsv add labels and assignees.";
+
+	function Execute(string orgName, string repoName, int issueNumber, string title, string body, string addLabelsCsv, string addAssigneesCsv) : string
+	{
+		return GitHubSkillFacade.UpdateGitHubIssue(orgName, repoName, issueNumber, title, body, addLabelsCsv, addAssigneesCsv);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to add github issue comment")]
+prototype ToAddGitHubIssueComment : GitHubSkillAction
+{
+	Description = @"orgName/repoName - repository owner and name. issueNumber - issue number. commentBody - comment text. agentSessionName - originating agent session name.";
+
+	function Execute(string orgName, string repoName, int issueNumber, string commentBody, string agentSessionName) : string
+	{
+		return GitHubSkillFacade.AddGitHubIssueComment(orgName, repoName, issueNumber, commentBody, agentSessionName);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to close github issue")]
+prototype ToCloseGitHubIssue : GitHubSkillAction
+{
+	Description = @"orgName/repoName - repository owner and name. issueNumber - issue number to close.";
+
+	function Execute(string orgName, string repoName, int issueNumber) : string
+	{
+		return GitHubSkillFacade.CloseGitHubIssue(orgName, repoName, issueNumber);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get git repository root")]
+prototype ToGetGitRepoRoot : GitHubSkillAction
+{
+	Description = @"startPath - path inside a git repository. Returns the repository root.";
+
+	function Execute(string startPath) : string
+	{
+		return GitHubSkillFacade.GetGitRepoRoot(startPath);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get git current branch")]
+prototype ToGetGitCurrentBranch : GitHubSkillAction
+{
+	Description = @"startPath - path inside a git repository. Returns the current branch.";
+
+	function Execute(string startPath) : string
+	{
+		return GitHubSkillFacade.GetGitCurrentBranch(startPath);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get git status porcelain")]
+prototype ToGetGitStatusPorcelain : GitHubSkillAction
+{
+	Description = @"startPath - path inside a git repository. pathspec - scoped pathspec for status.";
+
+	function Execute(string startPath, string pathspec) : string
+	{
+		return GitHubSkillFacade.GetGitStatusPorcelain(startPath, pathspec);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to git add a pathspec")]
+prototype ToGitAddPathspec : GitHubSkillAction
+{
+	Description = @"startPath - path inside a git repository. pathspec - scoped pathspec to stage.";
+
+	function Execute(string startPath, string pathspec) : string
+	{
+		return GitHubSkillFacade.GitAddPathspec(startPath, pathspec);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to git commit staged changes")]
+prototype ToGitCommit : GitHubSkillAction
+{
+	Description = @"startPath - path inside a git repository. message - commit message.";
+
+	function Execute(string startPath, string message) : string
+	{
+		return GitHubSkillFacade.GitCommit(startPath, message);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to git push branch")]
+prototype ToGitPushBranch : GitHubSkillAction
+{
+	Description = @"startPath - path inside a git repository. remote - remote name. branch - branch to push.";
+
+	function Execute(string startPath, string remote, string branch) : string
+	{
+		return GitHubSkillFacade.GitPushBranch(startPath, remote, branch);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get git head sha")]
+prototype ToGetGitHeadSha : GitHubSkillAction
+{
+	Description = @"startPath - path inside a git repository. Returns the current HEAD SHA.";
+
+	function Execute(string startPath) : string
+	{
+		return GitHubSkillFacade.GetGitHeadSha(startPath);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to commit and push scoped changes")]
+prototype ToCommitAndPushScopedChanges : GitHubSkillAction
+{
+	Description = @"startPath - path inside a git repository. pathspec - scoped pathspec. commitMessage - commit message. remote - remote name.";
+
+	function Execute(string startPath, string pathspec, string commitMessage, string remote) : string
+	{
+		return GitHubSkillFacade.CommitAndPushScopedChanges(startPath, pathspec, commitMessage, remote);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to run git tag release in solution")]
+prototype ToRunGitTagReleaseInSolution : GitHubSkillAction
+{
+	Description = @"solutionDirectory - solution directory. tagName - release tag to create and push.";
+
+	function Execute(string solutionDirectory, string tagName) : string
+	{
+		return GitHubSkillFacade.RunGitTagReleaseInSolution(solutionDirectory, tagName);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to initialize and push solution repository")]
+prototype ToInitializeAndPushSolutionRepository : GitHubSkillAction
+{
+	Description = @"solutionDirectory - local solution directory. solutionName/repositoryName/organizationName identify the solution and GitHub repository. cloneUrl - repository clone URL. branchName - branch to initialize and push.";
+
+	function Execute(string solutionDirectory, string solutionName, string repositoryName, string organizationName, string cloneUrl, string branchName) : string
+	{
+		return GitHubSkillFacade.InitializeAndPushSolutionRepository(solutionDirectory, solutionName, repositoryName, organizationName, cloneUrl, branchName);
+	}
+}

@@ -1,0 +1,102 @@
+prototype BuffalyCapabilityInspectionSkillAction : OpsAction
+{
+	Description = @"Base action type for read-only Buffaly capability inventory and self-inspection tools.";
+}
+
+[SemanticEntity("buffaly capability inspection skill, installed capabilities skill")]
+prototype BuffalyCapabilityInspectionSkill : SkillEntity, CoreEntity
+{
+	Description = "Read-only self-inspection actions for listing this Buffaly install's tools, prompt actions, skills, web modules, and providers.";
+	ActionRoot = BuffalyCapabilityInspectionSkillAction;
+}
+
+function ToCallCapabilityInspectionService(string methodName, JsonObject args) : string
+{
+	return JsonWsHelper.CallAgentWebJsonWsSecure("/api/buffaly.agent.web/capability-inspection-service/" + methodName, methodName, "WorkerFeature.InternalAuthToken", args);
+}
+
+[SemanticProgram.InfinitivePhrase("to summarize installed Buffaly capabilities")]
+[SemanticProgram.InfinitivePhrase("to show this install's capability inventory")]
+[SemanticProgram.InfinitivePhrase("to count installed skills tools prompt actions providers and web modules")]
+prototype ToGetInstalledCapabilitiesOverview : BuffalyCapabilityInspectionSkillAction
+{
+	Description = @"Returns secret-safe JSON summarizing installed Skills, Tools, Prompt Actions, Providers, and Web Modules.";
+
+	function Execute() : string
+	{
+		JsonObject args = new JsonObject();
+		return ToCallCapabilityInspectionService("get-installed-capabilities-overview", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list installed Buffaly skills")]
+[SemanticProgram.InfinitivePhrase("to show enabled Buffaly skill families")]
+[SemanticProgram.InfinitivePhrase("to inspect installed capability skills")]
+prototype ToListInstalledCapabilitySkills : BuffalyCapabilityInspectionSkillAction
+{
+	Description = @"includeDisabled - set true to include installed but disabled skills. Returns secret-safe JSON with skill descriptions and tool counts.";
+
+	function Execute(bool includeDisabled = false) : string
+	{
+		JsonObject args = new JsonObject();
+		args["includeDisabled"] = includeDisabled;
+		return ToCallCapabilityInspectionService("list-installed-capability-skills", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list installed Buffaly tools")]
+[SemanticProgram.InfinitivePhrase("to show executable Buffaly actions")]
+[SemanticProgram.InfinitivePhrase("to inspect installed capability tools")]
+prototype ToListInstalledCapabilityTools : BuffalyCapabilityInspectionSkillAction
+{
+	Description = @"skillName - optional exact SkillName filter. maxResults - maximum rows to return, 1 through 500. Returns secret-safe JSON for executable tools.";
+
+	function Execute(string skillName = "", int maxResults = 100) : string
+	{
+		JsonObject args = new JsonObject();
+		args["skillName"] = skillName;
+		args["maxResults"] = maxResults;
+		return ToCallCapabilityInspectionService("list-installed-capability-tools", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list installed Buffaly prompt actions")]
+[SemanticProgram.InfinitivePhrase("to show prompt guided Buffaly workflows")]
+[SemanticProgram.InfinitivePhrase("to inspect installed prompt skills")]
+prototype ToListInstalledCapabilityPromptActions : BuffalyCapabilityInspectionSkillAction
+{
+	Description = @"maxResults - maximum rows to return, 1 through 500. Returns secret-safe JSON for prompt actions and prompt paths.";
+
+	function Execute(int maxResults = 100) : string
+	{
+		return ProtoScriptCapabilityInspection.ListInstalledCapabilityPromptActions(maxResults);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list installed Buffaly providers")]
+[SemanticProgram.InfinitivePhrase("to show configured model providers")]
+[SemanticProgram.InfinitivePhrase("to inspect provider capability status")]
+prototype ToListInstalledCapabilityProviders : BuffalyCapabilityInspectionSkillAction
+{
+	Description = @"Returns secret-safe JSON for provider families, enabled/configured state, model counts, and provider module status. Secret values are never included.";
+
+	function Execute() : string
+	{
+		JsonObject args = new JsonObject();
+		return ToCallCapabilityInspectionService("list-installed-capability-providers", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list installed Buffaly web modules")]
+[SemanticProgram.InfinitivePhrase("to show installed Buffaly modules")]
+[SemanticProgram.InfinitivePhrase("to inspect installed module pages")]
+prototype ToListInstalledCapabilityWebModules : BuffalyCapabilityInspectionSkillAction
+{
+	Description = @"Returns JSON for installed web modules, enabled state, and declared UI pages.";
+
+	function Execute() : string
+	{
+		JsonObject args = new JsonObject();
+		return ToCallCapabilityInspectionService("list-installed-capability-web-modules", args);
+	}
+}

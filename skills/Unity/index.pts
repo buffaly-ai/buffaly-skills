@@ -1,0 +1,269 @@
+prototype UnitySkillAction : OpsAction
+{
+	Description = @"Base action type for Unity interaction skill tools.";
+}
+
+[SemanticEntity("unity interaction skill, unity skill")]
+prototype UnityInteractionSkill : SkillEntity, CoreEntity
+{
+	Description = "Native skill for controlling a Unity host application via TCP JSON protocol. Supports primitive commands and high-level composite actions.";
+	ActionRoot = UnitySkillAction;
+}
+
+function ToUnityHelperPath() : string
+{
+	return @"C:\inetpub\wwwroot\matt.buffaly.local\content\projects\OpsAgent\Skills\Unity\unity-host-client.ps1";
+}
+
+function ToUnityHelperPathStaging() : string
+{
+	return @"C:\inetpub\wwwroot\staging.buffaly.local3\content\projects\OpsAgent\Skills\Unity\unity-host-client.ps1";
+}
+
+function ToUnityResolveHelperPath(string stagingHint) : string
+{
+	if (StringUtil.IsEmpty(stagingHint))
+	{
+		return ToUnityHelperPath();
+	}
+	return ToUnityHelperPathStaging();
+}
+
+function ToUnityRunClient(string helperPath, string args) : string
+{
+	return SystemOperations.RunCommandLineWithTimeout(@"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe", "-ExecutionPolicy Bypass -NoProfile -File " + helperPath + " " + args, 30);
+}
+
+function ToUnityIntText(int value) : string
+{
+	return JsonUtil.ToStringExt(value).ToString();
+}
+
+[SemanticProgram.InfinitivePhrase("to connect to a unity host")]
+[SemanticProgram.InfinitivePhrase("to check unity host connection")]
+prototype ToConnectToUnityHost : UnitySkillAction
+{
+	Description = @"host - hostname or IP. port - TCP port. stagingHint - pass 'staging' to use staging helper path.
+Sends a GetSceneState command to verify the Unity host is running and responsive.
+Returns the scene state JSON or an error message.";
+
+	function Execute(string host, int port, string stagingHint) : string
+	{
+		string helperPath = ToUnityResolveHelperPath(stagingHint);
+		string args = "-HostName " + host + " -Port " + ToUnityIntText(port) + " -Mode Single -CommandType GetSceneState";
+		return ToUnityRunClient(helperPath, args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to spawn an object in unity")]
+[SemanticProgram.InfinitivePhrase("to create a unity primitive")]
+prototype ToSpawnUnityObject : UnitySkillAction
+{
+	Description = @"host - hostname or IP. port - TCP port. type - primitive type: Cube, Sphere, Capsule, Cylinder, or Plane.
+x, y, z - spawn position coordinates. stagingHint - pass 'staging' to use staging helper path.
+Returns JSON with objectId, type, and position.";
+
+	function Execute(string host, int port, string type, string x, string y, string z, string stagingHint) : string
+	{
+		string helperPath = ToUnityResolveHelperPath(stagingHint);
+		string args = "-HostName " + host + " -Port " + ToUnityIntText(port) + " -Mode Single -CommandType Spawn -ObjectType " + type + " -X " + x + " -Y " + y + " -Z " + z;
+		return ToUnityRunClient(helperPath, args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to move an object in unity")]
+prototype ToMoveUnityObject : UnitySkillAction
+{
+	Description = @"host - hostname or IP. port - TCP port. objectId - the object identifier returned by Spawn.
+x, y, z - new position coordinates. stagingHint - pass 'staging' to use staging helper path.
+Returns JSON with updated position.";
+
+	function Execute(string host, int port, string objectId, string x, string y, string z, string stagingHint) : string
+	{
+		string helperPath = ToUnityResolveHelperPath(stagingHint);
+		string args = "-HostName " + host + " -Port " + ToUnityIntText(port) + " -Mode Single -CommandType Move -ObjectId " + objectId + " -X " + x + " -Y " + y + " -Z " + z;
+		return ToUnityRunClient(helperPath, args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to destroy an object in unity")]
+prototype ToDestroyUnityObject : UnitySkillAction
+{
+	Description = @"host - hostname or IP. port - TCP port. objectId - the object identifier to destroy.
+stagingHint - pass 'staging' to use staging helper path.
+Returns JSON confirming destruction.";
+
+	function Execute(string host, int port, string objectId, string stagingHint) : string
+	{
+		string helperPath = ToUnityResolveHelperPath(stagingHint);
+		string args = "-HostName " + host + " -Port " + ToUnityIntText(port) + " -Mode Single -CommandType Destroy -ObjectId " + objectId;
+		return ToUnityRunClient(helperPath, args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get unity scene state")]
+[SemanticProgram.InfinitivePhrase("to list objects in unity scene")]
+prototype ToGetUnitySceneState : UnitySkillAction
+{
+	Description = @"host - hostname or IP. port - TCP port. stagingHint - pass 'staging' to use staging helper path.
+Returns JSON with all objects in the scene including positions and rotations.";
+
+	function Execute(string host, int port, string stagingHint) : string
+	{
+		string helperPath = ToUnityResolveHelperPath(stagingHint);
+		string args = "-HostName " + host + " -Port " + ToUnityIntText(port) + " -Mode Single -CommandType GetSceneState";
+		return ToUnityRunClient(helperPath, args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to spawn a row of objects in unity")]
+[SemanticProgram.InfinitivePhrase("to create a line of unity primitives")]
+prototype ToSpawnUnityRow : UnitySkillAction
+{
+	Description = @"host - hostname or IP. port - TCP port. type - primitive type.
+count - number of objects. startX, y, z - starting position. spacing - distance between objects.
+stagingHint - pass 'staging' to use staging helper path.
+Spawns a row of objects and returns all results.";
+
+	function Execute(string host, int port, string type, int count, string startX, string y, string z, string spacing, string stagingHint) : string
+	{
+		string helperPath = ToUnityResolveHelperPath(stagingHint);
+		string args = "-HostName " + host + " -Port " + ToUnityIntText(port) + " -Mode Batch -Pattern Row -ObjectType " + type + " -Count " + ToUnityIntText(count) + " -StartX " + startX + " -StartY " + y + " -StartZ " + z + " -Spacing " + spacing;
+		return ToUnityRunClient(helperPath, args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to build a tower in unity")]
+[SemanticProgram.InfinitivePhrase("to stack cubes vertically in unity")]
+prototype ToBuildUnityTower : UnitySkillAction
+{
+	Description = @"host - hostname or IP. port - TCP port. height - number of cubes to stack.
+x, z - horizontal position. stagingHint - pass 'staging' to use staging helper path.
+Builds a tower by stacking cubes vertically. Returns all spawn results.";
+
+	function Execute(string host, int port, int height, string x, string z, string stagingHint) : string
+	{
+		string helperPath = ToUnityResolveHelperPath(stagingHint);
+		string args = "-HostName " + host + " -Port " + ToUnityIntText(port) + " -Mode Batch -Pattern Tower -Count " + ToUnityIntText(height) + " -X " + x + " -Z " + z;
+		return ToUnityRunClient(helperPath, args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create a grid in unity")]
+[SemanticProgram.InfinitivePhrase("to arrange objects in a grid in unity")]
+prototype ToCreateUnityGrid : UnitySkillAction
+{
+	Description = @"host - hostname or IP. port - TCP port. type - primitive type.
+rows, cols - grid dimensions. startX, startY, startZ - starting position. spacing - distance between cells.
+stagingHint - pass 'staging' to use staging helper path.
+Creates a 2D grid of objects. Returns all spawn results.";
+
+	function Execute(string host, int port, string type, int rows, int cols, string startX, string startY, string startZ, string spacing, string stagingHint) : string
+	{
+		string helperPath = ToUnityResolveHelperPath(stagingHint);
+		string args = "-HostName " + host + " -Port " + ToUnityIntText(port) + " -Mode Batch -Pattern Grid -ObjectType " + type + " -Rows " + ToUnityIntText(rows) + " -Cols " + ToUnityIntText(cols) + " -StartX " + startX + " -StartY " + startY + " -StartZ " + startZ + " -Spacing " + spacing;
+		return ToUnityRunClient(helperPath, args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to build a house in unity")]
+[SemanticProgram.InfinitivePhrase("to construct a simple house in unity")]
+prototype ToBuildUnitySimpleHouse : UnitySkillAction
+{
+	Description = @"host - hostname or IP. port - TCP port. x, z - center position.
+width - house width. height - wall height. stagingHint - pass 'staging' to use staging helper path.
+Builds a simple house: floor (Plane) + 4 walls (Cubes) + roof (Sphere). Returns all spawn results.";
+
+	function Execute(string host, int port, string x, string z, string width, string height, string stagingHint) : string
+	{
+		string helperPath = ToUnityResolveHelperPath(stagingHint);
+		string args = "-HostName " + host + " -Port " + ToUnityIntText(port) + " -Mode Batch -Pattern House -X " + x + " -Z " + z + " -Width " + width + " -Height " + height;
+		return ToUnityRunClient(helperPath, args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create a stable structure in unity")]
+[SemanticProgram.InfinitivePhrase("to build a physics-aware stack in unity")]
+prototype ToCreateUnityStableStructure : UnitySkillAction
+{
+	Description = @"host - hostname or IP. port - TCP port. baseSize - number of cubes at the base.
+x, z - center position. stagingHint - pass 'staging' to use staging helper path.
+Builds a pyramid by stacking decreasing rows of cubes. Returns all spawn results.";
+
+	function Execute(string host, int port, int baseSize, string x, string z, string stagingHint) : string
+	{
+		string helperPath = ToUnityResolveHelperPath(stagingHint);
+		string args = "-HostName " + host + " -Port " + ToUnityIntText(port) + " -Mode Batch -Pattern Pyramid -Count " + ToUnityIntText(baseSize) + " -X " + x + " -Z " + z;
+		return ToUnityRunClient(helperPath, args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to arrange objects in a pattern in unity")]
+[SemanticProgram.InfinitivePhrase("to arrange unity objects in circle spiral or line")]
+prototype ToArrangeUnityPattern : UnitySkillAction
+{
+	Description = @"host - hostname or IP. port - TCP port. pattern - circle, spiral, or line.
+type - primitive type. count - number of objects. x, y, z - center position. spacing - radius or spacing.
+stagingHint - pass 'staging' to use staging helper path.
+Arranges objects in the specified pattern. Returns all spawn results.";
+
+	function Execute(string host, int port, string pattern, string type, int count, string x, string y, string z, string spacing, string stagingHint) : string
+	{
+		string helperPath = ToUnityResolveHelperPath(stagingHint);
+		string args = "-HostName " + host + " -Port " + ToUnityIntText(port) + " -Mode Batch -Pattern " + pattern + " -ObjectType " + type + " -Count " + ToUnityIntText(count) + " -X " + x + " -Y " + y + " -Z " + z + " -Spacing " + spacing;
+		return ToUnityRunClient(helperPath, args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to capture a unity scene screenshot")]
+prototype ToCaptureUnityScene : UnitySkillAction
+{
+	Description = @"outputPath - absolute or relative .png path. maxWidth - max width (0 for full). maxHeight - max height (0 for full).
+Captures a desktop screenshot to verify the Unity scene visually.";
+
+	function Execute(string outputPath, int maxWidth, int maxHeight) : string
+	{
+		return "Screenshot capture is handled by the ToCaptureDesktopScreenshotFile action. Call it with outputPath=" + outputPath + " maxWidth=" + ToUnityIntText(maxWidth) + " maxHeight=" + ToUnityIntText(maxHeight) + ". For batch-mode Unity hosts, use ToGetUnitySceneState for JSON scene inspection instead.";
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to launch a unity host")]
+prototype ToLaunchUnityHost : UnitySkillAction
+{
+	Description = @"exePath - path to UnityHost.exe. args - command-line arguments.
+Launches the Unity host application.";
+
+	function Execute(string exePath, string args) : string
+	{
+		return SystemOperations.RunCommandLineWithTimeout(exePath, args, 10);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to run a unity demo")]
+[SemanticProgram.InfinitivePhrase("to run end-to-end unity skill test")]
+prototype ToRunUnityDemo : UnitySkillAction
+{
+	Description = @"host - hostname or IP. port - TCP port. stagingHint - pass 'staging' to use staging helper path.
+Runs a full demo: connect, spawn cube, spawn sphere, get scene state, build tower, create grid, build house.
+Returns all results.";
+
+	function Execute(string host, int port, string stagingHint) : string
+	{
+		string helperPath = ToUnityResolveHelperPath(stagingHint);
+		string portArg = "-Port " + ToUnityIntText(port);
+		string hostArg = "-HostName " + host;
+		string baseArgs = hostArg + " " + portArg + " -Mode Single -CommandType ";
+		string batchArgs = hostArg + " " + portArg + " -Mode Batch -Pattern ";
+
+		string results = "";
+		results = results + "=== Connect (GetSceneState) ===" + "\n" + ToUnityRunClient(helperPath, baseArgs + "GetSceneState") + "\n\n";
+		results = results + "=== Spawn Cube ===" + "\n" + ToUnityRunClient(helperPath, baseArgs + "Spawn -ObjectType Cube -X 0 -Y 5 -Z 0") + "\n\n";
+		results = results + "=== Spawn Sphere ===" + "\n" + ToUnityRunClient(helperPath, baseArgs + "Spawn -ObjectType Sphere -X 3 -Y 2 -Z 0") + "\n\n";
+		results = results + "=== Build Tower (4 cubes) ===" + "\n" + ToUnityRunClient(helperPath, batchArgs + "Tower -Count 4 -X 10 -Z 0") + "\n\n";
+		results = results + "=== Create Grid (3x3 spheres) ===" + "\n" + ToUnityRunClient(helperPath, batchArgs + "Grid -ObjectType Sphere -Rows 3 -Cols 3 -StartX -10 -StartY 0.5 -StartZ 10 -Spacing 2") + "\n\n";
+		results = results + "=== Build House ===" + "\n" + ToUnityRunClient(helperPath, batchArgs + "House -X 15 -Z 0 -Width 4 -Height 3") + "\n\n";
+		results = results + "=== Final Scene State ===" + "\n" + ToUnityRunClient(helperPath, baseArgs + "GetSceneState");
+
+		return results;
+	}
+}

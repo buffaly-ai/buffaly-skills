@@ -1,0 +1,98 @@
+﻿prototype LlmProviderModelTier : SemanticEntityBase
+{
+	EntityName = "llm provider model tier";
+}
+
+prototype LlmProviderModelTierLight : LlmProviderModelTier
+{
+	EntityName = "llm provider model tier light";
+}
+
+prototype LlmProviderModelTierHeavy : LlmProviderModelTier
+{
+	EntityName = "llm provider model tier heavy";
+}
+
+prototype LlmProviderModelTierImage : LlmProviderModelTier
+{
+	EntityName = "llm provider model tier image";
+}
+
+prototype LlmProvider : SemanticEntityBase
+{
+	EntityName = "llm provider";
+}
+
+prototype GrokProvider : LlmProvider
+{
+	EntityName = "grok provider";
+}
+
+prototype GeminiProvider : LlmProvider
+{
+	EntityName = "gemini provider";
+}
+
+prototype LlmProviderModel : SemanticEntityBase
+{
+	EntityName = "llm provider model";
+	LlmProvider Provider;
+	LlmProviderModelTier Tier;
+	String ModelId;
+}
+
+prototype GrokModel : LlmProviderModel
+{
+	EntityName = "grok model";
+}
+
+prototype GeminiModel : LlmProviderModel
+{
+	EntityName = "gemini model";
+}
+
+prototype GrokModel#Default : GrokModel
+{
+	Provider = GrokProvider;
+	Tier = LlmProviderModelTierLight;
+	ModelId = "grok-4-fast-non-reasoning";
+	String HeavyModelId = "grok-4-1-fast-reasoning";
+	String ImageModelId = "grok-imagine-image";
+	String HeavyImageModelId = "grok-imagine-image-pro";
+	EntityName = "grok default model profile";
+}
+
+prototype GeminiModel#Default : GeminiModel
+{
+	Provider = GeminiProvider;
+	Tier = LlmProviderModelTierLight;
+	ModelId = "models/gemini-3-flash-preview";
+	String HeavyModelId = "models/gemini-3.1-pro-preview";
+	String ImageModelId = "models/gemini-3.1-flash-image-preview";
+	String HeavyImageModelId = "models/gemini-3-pro-image-preview";
+	EntityName = "gemini default model profile";
+}
+
+prototype GrokSkillAction : LlmSkillAction
+{
+	Description = "Base action type for Grok skill tools.";
+}
+
+prototype GrokSkill : SkillEntity
+{
+	ActionRoot = GrokSkillAction;
+	EntityName = "grok skill";
+	Description = "Grok provider ask/image actions.";
+}
+
+prototype GeminiSkillAction : LlmSkillAction
+{
+	Description = "Base action type for Gemini skill tools.";
+}
+
+prototype GeminiSkill : SkillEntity
+{
+	ActionRoot = GeminiSkillAction;
+	EntityName = "gemini skill";
+	Description = "Gemini provider ask/image actions.";
+}

@@ -1,0 +1,29 @@
+prototype ToBootstrapWebhookTimelineEvent : PromptAction
+{
+    IsPromptAction = true;
+    SkillKind = "prompt";
+    SkillVersion = "1.0.0";
+    PromptPath = "Skills/SessionManagement/Prompts/ToBootstrapWebhookTimelineEvent.prompt.md";
+    Description = "Bootstrap webhook timeline event handling and execute the next safest step.";
+    InfinitivePhrase = "to bootstrap webhook timeline event handling";
+}
+
+prototype ToResolveTopCandidateAndRun : PromptAction
+{
+    IsPromptAction = true;
+    SkillKind = "prompt";
+    SkillVersion = "1.0.0";
+    PromptPath = "Skills/SessionManagement/Prompts/ToResolveTopCandidateAndRun.prompt.md";
+    Description = "Resolve the top semantic candidate action and execute it with correct load-state handling.";
+    InfinitivePhrase = "to resolve top candidate action and run it with correct load handling";
+}
+
+prototype ToPassUserStateToABuffalyAgent : PromptAction
+{
+    IsPromptAction = true;
+    SkillKind = "prompt";
+    SkillVersion = "1.0.0";
+    PromptPath = "Skills/SessionManagement/Prompts/ToPassUserStateToABuffalyAgent.prompt.md";
+    Description = "Pass user state to a Buffaly agent using EvaluateInputContract.UserState and runtime-managed timeline injection.";
+    InfinitivePhrase = "to pass user state to a Buffaly agent";
+}

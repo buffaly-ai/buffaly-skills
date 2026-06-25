@@ -1,0 +1,76 @@
+prototype WikiPromptAction : PromptAction
+{
+    Description = "Base action type for wiki prompt workflows.";
+}
+[SemanticProgram.InfinitivePhrase("to create a wiki article")]
+[SemanticProgram.InfinitivePhrase("to generate a buffaly wiki article")]
+[SemanticProgram.InfinitivePhrase("to write a wiki article into the wiki folder")]
+prototype ToCreateWikiArticleSkill : WikiPromptAction
+{
+    IsPromptAction = true;
+    SkillKind = "prompt";
+    SkillVersion = "1.0.0";
+    PromptPath = @"Skills/Wiki/Prompts/CreateWikiArticle.prompt.md";
+    Description = @"Loads the workflow for generating one substantive markdown wiki article in the Buffaly Wiki folder with useful cross-links to related wiki pages, prompts, prototypes, and code files when known.";
+}
+
+[SemanticProgram.InfinitivePhrase("to refresh a wiki article")]
+[SemanticProgram.InfinitivePhrase("to expand a wiki article")]
+[SemanticProgram.InfinitivePhrase("to rewrite a wiki article with better content")]
+prototype ToRefreshWikiArticleSkill : WikiPromptAction
+{
+    IsPromptAction = true;
+    SkillKind = "prompt";
+    SkillVersion = "1.0.0";
+    PromptPath = @"Skills/Wiki/Prompts/RefreshWikiArticle.prompt.md";
+    Description = @"Loads the workflow for replacing thin or outdated wiki markdown with a fuller, better linked article while preserving the simple markdown-only wiki model.";
+}
+
+[SemanticProgram.InfinitivePhrase("to audit wiki coverage")]
+[SemanticProgram.InfinitivePhrase("to find missing wiki articles")]
+[SemanticProgram.InfinitivePhrase("to review the wiki for gaps")]
+prototype ToAuditWikiCoverageSkill : WikiPromptAction
+{
+    IsPromptAction = true;
+    SkillKind = "prompt";
+    SkillVersion = "1.0.0";
+    PromptPath = @"Skills/Wiki/Prompts/AuditWikiCoverage.prompt.md";
+    Description = @"Loads the workflow for reviewing the Buffaly wiki, identifying missing or weak articles, and proposing the next high-value additions or revisions.";
+}
+
+[SemanticProgram.InfinitivePhrase("to repair wiki cross links")]
+[SemanticProgram.InfinitivePhrase("to add cross links across wiki articles")]
+[SemanticProgram.InfinitivePhrase("to improve wiki links")]
+prototype ToRepairWikiCrossLinksSkill : WikiPromptAction
+{
+    IsPromptAction = true;
+    SkillKind = "prompt";
+    SkillVersion = "1.0.0";
+    PromptPath = @"Skills/Wiki/Prompts/RepairWikiCrossLinks.prompt.md";
+    Description = @"Loads the workflow for improving wiki link density and fixing broken or missing cross-links across wiki articles and important Buffaly project targets.";
+}
+
+[SemanticProgram.InfinitivePhrase("to insert a wiki article")]
+[SemanticProgram.InfinitivePhrase("to add a wiki article")]
+[SemanticProgram.InfinitivePhrase("to create a new wiki article file")]
+prototype ToInsertWikiArticleSkill : WikiPromptAction
+{
+    IsPromptAction = true;
+    SkillKind = "prompt";
+    SkillVersion = "1.0.0";
+    PromptPath = @"Skills/Wiki/Prompts/InsertWikiArticle.prompt.md";
+    Description = @"Loads the workflow for inserting a new wiki article into the Buffaly markdown wiki using direct file editing or Codex when available.";
+}
+
+[SemanticProgram.InfinitivePhrase("to edit a wiki article")]
+[SemanticProgram.InfinitivePhrase("to update a wiki article")]
+[SemanticProgram.InfinitivePhrase("to revise an existing wiki article")]
+prototype ToEditWikiArticleSkill : WikiPromptAction
+{
+    IsPromptAction = true;
+    SkillKind = "prompt";
+    SkillVersion = "1.0.0";
+    PromptPath = @"Skills/Wiki/Prompts/EditWikiArticle.prompt.md";
+    Description = @"Loads the workflow for editing an existing wiki article in the Buffaly markdown wiki using direct file editing or Codex when available.";
+}
+

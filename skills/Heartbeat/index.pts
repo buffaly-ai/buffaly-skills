@@ -1,0 +1,89 @@
+prototype HeartbeatSkillAction : OpsAction
+{
+	Description = @"Base action type for heartbeat scheduling tools.";
+}
+
+[SemanticEntity("heartbeat skill")]
+prototype HeartbeatSkill : SkillEntity
+{
+	Description = "Schedule and inspect heartbeat.tick event delivery back to target sessions.";
+	ActionRoot = HeartbeatSkillAction;
+}
+
+function ToCallHeartbeatService(string routePath, string methodName, JsonObject request) : string
+{
+	JsonObject args = new JsonObject();
+	args["request"] = request;
+	return JsonWsHelper.CallInternalJsonWsSecure(routePath, methodName, "WorkerFeature.InternalAuthToken", args);
+}
+
+[SemanticProgram.InfinitivePhrase("to start a heartbeat subscription")]
+[SemanticProgram.InfinitivePhrase("to send heartbeat events to a session")]
+prototype ToStartHeartbeatSubscription : HeartbeatSkillAction
+{
+	Description = @"sessionKey - subscriber session receiving heartbeat events. message - payload text included in heartbeat callback.";
+
+	function Execute(string sessionKey, string message) : string
+	{
+		return ToStartHeartbeatSubscriptionWithOptions.Execute(sessionKey, message, 30, 10);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to start a heartbeat subscription with options")]
+[SemanticProgram.InfinitivePhrase("to configure heartbeat interval and count")]
+prototype ToStartHeartbeatSubscriptionWithOptions : HeartbeatSkillAction
+{
+	Description = @"sessionKey - subscriber session receiving heartbeat events. message - payload text included in heartbeat callback. intervalSeconds - seconds between ticks. maxCount - number of heartbeat ticks to send.";
+
+	function Execute(string sessionKey, string message, int intervalSeconds, int maxCount) : string
+	{
+		JsonObject request = new JsonObject();
+		request["SessionKey"] = sessionKey;
+		request["Message"] = message;
+		request["IntervalSeconds"] = intervalSeconds;
+		request["MaxCount"] = maxCount;
+		request["EventType"] = "heartbeat.tick";
+		request["DeliveryMode"] = "queue-input";
+		return ToCallHeartbeatService("/api/buffaly.agent.heartbeat/heartbeat-service/start", "Start", request);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to stop a heartbeat subscription")]
+prototype ToStopHeartbeatSubscription : HeartbeatSkillAction
+{
+	Description = @"jobId - heartbeat job id returned by start/status methods.";
+
+	function Execute(string jobId) : string
+	{
+		JsonObject request = new JsonObject();
+		request["JobId"] = jobId;
+		return ToCallHeartbeatService("/api/buffaly.agent.heartbeat/heartbeat-service/stop", "Stop", request);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list heartbeat subscriptions")]
+[SemanticProgram.InfinitivePhrase("to get heartbeat service subscriptions")]
+prototype ToGetHeartbeatSubscriptions : HeartbeatSkillAction
+{
+	Description = @"Return active heartbeat jobs and heartbeat.service session-event subscriptions.";
+
+	function Execute() : string
+	{
+		JsonObject request = new JsonObject();
+		request["SourceSessionKey"] = "";
+		return ToCallHeartbeatService("/api/buffaly.agent.heartbeat/heartbeat-service/list", "List", request);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get heartbeat status")]
+prototype ToGetHeartbeatStatus : HeartbeatSkillAction
+{
+	Description = @"sourceSessionKey - optional source session key filter. Use empty string for all jobs.";
+
+	function Execute(string sourceSessionKey) : string
+	{
+		JsonObject request = new JsonObject();
+		request["SourceSessionKey"] = sourceSessionKey;
+		return ToCallHeartbeatService("/api/buffaly.agent.heartbeat/heartbeat-service/status", "Status", request);
+	}
+}

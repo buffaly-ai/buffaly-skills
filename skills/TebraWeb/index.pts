@@ -1,0 +1,62 @@
+import Buffaly.Agent.Tools.TebraWeb Buffaly.Agent.Tools.TebraWeb.TebraWebTools TebraWebTools;
+
+prototype TebraWebSkillAction : OpsAction, CodingContext
+{
+	Description = @"Base action type for Tebra/Kareo web workflows built on BrowserSessionSkill.";
+}
+
+[SemanticEntity("Tebra web skill, Tebra Kareo web skill")]
+prototype TebraWebSkill : SkillEntity
+{
+	EntityName = "Tebra web skill";
+	Description = @"Tebra/Kareo web workflow actions built on BrowserSessionSkill. Owns domain-specific login, patient notes navigation, and guarded Memo to Record readiness checks.";
+	ActionRoot = TebraWebSkillAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to login to tebra if needed")]
+[SemanticProgram.InfinitivePhrase("to authenticate tebra web with saved secret")]
+prototype ToLoginTebraIfNeeded : TebraWebSkillAction
+{
+	Description = @"Thin wrapper over TebraWebTools.LoginIfNeeded(_opsAgent, profileName, email, passwordSecret). passwordSecret should be a StringRef from ToGetUserSecret. Returns redacted JSON.";
+
+	function Execute(string profileName, string email, StringRef passwordSecret) : string
+	{
+		return TebraWebTools.LoginIfNeeded(_opsAgent, profileName, email, passwordSecret);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to open tebra patient notes")]
+[SemanticProgram.InfinitivePhrase("to verify tebra patient notes page")]
+prototype ToOpenTebraPatientNotes : TebraWebSkillAction
+{
+	Description = @"Thin wrapper over TebraWebTools.OpenPatientNotes(_opsAgent, profileName, patientKey, expectedName, expectedDob). Returns JSON verification state.";
+
+	function Execute(string profileName, string patientKey, string expectedName, string expectedDob) : string
+	{
+		return TebraWebTools.OpenPatientNotes(_opsAgent, profileName, patientKey, expectedName, expectedDob);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to check tebra memo to record insert readiness")]
+[SemanticProgram.InfinitivePhrase("to dry run tebra memo to record insertion")]
+prototype ToCheckTebraMemoToRecordInsertReadiness : TebraWebSkillAction
+{
+	Description = @"Thin wrapper over TebraWebTools.CheckMemoToRecordInsertReadiness(_opsAgent, profileName, patientKey, expectedName, expectedDob, idempotencyKey). Read-only/dry-run readiness and idempotency check.";
+
+	function Execute(string profileName, string patientKey, string expectedName, string expectedDob, string idempotencyKey) : string
+	{
+		return TebraWebTools.CheckMemoToRecordInsertReadiness(_opsAgent, profileName, patientKey, expectedName, expectedDob, idempotencyKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to prepare tebra memo to record draft without saving")]
+[SemanticProgram.InfinitivePhrase("to fill tebra memo to record note without saving")]
+prototype ToPrepareTebraMemoToRecordDraftFillOnly : TebraWebSkillAction
+{
+	Description = @"Thin wrapper over TebraWebTools.PrepareMemoToRecordDraftFillOnly(_opsAgent, profileName, patientKey, expectedName, expectedDob, idempotencyKey, noteText). Opens/fills a guarded draft and does not save, sign, or submit.";
+
+	function Execute(string profileName, string patientKey, string expectedName, string expectedDob, string idempotencyKey, string noteText) : string
+	{
+		return TebraWebTools.PrepareMemoToRecordDraftFillOnly(_opsAgent, profileName, patientKey, expectedName, expectedDob, idempotencyKey, noteText);
+	}
+}

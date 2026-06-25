@@ -1,0 +1,500 @@
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.LiveToolInputCollectionRequestContract LiveToolInputCollectionRequestContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.LiveToolInputCollectionResultContract LiveToolInputCollectionResultContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.RuntimeUiEventOutputContract RuntimeUiEventOutputContract;
+import Buffaly.Agent.Tools.Process Buffaly.Agent.Tools.Process.ProcessToolDisplayOptions ProcessToolDisplayOptions;
+prototype ProcessSkillAction : OpsAction
+{
+	Description = @"Base action type for process/system command execution tools.";
+}
+
+[SemanticEntity("process skill")]
+prototype ProcessSkill : SkillEntity
+{
+	Description = "Command-line and PowerShell execution tools backed by Buffaly.Agent.Tools.Process SystemOperations.";
+	ActionRoot = ProcessSkillAction;
+}
+
+function ToProcessSkillIsDisallowedBuffalySessionHttpPowerShellScript(string script) : bool
+{
+	if (StringUtil.IsEmpty(script))
+		return false;
+	return false;
+}
+
+function ToProcessSkillBuildPowerShellStreamLabel(string workingDirectory) : string
+{
+	if (StringUtil.IsEmpty(workingDirectory))
+	{
+		return "PowerShell";
+	}
+
+	return "PowerShell - " + workingDirectory;
+}
+
+function ToProcessSkillBuildCommandStreamLabel(string command) : string
+{
+	if (StringUtil.IsEmpty(command))
+	{
+		return "Command";
+	}
+
+	return "Command - " + command;
+}
+
+function ToProcessSkillLooksLikeShellSyntax(string commandLineArguments) : bool
+{
+	if (StringUtil.IsEmpty(commandLineArguments))
+		return false;
+
+	if (commandLineArguments.Contains("|"))
+		return true;
+	if (commandLineArguments.Contains("&&"))
+		return true;
+	if (commandLineArguments.Contains(";"))
+		return true;
+	if (commandLineArguments.Contains(">"))
+		return true;
+	if (commandLineArguments.Contains("<"))
+		return true;
+	if (commandLineArguments.Contains("`"))
+		return true;
+	if (commandLineArguments.Contains("$("))
+		return true;
+
+	return false;
+}
+
+function ToProcessSkillDirectCommandShellSyntaxDiagnostic(string toolName) : string
+{
+	return "Error: " + toolName + " runs an executable directly and does not interpret shell syntax. Use ToExecuteUnixShellOperationWithTimeout on macOS/Linux for Bash syntax, ToExecuteWindowsCommandShellOperationWithTimeout on Windows for cmd.exe syntax, or ToExecuteProcessWithArgumentsAndEnvironment for shell-free argv execution.";
+}
+
+[SemanticProgram.InfinitivePhrase("to execute a command line operation and return the output")]
+prototype ToExecuteCommandLineOperation : ProcessSkillAction
+{
+	Description = @"command - full path to the executable
+commandLineArguments - arguments to pass to the command. This is direct executable execution, not a shell; do not pass pipes, redirects, command chaining, or shell built-ins here. Use ToExecuteUnixShellOperationWithTimeout on macOS/Linux, ToExecuteWindowsCommandShellOperationWithTimeout on Windows, or ToExecuteProcessWithArgumentsAndEnvironment for shell-free argv execution. Uses a default timeout of 30 seconds. Returns command + arguments + output for diagnostics.";
+
+	function Execute(string command, string commandLineArguments) : string
+	{
+		if (ToProcessSkillLooksLikeShellSyntax(commandLineArguments))
+		{
+			return ToProcessSkillDirectCommandShellSyntaxDiagnostic("ToExecuteCommandLineOperation");
+		}
+
+		// Run the command line operation with a safe default timeout and return its output.
+		return SystemOperations.RunCommandLineWithTimeout(command, commandLineArguments, 30);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to execute a command line operation with a timeout and return the output")]
+prototype ToExecuteCommandLineOperationWithTimeout : ProcessSkillAction
+{
+	Description = @"command - full path to the executable
+commandLineArguments - arguments to pass to the command
+timeoutSeconds - maximum runtime in seconds (defaults to 30 when <= 0). This is direct executable execution, not a shell; do not pass pipes, redirects, command chaining, or shell built-ins here. Use ToExecuteUnixShellOperationWithTimeout on macOS/Linux, ToExecuteWindowsCommandShellOperationWithTimeout on Windows, or ToExecuteProcessWithArgumentsAndEnvironment for shell-free argv execution. Returns command + arguments + output for diagnostics.";
+
+	function Execute(string command, string commandLineArguments, int timeoutSeconds) : string
+	{
+		if (ToProcessSkillLooksLikeShellSyntax(commandLineArguments))
+		{
+			return ToProcessSkillDirectCommandShellSyntaxDiagnostic("ToExecuteCommandLineOperationWithTimeout");
+		}
+
+		// Run the command line operation with caller-provided timeout and return its output.
+		if (timeoutSeconds <= 0)
+		{
+			timeoutSeconds = 30;
+		}
+
+		return SystemOperations.RunCommandLineWithTimeout(command, commandLineArguments, timeoutSeconds, _opsAgent, "", ToProcessSkillBuildCommandStreamLabel(command));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to execute a PowerShell script and return the output")]
+prototype ToExecutePowerShellOperation : ProcessSkillAction
+{
+	Description = @"script - PowerShell script to execute (default timeout: 60 seconds). For longer-running commands, use ToExecutePowerShellOperationWithTimeout. Do not use this tool to call BuffalyAgentService evaluate endpoints; use typed session tools instead.";
+
+	function Execute(string script) : string
+	{
+		if (ToProcessSkillIsDisallowedBuffalySessionHttpPowerShellScript(script))
+		{
+			return "Error: Direct PowerShell HTTP calls to BuffalyAgentService evaluate endpoints are disabled. Use typed session tools (for example ToCreateBuffalySession / SessionTools) with canonical input shape.";
+		}
+
+		// Run the PowerShell script, mirror stdout/stderr to the active browser session, and return its final output.
+		return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 60, _opsAgent, "", ToProcessSkillBuildPowerShellStreamLabel(""));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to execute a PowerShell script with a timeout and return the output")]
+prototype ToExecutePowerShellOperationWithTimeout : ProcessSkillAction
+{
+	Description = @"script - PowerShell script to execute
+timeoutSeconds - maximum runtime in seconds (defaults to 60 when <= 0). Do not use this tool to call BuffalyAgentService evaluate endpoints; use typed session tools instead.";
+
+	function Execute(string script, int timeoutSeconds) : string
+	{
+		if (ToProcessSkillIsDisallowedBuffalySessionHttpPowerShellScript(script))
+		{
+			return "Error: Direct PowerShell HTTP calls to BuffalyAgentService evaluate endpoints are disabled. Use typed session tools (for example ToCreateBuffalySession / SessionTools) with canonical input shape.";
+		}
+
+		// Run the PowerShell script with caller-provided timeout, mirror stdout/stderr to the active browser session, and return its final output.
+		if (timeoutSeconds <= 0)
+		{
+			timeoutSeconds = 60;
+		}
+
+		return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, "", ToProcessSkillBuildPowerShellStreamLabel(""));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to execute a fast PowerShell script and return the output")]
+prototype ToExecuteFastPowerShellOperation : ProcessSkillAction
+{
+	Description = @"script - PowerShell script to execute through the managed PowerShell compatibility path (default timeout: 60 seconds). Preserves the fast PowerShell action contract while using manager-owned timeout/kill behavior. Do not use this tool to call BuffalyAgentService evaluate endpoints; use typed session tools instead.";
+
+	function Execute(string script) : string
+	{
+		if (ToProcessSkillIsDisallowedBuffalySessionHttpPowerShellScript(script))
+		{
+			return "Error: Direct PowerShell HTTP calls to BuffalyAgentService evaluate endpoints are disabled. Use typed session tools (for example ToCreateBuffalySession / SessionTools) with canonical input shape.";
+		}
+
+		// Run the PowerShell script through the managed worker path, mirror stdout/stderr to the active browser session, and return its final output.
+		return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 60, _opsAgent, "", ToProcessSkillBuildPowerShellStreamLabel(""));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to execute a fast PowerShell script with a timeout and return the output")]
+prototype ToExecuteFastPowerShellOperationWithTimeout : ProcessSkillAction
+{
+	Description = @"script - PowerShell script to execute through the managed PowerShell compatibility path
+timeoutSeconds - maximum runtime in seconds (defaults to 60 when <= 0). Preserves the fast PowerShell action contract while using manager-owned timeout/kill behavior. Do not use this tool to call BuffalyAgentService evaluate endpoints; use typed session tools instead.";
+
+	function Execute(string script, int timeoutSeconds) : string
+	{
+		if (ToProcessSkillIsDisallowedBuffalySessionHttpPowerShellScript(script))
+		{
+			return "Error: Direct PowerShell HTTP calls to BuffalyAgentService evaluate endpoints are disabled. Use typed session tools (for example ToCreateBuffalySession / SessionTools) with canonical input shape.";
+		}
+
+		if (timeoutSeconds <= 0)
+		{
+			timeoutSeconds = 60;
+		}
+
+		// Run the PowerShell script through the managed worker path with caller-provided timeout, mirror stdout/stderr to the active browser session, and return its final output.
+		return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, "", ToProcessSkillBuildPowerShellStreamLabel(""));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to execute a fast PowerShell script in a working directory and return the output")]
+prototype ToExecuteFastPowerShellOperationInWorkingDirectory : ProcessSkillAction
+{
+	Description = @"script - PowerShell script to execute through the managed PowerShell compatibility path
+workingDirectory - working directory to apply before script execution. Preserves the fast PowerShell action contract while using manager-owned timeout/kill behavior. Do not use this tool to call BuffalyAgentService evaluate endpoints; use typed session tools instead.";
+
+	function Execute(string script, string workingDirectory) : string
+	{
+		if (ToProcessSkillIsDisallowedBuffalySessionHttpPowerShellScript(script))
+		{
+			return "Error: Direct PowerShell HTTP calls to BuffalyAgentService evaluate endpoints are disabled. Use typed session tools (for example ToCreateBuffalySession / SessionTools) with canonical input shape.";
+		}
+
+		// Run the PowerShell script through the managed worker path in the requested working directory, mirror stdout/stderr to the active browser session, and return its final output.
+		return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, workingDirectory, 120, _opsAgent, "", ToProcessSkillBuildPowerShellStreamLabel(workingDirectory));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to execute a fast PowerShell script in a working directory with a timeout and return the output")]
+prototype ToExecuteFastPowerShellOperationInWorkingDirectoryWithTimeout : ProcessSkillAction, CoreAction
+{
+	Description = @"script - PowerShell script to execute through the managed PowerShell compatibility path
+workingDirectory - working directory to apply before script execution
+timeoutSeconds - maximum runtime in seconds (defaults to 120 when <= 0). Preserves the fast PowerShell action contract while using manager-owned timeout/kill behavior. Do not use this tool to call BuffalyAgentService evaluate endpoints; use typed session tools instead.";
+
+	function Execute(string script, string workingDirectory, int timeoutSeconds) : string
+	{
+		if (ToProcessSkillIsDisallowedBuffalySessionHttpPowerShellScript(script))
+		{
+			return "Error: Direct PowerShell HTTP calls to BuffalyAgentService evaluate endpoints are disabled. Use typed session tools (for example ToCreateBuffalySession / SessionTools) with canonical input shape.";
+		}
+
+		if (timeoutSeconds <= 0)
+		{
+			timeoutSeconds = 120;
+		}
+
+		// Run the PowerShell script through the managed worker path with working-directory scoping, mirror stdout/stderr to the active browser session, and return its final output.
+		return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, workingDirectory, timeoutSeconds, _opsAgent, "", ToProcessSkillBuildPowerShellStreamLabel(workingDirectory));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to emit a runtime UI event to the browser websocket")]
+prototype ToEmitRuntimeUiEvent : ProcessSkillAction
+{
+	Description = @"eventType - typed runtime UI event name to emit
+payloadJson - JSON object payload to send to the active browser session websocket. Returns the generated event id.";
+
+	function Execute(string eventType, string payloadJson) : string
+	{
+		// Send one typed runtime UI event through the active agent websocket bridge.
+		return _opsAgent.EmitRuntimeUiEvent(eventType, payloadJson);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to execute a PowerShell script and stream console output to the browser websocket")]
+prototype ToExecuteStreamingPowerShellOperationWithTimeout : ProcessSkillAction
+{
+	Description = @"script - PowerShell script to execute
+workingDirectory - working directory to apply before script execution
+timeoutSeconds - maximum runtime in seconds (defaults to 60 when <= 0)
+streamId - optional stable console stream id; generated when empty
+commandLabel - optional display label for the visible console stream. Streams stdout/stderr to the active browser session as console-output runtime UI events while returning final captured output.";
+
+	function Execute(string script, string workingDirectory, int timeoutSeconds, string streamId, string commandLabel) : string
+	{
+		if (ToProcessSkillIsDisallowedBuffalySessionHttpPowerShellScript(script))
+		{
+			return "Error: Direct PowerShell HTTP calls to BuffalyAgentService evaluate endpoints are disabled. Use typed session tools (for example ToCreateBuffalySession / SessionTools) with canonical input shape.";
+		}
+
+		if (timeoutSeconds <= 0)
+		{
+			timeoutSeconds = 60;
+		}
+
+		return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, workingDirectory, timeoutSeconds, _opsAgent, streamId, commandLabel);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to run GitHub auth login with the tool window opened for the login code")]
+prototype ToRunGitHubAuthLoginWithVisibleOutput : ProcessSkillAction
+{
+	Description = @"Runs gh auth login with the tool window explicitly opened so the user can see the browser/device login instructions immediately.
+timeoutSeconds - maximum runtime in seconds (defaults to 180 when <= 0). Uses an isolated GH_CONFIG_DIR when ghConfigDirectory is provided; otherwise uses the current GitHub CLI config.";
+
+	function Execute(int timeoutSeconds, string ghConfigDirectory) : string
+	{
+		if (timeoutSeconds <= 0)
+		{
+			timeoutSeconds = 180;
+		}
+
+		string script = "gh auth login";
+		if (!StringUtil.IsEmpty(ghConfigDirectory))
+		{
+			script = "$env:GH_CONFIG_DIR = '" + ghConfigDirectory.Replace("'", "''") + "'\n" + script;
+		}
+
+		ProcessToolDisplayOptions displayOptions = new ProcessToolDisplayOptions
+		{
+			CommandLabel = "gh auth login",
+			ForceOpenToolWindow = true,
+			DisplayMode = "focused-popup",
+			DisplayTitle = "GitHub authentication",
+			DisplayMessage = "Watch this output for the GitHub login code."
+		};
+
+		return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, displayOptions);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to run a live tool input round trip test")]
+prototype ToRunLiveToolInputRoundTripTest : ProcessSkillAction
+{
+	Description = @"Prompts the active browser tool card for one line of input, waits inside the active ProtoScript invocation for the submitted value, then emits follow-up runtime UI output and returns the received value. This proves the Phase 4 UI-to-ProtoScript round trip.";
+
+	function Execute(string prompt, int timeoutSeconds) : string
+	{
+		if (StringUtil.IsEmpty(prompt))
+		{
+			prompt = "Type a value and submit it back to ProtoScript.";
+		}
+
+		if (timeoutSeconds <= 0)
+		{
+			timeoutSeconds = 120;
+		}
+
+		_opsAgent.EmitRuntimeUiOutput(new RuntimeUiEventOutputContract
+		{
+			EventType = "tool-channel-output",
+			Stream = "stdout",
+			Text = "Starting live input round trip from ProtoScript.\n",
+			Command = "Live tool input round trip"
+		});
+
+		LiveToolInputCollectionResultContract inputResult = _opsAgent.CollectLiveToolInput(new LiveToolInputCollectionRequestContract
+		{
+			InputKind = "line",
+			Prompt = prompt,
+			Required = true,
+			IsSensitive = false,
+			TimeoutSeconds = timeoutSeconds
+		});
+
+		if (StringUtil.IsEmpty(inputResult.Value))
+		{
+			_opsAgent.EmitRuntimeUiOutput(new RuntimeUiEventOutputContract
+			{
+				EventType = "tool-channel-output",
+				Stream = "stderr",
+				Text = "Input collection ended with status: " + inputResult.Status + "\n",
+				Command = "Live tool input round trip"
+			});
+
+			return "Input round trip failed with status: " + inputResult.Status;
+		}
+
+		string value = inputResult.Value;
+
+		_opsAgent.EmitRuntimeUiOutput(new RuntimeUiEventOutputContract
+		{
+			EventType = "tool-channel-output",
+			Stream = "stdout",
+			Text = "ProtoScript resumed with input: " + value + "\n",
+			Command = "Live tool input round trip"
+		});
+
+		_opsAgent.EmitRuntimeUiOutput(new RuntimeUiEventOutputContract
+		{
+			EventType = "tool-channel-output",
+			Stream = "stdout",
+			Text = "Input length: " + value.Length.ToString() + "\n",
+			Command = "Live tool input round trip"
+		});
+
+		return "Round trip complete. ProtoScript received: " + value;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to run a multi step live tool input coordination test")]
+prototype ToRunMultiStepLiveToolInputCoordinationTest : ProcessSkillAction
+{
+	Description = @"Runs a multi-step live tool input coordination test. The active tool card asks for several browser-provided inputs, emits output after each submitted value, then returns a summary. Use this to validate repeated UI-to-ProtoScript input collection and output streaming in one tool invocation.";
+
+	function Execute(int timeoutSeconds) : string
+	{
+		if (timeoutSeconds <= 0)
+		{
+			timeoutSeconds = 180;
+		}
+
+		_opsAgent.EmitRuntimeUiOutput(new RuntimeUiEventOutputContract
+		{
+			EventType = "tool-channel-output",
+			Stream = "stdout",
+			Text = "Starting multi-step live input coordination test.\n",
+			Command = "Multi-step live input coordination test"
+		});
+
+		LiveToolInputCollectionResultContract nameResult = _opsAgent.CollectLiveToolInput(new LiveToolInputCollectionRequestContract
+		{
+			InputKind = "line",
+			Prompt = "Step 1/3: enter your name or initials.",
+			Required = true,
+			IsSensitive = false,
+			TimeoutSeconds = timeoutSeconds
+		});
+
+		if (StringUtil.IsEmpty(nameResult.Value))
+		{
+			_opsAgent.EmitRuntimeUiOutput(new RuntimeUiEventOutputContract
+			{
+				EventType = "tool-channel-output",
+				Stream = "stderr",
+				Text = "Step 1 did not receive input. Status: " + nameResult.Status + "\n",
+				Command = "Multi-step live input coordination test"
+			});
+
+			return "Multi-step test stopped at step 1 with status: " + nameResult.Status;
+		}
+
+		string name = nameResult.Value;
+		_opsAgent.EmitRuntimeUiOutput(new RuntimeUiEventOutputContract
+		{
+			EventType = "tool-channel-output",
+			Stream = "stdout",
+			Text = "Step 1 accepted. Hello, " + name + ".\n",
+			Command = "Multi-step live input coordination test"
+		});
+
+		LiveToolInputCollectionResultContract projectResult = _opsAgent.CollectLiveToolInput(new LiveToolInputCollectionRequestContract
+		{
+			InputKind = "line",
+			Prompt = "Step 2/3: enter a short project or task name.",
+			Required = true,
+			IsSensitive = false,
+			TimeoutSeconds = timeoutSeconds
+		});
+
+		if (StringUtil.IsEmpty(projectResult.Value))
+		{
+			_opsAgent.EmitRuntimeUiOutput(new RuntimeUiEventOutputContract
+			{
+				EventType = "tool-channel-output",
+				Stream = "stderr",
+				Text = "Step 2 did not receive input. Status: " + projectResult.Status + "\n",
+				Command = "Multi-step live input coordination test"
+			});
+
+			return "Multi-step test stopped at step 2 with status: " + projectResult.Status;
+		}
+
+		string project = projectResult.Value;
+		_opsAgent.EmitRuntimeUiOutput(new RuntimeUiEventOutputContract
+		{
+			EventType = "tool-channel-output",
+			Stream = "stdout",
+			Text = "Step 2 accepted. Project/task: " + project + ".\n",
+			Command = "Multi-step live input coordination test"
+		});
+
+		LiveToolInputCollectionResultContract confirmationResult = _opsAgent.CollectLiveToolInput(new LiveToolInputCollectionRequestContract
+		{
+			InputKind = "line",
+			Prompt = "Step 3/3: type CONFIRM to finish the coordination test.",
+			Required = true,
+			IsSensitive = false,
+			TimeoutSeconds = timeoutSeconds
+		});
+
+		if (StringUtil.IsEmpty(confirmationResult.Value))
+		{
+			_opsAgent.EmitRuntimeUiOutput(new RuntimeUiEventOutputContract
+			{
+				EventType = "tool-channel-output",
+				Stream = "stderr",
+				Text = "Step 3 did not receive input. Status: " + confirmationResult.Status + "\n",
+				Command = "Multi-step live input coordination test"
+			});
+
+			return "Multi-step test stopped at step 3 with status: " + confirmationResult.Status;
+		}
+
+		string confirmation = confirmationResult.Value;
+		_opsAgent.EmitRuntimeUiOutput(new RuntimeUiEventOutputContract
+		{
+			EventType = "tool-channel-output",
+			Stream = "stdout",
+			Text = "Step 3 accepted. Confirmation value: " + confirmation + ".\n",
+			Command = "Multi-step live input coordination test"
+		});
+
+		string summary = "Multi-step live input coordination complete. Name=" + name + "; Project=" + project + "; Confirmation=" + confirmation + ".";
+		_opsAgent.EmitRuntimeUiOutput(new RuntimeUiEventOutputContract
+		{
+			EventType = "tool-channel-output",
+			Stream = "stdout",
+			Text = summary + "\n",
+			Command = "Multi-step live input coordination test"
+		});
+
+		return summary;
+	}
+}
+
+

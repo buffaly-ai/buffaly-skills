@@ -1,0 +1,21 @@
+reference Buffaly.Development.Common Buffaly.Development.Common;
+import Buffaly.Development.Common Buffaly.Development.Common.VisualStudioOntologyGenerator VisualStudioOntologyGenerator;
+import Buffaly.Development.Common Buffaly.Development.Common.CSharpClassExposureGenerator CSharpClassExposureGenerator;
+import Buffaly.Development.Common Buffaly.Development.Common.Models.GenerateOrUpdateClassExposureFromCSharpRequest GenerateOrUpdateClassExposureFromCSharpRequest;
+import Buffaly.Development.Common Buffaly.Development.Common.Models.GenerateOrUpdateClassExposureFromCSharpResult GenerateOrUpdateClassExposureFromCSharpResult;
+
+prototype VisualStudioSkillAction : OpsAction
+{
+	Description = @"Base action type for Visual Studio skill tools.";
+}
+
+[SemanticEntity("visual studio skill")]
+prototype VisualStudioSkill : SkillEntity
+{
+	Description = "Visual Studio solution/build/deploy and related developer workflow actions.";
+	ActionRoot = VisualStudioSkillAction;
+}
+
+include "Actions.pts";
+include "VisualStudioOntologyGenerator.pts";
+include "PromptActions.pts";

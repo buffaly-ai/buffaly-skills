@@ -1,0 +1,94 @@
+import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.SessionTools SessionTools;
+
+prototype RuntimeProfileControlAction : LlmSkillAction
+{
+	Description = "Controls Buffaly runtime provider, model, and reasoning selections through backend validation.";
+
+	function GetCurrentRuntimeState() : string
+	{
+		if (_opsAgent == null)
+		{
+			return "ERROR: _opsAgent runtime is not available.";
+		}
+		return CoreOntologyTools.GetModel(_opsAgent);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get current buffaly provider model and reasoning")]
+[SemanticProgram.InfinitivePhrase("to get current buffaly runtime provider selection")]
+prototype ToGetBuffalyRuntimeProviderSelection : RuntimeProfileControlAction
+{
+	Description = "Returns the full current provider, transport, model name, and reasoning level plus available reasoning options for the active session runtime.";
+	function Execute() : string
+	{
+		return this.GetCurrentRuntimeState();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get current buffaly reasoning level")]
+[SemanticProgram.InfinitivePhrase("to get current buffaly model and reasoning")]
+prototype ToGetBuffalyRuntimeModelAndReasoning : ToGetBuffalyRuntimeProviderSelection
+{
+	Description = "Deprecated alias for ToGetBuffalyRuntimeProviderSelection.";
+}
+
+[SemanticProgram.InfinitivePhrase("to set buffaly session model selection")]
+[SemanticProgram.InfinitivePhrase("to set buffaly session provider model and reasoning")]
+[SemanticProgram.InfinitivePhrase("to change a buffaly session provider model")]
+prototype ToSetBuffalySessionModelSelection : RuntimeProfileControlAction
+{
+	Description = "Sets the provider, model name, and optional reasoning level for an existing session through backend provider-catalog validation.";
+	function Execute(string sessionKey, string provider, string modelName, string reasoningLevel = "") : string
+	{
+		if (_opsAgent == null)
+		{
+			return "ERROR: _opsAgent runtime is not available.";
+		}
+
+		return CoreOntologyTools.SetSessionModelSelection(_opsAgent, sessionKey, provider, modelName, reasoningLevel);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list available buffaly providers models and reasoning levels")]
+[SemanticProgram.InfinitivePhrase("to get buffaly provider model catalog")]
+[SemanticProgram.InfinitivePhrase("to show available runtime provider model options")]
+prototype ToGetBuffalyProviderModelCatalog : RuntimeProfileControlAction
+{
+	Description = "Returns the authoritative provider catalog: available providers, transports, models, default selection, and reasoning level options. Optionally accepts a sessionKey so defaults can reflect that session.";
+
+	function Execute(string sessionKey = "") : string
+	{
+		if (_opsAgent == null)
+		{
+			return "ERROR: _opsAgent runtime is not available.";
+		}
+
+		return _opsAgent.GetProviderModelCatalog((sessionKey ?? "").Trim());
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get current buffaly runtime context")]
+[SemanticProgram.InfinitivePhrase("to get current session key and runtime settings")]
+[SemanticProgram.InfinitivePhrase("to get the current session parent key")]
+[SemanticProgram.InfinitivePhrase("to get my parent session key")]
+prototype ToGetCurrentBuffalyRuntimeContext : RuntimeProfileControlAction
+{
+	Description = "Gets current Buffaly runtime context: session key, parent session key, session root directory, and provider state.";
+	function Execute() : string
+	{
+		if (_opsAgent == null)
+		{
+			return "ERROR: _opsAgent runtime is not available.";
+		}
+
+		string sessionKey = _opsAgent.GetSessionKeyOrEmpty();
+		string parentSessionKey = "";
+		if (sessionKey != "")
+		{
+			parentSessionKey = SessionTools.GetParentSessionKeyTool(sessionKey);
+		}
+		string root = _opsAgent.GetCurrentSessionDirectory();
+		string info = this.GetCurrentRuntimeState();
+		return "sessionKey=" + sessionKey + "\\nparentSessionKey=" + parentSessionKey + "\\nsessionRootDirectory=" + root + "\\nproviderInfo=" + info;
+	}
+}

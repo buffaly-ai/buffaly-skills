@@ -1,0 +1,169 @@
+prototype LlmProviderActionBase : LlmSkillAction
+{
+	Description = "Base action for provider-routed LLM operations.";
+}
+
+prototype GrokActionBase : LlmProviderActionBase
+{
+	Description = "Base action for xAI provider operations.";
+	String Provider = "xai";
+}
+
+prototype GeminiActionBase : LlmProviderActionBase
+{
+	Description = "Base action for Gemini provider operations.";
+	String Provider = "gemini";
+}
+
+[SemanticProgram.InfinitivePhrase("to ask a model through the buffaly runtime")]
+[SemanticProgram.InfinitivePhrase("to ask an llm with runtime provider routing")]
+[SemanticProgram.InfinitivePhrase("to ask a model with text image or video input")]
+prototype ToAskModelViaBuffalyRuntime : LlmProviderActionBase
+{
+	Description = @"Preferred LLM action for text completion and multimodal understanding. Delegates to the active Buffaly runtime provider catalog.
+prompt - optional primary text instruction.
+systemPrompt - optional system instruction.
+provider - optional provider token such as openai, xai, gemini, or anthropic.
+model - optional model override validated by the runtime catalog.
+reasoningLevel - optional canonical reasoning token.
+inputPartsJson - optional JSON array of PascalCase content parts: Type text/image_url/video_url with Text/ImageUrl/VideoUrl/MimeType fields.
+Does not support image or video generation.";
+
+	function Execute(string prompt, string systemPrompt = "", string provider = "", string model = "", string reasoningLevel = "", string inputPartsJson = "[]") : string
+	{
+		if (_opsAgent == null)
+		{
+			return "{\"Status\":\"failed\",\"Error\":\"Active Buffaly runtime host is unavailable.\",\"Provider\":\"\",\"Model\":\"\",\"ReasoningLevel\":\"\",\"Text\":\"\",\"UsageMetrics\":[]}";
+		}
+
+		return _opsAgent.AskModelViaRuntime(prompt, systemPrompt, provider, model, reasoningLevel, inputPartsJson);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to ask xai grok a question with specific model")]
+prototype ToAskGrokQuestionWithModel : GrokActionBase
+{
+	Description = "Legacy text wrapper. Prefer ToAskModelViaBuffalyRuntime for new calls.";
+	function Execute(string question, string model) : string
+	{
+		if (_opsAgent == null)
+		{
+			return "{\"Status\":\"failed\",\"Error\":\"Active Buffaly runtime host is unavailable.\",\"Provider\":\"xai\",\"Model\":\"\",\"ReasoningLevel\":\"\",\"Text\":\"\",\"UsageMetrics\":[]}";
+		}
+
+		return _opsAgent.AskModelViaRuntime(question, "", "xai", model, "", "[]");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to ask xai grok a question")]
+prototype ToAskGrokQuestion : GrokActionBase
+{
+	Description = "Legacy text wrapper. Prefer ToAskModelViaBuffalyRuntime for new calls.";
+	function Execute(string question) : string
+	{
+		if (_opsAgent == null)
+		{
+			return "{\"Status\":\"failed\",\"Error\":\"Active Buffaly runtime host is unavailable.\",\"Provider\":\"xai\",\"Model\":\"\",\"ReasoningLevel\":\"\",\"Text\":\"\",\"UsageMetrics\":[]}";
+		}
+
+		return _opsAgent.AskModelViaRuntime(question, "", "xai", "", "", "[]");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("deprecated unavailable grok heavy text ask")]
+prototype ToAskGrokQuestionHeavy : ToAskGrokQuestion
+{
+	Description = "Deprecated heavy-model wrapper. Use ToAskModelViaBuffalyRuntime with explicit provider/model/reasoning values.";
+	function Execute(string question) : string
+	{
+		return "{\"Status\":\"failed\",\"Error\":\"Deprecated heavy Grok wrapper is unavailable in v1. Use ToAskModelViaBuffalyRuntime with an explicit catalog-backed model and reasoningLevel.\",\"Provider\":\"xai\",\"Model\":\"\",\"ReasoningLevel\":\"\",\"Text\":\"\",\"UsageMetrics\":[]}";
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to ask gemini a question with specific model")]
+prototype ToAskGeminiQuestionWithModel : GeminiActionBase
+{
+	Description = "Legacy text wrapper. Prefer ToAskModelViaBuffalyRuntime for new calls.";
+	function Execute(string question, string model) : string
+	{
+		if (_opsAgent == null)
+		{
+			return "{\"Status\":\"failed\",\"Error\":\"Active Buffaly runtime host is unavailable.\",\"Provider\":\"gemini\",\"Model\":\"\",\"ReasoningLevel\":\"\",\"Text\":\"\",\"UsageMetrics\":[]}";
+		}
+
+		return _opsAgent.AskModelViaRuntime(question, "", "gemini", model, "", "[]");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to ask gemini a question")]
+prototype ToAskGeminiQuestion : GeminiActionBase
+{
+	Description = "Legacy text wrapper. Prefer ToAskModelViaBuffalyRuntime for new calls.";
+	function Execute(string question) : string
+	{
+		if (_opsAgent == null)
+		{
+			return "{\"Status\":\"failed\",\"Error\":\"Active Buffaly runtime host is unavailable.\",\"Provider\":\"gemini\",\"Model\":\"\",\"ReasoningLevel\":\"\",\"Text\":\"\",\"UsageMetrics\":[]}";
+		}
+
+		return _opsAgent.AskModelViaRuntime(question, "", "gemini", "", "", "[]");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("deprecated unavailable gemini heavy text ask")]
+prototype ToAskGeminiQuestionHeavy : ToAskGeminiQuestion
+{
+	Description = "Deprecated heavy-model wrapper. Use ToAskModelViaBuffalyRuntime with explicit provider/model/reasoning values.";
+	function Execute(string question) : string
+	{
+		return "{\"Status\":\"failed\",\"Error\":\"Deprecated heavy Gemini wrapper is unavailable in v1. Use ToAskModelViaBuffalyRuntime with an explicit catalog-backed model and reasoningLevel.\",\"Provider\":\"gemini\",\"Model\":\"\",\"ReasoningLevel\":\"\",\"Text\":\"\",\"UsageMetrics\":[]}";
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list text to speech voices")]
+[SemanticProgram.InfinitivePhrase("to list provider text to speech models and voices")]
+prototype ToListTextToSpeechVoices : LlmProviderActionBase
+{
+	Description = @"List provider-backed text-to-speech providers, models, and voices from the active Buffaly runtime catalog without calling external provider APIs.
+provider - optional provider token such as openai, gemini, or xai.
+model - optional model token to filter voices.";
+
+	function Execute(string provider = "", string model = "") : string
+	{
+		return _opsAgent.GetTextToSpeechCatalog(provider, model);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to generate text to speech audio")]
+[SemanticProgram.InfinitivePhrase("to create a text to speech audio artifact")]
+prototype ToGenerateTextToSpeechAudio : LlmProviderActionBase
+{
+	Description = @"Generate a provider-backed text-to-speech MP3 artifact under the current session artifacts/audio directory.
+text - required text to synthesize.
+outputFileName - optional file name; output is always written under artifacts/audio and forced to .mp3.
+provider - optional provider token; empty uses the active/default TTS provider.
+model - optional provider model; empty uses the provider default.
+voice - optional voice; empty uses the provider/model default.
+instructions - optional provider-specific speech instructions.";
+
+	function Execute(string text, string outputFileName = "", string provider = "", string model = "", string voice = "", string instructions = "") : string
+	{
+		return _opsAgent.GenerateTextToSpeechAudio(text, outputFileName, provider, model, voice, instructions);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to generate text to speech voice samples")]
+[SemanticProgram.InfinitivePhrase("to create text to speech samples for voices")]
+prototype ToGenerateTextToSpeechVoiceSamples : LlmProviderActionBase
+{
+	Description = @"Generate one provider-backed text-to-speech MP3 artifact per requested voice under the current session artifacts/audio directory.
+text - required text to synthesize.
+provider - optional provider token; empty uses the active/default TTS provider.
+model - optional provider model; empty uses the provider default.
+voicesCsv - optional comma-separated voice list; empty uses all supported voices for the provider/model.";
+
+	function Execute(string text, string provider = "", string model = "", string voicesCsv = "") : string
+	{
+		return _opsAgent.GenerateTextToSpeechVoiceSamples(text, provider, model, voicesCsv);
+	}
+}

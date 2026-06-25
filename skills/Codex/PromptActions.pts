@@ -1,0 +1,29 @@
+prototype CodexPromptAction : PromptAction
+{
+	Description = "Base action type for Codex prompt workflows.";
+}
+[SemanticProgram.InfinitivePhrase("to coordinate codex incremental edit and validate")]
+[SemanticProgram.InfinitivePhrase("to run a codex edit validate loop")]
+[SemanticProgram.InfinitivePhrase("to coordinate codex with external validation")]
+prototype ToCoordinateCodexIncrementalEditAndValidateSkill : CodexPromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/Codex/Prompts/CoordinateCodexIncrementalEditAndValidate.prompt.md";
+	Description = @"Loads the trusted workflow for bounded Codex edit batches with caller-owned validation between batches.";
+}
+
+[SemanticProgram.InfinitivePhrase("to find codex thread id by thread name")]
+[SemanticProgram.InfinitivePhrase("to lookup codex thread id from thread name")]
+prototype ToFindCodexThreadIdByNameSkill : CodexPromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/Codex/Prompts/FindCodexThreadIdByName.prompt.md";
+	Description = @"Loads the trusted workflow to resolve Codex threadId values from local session index records.";
+}
+
+
+

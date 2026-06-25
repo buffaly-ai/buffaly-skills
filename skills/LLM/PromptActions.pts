@@ -1,0 +1,9 @@
+[SemanticProgram.InfinitivePhrase("to prepare a comprehensive coding investigation brief")]
+[SemanticProgram.InfinitivePhrase("to build a large coding problem prompt package")]
+[SemanticProgram.InfinitivePhrase("to assemble a difficult coding handoff prompt")]
+prototype ToPrepareComprehensiveCodingInvestigationBrief : LlmSkillAction, PromptAction
+{
+	Description = @"Prepare a complete markdown brief for a difficult coding/debugging problem using evidence, code locations, and targeted snippets. Build incrementally and return final markdown for user handoff to model of choice.";
+	IsPromptAction = true;
+	PromptPath = "Skills/LLM/Prompts/PrepareComprehensiveCodingInvestigationBrief.prompt.md";
+}

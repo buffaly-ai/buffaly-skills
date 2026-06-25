@@ -1,0 +1,296 @@
+import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.SessionTools SessionTools;
+import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.QueuedInputResult QueuedInputResult;
+import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.SessionParentResult SessionParentResult;
+import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.SessionStatusResult SessionStatusResult;
+import Buffaly.Agent.Host Buffaly.Agent.Host.TurnSummaryContract TurnSummaryContract;
+import Buffaly.Agent.Host Buffaly.Agent.Host.GetSessionTurnBootstrapResponse GetSessionTurnBootstrapResponse;
+import Buffaly.Agent.Host Buffaly.Agent.Host.GetSessionTurnPageResponse GetSessionTurnPageResponse;
+import Buffaly.Agent.Host Buffaly.Agent.Host.GetTurnDetailResponse GetTurnDetailResponse;
+import Buffaly.Agent.Host Buffaly.Agent.Host.DeleteSessionResultContract DeleteSessionResultContract;
+
+
+prototype SessionManagementSkillAction : OpsAction
+{
+	Description = @"Base action type for Session Management skill tools.";
+}
+
+[SemanticEntity("session management skill")]
+prototype SessionManagementSkill : SkillEntity, CoreEntity, Level2ObserverEntityRoot
+{
+	Description = "Session management and maintenance actions for agent session directories and metadata.";
+	ActionRoot = SessionManagementSkillAction;
+}
+
+include "PromptActions.pts";
+
+[SemanticProgram.InfinitivePhrase("to analyze and improve entities within a session")]
+[SemanticProgram.InfinitivePhrase("to build an entity improvement merge plan from a session")]
+[SemanticProgram.InfinitivePhrase("to extract session entities and propose ontology improvements")]
+prototype ToAnalyzeAndImproveEntitiesWithinSessionSkill : PromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.1.0";
+	PromptPath = @"Skills/SessionManagement/Prompts/AnalyzeAndImproveEntitiesWithinSession.prompt.md";
+	Description = @"Loads the trusted workflow for extracting high-value entities from a target session, validating improvements against existing ontology/code/tools, and producing a merge plan with exact file targets and apply modes (item-by-item or batch).";
+}
+
+[SemanticProgram.InfinitivePhrase("to ensure a buffaly session exists")]
+[SemanticProgram.InfinitivePhrase("to create or load a buffaly session")]
+[SemanticProgram.InfinitivePhrase("to ensure a buffaly-agent session runtime exists")]
+prototype ToCreateBuffalySession : SessionManagementSkillAction
+{
+	Description = @"sessionKey - target session key. Ensures the session exists and is loaded as a Buffaly agent runtime. Reuse the same session when it already exists; do not create a new sibling session unless there is a concrete reason to isolate work. Does not send an instruction.";
+
+	function Execute(string sessionKey) : SessionStatusResult
+	{
+		return SessionTools.CreateBuffalySessionTool(sessionKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to ensure a buffaly child session exists")]
+[SemanticProgram.InfinitivePhrase("to create or load a buffaly child session")]
+[SemanticProgram.InfinitivePhrase("to attach a buffaly child session to a parent session")]
+prototype ToCreateBuffalyChildSession : SessionManagementSkillAction
+{
+	Description = @"parentSessionKey - existing parent session key. childSessionKey - child session key to ensure and attach under the parent. Prefer reusing an existing child session for the same task before creating another one; call ToGetChildSessions first unless there is a concrete reason to isolate work in a new child session. Returns the canonical minimal session status result.";
+
+	function Execute(string parentSessionKey, string childSessionKey) : SessionStatusResult
+	{
+		return SessionTools.CreateBuffalyChildSessionTool(parentSessionKey, childSessionKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get child sessions for a parent session")]
+[SemanticProgram.InfinitivePhrase("to list buffaly child sessions under a parent session")]
+[SemanticProgram.InfinitivePhrase("to reuse an existing child buffaly session")]
+prototype ToGetChildSessions : SessionManagementSkillAction
+{
+	Description = @"parentSessionKey - existing parent session key. Use this before creating a child session so the agent can reuse an existing child session when appropriate instead of creating duplicate sibling sessions. Returns the canonical shared session-status rows for existing child sessions.";
+
+	function Execute(string parentSessionKey) : List<SessionStatusResult>
+	{
+		return SessionTools.GetChildSessionsTool(parentSessionKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get a buffaly session parent key")]
+[SemanticProgram.InfinitivePhrase("to get the parent key for a session")]
+[SemanticProgram.InfinitivePhrase("to read a session parent session key")]
+prototype ToGetBuffalySessionParentKey : SessionManagementSkillAction
+{
+	Description = @"sessionKey - existing session key. Returns the authoritative parent session key, or an empty string when the session has no parent.";
+
+	function Execute(string sessionKey) : string
+	{
+		return SessionTools.GetParentSessionKeyTool(sessionKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create a buffaly sibling session")]
+[SemanticProgram.InfinitivePhrase("to create a sibling session under the same parent")]
+[SemanticProgram.InfinitivePhrase("to attach a new session as a sibling of another session")]
+prototype ToCreateBuffalySiblingSession : SessionManagementSkillAction
+{
+	Description = @"sourceSessionKey - existing session whose parent should be reused. siblingSessionKey - session key to ensure and attach under the same parent. Fails when sourceSessionKey has no parent.";
+
+	function Execute(string sourceSessionKey, string siblingSessionKey) : SessionStatusResult
+	{
+		return SessionTools.CreateBuffalySiblingSessionTool(sourceSessionKey, siblingSessionKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set a buffaly session parent")]
+[SemanticProgram.InfinitivePhrase("to change the parent session for an existing buffaly session")]
+[SemanticProgram.InfinitivePhrase("to attach an existing buffaly session to an existing parent session")]
+prototype ToSetBuffalySessionParent : SessionManagementSkillAction
+{
+	Description = @"sessionKey - existing child/session key to update. parentSessionKey - existing parent session key to assign. Both values must be exact session keys, not display names; this tool never creates sessions, rejects self-parenting and parent cycles, and returns SessionName plus ParentSessionName so callers can verify the relationship clearly.";
+
+	function Execute(string sessionKey, string parentSessionKey) : SessionParentResult
+	{
+		return SessionTools.SetSessionParentTool(sessionKey, parentSessionKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to queue an instruction to a session")]
+[SemanticProgram.InfinitivePhrase("to send message to a session")]
+[SemanticProgram.InfinitivePhrase("to dispatch instruction to child agent")]
+[SemanticProgram.InfinitivePhrase("to dispatch instruction to a session")]
+[SemanticProgram.InfinitivePhrase("to queue an instruction for a child session")]
+[SemanticProgram.InfinitivePhrase("to send instruction to child session")]
+prototype ToSendToSession : SessionManagementSkillAction
+{
+	Description = @"sessionKey - target existing session key. instruction - one instruction to queue for that session without waiting for completion. Returns the canonical minimal queued input result.";
+
+	function Execute(string sessionKey, string instruction) : QueuedInputResult
+	{
+		return SessionTools.SendToSessionTool(sessionKey, instruction);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get session status")]
+[SemanticProgram.InfinitivePhrase("to read the authoritative status for a buffaly session")]
+[SemanticProgram.InfinitivePhrase("to fetch worker-aware session status")]
+prototype ToGetSessionStatus : SessionManagementSkillAction
+{
+	Description = @"sessionKey - target existing session key. Returns the canonical minimal session status result for that session.";
+
+	function Execute(string sessionKey) : SessionStatusResult
+	{
+		return SessionTools.GetSessionStatusTool(sessionKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to archive a buffaly session")]
+[SemanticProgram.InfinitivePhrase("to hide a buffaly session from the active session list")]
+[SemanticProgram.InfinitivePhrase("to mark a session as archived")]
+prototype ToArchiveBuffalySession : SessionManagementSkillAction
+{
+	Description = @"sessionKey - exact existing session key to archive. Archives the session through targeted session metadata storage; this is not folder-moving cleanup and does not physically delete session files. Use only when the user asks to archive/remove a session from normal active lists.";
+
+	function Execute(string sessionKey) : DeleteSessionResultContract
+	{
+		return SessionTools.ArchiveSessionTool(sessionKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to unarchive a buffaly session")]
+[SemanticProgram.InfinitivePhrase("to restore an archived buffaly session to the session list")]
+[SemanticProgram.InfinitivePhrase("to mark a session as not archived")]
+prototype ToUnarchiveBuffalySession : SessionManagementSkillAction
+{
+	Description = @"sessionKey - exact existing session key to unarchive. Restores the session through targeted session metadata storage without loading or mutating runtime state. Use when the user asks to restore an archived session to normal session lists.";
+
+	function Execute(string sessionKey) : SessionStatusResult
+	{
+		return SessionTools.UnarchiveSessionTool(sessionKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get the most recent session turn")]
+[SemanticProgram.InfinitivePhrase("to inspect a session")]
+[SemanticProgram.InfinitivePhrase("to check child session progress")]
+[SemanticProgram.InfinitivePhrase("to get latest child session result")]
+[SemanticProgram.InfinitivePhrase("to get progress from a child session")]
+[SemanticProgram.InfinitivePhrase("to inspect recent child session output")]
+prototype ToGetMostRecentSessionTurn : SessionManagementSkillAction
+{
+	Description = @"sessionKey - target existing session key. Primary starting point for inspecting a session or checking child-session progress/result. Returns only the most recent turn summary, not raw history or tool result rows.";
+
+	function Execute(string sessionKey) : TurnSummaryContract
+	{
+		return SessionTools.GetMostRecentSessionTurnTool(sessionKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get recent session turns")]
+[SemanticProgram.InfinitivePhrase("to get recent session timeline")]
+[SemanticProgram.InfinitivePhrase("to inspect recent assistant responses from a session")]
+[SemanticProgram.InfinitivePhrase("to check what happened recently in a child session")]
+[SemanticProgram.InfinitivePhrase("to get recent child session progress")]
+prototype ToGetRecentSessionTurns : SessionManagementSkillAction
+{
+	Description = @"sessionKey - target existing session key. maxTurns - small bounded count of recent turn summaries, default 5 and capped in C#. Prefer ToGetMostRecentSessionTurn first for routine inspection; use this when a few recent turns are needed. Does not return raw tool result rows.";
+
+	function Execute(string sessionKey, int maxTurns = 5) : GetSessionTurnBootstrapResponse
+	{
+		return SessionTools.GetRecentSessionTurnsTool(sessionKey, maxTurns);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to page older session turns")]
+[SemanticProgram.InfinitivePhrase("to get older session timeline summaries")]
+[SemanticProgram.InfinitivePhrase("to inspect older turn summaries")]
+prototype ToGetSessionTurnPage : SessionManagementSkillAction
+{
+	Description = @"sessionKey - target existing session key. skipTurns - number of newest turns to skip. maxTurns - small bounded count, default 5 and capped in C#. Use after ToGetMostRecentSessionTurn or ToGetRecentSessionTurns when older summary turns are needed.";
+
+	function Execute(string sessionKey, int skipTurns, int maxTurns = 5) : GetSessionTurnPageResponse
+	{
+		return SessionTools.GetSessionTurnPageTool(sessionKey, skipTurns, maxTurns);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get details for one session turn")]
+[SemanticProgram.InfinitivePhrase("to inspect full rows for a selected turn")]
+[SemanticProgram.InfinitivePhrase("to inspect tool output within one turn")]
+prototype ToGetSessionTurnDetail : SessionManagementSkillAction
+{
+	Description = @"sessionKey - target existing session key. turnId - selected turn id from ToGetMostRecentSessionTurn, ToGetRecentSessionTurns, or ToGetSessionTurnPage. maxRows - optional detail row cap, defaults to 200 and is clamped by the host. This may contain a lot of data, including tool calls/results and lifecycle rows; prefer turn summaries unless specific evidence inside one turn is needed.";
+
+	function Execute(string sessionKey, string turnId, int maxRows = 200) : GetTurnDetailResponse
+	{
+		return SessionTools.GetSessionTurnDetailTool(sessionKey, turnId, maxRows);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list active buffaly sessions")]
+[SemanticProgram.InfinitivePhrase("to list active sessions from the runtime")]
+[SemanticProgram.InfinitivePhrase("to get active session info rows")]
+prototype ToListActiveSessions : SessionManagementSkillAction
+{
+	Description = @"maxCount - maximum active sessions to return (defaults to 50). Returns the canonical minimal session status rows from the runtime service.";
+
+	function Execute(int maxCount = 50) : List<SessionStatusResult>
+	{
+		return SessionTools.ListActiveSessionsTool(maxCount);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get a session message as markdown from a session")]
+[SemanticProgram.InfinitivePhrase("to deterministically convert a session message key into markdown")]
+[SemanticProgram.InfinitivePhrase("to get session message markdown by message key")]
+prototype ToGetSessionAssistantMessageMarkdown : SessionManagementSkillAction
+{
+	Description = @"sessionKey - target Buffaly session key. messageKey - message key to retrieve deterministically. Returns markdown as StringRef with metadata and normalized content text for the selected message.";
+
+	function Execute(string sessionKey, string messageKey) : StringRef
+	{
+		return SessionTools.GetSessionMessageMarkdownTool(sessionKey, messageKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to search user session messages by content")]
+[SemanticProgram.InfinitivePhrase("to find user messages in session history")]
+prototype ToSearchSessionMessages : SessionManagementSkillAction
+{
+	Description = @"search - required content search text. maxRows - maximum messages to return, default 25 and capped in C#. Returns compact JSON with MessageID, SessionID, MessageKey, TurnKey, SequenceNumber, Role, and Text.";
+
+	function Execute(string search, int maxRows = 25) : string
+	{
+		return SessionTools.SearchSessionMessagesTool(search, maxRows);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to search final assistant session messages by content")]
+[SemanticProgram.InfinitivePhrase("to search assistant final responses in session history")]
+[SemanticProgram.InfinitivePhrase("to find final assistant answers in session history")]
+prototype ToSearchSessionFinalAssistantMessages : SessionManagementSkillAction
+{
+	Description = @"search - required content search text. maxRows - maximum messages to return, default 25 and capped in C#. Returns compact JSON with MessageID, SessionID, MessageKey, TurnKey, SequenceNumber, Role, and Text.";
+
+	function Execute(string search, int maxRows = 25) : string
+	{
+		return SessionTools.SearchSessionFinalAssistantMessagesTool(search, maxRows);
+	}
+}
+
+
+
+[SemanticProgram.InfinitivePhrase("to get user state")]
+[SemanticProgram.InfinitivePhrase("to read stored user state by session key")]
+[SemanticProgram.InfinitivePhrase("to fetch the full user state payload for a session")]
+prototype ToGetUserState : SessionManagementSkillAction, Level2ObserverActionRoot
+{
+	Description = @"sessionKey - target session key. Returns the full stored user-state payload formatted as friendly JSON.";
+
+	function Execute(string sessionKey) : string
+	{
+		if (StringUtil.IsEmpty(sessionKey) || StringUtil.IsEmpty(sessionKey.Trim()))
+		{
+			return "Error: sessionKey is required.";
+		}
+		return SessionTools.GetUserStateTool(sessionKey);
+	}
+}

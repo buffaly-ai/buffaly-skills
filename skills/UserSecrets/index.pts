@@ -1,0 +1,97 @@
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.InteractiveSiteLaunchRequestContract InteractiveSiteLaunchRequestContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.InteractiveSiteLaunchResultContract InteractiveSiteLaunchResultContract;
+import BasicUtilities BasicUtilities.JsonObject JsonObject;
+
+prototype UserSecretsSkillAction : OpsAction
+{
+	Description = @"Base action type for blocking browser popups that collect API keys, private keys, passwords, tokens, and other user secrets into secure UserSecrets storage without exposing values to the model.";
+}
+
+[SemanticEntity("user secrets skill")]
+prototype UserSecretsSkill : SkillEntity
+{
+	Description = "Collect and update user-level secrets such as API keys, private keys, passwords, access tokens, bearer tokens, and connection secrets. Values are entered in a blocking browser popup and saved directly to UserSecrets secure storage without exposing secret values to the model or timeline.";
+	ActionRoot = UserSecretsSkillAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to launch the user secret collector interactive site")]
+[SemanticProgram.InfinitivePhrase("to collect a user secret in an interactive site")]
+[SemanticProgram.InfinitivePhrase("to save a user secret from a browser form")]
+[SemanticProgram.InfinitivePhrase("to ask the user for a private key")]
+[SemanticProgram.InfinitivePhrase("to ask the user for an API key")]
+[SemanticProgram.InfinitivePhrase("to ask the user for a password securely")]
+[SemanticProgram.InfinitivePhrase("to collect a secret value from the user")]
+[SemanticProgram.InfinitivePhrase("to update an existing user secret")]
+[SemanticProgram.InfinitivePhrase("to open a blocking popup for user secret entry")]
+[SemanticProgram.InfinitivePhrase("to securely collect a token from the user")]
+prototype ToRunUserSecretCollectorInteractiveSite : UserSecretsSkillAction
+{
+	Description = @"Launches a blocking browser popup that asks the user to enter or update one sensitive secret value, such as an API key, private key, password, OAuth token, bearer token, or connection secret. The value is saved directly to UserSecrets secure storage. The model and timeline receive only non-secret confirmation such as status and key name; the secret value is never returned. timeoutSeconds - maximum seconds to wait for browser exit.";
+
+	function Execute(int timeoutSeconds) : string
+	{
+		return ExecuteForMessage(timeoutSeconds, "", "");
+	}
+
+	function ExecuteForKey(int timeoutSeconds, string secretKey, string label) : string
+	{
+		return ExecuteForMessageWithKeyAndTitle(timeoutSeconds, "", "", secretKey, label, "");
+	}
+
+	function ExecuteForKeyWithTitle(int timeoutSeconds, string secretKey, string label, string title) : string
+	{
+		return ExecuteForMessageWithKeyAndTitle(timeoutSeconds, "", "", secretKey, label, title);
+	}
+
+	function ExecuteForMessage(int timeoutSeconds, string messageKey, string toolInvocationId) : string
+	{
+		return ExecuteForMessageWithKey(timeoutSeconds, messageKey, toolInvocationId, "", "");
+	}
+
+	function ExecuteForMessageWithKey(int timeoutSeconds, string messageKey, string toolInvocationId, string secretKey, string label) : string
+	{
+		return ExecuteForMessageWithKeyAndTitle(timeoutSeconds, messageKey, toolInvocationId, secretKey, label, "");
+	}
+
+	function ExecuteForMessageWithKeyAndTitle(int timeoutSeconds, string messageKey, string toolInvocationId, string secretKey, string label, string title) : string
+	{
+		if (timeoutSeconds <= 0)
+		{
+			timeoutSeconds = 120;
+		}
+
+		JsonObject initialState = new JsonObject();
+		initialState["SecretKey"] = secretKey.Trim();
+		initialState["Label"] = label.Trim();
+		initialState["Title"] = title.Trim();
+		initialState["Mode"] = "CreateOrUpdate";
+
+		string skillRoot = Path.Combine(_opsAgent.GetCurrentProjectDirectory(), "Skills", "UserSecrets");
+		string siteRoot = Path.Combine(skillRoot, "interactive-sites", "user-secret-collector");
+		string declarationPath = Path.Combine(skillRoot, "..", "..", "Generated", "JsonWs", "Buffaly.Agent.ScheduledProcesses.Examples.UserInputCollectorService.json");
+		if (!File.Exists(Path.GetFullPath(declarationPath)))
+		{
+			declarationPath = Path.Combine(RuntimeInstallRootFeature.GetRequiredInstallRootPath(), "app", "agent-web", "Generated", "JsonWs", "Buffaly.Agent.ScheduledProcesses.Examples.UserInputCollectorService.json");
+		}
+		string html = File.ReadAllText(Path.Combine(siteRoot, "site.html"));
+		string css = File.ReadAllText(Path.Combine(siteRoot, "site.css"));
+		string js = File.ReadAllText(Path.Combine(siteRoot, "site.js"));
+		string declarationJson = File.ReadAllText(Path.GetFullPath(declarationPath));
+
+		InteractiveSiteLaunchResultContract result = _opsAgent.LaunchInteractiveSite(new InteractiveSiteLaunchRequestContract
+		{
+			Title = "Secure User Secret Entry",
+			MessageKey = messageKey,
+			ToolInvocationId = toolInvocationId,
+			Html = html,
+			Css = css,
+			JavaScript = js,
+			ServiceDeclarationsJson = declarationJson,
+			InitialStateJson = initialState.ToString(),
+			TimeoutSeconds = timeoutSeconds
+		});
+
+		return "Interactive site exited with status: " + result.Status + "; value: " + result.Value;
+	}
+}
+

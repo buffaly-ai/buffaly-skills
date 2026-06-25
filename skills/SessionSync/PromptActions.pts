@@ -1,0 +1,15 @@
+prototype SessionSyncPromptAction : PromptAction
+{
+	Description = "Base action type for SessionSync prompt workflows.";
+}
+
+[SemanticProgram.InfinitivePhrase("to search previous sessions using semdb and disk")]
+[SemanticProgram.InfinitivePhrase("to find past conversations and read raw session files")]
+prototype ToSearchPreviousSessionsSkill : SessionSyncPromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/SessionSync/Prompts/SearchPreviousSessions.prompt.md";
+	Description = @"Find candidate sessions via semantic search, then read raw session files from disk for authoritative details.";
+}

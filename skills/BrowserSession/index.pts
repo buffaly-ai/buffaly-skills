@@ -1,0 +1,182 @@
+import Buffaly.Agent.Tools.Browser Buffaly.Agent.Tools.Browser.BrowserTools BrowserTools;
+import Buffaly.Agent.Tools.Browser Buffaly.Agent.Tools.Browser.BrowserSessionTools BrowserSessionTools;
+
+prototype BrowserSessionSkillAction : OpsAction, CodingContext
+{
+	Description = @"Base action type for deterministic browser session tools.";
+}
+
+[SemanticEntity("browser session skill")]
+prototype BrowserSessionSkill : SkillEntity
+{
+	EntityName = "browser session skill";
+	Description = @"Deterministic browser session tools backed by Buffaly.Agent.Tools.Browser.BrowserTools. Use for selector actions, DOM inspection, JavaScript execution, screenshots, console events, and browser session control.";
+	ActionRoot = BrowserSessionSkillAction;
+}
+
+include "PromptActions.pts";
+
+[SemanticProgram.InfinitivePhrase("to open a browser session")]
+[SemanticProgram.InfinitivePhrase("to start a browser session")]
+[SemanticProgram.InfinitivePhrase("to open a playwright browser session")]
+prototype ToOpenBrowserSession : BrowserSessionSkillAction
+{
+	Description = @"Thin wrapper over BrowserTools.BrowserSubAgentOpenTool(_opsAgent, profileName). profileName - persistent browser profile name. Returns JSON containing subAgentId/profile/status.";
+
+	function Execute(string profileName) : string
+	{
+		return BrowserTools.BrowserSubAgentOpenTool(_opsAgent, profileName);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list browser sessions")]
+[SemanticProgram.InfinitivePhrase("to list active browser subagents")]
+prototype ToListBrowserSessions : BrowserSessionSkillAction
+{
+	Description = @"Thin wrapper over BrowserTools.BrowserSubAgentListTool(_opsAgent). Returns active browser subagents for the current session.";
+
+	function Execute() : string
+	{
+		return BrowserTools.BrowserSubAgentListTool(_opsAgent);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to close a browser session")]
+[SemanticProgram.InfinitivePhrase("to close a browser subagent")]
+prototype ToCloseBrowserSession : BrowserSessionSkillAction
+{
+	Description = @"Thin wrapper over BrowserTools.BrowserSubAgentCloseTool(_opsAgent, subAgentId).";
+
+	function Execute(string subAgentId) : string
+	{
+		return BrowserTools.BrowserSubAgentCloseTool(_opsAgent, subAgentId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to open a browser url")]
+[SemanticProgram.InfinitivePhrase("to navigate a browser session")]
+prototype ToOpenBrowserUrl : BrowserSessionSkillAction
+{
+	Description = @"Thin wrapper over BrowserTools.BrowserOpenTool(_opsAgent, subAgentId, url).";
+
+	function Execute(string subAgentId, string url) : string
+	{
+		return BrowserTools.BrowserOpenTool(_opsAgent, subAgentId, url);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to click a browser selector")]
+prototype ToClickBrowserSelector : BrowserSessionSkillAction
+{
+	Description = @"Thin wrapper over BrowserTools.BrowserClickSelectorTool(_opsAgent, subAgentId, selector, timeoutMs).";
+
+	function Execute(string subAgentId, string selector, int timeoutMs = 15000) : string
+	{
+		return BrowserTools.BrowserClickSelectorTool(_opsAgent, subAgentId, selector, timeoutMs);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to type into a browser selector")]
+[SemanticProgram.InfinitivePhrase("to fill a browser selector")]
+prototype ToTypeBrowserSelector : BrowserSessionSkillAction
+{
+	Description = @"Thin wrapper over BrowserTools.BrowserTypeSelectorTool(_opsAgent, subAgentId, selector, text, clearFirst, timeoutMs).";
+
+	function Execute(string subAgentId, string selector, string text, bool clearFirst = true, int timeoutMs = 15000) : string
+	{
+		return BrowserTools.BrowserTypeSelectorTool(_opsAgent, subAgentId, selector, text, clearFirst, timeoutMs);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to press a browser selector key")]
+prototype ToPressBrowserSelector : BrowserSessionSkillAction
+{
+	Description = @"Thin wrapper over BrowserTools.BrowserPressSelectorTool(_opsAgent, subAgentId, selector, key, timeoutMs).";
+
+	function Execute(string subAgentId, string selector, string key, int timeoutMs = 15000) : string
+	{
+		return BrowserTools.BrowserPressSelectorTool(_opsAgent, subAgentId, selector, key, timeoutMs);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to wait for a browser selector state")]
+prototype ToWaitForBrowserSelectorState : BrowserSessionSkillAction
+{
+	Description = @"Thin wrapper over BrowserTools.BrowserWaitForSelectorStateTool(_opsAgent, subAgentId, selector, state, timeoutMs).";
+
+	function Execute(string subAgentId, string selector, string state, int timeoutMs = 15000) : string
+	{
+		return BrowserTools.BrowserWaitForSelectorStateTool(_opsAgent, subAgentId, selector, state, timeoutMs);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get browser selector text")]
+prototype ToGetBrowserSelectorText : BrowserSessionSkillAction
+{
+	Description = @"Thin wrapper over BrowserTools.BrowserGetSelectorTextTool(_opsAgent, subAgentId, selector, timeoutMs).";
+
+	function Execute(string subAgentId, string selector, int timeoutMs = 15000) : string
+	{
+		return BrowserTools.BrowserGetSelectorTextTool(_opsAgent, subAgentId, selector, timeoutMs);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get browser selector attribute")]
+prototype ToGetBrowserSelectorAttribute : BrowserSessionSkillAction
+{
+	Description = @"Thin wrapper over BrowserTools.BrowserGetSelectorAttributeTool(_opsAgent, subAgentId, selector, attributeName, timeoutMs).";
+
+	function Execute(string subAgentId, string selector, string attributeName, int timeoutMs = 15000) : string
+	{
+		return BrowserTools.BrowserGetSelectorAttributeTool(_opsAgent, subAgentId, selector, attributeName, timeoutMs);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to run browser script")]
+[SemanticProgram.InfinitivePhrase("to run JavaScript in the browser")]
+[SemanticProgram.InfinitivePhrase("to evaluate JavaScript in a browser session")]
+prototype ToRunBrowserScript : BrowserSessionSkillAction
+{
+	Description = @"Runs inline JavaScript in the active browser page using BrowserSessionTools.RunBrowserScript. script - JavaScript function/source. argsJson - JSON argument payload. mutationPolicy - audit label: readOnly or allowMutation.";
+
+	function Execute(string subAgentId, string script, string argsJson = "{}", int timeoutMs = 15000, string mutationPolicy = "readOnly") : string
+	{
+		return BrowserSessionTools.RunBrowserScript(_opsAgent, subAgentId, script, argsJson, timeoutMs, mutationPolicy);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to capture browser screenshot")]
+[SemanticProgram.InfinitivePhrase("to take browser screenshot")]
+prototype ToCaptureBrowserScreenshot : BrowserSessionSkillAction
+{
+	Description = @"Thin wrapper over BrowserTools.BrowserScreenshotTool(_opsAgent, subAgentId, relativePath).";
+
+	function Execute(string subAgentId, string relativePath) : string
+	{
+		return BrowserTools.BrowserScreenshotTool(_opsAgent, subAgentId, relativePath);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get browser console events")]
+[SemanticProgram.InfinitivePhrase("to read browser console diagnostics")]
+prototype ToGetBrowserConsoleEvents : BrowserSessionSkillAction
+{
+	Description = @"Thin wrapper over BrowserTools.BrowserConsoleEventsTool(_opsAgent, subAgentId, maxCount, clearAfterRead).";
+
+	function Execute(string subAgentId, int maxCount = 100, bool clearAfterRead = false) : string
+	{
+		return BrowserTools.BrowserConsoleEventsTool(_opsAgent, subAgentId, maxCount, clearAfterRead);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to fill a browser selector with a secret")]
+[SemanticProgram.InfinitivePhrase("to type a secret into a browser password field")]
+prototype ToFillBrowserSelectorWithSecret : BrowserSessionSkillAction
+{
+	Description = @"Fills a browser selector with a StringRef secret without returning or logging the secret. secretValue - StringRef returned by ToGetUserSecret and materialized only at this typed boundary. Returns redacted JSON only.";
+
+	function Execute(string subAgentId, string selector, StringRef secretValue, int timeoutMs = 15000) : string
+	{
+		return BrowserSessionTools.FillBrowserSelectorWithSecret(_opsAgent, subAgentId, selector, secretValue, timeoutMs);
+	}
+}

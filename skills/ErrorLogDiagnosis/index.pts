@@ -1,0 +1,66 @@
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.InteractiveSiteLaunchRequestContract InteractiveSiteLaunchRequestContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.InteractiveSiteLaunchResultContract InteractiveSiteLaunchResultContract;
+prototype ErrorLogDiagnosisSkillAction : OpsAction
+{
+	Description = @"Base action type for Error Log Diagnosis settings and interactive-site tools.";
+}
+
+[SemanticEntity("error log diagnosis skill")]
+prototype ErrorLogDiagnosisSkill : SkillEntity
+{
+	Description = "View and manage Error Log Diagnosis scheduled-process settings.";
+	ActionRoot = ErrorLogDiagnosisSkillAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to run the error log diagnosis static interactive site test")]
+[SemanticProgram.InfinitivePhrase("to launch the error log diagnosis settings static site shell")]
+[SemanticProgram.InfinitivePhrase("to view error log diagnosis settings in an interactive site")]
+prototype ToRunErrorLogDiagnosisStaticInteractiveSiteTest : ErrorLogDiagnosisSkillAction
+{
+	Description = @"Launches the Error Log Diagnosis settings interactive site for a process row. processID - Processes row ID to inspect. timeoutSeconds - maximum seconds to wait for the browser to exit.";
+
+	function Execute(int processID, int timeoutSeconds) : string
+	{
+		return ExecuteForMessage(processID, timeoutSeconds, "", "");
+	}
+
+	function ExecuteForMessage(int processID, int timeoutSeconds, string messageKey, string toolInvocationId) : string
+	{
+		if (processID <= 0)
+		{
+			return "Error: processID is required.";
+		}
+
+		if (timeoutSeconds <= 0)
+		{
+			timeoutSeconds = 120;
+		}
+
+		string skillRoot = Path.Combine(_opsAgent.GetCurrentProjectDirectory(), "Skills", "ErrorLogDiagnosis");
+		string siteRoot = Path.Combine(skillRoot, "interactive-sites", "error-log-diagnosis-settings");
+		string declarationPath = Path.Combine(skillRoot, "..", "..", "Generated", "JsonWs", "Buffaly.Agent.ScheduledProcesses.Examples.ErrorLogDiagnosisSettingsService.json");
+		if (!File.Exists(Path.GetFullPath(declarationPath)))
+		{
+			declarationPath = Path.Combine(RuntimeInstallRootFeature.GetRequiredInstallRootPath(), "app", "agent-web", "Generated", "JsonWs", "Buffaly.Agent.ScheduledProcesses.Examples.ErrorLogDiagnosisSettingsService.json");
+		}
+		string html = File.ReadAllText(Path.Combine(siteRoot, "site.html"));
+		string css = File.ReadAllText(Path.Combine(siteRoot, "site.css"));
+		string js = File.ReadAllText(Path.Combine(siteRoot, "site.js"));
+		string declarationJson = File.ReadAllText(Path.GetFullPath(declarationPath));
+		js = "window.ErrorLogDiagnosisSettingsSiteConfig = { ProcessID: " + processID.ToString() + " };\n" + js;
+
+		InteractiveSiteLaunchResultContract result = _opsAgent.LaunchInteractiveSite(new InteractiveSiteLaunchRequestContract
+		{
+			Title = "Error Log Diagnosis Settings",
+			MessageKey = messageKey,
+			ToolInvocationId = toolInvocationId,
+			Html = html,
+			Css = css,
+			JavaScript = js,
+			ServiceDeclarationsJson = declarationJson,
+			TimeoutSeconds = timeoutSeconds
+		});
+
+		return "Interactive site exited with status: " + result.Status + "; value: " + result.Value;
+	}
+}

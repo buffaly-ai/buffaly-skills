@@ -1,0 +1,177 @@
+prototype OnboardingPromptAction : PromptAction
+{
+    Description = "Base action type for Buffaly onboarding prompt workflows.";
+}
+
+[SemanticProgram.InfinitivePhrase("to set up my initial ontology")]
+[SemanticProgram.InfinitivePhrase("to teach Buffaly about my work")]
+[SemanticProgram.InfinitivePhrase("to start Buffaly guided setup")]
+[SemanticProgram.InfinitivePhrase("to create my first Buffaly ontology")]
+[SemanticProgram.InfinitivePhrase("to help Buffaly understand my work")]
+prototype ToSetUpInitialOntologySkill : OnboardingPromptAction
+{
+    IsPromptAction = true;
+    SkillKind = "prompt";
+    SkillVersion = "1.0.0";
+    PromptPath = @"Skills/Onboarding/Prompts/ToSetUpInitialOntologySkill.prompt.md";
+    Description = "Guide a new user through Buffaly's first setup by explaining Buffaly, collecting initial entities, prompt actions, and preferences, confirming them, and routing them through the appropriate remember workflows.";
+}
+
+[SemanticProgram.InfinitivePhrase("to show this install's capabilities")]
+[SemanticProgram.InfinitivePhrase("walk me through this install's capabilities")]
+[SemanticProgram.InfinitivePhrase("walk me through the Buffaly navigation capabilities screen")]
+[SemanticProgram.InfinitivePhrase("to show me what this Buffaly installation can do")]
+[SemanticProgram.InfinitivePhrase("show me what you can do")]
+[SemanticProgram.InfinitivePhrase("what can you do")]
+[SemanticProgram.InfinitivePhrase("tell me what you can do")]
+[SemanticProgram.InfinitivePhrase("show me what Buffaly can do")]
+[SemanticProgram.InfinitivePhrase("to explore this Buffaly install's capabilities")]
+[SemanticProgram.InfinitivePhrase("to understand the Buffaly navigation capabilities screen")]
+prototype ToShowInstallCapabilitiesSkill : OnboardingPromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/Onboarding/Prompts/ToShowInstallCapabilitiesSkill.prompt.md";
+	Description = "Guide a new user through the Buffaly Navigation capabilities screen, explaining installed skills, tools, prompt actions, context prompts, agents, providers, services, modules, ontology, and inspection surfaces in outcome-oriented language.";
+}
+
+prototype OnboardingSkill : SkillEntity, CoreEntity
+{
+    EntityName = "Buffaly onboarding skill";
+    Description = "Guided onboarding workflows for helping users understand Buffaly and teach it the first terms, actions, and preferences it should understand.";
+    ActionRoot = OnboardingPromptAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to connect GitHub to Buffaly")]
+[SemanticProgram.InfinitivePhrase("to remember my GitHub repositories")]
+[SemanticProgram.InfinitivePhrase("to set up GitHub in Buffaly")]
+prototype ToConnectGitHubToBuffalySkill : OnboardingPromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/Onboarding/Prompts/ToConnectGitHubToBuffalySkill.prompt.md";
+	Description = "Guide a new user through connecting GitHub to Buffaly and deciding which repositories Buffaly should remember.";
+}
+
+[SemanticProgram.InfinitivePhrase("to connect Google Workspace to Buffaly")]
+[SemanticProgram.InfinitivePhrase("to set up Google Workspace in Buffaly")]
+[SemanticProgram.InfinitivePhrase("to use Google Docs and Sheets with Buffaly")]
+prototype ToConnectGoogleWorkspaceToBuffalySkill : OnboardingPromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/Onboarding/Prompts/ToConnectGoogleWorkspaceToBuffalySkill.prompt.md";
+	Description = "Guide a new user through connecting Google Workspace concepts, documents, sheets, and account access to Buffaly.";
+}
+
+[SemanticProgram.InfinitivePhrase("to expose Buffaly through Tailscale")]
+[SemanticProgram.InfinitivePhrase("to connect Buffaly to Tailscale")]
+[SemanticProgram.InfinitivePhrase("to make Buffaly reachable through Tailscale")]
+prototype ToExposeBuffalyThroughTailscaleSkill : OnboardingPromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/Onboarding/Prompts/ToExposeBuffalyThroughTailscaleSkill.prompt.md";
+	Description = "Guide a new user through understanding and planning secure Buffaly access through Tailscale.";
+}
+
+[SemanticProgram.InfinitivePhrase("to set up Codex inside Buffaly")]
+[SemanticProgram.InfinitivePhrase("to use Codex inside Buffaly")]
+[SemanticProgram.InfinitivePhrase("to connect coding help to Buffaly")]
+prototype ToSetUpCodexInsideBuffalySkill : OnboardingPromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/Onboarding/Prompts/ToSetUpCodexInsideBuffalySkill.prompt.md";
+	Description = "Guide a new user through using Codex inside Buffaly for repository inspection, edits, validation, and commits.";
+}
+
+[SemanticProgram.InfinitivePhrase("to connect my first tool to Buffaly")]
+[SemanticProgram.InfinitivePhrase("to walk me through connecting my first tool")]
+[SemanticProgram.InfinitivePhrase("to start my first Buffaly integration")]
+prototype ToConnectFirstToolSkill : OnboardingPromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/Onboarding/Prompts/ToConnectFirstToolSkill.prompt.md";
+	Description = "Guide a new user through choosing and starting their first useful Buffaly integration, such as GitHub, Google Workspace, Tailscale, or Codex.";
+}
+
+[SemanticProgram.InfinitivePhrase("to create my first Buffaly task")]
+[SemanticProgram.InfinitivePhrase("to walk me through creating my first useful Buffaly task")]
+[SemanticProgram.InfinitivePhrase("to start my first task in Buffaly")]
+prototype ToCreateFirstBuffalyTaskSkill : OnboardingPromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/Onboarding/Prompts/ToCreateFirstBuffalyTaskSkill.prompt.md";
+	Description = "Guide a new user through turning a real goal into a bounded Buffaly task with evidence and acceptance criteria.";
+}
+
+[SemanticProgram.InfinitivePhrase("to teach Buffaly something useful")]
+[SemanticProgram.InfinitivePhrase("to walk me through teaching Buffaly something useful")]
+[SemanticProgram.InfinitivePhrase("to remember something useful in Buffaly")]
+prototype ToTeachBuffalySomethingUsefulSkill : OnboardingPromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/Onboarding/Prompts/ToTeachBuffalySomethingUsefulSkill.prompt.md";
+	Description = "Guide a new user through teaching Buffaly one useful object, preference, or repeatable workflow.";
+}
+
+[SemanticProgram.InfinitivePhrase("to create a prompt skill in Buffaly")]
+[SemanticProgram.InfinitivePhrase("to learn prompt skills in Buffaly")]
+[SemanticProgram.InfinitivePhrase("to create my first prompt skill")]
+prototype ToCreatePromptSkillWalkthroughSkill : OnboardingPromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/Onboarding/Prompts/ToCreatePromptSkillWalkthroughSkill.prompt.md";
+	Description = "Guide a user through the first level of extending Buffaly by creating reusable prompt skills with progressive examples.";
+}
+
+[SemanticProgram.InfinitivePhrase("to create a ProtoScript skill in Buffaly")]
+[SemanticProgram.InfinitivePhrase("to learn ProtoScript skills in Buffaly")]
+[SemanticProgram.InfinitivePhrase("to create my first ProtoScript action")]
+prototype ToCreateProtoScriptSkillWalkthroughSkill : OnboardingPromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/Onboarding/Prompts/ToCreateProtoScriptSkillWalkthroughSkill.prompt.md";
+	Description = "Guide a user through creating ProtoScript actions as deterministic compiled glue code for orchestrating existing tools.";
+}
+
+[SemanticProgram.InfinitivePhrase("to create a C# skill in Buffaly")]
+[SemanticProgram.InfinitivePhrase("to learn C# skills in Buffaly")]
+[SemanticProgram.InfinitivePhrase("to create native C# code for Buffaly")]
+prototype ToCreateCSharpSkillWalkthroughSkill : OnboardingPromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/Onboarding/Prompts/ToCreateCSharpSkillWalkthroughSkill.prompt.md";
+	Description = "Guide a user through understanding how Buffaly can be extended with native compiled C# code loaded at runtime.";
+}
+
+[SemanticProgram.InfinitivePhrase("to learn how Buffaly can modify itself")]
+[SemanticProgram.InfinitivePhrase("to understand Buffaly self modification")]
+[SemanticProgram.InfinitivePhrase("to see how Buffaly adds tools to itself")]
+prototype ToExplainBuffalySelfModificationSkill : OnboardingPromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/Onboarding/Prompts/ToExplainBuffalySelfModificationSkill.prompt.md";
+	Description = "Explain Buffaly's self-extension model in beginner-friendly language across prompts, ProtoScript, and C# code.";
+}
+

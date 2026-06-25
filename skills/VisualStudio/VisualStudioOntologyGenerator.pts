@@ -1,0 +1,55 @@
+[SemanticProgram.InfinitivePhrase("to serialize a visual studio solution to ontology")]
+[SemanticProgram.InfinitivePhrase("to serialize any solution to the ontology")]
+[SemanticProgram.InfinitivePhrase("to serialize a solution file into a visual studio solution prototype")]
+prototype VisualStudioOntologyGenerator_SerializeSolutionPrototype : VisualStudioSkillAction
+{
+	Description = @"Thin wrapper over Buffaly.Development.Common.VisualStudioOntologyGenerator.SerializeSolutionPrototype(solutionFilePath, destinationFilePath, prototypeTokenHint).
+solutionFilePath - passed directly to C#.
+destinationFilePath - passed directly to C#; when empty the method returns generated prototype text without writing a file.
+prototypeTokenHint - passed directly to C# as the optional deterministic token override.
+Returns raw string with no ProtoScript-side validation or reshaping.";
+
+	function Execute(string solutionFilePath, string destinationFilePath, string prototypeTokenHint) : string
+	{
+		return VisualStudioOntologyGenerator.SerializeSolutionPrototype(solutionFilePath, destinationFilePath, prototypeTokenHint);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to generate or update class exposure from c sharp")]
+[SemanticProgram.InfinitivePhrase("to generate protoscript class exposure from c sharp source")]
+prototype CSharpClassExposureGenerator_GenerateOrUpdateClassExposureFromCSharp : VisualStudioSkillAction
+{
+	Description = @"Thin wrapper over Buffaly.Development.Common.CSharpClassExposureGenerator.GenerateOrUpdateClassExposureFromCSharp(cSharpSourceText, outputFilePath, skillActionPrototypeName, sharedInitializerActionName).
+	cSharpSourceText - passed directly to C# as the full source text for one public class.
+	outputFilePath - passed directly to C# as the destination .pts file path to insert/update deterministically.
+	skillActionPrototypeName - passed directly to C# as the base action prototype parent type in generated wrappers.
+	sharedInitializerActionName - passed directly to C# as optional initializer action to call in generated wrappers.
+	Returns native GenerateOrUpdateClassExposureFromCSharpResult with no ProtoScript-side validation or reshaping.";
+
+	function Execute(string cSharpSourceText, string outputFilePath, string skillActionPrototypeName, string sharedInitializerActionName = "") : GenerateOrUpdateClassExposureFromCSharpResult
+	{
+		GenerateOrUpdateClassExposureFromCSharpRequest request = new GenerateOrUpdateClassExposureFromCSharpRequest();
+		request.CSharpSourceText = cSharpSourceText;
+		request.OutputFilePath = outputFilePath;
+		request.SkillActionPrototypeName = skillActionPrototypeName;
+		request.SharedInitializerActionName = sharedInitializerActionName;
+
+		CSharpClassExposureGenerator generator = new CSharpClassExposureGenerator();
+		return generator.GenerateOrUpdateClassExposureFromCSharp(request);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to apply a codex style update patch without codex")]
+prototype SmartPatch_ApplyToProjectFile : VisualStudioSkillAction
+{
+	Description = @"Thin wrapper over the core ToApplySmartPatchToProjectFile action for ProtoScript-compatible SmartPatch application.
+	relativePath - existing project-relative file path to update.
+	patchText - stripped-down Codex-style update-only patch document for that file.
+	Returns status string text with no ProtoScript-side validation or reshaping.";
+
+	function Execute(string relativePath, string patchText) : string
+	{
+		return ToApplySmartPatchToProjectFile.Execute(relativePath, patchText);
+	}
+}
+
+

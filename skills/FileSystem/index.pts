@@ -1,0 +1,365 @@
+prototype FileSystemSkillAction : OpsAction
+{
+	Description = @"Base action type for FileSystem skill tools.";
+}
+
+[SemanticEntity("file system skill")]
+prototype FileSystemSkill : SkillEntity
+{
+	Description = "File and directory read/search/open operations for local workspace inspection.";
+	ActionRoot = FileSystemSkillAction;
+}
+
+function ToNormalizeDirectoryPath(string directoryPath) : string
+{
+	if (StringUtil.IsEmpty(directoryPath))
+	{
+		return "";
+	}
+
+	return directoryPath.Trim();
+}
+
+function ToNormalizeFilePattern(string pattern) : string
+{
+	if (StringUtil.IsEmpty(pattern))
+	{
+		return "*.*";
+	}
+
+	return pattern.Trim();
+}
+
+function ToResolveFilePath(string directoryPath, string filePath) : string
+{
+	if (StringUtil.IsEmpty(filePath))
+	{
+		return "";
+	}
+
+	string normalizedDirectoryPath = ToNormalizeDirectoryPath(directoryPath);
+	if (Path.IsPathRooted(filePath))
+	{
+		return filePath;
+	}
+	if (StringUtil.IsEmpty(normalizedDirectoryPath))
+	{
+		return "";
+	}
+
+	return Path.Combine(normalizedDirectoryPath, filePath);
+}
+
+function ToEscapePowerShellSingleQuoted(string value) : string
+{
+	if (value == null)
+	{
+		return "";
+	}
+
+	return value.Replace("'", "''");
+}
+
+[SemanticProgram.InfinitivePhrase("to launch or open a file")]
+prototype ToLaunchOrOpenFile : FileSystemSkillAction
+{
+	Description = @"filePath - file path or URL to open.";
+
+	function Execute(string filePath) : string
+	{
+		// Launch a local file or URL using the default shell handler.
+		return SystemOperations.LaunchFile(filePath);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list files in a directory")]
+[SemanticProgram.InfinitivePhrase("to search for files in a directory")]
+prototype ToListFilesInDirectory : FileSystemSkillAction
+{
+	Description = @"directoryPath - root folder to search. pattern - wildcard file pattern (defaults to *.*).";
+
+	function Execute(string directoryPath, string pattern) : string
+	{
+		// List files in a directory using the FileSystemTools file search helper.
+		string normalizedDirectoryPath = ToNormalizeDirectoryPath(directoryPath);
+		string normalizedPattern = ToNormalizeFilePattern(pattern);
+		return FileSystemTools.SearchFiles(normalizedDirectoryPath, normalizedPattern);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read a text file")]
+[SemanticProgram.InfinitivePhrase("to read a file from a directory")]
+prototype ToReadTextFile : FileSystemSkillAction, CodingContext
+{
+	Description = @"directoryPath - optional base directory for relative paths. filePath - relative or absolute file path. StringRef-first for large payload chaining; use ToReadTextFileRaw when immediate materialized text is required.";
+
+	function Execute(string directoryPath, string filePath) : StringRef
+	{
+		// Read file contents through FileSystemTools.ReadFile for consistent formatting and truncation.
+		if (StringUtil.IsEmpty(filePath))
+		{
+			return "Error: filePath is required.";
+		}
+
+		string normalizedDirectoryPath = ToNormalizeDirectoryPath(directoryPath);
+		if (StringUtil.IsEmpty(normalizedDirectoryPath))
+		{
+			if (Path.IsPathRooted(filePath))
+			{
+				normalizedDirectoryPath = Path.GetDirectoryName(filePath);
+			}
+			else
+			{
+				return "Error: directoryPath is required for relative file paths.";
+			}
+		}
+
+		return FileSystemTools.ReadFile(normalizedDirectoryPath, filePath);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read raw text file data")]
+[SemanticProgram.InfinitivePhrase("to read a file from a directory as raw text")]
+prototype ToReadTextFileRaw : FileSystemSkillAction, CodingContext
+{
+	Description = @"directoryPath - optional base directory for relative paths. filePath - relative or absolute file path. Use when immediate raw text is required for display or inspection; materializes and returns raw text string immediately.";
+
+	function Execute(string directoryPath, string filePath) : string
+	{
+		// Read file contents through FileSystemTools.ReadFile and return raw materialized text.
+		if (StringUtil.IsEmpty(filePath))
+		{
+			return "Error: filePath is required.";
+		}
+
+		string normalizedDirectoryPath = ToNormalizeDirectoryPath(directoryPath);
+		if (StringUtil.IsEmpty(normalizedDirectoryPath))
+		{
+			if (Path.IsPathRooted(filePath))
+			{
+				normalizedDirectoryPath = Path.GetDirectoryName(filePath);
+			}
+			else
+			{
+				return "Error: directoryPath is required for relative file paths.";
+			}
+		}
+
+		return FileSystemTools.ReadFile(normalizedDirectoryPath, filePath);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to search for text in a directory")]
+[SemanticProgram.InfinitivePhrase("to search text across files in a directory")]
+prototype ToSearchTextInDirectory : FileSystemSkillAction
+{
+	Description = @"directoryPath - root folder to search. text - literal text to match.";
+
+	function Execute(string directoryPath, string text) : string
+	{
+		// Search text in supported source file types under the target directory.
+		string normalizedDirectoryPath = ToNormalizeDirectoryPath(directoryPath);
+		return FileSystemTools.SearchText(normalizedDirectoryPath, text);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to search for text in a directory with code context")]
+[SemanticProgram.InfinitivePhrase("to search text with code in a directory")]
+prototype ToSearchTextInDirectoryWithCode : FileSystemSkillAction
+{
+	Description = @"directoryPath - root folder to search. text - literal text to match.";
+
+	function Execute(string directoryPath, string text) : string
+	{
+		// Search text and return code context using FileSystemTools.SearchTextWithCode.
+		string normalizedDirectoryPath = ToNormalizeDirectoryPath(directoryPath);
+		return FileSystemTools.SearchTextWithCode(normalizedDirectoryPath, text);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get a block of lines from a file")]
+[SemanticProgram.InfinitivePhrase("to read a line range from a file")]
+prototype ToGetFileBlock : FileSystemSkillAction, CodingContext
+{
+	Description = @"directoryPath - optional base directory for relative paths. filePath - relative or absolute file path. startLine - 1-based line index. lineCount - number of lines.";
+
+	function Execute(string directoryPath, string filePath, int startLine, int lineCount) : string
+	{
+		// Return a line range from a file via FileSystemTools.GetFileBlock.
+		if (StringUtil.IsEmpty(filePath))
+		{
+			return "Error: filePath is required.";
+		}
+		if (lineCount <= 0)
+		{
+			return "Error: lineCount must be greater than zero.";
+		}
+
+		string normalizedDirectoryPath = ToNormalizeDirectoryPath(directoryPath);
+		if (StringUtil.IsEmpty(normalizedDirectoryPath))
+		{
+			if (Path.IsPathRooted(filePath))
+			{
+				normalizedDirectoryPath = Path.GetDirectoryName(filePath);
+			}
+			else
+			{
+				return "Error: directoryPath is required for relative file paths.";
+			}
+		}
+
+		return FileSystemTools.GetFileBlock(normalizedDirectoryPath, filePath, startLine, lineCount);
+	}
+}
+
+
+[SemanticProgram.InfinitivePhrase("to search for text in a file")]
+[SemanticProgram.InfinitivePhrase("to find text within a file")]
+prototype ToSearchTextInFile : FileSystemSkillAction
+{
+	Description = @"directoryPath - optional base directory for relative file paths. filePath - relative or absolute path. text - literal text to match.";
+
+	function Execute(string directoryPath, string filePath, string text) : string
+	{
+		// Search a single file with line-context output using Select-String.
+		if (StringUtil.IsEmpty(filePath))
+		{
+			return "Error: filePath is required.";
+		}
+		if (StringUtil.IsEmpty(text))
+		{
+			return "Error: text is required.";
+		}
+
+		string resolvedFilePath = ToResolveFilePath(directoryPath, filePath);
+		if (StringUtil.IsEmpty(resolvedFilePath))
+		{
+			return "Error: directoryPath is required for relative file paths.";
+		}
+
+		string escapedFilePath = ToEscapePowerShellSingleQuoted(resolvedFilePath);
+		string escapedText = ToEscapePowerShellSingleQuoted(text);
+		string script =
+			"$filePath = '" + escapedFilePath + "'; " +
+			"$text = '" + escapedText + "'; " +
+			"if (-not (Test-Path -LiteralPath $filePath)) { throw ('File not found: ' + $filePath) }; " +
+			"$results = Select-String -LiteralPath $filePath -Pattern $text -SimpleMatch -CaseSensitive:$false -Context 2,2; " +
+			"if ($results.Count -eq 0) { return 'No matches found in file: ' + $filePath }; " +
+			"$results | ForEach-Object { '-- line ' + $_.LineNumber + ' --'; $_.Context.PreContext; $_.Line; $_.Context.PostContext; '' };";
+
+		return SystemOperations.RunPowerShell(script);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to search text with ripgrep in a directory")]
+[SemanticProgram.InfinitivePhrase("to search files in a directory with rg")]
+[SemanticProgram.InfinitivePhrase("to find text using ripgrep in a folder")]
+prototype ToSearchTextInDirectoryWithRipgrep : FileSystemSkillAction, CodingContext
+{
+	Description = @"directoryPath - root folder to search.
+text - literal text to match.
+Uses rg (ripgrep) for fast recursive literal search and returns formatted file/line results. Requires ripgrep to be installed and available on PATH. Returns 'Error: ...' for missing inputs, missing directory, or missing rg.
+If RG is missing, offer to install it for the user.";
+
+	function Execute(string directoryPath, string text) : string
+	{
+		string normalizedDirectoryPath = ToNormalizeDirectoryPath(directoryPath);
+		return RipGrepTools.SearchText(normalizedDirectoryPath, text, false);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to replace a text file")]
+[SemanticProgram.InfinitivePhrase("to replace an entire file with text")]
+prototype ToReplaceTextFile : FileSystemSkillAction
+{
+	Description = @"directoryPath - optional base directory for relative file paths. filePath - relative or absolute file path. content - full file content to write.";
+
+	function Execute(string directoryPath, string filePath, string content) : string
+	{
+		if (StringUtil.IsEmpty(filePath))
+		{
+			return "Error: filePath is required.";
+		}
+
+		string normalizedDirectoryPath = ToNormalizeDirectoryPath(directoryPath);
+		if (StringUtil.IsEmpty(normalizedDirectoryPath))
+		{
+			if (Path.IsPathRooted(filePath))
+			{
+				normalizedDirectoryPath = Path.GetDirectoryName(filePath);
+			}
+			else
+			{
+				return "Error: directoryPath is required for relative file paths.";
+			}
+		}
+
+		return FileSystemTools.ReplaceTextFile(normalizedDirectoryPath, filePath, content);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to append text to a file")]
+[SemanticProgram.InfinitivePhrase("to append a large block of text to a file")]
+prototype ToAppendTextFile : FileSystemSkillAction
+{
+	Description = @"directoryPath - optional base directory for relative file paths. filePath - relative or absolute file path. content - text to append to the file.";
+
+	function Execute(string directoryPath, string filePath, string content) : string
+	{
+		if (StringUtil.IsEmpty(filePath))
+		{
+			return "Error: filePath is required.";
+		}
+
+		string normalizedDirectoryPath = ToNormalizeDirectoryPath(directoryPath);
+		if (StringUtil.IsEmpty(normalizedDirectoryPath))
+		{
+			if (Path.IsPathRooted(filePath))
+			{
+				normalizedDirectoryPath = Path.GetDirectoryName(filePath);
+			}
+			else
+			{
+				return "Error: directoryPath is required for relative file paths.";
+			}
+		}
+
+		return FileSystemTools.AppendTextFile(normalizedDirectoryPath, filePath, content);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to replace a text block in a file")]
+[SemanticProgram.InfinitivePhrase("to replace a large text block in a file")]
+prototype ToReplaceTextBlockInFile : FileSystemSkillAction
+{
+	Description = @"directoryPath - optional base directory for relative file paths. filePath - relative or absolute file path. targetText - exact literal text block to find. replacementText - replacement block to write.";
+
+	function Execute(string directoryPath, string filePath, string targetText, string replacementText) : string
+	{
+		if (StringUtil.IsEmpty(filePath))
+		{
+			return "Error: filePath is required.";
+		}
+		if (StringUtil.IsEmpty(targetText))
+		{
+			return "Error: targetText is required.";
+		}
+
+		string normalizedDirectoryPath = ToNormalizeDirectoryPath(directoryPath);
+		if (StringUtil.IsEmpty(normalizedDirectoryPath))
+		{
+			if (Path.IsPathRooted(filePath))
+			{
+				normalizedDirectoryPath = Path.GetDirectoryName(filePath);
+			}
+			else
+			{
+				return "Error: directoryPath is required for relative file paths.";
+			}
+		}
+
+		return FileSystemTools.ReplaceTextBlockInFile(normalizedDirectoryPath, filePath, targetText, replacementText);
+	}
+}
+
+

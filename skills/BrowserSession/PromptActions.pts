@@ -1,0 +1,14 @@
+[SemanticProgram.InfinitivePhrase("to use the browser")]
+[SemanticProgram.InfinitivePhrase("to control the browser")]
+[SemanticProgram.InfinitivePhrase("to automate a web page")]
+[SemanticProgram.InfinitivePhrase("to interact with a browser session")]
+[SemanticProgram.InfinitivePhrase("to run JavaScript in a browser")]
+[SemanticProgram.InfinitivePhrase("to use Playwright or CDP through Buffaly")]
+prototype UseBrowserSkill : PromptAction, BrowserSessionSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/BrowserSession/Prompts/UseBrowserSkill.prompt.md";
+	Description = @"Prompt/routing skill for browser automation. It teaches agents when to use BrowserSessionSkill primitives, when to use the Browser web-module task runner, and when to use domain skills such as TebraWebSkill.";
+}

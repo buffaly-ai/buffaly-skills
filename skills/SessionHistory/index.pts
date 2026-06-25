@@ -1,0 +1,76 @@
+import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.SessionHistorySummarizationTools SessionHistorySummarizationTools;
+
+prototype SessionHistorySkillAction : OpsAction
+{
+	Description = @"Base action type for Session History skill tools.";
+}
+
+[SemanticEntity("session history skill")]
+[SemanticEntity("session timeline skill")]
+prototype SessionHistorySkill : SkillEntity
+{
+	EntityName = "session history skill, session timeline skill";
+	Description = "Session history paging and summarization actions for Buffaly session timelines.";
+	ActionRoot = SessionHistorySkillAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to summarize session history")]
+[SemanticProgram.InfinitivePhrase("to summarize session timeline for a date range")]
+[SemanticProgram.InfinitivePhrase("to build a rolling summary from session history pages")]
+prototype ToSummarizeSessionHistory : SessionHistorySkillAction
+{
+	Description = @"Slow recap tool. Do not use for routine session inspection, child-session progress, or latest-result retrieval; prefer SessionManagement turn-summary tools such as ToGetMostRecentSessionTurn first. sessionKey - target session key. startUtc/endUtc - required ISO UTC bounds. carryContext - optional prior summary context used for chaining.";
+
+	function Execute(string sessionKey, string startUtc, string endUtc, string carryContext) : string
+	{
+		return SessionHistorySummarizationTools.SummarizeSessionHistoryForDateRangeTool(
+						sessionKey,
+			startUtc,
+			endUtc,
+			carryContext);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to summarize session history since last compaction")]
+[SemanticProgram.InfinitivePhrase("to summarize current session timeline")]
+prototype ToSummarizeSessionSinceLastCompaction : SessionHistorySkillAction
+{
+	Description = @"Slow recap tool. Do not use for routine session inspection, child-session progress, or latest-result retrieval; prefer SessionManagement turn-summary tools such as ToGetMostRecentSessionTurn first. sessionKey - target session key. carryContext - optional prior summary context used for chaining.";
+
+	function Execute(string sessionKey, string carryContext) : string
+	{
+		return SessionHistorySummarizationTools.SummarizeSinceLastCompactionTool(
+						sessionKey,
+			carryContext);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to summarize timeline since last compaction")]
+[SemanticProgram.InfinitivePhrase("to summarize session since last compaction")]
+prototype ToSummarizeSinceLastCompaction : SessionHistorySkillAction
+{
+	Description = @"Slow recap tool. Do not use for routine session inspection, child-session progress, or latest-result retrieval; prefer SessionManagement turn-summary tools such as ToGetMostRecentSessionTurn first. sessionKey - target session key. carryContext - optional prior summary context.";
+
+	function Execute(string sessionKey, string carryContext) : string
+	{
+		return SessionHistorySummarizationTools.SummarizeSinceLastCompactionTool(
+						sessionKey,
+			carryContext);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to summarize session history for a date range")]
+[SemanticProgram.InfinitivePhrase("to summarize session timeline between two utc timestamps")]
+prototype ToSummarizeSessionHistoryForDateRange : SessionHistorySkillAction
+{
+	Description = @"Slow recap tool. Do not use for routine session inspection, child-session progress, or latest-result retrieval; prefer SessionManagement turn-summary tools such as ToGetMostRecentSessionTurn first. sessionKey - target session key. startUtc/endUtc - ISO UTC bounds. carryContext - optional prior summary context.";
+
+	function Execute(string sessionKey, string startUtc, string endUtc, string carryContext) : string
+	{
+		return SessionHistorySummarizationTools.SummarizeSessionHistoryForDateRangeTool(
+						sessionKey,
+			startUtc,
+			endUtc,
+			carryContext);
+	}
+}

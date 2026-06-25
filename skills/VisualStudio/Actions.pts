@@ -1,0 +1,73 @@
+function ToTruncatedText(string value, int maxLength) : string
+{
+	if (StringUtil.IsEmpty(value))
+		return "";
+	if (maxLength <= 0)
+		return "";
+	if (value.Length <= maxLength)
+		return value;
+	return value.Substring(0, maxLength) + "\n...[truncated]";
+}
+
+[SemanticProgram.InfinitivePhrase("to update the dlls for a solution")]
+[SemanticProgram.InfinitivePhrase("to update dlls for the solution")]
+[SemanticProgram.InfinitivePhrase("to run update_dlls.bat for a solution")]
+prototype ToUpdateDllsForSolution : VisualStudioSkillAction
+{
+	Description = @"solution - VisualStudioSolution instance. Runs update_dlls.bat from ScriptDirectory (fallback: Directory\\Scripts).";
+
+	function Execute(VisualStudioSolution solution) : string
+	{
+		if (solution == null || StringUtil.IsEmpty(solution.Directory))
+		{
+			return "Error: Valid VisualStudioSolution required.";
+		}
+
+		string scriptRoot = solution.ScriptDirectory;
+		if (StringUtil.IsEmpty(scriptRoot))
+		{
+			scriptRoot = Path.Combine(solution.Directory, "Scripts");
+		}
+
+		string scriptPath = Path.Combine(scriptRoot, "update_dlls.bat");
+		if (!File.Exists(scriptPath))
+		{
+			return "update_dlls.bat not found at: " + scriptPath;
+		}
+
+		string commandArguments = "/c \"" + scriptPath + "\"";
+		string rawResult = ToExecuteCommandLineOperation.Execute(@"C:\Windows\System32\cmd.exe", commandArguments);
+		if (StringUtil.IsEmpty(rawResult))
+		{
+			return "Failed: update_dlls.bat returned no output.";
+		}
+
+		string normalizedResult = rawResult.ToLowerInvariant();
+		if (normalizedResult.Contains("exit code: 0"))
+		{
+			return "Success: update_dlls.bat completed.";
+		}
+		if (normalizedResult.Contains("timed out"))
+		{
+			return "Failed: update_dlls.bat timed out.";
+		}
+
+		return "Failed: update_dlls.bat reported errors. Use ToExecuteCommandLineOperationWithTimeout for full output details.";
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get the solution directory")]
+[SemanticProgram.InfinitivePhrase("to get a solution directory")]
+prototype ToGetSolutionDirectory : VisualStudioSkillAction
+{
+	Description = @"solution - VisualStudioSolution instance.";
+
+	function Execute(VisualStudioSolution solution) : string
+	{
+		if (solution == null || StringUtil.IsEmpty(solution.Directory))
+		{
+			return "Error: valid VisualStudioSolution with Directory is required.";
+		}
+		return "Solution Directory: " + solution.Directory;
+	}
+}

@@ -1,0 +1,11 @@
+﻿prototype LlmSkillAction : OpsAction
+{
+	Description = "Base action type for LLM skill tools.";
+}
+
+prototype LlmSkill : SkillEntity
+{
+	ActionRoot = LlmSkillAction;
+	EntityName = "llm skill";
+	Description = "Prompt construction and LLM execution helpers.";
+}

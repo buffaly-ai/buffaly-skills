@@ -1,0 +1,222 @@
+reference "lib/Buffaly.Maintenance.Client.dll" Buffaly.Maintenance.Client;
+import Buffaly.Maintenance.Client Buffaly.Maintenance.Client.BuffalyMaintenanceFacade BuffalyMaintenanceFacade;
+
+prototype BuffalyMaintenanceSkillAction : OpsAction
+{
+    Description = @"Base action type for Buffaly local maintenance tools.";
+}
+
+[SemanticEntity("buffaly maintenance skill")]
+prototype BuffalyMaintenanceSkill : SkillEntity
+{
+    Description = "Local Buffaly maintenance, diagnostics log upload, and update helper actions.";
+    ActionRoot = BuffalyMaintenanceSkillAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to get buffaly version")]
+[SemanticProgram.InfinitivePhrase("to show installed buffaly version")]
+[SemanticProgram.InfinitivePhrase("to check what version of buffaly is installed")]
+prototype ToGetBuffalyVersion : BuffalyMaintenanceSkillAction
+{
+    Description = @"Returns JSON text containing resolved install root, installed version, and warnings. No parameters are required.";
+
+    function Execute() : string
+    {
+        return BuffalyMaintenanceFacade.GetVersion();
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to get buffaly log path")]
+[SemanticProgram.InfinitivePhrase("to show where buffaly logs are written")]
+[SemanticProgram.InfinitivePhrase("to resolve buffaly diagnostics log directory")]
+prototype ToGetBuffalyLogPath : BuffalyMaintenanceSkillAction
+{
+    Description = @"Returns JSON text containing the primary Buffaly log directory and discovered log directories. No parameters are required.";
+
+    function Execute() : string
+    {
+        return BuffalyMaintenanceFacade.GetLogPath();
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to get buffaly maintenance status")]
+[SemanticProgram.InfinitivePhrase("to summarize buffaly local maintenance state")]
+[SemanticProgram.InfinitivePhrase("to check buffaly update and log status")]
+prototype ToGetBuffalyMaintenanceStatus : BuffalyMaintenanceSkillAction
+{
+    Description = @"Returns JSON text with version, update availability, log path state, recent error count, and warnings.";
+
+    function Execute() : string
+    {
+        return BuffalyMaintenanceFacade.GetMaintenanceStatus();
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to check buffaly update")]
+[SemanticProgram.InfinitivePhrase("to see whether buffaly has a newer release")]
+[SemanticProgram.InfinitivePhrase("to check if buffaly can be updated")]
+prototype ToCheckBuffalyUpdate : BuffalyMaintenanceSkillAction
+{
+    Description = @"Checks configured Buffaly update metadata using system-owned settings. Does not download or apply updates.";
+
+    function Execute() : string
+    {
+        return BuffalyMaintenanceFacade.CheckUpdate();
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to download latest buffaly installer")]
+[SemanticProgram.InfinitivePhrase("to download the newest buffaly update")]
+[SemanticProgram.InfinitivePhrase("to cache the latest buffaly installer")]
+prototype ToDownloadLatestBuffalyInstaller : BuffalyMaintenanceSkillAction
+{
+    Description = @"Downloads the latest configured Buffaly installer and validates SHA-256 when configured. Does not launch or apply it.";
+
+    function Execute() : string
+    {
+        return BuffalyMaintenanceFacade.DownloadLatestInstaller();
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to launch latest buffaly installer")]
+[SemanticProgram.InfinitivePhrase("to start the latest buffaly update installer")]
+[SemanticProgram.InfinitivePhrase("to update buffaly using the latest installer")]
+prototype ToLaunchLatestBuffalyInstaller : BuffalyMaintenanceSkillAction
+{
+    Description = @"Downloads if needed and launches the latest Buffaly installer through the system-owned update path. Agent behavior should require user confirmation before calling this action.";
+
+    function Execute() : string
+    {
+        return BuffalyMaintenanceFacade.LaunchLatestInstaller();
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to upload buffaly error logs")]
+[SemanticProgram.InfinitivePhrase("to send buffaly error logs to herd")]
+[SemanticProgram.InfinitivePhrase("to upload local buffaly errors")]
+prototype ToUploadBuffalyErrorLogs : BuffalyMaintenanceSkillAction
+{
+    Description = @"Uploads discovered Buffaly error logs to Herd using system-owned instance identity, Herd URL, and upload caps.";
+
+    function Execute() : string
+    {
+        return BuffalyMaintenanceFacade.UploadErrorLogs();
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to upload buffaly error and debug logs")]
+[SemanticProgram.InfinitivePhrase("to send buffaly diagnostics logs to herd")]
+[SemanticProgram.InfinitivePhrase("to upload buffaly debug logs")]
+prototype ToUploadBuffalyErrorAndDebugLogs : BuffalyMaintenanceSkillAction
+{
+    Description = @"Uploads discovered Buffaly error and debug logs to Herd using system-owned instance identity, Herd URL, and upload caps.";
+
+    function Execute() : string
+    {
+        return BuffalyMaintenanceFacade.UploadErrorAndDebugLogs();
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to upload current session logs")]
+[SemanticProgram.InfinitivePhrase("to send current buffaly session logs to herd")]
+[SemanticProgram.InfinitivePhrase("to upload this session diagnostics")]
+prototype ToUploadCurrentSessionLogs : BuffalyMaintenanceSkillAction
+{
+    Description = @"Uploads current-session logs to Herd. includeDebug=false uploads errors only; includeDebug=true includes debug logs.";
+
+    function Execute(bool includeDebug) : string
+    {
+        return BuffalyMaintenanceFacade.UploadCurrentSessionLogs(includeDebug);
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to apply buffaly update")]
+[SemanticProgram.InfinitivePhrase("to update buffaly")]
+[SemanticProgram.InfinitivePhrase("to download and apply the latest buffaly update")]
+prototype ToApplyBuffalyUpdate : BuffalyMaintenanceSkillAction
+{
+    Description = @"Downloads and launches the configured Buffaly update path. This is a high-impact action and requires explicit user confirmation before execution.";
+
+    function Execute() : string
+    {
+        return BuffalyMaintenanceFacade.ApplyUpdate();
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to clear old buffaly logs")]
+[SemanticProgram.InfinitivePhrase("to delete buffaly logs older than N minutes")]
+[SemanticProgram.InfinitivePhrase("to prune buffaly error and debug logs")]
+prototype ToClearBuffalyLogs : BuffalyMaintenanceSkillAction
+{
+    Description = @"Deletes Buffaly *.log files older than OlderThanMinutes across all discovered log directories (primary + secondary roots from resolver). Default 60. Returns the standard Buffaly maintenance JSON result envelope (deleted count, bytes freed, list of affected files, warnings). This is a high-impact destructive action. Agent behavior must require explicit user confirmation before calling.";
+
+    function Execute(int olderThanMinutes = 60) : string
+    {
+        return BuffalyMaintenanceFacade.ClearLogs(olderThanMinutes);
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to preview buffaly log cleanup")]
+[SemanticProgram.InfinitivePhrase("to list buffaly logs that would be deleted")]
+[SemanticProgram.InfinitivePhrase("to dry-run clear old buffaly logs")]
+prototype ToPreviewClearBuffalyLogs : BuffalyMaintenanceSkillAction
+{
+    Description = @"Dry-run version of log clearing. Returns the same data shape as ToClearBuffalyLogs but performs no deletions. Use this before calling the destructive version.";
+
+    function Execute(int olderThanMinutes = 60) : string
+    {
+        return BuffalyMaintenanceFacade.PreviewClearLogs(olderThanMinutes);
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to show tool execution policy")]
+[SemanticProgram.InfinitivePhrase("to list blocked commands and approval commands")]
+[SemanticProgram.InfinitivePhrase("to inspect hard deny and approval required tool policy")]
+prototype ToShowToolExecutionPolicy : BuffalyMaintenanceSkillAction
+{
+    Description = @"Returns JSON showing the active tool execution policy source, hard-deny rules, approval-required rules, approval text, and approval timeout.";
+
+    function Execute() : string
+    {
+        return ToolExecutionPolicyManager.GetPolicySummary();
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to configure tool execution policy defaults")]
+[SemanticProgram.InfinitivePhrase("to create the database backed tool execution policy")]
+prototype ToEnsureToolExecutionPolicyConfigured : BuffalyMaintenanceSkillAction
+{
+    Description = @"Creates the DB-backed Tool Execution Policy Feature from compiled defaults when missing. Returns the resulting policy summary.";
+
+    function Execute() : string
+    {
+        return ToolExecutionPolicyManager.EnsurePolicyFeatureConfigured();
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to add a string to the tool approval list")]
+[SemanticProgram.InfinitivePhrase("to require approval for a command string")]
+[SemanticProgram.InfinitivePhrase("to add an approval required command match")]
+prototype ToAddToolApprovalRequiredString : BuffalyMaintenanceSkillAction
+{
+    Description = @"value - exact command or argument substring that should require approval when used by command/process execution tools. Creates the DB-backed policy feature from defaults when missing.";
+
+    function Execute(string value) : string
+    {
+        return ToolExecutionPolicyManager.AddApprovalRequiredString(value);
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to remove a string from the tool approval list")]
+[SemanticProgram.InfinitivePhrase("to stop requiring approval for a command string")]
+[SemanticProgram.InfinitivePhrase("to remove an approval required command match")]
+prototype ToRemoveToolApprovalRequiredString : BuffalyMaintenanceSkillAction
+{
+    Description = @"value - exact command or argument substring to remove from approval-required rules. Creates the DB-backed policy feature from defaults when missing.";
+
+    function Execute(string value) : string
+    {
+        return ToolExecutionPolicyManager.RemoveApprovalRequiredString(value);
+    }
+}
+

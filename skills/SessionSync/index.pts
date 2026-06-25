@@ -1,0 +1,165 @@
+reference Buffaly.SessionSemanticDatabase Buffaly.SessionSemanticDatabase;
+import Buffaly.SessionSemanticDatabase Buffaly.SessionSemanticDatabase.SessionSemDbSyncDriver SessionSemDbSyncDriver;
+import Buffaly.SessionSemanticDatabase Buffaly.SessionSemanticDatabase.SessionFragmentResolutionDriver SessionFragmentResolutionDriver;
+import Buffaly.SessionSemanticDatabase Buffaly.SessionSemanticDatabase.SessionConversationSearchDriver SessionConversationSearchDriver;
+[SemanticEntity("session sync action root")]
+prototype SessionSyncSkillAction : OpsAction
+{
+    Description = @"Base action type for Session Sync skill tools.";
+}
+
+[SemanticEntity("session sync skill")]
+[SemanticEntity("session synchronization skill")]
+prototype SessionSyncSkill : SkillEntity
+{
+    Description = "Session synchronization actions for importing session files into the local Sessions semantic store.";
+    ActionRoot = SessionSyncSkillAction;
+}
+
+include "PromptActions.pts";
+
+prototype SessionSemDbSearchSkillAction : OpsAction
+{
+    Description = @"Base action type for local Sessions semantic search tools.";
+}
+
+prototype SessionSemDbSearchService : Service
+{
+    ServiceName = "SessionSemDbSearchService";
+    Scope = "singleton";
+    AutoInitialize = true;
+
+    function Initialize() : string
+    {
+        return "OK";
+    }
+
+    [SemanticProgram.InfinitivePhrase("to find top conversations for a semantic query")]
+    [SemanticProgram.InfinitivePhrase("to find top conversations for query")]
+    prototype ToFindTopConversationsForQuery : SessionSemDbSearchSkillAction
+    {
+        Description = @"Searches the local Sessions semantic store and returns ranked conversations for a semantic query.";
+
+        function Execute(string query, int topConversations, int topFragmentsPerConversation) : string
+        {
+            int normalizedTopConversations = topConversations;
+            if (normalizedTopConversations <= 0)
+            {
+                normalizedTopConversations = 5;
+            }
+
+            int normalizedTopFragmentsPerConversation = topFragmentsPerConversation;
+            if (normalizedTopFragmentsPerConversation <= 0)
+            {
+                normalizedTopFragmentsPerConversation = 3;
+            }
+
+            return SessionConversationSearchDriver.FindTopConversationsForQuery(
+                query,
+                normalizedTopConversations,
+                normalizedTopFragmentsPerConversation
+            );
+        }
+    }
+
+    [SemanticProgram.InfinitivePhrase("to search conversations for an exact text query")]
+    prototype ToFindExactConversationsForQuery : SessionSemDbSearchSkillAction
+    {
+        Description = @"Searches the local Sessions semantic store using exact fragment matching and returns grouped session matches.";
+
+        function Execute(string query, int topConversations, int topFragmentsPerConversation) : string
+        {
+            return SessionConversationSearchDriver.FindExactConversationsForQuery(query, topConversations, topFragmentsPerConversation);
+        }
+    }
+
+    [SemanticProgram.InfinitivePhrase("to search conversations with hybrid exact and semantic matching")]
+    prototype ToFindHybridConversationsForQuery : SessionSemDbSearchSkillAction
+    {
+        Description = @"Searches the local Sessions semantic store with combined semantic and exact matching and returns grouped session matches.";
+
+        function Execute(string query, int topConversations, int topFragmentsPerConversation) : string
+        {
+            return SessionConversationSearchDriver.FindHybridConversationsForQuery(query, topConversations, topFragmentsPerConversation);
+        }
+    }
+}
+
+[SemanticEntity("semantic conversation search action root")]
+prototype SemanticConversationSearchActionRoot : OpsAction
+{
+    Description = @"Restricted action root for the Semantic Conversation Search agent.";
+}
+
+[SemanticEntity("semantic conversation search entity root")]
+prototype SemanticConversationSearchEntityRoot : SemanticEntityBase
+{
+    Description = @"Restricted entity root for the Semantic Conversation Search agent.";
+}
+
+[SemanticProgram.InfinitivePhrase("to search conversations for a semantic query")]
+prototype ToSemanticConversationSearchFindTopConversationsForQuery : SemanticConversationSearchActionRoot
+{
+    Description = @"Searches historical conversations and returns ranked conversation summaries for a query.";
+
+    function Execute(string query, int topConversations, int topFragmentsPerConversation) : string
+    {
+        return SessionConversationSearchDriver.FindTopConversationsForQuery(query, topConversations, topFragmentsPerConversation);
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to resolve a conversation session from a semantic fragment")]
+prototype ToSemanticConversationSearchResolveSessionFromSemanticFragment : SemanticConversationSearchActionRoot
+{
+    Description = @"Resolves the parent session for a fragment id.";
+
+    function Execute(int fragmentID) : string
+    {
+        return SessionFragmentResolutionDriver.ResolveSessionFromFragment(fragmentID);
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to search conversations for an exact text query")]
+prototype ToSemanticConversationSearchFindExactConversationsForQuery : SemanticConversationSearchActionRoot
+{
+    Description = @"Searches historical conversations using exact fragment text search and returns grouped session matches.";
+
+    function Execute(string query, int topConversations, int topFragmentsPerConversation) : string
+    {
+        return SessionConversationSearchDriver.FindExactConversationsForQuery(query, topConversations, topFragmentsPerConversation);
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to search conversations with hybrid exact and semantic matching")]
+prototype ToSemanticConversationSearchFindHybridConversationsForQuery : SemanticConversationSearchActionRoot
+{
+    Description = @"Searches historical conversations using combined semantic similarity and exact fragment text search, then returns grouped session matches.";
+
+    function Execute(string query, int topConversations, int topFragmentsPerConversation) : string
+    {
+        return SessionConversationSearchDriver.FindHybridConversationsForQuery(query, topConversations, topFragmentsPerConversation);
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to search conversations with hybrid exact and semantic matching within a UTC time range")]
+prototype ToSemanticConversationSearchFindHybridConversationsForQueryWithinUtcRange : SemanticConversationSearchActionRoot
+{
+    Description = @"Searches historical conversations within an explicit UTC time range using combined semantic similarity and exact fragment text search, then returns grouped session matches.";
+
+    function Execute(string query, int topConversations, int topFragmentsPerConversation, string startUtc, string endUtc) : string
+    {
+        return SessionConversationSearchDriver.FindHybridConversationsForQueryWithinUtcRange(query, topConversations, topFragmentsPerConversation, startUtc, endUtc);
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to search conversations for exact text within a UTC time range")]
+prototype ToSemanticConversationSearchFindExactConversationsForQueryWithinUtcRange : SemanticConversationSearchActionRoot
+{
+    Description = @"Searches historical conversations within an explicit UTC time range using exact fragment text search and returns grouped session matches.";
+
+    function Execute(string query, int topConversations, int topFragmentsPerConversation, string startUtc, string endUtc) : string
+    {
+        return SessionConversationSearchDriver.FindExactConversationsForQueryWithinTimeRange(query, topConversations, topFragmentsPerConversation, startUtc, endUtc);
+    }
+}
+

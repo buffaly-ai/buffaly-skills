@@ -1,0 +1,52 @@
+reference "lib/Buffaly.Marketing.dll" Buffaly.Marketing;
+import Buffaly.Marketing Buffaly.Marketing.GoogleAnalytics.GoogleAnalyticsProtoScriptFacade GoogleAnalyticsProtoScriptFacade;
+
+prototype GoogleAnalyticsSkillAction : OpsAction
+{
+	Description = @"Base action type for Google Analytics primitive data access tools.";
+}
+
+[SemanticEntity("google analytics skill")]
+prototype GoogleAnalyticsSkill : SkillEntity
+{
+	Description = "Primitive GA4 Data API access tools for configured Buffaly.Marketing properties.";
+	EntityName = "google analytics skill";
+	ActionRoot = GoogleAnalyticsSkillAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to list marketing analytics properties")]
+[SemanticProgram.InfinitivePhrase("to list google analytics properties")]
+prototype ToListMarketingAnalyticsProperties : GoogleAnalyticsSkillAction
+{
+	Description = @"Returns configured GA4 property aliases, account IDs, property IDs, and API property names as JSON.";
+
+	function Execute() : string
+	{
+		return GoogleAnalyticsProtoScriptFacade.ListProperties();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to test marketing analytics access")]
+[SemanticProgram.InfinitivePhrase("to test google analytics property access")]
+prototype ToTestMarketingAnalyticsAccess : GoogleAnalyticsSkillAction
+{
+	Description = @"propertyAlias - configured GA4 property alias. startDate/endDate - GA4 date strings such as 7daysAgo/yesterday. Returns access status JSON.";
+
+	function Execute(string propertyAlias, string startDate, string endDate) : string
+	{
+		return GoogleAnalyticsProtoScriptFacade.TestAccess(propertyAlias, startDate, endDate);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to run a marketing analytics report")]
+[SemanticProgram.InfinitivePhrase("to run a google analytics report")]
+prototype ToRunMarketingAnalyticsReport : GoogleAnalyticsSkillAction
+{
+	Description = @"propertyAlias - configured GA4 property alias. dimensionsCsv/metricsCsv - comma-separated GA4 fields. Returns raw GA4 report JSON wrapped with property metadata.";
+
+	function Execute(string propertyAlias, string startDate, string endDate, string dimensionsCsv, string metricsCsv, int limit) : string
+	{
+		return GoogleAnalyticsProtoScriptFacade.RunReport(propertyAlias, startDate, endDate, dimensionsCsv, metricsCsv, limit);
+	}
+}
+

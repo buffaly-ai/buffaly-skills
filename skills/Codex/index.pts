@@ -1,0 +1,111 @@
+import Buffaly.Agent.Tools.Codex Buffaly.Agent.Tools.Codex.CodexTools CodexTools;
+
+prototype CodexSkillAction : OpsAction, CodingContext
+{
+	Description = @"Base action type for Codex skill tools.";
+}
+
+[SemanticEntity("codex skill")]
+prototype CodexSkill : SkillEntity, CoreEntity
+{
+	Description = "The Codex skill should be used for all non-ProtoScript code editing, or file editing operations. Use it instead of PowerShell / CMD options";
+	ActionRoot = CodexSkillAction;
+}
+
+include "PromptActions.pts";
+
+[SemanticProgram.InfinitivePhrase("to execute a codex edit turn")]
+[SemanticProgram.InfinitivePhrase("to run codex edit")]
+prototype ToCodexEditTool : CodexSkillAction
+{
+	Description = @"cwd - absolute working directory path.
+instruction - codex instruction text.
+trustedPromptPath - optional trusted prompt file path (use empty string when unused).";
+
+	function Execute(string cwd, string instruction, string trustedPromptPath) : string
+	{
+		return CodexTools.CodexEditTool(_opsAgent, cwd, instruction, trustedPromptPath);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to execute codex send")]
+[SemanticProgram.InfinitivePhrase("to run legacy codex send")]
+prototype ToCodexSendTool : CodexSkillAction
+{
+	Description = @"instruction - codex instruction text.";
+
+	function Execute(string instruction) : string
+	{
+		return CodexTools.CodexSendTool(_opsAgent, instruction);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to open a codex subagent")]
+[SemanticProgram.InfinitivePhrase("to attach to a codex thread")]
+prototype ToCodexSubAgentOpenTool : CodexSkillAction
+{
+	Description = @"cwd - absolute working directory path.
+threadId - optional thread id (use empty string to create a new thread).";
+
+	function Execute(string cwd, string threadId) : string
+	{
+		return CodexTools.CodexSubAgentOpenTool(_opsAgent, cwd, threadId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to send a codex subagent instruction")]
+prototype ToCodexSubAgentSendTool : CodexSkillAction
+{
+	Description = @"subAgentId - codex subagent id.
+instruction - codex instruction text.";
+
+	function Execute(string subAgentId, string instruction) : string
+	{
+		return CodexTools.CodexSubAgentSendTool(_opsAgent, subAgentId, instruction);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to steer a codex subagent")]
+prototype ToCodexSubAgentSteerTool : CodexSkillAction
+{
+	Description = @"subAgentId - codex subagent id.
+instruction - steering instruction text.";
+
+	function Execute(string subAgentId, string instruction) : string
+	{
+		return CodexTools.CodexSubAgentSteerTool(_opsAgent, subAgentId, instruction);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to cancel a codex subagent turn")]
+prototype ToCodexSubAgentCancelTool : CodexSkillAction
+{
+	Description = @"subAgentId - codex subagent id.";
+
+	function Execute(string subAgentId) : string
+	{
+		return CodexTools.CodexSubAgentCancelTool(_opsAgent, subAgentId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list codex subagents")]
+prototype ToCodexSubAgentListTool : CodexSkillAction
+{
+	Description = @"Returns active codex subagents for the current session.";
+
+	function Execute() : string
+	{
+		return CodexTools.CodexSubAgentListTool(_opsAgent);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to close a codex subagent")]
+prototype ToCodexSubAgentCloseTool : CodexSkillAction
+{
+	Description = @"subAgentId - codex subagent id.";
+
+	function Execute(string subAgentId) : string
+	{
+		return CodexTools.CodexSubAgentCloseTool(_opsAgent, subAgentId);
+	}
+}

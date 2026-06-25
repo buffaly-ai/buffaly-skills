@@ -1,0 +1,53 @@
+prototype ServicesSkillAction : OpsAction
+{
+	Description = @"Base action type for service discovery tools.";
+}
+
+[SemanticEntity("services skill")]
+[SemanticEntity("service discovery skill")]
+prototype ServicesSkill : SkillEntity, CoreEntity
+{
+	EntityName = "services skill, service discovery skill";
+	Description = "Service discovery tools for listing available ProtoScript-backed services and inspecting the declared service hierarchy.";
+	ActionRoot = ServicesSkillAction;
+}
+
+function ToCloneServiceHierarchy(Prototype prototype) : Prototype
+{
+	Collection children = prototype.GetDescendants();
+	Prototype result = prototype.ShallowClone();
+
+	foreach (Prototype child in children)
+	{
+		Prototype clonedChild = ToCloneServiceHierarchy(child);
+		result.Children.Add(clonedChild);
+	}
+
+	return result;
+}
+
+[SemanticProgram.InfinitivePhrase("to list services")]
+[SemanticProgram.InfinitivePhrase("to list available services")]
+[SemanticProgram.InfinitivePhrase("to enumerate protoscript services")]
+prototype ToListServices : ServicesSkillAction
+{
+	Description = @"Returns the full recursive flat list of available ProtoScript-backed services by reading all descendants of the Service base prototype.";
+
+	function Execute() : Collection
+	{
+		return Service.GetAllDescendants();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get the service hierarchy")]
+[SemanticProgram.InfinitivePhrase("to show the service inheritance tree")]
+[SemanticProgram.InfinitivePhrase("to inspect the recursive service tree")]
+prototype ToGetServiceHierarchy : ServicesSkillAction
+{
+	Description = @"Returns the recursive service hierarchy rooted at the Service base prototype so singleton and per-binding services can be inspected as a tree.";
+
+	function Execute() : Prototype
+	{
+		return ToCloneServiceHierarchy(Service);
+	}
+}

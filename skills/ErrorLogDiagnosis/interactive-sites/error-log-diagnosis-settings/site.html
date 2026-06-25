@@ -1,0 +1,71 @@
+<div class="eld-settings-site" data-site="error-log-diagnosis-settings">
+	<header class="eld-settings-header">
+		<div>
+			<h2>Error Log Diagnosis Settings</h2>
+			<p class="eld-settings-subtitle">Review and tune the scheduled error-log monitor without changing runtime history.</p>
+		</div>
+		<div class="eld-actions">
+			<button type="button" class="eld-button" data-action="edit-settings" hidden>Edit</button>
+			<button type="button" class="eld-button eld-button-primary" data-action="save-settings" hidden>Save</button>
+			<button type="button" class="eld-button" data-action="discard-settings" hidden>Discard</button>
+			<button type="button" class="eld-button" data-action="exit-site">Exit</button>
+		</div>
+	</header>
+
+	<section class="eld-status" data-role="status">Loading settings...</section>
+
+	<section class="eld-summary" aria-label="Settings summary">
+		<div>
+			<strong>Editable process settings</strong>
+			<span>JsonWs-backed settings for the existing Error Log Diagnosis scheduled-process row.</span>
+		</div>
+		<div>
+			<strong>Runtime state preserved</strong>
+			<span>File cursors, cooldown state, counters, and dispatch history are not edited here.</span>
+		</div>
+	</section>
+
+	<section class="eld-details" data-role="details" hidden>
+		<div class="eld-section-title">
+			<h3>Process settings</h3>
+			<p>Grouped by how the monitor uses each value.</p>
+		</div>
+		<div class="eld-settings-groups" data-role="settings-grid"></div>
+	</section>
+
+	<section class="eld-editor" data-role="editor" hidden>
+		<div class="eld-section-title">
+			<h3>Edit settings</h3>
+			<p>Save writes these editable fields back to the process row settings.</p>
+		</div>
+		<form class="eld-settings-form" data-role="settings-form">
+			<fieldset>
+				<legend>Session routing</legend>
+				<label><span>Session key</span><input data-bind="SessionKey" type="text" /></label>
+				<label><span>Agent name</span><input data-bind="AgentName" type="text" /></label>
+				<label><span>Create child session</span><input data-bind="CreateChildSession" type="checkbox" disabled /></label>
+				<label><span>Prompt context</span><input data-bind="PromptContext" type="text" /></label>
+			</fieldset>
+			<fieldset>
+				<legend>Log source</legend>
+				<label><span>Log directory</span><input data-bind="LogDirectory" type="text" /></label>
+				<label><span>File pattern</span><input data-bind="FilePattern" type="text" /></label>
+				<label><span>Excluded file-name text</span><textarea data-bind="ExcludeFileNameContains" rows="4"></textarea></label>
+			</fieldset>
+			<fieldset>
+				<legend>Limits</legend>
+				<label><span>Max instruction characters</span><input data-bind="MaxInstructionCharacters" type="number" /></label>
+				<label><span>Max matching lines</span><input data-bind="MaxMatchingLines" type="number" /></label>
+				<label><span>Max files per run</span><input data-bind="MaxFilesPerRun" type="number" /></label>
+				<label><span>Max bytes per file</span><input data-bind="MaxBytesPerFile" type="number" /></label>
+				<label><span>Max line characters</span><input data-bind="MaxLineCharacters" type="number" /></label>
+				<label><span>Max agent message characters</span><input data-bind="MaxAgentMessageCharacters" type="number" /></label>
+			</fieldset>
+			<fieldset>
+				<legend>History and cooldown</legend>
+				<label><span>History data-source path</span><input data-bind="HistoryDataSourcePath" type="text" /></label>
+				<label><span>Dispatch cooldown minutes</span><input data-bind="DispatchCooldownMinutes" type="number" /></label>
+			</fieldset>
+		</form>
+	</section>
+</div>
