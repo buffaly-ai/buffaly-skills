@@ -1,8 +1,6 @@
 reference Buffaly.OpenAI.ImageGeneration Buffaly.OpenAI.ImageGeneration;
 import Buffaly.OpenAI.ImageGeneration Buffaly.OpenAI.ImageGeneration.OpenAIImageGenerationServiceRuntime OpenAIImageGenerationServiceRuntime;
-import Buffaly.Agent.Tools.Http Buffaly.Agent.Tools.Http.JsonWsHelper JsonWsHelper;
-import Buffaly.Agent.Tools.Llm Buffaly.Agent.Tools.Llm.LLMs LLMs;
-import BasicUtilities BasicUtilities.JsonObject JsonObject;
+import Buffaly.Agent.Host Buffaly.Agent.Host.OpenAIFeature OpenAIFeature;
 import BasicUtilities BasicUtilities.StringUtil StringUtil;
 
 prototype OpenAIImageGenerationSkillAction : OpsAction
@@ -21,35 +19,24 @@ prototype OpenAIImageGenerationWebModuleService : Service
 {
 	ServiceName = "OpenAIImageGenerationWebModuleService";
 	Scope = "per-binding";
-	Description = @"Installed OpenAI image-generation web-module JSON route binding.";
-
-	String BaseUrl = "";
-	String ApiPrefix = "api/buffaly.openai.imagegeneration.webharness/image-generation-harness-json-ws-service";
+	Description = @"Installed OpenAI image-generation web-module service using OpenAIFeature-backed configuration.";
 
 	function Initialize() : string
 	{
-		string apiKey = LLMs.GetResponsesApiKeyOrEmpty();
+		string apiKey = OpenAIFeature.Feature.ApiKey;
 		if (StringUtil.IsEmpty(apiKey))
 		{
 			throw "OpenAI feature API key is required before using the OpenAI image generation web module.";
 		}
 
-		string resolvedBaseUrl = StringUtil.IsEmpty(this.BaseUrl) ? JsonWsHelper.ResolveWorkerInternalBaseUrl() : this.BaseUrl;
-		JsonObject request = new JsonObject();
-		request["ApiKey"] = apiKey;
-		JsonObject args = new JsonObject();
-		args["request"] = request;
-		string routeUrl = JsonWsHelper.BuildJsonRouteUrl(resolvedBaseUrl, this.ApiPrefix, "initialize");
-		JsonWsHelper.CallJsonWs(routeUrl, "Initialize", "", args);
-		return "OpenAIImageGenerationWebModuleService initialized (BaseUrl = " + resolvedBaseUrl + ", HasApiKey = true).";
+		return "OpenAIImageGenerationWebModuleService initialized (HasApiKey = true).";
 	}
 }
 
 [SemanticEntity("local openai image generation web module service")]
 partial prototype OpenAIImageGenerationWebModuleService#Local : OpenAIImageGenerationWebModuleService
 {
-	BaseUrl = "";
-	Description = "Local installed OpenAI image-generation web module binding using WorkerFeature.InternalBaseUrl unless explicitly overridden.";
+	Description = "Local installed OpenAI image-generation web module binding using OpenAIFeature.ApiKey.";
 }
 
 [SemanticProgram.InfinitivePhrase("to generate an image with openai")]
@@ -60,7 +47,7 @@ prototype ToGenerateImageWithOpenAI : OpenAIImageGenerationSkillAction
 
 	function Execute(string prompt, string size, string model, string quality, string background, string outputFormat, string outputCompression) : string
 	{
-		string apiKey = LLMs.GetResponsesApiKeyOrEmpty();
+		string apiKey = OpenAIFeature.Feature.ApiKey;
 		if (StringUtil.IsEmpty(apiKey))
 		{
 			throw "OpenAI feature API key is required before using OpenAI image generation.";
@@ -91,7 +78,7 @@ prototype ToEditImageWithOpenAI : OpenAIImageGenerationSkillAction
 
 	function Execute(string prompt, string imageFilePath, string maskFilePath, string size, string model, string quality, string background, string outputFormat, string outputCompression) : string
 	{
-		string apiKey = LLMs.GetResponsesApiKeyOrEmpty();
+		string apiKey = OpenAIFeature.Feature.ApiKey;
 		if (StringUtil.IsEmpty(apiKey))
 		{
 			throw "OpenAI feature API key is required before using OpenAI image generation.";
