@@ -3600,6 +3600,77 @@
       "RequiresPreStartInstall": true
     },
     {
+      "PackageId": "ExtensionPublishing",
+      "PackageType": "WebModule",
+      "Title": "Extension Publishing",
+      "Description": "Maintainer UI for building, comparing, and publishing Buffaly extension packages.",
+      "Version": "0.1.0",
+      "PackageKind": "BuffalyWebModule",
+      "SourcePath": "web-modules/ExtensionPublishing",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/ExtensionPublishing",
+      "Phrases": [
+        "extension publishing",
+        "publish skills",
+        "publish web modules"
+      ],
+      "Files": [
+        {
+          "Path": "asicUtilities.dll",
+          "Sha256": "4938647f139a04550321bbf8b9a31315583c6b57eebac906ffd0c1fc48c57c17"
+        },
+        {
+          "Path": "uffaly.Agent.Web.Common.dll",
+          "Sha256": "3ac1f89cc8cadd242b4325951ea83be9edfb79c1dc1350e8caccb2c121fd1d14"
+        },
+        {
+          "Path": "uffaly.Agent.Web.Common.pdb",
+          "Sha256": "955554816ae770c3038022c2a266fadc3e5cf703cdd87ba385c05972bbb91aa9"
+        },
+        {
+          "Path": "uffaly.ExtensionPublishing.WebModule.deps.json",
+          "Sha256": "6d582d86a50589dde2a7fb6afa12214389277eea709297dfd5558b5063a7b9b8"
+        },
+        {
+          "Path": "uffaly.ExtensionPublishing.WebModule.dll",
+          "Sha256": "c8bdbd91d3feec07d3ff565b78173263954cfd7d1cddfe524c9e0b36365bbbca"
+        },
+        {
+          "Path": "uffaly.ExtensionPublishing.WebModule.pdb",
+          "Sha256": "c8f636ed2c13e9f32407331a126e80f37ee8de3b414111a911951caed7bc85bb"
+        },
+        {
+          "Path": "enerated\\JsonWs\\Buffaly.ExtensionPublishing.WebModule.ExtensionPublishingService.ashx.js",
+          "Sha256": "4a7d8b07d1b0c328a39efe010381c4d9fd830d1c32d3d653afe0b3adc6a3b472"
+        },
+        {
+          "Path": "enerated\\JsonWs\\Buffaly.ExtensionPublishing.WebModule.ExtensionPublishingService.json",
+          "Sha256": "ee1c6ad2da4bb14afae490690fedf6d235484933518f78b3e8b24a9160f20626"
+        },
+        {
+          "Path": "icrosoft.Data.SqlClient.dll",
+          "Sha256": "5a34e2fa3479b1508dbc20fbeb2c9172f18c3868bdb147a185213a446645b400"
+        },
+        {
+          "Path": "icrosoft.Identity.Client.dll",
+          "Sha256": "10d59df4170053ea9597e3c20adc9607ad17318ad5d8747eda3d930a5a4b463a"
+        },
+        {
+          "Path": "eb-module.json",
+          "Sha256": "917e5b8a803ab7e30aa1caafe490b82d647e38dade0812c2e4f469b8cf747d72"
+        },
+        {
+          "Path": "ebAppUtilities.dll",
+          "Sha256": "b04993ec40d66d8f11ffc85f1d1c49ea52be9801406e48765e1e130fb881f5b4"
+        }
+      ],
+      "Dependencies": [],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsDefaultPackage": true,
+      "RequiresRestart": true,
+      "RequiresPreStartInstall": true
+    },
+    {
       "PackageId": "GoogleWorkspace",
       "PackageType": "WebModule",
       "Title": "Google Workspace",

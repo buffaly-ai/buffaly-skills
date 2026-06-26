@@ -1,0 +1,19 @@
+{
+  "Module": {
+    "Enabled": true,
+    "TypeName": "Buffaly.ExtensionPublishing.WebModule.ExtensionPublishingModule",
+    "AssemblyPath": "Buffaly.ExtensionPublishing.WebModule.dll",
+    "Description": "Maintainer UI for building, comparing, and publishing Buffaly extension packages.",
+    "Pages": [
+      {
+        "Path": "/extension-publishing",
+        "DisplayName": "Extension Publishing",
+        "Name": "extension-publishing",
+        "Description": "Build, compare, and publish local Buffaly extensions to the central repository."
+      }
+    ],
+    "DisplayName": "Extension Publishing",
+    "LoadOrder": 260,
+    "Name": "ExtensionPublishing"
+  }
+}
