@@ -1,0 +1,12 @@
+
+[SemanticProgram.InfinitivePhrase("to create a formatted google doc from markdown")]
+[SemanticProgram.InfinitivePhrase("to convert markdown to a properly formatted google document")]
+[SemanticProgram.InfinitivePhrase("to create google doc with heading styles from markdown")]
+prototype ToCreateFormattedGoogleDocFromMarkdownSkill : PromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/GoogleWorkspace/Prompts/CreateFormattedGoogleDocFromMarkdown.prompt.md";
+	Description = @"Loads the trusted workflow for converting markdown into a clean Google Doc with real heading styles, deterministic ranges, and visual verification.";
+}

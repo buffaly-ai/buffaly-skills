@@ -1,0 +1,27 @@
+prototype GoogleWorkspaceSkillAction : OpsAction
+{
+	Description = @"Base action type for Google Workspace skill tools.";
+}
+
+[SemanticEntity("google workspace skill")]
+prototype GoogleWorkspaceSkill : SkillEntity
+{
+	Description = "Google Workspace auth, Gmail, Drive, Docs, Sheets, and Calendar actions.";
+	ActionRoot = GoogleWorkspaceSkillAction;
+}
+
+include "Common.pts";
+include "GoogleWorkspaceService.pts";
+include "Memory.pts";
+include "PromptActions.pts";
+include "Auth.pts";
+include "Gmail.pts";
+include "Drive.pts";
+include "Docs.pts";
+include "Sheets.pts";
+include "Calendar.pts";
+include "Chat.pts";
+
+reference Buffaly.GoogleWorkspace Buffaly.GoogleWorkspace;
+
+

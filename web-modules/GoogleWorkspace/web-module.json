@@ -1,0 +1,19 @@
+{
+  "Module": {
+    "Enabled": true,
+    "Name": "GoogleWorkspace",
+    "DisplayName": "Google Workspace",
+    "Description": "Manage Google Workspace accounts and related workspace integrations.",
+    "AssemblyPath": "GoogleWorkspace/Buffaly.GoogleWorkspace.WebModule.dll",
+    "TypeName": "Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceWebModule",
+    "LoadOrder": 300,
+    "Pages": [
+      {
+        "Name": "google-workspace-accounts",
+        "DisplayName": "Workspace Accounts",
+        "Path": "/web-modules/GoogleWorkspace/google-workspace-accounts.html",
+        "Description": "View and manage Google Workspace account connections."
+      }
+    ]
+  }
+}

@@ -1,0 +1,163 @@
+import Buffaly.Business Buffaly.Sessions.Processes Processes;
+import Buffaly.Business Buffaly.Sessions.AddExternalScheduledTaskContract AddExternalScheduledTaskContract;
+import Buffaly.Business Buffaly.Sessions.AddRecurringProcessContract AddRecurringProcessContract;
+import Buffaly.Business Buffaly.Sessions.TriggerScheduledProcessContract TriggerScheduledProcessContract;
+
+prototype ProcessManagementSkillAction : OpsAction
+{
+	Description = @"Base action type for Buffaly scheduled process management tools.";
+}
+
+[SemanticEntity("process management skill")]
+[SemanticEntity("scheduled process management skill")]
+prototype ProcessManagementSkill : SkillEntity
+{
+	Description = "Manage Buffaly Processes rows, recurring interval processes, and externally triggered scheduled tasks.";
+	ActionRoot = ProcessManagementSkillAction;
+}
+
+include "PromptActions.pts";
+
+[SemanticProgram.InfinitivePhrase("to list Buffaly scheduled tasks")]
+[SemanticProgram.InfinitivePhrase("to list external scheduled tasks")]
+prototype ToListScheduledTasks : ProcessManagementSkillAction
+{
+	Description = @"Lists externally triggered scheduled tasks as compact summaries: ProcessID, ProcessName, status flags, timing, handler, SessionKey, and PromptContext. Use ToGetBuffalyProcessDetails for raw RunData/details.";
+
+	function Execute() : string
+	{
+		return JsonUtil.ToFriendlyJSON(new JsonValue(Processes.ListScheduledTasks())).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list Buffaly recurring processes")]
+[SemanticProgram.InfinitivePhrase("to list interval system processes")]
+prototype ToListRecurringProcesses : ProcessManagementSkillAction
+{
+	Description = @"Lists interval-driven recurring processes as compact summaries: ProcessID, ProcessName, status flags, timing, handler, SessionKey, and PromptContext. Use ToGetBuffalyProcessDetails for raw RunData/details.";
+
+	function Execute() : string
+	{
+		return JsonUtil.ToFriendlyJSON(new JsonValue(Processes.ListRecurringProcesses())).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list Buffaly processes")]
+[SemanticProgram.InfinitivePhrase("to list all process rows")]
+prototype ToListBuffalyProcesses : ProcessManagementSkillAction
+{
+	Description = @"Lists all Buffaly processes as compact summaries without raw RunData. Use ToGetBuffalyProcessDetails for full row data, validation, and raw RunData.";
+
+	function Execute() : string
+	{
+		return JsonUtil.ToFriendlyJSON(new JsonValue(Processes.ListProcesses())).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to show Buffaly process details")]
+[SemanticProgram.InfinitivePhrase("to inspect a scheduled process")]
+prototype ToGetBuffalyProcessDetails : ProcessManagementSkillAction
+{
+	Description = @"processID - numeric Processes.ProcessID to inspect.";
+
+	function Execute(int processID) : string
+	{
+		return JsonUtil.ToFriendlyJSON(new JsonValue(Processes.GetProcessDetails(processID))).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to add a Buffaly scheduled task")]
+[SemanticProgram.InfinitivePhrase("to create an external scheduled task")]
+prototype ToAddScheduledTask : ProcessManagementSkillAction
+{
+	Description = @"Creates or updates an external prompt-driven scheduled task. handlerAssembly, handlerType, processName, sessionKey, promptContext, and instruction are required. createChildSession controls whether each run creates a child session.";
+
+	function Execute(string processName, string handlerAssembly, string handlerType, string sessionKey, bool createChildSession, string promptContext, string instruction) : string
+	{
+		AddExternalScheduledTaskContract request = new AddExternalScheduledTaskContract();
+		request.ProcessName = processName;
+		request.HandlerAssembly = handlerAssembly;
+		request.HandlerType = handlerType;
+		request.SessionKey = sessionKey;
+		request.CreateChildSession = createChildSession;
+		request.PromptContext = promptContext;
+		request.Instruction = instruction;
+		request.TimeoutSeconds = 600;
+		request.MaximumRunTime = 10;
+		request.IsEnabled = true;
+		return JsonUtil.ToFriendlyJSON(new JsonValue(Processes.AddExternalScheduledTask(request))).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to add a Buffaly recurring process")]
+[SemanticProgram.InfinitivePhrase("to create an interval system process")]
+prototype ToAddRecurringProcess : ProcessManagementSkillAction
+{
+	Description = @"Creates or updates an interval-driven process. processName, handlerAssembly, handlerType, and runEveryMinutes are required. runDataJson may be empty.";
+
+	function Execute(string processName, string handlerAssembly, string handlerType, int runEveryMinutes, string runDataJson) : string
+	{
+		AddRecurringProcessContract request = new AddRecurringProcessContract();
+		request.ProcessName = processName;
+		request.HandlerAssembly = handlerAssembly;
+		request.HandlerType = handlerType;
+		request.RunEveryMinutes = runEveryMinutes;
+		request.RunDataJson = runDataJson;
+		request.MaximumRunTime = 8;
+		request.IsEnabled = true;
+		return JsonUtil.ToFriendlyJSON(new JsonValue(Processes.AddRecurringProcess(request))).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to enable a Buffaly process")]
+[SemanticProgram.InfinitivePhrase("to enable a scheduled task")]
+prototype ToEnableBuffalyProcess : ProcessManagementSkillAction
+{
+	Description = @"processID - numeric Processes.ProcessID to enable.";
+
+	function Execute(int processID) : string
+	{
+		return JsonUtil.ToFriendlyJSON(new JsonValue(Processes.EnableProcess(processID))).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to disable a Buffaly process")]
+[SemanticProgram.InfinitivePhrase("to disable a scheduled task")]
+prototype ToDisableBuffalyProcess : ProcessManagementSkillAction
+{
+	Description = @"processID - numeric Processes.ProcessID to disable.";
+
+	function Execute(int processID) : string
+	{
+		return JsonUtil.ToFriendlyJSON(new JsonValue(Processes.DisableProcess(processID))).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to trigger a scheduled task now")]
+[SemanticProgram.InfinitivePhrase("to run an external scheduled task now")]
+prototype ToTriggerScheduledTaskNow : ProcessManagementSkillAction
+{
+	Description = @"processName - exact process name. triggerKey may be empty when the row has no ExternalTriggerKey configured.";
+
+	function Execute(string processName, string triggerKey) : string
+	{
+		TriggerScheduledProcessContract request = new TriggerScheduledProcessContract();
+		request.ProcessName = processName;
+		request.TriggerKey = triggerKey;
+		request.TriggerSource = "ProtoScriptProcessManagementSkill";
+		return JsonUtil.ToFriendlyJSON(new JsonValue(Processes.TriggerScheduledProcess(request))).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to validate a Buffaly process configuration")]
+[SemanticProgram.InfinitivePhrase("to validate a scheduled process")]
+prototype ToValidateBuffalyProcessConfiguration : ProcessManagementSkillAction
+{
+	Description = @"processID - numeric Processes.ProcessID to validate.";
+
+	function Execute(int processID) : string
+	{
+		return JsonUtil.ToFriendlyJSON(new JsonValue(Processes.ValidateProcessConfiguration(processID))).ToString();
+	}
+}
+

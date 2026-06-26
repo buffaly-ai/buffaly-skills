@@ -1,0 +1,19 @@
+{
+  "Module": {
+    "Enabled": true,
+    "Name": "OpenAIImageGeneration",
+    "DisplayName": "OpenAI Image Generation",
+    "Description": "Generate and review images using OpenAI image-generation models.",
+    "AssemblyPath": "OpenAIImageGeneration/Buffaly.OpenAI.ImageGeneration.WebHarness.dll",
+    "TypeName": "Buffaly.OpenAI.ImageGeneration.WebHarness.ImageGenerationHarnessModule",
+    "LoadOrder": 1000,
+    "Pages": [
+      {
+        "Name": "index",
+        "DisplayName": "Image Generation",
+        "Path": "/web-modules/OpenAIImageGeneration/index.html",
+        "Description": "Open the OpenAI image-generation workbench."
+      }
+    ]
+  }
+}

@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Computer Use Workbench</title>
+	<link rel="icon" type="image/png" href="images/bf_logo_fav_Large.png">
+	<link rel="stylesheet" href="/custom_css/buffaly-page.css?v=20260526.1">
+	<link rel="stylesheet" href="/custom_css/buffaly-navigation.css?v=20260530.4">
+	<link rel="stylesheet" href="styles/computer-use-workbench.css">
+</head>
+<body class="buffaly-page">
+	<div class="buffaly-app-strip" role="banner">
+		<a class="buffaly-app-strip-brand" href="/buffaly-agent.html">
+			<img src="images/bf_logo_fav_Large.png" alt="">
+			<span>Buffaly</span>
+		</a>
+		<div class="buffaly-app-strip-center">
+			<buffaly-navigation-launcher label="Navigation" variant="strip" current-href="web-modules/ComputerUse/index.html"></buffaly-navigation-launcher>
+		</div>
+		<div class="buffaly-app-strip-page">Computer Use</div>
+	</div>
+  <main class="buffaly-page-shell">
+    <header class="buffaly-page-hero">
+      <div class="buffaly-page-hero-main">
+        <p class="buffaly-kicker">Buffaly Desktop Driver</p>
+        <h1 class="buffaly-title">Computer Use Workbench</h1>
+        <p class="buffaly-subtitle">Run OpenAI computer-use tasks with live screenshot feedback, artifacts, and driver diagnostics.</p>
+      </div>
+      <div class="buffaly-page-hero-actions">
+        <div id="apiStatus" class="buffaly-status-pill warning">Checking</div>
+        <button id="refreshButton" class="buffaly-button secondary" type="button">Refresh</button>
+      </div>
+    </header>
+
+    <section class="workbench-grid" aria-label="Computer use workbench">
+      <aside class="buffaly-panel control-panel">
+        <div class="panel-section">
+          <p class="buffaly-section-label">Command</p>
+          <h2 class="buffaly-panel-title">Direction</h2>
+          <label class="buffaly-field direction-field">
+            <span class="buffaly-field-label">Task direction</span>
+            <textarea id="directionInput" class="buffaly-textarea" rows="7">Move the mouse slightly and report what happened.</textarea>
+          </label>
+          <div class="run-actions">
+            <button id="startButton" class="buffaly-button wide" type="button">Start run</button>
+            <button id="interruptButton" class="buffaly-button secondary danger wide" type="button" disabled>Stop run</button>
+          </div>
+        </div>
+
+        <div class="panel-section divider options-grid">
+          <label class="buffaly-field">
+            <span class="buffaly-field-label">Model</span>
+            <input id="modelInput" class="buffaly-input" value="gpt-5.5">
+          </label>
+          <label class="buffaly-field">
+            <span class="buffaly-field-label">Max steps</span>
+            <input id="maxStepsInput" class="buffaly-input" type="number" min="1" value="40">
+          </label>
+          <label class="buffaly-field">
+            <span class="buffaly-field-label">Screenshot scale</span>
+            <input id="screenshotScaleInput" class="buffaly-input" type="number" min="0.1" step="0.1" value="1">
+          </label>
+          <label class="buffaly-field">
+            <span class="buffaly-field-label">Capture scope</span>
+            <select id="captureScopeInput" class="buffaly-select">
+              <option value="desktop">Desktop</option>
+              <option value="window">Window</option>
+              <option value="client">Client area</option>
+            </select>
+          </label>
+          <label class="buffaly-field">
+            <span class="buffaly-field-label">Window title</span>
+            <input id="windowTitleInput" class="buffaly-input" placeholder="Title contains">
+          </label>
+          <label class="buffaly-field">
+            <span class="buffaly-field-label">Process name</span>
+            <input id="processNameInput" class="buffaly-input" placeholder="chrome">
+          </label>
+          <label class="buffaly-field">
+            <span class="buffaly-field-label">Popup mode</span>
+            <select id="popupModeInput" class="buffaly-select">
+              <option value="active-owned">Active owned</option>
+              <option value="none">None</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="buffaly-metric status-card">
+          <div><span class="buffaly-metric-label">Run</span><strong id="runIdText">None</strong></div>
+          <div><span class="buffaly-metric-label">Status</span><strong id="runStatusText">Idle</strong></div>
+          <div><span class="buffaly-metric-label">Output root</span><strong id="outputRootText">Loading</strong></div>
+        </div>
+      </aside>
+
+      <section class="buffaly-panel screenshot-card">
+        <div class="buffaly-panel-header canvas-toolbar">
+          <div>
+            <p class="buffaly-section-label">Live visual feedback</p>
+            <h2 class="buffaly-panel-title">Latest screenshot</h2>
+            <p class="buffaly-muted">The screenshot updates as the driver captures the target window or desktop.</p>
+          </div>
+        </div>
+        <div class="screenshot-stage">
+          <img id="latestScreenshot" alt="Latest computer-use screenshot">
+          <div id="screenshotEmpty" class="buffaly-empty-state empty-state">
+            <strong>No screenshot yet.</strong>
+            <span>Start a run to see the current computer-use view here.</span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="buffaly-panel history-panel">
+        <div class="buffaly-panel-header compact">
+          <div>
+            <p class="buffaly-section-label">Session</p>
+            <h2 class="buffaly-panel-title">Recent runs</h2>
+          </div>
+        </div>
+        <div id="runList" class="run-list">No runs yet.</div>
+      </aside>
+    </section>
+
+    <section class="details-grid">
+      <article class="buffaly-panel details-panel">
+        <div class="buffaly-panel-header compact">
+          <div>
+            <p class="buffaly-section-label">Live</p>
+            <h2 class="buffaly-panel-title">Driver output</h2>
+          </div>
+        </div>
+        <pre id="stdoutLog" class="buffaly-code-block">No run started.</pre>
+      </article>
+
+      <article class="buffaly-panel details-panel error-panel">
+        <div class="buffaly-panel-header compact">
+          <div>
+            <p class="buffaly-section-label">Diagnostics</p>
+            <h2 class="buffaly-panel-title">Errors</h2>
+          </div>
+        </div>
+        <pre id="stderrLog" class="buffaly-code-block">No errors.</pre>
+      </article>
+
+      <article class="buffaly-panel details-panel artifact-list">
+        <div class="buffaly-panel-header compact">
+          <div>
+            <p class="buffaly-section-label">Artifacts</p>
+            <h2 class="buffaly-panel-title">Run files</h2>
+          </div>
+        </div>
+        <div id="fileList" class="file-list">No files yet.</div>
+      </article>
+    </section>
+  </main>
+
+  <script src="/js/kcs/global.js"></script>
+  <script src="/js/kcs/LocalStorage2.js"></script>
+  <script src="/js/kcs/moremoo4.js?v=2"></script>
+  <script src="/js/kcs/JsonMethod.js?v=2"></script>
+  <script src="/js/kcs/validators.js?v=2"></script>
+  <script src="/js/kcs/stl.js?v=2"></script>
+  <script>
+    window.UserMessages = window.UserMessages || {
+      DisplayNow: function(message, kind){ try { console[kind === 'Error' ? 'error' : 'log'](message); } catch {} },
+      DisplayAll: function(){},
+      AddError: function(){},
+      Save: function(){}
+    };
+    window.UserMessages_ConsoleFulfill = window.UserMessages_ConsoleFulfill || function(){};
+  </script>
+  <script src="/JsonWs/Buffaly.OpenAI.ComputerUse.WebHarness.ComputerUseWorkbenchJsonWsService.ashx.js?v=20260423.1"></script>
+  <script src="js/computer-use-workbench.js"></script>
+	<script src="/js/navigation/buffaly-navigation-data.js?v=20260528.2"></script>
+	<script src="/js/navigation/buffaly-navigation-launcher.js?v=20260530.3"></script>
+</body>
+</html>
+
+
+

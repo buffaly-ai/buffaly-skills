@@ -1,0 +1,176 @@
+.desktop-login-shell {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	min-height: 520px;
+	background: #101318;
+	color: #f4f7fb;
+	font-family: Arial, sans-serif;
+}
+
+.desktop-login-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 10px 12px;
+	border-bottom: 1px solid #28313e;
+	background: #171c24;
+}
+
+.desktop-login-title {
+	font-size: 14px;
+	font-weight: 700;
+}
+
+.desktop-login-actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.desktop-login-button {
+	min-width: 72px;
+	padding: 7px 10px;
+	border: 1px solid #3b4656;
+	border-radius: 6px;
+	background: #232b36;
+	color: #f4f7fb;
+	font-size: 13px;
+	cursor: pointer;
+}
+
+.desktop-login-button:hover {
+	background: #2d3745;
+}
+
+.desktop-login-button-close {
+	border-color: #6e3440;
+	background: #3a2027;
+}
+
+.desktop-login-button-release {
+	border-color: #6f7b8d;
+	background: #1c2530;
+}
+
+.desktop-login-shell.is-capturing-input .desktop-login-button-release {
+	border-color: #4aa276;
+	background: #153426;
+}
+
+.desktop-login-mobile-input-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 12px;
+	border-bottom: 1px solid #28313e;
+	background: #121821;
+}
+
+.desktop-login-mobile-input-row[hidden] {
+	display: none;
+}
+
+.desktop-login-mobile-input {
+	flex: 1;
+	min-width: 0;
+	box-sizing: border-box;
+	padding: 9px 10px;
+	border: 1px solid #3b4656;
+	border-radius: 6px;
+	background: #080b10;
+	color: #f4f7fb;
+	font-size: 16px;
+}
+
+.desktop-login-mobile-status {
+	min-width: 92px;
+	font-size: 12px;
+	color: #a9b3c2;
+	white-space: nowrap;
+}
+
+.desktop-login-stage {
+	position: relative;
+	flex: 1;
+	min-height: 0;
+	overflow: hidden;
+	background: #05070a;
+}
+
+.desktop-login-canvas {
+	display: block;
+	width: 100%;
+	height: 100%;
+	outline: none;
+	background: #05070a;
+	touch-action: none;
+	user-select: none;
+}
+
+.desktop-login-shell.is-capturing-input .desktop-login-canvas {
+	box-shadow: inset 0 0 0 3px #35d07f;
+	cursor: crosshair;
+}
+
+.desktop-login-shell:not(.is-capturing-input) .desktop-login-canvas {
+	box-shadow: inset 0 0 0 2px rgba(128, 144, 166, 0.55);
+	cursor: pointer;
+}
+
+.desktop-login-input-status {
+	position: absolute;
+	right: 12px;
+	bottom: 12px;
+	max-width: min(520px, calc(100% - 24px));
+	padding: 7px 10px;
+	border: 1px solid rgba(90, 168, 255, 0.45);
+	border-radius: 6px;
+	background: rgba(5, 7, 10, 0.82);
+	color: #d9e8ff;
+	font-size: 12px;
+	pointer-events: none;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.desktop-login-capture-badge {
+	position: absolute;
+	left: 12px;
+	top: 12px;
+	padding: 7px 10px;
+	border: 1px solid rgba(128, 144, 166, 0.65);
+	border-radius: 6px;
+	background: rgba(5, 7, 10, 0.82);
+	color: #c8d0dc;
+	font-size: 12px;
+	pointer-events: none;
+	white-space: nowrap;
+}
+
+.desktop-login-shell.is-capturing-input .desktop-login-capture-badge {
+	border-color: rgba(53, 208, 127, 0.85);
+	color: #cffff0;
+}
+
+.desktop-login-input-status.is-error {
+	border-color: rgba(255, 112, 112, 0.75);
+	color: #ffd6d6;
+}
+
+.desktop-login-empty {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	color: #a9b3c2;
+	font-size: 13px;
+	pointer-events: none;
+}
+
+.desktop-login-shell.has-frame .desktop-login-empty {
+	display: none;
+}

@@ -1,0 +1,49 @@
+prototype GoogleWorkspaceService : Service
+{
+	ServiceName = "GoogleWorkspaceService";
+	Scope = "singleton";
+	Description = @"Google Workspace runtime service backed by feature-backed configuration.";
+
+	function GetGoogleWorkspaceApplicationName() : string
+	{
+		return "OpsAgent Google Workspace";
+	}
+
+	function NormalizeGoogleWorkspaceAccountKey(string accountKey) : string
+	{
+		if (!StringUtil.IsEmpty(accountKey))
+		{
+			string normalized = accountKey.Trim();
+			if (StringUtil.IsEmpty(normalized))
+				return "";
+			if (normalized.Contains(" ") || normalized.Contains("\r") || normalized.Contains("\n") || normalized.Contains("\t") || normalized.Contains("#< CLIXML") || normalized.StartsWith("Exit code:"))
+			{
+				string recovered = normalized;
+				int outputIndex = recovered.IndexOf("Output:");
+				if (outputIndex >= 0)
+					recovered = recovered.Trim();
+
+				int firstBreak = recovered.IndexOf("\r");
+				if (firstBreak >= 0)
+					recovered = recovered.Substring(0, firstBreak).Trim();
+				firstBreak = recovered.IndexOf("\n");
+				if (firstBreak >= 0)
+					recovered = recovered.Substring(0, firstBreak).Trim();
+
+				if (!StringUtil.IsEmpty(recovered) && !recovered.Contains(" ") && !recovered.Contains("\r") && !recovered.Contains("\n") && !recovered.Contains("\t"))
+					return recovered;
+
+				return "";
+			}
+			return normalized;
+		}
+
+		return "";
+	}
+
+	function Initialize() : string
+	{
+		return GoogleWorkspaceServiceHost.InitializeFromFeature();
+	}
+}
+

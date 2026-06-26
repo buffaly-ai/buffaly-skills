@@ -1,0 +1,19 @@
+{
+  "Module": {
+    "Enabled": true,
+    "Name": "Browser",
+    "DisplayName": "Browser",
+    "Description": "Automated browser workbench for browsing, inspection, and web task execution.",
+    "AssemblyPath": "Browser/Buffaly.Browser.WebHarness.dll",
+    "TypeName": "Buffaly.Browser.WebHarness.BrowserWorkbenchModule",
+    "LoadOrder": 1000,
+    "Pages": [
+      {
+        "Name": "index",
+        "DisplayName": "Browser Workbench",
+        "Path": "/web-modules/Browser/index.html",
+        "Description": "Open the browser automation workbench."
+      }
+    ]
+  }
+}

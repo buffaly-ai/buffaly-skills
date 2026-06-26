@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Connect Google Workspace to Buffaly</title>
+	<link rel="icon" type="image/png" href="/images/bf_logo_fav_Large.png">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/custom_css/buffaly-page.css?v=20260526.1">
+	<link rel="stylesheet" href="/custom_css/buffaly-navigation.css?v=20260530.4">
+	<style>
+		.buffaly-page-shell { padding-bottom: 64px; }
+		.status-ready { border-color: rgba(22,163,74,.35); color: var(--buffaly-page-success); }
+		.status-warning { border-color: rgba(180,83,9,.35); color: var(--buffaly-page-warning); }
+		.status-error { border-color: rgba(220,38,38,.35); color: var(--buffaly-page-danger); }
+		.status-neutral { border-color: var(--buffaly-page-line); color: var(--buffaly-page-muted); }
+		.consent-list { list-style: none; margin: 0; padding-left: 0; }
+		.consent-list li { position: relative; padding-left: 1.25rem; margin-bottom: .65rem; font-size: .92rem; line-height: 1.4; }
+		.consent-list li::before { content: "•"; position: absolute; left: 0; top: -.05rem; color: var(--buffaly-page-accent); font-size: 1.25rem; }
+		.hidden-config { display: none; }
+		.pre { margin: 0; padding: 1rem; border-radius: 16px; background: #0f1724; color: #d8e6ff; font-family: Consolas, monospace; font-size: .82rem; max-height: 260px; overflow: auto; white-space: pre-wrap; }
+		.account-list { display: grid; gap: 1rem; }
+		.account-item { border: 1px solid var(--buffaly-page-line); border-radius: var(--buffaly-page-radius); padding: 1rem; background: var(--buffaly-page-panel-soft); }
+		.account-item h3 { font-size: 1rem; margin: 0; }
+		.account-meta { color: var(--buffaly-page-muted); font-size: .92rem; }
+		.account-warning { color: #9a5b00; background: rgba(255, 193, 7, .14); border: 1px solid rgba(154, 91, 0, .22); border-radius: 12px; padding: .55rem .7rem; }
+		.account-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+		.connected-accounts-summary { display: grid; gap: .85rem; }
+		.connected-account-card { display: grid; gap: .9rem; }
+		.connected-account-card-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: .75rem; min-width: 0; }
+		.connected-account-identity { min-width: 0; overflow-wrap: anywhere; }
+		.connected-account-card-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; }
+		.connected-account-card-footer .buffaly-status-pill { flex: 0 0 auto; }
+		.connected-account-card-footer .account-actions { justify-content: flex-end; }
+		@media (max-width: 760px) {
+			.connected-account-card-header, .connected-account-card-footer { display: grid; justify-content: stretch; }
+			.connected-account-card-footer .account-actions { justify-content: flex-start; }
+		}
+		.google-workspace-action-row { justify-content: flex-start; align-items: center; gap: .7rem; }
+		.google-workspace-action-row .buffaly-button { min-height: 46px; border-radius: 14px; padding: .72rem 1.05rem; font-size: .95rem; line-height: 1; box-shadow: 0 10px 20px rgba(15, 23, 42, .08); transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease; }
+		.google-workspace-action-row .buffaly-button:hover { transform: translateY(-1px); box-shadow: 0 14px 28px rgba(15, 23, 42, .12); }
+		.google-workspace-action-row .buffaly-button.secondary { background: #fff; }
+		.google-workspace-action-row .button-icon { display: inline-flex; align-items: center; justify-content: center; margin-right: .45rem; opacity: .86; }
+		@media (max-width: 760px) { .google-workspace-action-row .buffaly-button { width: 100%; justify-content: center; } }
+		.google-workspace-tabs { display: flex; gap: .5rem; flex-wrap: wrap; margin: 2rem 0 1rem; }
+		.google-workspace-tab { border: 1px solid var(--buffaly-page-line); background: var(--buffaly-page-panel); border-radius: 999px; padding: .55rem 1rem; font-weight: 700; color: var(--buffaly-page-muted); }
+		.google-workspace-tab.active { background: var(--buffaly-page-accent); color: #fff; border-color: var(--buffaly-page-accent); }
+		.google-workspace-tab-panel { display: none; }
+		.google-workspace-tab-panel.active { display: block; }
+		.settings-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+		.settings-table { width: 100%; border-collapse: collapse; }
+		.settings-table th, .settings-table td { border-bottom: 1px solid var(--buffaly-page-line); padding: .7rem .5rem; vertical-align: top; }
+		.settings-table th { color: var(--buffaly-page-muted); font-size: .85rem; text-transform: uppercase; letter-spacing: .04em; }
+	</style>
+</head>
+<body class="buffaly-page">
+	<div class="buffaly-app-strip" role="banner">
+		<a class="buffaly-app-strip-brand" href="/buffaly-agent.html">
+			<img src="/images/bf_logo_fav_Large.png" alt="">
+			<span>Buffaly</span>
+		</a>
+		<div class="buffaly-app-strip-center">
+			<buffaly-navigation-launcher label="Navigation" variant="strip" current-href="web-modules/GoogleWorkspace/google-workspace-accounts.html"></buffaly-navigation-launcher>
+		</div>
+		<div class="buffaly-app-strip-page">Google Workspace</div>
+	</div>
+	<div class="buffaly-page-shell">
+		<section class="buffaly-page-hero">
+			<div class="buffaly-page-hero-main">
+				<div class="buffaly-kicker">Connect your tools</div>
+				<h1 class="buffaly-title">Connect Google Workspace to Buffaly</h1>
+				<p class="buffaly-subtitle">Authorize your Google account once so Buffaly can help with Gmail, Drive, Docs, Sheets, Calendar, and Chat tasks you request.</p>
+			</div>
+			<div class="buffaly-page-hero-actions">
+				<span id="statusChip" class="buffaly-status-pill status-warning">Checking connection status...</span>
+				<span id="statusDetail" class="buffaly-muted"></span>
+			</div>
+		</section>
+
+		<div class="buffaly-grid">
+			<div class="buffaly-span-8">
+				<section class="buffaly-panel">
+					<h2 id="setupPanelTitle" class="buffaly-panel-title">Set up your connection</h2>
+					<p id="setupPanelIntro" class="buffaly-muted">Name this Google Workspace connection and authorize access when you're ready.</p>
+					<div id="connectionSummary" class="mb-4"></div>
+					<div id="connectFormPanel" class="buffaly-field mb-3">
+						<label for="accountLabel" class="buffaly-field-label">Connection label</label>
+						<input id="accountLabel" class="buffaly-input" type="text" placeholder="primary">
+						<div class="buffaly-muted">Use a simple label like <strong>primary</strong> or <strong>work</strong> so Buffaly can reference this connection later.</div>
+					</div>
+					<div id="connectActionPanel" class="buffaly-action-row google-workspace-action-row">
+						<button id="startAuthorizationBtn" class="buffaly-button" type="button"><span class="button-icon">&#128274;</span><span class="button-label">Connect Google Workspace</span></button>
+						<button id="addAccountBtn" class="buffaly-button secondary d-none" type="button"><span class="button-icon">&#43;</span><span class="button-label">Add another account</span></button>
+						<button id="refreshAccountsBtn" class="buffaly-button secondary" type="button"><span class="button-icon">&#8635;</span><span class="button-label">Refresh status</span></button>
+					</div>
+					<div id="launchUrlPanel" class="mt-3 d-none">
+						<label class="buffaly-field-label" for="launchUrl">Google sign-in URL</label>
+						<textarea id="launchUrl" class="buffaly-textarea" rows="4" readonly></textarea>
+						<div class="buffaly-muted">If the popup is blocked or lost, copy this URL into a new browser tab to continue sign-in.</div>
+					</div>
+					<div id="connectHelpPanel" class="mt-4 d-none">
+						<h2 class="buffaly-panel-title">Finish Google sign-in</h2>
+						<p class="buffaly-muted">Buffaly opened a Google sign-in window. Sign in and approve access there. If the popup does not complete automatically, paste the full URL from that window below and Buffaly will finish the connection for you.</p>
+						<details open>
+							<summary class="buffaly-muted fw-semibold" style="cursor: pointer;">Popup didn't finish automatically?</summary>
+							<div class="mt-3">
+								<div class="buffaly-field mb-3"><label class="buffaly-field-label">Paste full callback URL from the popup</label><textarea id="manualCallbackUrl" class="buffaly-textarea" rows="4" placeholder="https://localhost:57967/gauth?code=...&state=..."></textarea></div>
+								<div id="manualError" class="text-danger small mb-3 d-none"></div>
+								<button id="completeAuthorizationBtn" class="buffaly-button secondary" type="button">Finish connection manually</button>
+							</div>
+						</details>
+					</div>
+				</section>
+			</div>
+
+			<div class="buffaly-span-4">
+				<div id="sidebarStatusCard">
+					<section class="buffaly-panel">
+						<h2 class="buffaly-panel-title">Connection status</h2>
+						<div id="connectedAccountPanel" class="buffaly-muted">No Google Workspace account connected yet.</div>
+					</section>
+				</div>
+				<section class="buffaly-panel">
+					<h2 class="buffaly-panel-title">Permissions requested</h2>
+					<p class="buffaly-muted">Buffaly only uses this connection when carrying out Google Workspace actions you ask it to perform.</p>
+					<details open>
+						<summary class="buffaly-muted fw-semibold" style="cursor: pointer;">View requested permissions</summary>
+						<ul id="consentSummary" class="consent-list mt-2"></ul>
+					</details>
+				</section>
+			</div>
+		</div>
+
+		<section class="buffaly-panel hidden-config">
+			<input id="clientId" type="text" value="">
+			<input id="clientSecret" type="text" value="">
+			<input id="redirectUri" type="text" value="">
+			<input id="applicationName" type="text" value="">
+			<input id="scopePreset" type="text" value="workspace.full">
+		</section>
+		<nav class="google-workspace-tabs" aria-label="Google Workspace management tabs">
+			<button class="google-workspace-tab active" type="button" data-tab-target="oauthSettingsTab">OAuth Settings</button>
+			<button class="google-workspace-tab" type="button" data-tab-target="troubleshootingTab">Troubleshooting</button>
+		</nav>
+
+		<section id="oauthSettingsTab" class="buffaly-panel google-workspace-tab-panel active">
+			<div class="buffaly-panel-header">
+				<div>
+					<h2 class="buffaly-panel-title">OAuth Settings</h2>
+					<p class="buffaly-muted">See whether Google Workspace is using Buffaly module defaults or feature-based overrides. Secrets are never displayed.</p>
+				</div>
+				<span id="oauthSettingsSourceChip" class="buffaly-status-pill status-neutral">Checking settings...</span>
+			</div>
+			<div class="buffaly-field mb-4">
+				<label for="oauthClientMode" class="buffaly-field-label">Connection mode</label>
+				<select id="oauthClientMode" class="buffaly-input">
+					<option value="BuffalyDesktopDefault">Desktop app client</option>
+					<option value="CustomWebClient">Custom web client</option>
+				</select>
+				<div class="buffaly-muted mt-1">Desktop mode is the default for local installs. Use custom web mode only for hosted installs with their own Google OAuth web client.</div>
+			</div>
+			<div id="customWebClientPanel" class="buffaly-field mb-4 hidden-config">
+				<div class="buffaly-muted">Custom web mode uses the web client ID, secret, and redirect URI stored in the Google Workspace feature.</div>
+			</div>
+			<div id="effectiveOAuthSettingsPanel" class="mb-4"></div>
+			<div class="settings-grid">
+				<div id="desktopOAuthSettingsSection">
+					<h3 class="h5">Desktop feature overrides</h3>
+					<p class="buffaly-muted">Leave these blank to use the Buffaly defaults distributed with this module.</p>
+					<div class="buffaly-field mb-3"><label class="buffaly-field-label" for="settingsDesktopClientId">Desktop Client ID</label><input id="settingsDesktopClientId" class="buffaly-input" type="text" autocomplete="off"></div>
+					<div class="buffaly-field mb-3"><label class="buffaly-field-label" for="settingsDesktopClientSecret">Desktop Client Secret</label><input id="settingsDesktopClientSecret" class="buffaly-input" type="password" autocomplete="new-password" placeholder="Leave blank to use module default"></div>
+					<div class="buffaly-field mb-3"><label class="buffaly-field-label" for="settingsDesktopRedirectUri">Desktop Redirect URI</label><input id="settingsDesktopRedirectUri" class="buffaly-input" type="text" placeholder="Optional; defaults to module/request /gauth"></div>
+				</div>
+				<div id="customWebOAuthSettingsSection">
+					<h3 class="h5">Custom web client</h3>
+					<p class="buffaly-muted">Use only for hosted installs with their own Google OAuth Web client.</p>
+					<div class="buffaly-field mb-3"><label class="buffaly-field-label" for="settingsWebClientId">Web Client ID</label><input id="settingsWebClientId" class="buffaly-input" type="text" autocomplete="off"></div>
+					<div class="buffaly-field mb-3"><label class="buffaly-field-label" for="settingsWebClientSecret">Web Client Secret</label><input id="settingsWebClientSecret" class="buffaly-input" type="password" autocomplete="new-password"></div>
+					<div class="buffaly-field mb-3"><label class="buffaly-field-label" for="settingsWebRedirectUri">Web Redirect URI</label><input id="settingsWebRedirectUri" class="buffaly-input" type="text"></div>
+				</div>
+			</div>
+			<div class="buffaly-action-row google-workspace-action-row mt-3">
+				<button id="saveOAuthSettingsBtn" class="buffaly-button" type="button">Save OAuth settings</button>
+				<button id="useDefaultOAuthSettingsBtn" class="buffaly-button secondary" type="button">Use Buffaly defaults</button>
+				<button id="clearOAuthOverrideBtn" class="buffaly-button secondary" type="button">Clear feature overrides</button>
+			</div>
+			<div id="oauthSettingsMessage" class="buffaly-muted mt-3"></div>
+		</section>
+
+		<section id="troubleshootingTab" class="buffaly-panel google-workspace-tab-panel">
+			<div class="buffaly-panel-header">
+				<div>
+					<h2 class="buffaly-panel-title">Troubleshooting</h2>
+					<p class="buffaly-muted">Use this when Google sign-in, callback completion, or refresh-token persistence needs diagnosis.</p>
+				</div>
+			</div>
+			<div id="oauthLatestPanel" class="mb-4"></div>
+			<div class="settings-grid mb-4">
+				<div class="account-item"><h3>Recommended checks</h3><ul class="mb-0"><li>Desktop installs should normally use Buffaly Desktop defaults.</li><li>Hosted installs should use Custom web client mode with a Google Web OAuth client.</li><li>If a saved account lacks a refresh token, use Reconnect with consent.</li><li>If the popup stalls, paste the full callback URL into the manual completion box.</li></ul></div>
+				<div class="account-item"><h3>Current health</h3><div id="troubleshootingHealthPanel" class="buffaly-muted">Loading health details...</div></div>
+			</div>
+			<details open>
+				<summary class="fw-semibold">Technical details</summary>
+				<p class="buffaly-muted mt-3 mb-2">Visible for troubleshooting only. This should not be necessary for a normal first-time connection.</p>
+				<pre id="lastResult" class="pre">No calls yet.</pre>
+			</details>
+		</section>
+	</div>
+	<script src="/js/kcs/global.js"></script>
+	<script src="/js/kcs/LocalStorage2.js"></script>
+	<script src="/js/kcs/moremoo4.js?v=2"></script>
+	<script src="/js/kcs/JsonMethod.js?v=2"></script>
+	<script src="/js/kcs/validators.js?v=2"></script>
+	<script src="/js/kcs/stl.js?v=2"></script>
+	<script>
+		window.UserMessages = window.UserMessages || {
+			DisplayNow: function(message, kind){
+				try { console[kind === 'Error' ? 'error' : 'log'](message); } catch {}
+			},
+			DisplayAll: function(){},
+			AddError: function(){},
+			Save: function(){}
+		};
+		window.UserMessages_ConsoleFulfill = window.UserMessages_ConsoleFulfill || function(){};
+	</script>
+	<script src="/web-modules/GoogleWorkspace/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.ashx.js?v=20260623.1"></script>
+	<script src="js/services/google-workspace/google-workspace-accounts.js?v=20260623.1"></script>
+	<script src="/js/navigation/buffaly-navigation-data.js?v=20260528.2"></script>
+	<script src="/js/navigation/buffaly-navigation-launcher.js?v=20260530.3"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+

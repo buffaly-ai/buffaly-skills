@@ -1,0 +1,275 @@
+reference Buffaly.DesktopAutomation Buffaly.DesktopAutomation;
+import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.DesktopAutomation DesktopAutomation;
+
+prototype DesktopSkillAction : OpsAction
+{
+	Description = @"Base action type for Desktop skill tools.";
+}
+
+[SemanticEntity("desktop skill")]
+prototype DesktopSkill : SkillEntity
+{
+	Description = "Desktop automation actions for mouse, keyboard, wait, and screenshots.";
+	ActionRoot = DesktopSkillAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to get desktop automation capabilities")]
+[SemanticProgram.InfinitivePhrase("to diagnose desktop automation backend")]
+prototype ToGetDesktopAutomationCapabilities : DesktopSkillAction
+{
+	Description = @"Returns current platform/backend support and diagnostics without invoking native desktop APIs.";
+
+	function Execute() : string
+	{
+		return DesktopAutomation.GetCapabilitiesText();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to move the desktop mouse")]
+[SemanticProgram.InfinitivePhrase("to move mouse to screen coordinates")]
+prototype ToMoveDesktopMouse : DesktopSkillAction
+{
+	Description = @"x - absolute screen X coordinate.
+y - absolute screen Y coordinate.";
+
+	function Execute(int x, int y) : string
+	{
+		return DesktopAutomation.MoveMouse(x, y);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to click on the desktop")]
+[SemanticProgram.InfinitivePhrase("to click desktop coordinates")]
+prototype ToClickDesktopMouse : DesktopSkillAction
+{
+	Description = @"x - absolute screen X coordinate.
+y - absolute screen Y coordinate.
+button - mouse button: left, right, or middle.";
+
+	function Execute(int x, int y, string button) : string
+	{
+		return DesktopAutomation.ClickMouse(x, y, button);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to double click on the desktop")]
+prototype ToDoubleClickDesktopMouse : DesktopSkillAction
+{
+	Description = @"x - absolute screen X coordinate.
+y - absolute screen Y coordinate.
+button - mouse button: left, right, or middle.";
+
+	function Execute(int x, int y, string button) : string
+	{
+		return DesktopAutomation.DoubleClickMouse(x, y, button);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to scroll on the desktop")]
+prototype ToScrollDesktopMouse : DesktopSkillAction
+{
+	Description = @"x - absolute screen X coordinate.
+y - absolute screen Y coordinate.
+scrollX - horizontal wheel ticks.
+scrollY - vertical wheel ticks.";
+
+	function Execute(int x, int y, int scrollX, int scrollY) : string
+	{
+		return DesktopAutomation.ScrollMouse(x, y, scrollX, scrollY);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to press desktop keys")]
+[SemanticProgram.InfinitivePhrase("to send a key chord to the desktop")]
+prototype ToPressDesktopKeys : DesktopSkillAction
+{
+	Description = @"chord - key chord like ctrl+shift+s, win+r, or enter.";
+
+	function Execute(string chord) : string
+	{
+		return DesktopAutomation.PressKeys(chord);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to type text on the desktop")]
+prototype ToTypeDesktopText : DesktopSkillAction
+{
+	Description = @"text - text to type into the focused window.";
+
+	function Execute(string text) : string
+	{
+		return DesktopAutomation.TypeText(text);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to wait on desktop automation")]
+prototype ToWaitDesktopMilliseconds : DesktopSkillAction
+{
+	Description = @"milliseconds - number of milliseconds to wait.";
+
+	function Execute(int milliseconds) : string
+	{
+		return DesktopAutomation.WaitMilliseconds(milliseconds);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to capture desktop screenshot as base64")]
+prototype ToCaptureDesktopScreenshotBase64 : DesktopSkillAction
+{
+	Description = @"maxWidth - optional max capture width, use 0 for full width.
+maxHeight - optional max capture height, use 0 for full height.";
+
+	function Execute(int maxWidth, int maxHeight) : StringRef
+	{
+		return DesktopAutomation.CaptureScreenBase64(maxWidth, maxHeight);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to capture desktop stream frame json")]
+prototype ToCaptureDesktopStreamFrameJson : DesktopSkillAction
+{
+	Description = @"maxWidth - optional max capture width, use 0 for full width.
+maxHeight - optional max capture height, use 0 for full height.";
+
+	function Execute(int maxWidth, int maxHeight) : StringRef
+	{
+		return DesktopAutomation.CaptureScreenFrameJson(maxWidth, maxHeight);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to open desktop login control")]
+[SemanticProgram.InfinitivePhrase("to control desktop login in browser")]
+prototype ToOpenDesktopLoginControl : DesktopSkillAction
+{
+	Description = @"maxWidth - optional max stream width, use 0 for full width.
+maxHeight - optional max stream height, use 0 for full height.
+frameIntervalMs - desktop stream frame interval.
+timeoutSeconds - maximum seconds to wait for the browser to close the control.";
+
+	function Execute(int maxWidth, int maxHeight, int frameIntervalMs, int timeoutSeconds) : string
+	{
+		return DesktopAutomation.OpenDesktopLoginControl(_opsAgent, maxWidth, maxHeight, frameIntervalMs, timeoutSeconds);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to capture one diagnostic desktop window frame json")]
+[SemanticProgram.InfinitivePhrase("to test foreground application window capture json")]
+[SemanticProgram.InfinitivePhrase("to diagnose desktop window stream frame payload")]
+prototype ToCaptureDiagnosticDesktopWindowFrameJson : DesktopSkillAction
+{
+	Description = @"Experimental diagnostic action. Captures one frame from one visible application window and returns the typed desktop stream frame JSON payload. This does not open a browser UI, does not start a stream, and does not accept input. The current implementation may restore/foreground the matched window before capture.
+processName - process name such as notepad.
+windowTitleContains - optional title substring used to disambiguate visible windows.";
+
+	function Execute(string processName, string windowTitleContains) : StringRef
+	{
+		return DesktopAutomation.CaptureWindowFrameJson(processName, windowTitleContains);
+	}
+}
+
+prototype ToCaptureDesktopWindowFrameJson : DesktopSkillAction
+{
+	Description = @"Compatibility alias for ToCaptureDiagnosticDesktopWindowFrameJson. Prefer the diagnostic name because this action captures only one frame, may foreground the target window, and is not a streaming browser control.";
+
+	function Execute(string processName, string windowTitleContains) : StringRef
+	{
+		return DesktopAutomation.CaptureWindowFrameJson(processName, windowTitleContains);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get desktop window capture bounds")]
+[SemanticProgram.InfinitivePhrase("to diagnose application window capture rectangle")]
+prototype ToGetDesktopWindowCaptureBounds : DesktopSkillAction
+{
+	Description = @"processName - process name such as notepad.
+windowTitleContains - optional title substring. Returns left,top,width,height for the target window.";
+
+	function Execute(string processName, string windowTitleContains) : string
+	{
+		return DesktopAutomation.GetWindowCaptureBoundsText(processName, windowTitleContains);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to open experimental blocking desktop window control")]
+[SemanticProgram.InfinitivePhrase("to stream a foreground application window in the browser until close")]
+[SemanticProgram.InfinitivePhrase("to test browser control of a desktop application window")]
+prototype ToOpenExperimentalBlockingDesktopWindowControl : DesktopSkillAction
+{
+	Description = @"Experimental blocking desktop-window handoff. Opens an interactive browser surface, streams one matched foreground application window, and sends browser mouse/keyboard input back to that desktop window. This is not a detached or persistent stream: the tool call blocks until the user clicks Done/Cancel/Close or the timeout expires. The current implementation repeatedly restores/foregrounds the target window while active, so use only for controlled manual validation.
+processName - process name such as notepad.
+windowTitleContains - optional title substring.
+frameIntervalMs - desktop stream frame interval.
+timeoutSeconds - maximum seconds to wait for the browser to close the control.";
+
+	function Execute(string processName, string windowTitleContains, int frameIntervalMs, int timeoutSeconds) : string
+	{
+		return DesktopAutomation.OpenDesktopWindowControl(_opsAgent, processName, windowTitleContains, frameIntervalMs, timeoutSeconds);
+	}
+
+	function ExecuteForMessage(string processName, string windowTitleContains, int frameIntervalMs, int timeoutSeconds, string messageKey, string toolInvocationId) : string
+	{
+		return DesktopAutomation.OpenDesktopWindowControlForMessage(_opsAgent, processName, windowTitleContains, frameIntervalMs, timeoutSeconds, messageKey, toolInvocationId);
+	}
+}
+
+prototype ToOpenDesktopWindowControl : DesktopSkillAction
+{
+	Description = @"Compatibility alias for ToOpenExperimentalBlockingDesktopWindowControl. Prefer the experimental blocking name because this tool is not a persistent stream and may repeatedly foreground the matched desktop window while the browser control is open.";
+
+	function Execute(string processName, string windowTitleContains, int frameIntervalMs, int timeoutSeconds) : string
+	{
+		return DesktopAutomation.OpenDesktopWindowControl(_opsAgent, processName, windowTitleContains, frameIntervalMs, timeoutSeconds);
+	}
+
+	function ExecuteForMessage(string processName, string windowTitleContains, int frameIntervalMs, int timeoutSeconds, string messageKey, string toolInvocationId) : string
+	{
+		return DesktopAutomation.OpenDesktopWindowControlForMessage(_opsAgent, processName, windowTitleContains, frameIntervalMs, timeoutSeconds, messageKey, toolInvocationId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to open notepad stream control")]
+[SemanticProgram.InfinitivePhrase("to stream notepad in the browser")]
+prototype ToOpenNotepadStreamControl : DesktopSkillAction
+{
+	Description = @"Opens a blocking browser control streaming the visible Notepad window.
+frameIntervalMs - desktop stream frame interval.
+timeoutSeconds - maximum seconds to wait for the browser to close the control.";
+
+	function Execute(int frameIntervalMs, int timeoutSeconds) : string
+	{
+		return DesktopAutomation.OpenDesktopWindowControl(_opsAgent, "notepad", "", frameIntervalMs, timeoutSeconds);
+	}
+
+	function ExecuteForMessage(int frameIntervalMs, int timeoutSeconds, string messageKey, string toolInvocationId) : string
+	{
+		return DesktopAutomation.OpenDesktopWindowControlForMessage(_opsAgent, "notepad", "", frameIntervalMs, timeoutSeconds, messageKey, toolInvocationId);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to capture desktop screenshot to file")]
+prototype ToCaptureDesktopScreenshotFile : DesktopSkillAction
+{
+	Description = @"outputPath - absolute or relative .png path.
+maxWidth - optional max capture width, use 0 for full width.
+maxHeight - optional max capture height, use 0 for full height.";
+
+	function Execute(string outputPath, int maxWidth, int maxHeight) : string
+	{
+		return DesktopAutomation.CaptureScreenToFile(outputPath, maxWidth, maxHeight);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get desktop screen size")]
+prototype ToGetDesktopScreenSize : DesktopSkillAction
+{
+	Description = @"Returns current virtual desktop size as WIDTHxHEIGHT.";
+
+	function Execute() : string
+	{
+		return DesktopAutomation.GetDesktopSize();
+	}
+}
+
+
+
+
+

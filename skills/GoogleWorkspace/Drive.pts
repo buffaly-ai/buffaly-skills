@@ -1,0 +1,384 @@
+function ToNormalizeGoogleWorkspaceDriveScopePreset(string scopePreset, string fallbackPreset) : string
+{
+	if (StringUtil.IsEmpty(scopePreset))
+		return fallbackPreset;
+
+	string normalized = scopePreset.Trim().ToLowerInvariant();
+	if (normalized == "drive.file")
+		return "drive.write";
+	if (normalized == "drive.readonly")
+		return "drive.read";
+
+	return scopePreset;
+}
+
+[SemanticProgram.InfinitivePhrase("to search google drive files")]
+prototype ToSearchGoogleWorkspaceDriveFiles : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to drive.read when empty. query - Drive query. maxResults - number of rows. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string query, int maxResults) : string
+	{
+		scopePreset = ToNormalizeGoogleWorkspaceDriveScopePreset(scopePreset, "drive.read");
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.SearchFilesAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			query,
+			maxResults,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get google drive file metadata")]
+prototype ToGetGoogleWorkspaceDriveMetadata : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to drive.read when empty. fileId required. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string fileId) : string
+	{
+		scopePreset = ToNormalizeGoogleWorkspaceDriveScopePreset(scopePreset, "drive.read");
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.GetMetadataAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			fileId,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to download google drive text")]
+prototype ToDownloadGoogleWorkspaceDriveText : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to drive.read when empty. fileId required. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string fileId) : string
+	{
+		scopePreset = ToNormalizeGoogleWorkspaceDriveScopePreset(scopePreset, "drive.read");
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.DownloadTextAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			fileId,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to download a google drive file as base64")]
+prototype ToDownloadGoogleWorkspaceDriveFileBase64 : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to drive.read when empty. fileId required. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string fileId) : StringRef
+	{
+		scopePreset = ToNormalizeGoogleWorkspaceDriveScopePreset(scopePreset, "drive.read");
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.DownloadFileBase64Async(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			fileId,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to upload text to google drive")]
+prototype ToUploadGoogleWorkspaceDriveText : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to drive.write when empty. parentFolderId/fileName/mimeType/textContent are upload inputs. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string parentFolderId, string fileName, string mimeType, string textContent) : string
+	{
+		scopePreset = ToNormalizeGoogleWorkspaceDriveScopePreset(scopePreset, "drive.write");
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.UploadTextAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			fileName,
+			textContent,
+			parentFolderId,
+			mimeType,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to upload a base64 file to google drive")]
+prototype ToUploadGoogleWorkspaceDriveFileBase64 : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to drive.write when empty. parentFolderId/fileName/mimeType/base64Content are upload inputs. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string parentFolderId, string fileName, string mimeType, string base64Content) : string
+	{
+		scopePreset = ToNormalizeGoogleWorkspaceDriveScopePreset(scopePreset, "drive.write");
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.UploadFileBase64Async(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			fileName,
+			base64Content,
+			parentFolderId,
+			mimeType,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to upload a local file to google drive")]
+prototype ToUploadGoogleWorkspaceDriveFileFromDisk : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to drive.write when empty. parentFolderId/localFilePath/fileName/mimeType are required by schema. Pass empty fileName and/or mimeType to use runtime defaults. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string parentFolderId, string localFilePath, string fileName, string mimeType) : string
+	{
+		scopePreset = ToNormalizeGoogleWorkspaceDriveScopePreset(scopePreset, "drive.write");
+
+		if (StringUtil.IsEmpty(localFilePath))
+			return "localFilePath is required.";
+
+		if (StringUtil.IsEmpty(fileName))
+			fileName = Path.GetFileName(localFilePath);
+
+		if (StringUtil.IsEmpty(fileName))
+			return "fileName is required.";
+
+		if (StringUtil.IsEmpty(mimeType))
+			mimeType = "application/octet-stream";
+
+		string base64Content = Convert.ToBase64String(File.ReadAllBytes(localFilePath));
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.UploadFileBase64Async(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			fileName,
+			base64Content,
+			parentFolderId,
+			mimeType,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to upload a local file to google drive")]
+prototype ToUploadGoogleWorkspaceDriveFileFromDiskQuick : GoogleWorkspaceSkillAction
+{
+	Description = @"Convenience overload with minimal inputs. Uses scopePreset drive.write and defaults fileName/mimeType. accountKey/parentFolderId/localFilePath are required. Returns JSON.";
+
+	function Execute(string accountKey, string parentFolderId, string localFilePath) : string
+	{
+		return ToUploadGoogleWorkspaceDriveFileFromDisk.Execute(accountKey, "drive.write", parentFolderId, localFilePath, "", "");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to update a google drive file")]
+prototype ToUpdateGoogleWorkspaceDriveFile : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to drive.write when empty. fileId required. fileName/mimeType/textContent/base64Content are update inputs. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string fileId, string fileName, string mimeType, string textContent, string base64Content) : string
+	{
+		scopePreset = ToNormalizeGoogleWorkspaceDriveScopePreset(scopePreset, "drive.write");
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.UpdateFileAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			fileId,
+			fileName,
+			base64Content,
+			mimeType,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to delete a google drive file")]
+prototype ToDeleteGoogleWorkspaceDriveFile : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to drive.write when empty. fileId required. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string fileId) : string
+	{
+		scopePreset = ToNormalizeGoogleWorkspaceDriveScopePreset(scopePreset, "drive.write");
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.DeleteFileAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			fileId,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list a page of google drive files")]
+prototype ToListGoogleWorkspaceDriveFilesPage : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to drive.read when empty. query/pageSize/pageToken control paging. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string query, int pageSize, string pageToken) : string
+	{
+		scopePreset = ToNormalizeGoogleWorkspaceDriveScopePreset(scopePreset, "drive.read");
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.ListFilesPageAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			query,
+			pageSize,
+			pageToken,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to ensure a google drive folder exists")]
+prototype ToEnsureGoogleWorkspaceDriveFolder : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to drive.write when empty. parentFolderId/folderName determine the target folder. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string parentFolderId, string folderName) : string
+	{
+		scopePreset = ToNormalizeGoogleWorkspaceDriveScopePreset(scopePreset, "drive.write");
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.EnsureFolderAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			folderName,
+			parentFolderId,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to grant a google drive file permission")]
+prototype ToGrantGoogleWorkspaceDriveFilePermission : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset defaults to drive.write. fileId/permissionType/role required. user/group requires emailAddress. domain requires domain. Optional allowFileDiscovery/sendNotificationEmail/emailMessage/transferOwnership.";
+
+	function Execute(string accountKey, string scopePreset, string fileId, string permissionType, string role, string emailAddress, string domain, bool allowFileDiscovery, bool sendNotificationEmail, string emailMessage, bool transferOwnership) : string
+	{
+		scopePreset = ToNormalizeGoogleWorkspaceDriveScopePreset(scopePreset, "drive.write");
+
+		return GoogleWorkspaceServiceHost.CreatePermissionAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			fileId,
+			permissionType,
+			role,
+			emailAddress,
+			domain,
+			allowFileDiscovery,
+			sendNotificationEmail,
+			emailMessage,
+			transferOwnership,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to share a google drive file")]
+prototype ToShareGoogleWorkspaceDriveFile : GoogleWorkspaceSkillAction
+{
+	Description = @"Alias for granting a Drive permission with scopePreset defaulted to drive.write.";
+
+	function Execute(string accountKey, string scopePreset, string fileId, string permissionType, string role, string emailAddress, string domain, bool allowFileDiscovery, bool sendNotificationEmail, string emailMessage, bool transferOwnership) : string
+	{
+		return ToGrantGoogleWorkspaceDriveFilePermission.Execute(
+			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			fileId,
+			permissionType,
+			role,
+			emailAddress,
+			domain,
+			allowFileDiscovery,
+			sendNotificationEmail,
+			emailMessage,
+			transferOwnership);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list google drive file permissions")]
+prototype ToListGoogleWorkspaceDriveFilePermissions : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset defaults to drive.read. fileId required. pageSize/pageToken are optional paging controls.";
+
+	function Execute(string accountKey, string scopePreset, string fileId, int pageSize, string pageToken) : string
+	{
+		scopePreset = ToNormalizeGoogleWorkspaceDriveScopePreset(scopePreset, "drive.read");
+
+		return GoogleWorkspaceServiceHost.ListPermissionsAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			fileId,
+			pageSize,
+			pageToken,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to delete a google drive file permission")]
+prototype ToDeleteGoogleWorkspaceDriveFilePermission : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset defaults to drive.write. fileId and permissionId required. useDomainAdminAccess enables admin override for shared-drive contexts.";
+
+	function Execute(string accountKey, string scopePreset, string fileId, string permissionId, bool useDomainAdminAccess) : string
+	{
+		scopePreset = ToNormalizeGoogleWorkspaceDriveScopePreset(scopePreset, "drive.write");
+
+		return GoogleWorkspaceServiceHost.DeletePermissionAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			fileId,
+			permissionId,
+			useDomainAdminAccess,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to revoke a google drive file permission")]
+prototype ToRevokeGoogleWorkspaceDriveFilePermission : GoogleWorkspaceSkillAction
+{
+	Description = @"Alias for deleting a Drive file permission.";
+
+	function Execute(string accountKey, string scopePreset, string fileId, string permissionId, bool useDomainAdminAccess) : string
+	{
+		return ToDeleteGoogleWorkspaceDriveFilePermission.Execute(
+			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			fileId,
+			permissionId,
+			useDomainAdminAccess);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to grant a google drive file permission")]
+prototype ToGrantGoogleWorkspaceDriveFilePermission : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset defaults to drive.write. fileId/permissionType/role required. user/group requires emailAddress. domain requires domain. Optional allowFileDiscovery/sendNotificationEmail/emailMessage/transferOwnership.";
+
+	function Execute(string accountKey, string scopePreset, string fileId, string permissionType, string role, string emailAddress, string domain, bool allowFileDiscovery, bool sendNotificationEmail, string emailMessage, bool transferOwnership) : string
+	{
+		scopePreset = ToNormalizeGoogleWorkspaceDriveScopePreset(scopePreset, "drive.write");
+
+		bool sendAllowFileDiscovery = allowFileDiscovery;
+		if (StringUtil.EqualNoCase(permissionType, "user") || StringUtil.EqualNoCase(permissionType, "group"))
+			sendAllowFileDiscovery = false;
+
+		return GoogleWorkspaceServiceHost.CreatePermissionAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			fileId,
+			permissionType,
+			role,
+			emailAddress,
+			domain,
+			sendAllowFileDiscovery,
+			sendNotificationEmail,
+			emailMessage,
+			transferOwnership,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+

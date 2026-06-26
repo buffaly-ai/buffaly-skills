@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Browser LLM Workbench</title>
+	<link rel="icon" type="image/png" href="/images/bf_logo_fav_Large.png">
+	<link rel="stylesheet" href="/custom_css/buffaly-page.css?v=20260526.1">
+	<link rel="stylesheet" href="/custom_css/buffaly-navigation.css?v=20260530.4">
+	<link rel="stylesheet" href="styles/browser-workbench.css">
+</head>
+<body class="buffaly-page">
+	<div class="buffaly-app-strip" role="banner">
+		<a class="buffaly-app-strip-brand" href="/buffaly-agent.html">
+			<img src="/images/bf_logo_fav_Large.png" alt="">
+			<span>Buffaly</span>
+		</a>
+		<div class="buffaly-app-strip-center">
+			<buffaly-navigation-launcher label="Navigation" variant="strip" current-href="web-modules/Browser/index.html"></buffaly-navigation-launcher>
+		</div>
+		<div class="buffaly-app-strip-page">Browser Workbench</div>
+	</div>
+	<main class="buffaly-page-shell">
+		<header class="buffaly-page-hero">
+			<div class="buffaly-page-hero-main">
+				<p class="buffaly-kicker">Buffaly Browser Driver</p>
+				<h1 class="buffaly-title">Browser LLM Workbench</h1>
+				<p class="buffaly-subtitle">Run browser tool tasks with live screenshot feedback, artifacts, and runner diagnostics.</p>
+			</div>
+			<div class="buffaly-page-hero-actions">
+				<div id="apiStatus" class="buffaly-status-pill warning">Checking</div>
+				<button id="refreshButton" class="buffaly-button secondary" type="button">Refresh</button>
+			</div>
+		</header>
+
+		<section class="workbench-grid" aria-label="Browser workbench">
+			<aside class="buffaly-panel control-panel">
+				<div class="panel-section">
+					<p class="buffaly-section-label">Command</p>
+					<h2 class="buffaly-panel-title">Instruction</h2>
+					<label class="buffaly-field direction-field">
+						<span class="buffaly-field-label">Task instruction</span>
+						<textarea id="instructionInput" class="buffaly-textarea" rows="7">Open https://example.com, verify the page title, and save a screenshot.</textarea>
+					</label>
+					<div class="run-actions">
+						<button id="startButton" class="buffaly-button wide" type="button">Start run</button>
+						<button id="interruptButton" class="buffaly-button secondary danger wide" type="button" disabled>Stop run</button>
+					</div>
+				</div>
+
+				<div class="panel-section divider options-grid">
+					<label class="buffaly-field">
+						<span class="buffaly-field-label">Model</span>
+						<input id="modelInput" class="buffaly-input" value="gpt-5.5" readonly aria-readonly="true">
+					</label>
+					<label class="buffaly-field">
+						<span class="buffaly-field-label">Profile</span>
+						<input id="profileInput" class="buffaly-input" value="default">
+					</label>
+					<label class="buffaly-field">
+						<span class="buffaly-field-label">Max steps</span>
+						<input id="maxStepsInput" class="buffaly-input" type="number" min="1" value="40">
+					</label>
+			<label class="checkbox-option">
+				<input id="headlessInput" type="checkbox" checked>
+				<span>Run headless</span>
+			</label>
+		</div>
+
+				<div class="buffaly-metric status-card">
+					<div><span class="buffaly-metric-label">Run</span><strong id="runIdText">None</strong></div>
+					<div><span class="buffaly-metric-label">Status</span><strong id="runStatusText">Idle</strong></div>
+					<div><span class="buffaly-metric-label">Output root</span><strong id="outputRootText">Loading</strong></div>
+				</div>
+			</aside>
+
+			<section class="buffaly-panel screenshot-card">
+				<div class="buffaly-panel-header canvas-toolbar">
+					<div>
+						<p class="buffaly-section-label">Live visual feedback</p>
+						<h2 class="buffaly-panel-title">Latest screenshot</h2>
+						<p class="buffaly-muted">The screenshot updates as the browser runner captures pages.</p>
+					</div>
+				</div>
+				<div class="screenshot-stage" id="screenshotStage">
+					<img id="latestScreenshot" alt="Latest browser screenshot">
+					<div id="screenshotEmpty" class="buffaly-empty-state empty-state">
+						<strong>No screenshot yet.</strong>
+						<span>Start a run to see browser screenshots here.</span>
+					</div>
+				</div>
+			</section>
+
+			<aside class="buffaly-panel history-panel">
+				<div class="buffaly-panel-header compact">
+					<div>
+						<p class="buffaly-section-label">Session</p>
+						<h2 class="buffaly-panel-title">Recent runs</h2>
+					</div>
+				</div>
+				<div id="runList" class="run-list">No runs yet.</div>
+			</aside>
+		</section>
+
+		<section class="details-grid">
+			<article class="buffaly-panel details-panel">
+				<div class="buffaly-panel-header compact">
+					<div>
+						<p class="buffaly-section-label">Live</p>
+						<h2 class="buffaly-panel-title">Runner output</h2>
+					</div>
+				</div>
+				<pre id="stdoutLog" class="buffaly-code-block">No run started.</pre>
+			</article>
+
+			<article class="buffaly-panel details-panel error-panel">
+				<div class="buffaly-panel-header compact">
+					<div>
+						<p class="buffaly-section-label">Diagnostics</p>
+						<h2 class="buffaly-panel-title">Errors</h2>
+					</div>
+				</div>
+				<pre id="stderrLog" class="buffaly-code-block">No errors.</pre>
+			</article>
+
+			<article class="buffaly-panel details-panel artifact-list">
+				<div class="buffaly-panel-header compact">
+					<div>
+						<p class="buffaly-section-label">Artifacts</p>
+						<h2 class="buffaly-panel-title">Run files</h2>
+					</div>
+				</div>
+				<div id="fileList" class="file-list">No files yet.</div>
+			</article>
+		</section>
+	</main>
+
+	<script src="js/browser-workbench.js"></script>
+	<script src="/js/navigation/buffaly-navigation-data.js?v=20260528.2"></script>
+	<script src="/js/navigation/buffaly-navigation-launcher.js?v=20260530.3"></script>
+</body>
+</html>
+
+
+

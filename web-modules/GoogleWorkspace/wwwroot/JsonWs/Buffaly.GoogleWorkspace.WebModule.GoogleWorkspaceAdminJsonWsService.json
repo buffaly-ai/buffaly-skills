@@ -1,0 +1,17 @@
+{
+  "Assembly":"Buffaly.GoogleWorkspace.WebModule, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+  "Type":"Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService",
+  "KebabName":"google-workspace-admin-json-ws-service",
+  "Methods":[
+    { "IsStatic":"true", "IsReturnTypeArray":"false", "KebabName":"get-admin-snapshot", "Parameters":[{ "Type":"GoogleWorkspaceAdminInitializeRequestContract", "IsNullable":"false", "Name":"request", "IsArray":"false", "IsEnum":"false" }], "ReturnType":"GoogleWorkspaceAdminSnapshotContract", "UrlName":null, "Name":"GetAdminSnapshot", "DataObject":{} },
+    { "IsStatic":"true", "IsReturnTypeArray":"false", "KebabName":"list-accounts", "Parameters":[{ "Type":"GoogleWorkspaceAdminInitializeRequestContract", "IsNullable":"false", "Name":"request", "IsArray":"false", "IsEnum":"false" }], "ReturnType":"GoogleWorkspaceRawJsonContract", "UrlName":null, "Name":"ListAccounts", "DataObject":{} },
+    { "IsStatic":"true", "IsReturnTypeArray":"false", "KebabName":"get-account", "Parameters":[{ "Type":"GoogleWorkspaceAdminGetAccountRequestContract", "IsNullable":"false", "Name":"request", "IsArray":"false", "IsEnum":"false" }], "ReturnType":"GoogleWorkspaceRawJsonContract", "UrlName":null, "Name":"GetAccount", "DataObject":{} },
+    { "IsStatic":"true", "IsReturnTypeArray":"false", "KebabName":"start-authorization", "Parameters":[{ "Type":"GoogleWorkspaceAuthorizationStartRequestContract", "IsNullable":"false", "Name":"request", "IsArray":"false", "IsEnum":"false" }], "ReturnType":"GoogleWorkspaceRawJsonContract", "UrlName":null, "Name":"StartAuthorization", "DataObject":{} },
+    { "IsStatic":"true", "IsReturnTypeArray":"false", "KebabName":"complete-authorization", "Parameters":[{ "Type":"GoogleWorkspaceAuthorizationCompleteRequestContract", "IsNullable":"false", "Name":"request", "IsArray":"false", "IsEnum":"false" }], "ReturnType":"GoogleWorkspaceRawJsonContract", "UrlName":null, "Name":"CompleteAuthorization", "DataObject":{"CallbackUrl":"Optional full loopback callback URL used to recover the exact desktop redirect URI during manual completion."} },
+    { "IsStatic":"true", "IsReturnTypeArray":"false", "KebabName":"validate-account", "Parameters":[{ "Type":"GoogleWorkspaceAccountActionRequestContract", "IsNullable":"false", "Name":"request", "IsArray":"false", "IsEnum":"false" }], "ReturnType":"GoogleWorkspaceRawJsonContract", "UrlName":null, "Name":"ValidateAccount", "DataObject":{} },
+    { "IsStatic":"true", "IsReturnTypeArray":"false", "KebabName":"revoke-account", "Parameters":[{ "Type":"GoogleWorkspaceAccountActionRequestContract", "IsNullable":"false", "Name":"request", "IsArray":"false", "IsEnum":"false" }], "ReturnType":"GoogleWorkspaceRawJsonContract", "UrlName":null, "Name":"RevokeAccount", "DataObject":{} },
+    { "IsStatic":"true", "IsReturnTypeArray":"false", "KebabName":"remove-account", "Parameters":[{ "Type":"GoogleWorkspaceAccountActionRequestContract", "IsNullable":"false", "Name":"request", "IsArray":"false", "IsEnum":"false" }], "ReturnType":"GoogleWorkspaceRawJsonContract", "UrlName":null, "Name":"RemoveAccount", "DataObject":{} },
+    { "IsStatic":"true", "IsReturnTypeArray":"false", "KebabName":"get-oauth-latest", "Parameters":[], "ReturnType":"GoogleWorkspaceRawJsonContract", "UrlName":null, "Name":"GetOAuthLatest", "DataObject":{} }
+  ],
+  "Namespace":"Buffaly.GoogleWorkspace.WebModule"
+}

@@ -1,0 +1,69 @@
+reference Buffaly.Browser.WebHarness Buffaly.Browser.WebHarness;
+import Buffaly.Agent.Host Buffaly.Agent.Host.OpenAIFeature OpenAIFeature;
+import BasicUtilities BasicUtilities.JsonObject JsonObject;
+import BasicUtilities BasicUtilities.JsonValue JsonValue;
+import BasicUtilities BasicUtilities.StringUtil StringUtil;
+import Buffaly.Browser.WebHarness Buffaly.Browser.WebHarness.BrowserWorkbenchServiceHost BrowserWorkbenchServiceHost;
+import Buffaly.Browser.WebHarness Buffaly.Browser.WebHarness.StartBrowserRunRequest StartBrowserRunRequest;
+
+prototype BrowserSkillAction : OpsAction
+{
+	Description = @"Base action type for Browser web-module tools.";
+}
+
+[SemanticEntity("browser web module skill")]
+prototype BrowserSkill : SkillEntity
+{
+	Description = "Run browser LLM tasks through the installed Browser web module and runner.";
+	ActionRoot = BrowserSkillAction;
+}
+
+prototype BrowserWebModuleService : Service
+{
+	ServiceName = "BrowserWebModuleService";
+	Scope = "singleton";
+	Description = @"Installed Browser web-module binding using direct Browser workbench runtime APIs.";
+
+	function Initialize() : string
+	{
+		string apiKey = OpenAIFeature.Feature.ApiKey;
+		if (StringUtil.IsEmpty(apiKey))
+		{
+			throw "OpenAI Feature ApiKey is required before using the Browser web module.";
+		}
+
+		return BrowserWorkbenchServiceHost.Initialize(apiKey);
+	}
+}
+
+[SemanticEntity("local browser web module service")]
+partial prototype BrowserWebModuleService#Local : BrowserWebModuleService
+{
+	Description = "Local installed Browser web module binding using direct Browser workbench runtime APIs.";
+}
+
+[SemanticProgram.InfinitivePhrase("to run a browser task")]
+[SemanticProgram.InfinitivePhrase("to use the browser module")]
+prototype ToRunBrowserModuleTask : BrowserSkillAction
+{
+	Description = @"instruction(required), maxSteps(optional integer), profileName(optional). Runs one browser task through the installed Browser web module using the module default model.";
+
+	BrowserWebModuleService Service = BrowserWebModuleService#Local;
+
+	function Execute(string instruction, string model, int maxSteps = 40, string profileName) : string
+	{
+		if (StringUtil.IsEmpty(instruction))
+			return "Error: instruction is required.";
+
+		StartBrowserRunRequest request = new StartBrowserRunRequest();
+		request.Instruction = instruction;
+		// The Browser module owns model selection. Keep the model parameter for older callers,
+		// but do not let stale prompts or UI calls force an obsolete model.
+		request.MaxSteps = maxSteps;
+		if (!StringUtil.IsEmpty(profileName)) request.ProfileName = profileName;
+
+		return JsonUtil.ToFriendlyJSON(new JsonValue(BrowserWorkbenchServiceHost.StartRun(request))).ToString();
+	}
+}
+
+

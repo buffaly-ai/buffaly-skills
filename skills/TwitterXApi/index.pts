@@ -1,0 +1,388 @@
+reference System.Net.Http System.Net.Http;
+reference XApiClient.Core XApiClient.Core;
+
+include "PromptActions.pts";
+
+import XApiClient.Core XApiClient.Core.XClient XClient;
+import XApiClient.Core XApiClient.Core.Authentication.XCredentials XCredentials;
+import System.Net.Http System.Net.Http.HttpClient HttpClient;
+import BasicUtilities BasicUtilities.JsonObject JsonObject;
+import BasicUtilities BasicUtilities.JsonArray JsonArray;
+import Buffaly.Agent.Tools.Secrets Buffaly.Agent.Tools.Secrets.TwitterXApiSecretsFeature TwitterXApiSecretsFeature;
+import mscorlib System.Threading.CancellationToken CancellationToken;
+import mscorlib System.IO.File File;
+
+prototype TwitterXApiSkillAction : OpsAction
+{
+	Description = @"Base action type for Twitter/X API skill tools.";
+}
+
+[SemanticEntity("twitter x api skill")]
+[SemanticEntity("x api skill")]
+prototype TwitterXApiSkill : SkillEntity
+{
+	Description = "Twitter/X API actions for search, profile, timeline, mentions, and posting.";
+	ActionRoot = TwitterXApiSkillAction;
+}
+
+function ToNormalizeXMaxResults(int maxResults) : int
+{
+	if (maxResults < 1)
+	{
+		return 10;
+	}
+	if (maxResults > 100)
+	{
+		return 100;
+	}
+	return maxResults;
+}
+
+function ToNormalizePaginationToken(string paginationToken) : string
+{
+	if (paginationToken == null)
+	{
+		return "";
+	}
+	return paginationToken;
+}
+
+function ToCreateXCredentialsForSearch() : XCredentials
+{
+	XCredentials credentials = new XCredentials();
+	credentials.ClientId = TwitterXApiSecretsFeature.Feature.ClientId;
+	credentials.ClientSecret = TwitterXApiSecretsFeature.Feature.ClientSecret;
+	credentials.BearerToken = TwitterXApiSecretsFeature.Feature.BearerToken;
+	credentials.AccessToken = TwitterXApiSecretsFeature.Feature.AccessToken;
+	credentials.RefreshToken = TwitterXApiSecretsFeature.Feature.RefreshToken;
+	credentials.Scopes = TwitterXApiSecretsFeature.Feature.Scopes;
+	return credentials;
+}
+
+function ToCreateXCredentialsForUserContext() : XCredentials
+{
+	XCredentials credentials = new XCredentials();
+	credentials.ClientId = TwitterXApiSecretsFeature.Feature.ClientId;
+	credentials.ClientSecret = TwitterXApiSecretsFeature.Feature.ClientSecret;
+	credentials.BearerToken = TwitterXApiSecretsFeature.Feature.BearerToken;
+	credentials.AccessToken = TwitterXApiSecretsFeature.Feature.AccessToken;
+	credentials.RefreshToken = TwitterXApiSecretsFeature.Feature.RefreshToken;
+	credentials.Scopes = TwitterXApiSecretsFeature.Feature.Scopes;
+	return credentials;
+}
+
+function ToTryReadXUserId(string jsonText) : string
+{
+	// Parse GetMe payload shape and return data.id when present.
+	try
+	{
+		JsonObject root = new JsonObject(jsonText);
+		JsonObject data = root.GetJsonObjectOrDefault("data");
+		return data.GetStringOrNull("id") ?? "";
+	}
+	catch
+	{
+		return "";
+	}
+}
+
+function ToGetCurrentXUserId(XClient xApiClient) : string
+{
+	string meRawJson = xApiClient.GetMeAsync(new CancellationToken(false)).RawJson;
+	if (StringUtil.IsEmpty(meRawJson))
+	{
+		return "";
+	}
+
+	string userId = ToTryReadXUserId(meRawJson);
+	if (!StringUtil.IsEmpty(userId))
+		return userId;
+
+	// Some runtimes pass JSON as a quoted/escaped JSON string; normalize and parse a second time.
+	string normalizedJson = meRawJson.Replace("\\\"", "\"");
+	normalizedJson = normalizedJson.Replace("\"{", "{");
+	normalizedJson = normalizedJson.Replace("}\"", "}");
+
+	userId = ToTryReadXUserId(normalizedJson);
+	if (!StringUtil.IsEmpty(userId))
+		return userId;
+
+	return "";
+}
+
+[SemanticProgram.InfinitivePhrase("to debug x get me parsing")]
+prototype ToDebugXGetMeParsing : TwitterXApiSkillAction
+{
+	Description = @"Returns raw GetMe JSON and parsed user-id attempts for parser diagnostics.";
+
+	function Execute() : string
+	{
+		XCredentials credentials = ToCreateXCredentialsForUserContext();
+		HttpClient xHttpClient = new HttpClient();
+		XClient xApiClient = new XClient(xHttpClient, credentials, null);
+
+		string meRawJson = xApiClient.GetMeAsync(new CancellationToken(false)).RawJson;
+		string idFromRawObject = ToTryReadXUserId(meRawJson);
+
+		string normalizedJson = meRawJson.Replace("\\\"", "\"");
+		normalizedJson = normalizedJson.Replace("\"{", "{");
+		normalizedJson = normalizedJson.Replace("}\"", "}");
+		string idFromNormalizedObject = ToTryReadXUserId(normalizedJson);
+
+		return
+			"idFromRawObject: " + idFromRawObject + "\n" +
+			"idFromNormalizedObject: " + idFromNormalizedObject + "\n" +
+			"rawJson:\n" + meRawJson + "\n" +
+			"normalizedJson:\n" + normalizedJson;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to search recent posts on x")]
+[SemanticProgram.InfinitivePhrase("to search twitter recent posts")]
+prototype ToSearchXRecentPosts : TwitterXApiSkillAction
+{
+	Description = @"query - X recent search query.
+	maxResults - result count between 1 and 100.
+	paginationToken - pass empty for first page, or the token from a prior response for next page.";
+
+	function Execute(string query, int maxResults, string paginationToken) : string
+	{
+		if (StringUtil.IsEmpty(query))
+		{
+			return "Error: query is required.";
+		}
+		maxResults = ToNormalizeXMaxResults(maxResults);
+		paginationToken = ToNormalizePaginationToken(paginationToken);
+
+		// Search can run with bearer token auth.
+		XCredentials credentials = ToCreateXCredentialsForSearch();
+
+		HttpClient xHttpClient = new HttpClient();
+		XClient xApiClient = new XClient(xHttpClient, credentials, null);
+
+		string response = xApiClient.SearchRecentAsync(query, maxResults, paginationToken, new CancellationToken(false)).RawJson;
+		return response;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get my x profile")]
+[SemanticProgram.InfinitivePhrase("to get my twitter profile")]
+prototype ToGetXMe : TwitterXApiSkillAction
+{
+	Description = @"Returns the authenticated X account profile JSON.";
+
+	function Execute() : string
+	{
+		// User profile requires OAuth user-context credentials.
+		XCredentials credentials = ToCreateXCredentialsForUserContext();
+
+		HttpClient xHttpClient = new HttpClient();
+		XClient xApiClient = new XClient(xHttpClient, credentials, null);
+
+		string response = xApiClient.GetMeAsync(new CancellationToken(false)).RawJson;
+		return response;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get x home timeline")]
+[SemanticProgram.InfinitivePhrase("to get twitter home timeline")]
+prototype ToGetXHomeTimeline : TwitterXApiSkillAction
+{
+	Description = @"maxResults - result count between 1 and 100.
+	paginationToken - pass empty for first page, or the token from a prior response for next page.";
+
+	function Execute(int maxResults, string paginationToken) : string
+	{
+		maxResults = ToNormalizeXMaxResults(maxResults);
+		paginationToken = ToNormalizePaginationToken(paginationToken);
+
+		// Timelines require OAuth user-context credentials.
+		XCredentials credentials = ToCreateXCredentialsForUserContext();
+
+		HttpClient xHttpClient = new HttpClient();
+		XClient xApiClient = new XClient(xHttpClient, credentials, null);
+		string userId = ToGetCurrentXUserId(xApiClient);
+		if (StringUtil.IsEmpty(userId))
+		{
+			return "Error: unable to resolve current X user id from GetMe.";
+		}
+
+		string response = xApiClient.GetHomeTimelineAsync(userId, maxResults, paginationToken, new CancellationToken(false)).RawJson;
+		return response;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get my x tweets")]
+[SemanticProgram.InfinitivePhrase("to get my twitter tweets")]
+prototype ToGetXMyTweets : TwitterXApiSkillAction
+{
+	Description = @"maxResults - result count between 1 and 100.
+	paginationToken - pass empty for first page, or the token from a prior response for next page.";
+
+	function Execute(int maxResults, string paginationToken) : string
+	{
+		maxResults = ToNormalizeXMaxResults(maxResults);
+		paginationToken = ToNormalizePaginationToken(paginationToken);
+
+		// Timeline endpoints require OAuth user-context credentials.
+		XCredentials credentials = ToCreateXCredentialsForUserContext();
+
+		HttpClient xHttpClient = new HttpClient();
+		XClient xApiClient = new XClient(xHttpClient, credentials, null);
+		string userId = ToGetCurrentXUserId(xApiClient);
+		if (StringUtil.IsEmpty(userId))
+		{
+			return "Error: unable to resolve current X user id from GetMe.";
+		}
+
+		string response = xApiClient.GetMyTweetsAsync(userId, maxResults, paginationToken, new CancellationToken(false)).RawJson;
+		return response;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get x mentions")]
+[SemanticProgram.InfinitivePhrase("to get twitter mentions")]
+prototype ToGetXMentions : TwitterXApiSkillAction
+{
+	Description = @"maxResults - result count between 1 and 100.
+	paginationToken - pass empty for first page, or the token from a prior response for next page.";
+
+	function Execute(int maxResults, string paginationToken) : string
+	{
+		maxResults = ToNormalizeXMaxResults(maxResults);
+		paginationToken = ToNormalizePaginationToken(paginationToken);
+
+		// Mentions endpoint requires OAuth user-context credentials.
+		XCredentials credentials = ToCreateXCredentialsForUserContext();
+
+		HttpClient xHttpClient = new HttpClient();
+		XClient xApiClient = new XClient(xHttpClient, credentials, null);
+		string userId = ToGetCurrentXUserId(xApiClient);
+		if (StringUtil.IsEmpty(userId))
+		{
+			return "Error: unable to resolve current X user id from GetMe.";
+		}
+
+		string response = xApiClient.GetMentionsAsync(userId, maxResults, paginationToken, new CancellationToken(false)).RawJson;
+		return response;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to post a tweet on x")]
+[SemanticProgram.InfinitivePhrase("to post on twitter")]
+prototype ToPostXTweet : TwitterXApiSkillAction
+{
+	Description = @"text - tweet content to post.";
+
+	function Execute(string text) : string
+	{
+		if (StringUtil.IsEmpty(text))
+		{
+			return "Error: text is required.";
+		}
+
+		// Posting requires OAuth user-context credentials.
+		XCredentials credentials = ToCreateXCredentialsForUserContext();
+
+		HttpClient xHttpClient = new HttpClient();
+		XClient xApiClient = new XClient(xHttpClient, credentials, null);
+
+		string response = xApiClient.PostTweetAsync(text, new CancellationToken(false)).RawJson;
+		return response;
+	}
+}
+[SemanticProgram.InfinitivePhrase("to post a tweet with media on x")]
+[SemanticProgram.InfinitivePhrase("to post on twitter with media")]
+prototype ToPostXTweetWithMedia : TwitterXApiSkillAction
+{
+	Description = @"text - tweet content to post.
+	mediaFilePath - local file path for one image/video media attachment.";
+
+	function Execute(string text, string mediaFilePath) : string
+	{
+		if (StringUtil.IsEmpty(text))
+		{
+			return "Error: text is required.";
+		}
+
+		if (StringUtil.IsEmpty(mediaFilePath))
+		{
+			return "Error: mediaFilePath is required.";
+		}
+
+		if (!File.Exists(mediaFilePath))
+		{
+			return "Error: media file does not exist: " + mediaFilePath;
+		}
+
+		// Posting requires OAuth user-context credentials.
+		XCredentials credentials = ToCreateXCredentialsForUserContext();
+
+		HttpClient xHttpClient = new HttpClient();
+		XClient xApiClient = new XClient(xHttpClient, credentials, null);
+
+		string response = xApiClient.PostTweetWithMediaFileRawJsonAsync(text, mediaFilePath, new CancellationToken(false));
+		return response;
+	}
+}
+
+
+
+[SemanticProgram.InfinitivePhrase("to post a twitter thread")]
+[SemanticProgram.InfinitivePhrase("to post an x thread")]
+prototype ToPostXThread : TwitterXApiSkillAction
+{
+	Description = @"threadJson - JSON array of tweet texts. Posts the first tweet, then posts each later item as a reply to the prior tweet.";
+
+	function Execute(string threadJson) : string
+	{
+		if (StringUtil.IsEmpty(threadJson))
+		{
+			return "Error: threadJson is required.";
+		}
+
+		JsonArray tweets = new JsonArray(threadJson);
+		if (tweets.Count == 0)
+		{
+			return "Error: threadJson must contain at least one tweet text.";
+		}
+
+		XCredentials credentials = ToCreateXCredentialsForUserContext();
+		HttpClient xHttpClient = new HttpClient();
+		XClient xApiClient = new XClient(xHttpClient, credentials, null);
+
+		string previousTweetId = "";
+		JsonArray results = new JsonArray();
+		for (int i = 0; i < tweets.Count; i++)
+		{
+			string tweetText = tweets.GetString(i);
+			if (StringUtil.IsEmpty(tweetText))
+			{
+				return "Error: tweet text at index " + i + " is required.";
+			}
+
+			string rawJson = "";
+			if (StringUtil.IsEmpty(previousTweetId))
+			{
+				rawJson = xApiClient.PostTweetRawJsonAsync(tweetText, new CancellationToken(false));
+			}
+			else
+			{
+				rawJson = xApiClient.PostTweetReplyRawJsonAsync(tweetText, previousTweetId, new CancellationToken(false));
+			}
+
+			JsonObject response = new JsonObject(rawJson);
+			JsonObject data = response.GetJsonObjectOrDefault("data");
+			previousTweetId = data.GetStringOrNull("id") ?? "";
+			if (StringUtil.IsEmpty(previousTweetId))
+			{
+				return "Error: X post response at index " + i + " did not include data.id. Raw response: " + rawJson;
+			}
+
+			results.Add(response);
+		}
+
+		return results.ToString();
+	}
+}
+

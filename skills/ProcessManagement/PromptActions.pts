@@ -1,0 +1,29 @@
+prototype ToExplainHowToAddScheduledTask : PromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = "Skills/ProcessManagement/Prompts/ToExplainHowToAddScheduledTask.prompt.md";
+	Description = "Explain and guide creation of an external prompt-driven scheduled task using ProcessManagement tools.";
+	InfinitivePhrase = "to explain how to add a scheduled task";
+}
+
+prototype ToExplainHowToAddRecurringProcess : PromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = "Skills/ProcessManagement/Prompts/ToExplainHowToAddRecurringProcess.prompt.md";
+	Description = "Explain and guide creation of a recurring interval system process using ProcessManagement tools.";
+	InfinitivePhrase = "to explain how to add a recurring process";
+}
+
+[SemanticProgram.InfinitivePhrase("to add a deterministic scheduled task")]
+prototype ToAddDeterministicScheduledTask : PromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = "Skills/ProcessManagement/Prompts/ToAddDeterministicScheduledTask.prompt.md";
+	Description = "Guide creation of deterministic scheduled ProtoScript tasks that do not call an LLM or use model tokens.";
+}

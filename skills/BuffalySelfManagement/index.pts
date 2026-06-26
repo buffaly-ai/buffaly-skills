@@ -1,0 +1,13 @@
+include "BuffalySelfManagement.pts";
+
+prototype BuffalySelfManagementSkillAction : PromptAction
+{
+	Description = "Base action type for Buffaly self-management prompt tools.";
+}
+
+prototype BuffalySelfManagementSkill : SkillEntity
+{
+	EntityName = "buffaly self management skill, agent self management skill";
+	Description = "Prompt workflows for Buffaly diagnosing, repairing, and improving its own runtime, ProtoScript integration, and internal code quality.";
+	ActionRoot = BuffalySelfManagementSkillAction;
+}

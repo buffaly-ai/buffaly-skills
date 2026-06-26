@@ -1,0 +1,21 @@
+[SemanticProgram.InfinitivePhrase("to access local sql server")]
+[SemanticProgram.InfinitivePhrase("to connect to local sql server and list databases")]
+prototype ToAccessLocalSqlServerSkill : PromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/SqlServer/Prompts/AccessLocalSqlServer.prompt.md";
+	Description = @"Loads the trusted workflow for local SQL Server connectivity and safe read queries via sqlcmd.";
+}
+[SemanticProgram.InfinitivePhrase("to set up sql server 2025 express on a windows server")]
+[SemanticProgram.InfinitivePhrase("to install sql server 2025 express with validation and troubleshooting")]
+prototype ToSetupSqlServer2025ExpressSkill : PromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/SqlServer/Prompts/ToSetupSqlServer2025ExpressSkill.prompt.md";
+	Description = @"Loads a proven runbook to install SQL Server 2025 Express on Windows, validate service and login readiness, troubleshoot common failures (including SA password policy and argument issues), and apply post-install hardening.";
+}
+

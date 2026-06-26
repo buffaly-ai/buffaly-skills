@@ -1,0 +1,11743 @@
+const TIMELINE_POLL_INTERVAL_MS = 2000;
+const TURN_ACTIVITY_TICK_INTERVAL_MS = 1000;
+const LOG_FLUSH_INTERVAL_MS = 250;
+const MAX_RENDERED_CLIENT_LOG_LINES = 800;
+const MAX_CLIENT_LOG_LINE_CHARS = 4000;
+const MAX_CLIENT_SNAPSHOT_TURNS = 1200;
+const MAX_CLIENT_SNAPSHOT_INTERMEDIATE = 300;
+const MAX_CLIENT_SNAPSHOT_TEXT_CHARS = 16000;
+const MAX_CLIENT_SNAPSHOT_IMAGE_URL_CHARS = 200000;
+const MAX_PROMPT_DRAFT_CHARS = 12000;
+const MAX_PROMPT_DRAFT_STORAGE_CHARS = 250000;
+const MAX_TIMELINE_JSON_RESPONSE_BYTES = 2 * 1024 * 1024;
+
+let socket = null;
+let socketReadyPromise = null;
+let wsReconnectTimer = null;
+let wsReconnectInFlight = false;
+let wsReconnectAttempt = 0;
+let lastSessionListViewKey = "";
+let appServerErrorBannerTimer = null;
+let appServerErrorBannerSticky = false;
+let lastModelsRequestAtBySession = new Map(); // sessionId -> epoch ms
+let codexAccountInfo = null; // { authMode, accountId, email, subject, chatgptPlanType, label, identityKey, isAvailable }
+
+let sessions = new Map(); // sessionId -> { threadId, cwd, model, reasoningEffort, approvalPolicy, sandboxPolicy }
+let sessionCatalog = []; // [{ threadId, threadName, updatedAtUtc, cwd, model, reasoningEffort, sessionFilePath }]
+let activeSessionId = null;
+let pendingApproval = null; // { sessionId, approvalId }
+let pendingToolUserInput = null; // { sessionId, requestId, questions }
+let recoveryOfferModalSessionId = null;
+let turnInFlightBySession = new Map(); // sessionId -> boolean
+let lastSentPromptBySession = new Map(); // sessionId -> string
+let promptDraftByKey = new Map(); // "thread:<threadId>" | "__global__" -> text
+let promptDraftImagesByKey = new Map(); // "thread:<threadId>" | "__global__" -> unsent composer images
+let pendingComposerImages = [];
+let nextComposerImageId = 1;
+let selectedProjectKey = null;
+let projectNameByKey = new Map();
+let collapsedProjectKeys = new Set();
+let archivedThreadIds = new Set();
+let expandedProjectKeys = new Set();
+let customProjects = [];
+let projectOrderIndexByKey = new Map(); // projectKey -> stable display order index for current page lifetime
+let nextProjectOrderIndex = 0;
+let projectOrderInitialized = false;
+let pendingCreateRequests = new Map(); // requestId -> { threadName, cwd }
+let pendingRenameOnAttach = new Map(); // threadId -> threadName
+let pendingSessionLoad = null; // { threadId, previousSessionId }
+
+let timelineCursor = null;
+let timelinePollTimer = null;
+let timelinePollGeneration = 0;
+let timelinePollInFlight = false;
+let sessionListPollTimer = null;
+let logFlushTimer = null;
+let autoAttachAttempted = false;
+let sessionCatalogLoadedOnce = false;
+let syncingConversationModelSelect = false;
+let sessionMetaDetailsExpanded = false;
+let contextUsageByThread = new Map(); // threadId -> { usedTokens, contextWindow, percentLeft }
+let permissionLevelByThread = new Map(); // threadId -> { approval, sandbox }
+let preferredModelByThread = new Map(); // threadId -> model string ("" means default)
+let preferredReasoningByThread = new Map(); // threadId -> reasoning effort string ("" means default)
+let preferredPermissionByThread = new Map(); // threadId -> { approval, sandbox }
+let processingByThread = new Map(); // threadId -> boolean
+let completedUnreadThreadIds = new Set(); // threadId -> completion happened while not selected
+let pendingSessionModelSyncBySession = new Map(); // sessionId -> "model||effort" pending sync request key
+let lastConfirmedSessionModelSyncBySession = new Map(); // sessionId -> "model||effort" confirmed from server session state
+let pendingSessionPermissionSyncBySession = new Map(); // sessionId -> "approval||sandbox" pending sync request key
+let lastConfirmedSessionPermissionSyncBySession = new Map(); // sessionId -> "approval||sandbox" confirmed from server session state
+let timelineHasTruncatedHead = false;
+let timelineConnectionIssueShown = false;
+let runtimeSecurityConfig = null;
+let rateLimitBySession = new Map(); // sessionId -> latest rate limit summary payload
+let renderedClientLogLines = [];
+let pendingClientLogLines = [];
+let timelineCacheByThread = new Map(); // threadId -> { turns(summary + hydrated details), nextCursor, truncated, contextUsage, permission, reasoningSummary, maxEntries }
+let turnDetailFetchInFlight = new Set(); // `${threadId}::${turnId}`
+let turnActivityTickTimer = null;
+let turnStartedAtBySession = new Map(); // sessionId -> epoch ms when running turn started
+let turnStartGraceUntilBySession = new Map(); // sessionId -> epoch ms while waiting for turn_start confirmation
+let lastReasoningByThread = new Map(); // threadId -> latest reasoning summary
+let awaitingFreshReasoningBySession = new Map(); // sessionId -> true while waiting for first new-turn reasoning
+let reasoningBaselineBySession = new Map(); // sessionId -> reasoning text seen when turn started
+let jumpCollapseMode = false;
+let conversationMetaMenuOpen = false;
+let sessionThreadCopyResetTimer = null;
+let planModeNextTurn = false;
+let configuredDefaultModel = "";
+let scribeController = null;
+let sidebarProjectSearchQuery = "";
+let sidebarProjectSearchExpanded = false;
+let projectSidebarRenderQueued = false;
+let projectSidebarRenderPendingWhileHidden = false;
+let vsSelectionSnapshot = null; // { filePath, fileName, selectionText, caretLine, caretColumn }
+let consumedVsSelectionSignature = "";
+let vsSelectionPollTimer = null;
+let vsSelectionPollInFlight = false;
+let timelineSelectionSnapshot = null; // { threadId, selectionText, selectedAtMs }
+let consumedTimelineSelectionSignature = "";
+let pendingBuildFixClip = null; // { signature, state, errors, warnings, errorCount }
+let dismissedBuildFixSignature = "";
+let buildFixPollTimer = null;
+let lastDiffRefreshAssistantSignatureByThread = new Map();
+let openAiKeyStatusCache = null; // { hasKey, checkedAtMs }
+let blockedAutoRestoreThreadId = "";
+let startupRestoreAttemptThreadId = "";
+let latestRateLimitSnapshot = null; // latest account-level usage snapshot from backend endpoint
+let rateLimitSnapshotFetchInFlight = null;
+let lastRateLimitSnapshotFetchAtMs = 0;
+let reviewRecordsById = new Map(); // reviewId -> review record
+let reviewRecordIdsByCwd = new Map(); // cwd -> [reviewId]
+let reviewApprovalsByScopeKey = new Map(); // scopeKey -> approval record
+let reviewApprovalScopeKeysByCwd = new Map(); // cwd -> [scopeKey]
+let reviewCatalogFetchPromiseByCwd = new Map(); // cwd -> Promise
+let taskThreadIdByProjectKey = new Map();
+let currentWorkspaceTab = "tasks";
+
+const STORAGE_CWD_KEY = "codex-web-cwd";
+const STORAGE_LOG_VERBOSITY_KEY = "codex-web-log-verbosity";
+const STORAGE_LAST_THREAD_ID_KEY = "codex-web-last-thread-id";
+const STORAGE_LAST_SESSION_ID_KEY = "codex-web-last-session-id";
+const STORAGE_PROMPT_DRAFTS_KEY = "codex-web-prompt-drafts-v1";
+const STORAGE_STARTUP_RESTORE_GUARD_KEY = "codex-web-startup-restore-guard-v1";
+const STORAGE_THREAD_MODELS_KEY = "codex-web-thread-models-v1";
+const STORAGE_THREAD_REASONING_KEY = "codex-web-thread-reasoning-v1";
+const STORAGE_THREAD_PERMISSIONS_KEY = "codex-web-thread-permissions-v1";
+const STORAGE_PROJECT_META_KEY = "codex-web-project-meta";
+const STORAGE_COLLAPSED_PROJECTS_KEY = "codex-web-collapsed-projects";
+const STORAGE_ARCHIVED_THREADS_KEY = "codex-web-archived-threads";
+const STORAGE_SIDEBAR_COLLAPSED_KEY = "codex-web-sidebar-collapsed";
+const STORAGE_SIDEBAR_EXTRAS_EXPANDED_KEY = "codex-web-sidebar-extras-expanded";
+const STORAGE_CUSTOM_PROJECTS_KEY = "codex-web-custom-projects";
+const STORAGE_WORKSPACE_TAB_KEY = "codex-web-workspace-tab";
+const STORAGE_TASK_THREAD_BY_PROJECT_KEY = "codex-web-task-thread-by-project";
+const WORKSPACE_TAB_TASKS = "tasks";
+const WORKSPACE_TAB_CODE_REVIEWS = "code_reviews";
+const MAX_QUEUE_TEXT_CHARS = 90;
+const MAX_QUEUE_PREVIEW_SOURCE_CHARS = 1200;
+const MAX_QUEUE_PREVIEW_KEY_CHARS = 160;
+const MAX_QUEUED_TURNS_TRACKED = 100;
+const MAX_PROJECT_SESSIONS_COLLAPSED = 4;
+const MAX_PROJECT_SESSIONS_LOADED = 20;
+const MAX_COMPOSER_IMAGES = 4;
+const MAX_COMPOSER_IMAGE_BYTES = 8 * 1024 * 1024;
+const GLOBAL_PROMPT_DRAFT_KEY = "__global__";
+const SESSION_LIST_SYNC_INTERVAL_MS = 5000;
+const TURN_START_CONFIRM_GRACE_MS = 15000;
+const WS_RECONNECT_BASE_DELAY_MS = 1000;
+const WS_RECONNECT_MAX_DELAY_MS = 15000;
+const APP_SERVER_ERROR_BANNER_MS = 45000;
+const MODELS_LIST_MIN_INTERVAL_MS = 4000;
+const STARTUP_RESTORE_GUARD_WINDOW_MS = 5 * 60 * 1000;
+const STARTUP_RESTORE_GUARD_MAX_ATTEMPTS = 2;
+const VS_SELECTION_POLL_INTERVAL_MS = 1500;
+const VS_SELECTION_MAX_PROMPT_CHARS = 4000;
+const TIMELINE_SELECTION_MAX_PROMPT_CHARS = 4000;
+const BUILD_FIX_POLL_INTERVAL_MS = 2000;
+const BUILD_FIX_MAX_CHARS = 12000;
+const OPENAI_KEY_STATUS_CACHE_MS = 15000;
+const RATE_LIMIT_SNAPSHOT_FETCH_MIN_INTERVAL_MS = 15000;
+const PROMPT_INPUT_MAX_HEIGHT_DESKTOP_PX = 360;
+const PROMPT_INPUT_MAX_HEIGHT_MOBILE_PX = 192;
+const UI_AUDIT_OUTGOING_TYPES = new Set([
+  "session_create",
+  "session_attach",
+  "session_stop",
+  "session_rename",
+  "session_set_model",
+  "session_set_permissions",
+  "turn_start",
+  "turn_steer",
+  "turn_queue_add",
+  "turn_queue_pop",
+  "turn_queue_remove",
+  "turn_cancel",
+  "approval_response",
+  "tool_user_input_response",
+  "session_recovery_decision",
+  "turn_retry_decision"
+]);
+// Server turn cache is rebuilt from recent JSONL lines, so keep this high enough to capture many complete turns.
+const TIMELINE_INITIAL_WINDOW_DEFAULT = 1600;
+const TIMELINE_MAX_WINDOW_ENTRIES = 2000;
+let timelineWatchMaxEntries = TIMELINE_INITIAL_WINDOW_DEFAULT;
+const SECURITY_WARNING_TEXT = "Security warning: this UI can execute commands and modify files through Codex. Do not expose it to the public internet. Recommended: bind to localhost and access via Tailscale tailnet-only.";
+const REASONING_EFFORT_LEVELS = ["none", "minimal", "low", "medium", "high", "xhigh"];
+const REASONING_EFFORT_HELP = {
+  "": "Default uses the model's configured reasoning level. OpenAI docs define minimal, low, medium, and high; this app also exposes none and xhigh from the Codex schema.",
+  none: "Below minimal. Best for very simple requests where latency matters most.",
+  minimal: "Very light reasoning. Good for short edits and straightforward coding requests.",
+  low: "Light reasoning. A good default when tasks need some planning but should stay quick.",
+  medium: "Balanced reasoning depth, latency, and token usage.",
+  high: "Deeper reasoning for multi-step or ambiguous tasks. Higher latency and token usage.",
+  xhigh: "Above high. Best for the hardest tasks; expect the slowest responses and highest token usage."
+};
+const APPROVAL_POLICY_HELP = {
+  "": "Inherit uses the default policy configured for this runtime/session.",
+  untrusted: "Only known-safe read commands auto-run. Anything else asks for approval.",
+  "on-failure": "Runs commands in sandbox first and asks only if a retry without sandbox is needed. Legacy in current Codex config docs.",
+  "on-request": "The model decides when to ask for approval before running a command.",
+  never: "Never asks for approval. Command failures return directly to the model."
+};
+
+const layoutRoot = document.querySelector(".layout");
+const chatPanel = document.querySelector(".chat-panel");
+const chatMessages = document.getElementById("chatMessages");
+const logOutput = document.getElementById("logOutput");
+const promptForm = document.getElementById("promptForm");
+const promptInput = document.getElementById("promptInput");
+const promptQueue = document.getElementById("promptQueue");
+const timelineTruncationNotice = document.getElementById("timelineTruncationNotice");
+const pendingPromptStrip = document.getElementById("pendingPromptStrip");
+const pendingPromptText = document.getElementById("pendingPromptText");
+const scrollToBottomBtn = document.getElementById("scrollToBottomBtn");
+const contextLeftIndicator = document.getElementById("contextLeftIndicator");
+const permissionLevelIndicator = document.getElementById("permissionLevelIndicator");
+const composerImages = document.getElementById("composerImages");
+const promptTimelineSelectionIndicator = document.getElementById("promptTimelineSelectionIndicator");
+const promptSelectionIndicator = document.getElementById("promptSelectionIndicator");
+const promptBuildFixIndicator = document.getElementById("promptBuildFixIndicator");
+const imageUploadInput = document.getElementById("imageUploadInput");
+const imageUploadBtn = document.getElementById("imageUploadBtn");
+const speechToTextBtn = document.getElementById("speechToTextBtn");
+const planTurnToggleBtn = document.getElementById("planTurnToggleBtn");
+const queuePromptBtn = document.getElementById("queuePromptBtn");
+const cancelTurnBtn = document.getElementById("cancelTurnBtn");
+const turnActivityStrip = document.getElementById("turnActivityStrip");
+const turnActivityTimer = document.getElementById("turnActivityTimer");
+const turnActivityReasoning = document.getElementById("turnActivityReasoning");
+const turnActivityCancelLink = document.getElementById("turnActivityCancelLink");
+const planPanel = document.getElementById("planPanel");
+const planPanelSummary = document.getElementById("planPanelSummary");
+const planPanelStatus = document.getElementById("planPanelStatus");
+const planPanelBody = document.getElementById("planPanelBody");
+const sendPromptBtn = document.getElementById("sendPromptBtn");
+const mobileProjectsBtn = document.getElementById("mobileProjectsBtn");
+const sidebarBackdrop = document.getElementById("sidebarBackdrop");
+const securityWarningBanner = document.getElementById("securityWarningBanner");
+const appServerErrorBanner = document.getElementById("appServerErrorBanner");
+const appServerErrorText = document.getElementById("appServerErrorText");
+const appServerErrorDismissBtn = document.getElementById("appServerErrorDismissBtn");
+const connectionStatusBanner = document.getElementById("connectionStatusBanner");
+const connectionStatusText = document.getElementById("connectionStatusText");
+const connectionReconnectBtn = document.getElementById("connectionReconnectBtn");
+const aboutBtn = document.getElementById("aboutBtn");
+const sidebarExtrasToggleBtn = document.getElementById("sidebarExtrasToggleBtn");
+const sidebarExtrasGroup = document.getElementById("sidebarExtrasGroup");
+const aboutModal = document.getElementById("aboutModal");
+const aboutModalCloseBtn = document.getElementById("aboutModalCloseBtn");
+const aboutVersionLine = document.getElementById("aboutVersionLine");
+
+const newSessionBtn = document.getElementById("newSessionBtn");
+const newProjectBtn = document.getElementById("newProjectBtn");
+const newProjectSidebarBtn = document.getElementById("newProjectSidebarBtn");
+const attachSessionBtn = document.getElementById("attachSessionBtn");
+const existingSessionSelect = document.getElementById("existingSessionSelect");
+const stopSessionBtn = document.getElementById("stopSessionBtn");
+const sessionSelect = document.getElementById("sessionSelect");
+const conversationTitle = document.getElementById("conversationTitle");
+let conversationCodeReviewsBtn = document.getElementById("conversationCodeReviewsBtn");
+const sessionMeta = document.getElementById("sessionMeta");
+const conversationModelSummary = document.getElementById("conversationModelSummary");
+const conversationMetaMenuBtn = document.getElementById("conversationMetaMenuBtn");
+const conversationMetaMenu = document.getElementById("conversationMetaMenu");
+const workspaceTabTasksBtn = document.getElementById("workspaceTabTasksBtn");
+const workspaceTabCodeReviewsBtn = document.getElementById("workspaceTabCodeReviewsBtn");
+const sessionMetaThreadItem = document.getElementById("sessionMetaThreadItem");
+const sessionMetaThreadValue = document.getElementById("sessionMetaThreadValue");
+const sessionMetaThreadCopyBtn = document.getElementById("sessionMetaThreadCopyBtn");
+const sessionMetaDetailsBtn = document.getElementById("sessionMetaDetailsBtn");
+const sessionMetaModelItem = document.getElementById("sessionMetaModelItem");
+const sessionMetaAccountItem = document.getElementById("sessionMetaAccountItem");
+const sessionMetaAccountValue = document.getElementById("sessionMetaAccountValue");
+const sessionMetaUsageItem = document.getElementById("sessionMetaUsageItem");
+const sessionMetaUsageValue = document.getElementById("sessionMetaUsageValue");
+const jumpToBtn = document.getElementById("jumpToBtn");
+const conversationModelSelect = document.getElementById("conversationModelSelect");
+const conversationReasoningSelect = document.getElementById("conversationReasoningSelect");
+const conversationApprovalSelect = document.getElementById("conversationApprovalSelect");
+const conversationSandboxSelect = document.getElementById("conversationSandboxSelect");
+const sidebarToggleBtn = document.getElementById("sidebarToggleBtn");
+const projectList = document.getElementById("projectList");
+const projectSearchInput = document.getElementById("projectSearchInput");
+const projectSearchToggleBtn = document.getElementById("projectSearchToggleBtn");
+const sidebarSearchRow = document.getElementById("sidebarSearchRow");
+const gettingStartedPanel = document.getElementById("gettingStartedPanel");
+const queryParams = new URLSearchParams(window.location.search || "");
+const showGettingStartedOverride = parseBooleanQueryParam(queryParams.get("showGettingStarted"));
+const requestedWorkspaceTab = queryParams.get("tab");
+const timelineDiagQueryValue = queryParams.get("timelineDiag");
+const timelineDiagEnabledFromQuery =
+  parseBooleanQueryParam(timelineDiagQueryValue) === true ||
+  String(timelineDiagQueryValue || "").trim() === "1";
+const TIMELINE_DIAG_STORAGE_KEY = "codex.timeline.diag.v1";
+let timelineDiagEnabled = timelineDiagEnabledFromQuery;
+try {
+  if (timelineDiagEnabledFromQuery) {
+    localStorage.setItem(TIMELINE_DIAG_STORAGE_KEY, "1");
+  } else if (localStorage.getItem(TIMELINE_DIAG_STORAGE_KEY) === "1") {
+    timelineDiagEnabled = true;
+  }
+} catch {
+  // no-op
+}
+
+function normalizeWorkspaceTab(value) {
+  return WORKSPACE_TAB_TASKS;
+}
+
+function loadTaskThreadByProjectMap() {
+  taskThreadIdByProjectKey = new Map();
+  const raw = safeJsonParse(localStorage.getItem(STORAGE_TASK_THREAD_BY_PROJECT_KEY), {});
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+    return;
+  }
+
+  for (const [key, value] of Object.entries(raw)) {
+    const normalizedKey = String(key || "").trim().toLowerCase();
+    const threadId = normalizeThreadId(value || "");
+    if (!normalizedKey || !threadId) {
+      continue;
+    }
+    taskThreadIdByProjectKey.set(normalizedKey, threadId);
+  }
+}
+
+function persistTaskThreadByProjectMap() {
+  const payload = {};
+  for (const [key, value] of taskThreadIdByProjectKey.entries()) {
+    if (!key || !value) {
+      continue;
+    }
+    payload[key] = value;
+  }
+  localStorage.setItem(STORAGE_TASK_THREAD_BY_PROJECT_KEY, JSON.stringify(payload));
+}
+
+try {
+  currentWorkspaceTab = normalizeWorkspaceTab(requestedWorkspaceTab || localStorage.getItem(STORAGE_WORKSPACE_TAB_KEY) || WORKSPACE_TAB_TASKS);
+  loadTaskThreadByProjectMap();
+} catch {
+  currentWorkspaceTab = WORKSPACE_TAB_TASKS;
+  taskThreadIdByProjectKey = new Map();
+}
+
+const logVerbositySelect = document.getElementById("logVerbositySelect");
+const modelSelect = document.getElementById("modelSelect");
+const modelCustomInput = document.getElementById("modelCustomInput");
+const reloadModelsBtn = document.getElementById("reloadModelsBtn");
+const cwdInput = document.getElementById("cwdInput");
+
+const approvalPanel = document.getElementById("approvalPanel");
+const approvalSummary = document.getElementById("approvalSummary");
+const approvalDetails = document.getElementById("approvalDetails");
+const toolUserInputModal = document.getElementById("toolUserInputModal");
+const toolUserInputTitle = document.getElementById("toolUserInputTitle");
+const toolUserInputSubtitle = document.getElementById("toolUserInputSubtitle");
+const toolUserInputQuestions = document.getElementById("toolUserInputQuestions");
+const toolUserInputSubmitBtn = document.getElementById("toolUserInputSubmitBtn");
+const toolUserInputCancelBtn = document.getElementById("toolUserInputCancelBtn");
+const modelCommandModal = document.getElementById("modelCommandModal");
+const modelCommandSelect = document.getElementById("modelCommandSelect");
+const modelCommandCustomInput = document.getElementById("modelCommandCustomInput");
+const modelCommandApplyBtn = document.getElementById("modelCommandApplyBtn");
+const modelCommandCancelBtn = document.getElementById("modelCommandCancelBtn");
+const newProjectModal = document.getElementById("newProjectModal");
+const newProjectCwdInput = document.getElementById("newProjectCwdInput");
+const newProjectFirstSessionInput = document.getElementById("newProjectFirstSessionInput");
+const newProjectCreateBtn = document.getElementById("newProjectCreateBtn");
+const newProjectCancelBtn = document.getElementById("newProjectCancelBtn");
+const newSessionModal = document.getElementById("newSessionModal");
+const newSessionNameInput = document.getElementById("newSessionNameInput");
+const newSessionCwdInput = document.getElementById("newSessionCwdInput");
+const newSessionModelSelect = document.getElementById("newSessionModelSelect");
+const newSessionModelCustomInput = document.getElementById("newSessionModelCustomInput");
+const newSessionReasoningSelect = document.getElementById("newSessionReasoningSelect");
+const newSessionApprovalSelect = document.getElementById("newSessionApprovalSelect");
+const newSessionSandboxSelect = document.getElementById("newSessionSandboxSelect");
+const newSessionModelDefaultHint = document.getElementById("newSessionModelDefaultHint");
+const newSessionReasoningHelp = document.getElementById("newSessionReasoningHelp");
+const newSessionApprovalHelp = document.getElementById("newSessionApprovalHelp");
+const newSessionPermissionRisk = document.getElementById("newSessionPermissionRisk");
+const newSessionCreateBtn = document.getElementById("newSessionCreateBtn");
+const newSessionCancelBtn = document.getElementById("newSessionCancelBtn");
+const sessionRecoveryModal = document.getElementById("sessionRecoveryModal");
+const sessionRecoveryTitle = document.getElementById("sessionRecoveryTitle");
+const sessionRecoveryMessage = document.getElementById("sessionRecoveryMessage");
+const sessionRecoveryMeta = document.getElementById("sessionRecoveryMeta");
+const sessionRecoveryRecoverBtn = document.getElementById("sessionRecoveryRecoverBtn");
+const sessionRecoveryDismissBtn = document.getElementById("sessionRecoveryDismissBtn");
+
+const timeline = new window.CodexSessionTimeline({
+  container: chatMessages,
+  maxRenderedEntries: 1500,
+  systemTitle: "Session",
+  onDiagnostic: (stage, details) => {
+    if (!timelineDiagEnabled) {
+      return;
+    }
+
+    const normalizedStage = typeof stage === "string" && stage.trim()
+      ? `timeline_${stage.trim()}`
+      : "timeline_unknown";
+    logTimelineDiag(normalizedStage, details || {});
+  }
+});
+
+function uiAuditLog(eventName, details = null, level = "info") {
+  const method = level === "error"
+    ? "error"
+    : (level === "warn" ? "warn" : "info");
+  const logger = typeof console !== "undefined" && typeof console[method] === "function"
+    ? console[method].bind(console)
+    : null;
+  if (!logger) {
+    return;
+  }
+  const timestamp = new Date().toISOString();
+  const line = `${timestamp} ${eventName}${formatUiAuditDetails(details)}`;
+  logger(line);
+}
+window.uiAuditLog = uiAuditLog;
+
+function formatUiAuditDetails(details) {
+  if (!details || typeof details !== "object" || Array.isArray(details)) {
+    return "";
+  }
+
+  const parts = [];
+  for (const [key, value] of Object.entries(details)) {
+    if (value === null || value === undefined) {
+      continue;
+    }
+
+    if (typeof value === "object") {
+      try {
+        parts.push(`${key}=${JSON.stringify(value)}`);
+      } catch {
+        parts.push(`${key}=[object]`);
+      }
+      continue;
+    }
+
+    const normalized = String(value).replace(/\s+/g, " ").trim();
+    parts.push(`${key}=${normalized}`);
+  }
+
+  return parts.length > 0 ? ` ${parts.join(" ")}` : "";
+}
+
+function summarizeOutgoingAuditPayload(type, payload = {}) {
+  const sessionId = typeof payload.sessionId === "string" ? payload.sessionId : null;
+  const threadId = typeof payload.threadId === "string" ? payload.threadId : null;
+  const textLength = typeof payload.text === "string" ? payload.text.trim().length : 0;
+  const imageCount = Array.isArray(payload.images) ? payload.images.length : 0;
+  const summary = {};
+  if (sessionId) {
+    summary.sessionId = sessionId;
+  }
+  if (threadId) {
+    summary.threadId = threadId;
+  }
+  if (textLength > 0 || imageCount > 0) {
+    summary.input = { chars: textLength, images: imageCount };
+  }
+  if (typeof payload.cwd === "string" && payload.cwd.trim()) {
+    summary.cwd = payload.cwd.trim();
+  }
+  if (typeof payload.model === "string" && payload.model.trim()) {
+    summary.model = payload.model.trim();
+  }
+  if (typeof payload.effort === "string" && payload.effort.trim()) {
+    summary.effort = payload.effort.trim();
+  }
+  if (typeof payload.approvalPolicy === "string" && payload.approvalPolicy.trim()) {
+    summary.approvalPolicy = payload.approvalPolicy.trim();
+  }
+  if (typeof payload.sandbox === "string" && payload.sandbox.trim()) {
+    summary.sandbox = payload.sandbox.trim();
+  }
+  if (typeof payload.queueItemId === "string" && payload.queueItemId.trim()) {
+    summary.queueItemId = payload.queueItemId.trim();
+  }
+  if (type === "approval_response") {
+    summary.approvalId = typeof payload.approvalId === "string" ? payload.approvalId : null;
+    summary.decision = typeof payload.decision === "string" ? payload.decision : null;
+  }
+  if (type === "tool_user_input_response") {
+    const answers = payload.answers && typeof payload.answers === "object" && !Array.isArray(payload.answers)
+      ? Object.keys(payload.answers).length
+      : 0;
+    summary.answerCount = answers;
+    summary.requestId = typeof payload.requestId === "string" ? payload.requestId : null;
+  }
+  if (type === "session_recovery_decision") {
+    summary.offerId = typeof payload.offerId === "string" ? payload.offerId : null;
+    summary.recover = payload.recover === true;
+  }
+  if (type === "turn_retry_decision") {
+    summary.offerId = typeof payload.offerId === "string" ? payload.offerId : null;
+    summary.retry = payload.retry === true;
+  }
+  return summary;
+}
+
+function getMessageListRemainingScroll() {
+  if (!chatMessages) {
+    return 0;
+  }
+
+  return chatMessages.scrollHeight - (chatMessages.scrollTop + chatMessages.clientHeight);
+}
+
+function updateScrollToBottomButton() {
+  if (!scrollToBottomBtn || !chatMessages) {
+    return;
+  }
+
+  const remaining = getMessageListRemainingScroll();
+  const shouldShow = remaining > 96;
+  scrollToBottomBtn.classList.toggle("hidden", !shouldShow);
+}
+
+function updateTimelineTruncationNotice() {
+  if (!timelineTruncationNotice || !chatMessages) {
+    return;
+  }
+
+  const isAtTop = chatMessages.scrollTop <= 2;
+  const shouldShow = timelineHasTruncatedHead && isAtTop;
+  timelineTruncationNotice.classList.toggle("hidden", !shouldShow);
+}
+
+function isDocumentVisible() {
+  if (typeof document === "undefined") {
+    return true;
+  }
+
+  return document.visibilityState !== "hidden";
+}
+
+function scrollMessagesToBottom(smooth = false) {
+  if (!chatMessages) {
+    return;
+  }
+
+  if (smooth && typeof chatMessages.scrollTo === "function") {
+    chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: "smooth" });
+  } else {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  updateScrollToBottomButton();
+  updateTimelineTruncationNotice();
+}
+
+function normalizeSessionCwdForThread(threadId, cwdValue) {
+  const normalizedFromState = normalizeProjectCwd(cwdValue || "");
+  if (normalizedFromState) {
+    return normalizedFromState;
+  }
+
+  const entry = getCatalogEntryByThreadId(threadId || "");
+  return normalizeProjectCwd(entry?.cwd || "");
+}
+
+function syncCwdInputFromSessionState(state, options = {}) {
+  if (!cwdInput || !state) {
+    return;
+  }
+
+  const nextCwd = normalizeSessionCwdForThread(state.threadId || "", state.cwd || "");
+  const force = options.force === true;
+  if (!force && cwdInput.value.trim() === nextCwd) {
+    return;
+  }
+
+  cwdInput.value = nextCwd;
+  localStorage.setItem(STORAGE_CWD_KEY, nextCwd);
+}
+
+function setJumpCollapseMode(enabled) {
+  const hasState = !!getActiveSessionState();
+  const next = !!enabled && hasState;
+  jumpCollapseMode = next;
+
+  if (timeline && typeof timeline.setViewMode === "function") {
+    timeline.setViewMode(next ? "user-anchors" : "default");
+  }
+
+  if (jumpToBtn) {
+    const labelNode = jumpToBtn.querySelector("span");
+    if (labelNode) {
+      labelNode.textContent = next ? "Collapsed" : "Expanded";
+    }
+    jumpToBtn.setAttribute("aria-expanded", next ? "true" : "false");
+    jumpToBtn.title = next ? "Click to expand all turn details" : "Click to collapse all turn details";
+    jumpToBtn.setAttribute("aria-label", jumpToBtn.title);
+  }
+
+  updateScrollToBottomButton();
+}
+
+function updatePromptActionState() {
+  if (!queuePromptBtn || !sendPromptBtn || !cancelTurnBtn) {
+    return;
+  }
+
+  const recoveringActive = !!activeSessionId && isSessionAppServerRecovering(activeSessionId);
+  const processingActive = !!activeSessionId && isTurnInFlight(activeSessionId);
+  sendPromptBtn.disabled = recoveringActive;
+  queuePromptBtn.disabled = recoveringActive;
+  cancelTurnBtn.disabled = recoveringActive || !processingActive;
+  queuePromptBtn.classList.toggle("hidden", !processingActive);
+  cancelTurnBtn.classList.toggle("hidden", !processingActive);
+  sendPromptBtn.classList.toggle("queue-mode", processingActive);
+  sendPromptBtn.classList.toggle("solo-send", !processingActive);
+  sendPromptBtn.title = recoveringActive
+    ? "Session is recovering. Sending is temporarily disabled."
+    : (processingActive ? "Send now (Enter)" : "Send (Enter)");
+  queuePromptBtn.title = "Queue this instruction (Tab)";
+  cancelTurnBtn.title = "Stop running turn";
+  updatePendingPromptStrip();
+  updateTurnActivityStrip();
+}
+
+function trimPendingPromptPreview(text) {
+  const normalized = String(text || "").replace(/\s+/g, " ").trim();
+  if (!normalized) {
+    return "";
+  }
+
+  if (normalized.length <= 220) {
+    return normalized;
+  }
+
+  return `${normalized.slice(0, 220)}...`;
+}
+
+function updatePendingPromptStrip() {
+  if (!pendingPromptStrip || !pendingPromptText) {
+    return;
+  }
+
+  const sessionId = activeSessionId || "";
+  const running = !!sessionId && isTurnInFlight(sessionId);
+  const recovering = !!sessionId && isSessionAppServerRecovering(sessionId);
+  const promptPreview = running
+    || recovering
+    ? trimPendingPromptPreview(lastSentPromptBySession.get(sessionId) || "")
+    : "";
+  if (!promptPreview) {
+    pendingPromptStrip.classList.add("hidden");
+    pendingPromptText.textContent = "";
+    return;
+  }
+
+  pendingPromptText.textContent = recovering
+    ? `Recovering session while pending prompt is held: ${promptPreview}`
+    : promptPreview;
+  pendingPromptStrip.classList.remove("hidden");
+}
+
+function formatTurnElapsed(ms) {
+  const totalSeconds = Math.max(0, Math.floor((Number.isFinite(ms) ? ms : 0) / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const paddedMinutes = String(minutes).padStart(2, "0");
+  const paddedSeconds = String(seconds).padStart(2, "0");
+  if (hours > 0) {
+    return `${String(hours).padStart(2, "0")}:${paddedMinutes}:${paddedSeconds}`;
+  }
+
+  return `${paddedMinutes}:${paddedSeconds}`;
+}
+
+function normalizeReasoningSummary(text) {
+  if (typeof text !== "string") {
+    return "";
+  }
+
+  const normalized = text.replace(/\r/g, "").replace(/\s+/g, " ").trim();
+  if (!normalized) {
+    return "";
+  }
+  const lowered = normalized.toLowerCase();
+  if (lowered === "none" || lowered === "null") {
+    return "";
+  }
+  if (lowered.includes("encrypted by provider") && lowered.startsWith("reasoning available")) {
+    return "";
+  }
+
+  return normalized.length > 800 ? `${normalized.slice(0, 800)}...` : normalized;
+}
+
+function updateTurnActivityStrip() {
+  if (!turnActivityStrip || !turnActivityTimer || !turnActivityReasoning) {
+    return;
+  }
+
+  const sessionId = activeSessionId || "";
+  const running = !!sessionId && isTurnInFlight(sessionId);
+  if (!running) {
+    turnActivityStrip.classList.add("hidden");
+    turnActivityStrip.classList.remove("running");
+    return;
+  }
+
+  if (!turnStartedAtBySession.has(sessionId)) {
+    turnStartedAtBySession.set(sessionId, Date.now());
+  }
+
+  const startedAt = turnStartedAtBySession.get(sessionId) || Date.now();
+  const elapsed = formatTurnElapsed(Date.now() - startedAt);
+  turnActivityTimer.textContent = `Working ${elapsed}`;
+
+  const threadId = normalizeThreadId(getActiveSessionState()?.threadId || "");
+  const reasoning = threadId ? normalizeReasoningSummary(lastReasoningByThread.get(threadId) || "") : "";
+  let displayReasoning = reasoning;
+  if (awaitingFreshReasoningBySession.get(sessionId) === true) {
+    const baseline = normalizeReasoningSummary(reasoningBaselineBySession.get(sessionId) || "");
+    if (displayReasoning && displayReasoning !== baseline) {
+      awaitingFreshReasoningBySession.delete(sessionId);
+      reasoningBaselineBySession.delete(sessionId);
+    } else {
+      displayReasoning = "";
+    }
+  }
+  const promptPreview = trimPendingPromptPreview(lastSentPromptBySession.get(sessionId) || "");
+  turnActivityReasoning.textContent = displayReasoning || (promptPreview ? `Prompt sent: ${promptPreview}` : "Waiting for reasoning update...");
+  turnActivityStrip.classList.remove("hidden");
+  turnActivityStrip.classList.add("running");
+}
+
+function normalizeTimelineMaxEntries(value, fallback = TIMELINE_INITIAL_WINDOW_DEFAULT) {
+  const maxEntriesLimit = Math.max(20, Math.floor(Number(TIMELINE_MAX_WINDOW_ENTRIES) || TIMELINE_INITIAL_WINDOW_DEFAULT));
+  const fallbackNumericRaw = Math.max(20, Math.floor(Number(fallback) || TIMELINE_INITIAL_WINDOW_DEFAULT));
+  const fallbackNumeric = Math.min(maxEntriesLimit, fallbackNumericRaw);
+  const numeric = Math.floor(Number(value));
+  if (!Number.isFinite(numeric) || numeric < 20) {
+    return fallbackNumeric;
+  }
+
+  return Math.min(maxEntriesLimit, numeric);
+}
+
+function normalizeWatchSnapshotMode(value) {
+  const normalized = String(value || "").trim().toLowerCase();
+  if (normalized === "full" || normalized === "noop") {
+    return normalized;
+  }
+
+  return "";
+}
+
+function readTurnSnapshotTurnId(turn) {
+  if (!turn || typeof turn !== "object") {
+    return "";
+  }
+
+  if (typeof turn.turnId === "string" && turn.turnId.trim()) {
+    return turn.turnId.trim();
+  }
+
+  if (typeof turn.TurnId === "string" && turn.TurnId.trim()) {
+    return turn.TurnId.trim();
+  }
+
+  return "";
+}
+
+function readTurnSnapshotIntermediate(turn) {
+  if (!turn || typeof turn !== "object") {
+    return [];
+  }
+
+  if (Array.isArray(turn.intermediate)) {
+    return turn.intermediate;
+  }
+
+  if (Array.isArray(turn.Intermediate)) {
+    return turn.Intermediate;
+  }
+
+  return [];
+}
+
+function truncateTurnSnapshotText(text) {
+  const raw = typeof text === "string" ? text : "";
+  if (raw.length <= MAX_CLIENT_SNAPSHOT_TEXT_CHARS) {
+    return raw;
+  }
+
+  return `${raw.slice(0, MAX_CLIENT_SNAPSHOT_TEXT_CHARS)}\n... (truncated)`;
+}
+
+function normalizeTurnSnapshotImages(images) {
+  const source = Array.isArray(images) ? images : [];
+  const normalized = [];
+  for (const item of source) {
+    if (typeof item !== "string") {
+      continue;
+    }
+
+    const value = item.trim();
+    if (!value || value.length > MAX_CLIENT_SNAPSHOT_IMAGE_URL_CHARS) {
+      continue;
+    }
+
+    normalized.push(value);
+  }
+
+  return normalized;
+}
+
+function limitTurnSnapshotWindow(turns) {
+  if (!Array.isArray(turns) || turns.length <= MAX_CLIENT_SNAPSHOT_TURNS) {
+    return Array.isArray(turns) ? turns : [];
+  }
+
+  return turns.slice(turns.length - MAX_CLIENT_SNAPSHOT_TURNS);
+}
+
+function cloneTurnSnapshotEntry(entry) {
+  if (!entry || typeof entry !== "object") {
+    return null;
+  }
+
+  const rawText = typeof entry.text === "string" ? entry.text : (typeof entry.Text === "string" ? entry.Text : "");
+  return {
+    role: typeof entry.role === "string" ? entry.role : (typeof entry.Role === "string" ? entry.Role : ""),
+    title: typeof entry.title === "string" ? entry.title : (typeof entry.Title === "string" ? entry.Title : ""),
+    text: truncateTurnSnapshotText(rawText),
+    timestamp: entry.timestamp || entry.Timestamp || null,
+    rawType: typeof entry.rawType === "string" ? entry.rawType : (typeof entry.RawType === "string" ? entry.RawType : ""),
+    compact: entry.compact === true || entry.Compact === true,
+    images: normalizeTurnSnapshotImages(
+      Array.isArray(entry.images)
+        ? entry.images
+        : (Array.isArray(entry.Images) ? entry.Images : []))
+  };
+}
+
+function cloneTurnSnapshot(turn) {
+  if (!turn || typeof turn !== "object") {
+    return null;
+  }
+
+  const user = cloneTurnSnapshotEntry(turn.user || turn.User || null);
+  const assistantFinal = cloneTurnSnapshotEntry(turn.assistantFinal || turn.AssistantFinal || null);
+  const intermediateRaw = readTurnSnapshotIntermediate(turn);
+  const intermediate = [];
+  const maxIntermediateEntries = Math.min(intermediateRaw.length, MAX_CLIENT_SNAPSHOT_INTERMEDIATE);
+  for (let i = 0; i < maxIntermediateEntries; i += 1) {
+    const clonedEntry = cloneTurnSnapshotEntry(intermediateRaw[i]);
+    if (clonedEntry) {
+      intermediate.push(clonedEntry);
+    }
+  }
+
+  const intermediateCountRaw = Number(turn.intermediateCount ?? turn.IntermediateCount ?? intermediateRaw.length);
+  const intermediateCount = Number.isFinite(intermediateCountRaw) && intermediateCountRaw >= 0
+    ? Math.floor(intermediateCountRaw)
+    : intermediateRaw.length;
+  const effectiveIntermediateCount = Math.max(intermediateCount, intermediateRaw.length);
+  const hasIntermediate = turn.hasIntermediate === true
+    || turn.HasIntermediate === true
+    || effectiveIntermediateCount > 0
+    || intermediate.length > 0;
+  const loadedFromServer = turn.intermediateLoaded === true
+    || turn.IntermediateLoaded === true
+    || (hasIntermediate && intermediateRaw.length >= effectiveIntermediateCount);
+  const intermediateLoaded = loadedFromServer && intermediateRaw.length <= MAX_CLIENT_SNAPSHOT_INTERMEDIATE;
+
+  return {
+    turnId: readTurnSnapshotTurnId(turn),
+    user,
+    assistantFinal,
+    intermediate,
+    isInFlight: turn.isInFlight === true || turn.IsInFlight === true,
+    hasIntermediate,
+    intermediateCount: effectiveIntermediateCount,
+    intermediateLoaded
+  };
+}
+
+function mergeTurnWithDetail(baseTurn, detailTurn) {
+  const summary = cloneTurnSnapshot(baseTurn);
+  const detail = cloneTurnSnapshot(detailTurn);
+  if (!summary) {
+    return detail;
+  }
+
+  if (!detail) {
+    return summary;
+  }
+
+  const detailIntermediate = Array.isArray(detail.intermediate) ? detail.intermediate : [];
+  if (detailIntermediate.length > 0 || detail.intermediateLoaded === true) {
+    summary.intermediate = detailIntermediate.slice();
+    summary.intermediateLoaded = true;
+  }
+
+  if (!summary.assistantFinal && detail.assistantFinal) {
+    summary.assistantFinal = detail.assistantFinal;
+  }
+
+  if (detail.hasIntermediate === true || detailIntermediate.length > 0) {
+    summary.hasIntermediate = true;
+  }
+  if (Number.isFinite(detail.intermediateCount) && detail.intermediateCount > summary.intermediateCount) {
+    summary.intermediateCount = detail.intermediateCount;
+  }
+  if (!Number.isFinite(summary.intermediateCount) || summary.intermediateCount < 0) {
+    summary.intermediateCount = summary.intermediate.length;
+  }
+  if (summary.intermediateLoaded === true && summary.intermediateCount < summary.intermediate.length) {
+    summary.intermediateCount = summary.intermediate.length;
+  }
+
+  return summary;
+}
+
+function mergeIncomingTurnsWithExisting(incomingTurns, existingTurns, activeTurnDetail, options = {}) {
+  const incoming = limitTurnSnapshotWindow(Array.isArray(incomingTurns) ? incomingTurns : []);
+  const preserveMissingExisting = options && options.preserveMissingExisting === true;
+  const existingByTurnId = new Map();
+  const existingClones = [];
+  if (Array.isArray(existingTurns)) {
+    for (const item of limitTurnSnapshotWindow(existingTurns)) {
+      const cloned = cloneTurnSnapshot(item);
+      if (cloned) {
+        existingClones.push(cloned);
+        const turnId = readTurnSnapshotTurnId(cloned);
+        if (turnId) {
+          existingByTurnId.set(turnId, cloned);
+        }
+      }
+    }
+  }
+
+  const activeDetailId = readTurnSnapshotTurnId(activeTurnDetail);
+  if (incoming.length === 0) {
+    if (!activeDetailId) {
+      return limitTurnSnapshotWindow(existingClones);
+    }
+
+    const detailOnlyTurn = cloneTurnSnapshot(activeTurnDetail);
+    if (!detailOnlyTurn) {
+      return limitTurnSnapshotWindow(existingClones);
+    }
+
+    let mergedDetail = false;
+    const mergedExisting = existingClones.map((turn) => {
+      if (turn.turnId === activeDetailId) {
+        mergedDetail = true;
+        return mergeTurnWithDetail(turn, detailOnlyTurn);
+      }
+      return turn;
+    });
+
+    if (!mergedDetail) {
+      mergedExisting.push(detailOnlyTurn);
+    }
+
+    return limitTurnSnapshotWindow(mergedExisting);
+  }
+
+  let activeDetailIncluded = false;
+  const merged = [];
+  for (const turn of incoming) {
+    const summary = cloneTurnSnapshot(turn);
+    if (!summary) {
+      continue;
+    }
+
+    const turnId = summary.turnId;
+    if (turnId && activeDetailId && turnId === activeDetailId) {
+      merged.push(mergeTurnWithDetail(summary, activeTurnDetail));
+      activeDetailIncluded = true;
+      continue;
+    }
+
+    if (turnId && existingByTurnId.has(turnId)) {
+      merged.push(mergeTurnWithDetail(summary, existingByTurnId.get(turnId)));
+      continue;
+    }
+
+    merged.push(summary);
+  }
+
+  if (!activeDetailIncluded && activeDetailId) {
+    const detailOnlyTurn = cloneTurnSnapshot(activeTurnDetail);
+    if (detailOnlyTurn) {
+      merged.push(detailOnlyTurn);
+    }
+  }
+
+  if (preserveMissingExisting && merged.length > 0 && existingClones.length > 0) {
+    const mergedTurnIds = new Set();
+    for (const turn of merged) {
+      const turnId = readTurnSnapshotTurnId(turn);
+      if (turnId) {
+        mergedTurnIds.add(turnId);
+      }
+    }
+
+    const preservedPriorTurns = [];
+    for (const priorTurn of existingClones) {
+      const priorTurnId = readTurnSnapshotTurnId(priorTurn);
+      if (!priorTurnId || mergedTurnIds.has(priorTurnId)) {
+        continue;
+      }
+
+      preservedPriorTurns.push(priorTurn);
+    }
+
+    if (preservedPriorTurns.length > 0) {
+      return limitTurnSnapshotWindow(preservedPriorTurns.concat(merged));
+    }
+  }
+
+  return limitTurnSnapshotWindow(merged);
+}
+
+function buildLatestAssistantRenderSignature(turns) {
+  if (!Array.isArray(turns) || turns.length === 0) {
+    return "";
+  }
+
+  for (let i = turns.length - 1; i >= 0; i -= 1) {
+    const turn = turns[i];
+    const assistant = turn?.assistantFinal || turn?.AssistantFinal || null;
+    if (!assistant) {
+      continue;
+    }
+
+    const text = typeof assistant.text === "string"
+      ? assistant.text
+      : (typeof assistant.Text === "string" ? assistant.Text : "");
+    if (!text) {
+      continue;
+    }
+
+    const tail = text.length > 192 ? text.slice(text.length - 192) : text;
+    const turnId = readTurnSnapshotTurnId(turn) || "";
+    const timestamp = assistant.timestamp || assistant.Timestamp || "";
+    const rawType = assistant.rawType || assistant.RawType || "";
+    return `${turnId}|${timestamp}|${rawType}|${text.length}|${tail}`;
+  }
+
+  return "";
+}
+
+function refreshWorktreeDiffForAssistantRender(threadId, turns) {
+  const normalizedThreadId = normalizeThreadId(threadId);
+  if (!normalizedThreadId) {
+    return;
+  }
+
+  const nextSignature = buildLatestAssistantRenderSignature(turns);
+  if (!nextSignature) {
+    return;
+  }
+
+  const priorSignature = lastDiffRefreshAssistantSignatureByThread.get(normalizedThreadId) || "";
+  if (priorSignature === nextSignature) {
+    return;
+  }
+
+  lastDiffRefreshAssistantSignatureByThread.set(normalizedThreadId, nextSignature);
+  const requestRefresh = window.codexDiffRequestRefresh;
+  if (typeof requestRefresh === "function") {
+    requestRefresh({ force: false, reason: "assistant_render" });
+  }
+}
+
+function rememberTimelineCache(threadId, payload) {
+  const normalizedThreadId = normalizeThreadId(threadId);
+  if (!normalizedThreadId || !payload || typeof payload !== "object") {
+    return;
+  }
+
+  const existing = timelineCacheByThread.get(normalizedThreadId) || null;
+  const incomingTurns = Array.isArray(payload.turns) ? payload.turns : null;
+  const turns = incomingTurns && incomingTurns.length > 0
+    ? incomingTurns
+    : (existing && Array.isArray(existing.turns) ? existing.turns : []);
+  const nextCursor = typeof payload.nextCursor === "number"
+    ? payload.nextCursor
+    : (Number.isFinite(existing?.nextCursor) ? existing.nextCursor : null);
+  const truncated = payload.truncated === true || (payload.truncated !== false && existing?.truncated === true);
+  const maxEntries = normalizeTimelineMaxEntries(payload.maxEntries, existing?.maxEntries);
+  timelineCacheByThread.set(normalizedThreadId, {
+    turns,
+    nextCursor,
+    truncated,
+    contextUsage: payload.contextUsage || existing?.contextUsage || null,
+    permission: payload.permission || existing?.permission || null,
+    reasoningSummary: payload.reasoningSummary || existing?.reasoningSummary || "",
+    maxEntries
+  });
+}
+
+function restoreTimelineFromCache(threadId) {
+  const normalizedThreadId = normalizeThreadId(threadId);
+  if (!normalizedThreadId || !timelineCacheByThread.has(normalizedThreadId)) {
+    return false;
+  }
+
+  const cached = timelineCacheByThread.get(normalizedThreadId);
+  timelineWatchMaxEntries = normalizeTimelineMaxEntries(cached?.maxEntries, TIMELINE_INITIAL_WINDOW_DEFAULT);
+  if (!cached || !Array.isArray(cached.turns) || cached.turns.length === 0) {
+    return false;
+  }
+  if (typeof timeline.setServerTurns === "function") {
+    timeline.setServerTurns(cached.turns);
+  } else {
+    timeline.clear();
+  }
+
+  timelineCursor = Number.isFinite(cached.nextCursor) ? cached.nextCursor : null;
+  timelineHasTruncatedHead = cached.truncated === true;
+  applyTimelineWatchMetadata(normalizedThreadId, {
+    contextUsage: cached.contextUsage,
+    permission: cached.permission,
+    reasoningSummary: cached.reasoningSummary
+  });
+  updateTimelineTruncationNotice();
+  return true;
+}
+
+function applyTurnDetailToThreadCache(threadId, detailTurn) {
+  const normalizedThreadId = normalizeThreadId(threadId);
+  const normalizedDetail = cloneTurnSnapshot(detailTurn);
+  const detailTurnId = readTurnSnapshotTurnId(normalizedDetail);
+  if (!normalizedThreadId || !normalizedDetail || !detailTurnId) {
+    return false;
+  }
+
+  const cached = timelineCacheByThread.get(normalizedThreadId);
+  if (!cached || !Array.isArray(cached.turns) || cached.turns.length === 0) {
+    return false;
+  }
+
+  let changed = false;
+  const nextTurns = cached.turns.map((turn) => {
+    const turnId = readTurnSnapshotTurnId(turn);
+    if (!turnId || turnId !== detailTurnId) {
+      return turn;
+    }
+
+    changed = true;
+    return mergeTurnWithDetail(turn, normalizedDetail);
+  });
+
+  if (!changed) {
+    return false;
+  }
+
+  cached.turns = nextTurns;
+  timelineCacheByThread.set(normalizedThreadId, cached);
+
+  const activeThreadId = normalizeThreadId(getActiveSessionState()?.threadId || "");
+  if (activeThreadId === normalizedThreadId && typeof timeline.setServerTurns === "function") {
+    timeline.setServerTurns(nextTurns);
+  }
+
+  return true;
+}
+
+async function fetchTurnDetailForThread(threadId, turnId) {
+  const normalizedThreadId = normalizeThreadId(threadId);
+  const normalizedTurnId = typeof turnId === "string" ? turnId.trim() : "";
+  if (!normalizedThreadId || !normalizedTurnId) {
+    return;
+  }
+
+  const cacheKey = `${normalizedThreadId}::${normalizedTurnId}`;
+  if (turnDetailFetchInFlight.has(cacheKey)) {
+    return;
+  }
+
+  turnDetailFetchInFlight.add(cacheKey);
+  try {
+    const url = new URL("api/turns/detail", document.baseURI);
+    url.searchParams.set("threadId", normalizedThreadId);
+    url.searchParams.set("turnId", normalizedTurnId);
+    url.searchParams.set("maxEntries", String(normalizeTimelineMaxEntries(timelineWatchMaxEntries, TIMELINE_INITIAL_WINDOW_DEFAULT)));
+    if (timelineDiagEnabled) {
+      url.searchParams.set("diag", "1");
+    }
+    const response = await fetch(url, { cache: "no-store" });
+    if (!response.ok) {
+      const detail = await response.text();
+      throw new Error(`turn detail failed (${response.status}): ${detail}`);
+    }
+
+    const responseStats = {};
+    const payload = await readJsonResponseWithByteLimit(
+      response,
+      MAX_TIMELINE_JSON_RESPONSE_BYTES,
+      "turn detail",
+      responseStats);
+    logTimelineDiag("turn_detail", {
+      threadId: normalizedThreadId,
+      turnId: normalizedTurnId,
+      bytes: responseStats.bytes || 0,
+      readMs: responseStats.readMs || 0,
+      parseMs: responseStats.parseMs || 0
+    });
+    if (!payload || typeof payload !== "object" || !payload.turn || typeof payload.turn !== "object") {
+      return;
+    }
+
+    applyTurnDetailToThreadCache(normalizedThreadId, payload.turn);
+  } catch (error) {
+    appendLog(`[timeline] turn detail load failed: ${error}`);
+  } finally {
+    turnDetailFetchInFlight.delete(cacheKey);
+  }
+}
+
+function normalizePath(path) {
+  if (!path || typeof path !== "string") {
+    return "";
+  }
+
+  return path.replace(/\\/g, "/");
+}
+
+function safeJsonParse(raw, fallbackValue) {
+  if (!raw || typeof raw !== "string") {
+    return fallbackValue;
+  }
+
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return fallbackValue;
+  }
+}
+
+function readHeapUsageMb() {
+  if (typeof performance === "undefined" || !performance || !performance.memory) {
+    return null;
+  }
+
+  const value = Number(performance.memory.usedJSHeapSize);
+  if (!Number.isFinite(value) || value <= 0) {
+    return null;
+  }
+
+  return Math.round((value / (1024 * 1024)) * 10) / 10;
+}
+
+function summarizeTurnsForTimelineDiag(turns) {
+  if (!Array.isArray(turns)) {
+    return {
+      turnCount: 0,
+      entryCount: 0,
+      intermediateCount: 0,
+      textChars: 0,
+      maxEntryTextChars: 0,
+      imageCount: 0,
+      imageUrlChars: 0
+    };
+  }
+
+  let entryCount = 0;
+  let intermediateCount = 0;
+  let textChars = 0;
+  let maxEntryTextChars = 0;
+  let imageCount = 0;
+  let imageUrlChars = 0;
+
+  const collectEntry = (entry, isIntermediate) => {
+    if (!entry || typeof entry !== "object") {
+      return;
+    }
+
+    entryCount += 1;
+    if (isIntermediate) {
+      intermediateCount += 1;
+    }
+
+    const text = typeof entry.text === "string" ? entry.text : "";
+    textChars += text.length;
+    if (text.length > maxEntryTextChars) {
+      maxEntryTextChars = text.length;
+    }
+
+    const images = Array.isArray(entry.images) ? entry.images : [];
+    imageCount += images.length;
+    for (const image of images) {
+      if (typeof image === "string") {
+        imageUrlChars += image.length;
+      }
+    }
+  };
+
+  for (const turn of turns) {
+    if (!turn || typeof turn !== "object") {
+      continue;
+    }
+
+    collectEntry(turn.user, false);
+    collectEntry(turn.assistantFinal, false);
+    const intermediate = Array.isArray(turn.intermediate) ? turn.intermediate : [];
+    for (const entry of intermediate) {
+      collectEntry(entry, true);
+    }
+  }
+
+  return {
+    turnCount: turns.length,
+    entryCount,
+    intermediateCount,
+    textChars,
+    maxEntryTextChars,
+    imageCount,
+    imageUrlChars
+  };
+}
+
+function logTimelineDiag(stage, details = {}) {
+  if (!timelineDiagEnabled) {
+    return;
+  }
+
+  const pieces = [`stage=${stage}`];
+  for (const [key, value] of Object.entries(details || {})) {
+    if (value === null || value === undefined || value === "") {
+      continue;
+    }
+
+    pieces.push(`${key}=${value}`);
+  }
+
+  appendLog(`[timeline_diag] ${pieces.join(" ")}`);
+  emitTimelineDiagToServer(stage, details);
+}
+
+function emitTimelineDiagToServer(stage, details = {}) {
+  if (!timelineDiagEnabled) {
+    return;
+  }
+
+  const stageName = typeof stage === "string" ? stage.trim() : "";
+  if (!stageName) {
+    return;
+  }
+
+  const payloadDetails = {};
+  for (const [key, value] of Object.entries(details || {})) {
+    const normalizedKey = typeof key === "string" ? key.trim() : "";
+    if (!normalizedKey) {
+      continue;
+    }
+
+    if (typeof value === "number" && Number.isFinite(value)) {
+      payloadDetails[normalizedKey] = Math.round(value * 100) / 100;
+      continue;
+    }
+
+    if (typeof value === "boolean") {
+      payloadDetails[normalizedKey] = value;
+      continue;
+    }
+
+    if (value === null || value === undefined) {
+      payloadDetails[normalizedKey] = null;
+      continue;
+    }
+
+    const text = String(value);
+    payloadDetails[normalizedKey] = text.length > 256
+      ? `${text.slice(0, 256)}...(truncated ${text.length - 256} chars)`
+      : text;
+  }
+
+  const payload = {
+    source: "timeline",
+    stage: stageName,
+    threadId: normalizeThreadId(getActiveSessionState()?.threadId || ""),
+    sessionId: typeof activeSessionId === "string" ? activeSessionId : "",
+    timestampUtc: new Date().toISOString(),
+    details: payloadDetails
+  };
+
+  let raw = "";
+  try {
+    raw = JSON.stringify(payload);
+  } catch {
+    return;
+  }
+
+  if (!raw) {
+    return;
+  }
+
+  if (raw.length > 12000) {
+    raw = `${raw.slice(0, 12000)}...(truncated ${raw.length - 12000} chars)`;
+  }
+
+  const endpointUrl = new URL("api/diag/client-event", document.baseURI).toString();
+  try {
+    if (typeof navigator !== "undefined" && navigator && typeof navigator.sendBeacon === "function" && typeof Blob !== "undefined") {
+      const blob = new Blob([raw], { type: "application/json" });
+      if (navigator.sendBeacon(endpointUrl, blob)) {
+        return;
+      }
+    }
+  } catch {
+    // ignore and fallback to fetch
+  }
+
+  fetch(endpointUrl, {
+    method: "POST",
+    cache: "no-store",
+    keepalive: true,
+    headers: {
+      "content-type": "application/json"
+    },
+    body: raw
+  }).catch(() => {});
+}
+
+async function readJsonResponseWithByteLimit(response, maxBytes, label, statsSink = null) {
+  const boundedMaxBytes = Math.max(64 * 1024, Math.floor(Number(maxBytes) || MAX_TIMELINE_JSON_RESPONSE_BYTES));
+  const sourceLabel = typeof label === "string" && label.trim() ? label.trim() : "response";
+  const contentLengthRaw = response?.headers?.get?.("content-length");
+  const contentLength = Number(contentLengthRaw);
+  const readStartedAt = typeof performance !== "undefined" && performance ? performance.now() : Date.now();
+  if (statsSink && typeof statsSink === "object") {
+    statsSink.label = sourceLabel;
+    statsSink.contentLength = Number.isFinite(contentLength) ? contentLength : null;
+    statsSink.maxBytes = boundedMaxBytes;
+  }
+  if (Number.isFinite(contentLength) && contentLength > boundedMaxBytes) {
+    throw new Error(`${sourceLabel} payload too large (${contentLength} bytes)`);
+  }
+
+  if (!response || !response.body || typeof response.body.getReader !== "function") {
+    const text = await response.text();
+    const bytes = typeof TextEncoder !== "undefined"
+      ? new TextEncoder().encode(text).length
+      : text.length;
+    if (bytes > boundedMaxBytes) {
+      throw new Error(`${sourceLabel} payload too large (${bytes} bytes)`);
+    }
+
+    const parseStartedAt = typeof performance !== "undefined" && performance ? performance.now() : Date.now();
+    try {
+      const parsed = JSON.parse(text);
+      if (statsSink && typeof statsSink === "object") {
+        const parseEndedAt = typeof performance !== "undefined" && performance ? performance.now() : Date.now();
+        statsSink.bytes = bytes;
+        statsSink.readMs = Math.round((parseStartedAt - readStartedAt) * 10) / 10;
+        statsSink.parseMs = Math.round((parseEndedAt - parseStartedAt) * 10) / 10;
+      }
+      return parsed;
+    } catch (error) {
+      throw new Error(`${sourceLabel} invalid JSON: ${error}`);
+    }
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let receivedBytes = 0;
+  const chunks = [];
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) {
+      break;
+    }
+
+    if (value && value.byteLength > 0) {
+      receivedBytes += value.byteLength;
+      if (receivedBytes > boundedMaxBytes) {
+        try {
+          await reader.cancel();
+        } catch {
+          // no-op
+        }
+        throw new Error(`${sourceLabel} payload too large (> ${boundedMaxBytes} bytes)`);
+      }
+      chunks.push(decoder.decode(value, { stream: true }));
+    }
+  }
+
+  chunks.push(decoder.decode());
+  const text = chunks.join("");
+  const parseStartedAt = typeof performance !== "undefined" && performance ? performance.now() : Date.now();
+  try {
+    const parsed = JSON.parse(text);
+    if (statsSink && typeof statsSink === "object") {
+      const parseEndedAt = typeof performance !== "undefined" && performance ? performance.now() : Date.now();
+      statsSink.bytes = receivedBytes;
+      statsSink.readMs = Math.round((parseStartedAt - readStartedAt) * 10) / 10;
+      statsSink.parseMs = Math.round((parseEndedAt - parseStartedAt) * 10) / 10;
+    }
+    return parsed;
+  } catch (error) {
+    throw new Error(`${sourceLabel} invalid JSON: ${error}`);
+  }
+}
+
+function normalizeModelValue(value) {
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  return String(value).trim();
+}
+
+function normalizeReasoningEffort(value) {
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  const normalized = String(value).trim().toLowerCase();
+  if (!normalized) {
+    return "";
+  }
+
+  return REASONING_EFFORT_LEVELS.includes(normalized) ? normalized : "";
+}
+
+function loadThreadModelState() {
+  preferredModelByThread = new Map();
+  const raw = safeJsonParse(localStorage.getItem(STORAGE_THREAD_MODELS_KEY), {});
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+    return;
+  }
+
+  for (const [threadId, model] of Object.entries(raw)) {
+    const normalizedThreadId = typeof threadId === "string" ? threadId.trim() : "";
+    if (!normalizedThreadId) {
+      continue;
+    }
+
+    preferredModelByThread.set(normalizedThreadId, normalizeModelValue(model));
+  }
+}
+
+function persistThreadModelState() {
+  const payload = {};
+  for (const [threadId, model] of preferredModelByThread.entries()) {
+    const normalizedThreadId = typeof threadId === "string" ? threadId.trim() : "";
+    if (!normalizedThreadId) {
+      continue;
+    }
+
+    payload[normalizedThreadId] = normalizeModelValue(model);
+  }
+
+  localStorage.setItem(STORAGE_THREAD_MODELS_KEY, JSON.stringify(payload));
+}
+
+function loadThreadReasoningState() {
+  preferredReasoningByThread = new Map();
+  const raw = safeJsonParse(localStorage.getItem(STORAGE_THREAD_REASONING_KEY), {});
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+    return;
+  }
+
+  for (const [threadId, effort] of Object.entries(raw)) {
+    const normalizedThreadId = typeof threadId === "string" ? threadId.trim() : "";
+    if (!normalizedThreadId) {
+      continue;
+    }
+
+    preferredReasoningByThread.set(normalizedThreadId, normalizeReasoningEffort(effort));
+  }
+}
+
+function persistThreadReasoningState() {
+  const payload = {};
+  for (const [threadId, effort] of preferredReasoningByThread.entries()) {
+    const normalizedThreadId = typeof threadId === "string" ? threadId.trim() : "";
+    if (!normalizedThreadId) {
+      continue;
+    }
+
+    payload[normalizedThreadId] = normalizeReasoningEffort(effort);
+  }
+
+  localStorage.setItem(STORAGE_THREAD_REASONING_KEY, JSON.stringify(payload));
+}
+
+function loadThreadPermissionState() {
+  preferredPermissionByThread = new Map();
+  const raw = safeJsonParse(localStorage.getItem(STORAGE_THREAD_PERMISSIONS_KEY), {});
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+    return;
+  }
+
+  for (const [threadId, permission] of Object.entries(raw)) {
+    const normalizedThreadId = typeof threadId === "string" ? threadId.trim() : "";
+    if (!normalizedThreadId || !permission || typeof permission !== "object" || Array.isArray(permission)) {
+      continue;
+    }
+
+    const approval = normalizeApprovalPolicy(permission.approval || "");
+    const sandbox = normalizeSandboxMode(permission.sandbox || "");
+    preferredPermissionByThread.set(normalizedThreadId, { approval, sandbox });
+  }
+}
+
+function persistThreadPermissionState() {
+  const payload = {};
+  for (const [threadId, permission] of preferredPermissionByThread.entries()) {
+    const normalizedThreadId = typeof threadId === "string" ? threadId.trim() : "";
+    if (!normalizedThreadId || !permission || typeof permission !== "object") {
+      continue;
+    }
+
+    payload[normalizedThreadId] = {
+      approval: normalizeApprovalPolicy(permission.approval || ""),
+      sandbox: normalizeSandboxMode(permission.sandbox || "")
+    };
+  }
+
+  localStorage.setItem(STORAGE_THREAD_PERMISSIONS_KEY, JSON.stringify(payload));
+}
+
+function getPreferredModelForThread(threadId) {
+  const normalizedThreadId = typeof threadId === "string" ? threadId.trim() : "";
+  if (!normalizedThreadId || !preferredModelByThread.has(normalizedThreadId)) {
+    return { found: false, model: "" };
+  }
+
+  return {
+    found: true,
+    model: normalizeModelValue(preferredModelByThread.get(normalizedThreadId))
+  };
+}
+
+function getPreferredReasoningForThread(threadId) {
+  const normalizedThreadId = typeof threadId === "string" ? threadId.trim() : "";
+  if (!normalizedThreadId || !preferredReasoningByThread.has(normalizedThreadId)) {
+    return { found: false, effort: "" };
+  }
+
+  return {
+    found: true,
+    effort: normalizeReasoningEffort(preferredReasoningByThread.get(normalizedThreadId))
+  };
+}
+
+function getPreferredPermissionForThread(threadId) {
+  const normalizedThreadId = typeof threadId === "string" ? threadId.trim() : "";
+  if (!normalizedThreadId || !preferredPermissionByThread.has(normalizedThreadId)) {
+    return { found: false, approval: "", sandbox: "" };
+  }
+
+  const permission = preferredPermissionByThread.get(normalizedThreadId) || { approval: "", sandbox: "" };
+  return {
+    found: true,
+    approval: normalizeApprovalPolicy(permission.approval || ""),
+    sandbox: normalizeSandboxMode(permission.sandbox || "")
+  };
+}
+
+function setPreferredModelForThread(threadId, model, options = {}) {
+  const normalizedThreadId = typeof threadId === "string" ? threadId.trim() : "";
+  if (!normalizedThreadId) {
+    return;
+  }
+
+  preferredModelByThread.set(normalizedThreadId, normalizeModelValue(model));
+  if (options.persist !== false) {
+    persistThreadModelState();
+  }
+}
+
+function setPreferredReasoningForThread(threadId, effort, options = {}) {
+  const normalizedThreadId = typeof threadId === "string" ? threadId.trim() : "";
+  if (!normalizedThreadId) {
+    return;
+  }
+
+  preferredReasoningByThread.set(normalizedThreadId, normalizeReasoningEffort(effort));
+  if (options.persist !== false) {
+    persistThreadReasoningState();
+  }
+}
+
+function setPreferredPermissionForThread(threadId, permission, options = {}) {
+  const normalizedThreadId = typeof threadId === "string" ? threadId.trim() : "";
+  if (!normalizedThreadId || !permission || typeof permission !== "object") {
+    return;
+  }
+
+  preferredPermissionByThread.set(normalizedThreadId, {
+    approval: normalizeApprovalPolicy(permission.approval || ""),
+    sandbox: normalizeSandboxMode(permission.sandbox || "")
+  });
+  if (options.persist !== false) {
+    persistThreadPermissionState();
+  }
+}
+
+function ensureThreadModelPreference(threadId, model, options = {}) {
+  const normalizedThreadId = typeof threadId === "string" ? threadId.trim() : "";
+  if (!normalizedThreadId) {
+    return false;
+  }
+
+  const normalizedModel = normalizeModelValue(model);
+  if (preferredModelByThread.has(normalizedThreadId)) {
+    return false;
+  }
+
+  preferredModelByThread.set(normalizedThreadId, normalizedModel);
+  if (options.persist !== false) {
+    persistThreadModelState();
+  }
+
+  return true;
+}
+
+function ensureThreadReasoningPreference(threadId, effort, options = {}) {
+  const normalizedThreadId = typeof threadId === "string" ? threadId.trim() : "";
+  if (!normalizedThreadId) {
+    return false;
+  }
+
+  const normalizedEffort = normalizeReasoningEffort(effort);
+  if (preferredReasoningByThread.has(normalizedThreadId)) {
+    return false;
+  }
+
+  preferredReasoningByThread.set(normalizedThreadId, normalizedEffort);
+  if (options.persist !== false) {
+    persistThreadReasoningState();
+  }
+
+  return true;
+}
+
+function ensureThreadPermissionPreference(threadId, permission, options = {}) {
+  const normalizedThreadId = typeof threadId === "string" ? threadId.trim() : "";
+  if (!normalizedThreadId || !permission || typeof permission !== "object") {
+    return false;
+  }
+
+  if (preferredPermissionByThread.has(normalizedThreadId)) {
+    return false;
+  }
+
+  preferredPermissionByThread.set(normalizedThreadId, {
+    approval: normalizeApprovalPolicy(permission.approval || ""),
+    sandbox: normalizeSandboxMode(permission.sandbox || "")
+  });
+  if (options.persist !== false) {
+    persistThreadPermissionState();
+  }
+
+  return true;
+}
+
+function getPromptDraftKeyForThreadId(threadId) {
+  const normalized = typeof threadId === "string" ? threadId.trim() : "";
+  return normalized ? `thread:${normalized}` : GLOBAL_PROMPT_DRAFT_KEY;
+}
+
+function getPromptDraftKeyForState(state) {
+  if (!state) {
+    return GLOBAL_PROMPT_DRAFT_KEY;
+  }
+
+  return getPromptDraftKeyForThreadId(state.threadId);
+}
+
+function getCurrentPromptDraftKey() {
+  return getPromptDraftKeyForState(getActiveSessionState());
+}
+
+function normalizePromptDraftText(value) {
+  const text = typeof value === "string" ? value : String(value || "");
+  if (!text) {
+    return "";
+  }
+
+  if (text.length <= MAX_PROMPT_DRAFT_CHARS) {
+    return text;
+  }
+
+  return text.slice(0, MAX_PROMPT_DRAFT_CHARS);
+}
+
+function normalizeQueuePreviewText(value, maxChars = MAX_QUEUE_PREVIEW_SOURCE_CHARS) {
+  const raw = typeof value === "string" ? value : String(value || "");
+  if (!raw) {
+    return "";
+  }
+
+  const boundedMax = Math.max(32, Math.floor(Number(maxChars) || MAX_QUEUE_PREVIEW_SOURCE_CHARS));
+  const clipped = raw.length > boundedMax ? raw.slice(0, boundedMax) : raw;
+  return clipped.replace(/\s+/g, " ").trim();
+}
+
+function loadPromptDraftState() {
+  promptDraftByKey = new Map();
+  promptDraftImagesByKey = new Map();
+  const rawJson = localStorage.getItem(STORAGE_PROMPT_DRAFTS_KEY);
+  if (typeof rawJson === "string" && rawJson.length > MAX_PROMPT_DRAFT_STORAGE_CHARS) {
+    localStorage.removeItem(STORAGE_PROMPT_DRAFTS_KEY);
+    return;
+  }
+
+  const raw = safeJsonParse(rawJson, {});
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+    return;
+  }
+
+  let changed = false;
+  for (const [key, value] of Object.entries(raw)) {
+    if (typeof key !== "string" || !key.trim()) {
+      continue;
+    }
+
+    const rawText = typeof value === "string" ? value : String(value || "");
+    const text = normalizePromptDraftText(rawText);
+    if (!text) {
+      if (rawText) {
+        changed = true;
+      }
+      continue;
+    }
+
+    if (rawText !== text) {
+      changed = true;
+    }
+    promptDraftByKey.set(key, text);
+  }
+
+  if (changed) {
+    persistPromptDraftState();
+  }
+}
+
+function persistPromptDraftState() {
+  const payload = {};
+  for (const [key, value] of promptDraftByKey.entries()) {
+    if (typeof key !== "string" || !key.trim()) {
+      continue;
+    }
+
+    const text = normalizePromptDraftText(value);
+    if (!text) {
+      continue;
+    }
+
+    payload[key] = text;
+  }
+
+  const serialized = JSON.stringify(payload);
+  if (serialized.length > MAX_PROMPT_DRAFT_STORAGE_CHARS) {
+    localStorage.removeItem(STORAGE_PROMPT_DRAFTS_KEY);
+    return;
+  }
+
+  localStorage.setItem(STORAGE_PROMPT_DRAFTS_KEY, serialized);
+}
+
+function normalizePromptDraftImages(images, options = {}) {
+  const assignIds = options.assignIds === true;
+  return collectValidTurnImages(images)
+    .slice(0, MAX_COMPOSER_IMAGES)
+    .map((x) => ({
+      id: assignIds ? nextComposerImageId++ : Number(x.id || 0),
+      name: x.name || "image",
+      mimeType: x.mimeType || "image/*",
+      size: typeof x.size === "number" ? x.size : 0,
+      url: x.url
+    }));
+}
+
+function rememberPromptDraftImagesForKey(key, images) {
+  const normalizedKey = typeof key === "string" ? key.trim() : "";
+  if (!normalizedKey) {
+    return;
+  }
+
+  const normalizedImages = normalizePromptDraftImages(images);
+  if (normalizedImages.length > 0) {
+    promptDraftImagesByKey.set(normalizedKey, normalizedImages);
+  } else {
+    promptDraftImagesByKey.delete(normalizedKey);
+  }
+}
+
+function rememberPromptDraftForKey(key, text) {
+  const normalizedKey = typeof key === "string" ? key.trim() : "";
+  if (!normalizedKey) {
+    return;
+  }
+
+  const normalizedText = normalizePromptDraftText(text);
+  if (normalizedText) {
+    promptDraftByKey.set(normalizedKey, normalizedText);
+  } else {
+    promptDraftByKey.delete(normalizedKey);
+  }
+}
+
+function rememberPromptDraftForState(state) {
+  if (!promptInput) {
+    return;
+  }
+
+  const key = getPromptDraftKeyForState(state);
+  rememberPromptDraftForKey(key, promptInput.value);
+  rememberPromptDraftImagesForKey(key, pendingComposerImages);
+  persistPromptDraftState();
+}
+
+function getPromptInputMaxHeightPx() {
+  return isMobileViewport() ? PROMPT_INPUT_MAX_HEIGHT_MOBILE_PX : PROMPT_INPUT_MAX_HEIGHT_DESKTOP_PX;
+}
+
+function refreshPromptInputHeight(options = {}) {
+  if (!promptInput) {
+    return;
+  }
+
+  const reset = options.reset === true;
+  const maxHeightPx = getPromptInputMaxHeightPx();
+  promptInput.style.maxHeight = `${maxHeightPx}px`;
+
+  if (reset) {
+    promptInput.style.height = "";
+    promptInput.style.overflowY = "hidden";
+    return;
+  }
+
+  promptInput.style.height = "auto";
+  const scrollHeight = Math.max(0, promptInput.scrollHeight || 0);
+  if (scrollHeight > 0) {
+    promptInput.style.height = `${Math.min(scrollHeight, maxHeightPx)}px`;
+  }
+  promptInput.style.overflowY = scrollHeight > maxHeightPx ? "auto" : "hidden";
+}
+
+function clearCurrentPromptDraft() {
+  const key = getCurrentPromptDraftKey();
+  rememberPromptDraftForKey(key, "");
+  rememberPromptDraftImagesForKey(key, []);
+  persistPromptDraftState();
+}
+
+function restorePromptDraftForActiveSession(options = {}) {
+  if (!promptInput) {
+    return;
+  }
+
+  const includeGlobalFallback = options.includeGlobalFallback !== false;
+  const key = getCurrentPromptDraftKey();
+  let nextValue = promptDraftByKey.get(key);
+  let usedGlobalTextFallback = false;
+
+  if ((nextValue === undefined || nextValue === null || nextValue === "")
+      && includeGlobalFallback
+      && key !== GLOBAL_PROMPT_DRAFT_KEY) {
+    nextValue = promptDraftByKey.get(GLOBAL_PROMPT_DRAFT_KEY);
+    usedGlobalTextFallback = typeof nextValue === "string" && nextValue.length > 0;
+  }
+
+  const normalized = typeof nextValue === "string" ? nextValue : "";
+  if (promptInput.value !== normalized) {
+    promptInput.value = normalized;
+  }
+  refreshPromptInputHeight({ reset: normalized.length === 0 });
+
+  let nextImages = promptDraftImagesByKey.get(key);
+  let usedGlobalImageFallback = false;
+  if ((!Array.isArray(nextImages) || nextImages.length === 0)
+      && includeGlobalFallback
+      && key !== GLOBAL_PROMPT_DRAFT_KEY) {
+    nextImages = promptDraftImagesByKey.get(GLOBAL_PROMPT_DRAFT_KEY);
+    usedGlobalImageFallback = Array.isArray(nextImages) && nextImages.length > 0;
+  }
+
+  pendingComposerImages = normalizePromptDraftImages(nextImages || [], { assignIds: true });
+  renderComposerImages();
+
+  // Global fallback drafts are intended for transition states (no active thread key).
+  // Once consumed for a concrete thread/session, migrate and clear the global entry so
+  // the same unsent text does not leak into every thread forever.
+  if (key !== GLOBAL_PROMPT_DRAFT_KEY && (usedGlobalTextFallback || usedGlobalImageFallback)) {
+    if (usedGlobalTextFallback) {
+      rememberPromptDraftForKey(key, normalized);
+      rememberPromptDraftForKey(GLOBAL_PROMPT_DRAFT_KEY, "");
+    }
+    if (usedGlobalImageFallback) {
+      rememberPromptDraftImagesForKey(key, pendingComposerImages);
+      rememberPromptDraftImagesForKey(GLOBAL_PROMPT_DRAFT_KEY, []);
+    }
+    persistPromptDraftState();
+  }
+}
+
+function normalizeQueuedTurnSummaryList(list) {
+  if (!Array.isArray(list)) {
+    return [];
+  }
+
+  const normalized = [];
+  const maxItems = Math.min(list.length, MAX_QUEUED_TURNS_TRACKED);
+  for (let i = 0; i < maxItems; i += 1) {
+    const item = list[i];
+    if (!item || typeof item !== "object") {
+      continue;
+    }
+
+    const queueItemId = typeof item.queueItemId === "string" ? item.queueItemId.trim() : "";
+    if (!queueItemId) {
+      continue;
+    }
+
+    const previewText = normalizeQueuePreviewText(item.previewText);
+    const imageCount = Number.isFinite(item.imageCount) ? Math.max(0, Math.floor(item.imageCount)) : 0;
+    normalized.push({
+      queueItemId,
+      previewText,
+      imageCount,
+      createdAtUtc: typeof item.createdAtUtc === "string" ? item.createdAtUtc : null
+    });
+  }
+
+  return normalized;
+}
+
+function normalizeProjectCwd(cwd) {
+  const normalized = normalizePath(cwd || "").replace(/\/+$/g, "");
+  return normalized;
+}
+
+function getEffectiveProjectCwd(cwd) {
+  return normalizeProjectCwd(cwd || "");
+}
+
+function getProjectKeyFromCwd(cwd) {
+  const normalized = normalizeProjectCwd(cwd);
+  return normalized ? normalized.toLowerCase() : "(unknown)";
+}
+
+function pathLeaf(path) {
+  const normalized = normalizeProjectCwd(path);
+  if (!normalized) {
+    return "";
+  }
+
+  const parts = normalized.split("/");
+  return parts.length > 0 ? parts[parts.length - 1] : normalized;
+}
+
+function createRequestId() {
+  if (window.crypto && typeof window.crypto.randomUUID === "function") {
+    return window.crypto.randomUUID();
+  }
+
+  return `req-${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
+}
+
+function persistProjectNameMap() {
+  const payload = {};
+  for (const [key, value] of projectNameByKey.entries()) {
+    const trimmed = String(value || "").trim();
+    if (!trimmed) {
+      continue;
+    }
+
+    payload[key] = trimmed;
+  }
+
+  localStorage.setItem(STORAGE_PROJECT_META_KEY, JSON.stringify(payload));
+}
+
+function persistCollapsedProjectKeys() {
+  localStorage.setItem(STORAGE_COLLAPSED_PROJECTS_KEY, JSON.stringify(Array.from(collapsedProjectKeys)));
+}
+
+function persistArchivedThreads() {
+  localStorage.setItem(STORAGE_ARCHIVED_THREADS_KEY, JSON.stringify(Array.from(archivedThreadIds)));
+}
+
+function persistCustomProjects() {
+  localStorage.setItem(STORAGE_CUSTOM_PROJECTS_KEY, JSON.stringify(customProjects));
+}
+
+function loadProjectUiState() {
+  projectNameByKey = new Map();
+  const projectMeta = safeJsonParse(localStorage.getItem(STORAGE_PROJECT_META_KEY), {});
+  if (projectMeta && typeof projectMeta === "object" && !Array.isArray(projectMeta)) {
+    for (const [key, value] of Object.entries(projectMeta)) {
+      const trimmed = String(value || "").trim();
+      if (trimmed) {
+        projectNameByKey.set(String(key), trimmed);
+      }
+    }
+  }
+
+  const collapsed = safeJsonParse(localStorage.getItem(STORAGE_COLLAPSED_PROJECTS_KEY), []);
+  collapsedProjectKeys = new Set(Array.isArray(collapsed) ? collapsed.filter((x) => typeof x === "string") : []);
+
+  const archived = safeJsonParse(localStorage.getItem(STORAGE_ARCHIVED_THREADS_KEY), []);
+  archivedThreadIds = new Set(Array.isArray(archived) ? archived.filter((x) => typeof x === "string" && x.trim()) : []);
+
+  const custom = safeJsonParse(localStorage.getItem(STORAGE_CUSTOM_PROJECTS_KEY), []);
+  customProjects = Array.isArray(custom)
+    ? custom
+      .filter((x) => x && typeof x === "object")
+      .map((x) => {
+        const cwd = normalizeProjectCwd(x.cwd || "");
+        const key = cwd ? getProjectKeyFromCwd(cwd) : "";
+        const name = typeof x.name === "string" ? x.name.trim() : "";
+        if (!cwd) {
+          return null;
+        }
+
+        return { key, cwd, name };
+      })
+      .filter((x) => !!x)
+    : [];
+
+}
+
+function getProjectDisplayName(project) {
+  if (!project) {
+    return "(unknown project)";
+  }
+
+  const stored = projectNameByKey.get(project.key);
+  if (stored) {
+    return stored;
+  }
+
+  if (project.customName) {
+    return project.customName;
+  }
+
+  const leaf = pathLeaf(project.cwd);
+  return leaf || "(unknown project)";
+}
+
+function buildActionIcon(kind) {
+  const icon = document.createElement("i");
+  icon.setAttribute("aria-hidden", "true");
+
+  const iconClass = {
+    plus: "bi-plus-lg",
+    pencil: "bi-pencil-square",
+    archive: "bi-archive",
+    restore: "bi-arrow-counterclockwise",
+    chevronDown: "bi-chevron-down",
+    chevronRight: "bi-chevron-right"
+  }[kind] || "bi-plus-lg";
+
+  icon.className = `bi ${iconClass}`;
+  return icon;
+}
+
+function getCatalogSessionUpdatedTick(session) {
+  if (!session || !session.updatedAtUtc) {
+    return 0;
+  }
+
+  const tick = Date.parse(session.updatedAtUtc);
+  return Number.isFinite(tick) ? tick : 0;
+}
+
+function getCatalogDirectoryInfo(session) {
+  const normalizedCwd = normalizePath(session?.cwd || "").replace(/\/+$/g, "");
+  if (!normalizedCwd) {
+    return { key: "(unknown)", label: "(unknown)" };
+  }
+
+  return {
+    key: normalizedCwd.toLowerCase(),
+    label: normalizedCwd
+  };
+}
+
+function buildCatalogDirectoryGroups() {
+  const map = new Map();
+  for (const session of sessionCatalog) {
+    const info = getCatalogDirectoryInfo(session);
+    if (!map.has(info.key)) {
+      map.set(info.key, {
+        key: info.key,
+        label: info.label,
+        sessions: [],
+        latestTick: 0
+      });
+    }
+
+    const group = map.get(info.key);
+    group.sessions.push(session);
+    const tick = getCatalogSessionUpdatedTick(session);
+    if (tick > group.latestTick) {
+      group.latestTick = tick;
+    }
+  }
+
+  const groups = Array.from(map.values());
+  for (const group of groups) {
+    group.sessions.sort((a, b) => {
+      const tickCompare = getCatalogSessionUpdatedTick(b) - getCatalogSessionUpdatedTick(a);
+      if (tickCompare !== 0) return tickCompare;
+      return (a.threadId || "").localeCompare(b.threadId || "");
+    });
+  }
+
+  groups.sort((a, b) => {
+    const tickCompare = b.latestTick - a.latestTick;
+    if (tickCompare !== 0) return tickCompare;
+    return a.label.localeCompare(b.label);
+  });
+
+  return groups;
+}
+
+function getCatalogEntryByThreadId(threadId) {
+  if (!threadId) {
+    return null;
+  }
+
+  return sessionCatalog.find((x) => x && x.threadId === threadId) || null;
+}
+
+function touchSessionActivity(sessionId, tick = Date.now()) {
+  if (!sessionId || !sessions.has(sessionId)) {
+    return;
+  }
+
+  const state = sessions.get(sessionId);
+  if (!state) {
+    return;
+  }
+
+  const normalizedTick = Number.isFinite(tick) ? tick : Date.now();
+  state.lastActivityTick = normalizedTick;
+  if (!state.createdAtTick) {
+    state.createdAtTick = normalizedTick;
+  }
+}
+
+function getPendingSessionLoadThreadId() {
+  return normalizeThreadId(pendingSessionLoad?.threadId || "");
+}
+
+function clearPendingSessionLoad() {
+  pendingSessionLoad = null;
+  if (chatPanel) {
+    chatPanel.classList.remove("session-loading");
+  }
+}
+
+function beginPendingSessionLoad(threadId, displayName = "") {
+  const normalizedThreadId = typeof threadId === "string" ? threadId.trim() : "";
+  if (!normalizedThreadId) {
+    return;
+  }
+
+  pendingSessionLoad = {
+    threadId: normalizedThreadId,
+    previousSessionId: activeSessionId || null
+  };
+  if (chatPanel) {
+    chatPanel.classList.add("session-loading");
+  }
+
+  timelinePollGeneration += 1;
+  if (timelinePollTimer) {
+    clearInterval(timelinePollTimer);
+    timelinePollTimer = null;
+  }
+  timelineCursor = null;
+  timelineWatchMaxEntries = TIMELINE_INITIAL_WINDOW_DEFAULT;
+  timeline.clear();
+  timelineHasTruncatedHead = false;
+  updateTimelineTruncationNotice();
+  const title = displayName && displayName.trim().length > 0
+    ? `Loading ${displayName.trim()}...`
+    : `Loading ${normalizedThreadId}...`;
+  appendLog(`[session] ${title}`);
+  renderProjectSidebar();
+}
+
+function handlePendingSessionLoadFailure() {
+  const pending = pendingSessionLoad;
+  if (!pending) {
+    return;
+  }
+
+  const prior = pending.previousSessionId || null;
+  clearPendingSessionLoad();
+  if (prior && sessions.has(prior)) {
+    setActiveSession(prior, { restartTimeline: true, reason: "pending_load_failed_restore_previous" });
+    return;
+  }
+
+  restartTimelinePolling();
+}
+
+function setLocalThreadName(threadId, threadName) {
+  const normalizedThreadId = typeof threadId === "string" ? threadId.trim() : "";
+  if (!normalizedThreadId) {
+    return;
+  }
+
+  const normalizedName = String(threadName || "").trim();
+  for (const state of sessions.values()) {
+    if (state && state.threadId === normalizedThreadId) {
+      state.threadName = normalizedName || state.threadName || "";
+    }
+  }
+
+  for (const entry of sessionCatalog) {
+    if (entry && entry.threadId === normalizedThreadId && normalizedName) {
+      entry.threadName = normalizedName;
+    }
+  }
+}
+
+function findAttachedSessionIdByThreadId(threadId) {
+  const normalizedThreadId = normalizeThreadId(threadId || "");
+  if (!normalizedThreadId) {
+    return null;
+  }
+
+  for (const [sessionId, state] of sessions.entries()) {
+    if (normalizeThreadId(state?.threadId || "") === normalizedThreadId) {
+      return sessionId;
+    }
+  }
+
+  return null;
+}
+
+function isPendingSessionLoadForThread(threadId) {
+  const normalizedThreadId = normalizeThreadId(threadId || "");
+  return !!normalizedThreadId &&
+    !!getPendingSessionLoadThreadId() &&
+    normalizedThreadId === getPendingSessionLoadThreadId();
+}
+
+function getPendingSessionLoadAttachedSessionId() {
+  const pendingThreadId = getPendingSessionLoadThreadId();
+  if (!pendingThreadId) {
+    return null;
+  }
+
+  const attachedSessionId = findAttachedSessionIdByThreadId(pendingThreadId);
+  return attachedSessionId && sessions.has(attachedSessionId)
+    ? attachedSessionId
+    : null;
+}
+
+function getProjectForSessionState(state) {
+  if (!state) {
+    return { key: "(unknown)", cwd: "" };
+  }
+
+  const cwd = getEffectiveProjectCwd(state.cwd || "");
+  return { key: getProjectKeyFromCwd(cwd), cwd };
+}
+
+function buildSidebarProjectGroups() {
+  const map = new Map();
+  const seenThreads = new Set();
+
+  function ensureProject(cwd) {
+    const normalizedCwd = getEffectiveProjectCwd(cwd || "");
+    const key = getProjectKeyFromCwd(normalizedCwd);
+    if (!map.has(key)) {
+      const custom = customProjects.find((x) => x && x.key === key) || null;
+      map.set(key, {
+        key,
+        cwd: normalizedCwd,
+        customName: custom?.name || "",
+        isCustom: !!custom,
+        sessions: [],
+        latestTick: 0
+      });
+    }
+
+    return map.get(key);
+  }
+
+  for (const customProject of customProjects) {
+    ensureProject(customProject.cwd);
+  }
+
+  for (const entry of sessionCatalog) {
+    if (!entry || !entry.threadId) {
+      continue;
+    }
+
+    const attachedSessionId = findAttachedSessionIdByThreadId(entry.threadId);
+    const attachedState = attachedSessionId ? sessions.get(attachedSessionId) : null;
+    const effectiveCwd = getEffectiveProjectCwd(entry.cwd || attachedState?.cwd || "");
+    const project = ensureProject(effectiveCwd);
+    const tick = Math.max(getCatalogSessionUpdatedTick(entry), attachedState?.lastActivityTick || 0);
+    if (tick > project.latestTick) {
+      project.latestTick = tick;
+    }
+
+    project.sessions.push({
+      threadId: entry.threadId,
+      threadName: entry.threadName || attachedState?.threadName || "",
+      updatedAtUtc: tick > 0 ? new Date(tick).toISOString() : (entry.updatedAtUtc || null),
+      sortTick: tick,
+      cwd: effectiveCwd,
+      model: entry.model || "",
+      reasoningEffort: normalizeReasoningEffort(entry.reasoningEffort || attachedState?.reasoningEffort || ""),
+      attachedSessionId,
+      isAttached: !!attachedSessionId,
+      isProcessing: attachedSessionId ? isTurnInFlight(attachedSessionId) : isThreadProcessing(entry.threadId),
+      hasPendingApproval: !!(attachedState && attachedState.pendingApproval && typeof attachedState.pendingApproval.approvalId === "string" && attachedState.pendingApproval.approvalId.trim()),
+      hasPendingRecoveryOffer: !!(attachedState && attachedState.pendingRecoveryOffer && typeof attachedState.pendingRecoveryOffer.offerId === "string" && attachedState.pendingRecoveryOffer.offerId.trim()),
+      hasPendingTurnRetryOffer: !!(attachedState && attachedState.pendingTurnRetryOffer && typeof attachedState.pendingTurnRetryOffer.offerId === "string" && attachedState.pendingTurnRetryOffer.offerId.trim()),
+      isArchived: archivedThreadIds.has(entry.threadId),
+      hasUnreadCompletion: hasThreadCompletionUnread(entry.threadId)
+    });
+    seenThreads.add(entry.threadId);
+  }
+
+  for (const [sessionId, state] of sessions.entries()) {
+    if (!state || !state.threadId || seenThreads.has(state.threadId)) {
+      continue;
+    }
+
+    const project = ensureProject(state.cwd || "");
+    const tick = state.lastActivityTick || state.createdAtTick || 0;
+    if (tick > project.latestTick) {
+      project.latestTick = tick;
+    }
+    project.sessions.push({
+      threadId: state.threadId,
+      threadName: state.threadName || "",
+      updatedAtUtc: tick > 0 ? new Date(tick).toISOString() : null,
+      sortTick: tick,
+      cwd: getEffectiveProjectCwd(state.cwd || ""),
+      model: state.model || "",
+      reasoningEffort: normalizeReasoningEffort(state.reasoningEffort || ""),
+      attachedSessionId: sessionId,
+      isAttached: true,
+      isProcessing: isTurnInFlight(sessionId),
+      hasPendingApproval: !!(state.pendingApproval && typeof state.pendingApproval.approvalId === "string" && state.pendingApproval.approvalId.trim()),
+      hasPendingRecoveryOffer: !!(state.pendingRecoveryOffer && typeof state.pendingRecoveryOffer.offerId === "string" && state.pendingRecoveryOffer.offerId.trim()),
+      hasPendingTurnRetryOffer: !!(state.pendingTurnRetryOffer && typeof state.pendingTurnRetryOffer.offerId === "string" && state.pendingTurnRetryOffer.offerId.trim()),
+      isArchived: archivedThreadIds.has(state.threadId),
+      hasUnreadCompletion: hasThreadCompletionUnread(state.threadId)
+    });
+  }
+
+  const groups = Array.from(map.values());
+  for (const group of groups) {
+    group.sessions.sort((a, b) => {
+      const tickCompare = (b.sortTick || 0) - (a.sortTick || 0);
+      if (tickCompare !== 0) {
+        return tickCompare;
+      }
+
+      return (a.threadId || "").localeCompare(b.threadId || "");
+    });
+  }
+
+  const hasSessions = groups.some((group) => Array.isArray(group.sessions) && group.sessions.length > 0);
+  if (!projectOrderInitialized && hasSessions && sessionCatalogLoadedOnce) {
+    const initial = [...groups].sort((a, b) => {
+      const tickCompare = (b.latestTick || 0) - (a.latestTick || 0);
+      if (tickCompare !== 0) {
+        return tickCompare;
+      }
+
+      return getProjectDisplayName(a).localeCompare(getProjectDisplayName(b));
+    });
+    projectOrderIndexByKey = new Map();
+    nextProjectOrderIndex = 0;
+    for (const group of initial) {
+      projectOrderIndexByKey.set(group.key, nextProjectOrderIndex++);
+    }
+    projectOrderInitialized = true;
+  }
+
+  if (projectOrderInitialized) {
+    for (const group of groups) {
+      if (!projectOrderIndexByKey.has(group.key)) {
+        projectOrderIndexByKey.set(group.key, nextProjectOrderIndex++);
+      }
+    }
+
+    groups.sort((a, b) => {
+      const rankA = projectOrderIndexByKey.get(a.key);
+      const rankB = projectOrderIndexByKey.get(b.key);
+      if (rankA !== rankB) {
+        return rankA - rankB;
+      }
+
+      return getProjectDisplayName(a).localeCompare(getProjectDisplayName(b));
+    });
+  } else {
+    groups.sort((a, b) => getProjectDisplayName(a).localeCompare(getProjectDisplayName(b)));
+  }
+
+  return groups;
+}
+
+function isMobileViewport() {
+  return typeof window !== "undefined" && typeof window.matchMedia === "function"
+    ? window.matchMedia("(max-width: 900px)").matches
+    : false;
+}
+
+function isMobileProjectsOpen() {
+  return !!layoutRoot && layoutRoot.classList.contains("mobile-projects-open");
+}
+
+function updateMobileProjectsButton() {
+  const mobile = isMobileViewport();
+  const open = mobile && isMobileProjectsOpen();
+
+  if (mobileProjectsBtn) {
+    mobileProjectsBtn.setAttribute("aria-expanded", open ? "true" : "false");
+    mobileProjectsBtn.title = open ? "Hide projects" : "Show projects";
+    mobileProjectsBtn.setAttribute("aria-label", mobileProjectsBtn.title);
+  }
+
+  if (sidebarToggleBtn) {
+    const icon = sidebarToggleBtn.querySelector("i");
+    if (mobile) {
+      sidebarToggleBtn.title = "Close projects";
+      sidebarToggleBtn.setAttribute("aria-label", "Close projects");
+      sidebarToggleBtn.setAttribute("aria-expanded", open ? "true" : "false");
+      if (icon) {
+        icon.className = "bi bi-x-lg";
+      }
+      return;
+    }
+
+    const collapsed = isSidebarCollapsed();
+    const label = collapsed ? "Show projects" : "Hide projects";
+    sidebarToggleBtn.title = label;
+    sidebarToggleBtn.setAttribute("aria-label", label);
+    sidebarToggleBtn.setAttribute("aria-expanded", collapsed ? "false" : "true");
+    if (icon) {
+      icon.className = collapsed ? "bi bi-layout-sidebar-inset" : "bi bi-layout-sidebar-inset-reverse";
+    }
+  }
+}
+
+function setMobileProjectsOpen(isOpen) {
+  if (!layoutRoot) {
+    return;
+  }
+
+  const mobile = isMobileViewport();
+  const open = mobile ? !!isOpen : false;
+  layoutRoot.classList.toggle("mobile-projects-open", open);
+  if (sidebarBackdrop) {
+    sidebarBackdrop.classList.toggle("hidden", !open);
+  }
+
+  updateMobileProjectsButton();
+}
+
+function updateConversationMetaVisibility() {
+  if (!sessionMeta || !sessionMetaModelItem) {
+    return;
+  }
+
+  const hasState = !!getActiveSessionState();
+
+  if (sessionMetaDetailsBtn) {
+    sessionMetaDetailsBtn.classList.add("hidden");
+    sessionMetaDetailsBtn.setAttribute("aria-expanded", "false");
+  }
+
+  sessionMeta.classList.toggle("hidden", !hasState);
+  if (conversationMetaMenuBtn) {
+    conversationMetaMenuBtn.disabled = !hasState;
+  }
+  if (jumpToBtn) {
+    jumpToBtn.disabled = !hasState;
+  }
+  if (!hasState) {
+    setConversationMetaMenuOpen(false);
+    setJumpCollapseMode(false);
+  }
+}
+
+function setConversationMetaMenuOpen(isOpen) {
+  if (!conversationMetaMenu || !conversationMetaMenuBtn) {
+    conversationMetaMenuOpen = false;
+    return;
+  }
+
+  const hasState = !!getActiveSessionState();
+  const open = !!isOpen && hasState;
+  conversationMetaMenuOpen = open;
+  conversationMetaMenu.classList.toggle("hidden", !open);
+  conversationMetaMenuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+}
+
+function updateConversationModelSummary() {
+  if (!conversationModelSummary) {
+    return;
+  }
+
+  const state = getActiveSessionState();
+  const modelValue = normalizeModelValue(
+    conversationModelSelect?.value
+      || state?.model
+      || configuredDefaultModel
+      || modelSelect?.value
+      || ""
+  );
+  const reasoningValue = normalizeReasoningEffort(
+    conversationReasoningSelect?.value || state?.reasoningEffort || ""
+  );
+
+  const modelLabel = modelValue || "auto";
+  const reasoningLabel = reasoningValue || "auto";
+  const summary = `${modelLabel} | ${reasoningLabel}`;
+  conversationModelSummary.textContent = summary;
+  conversationModelSummary.title = summary;
+}
+
+function setSidebarExtrasExpanded(isExpanded, options = {}) {
+  const expanded = !!isExpanded;
+  const persist = options.persist !== false;
+
+  if (sidebarExtrasGroup) {
+    sidebarExtrasGroup.classList.toggle("hidden", !expanded);
+  }
+
+  if (sidebarExtrasToggleBtn) {
+    const label = expanded ? "Collapse navigation options" : "Expand navigation options";
+    sidebarExtrasToggleBtn.title = label;
+    sidebarExtrasToggleBtn.setAttribute("aria-label", label);
+    sidebarExtrasToggleBtn.setAttribute("aria-expanded", expanded ? "true" : "false");
+
+    const icon = sidebarExtrasToggleBtn.querySelector("i");
+    if (icon) {
+      icon.className = expanded ? "bi bi-chevron-down sidebar-nav-toggle-icon" : "bi bi-chevron-right sidebar-nav-toggle-icon";
+    }
+  }
+
+  if (persist) {
+    localStorage.setItem(STORAGE_SIDEBAR_EXTRAS_EXPANDED_KEY, expanded ? "1" : "0");
+  }
+}
+
+function applySidebarCollapsed(isCollapsed) {
+  if (!layoutRoot) {
+    return;
+  }
+
+  if (isMobileViewport()) {
+    layoutRoot.classList.remove("sidebar-collapsed");
+    updateMobileProjectsButton();
+    return;
+  }
+
+  layoutRoot.classList.toggle("sidebar-collapsed", isCollapsed);
+  localStorage.setItem(STORAGE_SIDEBAR_COLLAPSED_KEY, isCollapsed ? "1" : "0");
+  if (sidebarToggleBtn) {
+    const label = isCollapsed ? "Show projects" : "Hide projects";
+    sidebarToggleBtn.title = label;
+    sidebarToggleBtn.setAttribute("aria-label", label);
+    sidebarToggleBtn.setAttribute("aria-expanded", isCollapsed ? "false" : "true");
+    const icon = sidebarToggleBtn.querySelector("i");
+    if (icon) {
+      icon.className = isCollapsed ? "bi bi-layout-sidebar-inset" : "bi bi-layout-sidebar-inset-reverse";
+    }
+  }
+}
+
+function isSidebarCollapsed() {
+  return !!layoutRoot && layoutRoot.classList.contains("sidebar-collapsed");
+}
+
+function selectProject(projectKey, projectCwd = "") {
+  selectedProjectKey = projectKey || null;
+  const normalizedCwd = normalizeProjectCwd(projectCwd || "");
+  if (normalizedCwd) {
+    cwdInput.value = normalizedCwd;
+    localStorage.setItem(STORAGE_CWD_KEY, normalizedCwd);
+  }
+
+  renderProjectSidebar();
+  if (isMobileViewport()) {
+    setMobileProjectsOpen(false);
+  }
+}
+
+function syncSelectedProjectFromActiveSession() {
+  const active = getActiveSessionState();
+  if (!active) {
+    return;
+  }
+
+  const info = getProjectForSessionState(active);
+  if (!info.key || info.key === "(unknown)") {
+    return;
+  }
+
+  selectedProjectKey = info.key;
+}
+
+function getSelectedProjectGroup() {
+  const groups = buildSidebarProjectGroups();
+  if (!selectedProjectKey) {
+    return groups.length > 0 ? groups[0] || null : null;
+  }
+
+  return groups.find((x) => x.key === selectedProjectKey) || groups[0] || null;
+}
+
+function getWorkspaceProjectCwd() {
+  const selectedGroup = getSelectedProjectGroup();
+  const selectedCwd = normalizeProjectCwd(selectedGroup?.cwd || "");
+  if (selectedCwd) {
+    return selectedCwd;
+  }
+
+  const active = getActiveSessionState();
+  const activeCwd = normalizeProjectCwd(active?.cwd || "");
+  if (activeCwd) {
+    return activeCwd;
+  }
+
+  return normalizeProjectCwd(cwdInput?.value || "");
+}
+
+function rememberTaskThreadForSessionState(sessionId, state) {
+  if (!sessionId || !state) {
+    return;
+  }
+
+  const threadId = normalizeThreadId(state.threadId || "");
+  const projectKey = getProjectKeyFromCwd(state.cwd || "");
+  if (!threadId || !projectKey || projectKey === "(unknown)") {
+    return;
+  }
+
+  taskThreadIdByProjectKey.set(projectKey, threadId);
+  try {
+    persistTaskThreadByProjectMap();
+  } catch {
+  }
+}
+
+async function selectThreadById(threadId, cwd, options = {}) {
+  const targetThreadId = normalizeThreadId(threadId || "");
+  if (!targetThreadId) {
+    return false;
+  }
+
+  const attachedSessionId = findAttachedSessionIdByThreadId(targetThreadId);
+  if (attachedSessionId && sessions.has(attachedSessionId)) {
+    clearPendingSessionLoad();
+    setActiveSession(attachedSessionId, {
+      persistSelection: options.persistSelection === true,
+      reason: options.reason || "thread_select_already_attached"
+    });
+    return true;
+  }
+
+  beginPendingSessionLoad(targetThreadId, options.displayName || targetThreadId);
+  const attached = await attachSessionByThreadId(targetThreadId, cwd, options);
+  if (!attached) {
+    handlePendingSessionLoadFailure();
+    return false;
+  }
+
+  return true;
+}
+
+async function restoreTaskSessionForCurrentProject(reason = "workspace_tab_tasks") {
+  const cwd = getWorkspaceProjectCwd();
+  if (!cwd) {
+    return false;
+  }
+
+  const projectKey = getProjectKeyFromCwd(cwd);
+  const preferredThreadId = taskThreadIdByProjectKey.get(projectKey) || "";
+  let targetThreadId = preferredThreadId;
+  if (!targetThreadId) {
+    const candidate = sessionCatalog.find((entry) =>
+      entry
+      && normalizeProjectCwd(entry.cwd || "") === cwd);
+    targetThreadId = normalizeThreadId(candidate?.threadId || "");
+  }
+
+  if (!targetThreadId) {
+    return false;
+  }
+
+  const attachedSessionId = findAttachedSessionIdByThreadId(targetThreadId);
+  if (attachedSessionId && sessions.has(attachedSessionId)) {
+    setActiveSession(attachedSessionId, { persistSelection: true, reason });
+    return true;
+  }
+
+  return selectThreadById(targetThreadId, cwd, {
+    displayName: targetThreadId,
+    persistSelection: true,
+    reason
+  });
+}
+
+function formatSessionSubtitle(entry) {
+  const parts = [];
+  if (entry.updatedAtUtc) {
+    const tick = Date.parse(entry.updatedAtUtc);
+    if (Number.isFinite(tick)) {
+      parts.push(new Date(tick).toLocaleString());
+    }
+  }
+
+  if (entry.model) {
+    const effort = normalizeReasoningEffort(entry.reasoningEffort || "");
+    parts.push(effort ? `${entry.model} (${effort})` : entry.model);
+  } else if (entry.reasoningEffort) {
+    parts.push(`reasoning: ${entry.reasoningEffort}`);
+  }
+
+  return parts.join(" | ");
+}
+
+function buildCollaborationModePayload(planModeEnabled) {
+  if (planModeEnabled === true) {
+    return { mode: "plan" };
+  }
+
+  return null;
+}
+
+async function createSessionForCwd(cwd, options = {}) {
+  const normalizedCwd = normalizeProjectCwd(cwd || "");
+  const hasProvidedName = Object.prototype.hasOwnProperty.call(options, "threadName");
+  const shouldPromptName = options.askName === true && !hasProvidedName;
+  const rawName = hasProvidedName
+    ? String(options.threadName || "")
+    : (shouldPromptName ? window.prompt("Session name (optional):", "") : "");
+  if (rawName === null) {
+    return;
+  }
+
+  const threadName = String(rawName || "").trim();
+
+  try {
+    await ensureSocket();
+  } catch (error) {
+    appendLog(`[ws] connect failed: ${error}`);
+    return;
+  }
+
+  const payload = {};
+  if (normalizedCwd) {
+    payload.cwd = normalizedCwd;
+  }
+
+  const model = normalizeModelValue(options.model ?? modelValueForCreate() ?? "");
+  if (model) {
+    payload.model = model;
+  }
+  const effort = normalizeReasoningEffort(options.effort ?? selectedReasoningValue() ?? "");
+  if (effort) {
+    payload.effort = effort;
+  }
+  const approvalPolicy = normalizeApprovalPolicy(options.approvalPolicy ?? selectedApprovalValue() ?? "");
+  if (approvalPolicy) {
+    payload.approvalPolicy = approvalPolicy;
+  }
+  const sandboxMode = normalizeSandboxMode(options.sandbox ?? options.sandboxMode ?? selectedSandboxValue() ?? "");
+  if (sandboxMode) {
+    payload.sandbox = sandboxMode;
+  }
+
+  const requestId = createRequestId();
+  payload.requestId = requestId;
+  if (threadName || normalizedCwd) {
+    pendingCreateRequests.set(requestId, { threadName, cwd: normalizedCwd });
+  }
+
+  if (normalizedCwd) {
+    cwdInput.value = normalizedCwd;
+    localStorage.setItem(STORAGE_CWD_KEY, normalizedCwd);
+  }
+
+  send("session_create", payload);
+  send("session_catalog_list");
+}
+
+async function attachSessionByThreadId(threadId, cwd, options = {}) {
+  if (!threadId) {
+    return false;
+  }
+
+  if (options.persistSelection === true) {
+    storeLastThreadId(threadId);
+  }
+
+  try {
+    await ensureSocket();
+  } catch (error) {
+    appendLog(`[ws] connect failed: ${error}`);
+    return false;
+  }
+
+  const payload = { threadId };
+  const preferred = getPreferredModelForThread(threadId);
+  const preferredPermission = getPreferredPermissionForThread(threadId);
+  const model = preferred.found
+    ? preferred.model
+    : normalizeModelValue(getCatalogEntryByThreadId(threadId)?.model || modelValueForCreate() || "");
+  if (model) {
+    payload.model = model;
+  }
+  if (preferredPermission.found) {
+    if (preferredPermission.approval) {
+      payload.approvalPolicy = preferredPermission.approval;
+    }
+    if (preferredPermission.sandbox) {
+      payload.sandbox = preferredPermission.sandbox;
+    }
+  }
+
+  const normalizedCwd = normalizeProjectCwd(cwd || cwdInput.value.trim());
+  if (normalizedCwd) {
+    payload.cwd = normalizedCwd;
+    cwdInput.value = normalizedCwd;
+    localStorage.setItem(STORAGE_CWD_KEY, normalizedCwd);
+  }
+
+  return send("session_attach", payload);
+}
+
+async function renameSessionFromSidebar(entry) {
+  if (!entry || !entry.threadId) {
+    return;
+  }
+
+  const currentName = entry.threadName || "";
+  const nextNameRaw = window.prompt("Rename session:", currentName);
+  if (nextNameRaw === null) {
+    return;
+  }
+
+  const nextName = String(nextNameRaw || "").trim();
+  if (!nextName) {
+    appendLog("[rename] session name cannot be empty");
+    return;
+  }
+
+  if (nextName.length > 200) {
+    appendLog("[rename] name must be 200 characters or fewer");
+    return;
+  }
+
+  try {
+    await ensureSocket();
+  } catch (error) {
+    appendLog(`[ws] connect failed: ${error}`);
+    return;
+  }
+
+  if (entry.attachedSessionId && sessions.has(entry.attachedSessionId)) {
+    send("session_rename", { sessionId: entry.attachedSessionId, threadName: nextName });
+    send("session_catalog_list");
+    return;
+  }
+
+  pendingRenameOnAttach.set(entry.threadId, nextName);
+  await attachSessionByThreadId(entry.threadId, entry.cwd);
+}
+
+function toggleSessionArchived(threadId) {
+  if (!threadId) {
+    return;
+  }
+
+  if (archivedThreadIds.has(threadId)) {
+    archivedThreadIds.delete(threadId);
+  } else {
+    archivedThreadIds.add(threadId);
+  }
+
+  persistArchivedThreads();
+  renderProjectSidebar();
+}
+
+function promoteProjectToTop(projectKey) {
+  const normalizedProjectKey = typeof projectKey === "string" ? projectKey.trim().toLowerCase() : "";
+  if (!normalizedProjectKey) {
+    return;
+  }
+
+  const orderedKeys = [];
+  if (projectOrderInitialized) {
+    const ranked = Array.from(projectOrderIndexByKey.entries())
+      .sort((a, b) => (a[1] || 0) - (b[1] || 0))
+      .map((entry) => entry[0]);
+    for (const key of ranked) {
+      if (key && key !== normalizedProjectKey) {
+        orderedKeys.push(key);
+      }
+    }
+  }
+
+  projectOrderIndexByKey = new Map();
+  projectOrderIndexByKey.set(normalizedProjectKey, 0);
+  nextProjectOrderIndex = 1;
+  for (const key of orderedKeys) {
+    if (!projectOrderIndexByKey.has(key)) {
+      projectOrderIndexByKey.set(key, nextProjectOrderIndex++);
+    }
+  }
+
+  projectOrderInitialized = true;
+}
+
+function syncNewSessionModelOptions(seedModel = null) {
+  if (!newSessionModelSelect || !modelSelect) {
+    return;
+  }
+
+  const hasExplicitSeed = seedModel !== null && seedModel !== undefined;
+  const desired = hasExplicitSeed
+    ? normalizeModelValue(seedModel)
+    : normalizeModelValue(newSessionModelSelect.value || modelValueForCreate() || "");
+  newSessionModelSelect.textContent = "";
+  const sourceOptions = Array.from(modelSelect.options);
+  for (const option of sourceOptions) {
+    const next = document.createElement("option");
+    next.value = option.value;
+    next.textContent = option.textContent || option.value;
+    newSessionModelSelect.appendChild(next);
+  }
+
+  if (newSessionModelSelect.options.length === 0) {
+    const optDefault = document.createElement("option");
+    optDefault.value = "";
+    optDefault.textContent = configuredDefaultModel ? `(default: ${configuredDefaultModel})` : "(default)";
+    newSessionModelSelect.appendChild(optDefault);
+
+    const optCustom = document.createElement("option");
+    optCustom.value = "__custom__";
+    optCustom.textContent = "Custom...";
+    newSessionModelSelect.appendChild(optCustom);
+  }
+
+  const hasDesired = desired && Array.from(newSessionModelSelect.options).some((option) => option.value === desired);
+  if (hasDesired) {
+    newSessionModelSelect.value = desired;
+    if (newSessionModelCustomInput) {
+      newSessionModelCustomInput.classList.add("hidden");
+    }
+    updateNewSessionModelDefaultHint();
+    return;
+  }
+
+  if (desired) {
+    newSessionModelSelect.value = "__custom__";
+    if (newSessionModelCustomInput) {
+      newSessionModelCustomInput.classList.remove("hidden");
+      newSessionModelCustomInput.value = desired;
+    }
+    updateNewSessionModelDefaultHint();
+    return;
+  }
+
+  newSessionModelSelect.value = "";
+  if (newSessionModelCustomInput) {
+    newSessionModelCustomInput.classList.add("hidden");
+    newSessionModelCustomInput.value = "";
+  }
+
+  updateNewSessionModelDefaultHint();
+}
+
+function updateNewSessionModelDefaultHint() {
+  if (!newSessionModelDefaultHint) {
+    return;
+  }
+
+  if (!configuredDefaultModel) {
+    newSessionModelDefaultHint.classList.add("hidden");
+    newSessionModelDefaultHint.textContent = "";
+    return;
+  }
+
+  newSessionModelDefaultHint.classList.remove("hidden");
+  newSessionModelDefaultHint.textContent = `Default model: ${configuredDefaultModel}`;
+}
+
+function getReasoningHelpText(value) {
+  const normalized = normalizeReasoningEffort(value);
+  return REASONING_EFFORT_HELP[normalized] || REASONING_EFFORT_HELP[""];
+}
+
+function updateNewSessionReasoningHelp() {
+  if (!newSessionReasoningHelp || !newSessionReasoningSelect) {
+    return;
+  }
+
+  newSessionReasoningHelp.textContent = getReasoningHelpText(newSessionReasoningSelect.value || "");
+}
+
+function getApprovalHelpText(value) {
+  const normalized = normalizeApprovalPolicy(value);
+  return APPROVAL_POLICY_HELP[normalized] || APPROVAL_POLICY_HELP[""];
+}
+
+function updateNewSessionApprovalHelp() {
+  if (!newSessionApprovalHelp || !newSessionApprovalSelect) {
+    return;
+  }
+
+  newSessionApprovalHelp.textContent = getApprovalHelpText(newSessionApprovalSelect.value || "");
+}
+
+function getPermissionRiskClass(approval, sandbox) {
+  const normalizedApproval = normalizeApprovalPolicy(approval);
+  const normalizedSandbox = normalizeSandboxMode(sandbox);
+
+  if (normalizedSandbox === "danger-full-access" || normalizedApproval === "never") {
+    return "risk-danger";
+  }
+
+  if (normalizedSandbox === "workspace-write" || normalizedApproval === "on-request" || normalizedApproval === "on-failure") {
+    return "risk-caution";
+  }
+
+  if (normalizedSandbox === "read-only" || normalizedApproval === "untrusted") {
+    return "risk-safe";
+  }
+
+  return "risk-neutral";
+}
+
+function getPermissionRiskSummary(approval, sandbox) {
+  const normalizedApproval = normalizeApprovalPolicy(approval);
+  const normalizedSandbox = normalizeSandboxMode(sandbox);
+  const approvalLabel = normalizedApproval || "inherit";
+  const sandboxLabel = normalizedSandbox || "inherit";
+  const approvalMeaning = getApprovalHelpText(normalizedApproval);
+
+  if (normalizedSandbox === "danger-full-access" || normalizedApproval === "never") {
+    return `High risk: approval=${approvalLabel}, sandbox=${sandboxLabel}. Commands can run with little or no containment. ${approvalMeaning}`;
+  }
+
+  if (normalizedSandbox === "workspace-write" || normalizedApproval === "on-request" || normalizedApproval === "on-failure") {
+    return `Moderate risk: approval=${approvalLabel}, sandbox=${sandboxLabel}. Suitable for active coding with guardrails. ${approvalMeaning}`;
+  }
+
+  if (normalizedSandbox === "read-only" || normalizedApproval === "untrusted") {
+    return `Low risk: approval=${approvalLabel}, sandbox=${sandboxLabel}. Best for safe inspection and planning. ${approvalMeaning}`;
+  }
+
+  return `Risk unknown: inheriting approval and sandbox from session defaults. ${approvalMeaning}`;
+}
+
+function updateNewSessionPermissionVisuals() {
+  if (!newSessionApprovalSelect || !newSessionSandboxSelect || !newSessionPermissionRisk) {
+    return;
+  }
+
+  const approval = normalizeApprovalPolicy(newSessionApprovalSelect.value || "");
+  const sandbox = normalizeSandboxMode(newSessionSandboxSelect.value || "");
+  const riskClass = getPermissionRiskClass(approval, sandbox);
+
+  const riskClasses = ["risk-neutral", "risk-safe", "risk-caution", "risk-danger"];
+  for (const className of riskClasses) {
+    newSessionPermissionRisk.classList.remove(className);
+    newSessionApprovalSelect.classList.remove(className);
+    newSessionSandboxSelect.classList.remove(className);
+  }
+
+  newSessionPermissionRisk.classList.add(riskClass);
+  newSessionApprovalSelect.classList.add(riskClass);
+  newSessionSandboxSelect.classList.add(riskClass);
+  newSessionPermissionRisk.textContent = getPermissionRiskSummary(approval, sandbox);
+}
+
+function openNewSessionModal(cwd, options = {}) {
+  if (!newSessionModal || !newSessionCwdInput || !newSessionNameInput || !newSessionReasoningSelect || !newSessionApprovalSelect || !newSessionSandboxSelect) {
+    return;
+  }
+
+  const selectedGroup = buildSidebarProjectGroups().find((x) => x.key === selectedProjectKey) || null;
+  const seedCwd = normalizeProjectCwd(cwd || options.cwd || selectedGroup?.cwd || cwdInput.value.trim());
+  newSessionCwdInput.value = seedCwd;
+  newSessionNameInput.value = String(options.threadName || "");
+  const hasModelOverride = Object.prototype.hasOwnProperty.call(options, "model");
+  syncNewSessionModelOptions(hasModelOverride ? options.model : "");
+  requestModelsListForActiveSession({ force: true });
+
+  const seedEffort = normalizeReasoningEffort(options.effort ?? selectedReasoningValue() ?? "");
+  newSessionReasoningSelect.value = Array.from(newSessionReasoningSelect.options).some((option) => option.value === seedEffort)
+    ? seedEffort
+    : "";
+
+  const seedApproval = normalizeApprovalPolicy(options.approvalPolicy ?? selectedApprovalValue() ?? "");
+  newSessionApprovalSelect.value = Array.from(newSessionApprovalSelect.options).some((option) => option.value === seedApproval)
+    ? seedApproval
+    : "";
+
+  const seedSandbox = normalizeSandboxMode(options.sandbox ?? options.sandboxMode ?? selectedSandboxValue() ?? "");
+  newSessionSandboxSelect.value = Array.from(newSessionSandboxSelect.options).some((option) => option.value === seedSandbox)
+    ? seedSandbox
+    : "";
+
+  updateNewSessionReasoningHelp();
+  updateNewSessionApprovalHelp();
+  updateNewSessionPermissionVisuals();
+  updateNewSessionModelDefaultHint();
+  newSessionModal.classList.remove("hidden");
+  newSessionNameInput.focus();
+  newSessionNameInput.select();
+}
+
+function closeNewSessionModal() {
+  if (!newSessionModal) {
+    return;
+  }
+
+  newSessionModal.classList.add("hidden");
+}
+
+function newSessionModelValue() {
+  if (!newSessionModelSelect) {
+    return "";
+  }
+
+  const selection = newSessionModelSelect.value || "";
+  if (selection === "__custom__") {
+    const custom = newSessionModelCustomInput ? String(newSessionModelCustomInput.value || "").trim() : "";
+    return custom || "";
+  }
+
+  return normalizeModelValue(selection);
+}
+
+async function submitNewSessionModal() {
+  if (!newSessionNameInput || !newSessionCwdInput || !newSessionReasoningSelect || !newSessionApprovalSelect || !newSessionSandboxSelect) {
+    return;
+  }
+
+  const threadName = String(newSessionNameInput.value || "").trim();
+  if (threadName.length > 200) {
+    appendLog("[session] name must be 200 characters or fewer");
+    newSessionNameInput.focus();
+    return;
+  }
+
+  const cwd = normalizeProjectCwd(newSessionCwdInput.value || "");
+  if (!cwd) {
+    appendLog("[session] working directory is required");
+    newSessionCwdInput.focus();
+    return;
+  }
+
+  const model = newSessionModelValue();
+  if (newSessionModelSelect && newSessionModelSelect.value === "__custom__" && !model) {
+    appendLog("[session] custom model cannot be empty");
+    if (newSessionModelCustomInput) {
+      newSessionModelCustomInput.focus();
+    }
+    return;
+  }
+
+  const effort = normalizeReasoningEffort(newSessionReasoningSelect.value || "");
+  const approvalPolicy = normalizeApprovalPolicy(newSessionApprovalSelect.value || "");
+  const sandboxMode = normalizeSandboxMode(newSessionSandboxSelect.value || "");
+
+  closeNewSessionModal();
+  await createSessionForCwd(cwd, {
+    askName: false,
+    threadName,
+    model,
+    effort,
+    approvalPolicy,
+    sandbox: sandboxMode
+  });
+}
+
+function openNewProjectModal() {
+  if (!newProjectModal || !newProjectCwdInput || !newProjectFirstSessionInput) {
+    return;
+  }
+
+  const selectedGroup = buildSidebarProjectGroups().find((x) => x.key === selectedProjectKey) || null;
+  const seedCwd = normalizeProjectCwd(selectedGroup?.cwd || cwdInput.value.trim());
+  newProjectCwdInput.value = seedCwd;
+  newProjectFirstSessionInput.value = "";
+  newProjectModal.classList.remove("hidden");
+  newProjectCwdInput.focus();
+  newProjectCwdInput.select();
+}
+
+function closeNewProjectModal() {
+  if (!newProjectModal) {
+    return;
+  }
+
+  newProjectModal.classList.add("hidden");
+}
+
+async function submitNewProjectModal() {
+  if (!newProjectCwdInput || !newProjectFirstSessionInput) {
+    return;
+  }
+
+  const cwd = normalizeProjectCwd(newProjectCwdInput.value || "");
+  if (!cwd) {
+    appendLog("[project] working directory is required");
+    newProjectCwdInput.focus();
+    return;
+  }
+
+  const firstSessionName = String(newProjectFirstSessionInput.value || "").trim();
+  if (firstSessionName.length > 200) {
+    appendLog("[project] first session name must be 200 characters or fewer");
+    newProjectFirstSessionInput.focus();
+    return;
+  }
+
+  const key = getProjectKeyFromCwd(cwd);
+  if (!customProjects.some((x) => x && x.key === key)) {
+    customProjects.push({ key, cwd, name: "" });
+    persistCustomProjects();
+  }
+
+  promoteProjectToTop(key);
+  selectProject(key, cwd);
+  closeNewProjectModal();
+
+  await createSessionForCwd(cwd, { askName: false, threadName: firstSessionName });
+}
+
+function promptCreateProject() {
+  openNewProjectModal();
+}
+
+function renameProject(project) {
+  if (!project) {
+    return;
+  }
+
+  const key = project.key;
+  const currentName = projectNameByKey.get(key) || getProjectDisplayName(project);
+  const nameRaw = window.prompt("Rename project:", currentName || "");
+  if (nameRaw === null) {
+    return;
+  }
+
+  const name = String(nameRaw || "").trim();
+  if (name) {
+    projectNameByKey.set(key, name);
+  } else {
+    projectNameByKey.delete(key);
+  }
+
+  persistProjectNameMap();
+  renderProjectSidebar();
+}
+
+function toggleProjectCollapsed(projectKey) {
+  if (!projectKey) {
+    return;
+  }
+
+  if (collapsedProjectKeys.has(projectKey)) {
+    collapsedProjectKeys.delete(projectKey);
+  } else {
+    collapsedProjectKeys.add(projectKey);
+  }
+
+  persistCollapsedProjectKeys();
+  renderProjectSidebar();
+}
+
+function normalizeSidebarSearchQuery(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function matchesSidebarSearch(text, query) {
+  if (!query) {
+    return true;
+  }
+
+  return normalizeSidebarSearchQuery(text).includes(query);
+}
+
+function applyProjectSearchUi(options = {}) {
+  const focus = options.focus === true;
+  const visible = sidebarProjectSearchExpanded || sidebarProjectSearchQuery.length > 0;
+  if (sidebarSearchRow) {
+    sidebarSearchRow.classList.toggle("hidden", !visible);
+  }
+
+  if (projectSearchToggleBtn) {
+    projectSearchToggleBtn.classList.toggle("active", visible);
+    projectSearchToggleBtn.setAttribute("aria-expanded", visible ? "true" : "false");
+    projectSearchToggleBtn.title = visible ? "Close search" : "Search projects and sessions";
+    projectSearchToggleBtn.setAttribute("aria-label", projectSearchToggleBtn.title);
+    const icon = projectSearchToggleBtn.querySelector("i");
+    if (icon) {
+      icon.className = visible ? "bi bi-x-lg" : "bi bi-search";
+    }
+  }
+
+  if (visible && focus && projectSearchInput) {
+    projectSearchInput.focus();
+    projectSearchInput.select();
+  }
+}
+
+function renderProjectSidebarNow() {
+  if (!projectList) {
+    return;
+  }
+
+  const groups = buildSidebarProjectGroups();
+  if (!selectedProjectKey && groups.length > 0) {
+    selectedProjectKey = groups[0].key;
+  } else if (selectedProjectKey && !groups.some((x) => x.key === selectedProjectKey)) {
+    selectedProjectKey = groups.length > 0 ? groups[0].key : null;
+  }
+  if (projectSearchInput && projectSearchInput.value !== sidebarProjectSearchQuery) {
+    projectSearchInput.value = sidebarProjectSearchQuery;
+  }
+  if (sidebarProjectSearchQuery.length > 0) {
+    sidebarProjectSearchExpanded = true;
+  }
+  applyProjectSearchUi();
+  const searchQuery = normalizeSidebarSearchQuery(sidebarProjectSearchQuery);
+  const searchEnabled = searchQuery.length > 0;
+
+  projectList.textContent = "";
+  if (groups.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "sidebar-empty";
+    empty.textContent = "No sessions yet. Create a project or start a session.";
+    projectList.appendChild(empty);
+    return;
+  }
+
+  for (const group of groups) {
+    const visibleSessions = group.sessions.filter((x) => !x.isArchived || x.attachedSessionId === activeSessionId);
+    const projectLabelForSearch = `${getProjectDisplayName(group)}\n${group.cwd || ""}`;
+    const projectMatchesSearch = matchesSidebarSearch(projectLabelForSearch, searchQuery);
+    const matchingSessions = searchEnabled
+      ? visibleSessions.filter((entry) => {
+        const sessionLabel = `${entry.threadName || ""}\n${entry.threadId || ""}\n${entry.cwd || ""}\n${formatSessionSubtitle(entry)}`;
+        return matchesSidebarSearch(sessionLabel, searchQuery);
+      })
+      : visibleSessions;
+    const sessionsForGroup = searchEnabled ? matchingSessions : visibleSessions;
+    if (searchEnabled && !projectMatchesSearch && sessionsForGroup.length === 0) {
+      continue;
+    }
+
+    const hasSessionOverflow = sessionsForGroup.length > MAX_PROJECT_SESSIONS_COLLAPSED;
+    const projectSessionsExpanded = expandedProjectKeys.has(group.key);
+    const sessionsToRender = hasSessionOverflow && !projectSessionsExpanded
+      ? sessionsForGroup.slice(0, MAX_PROJECT_SESSIONS_COLLAPSED)
+      : sessionsForGroup;
+    if (sessionsForGroup.length === 0 && !group.isCustom && !projectMatchesSearch) {
+      continue;
+    }
+
+    const groupEl = document.createElement("div");
+    groupEl.className = "project-group";
+    if (selectedProjectKey === group.key) {
+      groupEl.classList.add("selected");
+    }
+    if (collapsedProjectKeys.has(group.key)) {
+      groupEl.classList.add("collapsed");
+    }
+
+    const header = document.createElement("div");
+    header.className = "project-header";
+
+    const projectCollapsed = collapsedProjectKeys.has(group.key);
+    const toggleBtn = document.createElement("button");
+    toggleBtn.type = "button";
+    toggleBtn.className = "project-toggle";
+    toggleBtn.appendChild(buildActionIcon(projectCollapsed ? "chevronRight" : "chevronDown"));
+    toggleBtn.title = projectCollapsed ? "Expand project" : "Collapse project";
+    toggleBtn.setAttribute("aria-label", projectCollapsed ? "Expand project" : "Collapse project");
+    toggleBtn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      toggleProjectCollapsed(group.key);
+    });
+    header.appendChild(toggleBtn);
+
+    const nameWrap = document.createElement("div");
+    nameWrap.className = "project-name-wrap";
+    nameWrap.addEventListener("click", () => {
+      selectProject(group.key, group.cwd);
+    });
+
+    const name = document.createElement("div");
+    name.className = "project-name";
+    const projectNameLabel = `${getProjectDisplayName(group)} (${sessionsForGroup.length})`;
+    name.textContent = projectNameLabel;
+    name.title = projectNameLabel;
+    nameWrap.appendChild(name);
+
+    const path = document.createElement("div");
+    path.className = "project-path";
+    const projectPathLabel = group.cwd || "(unknown cwd)";
+    path.textContent = projectPathLabel;
+    path.title = projectPathLabel;
+    nameWrap.appendChild(path);
+    header.appendChild(nameWrap);
+
+    const headerActions = document.createElement("div");
+    headerActions.className = "project-actions";
+
+    const newSessionAction = document.createElement("button");
+    newSessionAction.type = "button";
+    newSessionAction.className = "icon-btn";
+    newSessionAction.title = "New session in this project";
+    newSessionAction.setAttribute("aria-label", "New session in this project");
+    newSessionAction.appendChild(buildActionIcon("plus"));
+    newSessionAction.addEventListener("click", (event) => {
+      event.stopPropagation();
+      openNewSessionModal(group.cwd || cwdInput.value.trim());
+    });
+    headerActions.appendChild(newSessionAction);
+
+    const renameProjectAction = document.createElement("button");
+    renameProjectAction.type = "button";
+    renameProjectAction.className = "icon-btn";
+    renameProjectAction.title = "Rename project";
+    renameProjectAction.setAttribute("aria-label", "Rename project");
+    renameProjectAction.appendChild(buildActionIcon("pencil"));
+    renameProjectAction.addEventListener("click", (event) => {
+      event.stopPropagation();
+      renameProject(group);
+    });
+    headerActions.appendChild(renameProjectAction);
+    header.appendChild(headerActions);
+
+    groupEl.appendChild(header);
+
+    const sessionsWrap = document.createElement("div");
+    sessionsWrap.className = "project-sessions";
+    for (const entry of sessionsToRender) {
+      const row = document.createElement("div");
+      row.className = "session-row";
+      const isPendingLoad = isPendingSessionLoadForThread(entry.threadId);
+      const showOnlyPendingAsActive = !!getPendingSessionLoadThreadId();
+      if (!showOnlyPendingAsActive && entry.attachedSessionId && entry.attachedSessionId === activeSessionId) {
+        row.classList.add("active");
+      }
+      if (isPendingLoad) {
+        row.classList.add("active", "loading");
+      }
+
+      const head = document.createElement("div");
+      head.className = "session-row-head";
+
+      const openBtn = document.createElement("button");
+      openBtn.type = "button";
+      openBtn.className = "session-open-btn";
+      openBtn.title = entry.threadId;
+      openBtn.addEventListener("click", async () => {
+        selectProject(group.key, group.cwd);
+        await selectThreadById(entry.threadId, entry.cwd || group.cwd, {
+          displayName: entry.threadName || entry.threadId,
+          persistSelection: true,
+          reason: "sidebar_session_click_already_attached"
+        });
+      });
+
+      const title = document.createElement("div");
+      title.className = "session-title";
+      const sessionTitleLabel = entry.threadName || entry.threadId;
+      title.textContent = sessionTitleLabel;
+      title.title = sessionTitleLabel;
+      openBtn.appendChild(title);
+
+      const subtitle = document.createElement("div");
+      subtitle.className = "session-subtitle";
+      const sessionSubtitleLabel = formatSessionSubtitle(entry);
+      subtitle.textContent = sessionSubtitleLabel;
+      subtitle.title = sessionSubtitleLabel;
+      openBtn.appendChild(subtitle);
+      head.appendChild(openBtn);
+
+      const badges = document.createElement("div");
+      badges.className = "session-badges";
+      if (entry.isProcessing) {
+        const processing = document.createElement("span");
+        processing.className = "session-badge processing";
+        processing.title = "Processing";
+        processing.setAttribute("aria-label", "Processing");
+        const spinner = document.createElement("i");
+        spinner.className = "bi bi-arrow-repeat session-processing-icon";
+        spinner.setAttribute("aria-hidden", "true");
+        processing.appendChild(spinner);
+        badges.appendChild(processing);
+      }
+      if (isPendingLoad) {
+        const loading = document.createElement("span");
+        loading.className = "session-badge processing";
+        loading.title = "Loading session";
+        loading.setAttribute("aria-label", "Loading session");
+        const spinner = document.createElement("i");
+        spinner.className = "bi bi-arrow-repeat session-processing-icon";
+        spinner.setAttribute("aria-hidden", "true");
+        loading.appendChild(spinner);
+        badges.appendChild(loading);
+      }
+      if (entry.hasPendingApproval) {
+        const awaitingApproval = document.createElement("span");
+        awaitingApproval.className = "session-badge awaiting-approval";
+        awaitingApproval.textContent = "Approval";
+        awaitingApproval.title = "Awaiting approval";
+        awaitingApproval.setAttribute("aria-label", "Awaiting approval");
+        badges.appendChild(awaitingApproval);
+      }
+      if (entry.hasPendingRecoveryOffer && entry.attachedSessionId) {
+        const recovery = document.createElement("button");
+        recovery.type = "button";
+        recovery.className = "session-badge recovery-offer";
+        recovery.textContent = "Recover";
+        recovery.title = "Codex appears stalled. Open recovery prompt.";
+        recovery.setAttribute("aria-label", "Session recovery available");
+        recovery.addEventListener("click", (event) => {
+          event.stopPropagation();
+          if (!entry.attachedSessionId || !sessions.has(entry.attachedSessionId)) {
+            return;
+          }
+
+          setActiveSession(entry.attachedSessionId, { persistSelection: true, reason: "sidebar_recovery_offer" });
+          syncSessionRecoveryModal();
+        });
+        badges.appendChild(recovery);
+      }
+      if (entry.hasPendingTurnRetryOffer && entry.attachedSessionId) {
+        const retry = document.createElement("button");
+        retry.type = "button";
+        retry.className = "session-badge recovery-offer";
+        retry.textContent = "Retry";
+        retry.title = "A dropped prompt can be resent. Open retry prompt.";
+        retry.setAttribute("aria-label", "Turn retry available");
+        retry.addEventListener("click", (event) => {
+          event.stopPropagation();
+          if (!entry.attachedSessionId || !sessions.has(entry.attachedSessionId)) {
+            return;
+          }
+
+          setActiveSession(entry.attachedSessionId, { persistSelection: true, reason: "sidebar_turn_retry_offer" });
+          syncSessionRecoveryModal();
+        });
+        badges.appendChild(retry);
+      }
+      if (!entry.isProcessing && entry.hasUnreadCompletion) {
+        const completed = document.createElement("span");
+        completed.className = "session-badge completed-unread";
+        completed.title = "New completed output";
+        completed.setAttribute("aria-label", "New completed output");
+        badges.appendChild(completed);
+      }
+      head.appendChild(badges);
+
+      const actions = document.createElement("div");
+      actions.className = "project-actions";
+
+      const renameSessionAction = document.createElement("button");
+      renameSessionAction.type = "button";
+      renameSessionAction.className = "icon-btn";
+      renameSessionAction.title = "Rename session";
+      renameSessionAction.setAttribute("aria-label", "Rename session");
+      renameSessionAction.appendChild(buildActionIcon("pencil"));
+      renameSessionAction.addEventListener("click", (event) => {
+        event.stopPropagation();
+        renameSessionFromSidebar(entry);
+      });
+      actions.appendChild(renameSessionAction);
+
+      const archiveAction = document.createElement("button");
+      archiveAction.type = "button";
+      archiveAction.className = "icon-btn";
+      archiveAction.title = entry.isArchived ? "Unarchive session" : "Archive session";
+      archiveAction.setAttribute("aria-label", archiveAction.title);
+      archiveAction.appendChild(buildActionIcon(entry.isArchived ? "restore" : "archive"));
+      archiveAction.addEventListener("click", (event) => {
+        event.stopPropagation();
+        toggleSessionArchived(entry.threadId);
+      });
+      actions.appendChild(archiveAction);
+      head.appendChild(actions);
+
+      row.appendChild(head);
+      sessionsWrap.appendChild(row);
+    }
+
+    if (sessionsForGroup.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "sidebar-empty";
+      empty.textContent = searchEnabled ? "No matching sessions in this project." : "No sessions in this project.";
+      sessionsWrap.appendChild(empty);
+    } else if (hasSessionOverflow) {
+      const toggleMoreBtn = document.createElement("button");
+      toggleMoreBtn.type = "button";
+      toggleMoreBtn.className = "more-sessions-btn";
+      if (projectSessionsExpanded) {
+        toggleMoreBtn.textContent = "Show less";
+      } else {
+        const remainingCount = sessionsForGroup.length - sessionsToRender.length;
+        toggleMoreBtn.textContent = `Read more (${remainingCount})`;
+      }
+
+      toggleMoreBtn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        if (expandedProjectKeys.has(group.key)) {
+          expandedProjectKeys.delete(group.key);
+        } else {
+          expandedProjectKeys.add(group.key);
+        }
+
+        renderProjectSidebar();
+      });
+      sessionsWrap.appendChild(toggleMoreBtn);
+    }
+
+    groupEl.appendChild(sessionsWrap);
+    projectList.appendChild(groupEl);
+  }
+
+  if (!projectList.firstChild) {
+    const empty = document.createElement("div");
+    empty.className = "sidebar-empty";
+    empty.textContent = searchEnabled ? "No matching projects or sessions." : "No sessions to display.";
+    projectList.appendChild(empty);
+  }
+}
+
+function renderProjectSidebar() {
+  if (!isDocumentVisible()) {
+    projectSidebarRenderPendingWhileHidden = true;
+    return;
+  }
+
+  projectSidebarRenderPendingWhileHidden = false;
+  if (projectSidebarRenderQueued) {
+    return;
+  }
+
+  projectSidebarRenderQueued = true;
+  const run = () => {
+    if (!isDocumentVisible()) {
+      projectSidebarRenderQueued = false;
+      projectSidebarRenderPendingWhileHidden = true;
+      return;
+    }
+
+    projectSidebarRenderQueued = false;
+    renderProjectSidebarNow();
+  };
+
+  if (typeof window !== "undefined" && typeof window.requestAnimationFrame === "function") {
+    window.requestAnimationFrame(run);
+    return;
+  }
+
+  setTimeout(run, 0);
+}
+
+function updateWorkspaceTabUrl(tab) {
+  const next = new URL(window.location.href);
+  next.searchParams.delete("tab");
+  window.history.replaceState(null, "", next.toString());
+}
+
+function renderWorkspaceTabUi() {
+  const isReviews = false;
+  if (workspaceTabTasksBtn) {
+    workspaceTabTasksBtn.classList.toggle("active", !isReviews);
+    workspaceTabTasksBtn.setAttribute("aria-selected", !isReviews ? "true" : "false");
+  }
+  if (workspaceTabCodeReviewsBtn) {
+    workspaceTabCodeReviewsBtn.classList.toggle("active", isReviews);
+    workspaceTabCodeReviewsBtn.setAttribute("aria-selected", isReviews ? "true" : "false");
+  }
+  if (layoutRoot) {
+    layoutRoot.classList.toggle("workspace-code-reviews", isReviews);
+    layoutRoot.classList.toggle("workspace-tasks", !isReviews);
+  }
+  if (conversationTitle) {
+    conversationTitle.textContent = "Conversation";
+  }
+  const setMode = window.codexDiffSetWorkspaceMode;
+  if (typeof setMode === "function") {
+    setMode(isReviews ? WORKSPACE_TAB_CODE_REVIEWS : WORKSPACE_TAB_TASKS);
+  }
+}
+
+async function setWorkspaceTab(tab, options = {}) {
+  const nextTab = normalizeWorkspaceTab(tab);
+  const changed = currentWorkspaceTab !== nextTab;
+  if (changed) {
+    const active = getActiveSessionState();
+    rememberTaskThreadForSessionState(activeSessionId || "", active);
+  }
+
+  currentWorkspaceTab = nextTab;
+  try {
+    localStorage.setItem(STORAGE_WORKSPACE_TAB_KEY, currentWorkspaceTab);
+  } catch {
+  }
+  updateWorkspaceTabUrl(currentWorkspaceTab);
+  renderWorkspaceTabUi();
+  refreshSessionMeta();
+
+  if (currentWorkspaceTab !== WORKSPACE_TAB_CODE_REVIEWS
+    && options.skipTaskRestore !== true
+    && (changed || options.forceRestore === true)) {
+    await restoreTaskSessionForCurrentProject(options.reason || "workspace_tab_tasks");
+  }
+}
+
+function wsUrl() {
+  const scheme = window.location.protocol === "https:" ? "wss" : "ws";
+  const endpoint = new URL("ws", document.baseURI);
+  endpoint.protocol = scheme;
+  return endpoint.toString();
+}
+
+function setConnectionStatusBannerState(state, message, options = {}) {
+  if (!connectionStatusBanner || !connectionStatusText) {
+    return;
+  }
+
+  const normalizedState = typeof state === "string" ? state.trim().toLowerCase() : "";
+  const normalizedMessage = String(message || "").trim();
+  if (!normalizedMessage || normalizedState === "connected") {
+    connectionStatusText.textContent = "";
+    connectionStatusBanner.classList.add("hidden");
+    connectionStatusBanner.dataset.state = "connected";
+    if (connectionReconnectBtn) {
+      connectionReconnectBtn.classList.add("hidden");
+      connectionReconnectBtn.disabled = false;
+    }
+    return;
+  }
+
+  connectionStatusBanner.dataset.state = normalizedState || "disconnected";
+  connectionStatusText.textContent = normalizedMessage;
+  connectionStatusBanner.classList.remove("hidden");
+  if (connectionReconnectBtn) {
+    const showReconnect = options.showReconnect === true;
+    connectionReconnectBtn.classList.toggle("hidden", !showReconnect);
+    connectionReconnectBtn.disabled = wsReconnectInFlight;
+  }
+}
+
+function hideAppServerErrorBanner(options = {}) {
+  if (!appServerErrorBanner || !appServerErrorText) {
+    return;
+  }
+
+  const force = options.force === true;
+  if (appServerErrorBannerSticky && !force) {
+    return;
+  }
+
+  appServerErrorBannerSticky = false;
+  if (appServerErrorBannerTimer) {
+    clearTimeout(appServerErrorBannerTimer);
+    appServerErrorBannerTimer = null;
+  }
+  appServerErrorText.textContent = "";
+  appServerErrorBanner.title = "";
+  appServerErrorBanner.classList.add("hidden");
+}
+
+function showAppServerErrorBanner(message, options = {}) {
+  if (!appServerErrorBanner || !appServerErrorText) {
+    return;
+  }
+
+  const normalizedMessage = String(message || "").trim();
+  if (!normalizedMessage) {
+    hideAppServerErrorBanner({ force: true });
+    return;
+  }
+
+  if (appServerErrorBannerTimer) {
+    clearTimeout(appServerErrorBannerTimer);
+    appServerErrorBannerTimer = null;
+  }
+
+  const detail = typeof options.detail === "string" ? options.detail.trim() : "";
+  const recommendedAction = typeof options.recommendedAction === "string" ? options.recommendedAction.trim() : "";
+  appServerErrorBannerSticky = options.sticky === true;
+  appServerErrorText.textContent = normalizedMessage;
+  const titleParts = [];
+  if (detail) {
+    titleParts.push(detail);
+  }
+  if (recommendedAction) {
+    titleParts.push(`Action: ${recommendedAction}`);
+  }
+  appServerErrorBanner.title = titleParts.join(" | ");
+  appServerErrorBanner.classList.remove("hidden");
+
+  if (!appServerErrorBannerSticky) {
+    appServerErrorBannerTimer = setTimeout(() => {
+      hideAppServerErrorBanner({ force: true });
+    }, APP_SERVER_ERROR_BANNER_MS);
+  }
+}
+
+function clearWsReconnectTimer() {
+  if (!wsReconnectTimer) {
+    return;
+  }
+
+  clearTimeout(wsReconnectTimer);
+  wsReconnectTimer = null;
+}
+
+function scheduleWsReconnect(source = "unknown") {
+  if (wsReconnectTimer || wsReconnectInFlight) {
+    return;
+  }
+
+  const delayMs = Math.min(
+    WS_RECONNECT_MAX_DELAY_MS,
+    WS_RECONNECT_BASE_DELAY_MS * Math.pow(2, Math.min(wsReconnectAttempt, 4)));
+  const delaySeconds = Math.max(1, Math.round(delayMs / 1000));
+  uiAuditLog("ws.reconnect_scheduled", { source, delaySeconds, attempt: wsReconnectAttempt + 1 });
+  setConnectionStatusBannerState(
+    "disconnected",
+    `Disconnected from websocket bridge. Reconnecting in ${delaySeconds}s...`,
+    { showReconnect: true });
+
+  wsReconnectTimer = setTimeout(async () => {
+    wsReconnectTimer = null;
+    wsReconnectInFlight = true;
+    wsReconnectAttempt += 1;
+    let shouldRetry = false;
+    setConnectionStatusBannerState(
+      "reconnecting",
+      "Reconnecting to websocket bridge...",
+      { showReconnect: true });
+
+    try {
+      await ensureSocket();
+    } catch (error) {
+      uiAuditLog("ws.reconnect_failed", { source, attempt: wsReconnectAttempt, error: String(error || "") }, "warn");
+      appendLog(`[ws] reconnect attempt failed (${source}): ${error}`);
+      shouldRetry = true;
+    } finally {
+      wsReconnectInFlight = false;
+      if (connectionReconnectBtn && !connectionReconnectBtn.classList.contains("hidden")) {
+        connectionReconnectBtn.disabled = false;
+      }
+    }
+
+    if (shouldRetry) {
+      scheduleWsReconnect("retry");
+    }
+  }, delayMs);
+}
+
+async function reconnectWebSocketNow() {
+  clearWsReconnectTimer();
+  if (wsReconnectInFlight) {
+    return;
+  }
+
+  wsReconnectInFlight = true;
+  let shouldRetry = false;
+  setConnectionStatusBannerState("reconnecting", "Reconnecting to websocket bridge...", { showReconnect: true });
+  try {
+    await ensureSocket();
+  } catch (error) {
+    uiAuditLog("ws.manual_reconnect_failed", { error: String(error || "") }, "warn");
+    appendLog(`[ws] manual reconnect failed: ${error}`);
+    shouldRetry = true;
+  } finally {
+    wsReconnectInFlight = false;
+    if (connectionReconnectBtn && !connectionReconnectBtn.classList.contains("hidden")) {
+      connectionReconnectBtn.disabled = false;
+    }
+  }
+
+  if (shouldRetry) {
+    scheduleWsReconnect("manual");
+  }
+}
+
+function buildSessionListApprovalKey(approval) {
+  if (!approval || typeof approval !== "object" || Array.isArray(approval)) {
+    return "";
+  }
+
+  const approvalId = typeof approval.approvalId === "string" ? approval.approvalId.trim() : "";
+  const requestType = typeof approval.requestType === "string" ? approval.requestType.trim() : "";
+  const summary = typeof approval.summary === "string" ? approval.summary.trim() : "";
+  const reason = typeof approval.reason === "string" ? approval.reason.trim() : "";
+  const cwd = typeof approval.cwd === "string" ? approval.cwd.trim() : "";
+  const createdAtUtc = typeof approval.createdAtUtc === "string" ? approval.createdAtUtc.trim() : "";
+  const actions = Array.isArray(approval.actions)
+    ? approval.actions.map((x) => String(x || "").trim()).filter((x) => x.length > 0).join(",")
+    : "";
+  return `${approvalId}|${requestType}|${summary}|${reason}|${cwd}|${createdAtUtc}|${actions}`;
+}
+
+function buildSessionListRecoveryOfferKey(offer) {
+  if (!offer || typeof offer !== "object" || Array.isArray(offer)) {
+    return "";
+  }
+
+  const offerId = typeof offer.offerId === "string" ? offer.offerId.trim() : "";
+  const reason = typeof offer.reason === "string" ? offer.reason.trim() : "";
+  const message = typeof offer.message === "string" ? offer.message.trim() : "";
+  const pendingSeconds = Number.isFinite(offer.pendingSeconds) ? Math.max(0, Math.round(offer.pendingSeconds)) : 0;
+  const createdAtUtc = typeof offer.createdAtUtc === "string" ? offer.createdAtUtc.trim() : "";
+  const dispatchId = typeof offer.dispatchId === "string" ? offer.dispatchId.trim() : "";
+  const activeTurnId = typeof offer.activeTurnId === "string" ? offer.activeTurnId.trim() : "";
+  return `${offerId}|${reason}|${message}|${pendingSeconds}|${createdAtUtc}|${dispatchId}|${activeTurnId}`;
+}
+
+function buildSessionListTurnRetryOfferKey(offer) {
+  if (!offer || typeof offer !== "object" || Array.isArray(offer)) {
+    return "";
+  }
+
+  const offerId = typeof offer.offerId === "string" ? offer.offerId.trim() : "";
+  const message = typeof offer.message === "string" ? offer.message.trim() : "";
+  const pendingSeconds = Number.isFinite(offer.pendingSeconds) ? Math.max(0, Math.round(offer.pendingSeconds)) : 0;
+  const createdAtUtc = typeof offer.createdAtUtc === "string" ? offer.createdAtUtc.trim() : "";
+  const dispatchId = typeof offer.dispatchId === "string" ? offer.dispatchId.trim() : "";
+  const textChars = Number.isFinite(offer.textChars) ? Math.max(0, Math.floor(offer.textChars)) : 0;
+  const imageCount = Number.isFinite(offer.imageCount) ? Math.max(0, Math.floor(offer.imageCount)) : 0;
+  return `${offerId}|${message}|${pendingSeconds}|${createdAtUtc}|${dispatchId}|${textChars}|${imageCount}`;
+}
+
+function normalizeRecoveryOffer(offer) {
+  if (!offer || typeof offer !== "object" || Array.isArray(offer)) {
+    return null;
+  }
+
+  const offerId = typeof offer.offerId === "string" ? offer.offerId.trim() : "";
+  if (!offerId) {
+    return null;
+  }
+
+  const reason = typeof offer.reason === "string" ? offer.reason.trim() : "";
+  const message = typeof offer.message === "string" ? offer.message.trim() : "";
+  const pendingSeconds = Number.isFinite(offer.pendingSeconds) ? Math.max(0, Math.round(offer.pendingSeconds)) : 0;
+  const createdAtUtc = typeof offer.createdAtUtc === "string" ? offer.createdAtUtc.trim() : "";
+  const dispatchId = typeof offer.dispatchId === "string" ? offer.dispatchId.trim() : "";
+  const activeTurnId = typeof offer.activeTurnId === "string" ? offer.activeTurnId.trim() : "";
+  return {
+    offerId,
+    reason,
+    message,
+    pendingSeconds,
+    createdAtUtc,
+    dispatchId: dispatchId || null,
+    activeTurnId: activeTurnId || null
+  };
+}
+
+function normalizeTurnRetryOffer(offer) {
+  if (!offer || typeof offer !== "object" || Array.isArray(offer)) {
+    return null;
+  }
+
+  const offerId = typeof offer.offerId === "string" ? offer.offerId.trim() : "";
+  if (!offerId) {
+    return null;
+  }
+
+  const message = typeof offer.message === "string" ? offer.message.trim() : "";
+  const pendingSeconds = Number.isFinite(offer.pendingSeconds) ? Math.max(0, Math.round(offer.pendingSeconds)) : 0;
+  const createdAtUtc = typeof offer.createdAtUtc === "string" ? offer.createdAtUtc.trim() : "";
+  const dispatchId = typeof offer.dispatchId === "string" ? offer.dispatchId.trim() : "";
+  const textChars = Number.isFinite(offer.textChars) ? Math.max(0, Math.floor(offer.textChars)) : 0;
+  const imageCount = Number.isFinite(offer.imageCount) ? Math.max(0, Math.floor(offer.imageCount)) : 0;
+  const model = typeof offer.model === "string" ? offer.model.trim() : "";
+  const reasoningEffort = typeof offer.reasoningEffort === "string" ? offer.reasoningEffort.trim() : "";
+  const approvalPolicy = typeof offer.approvalPolicy === "string" ? offer.approvalPolicy.trim() : "";
+  const sandboxPolicy = typeof offer.sandboxPolicy === "string" ? offer.sandboxPolicy.trim() : "";
+  return {
+    offerId,
+    message,
+    pendingSeconds,
+    createdAtUtc,
+    dispatchId: dispatchId || null,
+    textChars,
+    imageCount,
+    model: model || null,
+    reasoningEffort: reasoningEffort || null,
+    approvalPolicy: approvalPolicy || null,
+    sandboxPolicy: sandboxPolicy || null
+  };
+}
+
+function buildSessionListQueuedTurnsKey(queuedTurns) {
+  if (!Array.isArray(queuedTurns) || queuedTurns.length === 0) {
+    return "";
+  }
+
+  return queuedTurns
+    .slice(0, MAX_QUEUED_TURNS_TRACKED)
+    .map((queued) => {
+      if (!queued || typeof queued !== "object") {
+        return "";
+      }
+
+      const queueItemId = typeof queued.queueItemId === "string" ? queued.queueItemId.trim() : "";
+      const previewText = normalizeQueuePreviewText(queued.previewText, MAX_QUEUE_PREVIEW_KEY_CHARS);
+      const imageCount = Number.isFinite(queued.imageCount) ? Math.max(0, Math.floor(queued.imageCount)) : 0;
+      const createdAtUtc = typeof queued.createdAtUtc === "string" ? queued.createdAtUtc.trim() : "";
+      return `${queueItemId}|${previewText}|${imageCount}|${createdAtUtc}`;
+    })
+    .join("~");
+}
+
+function buildSessionListViewKey(activeSessionId, list, processingByThread) {
+  const normalizedActiveSessionId = typeof activeSessionId === "string" ? activeSessionId.trim() : "";
+  const normalizedSessions = Array.isArray(list)
+    ? list
+        .filter((s) => s && typeof s === "object")
+        .map((s) => ({
+          sessionId: typeof s.sessionId === "string" ? s.sessionId.trim() : "",
+          threadId: typeof s.threadId === "string" ? s.threadId.trim() : "",
+          cwd: typeof s.cwd === "string" ? s.cwd.trim() : "",
+          model: typeof s.model === "string" ? s.model.trim() : "",
+          reasoningEffort: typeof s.reasoningEffort === "string"
+            ? s.reasoningEffort.trim()
+            : (typeof s.effort === "string" ? s.effort.trim() : ""),
+          approvalPolicy: typeof s.approvalPolicy === "string"
+            ? s.approvalPolicy.trim()
+            : (typeof s.approval_policy === "string" ? s.approval_policy.trim() : ""),
+          sandboxPolicy: typeof s.sandboxPolicy === "string"
+            ? s.sandboxPolicy.trim()
+            : (typeof s.sandbox_policy === "string" ? s.sandbox_policy.trim() : ""),
+          isTurnInFlight: s.isTurnInFlight === true || s.turnInFlight === true,
+          isTurnInFlightInferredFromLogs: s.isTurnInFlightInferredFromLogs === true,
+          isTurnInFlightLogOnly: s.isTurnInFlightLogOnly === true,
+          isAppServerRecovering: s.isAppServerRecovering === true,
+          queuedTurnCount: Number.isFinite(s.queuedTurnCount) ? Math.max(0, Math.floor(s.queuedTurnCount)) : 0,
+          turnCountInMemory: Number.isFinite(s.turnCountInMemory) ? Math.max(0, Math.floor(s.turnCountInMemory)) : 0,
+          pendingApproval: buildSessionListApprovalKey(s.pendingApproval),
+          pendingRecoveryOffer: buildSessionListRecoveryOfferKey(s.pendingRecoveryOffer),
+          pendingTurnRetryOffer: buildSessionListTurnRetryOfferKey(s.pendingTurnRetryOffer),
+          queuedTurns: buildSessionListQueuedTurnsKey(s.queuedTurns)
+        }))
+        .sort((a, b) => a.sessionId.localeCompare(b.sessionId))
+    : [];
+
+  const normalizedProcessing = [];
+  if (processingByThread && typeof processingByThread === "object" && !Array.isArray(processingByThread)) {
+    for (const [threadId, processing] of Object.entries(processingByThread)) {
+      const normalizedThreadId = typeof threadId === "string" ? threadId.trim() : "";
+      if (!normalizedThreadId) {
+        continue;
+      }
+
+      normalizedProcessing.push({
+        threadId: normalizedThreadId,
+        processing: processing === true
+      });
+    }
+    normalizedProcessing.sort((a, b) => a.threadId.localeCompare(b.threadId));
+  }
+
+  return JSON.stringify({
+    activeSessionId: normalizedActiveSessionId,
+    sessions: normalizedSessions,
+    processingByThread: normalizedProcessing
+  });
+}
+
+function appendLog(text) {
+  const stamp = new Date().toISOString();
+  const rawText = typeof text === "string" ? text : String(text || "");
+  const clippedText = rawText.length > MAX_CLIENT_LOG_LINE_CHARS
+    ? `${rawText.slice(0, MAX_CLIENT_LOG_LINE_CHARS)} ... (truncated ${rawText.length - MAX_CLIENT_LOG_LINE_CHARS} chars)`
+    : rawText;
+  const line = `${stamp} ${clippedText}`;
+  if (!logOutput) {
+    return;
+  }
+
+  pendingClientLogLines.push(line);
+}
+
+function flushPendingClientLogs() {
+  if (!logOutput || pendingClientLogLines.length === 0) {
+    return;
+  }
+
+  const shouldStickToBottom = (logOutput.scrollHeight - (logOutput.scrollTop + logOutput.clientHeight)) <= 20;
+  renderedClientLogLines.push(...pendingClientLogLines);
+  pendingClientLogLines = [];
+
+  if (renderedClientLogLines.length > MAX_RENDERED_CLIENT_LOG_LINES) {
+    renderedClientLogLines = renderedClientLogLines.slice(renderedClientLogLines.length - MAX_RENDERED_CLIENT_LOG_LINES);
+  }
+
+  logOutput.textContent = renderedClientLogLines.join("\n");
+  if (shouldStickToBottom) {
+    logOutput.scrollTop = logOutput.scrollHeight;
+  }
+}
+
+function setSecurityWarningVisible(message, reasons = []) {
+  if (!securityWarningBanner) {
+    return;
+  }
+
+  const normalizedMessage = String(message || "").trim() || SECURITY_WARNING_TEXT;
+  const normalizedReasons = Array.isArray(reasons)
+    ? reasons.map((x) => String(x || "").trim()).filter((x) => x.length > 0)
+    : [];
+
+  securityWarningBanner.textContent = normalizedMessage;
+  securityWarningBanner.title = normalizedReasons.length > 0 ? normalizedReasons.join(" | ") : normalizedMessage;
+  securityWarningBanner.classList.remove("hidden");
+}
+
+function setSecurityWarningHidden() {
+  if (!securityWarningBanner) {
+    return;
+  }
+
+  securityWarningBanner.textContent = "";
+  securityWarningBanner.title = "";
+  securityWarningBanner.classList.add("hidden");
+}
+
+function applySecurityConfig(config) {
+  runtimeSecurityConfig = config && typeof config === "object" ? config : null;
+  if (!runtimeSecurityConfig) {
+    setSecurityWarningVisible(SECURITY_WARNING_TEXT, ["Security posture could not be loaded from the server."]);
+    return;
+  }
+
+  const reasons = Array.isArray(runtimeSecurityConfig.unsafeReasons) ? runtimeSecurityConfig.unsafeReasons : [];
+  if (runtimeSecurityConfig.unsafeConfigurationDetected === true) {
+    setSecurityWarningVisible(runtimeSecurityConfig.securityWarningMessage || SECURITY_WARNING_TEXT, reasons);
+  } else {
+    setSecurityWarningHidden();
+  }
+
+  if (aboutVersionLine) {
+    const version = String(runtimeSecurityConfig.projectVersion || "unknown").trim() || "unknown";
+    aboutVersionLine.textContent = `Codex Embedded version: ${version}`;
+  }
+}
+
+async function loadRuntimeSecurityConfig() {
+  const response = await fetch(new URL("api/security/config", document.baseURI), { cache: "no-store" });
+  if (!response.ok) {
+    throw new Error(`security config request failed (${response.status})`);
+  }
+
+  const data = await response.json();
+  applySecurityConfig(data);
+}
+
+function openAboutModal() {
+  if (!aboutModal) {
+    return;
+  }
+
+  aboutModal.classList.remove("hidden");
+}
+
+function closeAboutModal() {
+  if (!aboutModal) {
+    return;
+  }
+
+  aboutModal.classList.add("hidden");
+}
+
+function setApprovalVisible(show) {
+  approvalPanel.classList.toggle("hidden", !show);
+}
+
+function normalizeToolUserInputQuestions(rawQuestions) {
+  if (!Array.isArray(rawQuestions)) {
+    return [];
+  }
+
+  const output = [];
+  for (const question of rawQuestions) {
+    if (!question || typeof question !== "object") {
+      continue;
+    }
+
+    const id = typeof question.id === "string" ? question.id.trim() : "";
+    if (!id) {
+      continue;
+    }
+
+    const prompt = typeof question.question === "string" && question.question.trim()
+      ? question.question.trim()
+      : id;
+    const header = typeof question.header === "string" && question.header.trim()
+      ? question.header.trim()
+      : "";
+    const options = Array.isArray(question.options)
+      ? question.options
+          .filter((option) => option && typeof option === "object" && typeof option.label === "string" && option.label.trim().length > 0)
+          .map((option) => ({
+            label: option.label.trim(),
+            description: typeof option.description === "string" && option.description.trim() ? option.description.trim() : ""
+          }))
+      : [];
+
+    output.push({ id, header, prompt, options });
+  }
+
+  return output;
+}
+
+function setToolUserInputModalVisible(show) {
+  if (!toolUserInputModal) {
+    return;
+  }
+
+  toolUserInputModal.classList.toggle("hidden", !show);
+}
+
+function clearToolUserInputModal() {
+  if (toolUserInputTitle) {
+    toolUserInputTitle.textContent = "Input Needed";
+  }
+  if (toolUserInputSubtitle) {
+    toolUserInputSubtitle.textContent = "";
+  }
+  if (toolUserInputQuestions) {
+    toolUserInputQuestions.innerHTML = "";
+  }
+}
+
+function closeToolUserInputModal() {
+  setToolUserInputModalVisible(false);
+  clearToolUserInputModal();
+}
+
+function createToolUserInputQuestionNode(question, questionIndex) {
+  const block = document.createElement("section");
+  block.className = "tool-user-input-question";
+  block.dataset.questionId = question.id;
+
+  const header = document.createElement("div");
+  header.className = "tool-user-input-question-header";
+  header.textContent = question.header || `Question ${questionIndex + 1}`;
+  block.appendChild(header);
+
+  const prompt = document.createElement("div");
+  prompt.className = "tool-user-input-question-text";
+  prompt.textContent = question.prompt;
+  block.appendChild(prompt);
+
+  const options = document.createElement("div");
+  options.className = "tool-user-input-options";
+  const radioName = `tool_user_input_${question.id}`;
+
+  const renderOption = (value, description) => {
+    const row = document.createElement("label");
+    row.className = "tool-user-input-option";
+
+    const radio = document.createElement("input");
+    radio.type = "radio";
+    radio.name = radioName;
+    radio.value = value;
+    const content = document.createElement("div");
+    const label = document.createElement("div");
+    label.className = "tool-user-input-option-label";
+    label.textContent = value;
+    content.appendChild(label);
+
+    if (description) {
+      const desc = document.createElement("div");
+      desc.className = "tool-user-input-option-description";
+      desc.textContent = description;
+      content.appendChild(desc);
+    }
+
+    row.append(radio, content);
+    options.appendChild(row);
+  };
+
+  if (question.options.length > 0) {
+    question.options.forEach((option) => {
+      renderOption(option.label, option.description);
+    });
+  } else {
+    renderOption("Provide answer", "");
+  }
+
+  renderOption("__other__", "Enter a custom answer");
+
+  const otherInput = document.createElement("input");
+  otherInput.type = "text";
+  otherInput.className = "tool-user-input-other-input hidden";
+  otherInput.placeholder = "Custom answer";
+  otherInput.dataset.questionId = question.id;
+  options.appendChild(otherInput);
+
+  options.addEventListener("change", () => {
+    const selected = options.querySelector(`input[name="${radioName}"]:checked`);
+    const useOther = !!selected && selected.value === "__other__";
+    otherInput.classList.toggle("hidden", !useOther);
+    if (useOther) {
+      otherInput.focus();
+    }
+  });
+
+  block.appendChild(options);
+  return block;
+}
+
+function renderToolUserInputModal() {
+  if (!pendingToolUserInput || !toolUserInputModal || !toolUserInputQuestions || !toolUserInputSubtitle) {
+    return;
+  }
+
+  clearToolUserInputModal();
+  const questions = pendingToolUserInput.questions || [];
+  if (toolUserInputSubtitle) {
+    toolUserInputSubtitle.textContent = questions.length > 0
+      ? `Answer ${questions.length} question${questions.length === 1 ? "" : "s"} to continue this turn.`
+      : "No question payload was provided. Submit to continue.";
+  }
+
+  questions.forEach((question, questionIndex) => {
+    toolUserInputQuestions.appendChild(createToolUserInputQuestionNode(question, questionIndex));
+  });
+
+  setToolUserInputModalVisible(true);
+  if (toolUserInputQuestions) {
+    const firstInteractive = toolUserInputQuestions.querySelector("input[type=\"radio\"], input.tool-user-input-other-input");
+    if (firstInteractive instanceof HTMLElement) {
+      firstInteractive.focus();
+    }
+  }
+}
+
+function collectToolUserInputAnswers() {
+  const answers = {};
+  if (!pendingToolUserInput || !toolUserInputQuestions) {
+    return answers;
+  }
+
+  for (const question of pendingToolUserInput.questions || []) {
+    const questionId = typeof question.id === "string" ? question.id.trim() : "";
+    if (!questionId) {
+      continue;
+    }
+
+    const selected = toolUserInputQuestions.querySelector(`input[name="tool_user_input_${questionId}"]:checked`);
+    if (!selected) {
+      continue;
+    }
+
+    let answerText = selected.value;
+    if (answerText === "__other__") {
+      const otherInput = toolUserInputQuestions.querySelector(`input.tool-user-input-other-input[data-question-id="${questionId}"]`);
+      if (otherInput && typeof otherInput.value === "string" && otherInput.value.trim()) {
+        answerText = otherInput.value.trim();
+      } else {
+        continue;
+      }
+    }
+
+    if (answerText && answerText !== "__other__") {
+      answers[questionId] = answerText;
+    }
+  }
+
+  return answers;
+}
+
+function findMissingToolUserInputQuestionIds(answers) {
+  const missing = [];
+  if (!pendingToolUserInput) {
+    return missing;
+  }
+
+  const normalizedAnswers = answers && typeof answers === "object" ? answers : {};
+  for (const question of pendingToolUserInput.questions || []) {
+    const questionId = typeof question.id === "string" ? question.id.trim() : "";
+    if (!questionId) {
+      continue;
+    }
+
+    if (!Object.prototype.hasOwnProperty.call(normalizedAnswers, questionId)) {
+      missing.push(questionId);
+    }
+  }
+
+  return missing;
+}
+
+function submitPendingToolUserInputWithAnswers(answers, sourceLabel = "ui") {
+  if (!pendingToolUserInput) {
+    return false;
+  }
+
+  const normalizedAnswers = answers && typeof answers === "object" ? answers : {};
+  send("tool_user_input_response", {
+    sessionId: pendingToolUserInput.sessionId,
+    requestId: pendingToolUserInput.requestId,
+    answers: normalizedAnswers
+  });
+  appendLog(`[tool_input] submitted (${sourceLabel}) session=${pendingToolUserInput.sessionId} requestId=${pendingToolUserInput.requestId} answers=${Object.keys(normalizedAnswers).length}`);
+  pendingToolUserInput = null;
+  closeToolUserInputModal();
+  return true;
+}
+
+function submitPendingToolUserInput() {
+  if (!pendingToolUserInput) {
+    return;
+  }
+
+  const answers = collectToolUserInputAnswers();
+  const missingQuestionIds = findMissingToolUserInputQuestionIds(answers);
+  if (missingQuestionIds.length > 0) {
+    appendLog(`[tool_input] answer all questions before submitting (${missingQuestionIds.length} remaining)`);
+    const firstMissingId = missingQuestionIds[0];
+    const firstMissingInput = toolUserInputQuestions
+      ? toolUserInputQuestions.querySelector(`input[name="tool_user_input_${firstMissingId}"]`)
+      : null;
+    if (firstMissingInput instanceof HTMLElement) {
+      firstMissingInput.focus();
+    }
+    return;
+  }
+
+  submitPendingToolUserInputWithAnswers(answers, "modal");
+}
+
+function cancelPendingToolUserInput() {
+  if (!pendingToolUserInput) {
+    closeToolUserInputModal();
+    return;
+  }
+
+  send("tool_user_input_response", {
+    sessionId: pendingToolUserInput.sessionId,
+    requestId: pendingToolUserInput.requestId,
+    answers: {}
+  });
+  appendLog(`[tool_input] canceled session=${pendingToolUserInput.sessionId} requestId=${pendingToolUserInput.requestId}`);
+  pendingToolUserInput = null;
+  closeToolUserInputModal();
+}
+
+function isSessionRecoveryModalOpen() {
+  return !!sessionRecoveryModal && !sessionRecoveryModal.classList.contains("hidden");
+}
+
+function setSessionRecoveryModalVisible(show) {
+  if (!sessionRecoveryModal) {
+    return;
+  }
+
+  sessionRecoveryModal.classList.toggle("hidden", !show);
+}
+
+function closeSessionRecoveryModal(options = {}) {
+  if (!sessionRecoveryModal) {
+    return;
+  }
+
+  sessionRecoveryModal.dataset.sessionId = "";
+  sessionRecoveryModal.dataset.offerId = "";
+  sessionRecoveryModal.dataset.mode = "";
+  recoveryOfferModalSessionId = null;
+  setSessionRecoveryModalVisible(false);
+  if (options.focusPrompt === true) {
+    promptInput.focus();
+  }
+}
+
+function openSessionRecoveryModal(sessionId, offer, mode = "recover") {
+  if (!sessionRecoveryModal || !offer || !sessionId) {
+    return;
+  }
+
+  const modalMode = mode === "turn_retry" ? "turn_retry" : "recover";
+  const state = sessions.get(sessionId) || null;
+  const threadLabel = state && state.threadId ? state.threadId : "unknown";
+  if (sessionRecoveryTitle) {
+    sessionRecoveryTitle.textContent = modalMode === "turn_retry"
+      ? "Retry dropped prompt?"
+      : "Codex session appears stalled";
+  }
+  if (sessionRecoveryMessage) {
+    const base = typeof offer.message === "string" && offer.message.trim()
+      ? offer.message.trim()
+      : (modalMode === "turn_retry"
+        ? "Codex disconnected before the previous prompt started."
+        : "No response was received from Codex for this turn.");
+    sessionRecoveryMessage.textContent = base;
+  }
+  if (sessionRecoveryMeta) {
+    const parts = [];
+    parts.push(`Session: ${sessionId}`);
+    parts.push(`Thread: ${threadLabel}`);
+    const pendingSeconds = Number.isFinite(offer.pendingSeconds) ? Math.max(0, Math.round(offer.pendingSeconds)) : 0;
+    if (pendingSeconds > 0) {
+      parts.push(modalMode === "turn_retry" ? `Recovered ${pendingSeconds}s ago` : `Stalled for ${pendingSeconds}s`);
+    }
+    if (modalMode === "recover" && offer.reason) {
+      parts.push(`Reason: ${offer.reason}`);
+    }
+    if (modalMode === "turn_retry") {
+      const textChars = Number.isFinite(offer.textChars) ? Math.max(0, Math.floor(offer.textChars)) : 0;
+      const imageCount = Number.isFinite(offer.imageCount) ? Math.max(0, Math.floor(offer.imageCount)) : 0;
+      parts.push(`Prompt: ${textChars} chars, ${imageCount} image(s)`);
+    }
+    sessionRecoveryMeta.textContent = parts.join(" | ");
+  }
+  if (sessionRecoveryRecoverBtn) {
+    sessionRecoveryRecoverBtn.textContent = modalMode === "turn_retry" ? "Retry Prompt" : "Recover Session";
+  }
+  if (sessionRecoveryDismissBtn) {
+    sessionRecoveryDismissBtn.textContent = modalMode === "turn_retry" ? "Dismiss" : "Not Now";
+  }
+
+  recoveryOfferModalSessionId = sessionId;
+  sessionRecoveryModal.dataset.sessionId = sessionId;
+  sessionRecoveryModal.dataset.offerId = offer.offerId;
+  sessionRecoveryModal.dataset.mode = modalMode;
+  setSessionRecoveryModalVisible(true);
+  if (sessionRecoveryRecoverBtn) {
+    sessionRecoveryRecoverBtn.focus();
+  }
+}
+
+function syncSessionRecoveryModal() {
+  if (!sessionRecoveryModal) {
+    return;
+  }
+
+  if (!activeSessionId || !sessions.has(activeSessionId)) {
+    closeSessionRecoveryModal();
+    return;
+  }
+
+  const state = sessions.get(activeSessionId) || null;
+  const recoveryOffer = state && state.pendingRecoveryOffer ? state.pendingRecoveryOffer : null;
+  const turnRetryOffer = state && state.pendingTurnRetryOffer ? state.pendingTurnRetryOffer : null;
+  const mode = recoveryOffer ? "recover" : (turnRetryOffer ? "turn_retry" : "");
+  const offer = recoveryOffer || turnRetryOffer || null;
+  if (!offer) {
+    if (recoveryOfferModalSessionId === activeSessionId || isSessionRecoveryModalOpen()) {
+      closeSessionRecoveryModal();
+    }
+    return;
+  }
+
+  const shownSessionId = sessionRecoveryModal.dataset.sessionId || "";
+  const shownOfferId = sessionRecoveryModal.dataset.offerId || "";
+  const shownMode = sessionRecoveryModal.dataset.mode || "";
+  if (isSessionRecoveryModalOpen() &&
+      shownSessionId === activeSessionId &&
+      shownMode === mode &&
+      shownOfferId === offer.offerId) {
+    return;
+  }
+
+  openSessionRecoveryModal(activeSessionId, offer, mode);
+}
+
+function submitSessionRecoveryDecision(recover) {
+  if (!activeSessionId || !sessions.has(activeSessionId)) {
+    appendLog("[session_recovery] no active session available for recovery decision");
+    closeSessionRecoveryModal();
+    return false;
+  }
+
+  const state = sessions.get(activeSessionId) || null;
+  const mode = sessionRecoveryModal && sessionRecoveryModal.dataset.mode === "turn_retry"
+    ? "turn_retry"
+    : "recover";
+  const offer = mode === "turn_retry"
+    ? (state && state.pendingTurnRetryOffer ? state.pendingTurnRetryOffer : null)
+    : (state && state.pendingRecoveryOffer ? state.pendingRecoveryOffer : null);
+  if (!offer || !offer.offerId) {
+    appendLog(mode === "turn_retry"
+      ? "[turn_retry] no pending retry prompt found"
+      : "[session_recovery] no pending recovery prompt found");
+    closeSessionRecoveryModal();
+    return false;
+  }
+
+  const decisionAccept = recover === true;
+  if (mode === "turn_retry") {
+    if (!send("turn_retry_decision", {
+      sessionId: activeSessionId,
+      offerId: offer.offerId,
+      retry: decisionAccept
+    })) {
+      return false;
+    }
+  } else {
+    if (!send("session_recovery_decision", {
+      sessionId: activeSessionId,
+      offerId: offer.offerId,
+      recover: decisionAccept
+    })) {
+      return false;
+    }
+  }
+
+  appendLog(mode === "turn_retry"
+    ? `[turn_retry] decision=${decisionAccept ? "retry" : "dismiss"} session=${activeSessionId} offerId=${offer.offerId}`
+    : `[session_recovery] decision=${decisionAccept ? "recover" : "dismiss"} session=${activeSessionId} offerId=${offer.offerId}`);
+  if (mode === "turn_retry") {
+    state.pendingTurnRetryOffer = null;
+  } else {
+    state.pendingRecoveryOffer = null;
+  }
+  if (decisionAccept && mode === "recover") {
+    state.isAppServerRecovering = true;
+  }
+  uiAuditLog(
+    mode === "turn_retry" ? "ui.turn_retry_decision_submitted" : "ui.session_recovery_decision_submitted",
+    mode === "turn_retry"
+      ? {
+          sessionId: activeSessionId,
+          offerId: offer.offerId,
+          retry: decisionAccept
+        }
+      : {
+          sessionId: activeSessionId,
+          offerId: offer.offerId,
+          recover: decisionAccept
+        });
+  closeSessionRecoveryModal({ focusPrompt: false });
+  updatePromptActionState();
+  renderProjectSidebar();
+  return true;
+}
+
+function createEmptySessionState(now = Date.now()) {
+  return {
+    threadId: null,
+    cwd: null,
+    model: null,
+    reasoningEffort: null,
+    approvalPolicy: null,
+    sandboxPolicy: null,
+    isAppServerRecovering: false,
+    isPlanTurn: false,
+    planStatus: "idle",
+    planText: "",
+    planDraftText: "",
+    planUpdatedAt: null,
+    pendingApproval: null,
+    pendingRecoveryOffer: null,
+    pendingTurnRetryOffer: null,
+    queuedTurns: [],
+    queuedTurnCount: 0,
+    turnCountInMemory: 0,
+    createdAtTick: now,
+    lastActivityTick: now
+  };
+}
+
+function ensureSessionState(sessionId) {
+  if (!sessions.has(sessionId)) {
+    sessions.set(sessionId, createEmptySessionState());
+  }
+  return sessions.get(sessionId);
+}
+
+function getActiveSessionState() {
+  if (!activeSessionId || !sessions.has(activeSessionId)) {
+    return null;
+  }
+
+  return sessions.get(activeSessionId) || null;
+}
+
+window.codexDiffGetActiveContext = function codexDiffGetActiveContext() {
+  const state = getActiveSessionState();
+  if (!state) {
+    return null;
+  }
+
+  const cwd = normalizeProjectCwd(state.cwd || "");
+  if (!cwd) {
+    return null;
+  }
+
+  return {
+    sessionId: activeSessionId || "",
+    threadId: state.threadId || "",
+    cwd
+  };
+};
+
+const REVIEW_METADATA_HEADER = "[Review metadata]";
+const REVIEW_METADATA_FOOTER = "[/Review metadata]";
+
+function normalizeReviewTargetType(value) {
+  return value === "commit" ? "commit" : "worktree";
+}
+
+function normalizeReviewStatus(value) {
+  const source = typeof value === "string" ? value.trim().toLowerCase() : "";
+  if (source === "running") {
+    return "running";
+  }
+  if (source === "completed") {
+    return "completed";
+  }
+  if (source === "dismissed" || source === "reviewed") {
+    return "dismissed";
+  }
+  if (source === "failed") {
+    return "failed";
+  }
+  if (source === "stale") {
+    return "stale";
+  }
+  return "queued";
+}
+
+function parseUtcTimestamp(value) {
+  if (typeof value !== "string" || !value.trim()) {
+    return 0;
+  }
+  const parsed = Date.parse(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function normalizeReviewCommitSha(value) {
+  return typeof value === "string" ? value.trim().toLowerCase() : "";
+}
+
+function buildReviewScopeKey(cwd, targetType, commitSha = "") {
+  const normalizedCwd = normalizeProjectCwd(cwd || "");
+  if (!normalizedCwd) {
+    return "";
+  }
+
+  const normalizedTargetType = normalizeReviewTargetType(targetType);
+  if (normalizedTargetType === "commit") {
+    return `${normalizedCwd}::commit::${normalizeReviewCommitSha(commitSha)}`;
+  }
+
+  return `${normalizedCwd}::worktree`;
+}
+
+function createReviewId() {
+  const randomPart = Math.random().toString(36).slice(2, 10);
+  return `review_${Date.now().toString(36)}_${randomPart}`;
+}
+
+function serializeReviewMetadataBlock(metadata) {
+  const lines = [];
+  const pushValue = (key, value) => {
+    if (value === null || value === undefined) {
+      return;
+    }
+    const text = typeof value === "string" ? value.trim() : String(value);
+    if (!text) {
+      return;
+    }
+    lines.push(`${key}=${text.replace(/\r?\n/g, " ")}`);
+  };
+
+  pushValue("review_id", metadata.reviewId);
+  pushValue("thread_id", metadata.threadId);
+  pushValue("session_id", metadata.sessionId);
+  pushValue("cwd", normalizeProjectCwd(metadata.cwd || ""));
+  pushValue("target_type", normalizeReviewTargetType(metadata.targetType));
+  pushValue("commit_sha", normalizeReviewCommitSha(metadata.commitSha));
+  pushValue("context_label", metadata.contextLabel);
+  pushValue("visible_files", Number.isFinite(metadata.visibleFiles) ? Math.max(0, Math.floor(metadata.visibleFiles)) : 0);
+  pushValue("total_files", Number.isFinite(metadata.totalFiles) ? Math.max(0, Math.floor(metadata.totalFiles)) : 0);
+  pushValue("hidden_binary_files", Number.isFinite(metadata.hiddenBinaryFiles) ? Math.max(0, Math.floor(metadata.hiddenBinaryFiles)) : 0);
+
+  return `${REVIEW_METADATA_HEADER}\n${lines.join("\n")}\n${REVIEW_METADATA_FOOTER}`;
+}
+
+function parseReviewMetadataBlock(promptText) {
+  const source = typeof promptText === "string" ? promptText : "";
+  if (!source.includes(REVIEW_METADATA_HEADER) || !source.includes(REVIEW_METADATA_FOOTER)) {
+    return null;
+  }
+
+  const match = source.match(/\[Review metadata\]([\s\S]*?)\[\/Review metadata\]/i);
+  if (!match || typeof match[1] !== "string") {
+    return null;
+  }
+
+  const metadata = {};
+  const lines = match[1].split(/\r?\n/);
+  for (const rawLine of lines) {
+    const line = typeof rawLine === "string" ? rawLine.trim() : "";
+    if (!line) {
+      continue;
+    }
+    const separatorIndex = line.indexOf("=");
+    if (separatorIndex <= 0) {
+      continue;
+    }
+    const key = line.slice(0, separatorIndex).trim().toLowerCase();
+    const value = line.slice(separatorIndex + 1).trim();
+    if (!key || !value) {
+      continue;
+    }
+    metadata[key] = value;
+  }
+
+  const reviewId = typeof metadata.review_id === "string" ? metadata.review_id.trim() : "";
+  const cwd = normalizeProjectCwd(typeof metadata.cwd === "string" ? metadata.cwd : "");
+  const targetType = normalizeReviewTargetType(typeof metadata.target_type === "string" ? metadata.target_type : "");
+  const commitSha = normalizeReviewCommitSha(typeof metadata.commit_sha === "string" ? metadata.commit_sha : "");
+  if (!reviewId || !cwd) {
+    return null;
+  }
+
+  return {
+    reviewId,
+    threadId: typeof metadata.thread_id === "string" ? metadata.thread_id.trim() : "",
+    sessionId: typeof metadata.session_id === "string" ? metadata.session_id.trim() : "",
+    cwd,
+    targetType,
+    commitSha,
+    scopeKey: buildReviewScopeKey(cwd, targetType, commitSha),
+    contextLabel: typeof metadata.context_label === "string" ? metadata.context_label.trim() : "",
+    visibleFiles: Number.parseInt(metadata.visible_files || "0", 10) || 0,
+    totalFiles: Number.parseInt(metadata.total_files || "0", 10) || 0,
+    hiddenBinaryFiles: Number.parseInt(metadata.hidden_binary_files || "0", 10) || 0
+  };
+}
+
+function stripReviewMetadataBlock(promptText) {
+  const source = typeof promptText === "string" ? promptText : "";
+  if (!source.includes(REVIEW_METADATA_HEADER)) {
+    return source.trim();
+  }
+
+  return source
+    .replace(/\n?\[Review metadata\][\s\S]*?\[\/Review metadata\]\s*/gi, "\n")
+    .trim();
+}
+
+function normalizeReviewFindingPath(path, cwd) {
+  const normalizedPath = typeof path === "string" ? path.trim().replace(/\\/g, "/") : "";
+  const normalizedCwd = normalizeProjectCwd(cwd || "").replace(/\\/g, "/").replace(/\/+$/, "");
+  if (!normalizedPath) {
+    return "";
+  }
+  if (!normalizedCwd) {
+    return normalizedPath;
+  }
+  if (normalizedPath.length > normalizedCwd.length + 1 &&
+    normalizedPath.toLowerCase().startsWith(`${normalizedCwd.toLowerCase()}/`)) {
+    return normalizedPath.slice(normalizedCwd.length + 1);
+  }
+  return normalizedPath;
+}
+
+function parseReviewFindingLink(rawHref) {
+  const source = typeof rawHref === "string" ? rawHref.trim() : "";
+  if (!source) {
+    return null;
+  }
+
+  let value = source;
+  if (/^file:\/\//i.test(value)) {
+    try {
+      value = decodeURI(value);
+    } catch {
+    }
+    value = value.replace(/^file:\/\/\/?/i, "");
+  } else {
+    if (/^[a-z][a-z0-9+.-]*:\/\//i.test(value)) {
+      return null;
+    }
+    try {
+      value = decodeURI(value);
+    } catch {
+    }
+  }
+
+  value = value.replace(/[?#].*$/, "");
+  if (!value) {
+    return null;
+  }
+
+  let lineNo = 0;
+  const lineMatch = value.match(/:(\d+)(?::\d+)?$/);
+  if (lineMatch) {
+    const parsedLine = Number.parseInt(lineMatch[1] || "0", 10);
+    if (Number.isFinite(parsedLine) && parsedLine > 0) {
+      lineNo = parsedLine;
+      value = value.slice(0, lineMatch.index);
+    }
+  }
+
+  return {
+    path: value.replace(/\\/g, "/"),
+    lineNo
+  };
+}
+
+function normalizeReviewSeverity(value) {
+  const source = typeof value === "string" ? value.toLowerCase() : "";
+  if (source.includes("critical")) {
+    return "critical";
+  }
+  if (source.includes("high")) {
+    return "high";
+  }
+  if (source.includes("medium")) {
+    return "medium";
+  }
+  if (source.includes("low")) {
+    return "low";
+  }
+  return "info";
+}
+
+function extractReviewFindingsFromAssistantText(bodyText, cwd) {
+  const source = typeof bodyText === "string" ? bodyText : "";
+  const normalizedCwd = normalizeProjectCwd(cwd || "");
+  if (!source.trim()) {
+    return [];
+  }
+
+  const findings = [];
+  const dedupe = new Set();
+  const lines = source.split(/\r?\n/);
+  for (const rawLine of lines) {
+    const line = typeof rawLine === "string" ? rawLine.trim() : "";
+    if (!line) {
+      continue;
+    }
+
+    const hasFindingShape =
+      /^\d+\.\s+/i.test(line) ||
+      /^[*-]\s+/i.test(line) ||
+      /\b(critical|high|medium|low)\b/i.test(line);
+    if (!hasFindingShape) {
+      continue;
+    }
+
+    const detail = line.replace(/\s+/g, " ").trim();
+    const severity = normalizeReviewSeverity(detail);
+    let matchedLink = false;
+    const markdownLinks = line.matchAll(/\[([^\]]+)\]\(([^)]+)\)/g);
+    for (const linkMatch of markdownLinks) {
+      const parsedLink = parseReviewFindingLink(linkMatch[2]);
+      if (!parsedLink || !parsedLink.path) {
+        continue;
+      }
+
+      matchedLink = true;
+      const normalizedPath = normalizeReviewFindingPath(parsedLink.path, normalizedCwd);
+      const findingKey = `${normalizedPath}|${parsedLink.lineNo}|${detail}`;
+      if (dedupe.has(findingKey)) {
+        continue;
+      }
+      dedupe.add(findingKey);
+      findings.push({
+        key: findingKey,
+        severity,
+        detail,
+        label: typeof linkMatch[1] === "string" ? linkMatch[1].trim() : "",
+        path: normalizedPath,
+        lineNo: parsedLink.lineNo
+      });
+    }
+
+    if (!matchedLink) {
+      const fallbackKey = `summary||${detail}`;
+      if (dedupe.has(fallbackKey)) {
+        continue;
+      }
+      dedupe.add(fallbackKey);
+      findings.push({
+        key: fallbackKey,
+        severity,
+        detail,
+        label: "",
+        path: "",
+        lineNo: 0
+      });
+    }
+  }
+
+  return findings;
+}
+
+function normalizeStoredReviewFinding(finding) {
+  if (!finding || typeof finding !== "object") {
+    return null;
+  }
+
+  const detail = typeof finding.detail === "string" ? finding.detail.trim() : "";
+  const path = typeof finding.path === "string" ? finding.path.trim() : "";
+  const lineNo = Number.isFinite(finding.lineNo) ? Math.max(0, Math.floor(finding.lineNo)) : 0;
+  const key = typeof finding.key === "string" && finding.key.trim()
+    ? finding.key.trim()
+    : `${path}|${lineNo}|${detail}`;
+  if (!key || !detail) {
+    return null;
+  }
+
+  return {
+    key,
+    severity: normalizeReviewSeverity(finding.severity || "info"),
+    detail,
+    label: typeof finding.label === "string" ? finding.label : "",
+    path,
+    lineNo,
+    done: finding.done === true,
+    references: Array.isArray(finding.references)
+      ? finding.references.map((reference) => {
+        if (!reference || typeof reference !== "object") {
+          return null;
+        }
+        const referencePath = typeof reference.path === "string" ? reference.path.trim() : "";
+        if (!referencePath) {
+          return null;
+        }
+        const lineStart = Number.isFinite(reference.lineStart) ? Math.max(0, Math.floor(reference.lineStart)) : 0;
+        const lineEndRaw = Number.isFinite(reference.lineEnd) ? Math.max(0, Math.floor(reference.lineEnd)) : 0;
+        const lineEnd = lineEndRaw >= lineStart ? lineEndRaw : lineStart;
+        return {
+          path: referencePath,
+          lineStart,
+          lineEnd,
+          label: typeof reference.label === "string" ? reference.label : ""
+        };
+      }).filter((x) => !!x)
+      : []
+  };
+}
+
+function normalizeStoredReviewRecord(record) {
+  if (!record || typeof record !== "object") {
+    return null;
+  }
+
+  const reviewId = typeof record.reviewId === "string" ? record.reviewId.trim() : "";
+  const cwd = normalizeProjectCwd(record.cwd || "");
+  const targetType = normalizeReviewTargetType(record.targetType);
+  const commitSha = normalizeReviewCommitSha(record.commitSha);
+  if (!reviewId || !cwd) {
+    return null;
+  }
+
+  const findings = Array.isArray(record.findings)
+    ? record.findings.map(normalizeStoredReviewFinding).filter((x) => !!x)
+    : [];
+  const normalized = {
+    reviewId,
+    sessionId: typeof record.sessionId === "string" ? record.sessionId.trim() : "",
+    threadId: typeof record.threadId === "string" ? record.threadId.trim() : "",
+    cwd,
+    targetType,
+    commitSha,
+    scopeKey: buildReviewScopeKey(cwd, targetType, commitSha),
+    commitSubject: typeof record.commitSubject === "string" ? record.commitSubject.trim() : "",
+    contextLabel: typeof record.contextLabel === "string" ? record.contextLabel.trim() : "",
+    totalFiles: Number.isFinite(record.totalFiles) ? Math.max(0, Math.floor(record.totalFiles)) : 0,
+    visibleFiles: Number.isFinite(record.visibleFiles) ? Math.max(0, Math.floor(record.visibleFiles)) : 0,
+    hiddenBinaryFiles: Number.isFinite(record.hiddenBinaryFiles) ? Math.max(0, Math.floor(record.hiddenBinaryFiles)) : 0,
+    noteText: typeof record.noteText === "string" ? record.noteText.trim() : "",
+    promptText: typeof record.promptText === "string" ? record.promptText : "",
+    status: normalizeReviewStatus(record.status),
+    queuedAtUtc: typeof record.queuedAtUtc === "string" ? record.queuedAtUtc : "",
+    startedAtUtc: typeof record.startedAtUtc === "string" ? record.startedAtUtc : "",
+    completedAtUtc: typeof record.completedAtUtc === "string" ? record.completedAtUtc : "",
+    turnId: typeof record.turnId === "string" ? record.turnId.trim() : "",
+    assistantText: typeof record.assistantText === "string" ? record.assistantText : "",
+    findings
+  };
+  return normalized;
+}
+
+function normalizeStoredReviewApproval(approval) {
+  if (!approval || typeof approval !== "object") {
+    return null;
+  }
+
+  const cwd = normalizeProjectCwd(approval.cwd || "");
+  const targetType = normalizeReviewTargetType(approval.targetType);
+  const commitSha = normalizeReviewCommitSha(approval.commitSha);
+  if (!cwd) {
+    return null;
+  }
+  if (targetType === "commit" && !commitSha) {
+    return null;
+  }
+
+  const scopeKey = buildReviewScopeKey(cwd, targetType, commitSha);
+  if (!scopeKey) {
+    return null;
+  }
+
+  return {
+    scopeKey,
+    cwd,
+    targetType,
+    commitSha,
+    approvedAtUtc: typeof approval.approvedAtUtc === "string" ? approval.approvedAtUtc : ""
+  };
+}
+
+function dispatchReviewRegistryUpdated(reason, scopeKey = "") {
+  try {
+    window.dispatchEvent(new CustomEvent("codex:reviews-updated", {
+      detail: {
+        reason: reason || "unknown",
+        scopeKey
+      }
+    }));
+  } catch {
+  }
+}
+
+function upsertReviewRecord(record, reason) {
+  const normalized = normalizeStoredReviewRecord(record);
+  if (!normalized) {
+    return false;
+  }
+
+  const existing = reviewRecordsById.get(normalized.reviewId) || null;
+  const previousSerialized = existing ? JSON.stringify(existing) : "";
+  const nextSerialized = JSON.stringify(normalized);
+  if (existing && previousSerialized === nextSerialized) {
+    return false;
+  }
+
+  reviewRecordsById.set(normalized.reviewId, normalized);
+  const normalizedCwd = normalized.cwd;
+  const existingIds = reviewRecordIdsByCwd.get(normalizedCwd) || [];
+  if (!existingIds.includes(normalized.reviewId)) {
+    reviewRecordIdsByCwd.set(normalizedCwd, [...existingIds, normalized.reviewId]);
+  }
+  dispatchReviewRegistryUpdated(reason, normalized.scopeKey);
+  return true;
+}
+
+function replaceReviewCatalogForCwd(cwd, records, reason) {
+  const normalizedCwd = normalizeProjectCwd(cwd || "");
+  if (!normalizedCwd) {
+    return false;
+  }
+
+  const previousIds = reviewRecordIdsByCwd.get(normalizedCwd) || [];
+  const nextRecords = Array.isArray(records)
+    ? records.map(normalizeStoredReviewRecord).filter((x) => !!x && x.cwd === normalizedCwd)
+    : [];
+  const nextIds = [];
+  let changed = previousIds.length !== nextRecords.length;
+
+  for (const reviewId of previousIds) {
+    if (!nextRecords.some((record) => record.reviewId === reviewId)) {
+      reviewRecordsById.delete(reviewId);
+      changed = true;
+    }
+  }
+
+  for (const record of nextRecords) {
+    nextIds.push(record.reviewId);
+    const existing = reviewRecordsById.get(record.reviewId) || null;
+    const previousSerialized = existing ? JSON.stringify(existing) : "";
+    const nextSerialized = JSON.stringify(record);
+    if (!existing || previousSerialized !== nextSerialized) {
+      reviewRecordsById.set(record.reviewId, record);
+      changed = true;
+    }
+  }
+
+  reviewRecordIdsByCwd.set(normalizedCwd, nextIds);
+  if (changed) {
+    dispatchReviewRegistryUpdated(reason, "");
+  }
+  return changed;
+}
+
+function upsertReviewApprovalRecord(approval, reason) {
+  const normalized = normalizeStoredReviewApproval(approval);
+  if (!normalized) {
+    return false;
+  }
+
+  const existing = reviewApprovalsByScopeKey.get(normalized.scopeKey) || null;
+  const previousSerialized = existing ? JSON.stringify(existing) : "";
+  const nextSerialized = JSON.stringify(normalized);
+  if (existing && previousSerialized === nextSerialized) {
+    return false;
+  }
+
+  reviewApprovalsByScopeKey.set(normalized.scopeKey, normalized);
+  const existingScopeKeys = reviewApprovalScopeKeysByCwd.get(normalized.cwd) || [];
+  if (!existingScopeKeys.includes(normalized.scopeKey)) {
+    reviewApprovalScopeKeysByCwd.set(normalized.cwd, [...existingScopeKeys, normalized.scopeKey]);
+  }
+  dispatchReviewRegistryUpdated(reason, normalized.scopeKey);
+  return true;
+}
+
+function removeReviewApprovalRecord(scopeKey, cwd, reason) {
+  const normalizedScopeKey = typeof scopeKey === "string" ? scopeKey.trim() : "";
+  const normalizedCwd = normalizeProjectCwd(cwd || "");
+  if (!normalizedScopeKey) {
+    return false;
+  }
+
+  let changed = false;
+  if (reviewApprovalsByScopeKey.delete(normalizedScopeKey)) {
+    changed = true;
+  }
+
+  if (normalizedCwd) {
+    const existingScopeKeys = reviewApprovalScopeKeysByCwd.get(normalizedCwd) || [];
+    const filtered = existingScopeKeys.filter((value) => value !== normalizedScopeKey);
+    if (filtered.length !== existingScopeKeys.length) {
+      reviewApprovalScopeKeysByCwd.set(normalizedCwd, filtered);
+      changed = true;
+    }
+  }
+
+  if (changed) {
+    dispatchReviewRegistryUpdated(reason, normalizedScopeKey);
+  }
+  return changed;
+}
+
+function replaceReviewApprovalsForCwd(cwd, approvals, reason) {
+  const normalizedCwd = normalizeProjectCwd(cwd || "");
+  if (!normalizedCwd) {
+    return false;
+  }
+
+  const previousScopeKeys = reviewApprovalScopeKeysByCwd.get(normalizedCwd) || [];
+  const nextApprovals = Array.isArray(approvals)
+    ? approvals.map(normalizeStoredReviewApproval).filter((item) => !!item && item.cwd === normalizedCwd)
+    : [];
+  const nextScopeKeys = [];
+  let changed = previousScopeKeys.length !== nextApprovals.length;
+
+  for (const scopeKey of previousScopeKeys) {
+    if (!nextApprovals.some((approval) => approval.scopeKey === scopeKey)) {
+      reviewApprovalsByScopeKey.delete(scopeKey);
+      changed = true;
+    }
+  }
+
+  for (const approval of nextApprovals) {
+    nextScopeKeys.push(approval.scopeKey);
+    const existing = reviewApprovalsByScopeKey.get(approval.scopeKey) || null;
+    const previousSerialized = existing ? JSON.stringify(existing) : "";
+    const nextSerialized = JSON.stringify(approval);
+    if (!existing || previousSerialized !== nextSerialized) {
+      reviewApprovalsByScopeKey.set(approval.scopeKey, approval);
+      changed = true;
+    }
+  }
+
+  reviewApprovalScopeKeysByCwd.set(normalizedCwd, nextScopeKeys);
+  if (changed) {
+    dispatchReviewRegistryUpdated(reason, "");
+  }
+  return changed;
+}
+
+async function postReviewJson(urlPath, payload) {
+  const response = await fetch(new URL(urlPath, document.baseURI), {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload || {})
+  });
+  if (!response.ok) {
+    const detail = await response.text();
+    throw new Error(`review request failed (${response.status}): ${detail}`);
+  }
+  return await response.json();
+}
+
+async function refreshReviewCatalogForCwd(cwd, options = {}) {
+  const normalizedCwd = normalizeProjectCwd(cwd || "");
+  if (!normalizedCwd) {
+    return [];
+  }
+
+  const force = options.force === true;
+  const existingPromise = reviewCatalogFetchPromiseByCwd.get(normalizedCwd);
+  if (!force && existingPromise) {
+    return await existingPromise;
+  }
+
+  const loadPromise = (async () => {
+    const url = new URL("api/reviews", document.baseURI);
+    url.searchParams.set("cwd", normalizedCwd);
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: { Accept: "application/json" },
+      cache: "no-store"
+    });
+    if (!response.ok) {
+      const detail = await response.text();
+      throw new Error(`review catalog failed (${response.status}): ${detail}`);
+    }
+
+    const payload = await response.json();
+    const reviews = Array.isArray(payload?.reviews) ? payload.reviews : [];
+    const approvals = Array.isArray(payload?.approvals) ? payload.approvals : [];
+    replaceReviewCatalogForCwd(normalizedCwd, reviews, force ? "review_catalog_refresh_forced" : "review_catalog_refresh");
+    replaceReviewApprovalsForCwd(normalizedCwd, approvals, force ? "review_approvals_refresh_forced" : "review_approvals_refresh");
+    return reviews;
+  })();
+
+  reviewCatalogFetchPromiseByCwd.set(normalizedCwd, loadPromise);
+  try {
+    return await loadPromise;
+  } finally {
+    const current = reviewCatalogFetchPromiseByCwd.get(normalizedCwd);
+    if (current === loadPromise) {
+      reviewCatalogFetchPromiseByCwd.delete(normalizedCwd);
+    }
+  }
+}
+
+function getReviewCatalogCwdsForEvent(payload) {
+  const next = new Set();
+  const addCwd = (value) => {
+    const normalized = normalizeProjectCwd(value || "");
+    if (normalized) {
+      next.add(normalized);
+    }
+  };
+
+  if (payload && typeof payload === "object") {
+    addCwd(payload.cwd);
+    const sessionId = typeof payload.sessionId === "string" ? payload.sessionId.trim() : "";
+    const threadId = normalizeThreadId(payload.threadId || "");
+    const turnId = typeof payload.turnId === "string" ? payload.turnId.trim() : "";
+
+    if (sessionId) {
+      const state = sessions.get(sessionId) || null;
+      addCwd(state?.cwd || "");
+    }
+
+    for (const record of reviewRecordsById.values()) {
+      if (!record || typeof record !== "object") {
+        continue;
+      }
+      if (sessionId && record.sessionId === sessionId) {
+        addCwd(record.cwd);
+        continue;
+      }
+      if (threadId && record.threadId === threadId) {
+        addCwd(record.cwd);
+        continue;
+      }
+      if (turnId && record.turnId === turnId) {
+        addCwd(record.cwd);
+      }
+    }
+  }
+
+  return Array.from(next);
+}
+
+async function refreshReviewCatalogsForEvent(payload, options = {}) {
+  const cwds = getReviewCatalogCwdsForEvent(payload);
+  if (cwds.length <= 0) {
+    return;
+  }
+
+  await Promise.allSettled(cwds.map((cwd) => refreshReviewCatalogForCwd(cwd, options)));
+}
+
+async function updateReviewStatus(reviewId, status) {
+  const normalizedReviewId = typeof reviewId === "string" ? reviewId.trim() : "";
+  if (!normalizedReviewId) {
+    return false;
+  }
+
+  const payload = await postReviewJson("api/reviews/status", {
+    reviewId: normalizedReviewId,
+    status: typeof status === "string" ? status.trim() : ""
+  });
+  const existing = reviewRecordsById.get(normalizedReviewId);
+  if (existing) {
+    const nextStatus = normalizeReviewStatus(status);
+    const isTerminal = nextStatus === "completed" || nextStatus === "dismissed" || nextStatus === "failed" || nextStatus === "stale";
+    const next = {
+      ...existing,
+      status: nextStatus || existing.status,
+      startedAtUtc: nextStatus === "running" && !existing.startedAtUtc ? new Date().toISOString() : existing.startedAtUtc,
+      completedAtUtc: isTerminal
+        ? (existing.completedAtUtc || new Date().toISOString())
+        : (nextStatus === "running" ? "" : existing.completedAtUtc)
+    };
+    upsertReviewRecord(next, "review_status_updated");
+  }
+  return payload?.updated === true;
+}
+
+async function setReviewFindingDone(reviewId, findingKey, done) {
+  const normalizedReviewId = typeof reviewId === "string" ? reviewId.trim() : "";
+  const normalizedFindingKey = typeof findingKey === "string" ? findingKey.trim() : "";
+  if (!normalizedReviewId || !normalizedFindingKey) {
+    return false;
+  }
+
+  const payload = await postReviewJson("api/reviews/finding-state", {
+    reviewId: normalizedReviewId,
+    findingKey: normalizedFindingKey,
+    done: done === true
+  });
+  return payload?.updated === true;
+}
+
+async function clearReviewFindingDone(reviewId) {
+  const normalizedReviewId = typeof reviewId === "string" ? reviewId.trim() : "";
+  if (!normalizedReviewId) {
+    return 0;
+  }
+
+  const payload = await postReviewJson("api/reviews/finding-clear", {
+    reviewId: normalizedReviewId
+  });
+  return Number.isFinite(payload?.cleared) ? payload.cleared : 0;
+}
+
+async function setReviewScopeApproval(options = {}) {
+  const cwd = normalizeProjectCwd(options.cwd || "");
+  const targetType = normalizeReviewTargetType(options.targetType);
+  const commitSha = normalizeReviewCommitSha(options.commitSha);
+  if (!cwd) {
+    return { updated: false, approval: null };
+  }
+  if (targetType === "commit" && !commitSha) {
+    return { updated: false, approval: null };
+  }
+
+  const approved = options.approved === true;
+  const scopeKey = buildReviewScopeKey(cwd, targetType, commitSha);
+  const payload = await postReviewJson("api/reviews/approval", {
+    cwd,
+    targetType,
+    commitSha,
+    approved
+  });
+
+  const normalizedApproval = normalizeStoredReviewApproval(payload?.approval || null);
+  let changed = false;
+  if (approved) {
+    if (normalizedApproval) {
+      changed = upsertReviewApprovalRecord(normalizedApproval, "review_scope_approval_updated");
+    }
+  } else {
+    changed = removeReviewApprovalRecord(scopeKey, cwd, "review_scope_approval_removed");
+  }
+
+  return {
+    updated: payload?.updated === true || changed,
+    approval: normalizedApproval
+  };
+}
+
+function getReviewRecordsForScope(scopeKey) {
+  const records = [];
+  if (!scopeKey) {
+    return records;
+  }
+  for (const record of reviewRecordsById.values()) {
+    if (record.scopeKey === scopeKey) {
+      records.push(record);
+    }
+  }
+  const getRecordActivityTime = (record) => {
+    if (!record || typeof record !== "object") {
+      return 0;
+    }
+    const completed = parseUtcTimestamp(record.completedAtUtc);
+    const started = parseUtcTimestamp(record.startedAtUtc);
+    const queued = parseUtcTimestamp(record.queuedAtUtc);
+    return Math.max(completed, started, queued);
+  };
+  records.sort((a, b) => {
+    const bTime = getRecordActivityTime(b);
+    const aTime = getRecordActivityTime(a);
+    if (bTime !== aTime) {
+      return bTime - aTime;
+    }
+    const bQueued = parseUtcTimestamp(b?.queuedAtUtc);
+    const aQueued = parseUtcTimestamp(a?.queuedAtUtc);
+    if (bQueued !== aQueued) {
+      return bQueued - aQueued;
+    }
+    const bId = typeof b?.reviewId === "string" ? b.reviewId : "";
+    const aId = typeof a?.reviewId === "string" ? a.reviewId : "";
+    return bId.localeCompare(aId);
+  });
+  return records;
+}
+
+function buildReviewScopeSummary(scopeKey) {
+  const records = getReviewRecordsForScope(scopeKey);
+  const approval = scopeKey ? (reviewApprovalsByScopeKey.get(scopeKey) || null) : null;
+  let queuedCount = 0;
+  let runningCount = 0;
+  let completedCount = 0;
+  let dismissedCount = 0;
+  let failedCount = 0;
+  let staleCount = 0;
+  let latestRunningRecord = null;
+  let latestQueuedRecord = null;
+  let latestTerminalRecord = null;
+  for (const record of records) {
+    if (record.status === "running") {
+      runningCount += 1;
+      if (!latestRunningRecord) {
+        latestRunningRecord = record;
+      }
+    } else if (record.status === "queued") {
+      queuedCount += 1;
+      if (!latestQueuedRecord) {
+        latestQueuedRecord = record;
+      }
+    } else if (record.status === "dismissed") {
+      dismissedCount += 1;
+      if (!latestTerminalRecord) {
+        latestTerminalRecord = record;
+      }
+    } else if (record.status === "completed") {
+      completedCount += 1;
+      if (!latestTerminalRecord) {
+        latestTerminalRecord = record;
+      }
+    } else if (record.status === "failed") {
+      failedCount += 1;
+      if (!latestTerminalRecord) {
+        latestTerminalRecord = record;
+      }
+    } else if (record.status === "stale") {
+      staleCount += 1;
+      if (!latestTerminalRecord) {
+        latestTerminalRecord = record;
+      }
+    } else {
+      queuedCount += 1;
+      if (!latestQueuedRecord) {
+        latestQueuedRecord = record;
+      }
+    }
+  }
+
+  const primaryRecord = latestRunningRecord || latestQueuedRecord || latestTerminalRecord || (records.length > 0 ? records[0] : null);
+  let status = "not_started";
+  if (latestRunningRecord) {
+    status = "running";
+  } else if (latestQueuedRecord) {
+    status = "queued";
+  } else if (primaryRecord && typeof primaryRecord.status === "string" && primaryRecord.status) {
+    status = primaryRecord.status;
+  } else if (dismissedCount > 0 && completedCount === 0 && failedCount === 0 && staleCount === 0) {
+    status = "dismissed";
+  }
+
+  const openFindingCount = primaryRecord && primaryRecord.status !== "dismissed" && Array.isArray(primaryRecord.findings)
+    ? primaryRecord.findings.length
+    : 0;
+
+  return {
+    scopeKey,
+    status,
+    isApproved: !!approval,
+    approval: approval ? { ...approval } : null,
+    approvedAtUtc: approval && typeof approval.approvedAtUtc === "string" ? approval.approvedAtUtc : "",
+    reviewCount: records.length,
+    queuedCount,
+    runningCount,
+    requestedCount: queuedCount + runningCount,
+    completedCount,
+    dismissedCount,
+    failedCount,
+    staleCount,
+    openFindingCount,
+    records,
+    primaryRecord
+  };
+}
+
+function getReviewFindingsForScope(scopeKey) {
+  const records = getReviewRecordsForScope(scopeKey);
+  const findings = [];
+  for (const record of records) {
+    if (record.status === "dismissed") {
+      continue;
+    }
+    const reviewLabel = record.commitSha
+      ? `${record.commitSha.slice(0, 7)} review`
+      : "worktree review";
+    for (const finding of record.findings || []) {
+      findings.push({
+        ...finding,
+        reviewId: record.reviewId,
+        reviewLabel
+      });
+    }
+  }
+  return findings;
+}
+
+async function markReviewScopeDone(scopeKey) {
+  const normalizedScopeKey = typeof scopeKey === "string" ? scopeKey.trim() : "";
+  if (!normalizedScopeKey) {
+    return false;
+  }
+
+  const records = getReviewRecordsForScope(normalizedScopeKey);
+  if (!Array.isArray(records) || records.length === 0) {
+    return false;
+  }
+
+  const targets = records.filter((record) =>
+    record
+    && typeof record.reviewId === "string"
+    && record.reviewId.trim()
+    && record.status !== "dismissed");
+  if (targets.length === 0) {
+    return true;
+  }
+
+  await Promise.all(targets.map((record) => updateReviewStatus(record.reviewId, "dismissed")));
+  const cwd = targets[0] && typeof targets[0].cwd === "string" ? targets[0].cwd : "";
+  if (cwd) {
+    await refreshReviewCatalogForCwd(cwd, { force: true });
+  }
+  return true;
+}
+
+window.codexDiffRefreshReviewCatalog = async function codexDiffRefreshReviewCatalog(cwd, options = {}) {
+  return await refreshReviewCatalogForCwd(cwd, options);
+};
+
+window.codexDiffSetReviewFindingDone = async function codexDiffSetReviewFindingDone(reviewId, findingKey, done) {
+  return await setReviewFindingDone(reviewId, findingKey, done);
+};
+
+window.codexDiffClearReviewFindingDone = async function codexDiffClearReviewFindingDone(reviewId) {
+  return await clearReviewFindingDone(reviewId);
+};
+
+window.codexDiffMarkReviewScopeDone = async function codexDiffMarkReviewScopeDone(scopeKey) {
+  return await markReviewScopeDone(scopeKey);
+};
+
+window.codexDiffSetReviewScopeApproval = async function codexDiffSetReviewScopeApproval(options = {}) {
+  return await setReviewScopeApproval(options);
+};
+
+window.codexDiffCreateReviewRequest = async function codexDiffCreateReviewRequest(options = {}) {
+  const cwd = normalizeProjectCwd(options.cwd || "");
+  const targetType = normalizeReviewTargetType(options.targetType);
+  const commitSha = normalizeReviewCommitSha(options.commitSha);
+  if (!cwd) {
+    return null;
+  }
+  if (targetType === "commit" && !commitSha) {
+    return null;
+  }
+
+  const threadId = normalizeThreadId(options.threadId || "");
+  const sessionId = typeof options.sessionId === "string" ? options.sessionId.trim() : "";
+  const contextLabel = typeof options.contextLabel === "string" && options.contextLabel.trim()
+    ? options.contextLabel.trim()
+    : "+3";
+  const totalFiles = Number.isFinite(options.totalFiles) ? Math.max(0, Math.floor(options.totalFiles)) : 0;
+  const visibleFiles = Number.isFinite(options.visibleFiles) ? Math.max(0, Math.floor(options.visibleFiles)) : 0;
+  const hiddenBinaryFiles = Number.isFinite(options.hiddenBinaryFiles) ? Math.max(0, Math.floor(options.hiddenBinaryFiles)) : 0;
+  const commitSubject = typeof options.commitSubject === "string" ? options.commitSubject.trim() : "";
+  const noteText = typeof options.noteText === "string" ? options.noteText.trim() : "";
+  const initialStatus = typeof options.initialStatus === "string" && options.initialStatus.trim()
+    ? options.initialStatus.trim()
+    : "queued";
+
+  const payload = await postReviewJson("api/reviews/create", {
+    threadId,
+    sessionId,
+    cwd,
+    targetType,
+    commitSha,
+    commitSubject,
+    contextLabel,
+    visibleFiles,
+    totalFiles,
+    hiddenBinaryFiles,
+    noteText,
+    initialStatus
+  });
+
+  const record = normalizeStoredReviewRecord(payload?.review || null);
+  const promptText = typeof payload?.promptText === "string" ? payload.promptText : "";
+  if (!record || !promptText) {
+    return null;
+  }
+
+  upsertReviewRecord(record, "review_created");
+  return {
+    reviewId: record.reviewId,
+    scopeKey: record.scopeKey,
+    cwd: record.cwd,
+    targetType: record.targetType,
+    commitSha: record.commitSha,
+    commitSubject: record.commitSubject,
+    noteText: record.noteText,
+    promptText
+  };
+};
+
+window.codexDiffGetReviewScopeSummary = function codexDiffGetReviewScopeSummary(scopeKey) {
+  return buildReviewScopeSummary(typeof scopeKey === "string" ? scopeKey.trim() : "");
+};
+
+window.codexDiffGetReviewFindingsForScope = function codexDiffGetReviewFindingsForScope(scopeKey) {
+  return getReviewFindingsForScope(typeof scopeKey === "string" ? scopeKey.trim() : "");
+};
+
+window.codexDiffGetCommitReviewSummaries = function codexDiffGetCommitReviewSummaries(cwd, commits = []) {
+  const normalizedCwd = normalizeProjectCwd(cwd || "");
+  if (!normalizedCwd || !Array.isArray(commits)) {
+    return [];
+  }
+
+  return commits.map((commit) => {
+    const sha = typeof commit?.sha === "string" ? commit.sha.trim().toLowerCase() : "";
+    const scopeKey = buildReviewScopeKey(normalizedCwd, "commit", sha);
+    return {
+      sha,
+      scopeKey,
+      summary: buildReviewScopeSummary(scopeKey)
+    };
+  });
+};
+
+window.codexDiffQueueReviewPrompt = async function codexDiffQueueReviewPrompt(rawPromptText, options = {}) {
+  const promptText = typeof rawPromptText === "string" ? rawPromptText : "";
+  const normalizedPrompt = appendDiffNotesToPrompt(promptText).trim();
+  if (!normalizedPrompt) {
+    appendLog("[review] prompt is empty");
+    return false;
+  }
+
+  if (!activeSessionId) {
+    appendLog("[review] no active session; create or attach one first");
+    return false;
+  }
+  if (isSessionAppServerRecovering(activeSessionId)) {
+    appendLog(`[review] session=${activeSessionId} is recovering; queue is temporarily disabled`);
+    return false;
+  }
+
+  try {
+    await ensureSocket();
+  } catch (error) {
+    appendLog(`[ws] connect failed: ${error}`);
+    return false;
+  }
+
+  const queued = await queuePrompt(activeSessionId, normalizedPrompt, [], { planMode: false });
+  if (!queued) {
+    if (options.reviewRequest?.reviewId) {
+      await updateReviewStatus(options.reviewRequest.reviewId, "failed").catch(() => { });
+    }
+    appendLog(`[review] failed to queue review prompt for session=${activeSessionId}`);
+    return false;
+  }
+
+  if (options.logSuccess !== false) {
+    appendLog(`[review] queued review request for session=${activeSessionId}`);
+  }
+  if (options.reviewRequest?.cwd) {
+    refreshReviewCatalogForCwd(options.reviewRequest.cwd, { force: true }).catch(() => { });
+  }
+  return true;
+};
+
+window.codexDiffQueueFixPrompt = async function codexDiffQueueFixPrompt(rawPromptText, options = {}) {
+  const promptText = typeof rawPromptText === "string" ? rawPromptText : "";
+  const normalizedPrompt = appendDiffNotesToPrompt(promptText).trim();
+  if (!normalizedPrompt) {
+    appendLog("[review] fix prompt is empty");
+    return false;
+  }
+
+  if (!activeSessionId) {
+    appendLog("[review] no active session; create or attach one first");
+    return false;
+  }
+  if (isSessionAppServerRecovering(activeSessionId)) {
+    appendLog(`[review] session=${activeSessionId} is recovering; queue is temporarily disabled`);
+    return false;
+  }
+
+  try {
+    await ensureSocket();
+  } catch (error) {
+    appendLog(`[ws] connect failed: ${error}`);
+    return false;
+  }
+
+  const queued = await queuePrompt(activeSessionId, normalizedPrompt, [], { planMode: false });
+  if (!queued) {
+    appendLog(`[review] failed to queue fix prompt for session=${activeSessionId}`);
+    return false;
+  }
+
+  if (options.logSuccess !== false) {
+    appendLog(`[review] queued fix prompt for session=${activeSessionId}`);
+  }
+  return true;
+};
+
+window.codexDiffRunReviewPrompt = async function codexDiffRunReviewPrompt(rawPromptText, options = {}) {
+  const promptText = typeof rawPromptText === "string" ? rawPromptText : "";
+  const normalizedPrompt = appendDiffNotesToPrompt(promptText).trim();
+  if (!normalizedPrompt) {
+    appendLog("[review] prompt is empty");
+    return false;
+  }
+
+  if (!activeSessionId) {
+    appendLog("[review] no active session; create or attach one first");
+    return false;
+  }
+  if (isSessionAppServerRecovering(activeSessionId)) {
+    appendLog(`[review] session=${activeSessionId} is recovering; wait and retry`);
+    return false;
+  }
+
+  try {
+    await ensureSocket();
+  } catch (error) {
+    appendLog(`[ws] connect failed: ${error}`);
+    return false;
+  }
+
+  if (isTurnInFlight(activeSessionId)) {
+    const queued = await queuePrompt(activeSessionId, normalizedPrompt, [], { planMode: false });
+    if (!queued) {
+      if (options.reviewRequest?.reviewId) {
+        await updateReviewStatus(options.reviewRequest.reviewId, "failed").catch(() => { });
+      }
+      appendLog(`[review] failed to queue review prompt for session=${activeSessionId}`);
+      return false;
+    }
+
+    if (options.logSuccess !== false) {
+      appendLog(`[review] turn is active; review request queued for session=${activeSessionId}`);
+    }
+    if (options.reviewRequest?.cwd) {
+      refreshReviewCatalogForCwd(options.reviewRequest.cwd, { force: true }).catch(() => { });
+    }
+    return true;
+  }
+
+  const started = startTurn(activeSessionId, normalizedPrompt, [], { planMode: false });
+  if (!started) {
+    if (options.reviewRequest?.reviewId) {
+      await updateReviewStatus(options.reviewRequest.reviewId, "failed").catch(() => { });
+    }
+    appendLog(`[review] failed to start review prompt for session=${activeSessionId}`);
+    return false;
+  }
+
+  if (options.logSuccess !== false) {
+    appendLog(`[review] started review request for session=${activeSessionId}`);
+  }
+  if (options.reviewRequest?.cwd) {
+    refreshReviewCatalogForCwd(options.reviewRequest.cwd, { force: true }).catch(() => { });
+  }
+  return true;
+};
+
+function normalizeThreadId(threadId) {
+  return typeof threadId === "string" ? threadId.trim() : "";
+}
+
+function getActiveThreadId() {
+  return normalizeThreadId(getActiveSessionState()?.threadId || "");
+}
+
+function hasAttachedSessionForThread(threadId) {
+  const normalizedThreadId = normalizeThreadId(threadId);
+  if (!normalizedThreadId) {
+    return false;
+  }
+
+  for (const state of sessions.values()) {
+    if (normalizeThreadId(state?.threadId || "") === normalizedThreadId) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function hasThreadCompletionUnread(threadId) {
+  const normalizedThreadId = normalizeThreadId(threadId);
+  if (!normalizedThreadId) {
+    return false;
+  }
+
+  return completedUnreadThreadIds.has(normalizedThreadId);
+}
+
+function markThreadCompletionUnread(threadId, options = {}) {
+  const normalizedThreadId = normalizeThreadId(threadId);
+  if (!normalizedThreadId) {
+    return false;
+  }
+
+  if (options.requireAttached === true && !hasAttachedSessionForThread(normalizedThreadId)) {
+    return false;
+  }
+
+  if (normalizedThreadId === getActiveThreadId()) {
+    return false;
+  }
+
+  const hadEntry = completedUnreadThreadIds.has(normalizedThreadId);
+  completedUnreadThreadIds.add(normalizedThreadId);
+  return !hadEntry;
+}
+
+function markThreadCompletionSeen(threadId) {
+  const normalizedThreadId = normalizeThreadId(threadId);
+  if (!normalizedThreadId) {
+    return false;
+  }
+
+  return completedUnreadThreadIds.delete(normalizedThreadId);
+}
+
+function applyProcessingByThread(nextProcessingMap) {
+  const prior = processingByThread;
+  const next = new Map();
+
+  if (nextProcessingMap && typeof nextProcessingMap[Symbol.iterator] === "function") {
+    for (const [threadId, processing] of nextProcessingMap) {
+      const normalizedThreadId = normalizeThreadId(threadId);
+      if (!normalizedThreadId || processing !== true) {
+        continue;
+      }
+
+      next.set(normalizedThreadId, true);
+    }
+  }
+
+  for (const [threadId, wasProcessing] of prior.entries()) {
+    if (wasProcessing !== true) {
+      continue;
+    }
+
+    if (next.get(threadId) === true) {
+      continue;
+    }
+
+    markThreadCompletionUnread(threadId, { requireAttached: true });
+  }
+
+  processingByThread = next;
+}
+
+function clearComposerImages() {
+  pendingComposerImages = [];
+  renderComposerImages();
+}
+
+function renderComposerImages() {
+  if (!composerImages) {
+    return;
+  }
+
+  composerImages.textContent = "";
+  if (pendingComposerImages.length === 0) {
+    composerImages.classList.add("hidden");
+    return;
+  }
+
+  for (const image of pendingComposerImages) {
+    const pill = document.createElement("div");
+    pill.className = "composer-image-pill";
+
+    const preview = document.createElement("img");
+    preview.src = image.url;
+    preview.alt = image.name || "attached image";
+    preview.loading = "lazy";
+    pill.appendChild(preview);
+
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "composer-image-remove";
+    removeBtn.textContent = "x";
+    removeBtn.title = "Remove image";
+    removeBtn.addEventListener("click", () => {
+      pendingComposerImages = pendingComposerImages.filter((x) => x.id !== image.id);
+      renderComposerImages();
+      rememberPromptDraftForState(getActiveSessionState());
+    });
+    pill.appendChild(removeBtn);
+
+    composerImages.appendChild(pill);
+  }
+
+  composerImages.classList.remove("hidden");
+}
+
+function getTimelineSelectionSignature(snapshot) {
+  if (!snapshot) {
+    return "";
+  }
+
+  return [
+    String(snapshot.threadId || "").trim(),
+    String(snapshot.selectionText || "")
+  ].join("||");
+}
+
+function getCurrentTimelineSelectionSnapshot() {
+  if (!chatMessages || typeof window === "undefined" || typeof window.getSelection !== "function") {
+    return null;
+  }
+
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
+    return null;
+  }
+
+  const selectedText = String(selection || "");
+  if (!selectedText.trim()) {
+    return null;
+  }
+
+  const anchorNode = selection.anchorNode;
+  const focusNode = selection.focusNode;
+  if ((anchorNode && !chatMessages.contains(anchorNode)) || (focusNode && !chatMessages.contains(focusNode))) {
+    return null;
+  }
+
+  const range = selection.getRangeAt(0);
+  const ancestor = range && range.commonAncestorContainer
+    ? range.commonAncestorContainer
+    : null;
+  if (ancestor && !chatMessages.contains(ancestor)) {
+    return null;
+  }
+
+  return {
+    threadId: getActiveThreadId(),
+    selectionText: selectedText,
+    selectedAtMs: Date.now()
+  };
+}
+
+function renderTimelineSelectionIndicator() {
+  if (!promptTimelineSelectionIndicator) {
+    return;
+  }
+
+  const activeThreadId = getActiveThreadId();
+  const snapshot = timelineSelectionSnapshot;
+  if (!snapshot || !activeThreadId || String(snapshot.threadId || "").trim() !== activeThreadId) {
+    promptTimelineSelectionIndicator.textContent = "";
+    promptTimelineSelectionIndicator.classList.add("hidden");
+    return;
+  }
+
+  const signature = getTimelineSelectionSignature(snapshot);
+  if (signature && signature === consumedTimelineSelectionSignature) {
+    promptTimelineSelectionIndicator.textContent = "";
+    promptTimelineSelectionIndicator.classList.add("hidden");
+    return;
+  }
+
+  const chars = String(snapshot.selectionText || "").length;
+  const previewLines = String(snapshot.selectionText || "")
+    .replace(/\r/g, "")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .slice(0, 2);
+  const previewText = previewLines.length > 0
+    ? previewLines.join(" ")
+    : "(selection is empty)";
+
+  const header = document.createElement("div");
+  header.className = "header";
+  const label = document.createElement("span");
+  label.className = "file";
+  label.textContent = "Timeline selection";
+  header.appendChild(label);
+
+  const meta = document.createElement("span");
+  meta.className = "meta";
+  meta.textContent = ` ${chars} chars`;
+  header.appendChild(meta);
+
+  const dismiss = document.createElement("button");
+  dismiss.type = "button";
+  dismiss.className = "dismiss";
+  dismiss.title = "Dismiss selected timeline context";
+  dismiss.setAttribute("aria-label", "Dismiss selected timeline context");
+  dismiss.textContent = "\u00D7";
+  dismiss.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    consumedTimelineSelectionSignature = signature;
+    renderTimelineSelectionIndicator();
+  });
+  header.appendChild(dismiss);
+
+  const preview = document.createElement("div");
+  preview.className = "preview";
+  preview.textContent = previewText;
+
+  promptTimelineSelectionIndicator.textContent = "";
+  promptTimelineSelectionIndicator.appendChild(header);
+  promptTimelineSelectionIndicator.appendChild(preview);
+  promptTimelineSelectionIndicator.classList.remove("hidden");
+}
+
+function refreshTimelineSelectionSnapshot(options = {}) {
+  const clearWhenNoSelection = options.clearWhenNoSelection === true;
+  const force = options.force === true;
+  const next = getCurrentTimelineSelectionSnapshot();
+  const activeThreadId = getActiveThreadId();
+
+  if (timelineSelectionSnapshot && String(timelineSelectionSnapshot.threadId || "").trim() !== activeThreadId) {
+    timelineSelectionSnapshot = null;
+    renderTimelineSelectionIndicator();
+    return null;
+  }
+
+  if (!next) {
+    if (clearWhenNoSelection && timelineSelectionSnapshot !== null) {
+      timelineSelectionSnapshot = null;
+      renderTimelineSelectionIndicator();
+    } else if (force) {
+      renderTimelineSelectionIndicator();
+    }
+    return timelineSelectionSnapshot;
+  }
+
+  const previousSignature = getTimelineSelectionSignature(timelineSelectionSnapshot);
+  const nextSignature = getTimelineSelectionSignature(next);
+  const changed = previousSignature !== nextSignature;
+  timelineSelectionSnapshot = next;
+  if (changed || force) {
+    renderTimelineSelectionIndicator();
+  }
+  return timelineSelectionSnapshot;
+}
+
+function formatTimelineSelectionContextForPrompt(snapshot) {
+  if (!snapshot) {
+    return "";
+  }
+
+  const activeThreadId = getActiveThreadId();
+  const snapshotThreadId = String(snapshot.threadId || "").trim();
+  if (!activeThreadId || snapshotThreadId !== activeThreadId) {
+    return "";
+  }
+
+  const text = String(snapshot.selectionText || "");
+  if (!text.trim()) {
+    return "";
+  }
+
+  const truncated = text.length > TIMELINE_SELECTION_MAX_PROMPT_CHARS
+    ? `${text.slice(0, TIMELINE_SELECTION_MAX_PROMPT_CHARS)}\n...[selection truncated]...`
+    : text;
+
+  return [
+    "",
+    "[Timeline selection context]",
+    `Thread: ${snapshotThreadId}`,
+    "Selected timeline text:",
+    "```",
+    truncated,
+    "```"
+  ].join("\n");
+}
+
+function composePromptWithTimelineSelection(promptText) {
+  const base = String(promptText || "");
+  if (!base.trim()) {
+    return { prompt: base, includedSelection: false };
+  }
+
+  const snapshot = timelineSelectionSnapshot;
+  const signature = getTimelineSelectionSignature(snapshot);
+  if (signature && signature === consumedTimelineSelectionSignature) {
+    return { prompt: base, includedSelection: false };
+  }
+
+  const contextBlock = formatTimelineSelectionContextForPrompt(snapshot);
+  if (!contextBlock) {
+    return { prompt: base, includedSelection: false };
+  }
+
+  return {
+    prompt: `${base}\n${contextBlock}`,
+    includedSelection: true,
+    selection: snapshot,
+    selectionSignature: signature
+  };
+}
+
+function getVsBridgeCommands() {
+  const bridge = window.__vsBridge || window.devAgentBridge;
+  if (!bridge || !bridge.commands || typeof bridge.commands.getContext !== "function") {
+    return null;
+  }
+
+  return bridge.commands;
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function getFileNameFromPath(path) {
+  const normalized = String(path || "").trim();
+  if (!normalized) {
+    return "";
+  }
+
+  const slash = Math.max(normalized.lastIndexOf("/"), normalized.lastIndexOf("\\"));
+  return slash >= 0 ? normalized.slice(slash + 1) : normalized;
+}
+
+function normalizeVsSelectionSnapshot(rawContext) {
+  if (!rawContext || typeof rawContext !== "object") {
+    return null;
+  }
+
+  const filePath = String(rawContext.activeDocumentPath || "").trim();
+  const selectionText = String(rawContext.selectionText || "");
+  if (!filePath || !selectionText.trim()) {
+    return null;
+  }
+
+  const line = Number(rawContext.caretLine || 0);
+  const column = Number(rawContext.caretColumn || 0);
+  return {
+    filePath,
+    fileName: getFileNameFromPath(filePath),
+    selectionText,
+    caretLine: Number.isFinite(line) ? Math.max(0, Math.floor(line)) : 0,
+    caretColumn: Number.isFinite(column) ? Math.max(0, Math.floor(column)) : 0
+  };
+}
+
+function getVsSelectionSignature(snapshot) {
+  if (!snapshot) {
+    return "";
+  }
+
+  return [
+    String(snapshot.filePath || "").trim(),
+    String(snapshot.selectionText || ""),
+    Number(snapshot.caretLine || 0),
+    Number(snapshot.caretColumn || 0)
+  ].join("||");
+}
+
+function renderVsSelectionIndicator() {
+  if (!promptSelectionIndicator) {
+    return;
+  }
+
+  const snapshot = vsSelectionSnapshot;
+  if (!snapshot) {
+    promptSelectionIndicator.textContent = "";
+    promptSelectionIndicator.classList.add("hidden");
+    return;
+  }
+  const signature = getVsSelectionSignature(snapshot);
+  if (signature && signature === consumedVsSelectionSignature) {
+    promptSelectionIndicator.textContent = "";
+    promptSelectionIndicator.classList.add("hidden");
+    return;
+  }
+
+  const chars = snapshot.selectionText.length;
+  const caretParts = [];
+  if (snapshot.caretLine > 0) {
+    caretParts.push(`line ${snapshot.caretLine}`);
+  }
+  if (snapshot.caretColumn > 0) {
+    caretParts.push(`col ${snapshot.caretColumn}`);
+  }
+  const caretText = caretParts.length > 0 ? ` | ${caretParts.join(", ")}` : "";
+  const previewLines = String(snapshot.selectionText || "")
+    .replace(/\r/g, "")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .slice(0, 2);
+  const previewText = previewLines.length > 0
+    ? previewLines.join(" ")
+    : "(selection is empty)";
+
+  const header = document.createElement("div");
+  header.className = "header";
+  const file = document.createElement("span");
+  file.className = "file";
+  file.textContent = `VS selection: ${snapshot.fileName || snapshot.filePath}`;
+  header.appendChild(file);
+
+  const meta = document.createElement("span");
+  meta.className = "meta";
+  meta.textContent = ` ${chars} chars${caretText}`;
+  header.appendChild(meta);
+
+  const dismiss = document.createElement("button");
+  dismiss.type = "button";
+  dismiss.className = "dismiss";
+  dismiss.title = "Dismiss selected code context";
+  dismiss.setAttribute("aria-label", "Dismiss selected code context");
+  dismiss.textContent = "\u00D7";
+  dismiss.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    consumedVsSelectionSignature = signature;
+    renderVsSelectionIndicator();
+  });
+  header.appendChild(dismiss);
+
+  const preview = document.createElement("div");
+  preview.className = "preview";
+  preview.textContent = previewText;
+
+  promptSelectionIndicator.textContent = "";
+  promptSelectionIndicator.appendChild(header);
+  promptSelectionIndicator.appendChild(preview);
+  promptSelectionIndicator.classList.remove("hidden");
+}
+
+async function refreshVsSelectionSnapshot(options = {}) {
+  const force = options.force === true;
+  if (vsSelectionPollInFlight && !force) {
+    return vsSelectionSnapshot;
+  }
+
+  const commands = getVsBridgeCommands();
+  if (!commands) {
+    if (vsSelectionSnapshot !== null) {
+      vsSelectionSnapshot = null;
+      renderVsSelectionIndicator();
+    }
+    return null;
+  }
+
+  vsSelectionPollInFlight = true;
+  try {
+    const context = await commands.getContext();
+    const normalized = normalizeVsSelectionSnapshot(context);
+    const changed = JSON.stringify(normalized) !== JSON.stringify(vsSelectionSnapshot);
+    vsSelectionSnapshot = normalized;
+    if (changed || force) {
+      renderVsSelectionIndicator();
+    }
+    return vsSelectionSnapshot;
+  } catch (error) {
+    if (vsSelectionSnapshot !== null) {
+      vsSelectionSnapshot = null;
+      renderVsSelectionIndicator();
+    }
+    return null;
+  } finally {
+    vsSelectionPollInFlight = false;
+  }
+}
+
+function startVsSelectionPolling() {
+  if (vsSelectionPollTimer) {
+    clearInterval(vsSelectionPollTimer);
+  }
+
+  refreshVsSelectionSnapshot({ force: true }).catch(() => {});
+  vsSelectionPollTimer = setInterval(() => {
+    if (!isDocumentVisible()) {
+      return;
+    }
+    refreshVsSelectionSnapshot().catch(() => {});
+  }, VS_SELECTION_POLL_INTERVAL_MS);
+}
+
+function formatSelectionContextForPrompt(snapshot) {
+  if (!snapshot) {
+    return "";
+  }
+
+  const text = String(snapshot.selectionText || "");
+  if (!text.trim()) {
+    return "";
+  }
+
+  const truncated = text.length > VS_SELECTION_MAX_PROMPT_CHARS
+    ? `${text.slice(0, VS_SELECTION_MAX_PROMPT_CHARS)}\n...[selection truncated]...`
+    : text;
+  const caret = snapshot.caretLine > 0
+    ? `line ${snapshot.caretLine}${snapshot.caretColumn > 0 ? `, col ${snapshot.caretColumn}` : ""}`
+    : "unknown";
+  return [
+    "",
+    "[Visual Studio selection context]",
+    `File: ${snapshot.filePath}`,
+    `Caret: ${caret}`,
+    "Selected code:",
+    "```",
+    truncated,
+    "```"
+  ].join("\n");
+}
+
+async function composePromptWithVsSelection(promptText) {
+  const base = String(promptText || "");
+  if (!base.trim()) {
+    return { prompt: base, includedSelection: false };
+  }
+
+  const snapshot = await refreshVsSelectionSnapshot({ force: true });
+  const signature = getVsSelectionSignature(snapshot);
+  if (signature && signature === consumedVsSelectionSignature) {
+    return { prompt: base, includedSelection: false };
+  }
+  const contextBlock = formatSelectionContextForPrompt(snapshot);
+  if (!contextBlock) {
+    return { prompt: base, includedSelection: false };
+  }
+
+  return {
+    prompt: `${base}\n${contextBlock}`,
+    includedSelection: true,
+    selection: snapshot,
+    selectionSignature: signature
+  };
+}
+
+function getBridgeBuildFixSnapshot() {
+  const bridge = window.__vsBridge || window.devAgentBridge;
+  const build = bridge && bridge.build && typeof bridge.build === "object" ? bridge.build : null;
+  if (!build) {
+    return null;
+  }
+
+  const state = String(build.state || "").trim().toLowerCase();
+  const errors = String(build.errorList || "");
+  const warnings = String(build.warningList || "");
+  const parsedErrorCount = Number(build.errors || 0);
+  const errorCount = Number.isFinite(parsedErrorCount) ? Math.max(0, Math.floor(parsedErrorCount)) : 0;
+  if (state !== "failed" || !errors.trim()) {
+    return null;
+  }
+
+  return {
+    state,
+    errors,
+    warnings,
+    errorCount
+  };
+}
+
+function buildFixClipSignature(snapshot) {
+  if (!snapshot) {
+    return "";
+  }
+
+  return `${snapshot.state}||${snapshot.errorCount}||${snapshot.errors}`;
+}
+
+function formatBuildFixContextForPrompt(clip) {
+  if (!clip || !clip.errors || !clip.errors.trim()) {
+    return "";
+  }
+
+  const errors = clip.errors.length > BUILD_FIX_MAX_CHARS
+    ? `${clip.errors.slice(0, BUILD_FIX_MAX_CHARS)}\n...[build errors truncated]...`
+    : clip.errors;
+  const warningSection = clip.warnings && clip.warnings.trim()
+    ? [
+      "",
+      "Warnings:",
+      "```",
+      clip.warnings,
+      "```"
+    ].join("\n")
+    : "";
+  return [
+    "",
+    "[Visual Studio build errors]",
+    `Build state: ${clip.state}`,
+    `Error count: ${clip.errorCount}`,
+    "Errors:",
+    "```",
+    errors,
+    "```",
+    warningSection
+  ].join("\n");
+}
+
+function renderBuildFixIndicator() {
+  if (!promptBuildFixIndicator) {
+    return;
+  }
+
+  const clip = pendingBuildFixClip;
+  if (!clip || !clip.signature) {
+    promptBuildFixIndicator.textContent = "";
+    promptBuildFixIndicator.classList.add("hidden");
+    return;
+  }
+
+  const row = document.createElement("div");
+  row.className = "header";
+
+  const label = document.createElement("span");
+  label.className = "label";
+  label.textContent = `Build failed: ${clip.errorCount} error${clip.errorCount === 1 ? "" : "s"}`;
+  row.appendChild(label);
+
+  const fixBtn = document.createElement("button");
+  fixBtn.type = "button";
+  fixBtn.className = "fix";
+  fixBtn.textContent = "Fix";
+  fixBtn.title = "Attach build errors to next request";
+  fixBtn.addEventListener("click", () => {
+    if (promptInput) {
+      promptInput.focus();
+    }
+  });
+  row.appendChild(fixBtn);
+
+  const dismissBtn = document.createElement("button");
+  dismissBtn.type = "button";
+  dismissBtn.className = "dismiss";
+  dismissBtn.textContent = "\u00D7";
+  dismissBtn.title = "Dismiss build fix clip";
+  dismissBtn.setAttribute("aria-label", "Dismiss build fix clip");
+  dismissBtn.addEventListener("click", () => {
+    dismissedBuildFixSignature = clip.signature;
+    pendingBuildFixClip = null;
+    renderBuildFixIndicator();
+  });
+  row.appendChild(dismissBtn);
+
+  const preview = document.createElement("div");
+  preview.className = "preview";
+  const firstLine = String(clip.errors || "").replace(/\r/g, "").split("\n").map((line) => line.trim()).find((line) => line);
+  preview.textContent = firstLine || "Error list ready to attach.";
+
+  promptBuildFixIndicator.textContent = "";
+  promptBuildFixIndicator.appendChild(row);
+  promptBuildFixIndicator.appendChild(preview);
+  promptBuildFixIndicator.classList.remove("hidden");
+}
+
+function refreshBuildFixClipFromBridge() {
+  const snapshot = getBridgeBuildFixSnapshot();
+  if (!snapshot) {
+    if (pendingBuildFixClip) {
+      pendingBuildFixClip = null;
+      renderBuildFixIndicator();
+    }
+    return;
+  }
+
+  const signature = buildFixClipSignature(snapshot);
+  if (!signature || signature === dismissedBuildFixSignature) {
+    return;
+  }
+
+  if (pendingBuildFixClip && pendingBuildFixClip.signature === signature) {
+    return;
+  }
+
+  pendingBuildFixClip = {
+    signature,
+    state: snapshot.state,
+    errors: snapshot.errors,
+    warnings: snapshot.warnings,
+    errorCount: snapshot.errorCount
+  };
+  renderBuildFixIndicator();
+}
+
+function startBuildFixPolling() {
+  if (buildFixPollTimer) {
+    clearInterval(buildFixPollTimer);
+  }
+
+  refreshBuildFixClipFromBridge();
+  buildFixPollTimer = setInterval(() => {
+    if (!isDocumentVisible()) {
+      return;
+    }
+    refreshBuildFixClipFromBridge();
+  }, BUILD_FIX_POLL_INTERVAL_MS);
+}
+
+function composePromptWithBuildFix(promptText) {
+  const base = String(promptText || "");
+  const clip = pendingBuildFixClip;
+  if (!clip || !clip.signature) {
+    return { prompt: base, includedBuildFix: false };
+  }
+
+  const block = formatBuildFixContextForPrompt(clip);
+  if (!block) {
+    return { prompt: base, includedBuildFix: false };
+  }
+
+  const head = base.trim() ? base : "Fix the build errors from the latest Visual Studio build.";
+  return {
+    prompt: `${head}\n${block}`,
+    includedBuildFix: true,
+    buildFixSignature: clip.signature
+  };
+}
+
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(typeof reader.result === "string" ? reader.result : "");
+    reader.onerror = () => reject(new Error(`failed reading image '${file.name || "unnamed"}'`));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function addComposerFiles(filesLike) {
+  const files = Array.from(filesLike || []);
+  const imageFiles = files.filter((f) => f && typeof f.type === "string" && f.type.startsWith("image/"));
+  if (imageFiles.length === 0) {
+    return;
+  }
+
+  for (const file of imageFiles) {
+    if (pendingComposerImages.length >= MAX_COMPOSER_IMAGES) {
+      appendLog(`[image] max ${MAX_COMPOSER_IMAGES} attachments reached`);
+      break;
+    }
+
+    if (typeof file.size === "number" && file.size > MAX_COMPOSER_IMAGE_BYTES) {
+      appendLog(`[image] '${file.name || "image"}' is too large (max ${Math.floor(MAX_COMPOSER_IMAGE_BYTES / (1024 * 1024))}MB)`);
+      continue;
+    }
+
+    try {
+      const dataUrl = await fileToDataUrl(file);
+      if (!dataUrl.startsWith("data:image/")) {
+        appendLog(`[image] '${file.name || "image"}' is not a supported image`);
+        continue;
+      }
+
+      pendingComposerImages.push({
+        id: nextComposerImageId++,
+        name: file.name || "image",
+        mimeType: file.type || "image/*",
+        size: file.size || 0,
+        url: dataUrl
+      });
+    } catch (error) {
+      appendLog(`[image] ${error}`);
+    }
+  }
+
+  renderComposerImages();
+  rememberPromptDraftForState(getActiveSessionState());
+}
+
+function initializeScribeControl() {
+  if (!speechToTextBtn || !promptInput) {
+    return;
+  }
+
+  if (typeof window.initScribe !== "function") {
+    appendLog("[voice] scribe module is unavailable");
+    speechToTextBtn.disabled = true;
+    speechToTextBtn.title = "Speech-to-text failed to initialize";
+    speechToTextBtn.setAttribute("aria-label", "Speech-to-text failed to initialize");
+    return;
+  }
+
+  const targetId = (speechToTextBtn.dataset.scribeTarget || "").trim();
+  const target = targetId ? document.getElementById(targetId) : promptInput;
+  if (!target) {
+    appendLog("[voice] speech-to-text target field was not found");
+    speechToTextBtn.disabled = true;
+    return;
+  }
+
+  const ensureVoiceKeyConfigured = async () => {
+    const now = Date.now();
+    if (openAiKeyStatusCache
+      && Number.isFinite(openAiKeyStatusCache.checkedAtMs)
+      && (now - openAiKeyStatusCache.checkedAtMs) <= OPENAI_KEY_STATUS_CACHE_MS) {
+      if (openAiKeyStatusCache.hasKey === true) {
+        return true;
+      }
+
+      appendLog("[voice] OpenAI API key is not configured. Redirecting to Settings.");
+      window.location.assign("settings?focusOpenAiKey=1&reason=voice");
+      return false;
+    }
+
+    let hasKey = false;
+    try {
+      const response = await fetch(new URL("api/settings/openai-key/status", document.baseURI), { cache: "no-store" });
+      if (response.ok) {
+        const payload = await response.json();
+        hasKey = payload && payload.hasKey === true;
+      }
+    } catch (error) {
+      appendLog(`[voice] unable to verify OpenAI key status: ${error}`);
+      return false;
+    } finally {
+      openAiKeyStatusCache = {
+        hasKey,
+        checkedAtMs: now
+      };
+    }
+
+    if (hasKey) {
+      return true;
+    }
+
+    appendLog("[voice] OpenAI API key is required for speech-to-text. Redirecting to Settings.");
+    window.location.assign("settings?focusOpenAiKey=1&reason=voice");
+    return false;
+  };
+
+  scribeController = window.initScribe({
+    button: speechToTextBtn,
+    target,
+    transcribeUrl: new URL("api/transcribe", document.baseURI),
+    beforeStart: ensureVoiceKeyConfigured,
+    onLog: (message) => appendLog(message),
+    onDraftSync: () => rememberPromptDraftForState(getActiveSessionState())
+  });
+}
+
+async function settleScribeBeforeSubmit() {
+  if (!scribeController) {
+    return;
+  }
+
+  try {
+    if (typeof scribeController.stopAndWaitForIdle === "function") {
+      await scribeController.stopAndWaitForIdle();
+      return;
+    }
+
+    if (scribeController.recording && typeof scribeController.stop === "function") {
+      await scribeController.stop();
+    }
+  } catch (error) {
+    appendLog(`[voice] failed to finalize dictation before send: ${error}`);
+  }
+}
+
+function getQueuedTurnsForSession(sessionId) {
+  if (!sessionId) {
+    return [];
+  }
+
+  const state = sessions.get(sessionId);
+  if (!state || !Array.isArray(state.queuedTurns)) {
+    return [];
+  }
+
+  return state.queuedTurns;
+}
+
+function isThreadProcessing(threadId) {
+  const normalizedThreadId = normalizeThreadId(threadId);
+  if (!normalizedThreadId) {
+    return false;
+  }
+
+  return processingByThread.get(normalizedThreadId) === true;
+}
+
+function isTurnInFlight(sessionId) {
+  if (!sessionId) {
+    return false;
+  }
+
+  return turnInFlightBySession.get(sessionId) === true;
+}
+
+function isSessionAppServerRecovering(sessionId) {
+  if (!sessionId) {
+    return false;
+  }
+
+  const state = sessions.get(sessionId);
+  return !!state && state.isAppServerRecovering === true;
+}
+
+function setTurnStartGrace(sessionId, enabled, durationMs = TURN_START_CONFIRM_GRACE_MS) {
+  if (!sessionId) {
+    return;
+  }
+
+  if (!enabled) {
+    turnStartGraceUntilBySession.delete(sessionId);
+    return;
+  }
+
+  const safeDuration = Number.isFinite(durationMs)
+    ? Math.max(1000, Math.floor(durationMs))
+    : TURN_START_CONFIRM_GRACE_MS;
+  turnStartGraceUntilBySession.set(sessionId, Date.now() + safeDuration);
+}
+
+function isTurnStartGraceActive(sessionId) {
+  if (!sessionId) {
+    return false;
+  }
+
+  const until = turnStartGraceUntilBySession.get(sessionId);
+  if (!Number.isFinite(until)) {
+    return false;
+  }
+
+  if (Date.now() > until) {
+    turnStartGraceUntilBySession.delete(sessionId);
+    return false;
+  }
+
+  return true;
+}
+
+function resolveTurnInFlightFromServer(sessionId, serverInFlight) {
+  if (!sessionId) {
+    return !!serverInFlight;
+  }
+
+  if (serverInFlight) {
+    setTurnStartGrace(sessionId, false);
+    return true;
+  }
+
+  if (isTurnStartGraceActive(sessionId)) {
+    return true;
+  }
+
+  setTurnStartGrace(sessionId, false);
+  return false;
+}
+
+function setTurnInFlight(sessionId, value) {
+  if (!sessionId) {
+    return;
+  }
+
+  const normalized = !!value;
+  const prior = turnInFlightBySession.get(sessionId) === true;
+  turnInFlightBySession.set(sessionId, normalized);
+  if (prior !== normalized) {
+    const state = sessions.get(sessionId) || null;
+    const threadId = normalizeThreadId(state?.threadId || "");
+    if (normalized) {
+      if (!turnStartedAtBySession.has(sessionId)) {
+        turnStartedAtBySession.set(sessionId, Date.now());
+      }
+      const baselineReasoning = threadId ? normalizeReasoningSummary(lastReasoningByThread.get(threadId) || "") : "";
+      reasoningBaselineBySession.set(sessionId, baselineReasoning);
+      awaitingFreshReasoningBySession.set(sessionId, true);
+      if (threadId) {
+        lastReasoningByThread.delete(threadId);
+      }
+    } else {
+      turnStartedAtBySession.delete(sessionId);
+      setTurnStartGrace(sessionId, false);
+      awaitingFreshReasoningBySession.delete(sessionId);
+      reasoningBaselineBySession.delete(sessionId);
+    }
+
+    renderProjectSidebar();
+    if (sessionId === activeSessionId) {
+      updatePromptActionState();
+    }
+  }
+}
+
+function applyTurnOverrideReset(sessionId, options = {}) {
+  if (!sessionId) {
+    return;
+  }
+
+  const state = sessions.get(sessionId) || null;
+  if (state) {
+    const threadId = normalizeThreadId(state.threadId || "");
+    if (threadId) {
+      processingByThread.delete(threadId);
+    }
+    state.queuedTurns = [];
+    state.queuedTurnCount = 0;
+    if (state.isPlanTurn === true) {
+      finalizePlanTurn(sessionId, "interrupted", true);
+    }
+  }
+
+  setTurnInFlight(sessionId, false);
+  if (sessionId === activeSessionId) {
+    updatePromptActionState();
+    renderPromptQueue();
+    updatePlanPanel();
+  }
+
+  if (options.renderSidebar !== false) {
+    renderProjectSidebar();
+  }
+}
+
+function trimPromptPreview(text) {
+  const normalized = normalizeQueuePreviewText(text);
+  if (normalized.length <= MAX_QUEUE_TEXT_CHARS) {
+    return normalized;
+  }
+
+  return `${normalized.slice(0, MAX_QUEUE_TEXT_CHARS)}...`;
+}
+
+function renderPromptQueue() {
+  if (!promptQueue) {
+    return;
+  }
+
+  if (!activeSessionId) {
+    promptQueue.textContent = "";
+    promptQueue.classList.add("hidden");
+    return;
+  }
+
+  const queue = getQueuedTurnsForSession(activeSessionId);
+  if (!queue || queue.length === 0) {
+    promptQueue.textContent = "";
+    promptQueue.classList.add("hidden");
+    return;
+  }
+
+  promptQueue.textContent = "";
+  const header = document.createElement("div");
+  header.className = "prompt-queue-header";
+  header.textContent = `Queued (${queue.length}) - tap to edit before sending`;
+  promptQueue.appendChild(header);
+
+  const list = document.createElement("div");
+  list.className = "prompt-queue-list";
+  const maxQueueItemsToRender = Math.min(queue.length, MAX_QUEUED_TURNS_TRACKED);
+  for (let i = 0; i < maxQueueItemsToRender; i++) {
+    const item = queue[i];
+    const imageCount = Number.isFinite(item.imageCount) ? Math.max(0, Math.floor(item.imageCount)) : 0;
+    const imageSuffix = imageCount > 0 ? ` (+${imageCount} image${imageCount > 1 ? "s" : ""})` : "";
+    const rawPreview = normalizeQueuePreviewText(item.previewText) || (imageCount > 0 ? "(image only)" : "");
+
+    const row = document.createElement("div");
+    row.className = "prompt-queue-row";
+
+    const itemButton = document.createElement("button");
+    itemButton.type = "button";
+    itemButton.className = "prompt-queue-item";
+    itemButton.textContent = `${i + 1}. ${trimPromptPreview(rawPreview)}${imageSuffix}`;
+    itemButton.addEventListener("click", () => {
+      requestQueuedPromptForEditing(activeSessionId, item.queueItemId);
+    });
+
+    const removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.className = "prompt-queue-remove";
+    removeButton.title = "Remove queued prompt";
+    removeButton.setAttribute("aria-label", "Remove queued prompt");
+    removeButton.textContent = "x";
+    removeButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      removeQueuedPrompt(activeSessionId, item.queueItemId);
+    });
+
+    row.append(itemButton, removeButton);
+    list.appendChild(row);
+  }
+  promptQueue.appendChild(list);
+  promptQueue.classList.remove("hidden");
+}
+
+async function queuePrompt(sessionId, promptText, images = [], options = {}) {
+  if (!sessionId) {
+    return false;
+  }
+  if (isSessionAppServerRecovering(sessionId)) {
+    return false;
+  }
+
+  const turnInput = buildTurnInput(promptText, images, { trimText: false });
+  if (!turnInput.hasContent) {
+    return false;
+  }
+
+  const state = sessions.get(sessionId);
+  const turnCwd = normalizeSessionCwdForThread(state?.threadId || "", state?.cwd || "") || cwdInput.value.trim();
+  const turnModel = normalizeModelValue(state?.model || "");
+  const turnEffort = normalizeReasoningEffort(state?.reasoningEffort || "");
+
+  const payload = {
+    sessionId,
+    text: turnInput.text,
+    images: mapTurnPayloadImages(turnInput.images)
+  };
+  if (turnCwd) {
+    payload.cwd = turnCwd;
+  }
+  if (turnModel) {
+    payload.model = turnModel;
+  }
+  if (turnEffort) {
+    payload.effort = turnEffort;
+  }
+  const collaborationMode = buildCollaborationModePayload(options.planMode === true);
+  if (collaborationMode) {
+    payload.collaborationMode = collaborationMode;
+  }
+
+  if (!send("turn_queue_add", payload)) {
+    return false;
+  }
+  uiAuditLog("out.message_queued", {
+    sessionId,
+    chars: turnInput.text.trim().length,
+    images: turnInput.images.length,
+    planMode: options.planMode === true
+  });
+
+  return true;
+}
+
+function collectValidTurnImages(images) {
+  if (!Array.isArray(images)) {
+    return [];
+  }
+
+  return images.filter((x) => x && typeof x.url === "string" && x.url.trim().length > 0);
+}
+
+function mapTurnPayloadImages(images) {
+  return images.map((x) => ({ url: x.url, name: x.name || "image" }));
+}
+
+function buildTurnInput(promptText, images = [], options = {}) {
+  const trimText = options.trimText === true;
+  const rawText = String(promptText || "");
+  const text = trimText ? rawText.trim() : rawText;
+  const validImages = collectValidTurnImages(images);
+  const hasText = text.trim().length > 0;
+  return {
+    text,
+    images: validImages,
+    hasContent: hasText || validImages.length > 0
+  };
+}
+
+function steerTurn(sessionId, promptText, images = []) {
+  const turnInput = buildTurnInput(promptText, images, { trimText: true });
+  if (!sessionId || !turnInput.hasContent) {
+    return false;
+  }
+  if (isSessionAppServerRecovering(sessionId)) {
+    return false;
+  }
+
+  const payload = {
+    sessionId,
+    text: turnInput.text,
+    images: mapTurnPayloadImages(turnInput.images)
+  };
+  if (!send("turn_steer", payload)) {
+    return false;
+  }
+  uiAuditLog("out.message_sent", {
+    via: "turn_steer",
+    sessionId,
+    chars: turnInput.text.trim().length,
+    images: turnInput.images.length
+  });
+
+  touchSessionActivity(sessionId);
+  if (turnInput.text) {
+    lastSentPromptBySession.set(sessionId, turnInput.text);
+  }
+  updatePendingPromptStrip();
+  updateTurnActivityStrip();
+  return true;
+}
+
+function requestQueuedPromptForEditing(sessionId, queueItemId) {
+  if (!sessionId) {
+    return;
+  }
+
+  const normalizedQueueItemId = typeof queueItemId === "string" ? queueItemId.trim() : "";
+  if (!normalizedQueueItemId) {
+    return;
+  }
+
+  if (!send("turn_queue_pop", { sessionId, queueItemId: normalizedQueueItemId })) {
+    appendLog("[queue] failed to request queued prompt edit; websocket is closed");
+  }
+}
+
+function removeQueuedPrompt(sessionId, queueItemId) {
+  if (!sessionId) {
+    return;
+  }
+
+  const normalizedQueueItemId = typeof queueItemId === "string" ? queueItemId.trim() : "";
+  if (!normalizedQueueItemId) {
+    return;
+  }
+
+  if (!send("turn_queue_remove", { sessionId, queueItemId: normalizedQueueItemId })) {
+    appendLog("[queue] failed to remove queued prompt; websocket is closed");
+  }
+}
+
+function restoreQueuedPromptForEditing(text, images = []) {
+  promptInput.value = normalizePromptDraftText(text);
+  refreshPromptInputHeight({ reset: promptInput.value.length === 0 });
+
+  pendingComposerImages = normalizePromptDraftImages(images, { assignIds: true });
+  renderComposerImages();
+  rememberPromptDraftForState(getActiveSessionState());
+
+  promptInput.focus();
+  promptInput.selectionStart = promptInput.selectionEnd = promptInput.value.length;
+}
+
+function startTurn(sessionId, promptText, images = [], options = {}) {
+  const turnInput = buildTurnInput(promptText, images, { trimText: true });
+  const state = sessions.get(sessionId);
+  const turnCwd = normalizeSessionCwdForThread(state?.threadId || "", state?.cwd || "") || cwdInput.value.trim();
+  const turnModel = normalizeModelValue(state?.model || "");
+  if (!sessionId || !turnInput.hasContent) {
+    return false;
+  }
+  if (isSessionAppServerRecovering(sessionId)) {
+    return false;
+  }
+
+  const payload = {
+    sessionId,
+    text: turnInput.text,
+    images: mapTurnPayloadImages(turnInput.images)
+  };
+
+  if (state && turnModel) {
+    state.model = turnModel;
+  }
+
+  const turnEffort = normalizeReasoningEffort(state?.reasoningEffort || "");
+  if (state && turnEffort) {
+    state.reasoningEffort = turnEffort;
+  }
+
+  if (turnCwd) {
+    payload.cwd = turnCwd;
+    if (state) {
+      state.cwd = turnCwd;
+      if (sessionId === activeSessionId) {
+        refreshSessionMeta();
+      }
+      renderProjectSidebar();
+    }
+  }
+
+  if (turnModel) {
+    payload.model = turnModel;
+  }
+  if (turnEffort) {
+    payload.effort = turnEffort;
+  }
+  const collaborationMode = buildCollaborationModePayload(options.planMode === true);
+  if (collaborationMode) {
+    payload.collaborationMode = collaborationMode;
+  }
+  if (state && sessionId === activeSessionId && !turnCwd) {
+    refreshSessionMeta();
+    renderProjectSidebar();
+  }
+
+  if (!send("turn_start", payload)) {
+    return false;
+  }
+  uiAuditLog("out.message_sent", {
+    via: "turn_start",
+    sessionId,
+    chars: turnInput.text.trim().length,
+    images: turnInput.images.length,
+    planMode: options.planMode === true,
+    fromQueue: options.fromQueue === true
+  });
+
+  setTurnStartGrace(sessionId, true);
+  touchSessionActivity(sessionId);
+  setTurnInFlight(sessionId, true);
+  if (turnInput.text) {
+    lastSentPromptBySession.set(sessionId, turnInput.text);
+  }
+
+  if (options.fromQueue === true) {
+    appendLog(`[turn] dequeued next prompt for session=${sessionId}`);
+  }
+
+  markPlanTurnStarted(sessionId, options.planMode === true);
+
+  return true;
+}
+
+function prunePromptState() {
+  const validIds = new Set(sessions.keys());
+  for (const key of Array.from(turnInFlightBySession.keys())) {
+    if (!validIds.has(key)) {
+      turnInFlightBySession.delete(key);
+    }
+  }
+
+  for (const key of Array.from(turnStartGraceUntilBySession.keys())) {
+    if (!validIds.has(key)) {
+      turnStartGraceUntilBySession.delete(key);
+    }
+  }
+
+  for (const key of Array.from(lastSentPromptBySession.keys())) {
+    if (!validIds.has(key)) {
+      lastSentPromptBySession.delete(key);
+    }
+  }
+}
+
+function storeLastThreadId(threadId) {
+  const normalized = typeof threadId === "string" ? threadId.trim() : "";
+  if (!normalized) {
+    return;
+  }
+
+  localStorage.setItem(STORAGE_LAST_THREAD_ID_KEY, normalized);
+}
+
+function getStoredLastThreadId() {
+  const value = localStorage.getItem(STORAGE_LAST_THREAD_ID_KEY);
+  return value && value.trim().length > 0 ? value.trim() : null;
+}
+
+function storeLastSessionId(sessionId) {
+  const normalized = typeof sessionId === "string" ? sessionId.trim() : "";
+  if (!normalized) {
+    return;
+  }
+
+  localStorage.setItem(STORAGE_LAST_SESSION_ID_KEY, normalized);
+}
+
+function getStoredLastSessionId() {
+  const value = localStorage.getItem(STORAGE_LAST_SESSION_ID_KEY);
+  return value && value.trim().length > 0 ? value.trim() : null;
+}
+
+function clearStoredLastSessionAndThread() {
+  localStorage.removeItem(STORAGE_LAST_THREAD_ID_KEY);
+  localStorage.removeItem(STORAGE_LAST_SESSION_ID_KEY);
+}
+
+function initializeStartupRestoreGuard() {
+  blockedAutoRestoreThreadId = "";
+  startupRestoreAttemptThreadId = "";
+
+  const storedThreadId = getStoredLastThreadId();
+  if (!storedThreadId) {
+    localStorage.removeItem(STORAGE_STARTUP_RESTORE_GUARD_KEY);
+    return;
+  }
+
+  const now = Date.now();
+  const existing = safeJsonParse(localStorage.getItem(STORAGE_STARTUP_RESTORE_GUARD_KEY), {});
+  const priorThreadId = normalizeThreadId(existing?.threadId || "");
+  const priorStartedAtMs = Number(existing?.startedAtMs || 0);
+  const priorAttempts = Number(existing?.attemptCount || 0);
+  const hasRecentPriorAttempt =
+    priorThreadId === storedThreadId &&
+    Number.isFinite(priorStartedAtMs) &&
+    priorStartedAtMs > 0 &&
+    (now - priorStartedAtMs) <= STARTUP_RESTORE_GUARD_WINDOW_MS;
+  const attemptCount = hasRecentPriorAttempt
+    ? Math.max(1, Math.floor(priorAttempts) + 1)
+    : 1;
+
+  localStorage.setItem(
+    STORAGE_STARTUP_RESTORE_GUARD_KEY,
+    JSON.stringify({
+      threadId: storedThreadId,
+      attemptCount,
+      startedAtMs: now
+    }));
+
+  if (attemptCount >= STARTUP_RESTORE_GUARD_MAX_ATTEMPTS) {
+    blockedAutoRestoreThreadId = storedThreadId;
+    clearStoredLastSessionAndThread();
+    localStorage.removeItem(STORAGE_STARTUP_RESTORE_GUARD_KEY);
+    return;
+  }
+
+  startupRestoreAttemptThreadId = storedThreadId;
+}
+
+function markStartupRestoreStable(threadId) {
+  const normalizedThreadId = normalizeThreadId(threadId);
+  if (!normalizedThreadId || !startupRestoreAttemptThreadId) {
+    return;
+  }
+
+  if (normalizedThreadId !== startupRestoreAttemptThreadId) {
+    return;
+  }
+
+  localStorage.removeItem(STORAGE_STARTUP_RESTORE_GUARD_KEY);
+  startupRestoreAttemptThreadId = "";
+}
+
+async function tryAutoAttachStoredThread() {
+  if (autoAttachAttempted) {
+    return;
+  }
+
+  if (blockedAutoRestoreThreadId) {
+    autoAttachAttempted = true;
+    appendLog(
+      `[session] skipped auto-attach for unstable thread=${blockedAutoRestoreThreadId}; choose a thread manually from the sidebar`);
+    return;
+  }
+
+  const threadId = getStoredLastThreadId();
+  if (!threadId) {
+    autoAttachAttempted = true;
+    return;
+  }
+
+  if (findAttachedSessionIdByThreadId(threadId)) {
+    autoAttachAttempted = true;
+    return;
+  }
+
+  const existsInCatalog = sessionCatalog.some((s) => s && s.threadId === threadId);
+  if (!existsInCatalog) {
+    autoAttachAttempted = true;
+    return;
+  }
+
+  autoAttachAttempted = true;
+
+  appendLog(`[session] auto-attaching previous thread=${threadId}`);
+  const catalogEntry = getCatalogEntryByThreadId(threadId);
+  await selectThreadById(threadId, catalogEntry?.cwd || cwdInput.value.trim(), {
+    displayName: catalogEntry?.threadName || threadId,
+    persistSelection: true,
+    reason: "auto_attach_previous_thread"
+  });
+}
+
+function syncConversationModelOptions(preferredValue = null) {
+  if (!conversationModelSelect || !modelSelect) {
+    return;
+  }
+
+  const targetValue = preferredValue === null || preferredValue === undefined
+    ? (conversationModelSelect.value || modelSelect.value || "")
+    : String(preferredValue || "");
+
+  syncingConversationModelSelect = true;
+  conversationModelSelect.textContent = "";
+
+  for (const option of Array.from(modelSelect.options)) {
+    const next = document.createElement("option");
+    next.value = option.value;
+    next.textContent = option.textContent || option.value;
+    conversationModelSelect.appendChild(next);
+  }
+
+  if (targetValue && Array.from(conversationModelSelect.options).some((x) => x.value === targetValue)) {
+    conversationModelSelect.value = targetValue;
+  } else if (targetValue && targetValue.trim()) {
+    const custom = targetValue.trim();
+    const adHocOption = document.createElement("option");
+    adHocOption.value = custom;
+    adHocOption.textContent = `${custom} (active)`;
+    conversationModelSelect.appendChild(adHocOption);
+    conversationModelSelect.value = custom;
+  } else {
+    conversationModelSelect.value = modelSelect.value || "";
+  }
+
+  syncingConversationModelSelect = false;
+  updateConversationModelSummary();
+}
+
+function populateReasoningEffortSelect() {
+  if (!conversationReasoningSelect) {
+    return;
+  }
+
+  conversationReasoningSelect.textContent = "";
+
+  const defaultOption = document.createElement("option");
+  defaultOption.value = "";
+  defaultOption.textContent = "auto";
+  conversationReasoningSelect.appendChild(defaultOption);
+
+  for (const level of REASONING_EFFORT_LEVELS) {
+    const option = document.createElement("option");
+    option.value = level;
+    option.textContent = level;
+    conversationReasoningSelect.appendChild(option);
+  }
+}
+
+function syncConversationReasoningOptions(preferredValue = null) {
+  if (!conversationReasoningSelect) {
+    return;
+  }
+
+  const targetValue = preferredValue === null || preferredValue === undefined
+    ? (conversationReasoningSelect.value || "")
+    : normalizeReasoningEffort(preferredValue);
+
+  if (conversationReasoningSelect.options.length === 0) {
+    populateReasoningEffortSelect();
+  }
+
+  syncingConversationModelSelect = true;
+  const hasTarget = Array.from(conversationReasoningSelect.options).some((x) => x.value === targetValue);
+  conversationReasoningSelect.value = hasTarget ? targetValue : "";
+  syncingConversationModelSelect = false;
+  updateConversationModelSummary();
+}
+
+function parseBooleanQueryParam(value) {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const normalized = value.trim().toLowerCase();
+  if (normalized === "1" || normalized === "true" || normalized === "yes" || normalized === "on") {
+    return true;
+  }
+  if (normalized === "0" || normalized === "false" || normalized === "no" || normalized === "off") {
+    return false;
+  }
+  return null;
+}
+
+function updateGettingStartedPanelVisibility() {
+  if (!gettingStartedPanel) {
+    return;
+  }
+
+  if (showGettingStartedOverride !== null) {
+    gettingStartedPanel.classList.toggle("hidden", !showGettingStartedOverride);
+    return;
+  }
+
+  const hasState = !!getActiveSessionState();
+  gettingStartedPanel.classList.toggle("hidden", hasState);
+}
+
+function resetSessionThreadCopyButton() {
+  if (!sessionMetaThreadCopyBtn) {
+    return;
+  }
+
+  sessionMetaThreadCopyBtn.textContent = "Copy";
+  sessionMetaThreadCopyBtn.classList.remove("is-copied");
+}
+
+function setSessionThreadCopyButtonCopied() {
+  if (!sessionMetaThreadCopyBtn) {
+    return;
+  }
+
+  sessionMetaThreadCopyBtn.textContent = "Copied";
+  sessionMetaThreadCopyBtn.classList.add("is-copied");
+  if (sessionThreadCopyResetTimer) {
+    clearTimeout(sessionThreadCopyResetTimer);
+  }
+  sessionThreadCopyResetTimer = setTimeout(() => {
+    sessionThreadCopyResetTimer = null;
+    resetSessionThreadCopyButton();
+  }, 1500);
+}
+
+function normalizeCodexAccountPayload(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+    return null;
+  }
+
+  const authMode = typeof raw.authMode === "string" ? raw.authMode.trim() : "";
+  const accountId = typeof raw.accountId === "string" ? raw.accountId.trim() : "";
+  const email = typeof raw.email === "string" ? raw.email.trim() : "";
+  const subject = typeof raw.subject === "string" ? raw.subject.trim() : "";
+  const chatgptPlanType = typeof raw.chatgptPlanType === "string" ? raw.chatgptPlanType.trim() : "";
+  const identityKey = typeof raw.identityKey === "string"
+    ? raw.identityKey.trim()
+    : [authMode, accountId, email, subject].join("|");
+  const label = typeof raw.label === "string" ? raw.label.trim() : "";
+  const isAvailable = raw.isAvailable === true || !!(accountId || email || subject);
+
+  if (!authMode && !accountId && !email && !subject && !label && !isAvailable) {
+    return null;
+  }
+
+  return {
+    authMode,
+    accountId,
+    email,
+    subject,
+    chatgptPlanType,
+    label,
+    identityKey,
+    isAvailable
+  };
+}
+
+function formatCodexAccountDisplay(account) {
+  if (!account) {
+    return "unavailable";
+  }
+
+  if (account.label) {
+    return account.label;
+  }
+
+  if (account.email) {
+    return account.email;
+  }
+
+  if (account.accountId) {
+    return `account:${account.accountId.slice(0, 12)}`;
+  }
+
+  if (account.subject) {
+    return `sub:${account.subject.slice(0, 16)}`;
+  }
+
+  if (account.authMode) {
+    return account.authMode;
+  }
+
+  return "unavailable";
+}
+
+function syncCodexAccountFromPayload(raw, sourceType = "") {
+  const next = normalizeCodexAccountPayload(raw);
+  const previousKey = codexAccountInfo?.identityKey || "";
+  const nextKey = next?.identityKey || "";
+  const changed = previousKey !== nextKey;
+  codexAccountInfo = next;
+
+  if (changed) {
+    const display = formatCodexAccountDisplay(next);
+    if (display && display !== "unavailable") {
+      appendLog(`[auth] active account ${display}${sourceType ? ` (${sourceType})` : ""}`);
+    } else {
+      appendLog("[auth] active account unavailable");
+    }
+  }
+
+  refreshSessionMetaAccount();
+}
+
+function refreshSessionMetaAccount() {
+  if (!sessionMetaAccountItem || !sessionMetaAccountValue) {
+    return;
+  }
+
+  const hasState = !!getActiveSessionState();
+  if (!hasState) {
+    sessionMetaAccountItem.classList.add("hidden");
+    sessionMetaAccountValue.textContent = "unavailable";
+    sessionMetaAccountValue.title = "";
+    return;
+  }
+
+  const account = codexAccountInfo;
+  const display = formatCodexAccountDisplay(account);
+  sessionMetaAccountItem.classList.remove("hidden");
+  sessionMetaAccountValue.textContent = display;
+
+  const titleParts = [];
+  if (account?.email) titleParts.push(`email=${account.email}`);
+  if (account?.accountId) titleParts.push(`accountId=${account.accountId}`);
+  if (account?.subject) titleParts.push(`subject=${account.subject}`);
+  if (account?.chatgptPlanType) titleParts.push(`plan=${account.chatgptPlanType}`);
+  if (account?.authMode) titleParts.push(`mode=${account.authMode}`);
+  sessionMetaAccountValue.title = titleParts.join(" | ");
+}
+
+function formatUpdatedAt(value) {
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return "";
+  }
+
+  return parsed.toLocaleString();
+}
+
+function formatRateLimitNumber(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) {
+    return "";
+  }
+
+  if (Math.abs(numeric - Math.round(numeric)) < 0.0001) {
+    return Math.round(numeric).toLocaleString();
+  }
+
+  return numeric.toLocaleString(undefined, { maximumFractionDigits: 3 });
+}
+
+function formatRateLimitSummary(rateLimit) {
+  if (!rateLimit || typeof rateLimit !== "object") {
+    return "unavailable";
+  }
+
+  const summary = typeof rateLimit.summary === "string" ? rateLimit.summary.trim() : "";
+  if (summary) {
+    return summary;
+  }
+
+  const remaining = formatRateLimitNumber(rateLimit.remaining);
+  const limit = formatRateLimitNumber(rateLimit.limit);
+  const used = formatRateLimitNumber(rateLimit.used);
+  const resetAt = formatUpdatedAt(rateLimit.resetAtUtc);
+  const parts = [];
+  if (remaining && limit) {
+    parts.push(`${remaining}/${limit} remaining`);
+  } else if (remaining) {
+    parts.push(`${remaining} remaining`);
+  }
+  if (used) {
+    parts.push(`${used} used`);
+  }
+  if (resetAt) {
+    parts.push(`resets ${resetAt}`);
+  }
+
+  return parts.length > 0 ? parts.join(" | ") : "updated";
+}
+
+function readWeeklyRateLimitWindow(rateLimit) {
+  if (!rateLimit || typeof rateLimit !== "object") {
+    return null;
+  }
+
+  const candidates = [];
+  if (rateLimit.secondary && typeof rateLimit.secondary === "object") {
+    candidates.push(rateLimit.secondary);
+  }
+  if (rateLimit.primary && typeof rateLimit.primary === "object") {
+    candidates.push(rateLimit.primary);
+  }
+
+  const matchWeeklyWindow = candidates.find((window) => {
+    const minutes = Number(window?.windowMinutes);
+    return Number.isFinite(minutes) && Math.abs(minutes - 10080) <= 2;
+  });
+  if (matchWeeklyWindow) {
+    return matchWeeklyWindow;
+  }
+
+  return null;
+}
+
+function formatPercentInt(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) {
+    return "";
+  }
+
+  return `${Math.max(0, Math.min(100, Math.round(numeric)))}%`;
+}
+
+function getWeeklyRemainingPercent(rateLimit) {
+  const window = readWeeklyRateLimitWindow(rateLimit);
+  if (window && typeof window === "object") {
+    const remaining = Number(window.remainingPercent);
+    if (Number.isFinite(remaining)) {
+      return Math.max(0, Math.min(100, remaining));
+    }
+
+    const used = Number(window.usedPercent);
+    if (Number.isFinite(used)) {
+      return Math.max(0, Math.min(100, 100 - used));
+    }
+  }
+
+  const summary = typeof rateLimit?.summary === "string" ? rateLimit.summary : "";
+  const match = summary.match(/weekly\s+(\d+(?:\.\d+)?)%\s+remaining/i);
+  if (match && match[1]) {
+    const parsed = Number(match[1]);
+    if (Number.isFinite(parsed)) {
+      return Math.max(0, Math.min(100, parsed));
+    }
+  }
+
+  return null;
+}
+
+function getRateLimitUpdatedAtMs(rateLimit) {
+  if (!rateLimit || typeof rateLimit !== "object") {
+    return 0;
+  }
+
+  const updatedAt = typeof rateLimit.updatedAtUtc === "string" ? rateLimit.updatedAtUtc.trim() : "";
+  if (!updatedAt) {
+    return 0;
+  }
+
+  const parsed = Date.parse(updatedAt);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function renderSessionMetaUsageWeeklyProgress(container, rateLimit) {
+  if (!container) {
+    return;
+  }
+
+  const remainingPercent = getWeeklyRemainingPercent(rateLimit);
+  if (!Number.isFinite(remainingPercent)) {
+    container.textContent = formatRateLimitSummary(rateLimit);
+    return;
+  }
+
+  const roundedPercent = Math.max(0, Math.min(100, Math.round(remainingPercent)));
+  const wrap = document.createElement("div");
+  wrap.className = "conversation-usage-progress";
+
+  const text = document.createElement("div");
+  text.className = "conversation-usage-progress-label";
+  text.textContent = `Weekly ${formatPercentInt(roundedPercent)} left`;
+  wrap.appendChild(text);
+
+  const track = document.createElement("div");
+  track.className = "conversation-usage-progress-track";
+  const fill = document.createElement("div");
+  fill.className = "conversation-usage-progress-fill";
+  if (roundedPercent <= 25) {
+    fill.classList.add("critical");
+  } else if (roundedPercent <= 50) {
+    fill.classList.add("warning");
+  }
+
+  fill.style.width = `${roundedPercent}%`;
+  fill.setAttribute("role", "progressbar");
+  fill.setAttribute("aria-valuemin", "0");
+  fill.setAttribute("aria-valuemax", "100");
+  fill.setAttribute("aria-valuenow", String(roundedPercent));
+  fill.setAttribute("aria-label", `Weekly usage left ${roundedPercent}%`);
+  track.appendChild(fill);
+  wrap.appendChild(track);
+
+  container.replaceChildren(wrap);
+}
+
+function getAnyKnownRateLimitPayload() {
+  let latest = latestRateLimitSnapshot && typeof latestRateLimitSnapshot === "object"
+    ? latestRateLimitSnapshot
+    : null;
+  let latestTick = getRateLimitUpdatedAtMs(latest);
+  for (const payload of rateLimitBySession.values()) {
+    if (!payload || typeof payload !== "object") {
+      continue;
+    }
+
+    const payloadTick = getRateLimitUpdatedAtMs(payload);
+    if (!latest || payloadTick > latestTick) {
+      latest = payload;
+      latestTick = payloadTick;
+    }
+  }
+
+  return latest;
+}
+
+function refreshLatestRateLimitSnapshot(force = false) {
+  const nowMs = Date.now();
+  if (!force && nowMs - lastRateLimitSnapshotFetchAtMs < RATE_LIMIT_SNAPSHOT_FETCH_MIN_INTERVAL_MS) {
+    return;
+  }
+
+  if (rateLimitSnapshotFetchInFlight) {
+    return;
+  }
+
+  lastRateLimitSnapshotFetchAtMs = nowMs;
+  const url = new URL("api/settings/codex-usage/status", document.baseURI);
+  rateLimitSnapshotFetchInFlight = fetch(url, { cache: "no-store" })
+    .then(async (response) => {
+      if (!response.ok) {
+        return null;
+      }
+
+      const payload = await response.json();
+      if (!payload || typeof payload !== "object") {
+        return null;
+      }
+
+      const latest = payload.latest && typeof payload.latest === "object" ? payload.latest : null;
+      const selected = latest;
+      if (!selected) {
+        return null;
+      }
+
+      latestRateLimitSnapshot = selected;
+      if (!rateLimitBySession.has(activeSessionId || "")) {
+        refreshSessionMetaUsage();
+      }
+
+      return selected;
+    })
+    .catch(() => null)
+    .finally(() => {
+      rateLimitSnapshotFetchInFlight = null;
+    });
+}
+
+function refreshSessionMetaUsage() {
+  if (!sessionMetaUsageItem || !sessionMetaUsageValue) {
+    return;
+  }
+
+  const hasState = !!getActiveSessionState();
+  if (!hasState) {
+    sessionMetaUsageItem.classList.add("hidden");
+    sessionMetaUsageValue.textContent = "unavailable";
+    sessionMetaUsageValue.title = "";
+    return;
+  }
+
+  const sessionId = typeof activeSessionId === "string" ? activeSessionId : "";
+  const sessionRateLimit = sessionId ? rateLimitBySession.get(sessionId) : null;
+  const fallbackRateLimit = getAnyKnownRateLimitPayload();
+  const rateLimit = sessionRateLimit && typeof sessionRateLimit === "object"
+    ? sessionRateLimit
+    : fallbackRateLimit;
+  sessionMetaUsageItem.classList.remove("hidden");
+  renderSessionMetaUsageWeeklyProgress(sessionMetaUsageValue, rateLimit);
+  if (!rateLimit) {
+    refreshLatestRateLimitSnapshot();
+  }
+
+  const titleParts = [];
+  if (rateLimit && typeof rateLimit === "object") {
+    if (typeof rateLimit.scope === "string" && rateLimit.scope.trim()) {
+      titleParts.push(`scope=${rateLimit.scope.trim()}`);
+    }
+    if (rateLimit !== sessionRateLimit && typeof rateLimit.sessionId === "string" && rateLimit.sessionId.trim()) {
+      titleParts.push(`fallbackSession=${rateLimit.sessionId.trim()}`);
+    }
+    if (typeof rateLimit.source === "string" && rateLimit.source.trim()) {
+      titleParts.push(`source=${rateLimit.source.trim()}`);
+    }
+    const resetAt = formatUpdatedAt(rateLimit.resetAtUtc);
+    if (resetAt) {
+      titleParts.push(`resetAt=${resetAt}`);
+    }
+  } else {
+    titleParts.push("No usage update has been received for this session yet.");
+  }
+
+  sessionMetaUsageValue.title = titleParts.join(" | ");
+}
+
+function refreshSessionMeta() {
+  if (!sessionMeta || !sessionMetaModelItem) {
+    return;
+  }
+
+  const state = getActiveSessionState();
+  if (!state) {
+    if (conversationTitle) {
+      const emptyTitle = "Conversation";
+      conversationTitle.textContent = emptyTitle;
+      conversationTitle.title = emptyTitle;
+    }
+    if (timeline && typeof timeline.setSessionModel === "function") {
+      timeline.setSessionModel("");
+    }
+    sessionMeta.classList.add("hidden");
+    sessionMetaModelItem.classList.add("hidden");
+    syncConversationModelOptions(modelSelect.value || "");
+    syncConversationReasoningOptions("");
+    syncConversationPermissionOptions("", "");
+    if (sessionMetaThreadItem) {
+      sessionMetaThreadItem.classList.add("hidden");
+    }
+    if (sessionMetaThreadValue) {
+      sessionMetaThreadValue.textContent = "(none)";
+      sessionMetaThreadValue.title = "";
+    }
+    refreshSessionMetaAccount();
+    refreshSessionMetaUsage();
+    resetSessionThreadCopyButton();
+    sessionMeta.title = "";
+    updateConversationModelSummary();
+    updateContextLeftIndicator();
+    updatePermissionLevelIndicator();
+    updateConversationMetaVisibility();
+    updateGettingStartedPanelVisibility();
+    updatePlanPanel();
+    return;
+  }
+
+  const namedCatalogEntry = getCatalogEntryByThreadId(state.threadId);
+  const threadName = namedCatalogEntry?.threadName || state.threadName || "";
+  const threadId = state.threadId || "";
+  const preferred = getPreferredModelForThread(state.threadId);
+  const preferredEffort = getPreferredReasoningForThread(state.threadId);
+  const preferredPermission = getPreferredPermissionForThread(state.threadId);
+  const selectedModel = preferred.found
+    ? preferred.model
+    : normalizeModelValue(state.model || "");
+  const selectedEffort = preferredEffort.found
+    ? preferredEffort.effort
+    : normalizeReasoningEffort(state.reasoningEffort || "");
+  const selectedApproval = preferredPermission.found
+    ? preferredPermission.approval
+    : normalizeApprovalPolicy(state.approvalPolicy || "");
+  const selectedSandbox = preferredPermission.found
+    ? preferredPermission.sandbox
+    : normalizeSandboxMode(state.sandboxPolicy || "");
+  const titleValue = threadName || threadId || "Conversation";
+  if (conversationTitle) {
+    const effectiveTitle = titleValue;
+    conversationTitle.textContent = effectiveTitle;
+    conversationTitle.title = effectiveTitle;
+  }
+  sessionMeta.classList.remove("hidden");
+  if (sessionMetaThreadItem) {
+    sessionMetaThreadItem.classList.toggle("hidden", !threadId);
+  }
+  if (sessionMetaThreadValue) {
+    sessionMetaThreadValue.textContent = threadId || "(none)";
+    sessionMetaThreadValue.title = threadId || "";
+  }
+  refreshSessionMetaAccount();
+  refreshSessionMetaUsage();
+  resetSessionThreadCopyButton();
+
+  syncConversationModelOptions(selectedModel);
+  syncConversationReasoningOptions(selectedEffort);
+  syncConversationPermissionOptions(selectedApproval, selectedSandbox);
+  if (timeline && typeof timeline.setSessionModel === "function") {
+    timeline.setSessionModel(selectedModel);
+  }
+  sessionMetaModelItem.dataset.available = "1";
+  sessionMetaModelItem.classList.remove("hidden");
+  sessionMeta.title = "";
+  updateConversationModelSummary();
+  updateContextLeftIndicator();
+  updatePermissionLevelIndicator();
+  updateConversationMetaVisibility();
+  updateGettingStartedPanelVisibility();
+  updatePlanPanel();
+}
+
+function restartTimelinePolling() {
+  timelinePollGeneration += 1;
+  const generation = timelinePollGeneration;
+
+  if (timelinePollTimer) {
+    clearInterval(timelinePollTimer);
+    timelinePollTimer = null;
+  }
+
+  const state = getActiveSessionState();
+  if (!state || !state.threadId) {
+    return;
+  }
+
+  const shouldInitialLoad = timelineCursor === null;
+  const runTimelinePoll = (initial) => {
+    if (!isDocumentVisible()) {
+      return;
+    }
+
+    pollTimelineOnce(initial, generation).catch((error) => {
+      handleTimelinePollError(error);
+    });
+  };
+  runTimelinePoll(shouldInitialLoad);
+
+  timelinePollTimer = setInterval(() => {
+    runTimelinePoll(false);
+  }, TIMELINE_POLL_INTERVAL_MS);
+}
+
+function handleTimelinePollError(error) {
+  const message = String(error || "");
+  const isConnectionError = message.includes("Failed to fetch") || message.includes("NetworkError");
+  if (isConnectionError) {
+    if (!timelineConnectionIssueShown) {
+      appendLog("[timeline] There is a problem connecting to the server. The application may have stopped.");
+      timelineConnectionIssueShown = true;
+    }
+    return;
+  }
+
+  appendLog(`[timeline] error: ${message}`);
+}
+
+async function pollTimelineOnce(initial, generation) {
+  if (timelinePollInFlight) {
+    return;
+  }
+
+  const state = getActiveSessionState();
+  const polledSessionId = activeSessionId;
+  if (!state || !state.threadId) {
+    return;
+  }
+
+  timelinePollInFlight = true;
+  const pollStartedAt = typeof performance !== "undefined" && performance ? performance.now() : Date.now();
+  try {
+    const normalizedThreadId = normalizeThreadId(state.threadId || "");
+    const isInitialRequest = initial || timelineCursor === null;
+    let activeWatchMaxEntries = normalizeTimelineMaxEntries(timelineWatchMaxEntries, TIMELINE_INITIAL_WINDOW_DEFAULT);
+    timelineWatchMaxEntries = activeWatchMaxEntries;
+    const responseStats = {};
+    logTimelineDiag("poll_start", {
+      threadId: normalizedThreadId || state.threadId,
+      initial: isInitialRequest ? 1 : 0,
+      cursor: Number.isFinite(timelineCursor) ? timelineCursor : "none",
+      maxEntries: activeWatchMaxEntries,
+      heapMb: readHeapUsageMb() ?? "n/a"
+    });
+    const fetchTurnsBootstrap = async (maxEntries) => {
+      const requestedMaxEntries = normalizeTimelineMaxEntries(maxEntries, activeWatchMaxEntries);
+      const url = new URL("api/turns/bootstrap", document.baseURI);
+      url.searchParams.set("threadId", normalizedThreadId || state.threadId);
+      url.searchParams.set("maxEntries", String(requestedMaxEntries));
+      if (timelineDiagEnabled) {
+        url.searchParams.set("diag", "1");
+      }
+
+      const response = await fetch(url, { cache: "no-store" });
+      if (!response.ok) {
+        const detail = await response.text();
+        throw new Error(`watch failed (${response.status}): ${detail}`);
+      }
+
+      return readJsonResponseWithByteLimit(
+        response,
+        MAX_TIMELINE_JSON_RESPONSE_BYTES,
+        "timeline bootstrap",
+        responseStats);
+    };
+    const fetchTurnsWatch = async (maxEntries) => {
+      const requestedMaxEntries = normalizeTimelineMaxEntries(maxEntries, activeWatchMaxEntries);
+      const url = new URL("api/turns/watch", document.baseURI);
+      url.searchParams.set("threadId", normalizedThreadId || state.threadId);
+      url.searchParams.set("maxEntries", String(requestedMaxEntries));
+      if (timelineDiagEnabled) {
+        url.searchParams.set("diag", "1");
+      }
+      if (Number.isFinite(timelineCursor)) {
+        url.searchParams.set("cursor", String(timelineCursor));
+      } else {
+        url.searchParams.set("initial", "true");
+      }
+
+      const response = await fetch(url, { cache: "no-store" });
+      if (!response.ok) {
+        const detail = await response.text();
+        throw new Error(`watch failed (${response.status}): ${detail}`);
+      }
+
+      return readJsonResponseWithByteLimit(
+        response,
+        MAX_TIMELINE_JSON_RESPONSE_BYTES,
+        "timeline watch",
+        responseStats);
+    };
+
+    const response = isInitialRequest
+      ? await fetchTurnsBootstrap(activeWatchMaxEntries)
+      : await fetchTurnsWatch(activeWatchMaxEntries);
+    if (generation !== timelinePollGeneration) {
+      return;
+    }
+
+    const activeStateAfterFetch = getActiveSessionState();
+    const activeThreadIdAfterFetch = normalizeThreadId(activeStateAfterFetch?.threadId || "");
+    if (!activeThreadIdAfterFetch || activeThreadIdAfterFetch !== normalizedThreadId) {
+      return;
+    }
+
+    const data = response;
+    timelineConnectionIssueShown = false;
+    if (generation !== timelinePollGeneration) {
+      return;
+    }
+
+    const priorCursor = timelineCursor;
+    const nextCursor = typeof data.nextCursor === "number" ? data.nextCursor : timelineCursor;
+    const incomingTurns = Array.isArray(data.turns) ? data.turns : [];
+    const snapshotMode = normalizeWatchSnapshotMode(data.mode || data.snapshotMode || "");
+    const activeTurnDetail = data.activeTurnDetail && typeof data.activeTurnDetail === "object"
+      ? data.activeTurnDetail
+      : null;
+    const cachedTimeline = timelineCacheByThread.get(normalizedThreadId) || null;
+    const existingTurns = Array.isArray(cachedTimeline?.turns)
+      ? cachedTimeline.turns
+      : [];
+    const hasServerPayload = incomingTurns.length > 0 || !!activeTurnDetail;
+    const forcedFullSnapshot = isInitialRequest || data.reset === true || priorCursor === null;
+    const shouldConsumeFullSnapshot =
+      snapshotMode === "full" ||
+      (snapshotMode !== "noop" && (forcedFullSnapshot || hasServerPayload));
+    logTimelineDiag("poll_payload", {
+      threadId: normalizedThreadId,
+      mode: snapshotMode || "unknown",
+      bytes: responseStats.bytes || 0,
+      contentLength: responseStats.contentLength || 0,
+      readMs: responseStats.readMs || 0,
+      parseMs: responseStats.parseMs || 0,
+      incomingTurns: incomingTurns.length,
+      activeDetail: activeTurnDetail ? 1 : 0,
+      reset: data.reset === true ? 1 : 0,
+      truncated: data.truncated === true ? 1 : 0,
+      nextCursor: Number.isFinite(nextCursor) ? nextCursor : "none"
+    });
+    const sessionInFlightOrPending =
+      !!polledSessionId && (isTurnInFlight(polledSessionId) || isTurnStartGraceActive(polledSessionId));
+    const threadProcessing = isThreadProcessing(normalizedThreadId);
+    const preserveMissingExistingTurns =
+      snapshotMode === "full" &&
+      !forcedFullSnapshot &&
+      data.reset !== true &&
+      incomingTurns.length > 0 &&
+      existingTurns.length > incomingTurns.length &&
+      (threadProcessing || sessionInFlightOrPending);
+    let turns = existingTurns;
+    let hasServerTurns = existingTurns.length > 0;
+
+    if (shouldConsumeFullSnapshot) {
+      turns = mergeIncomingTurnsWithExisting(
+        incomingTurns,
+        existingTurns,
+        activeTurnDetail,
+        { preserveMissingExisting: preserveMissingExistingTurns });
+      hasServerTurns = turns.length > 0;
+
+      if (hasServerTurns) {
+        const turnSummary = summarizeTurnsForTimelineDiag(turns);
+        const heapBeforeRender = readHeapUsageMb();
+        if (typeof timeline.setServerTurns === "function") {
+          timeline.setServerTurns(turns);
+        } else {
+          timeline.clear();
+        }
+        const heapAfterRender = readHeapUsageMb();
+        logTimelineDiag("render_full", {
+          threadId: normalizedThreadId,
+          turns: turnSummary.turnCount,
+          entries: turnSummary.entryCount,
+          intermediate: turnSummary.intermediateCount,
+          textChars: turnSummary.textChars,
+          maxEntryTextChars: turnSummary.maxEntryTextChars,
+          images: turnSummary.imageCount,
+          imageUrlChars: turnSummary.imageUrlChars,
+          heapBeforeMb: heapBeforeRender ?? "n/a",
+          heapAfterMb: heapAfterRender ?? "n/a",
+          renderedNodes: Number.isFinite(timeline?.renderCount) ? timeline.renderCount : "n/a"
+        });
+        refreshWorktreeDiffForAssistantRender(normalizedThreadId, turns);
+
+        if (polledSessionId && sessions.has(polledSessionId)) {
+          reconcileTurnAndPlanStateFromTurnsWatch(polledSessionId, turns);
+        }
+
+        timelineHasTruncatedHead = data.truncated === true;
+        if (data.reset === true) {
+          appendLog("[timeline] session file was reset or rotated");
+        }
+      } else if (forcedFullSnapshot) {
+        setJumpCollapseMode(false);
+        if (typeof timeline.clear === "function") {
+          timeline.clear();
+        }
+        if (typeof timeline.enqueueInlineNotice === "function") {
+          timeline.enqueueInlineNotice("No complete turns found yet for this session.");
+        }
+        if (typeof timeline.flush === "function") {
+          timeline.flush();
+        }
+      }
+    } else if (polledSessionId && sessions.has(polledSessionId) && existingTurns.length > 0) {
+      // No-op snapshot means cursor heartbeat only. Keep current timeline and reconcile local state.
+      reconcileTurnAndPlanStateFromTurnsWatch(polledSessionId, existingTurns);
+    }
+
+    timelineCursor = nextCursor;
+    applyTimelineWatchMetadata(state.threadId, data);
+    if (shouldConsumeFullSnapshot && hasServerTurns) {
+      rememberTimelineCache(state.threadId, {
+        turns,
+        nextCursor,
+        truncated: data.truncated === true,
+        contextUsage: data.contextUsage,
+        permission: data.permission,
+        reasoningSummary: data.reasoningSummary,
+        maxEntries: activeWatchMaxEntries
+      });
+    }
+
+    if (data.truncated === true && !hasServerTurns) {
+      timelineHasTruncatedHead = true;
+    }
+    updateTimelineTruncationNotice();
+    markStartupRestoreStable(normalizedThreadId);
+  } finally {
+    const pollEndedAt = typeof performance !== "undefined" && performance ? performance.now() : Date.now();
+    logTimelineDiag("poll_end", {
+      elapsedMs: Math.round((pollEndedAt - pollStartedAt) * 10) / 10,
+      heapMb: readHeapUsageMb() ?? "n/a"
+    });
+    timelinePollInFlight = false;
+  }
+}
+
+function setActiveSession(sessionId, options = {}) {
+  if (!sessionId || !sessions.has(sessionId)) {
+    return;
+  }
+
+  const restartTimeline = options.restartTimeline !== false;
+  const persistSelection = options.persistSelection === true;
+  const reason = typeof options.reason === "string" && options.reason.trim()
+    ? options.reason.trim()
+    : "unspecified";
+  const changed = activeSessionId !== sessionId;
+  const previousSessionId = activeSessionId || null;
+  const previousState = getActiveSessionState();
+  if (changed) {
+    rememberTaskThreadForSessionState(previousSessionId || "", previousState);
+  }
+  if (changed) {
+    rememberPromptDraftForState(previousState);
+    setJumpCollapseMode(true);
+  }
+
+  activeSessionId = sessionId;
+  if (sessionSelect) {
+    sessionSelect.value = sessionId;
+  }
+  stopSessionBtn.disabled = false;
+  const state = sessions.get(sessionId);
+  if (changed && state) {
+    syncCwdInputFromSessionState(state);
+  }
+  markThreadCompletionSeen(state?.threadId || "");
+  if (state?.threadId) {
+    const preferred = getPreferredModelForThread(state.threadId);
+    if (preferred.found) {
+      state.model = preferred.model || null;
+    }
+    const preferredEffort = getPreferredReasoningForThread(state.threadId);
+    if (preferredEffort.found) {
+      state.reasoningEffort = preferredEffort.effort || null;
+    }
+    const preferredPermission = getPreferredPermissionForThread(state.threadId);
+    if (preferredPermission.found) {
+      state.approvalPolicy = preferredPermission.approval || null;
+      state.sandboxPolicy = preferredPermission.sandbox || null;
+      replacePermissionLevelForThread(state.threadId, {
+        approval: preferredPermission.approval,
+        sandbox: preferredPermission.sandbox
+      });
+    }
+  }
+  if (isPendingSessionLoadForThread(state?.threadId || "")) {
+    clearPendingSessionLoad();
+  }
+  rememberTaskThreadForSessionState(sessionId, state);
+  if (changed) {
+    uiAuditLog("ui.active_session_changed", {
+      from: previousSessionId,
+      to: sessionId,
+      threadId: state?.threadId || null,
+      reason
+    });
+  }
+  if (persistSelection) {
+    storeLastSessionId(sessionId);
+    if (state && state.threadId) {
+      storeLastThreadId(state.threadId);
+    }
+  }
+  syncSelectedProjectFromActiveSession();
+  refreshSessionMeta();
+  updateContextLeftIndicator();
+  updatePermissionLevelIndicator();
+  updatePromptActionState();
+  updatePlanPanel();
+  renderPromptQueue();
+  if (changed) {
+    clearComposerImages();
+    restorePromptDraftForActiveSession();
+  }
+  renderProjectSidebar();
+  if (changed && currentWorkspaceTab === WORKSPACE_TAB_CODE_REVIEWS) {
+    setWorkspaceTab(WORKSPACE_TAB_TASKS, {
+      reason: "active_session_changed_exit_code_reviews",
+      skipTaskRestore: true
+    }).catch((error) => appendLog(`[workspace] failed to restore tasks view after thread change: ${error}`));
+  }
+  if (changed && isMobileViewport()) {
+    setMobileProjectsOpen(false);
+  }
+
+  if (changed || restartTimeline) {
+    const restoredFromCache = restoreTimelineFromCache(state?.threadId || "");
+    if (!restoredFromCache) {
+      timelineCursor = null;
+      timelineWatchMaxEntries = TIMELINE_INITIAL_WINDOW_DEFAULT;
+      timeline.clear();
+      timelineHasTruncatedHead = false;
+      updateTimelineTruncationNotice();
+    }
+    restartTimelinePolling();
+  }
+
+  syncSessionRecoveryModal();
+  if (changed) {
+    requestModelsListForSession(sessionId);
+  }
+  renderTimelineSelectionIndicator();
+  updateScrollToBottomButton();
+}
+
+function clearActiveSession() {
+  const previousState = getActiveSessionState();
+  rememberPromptDraftForState(previousState);
+  setJumpCollapseMode(false);
+
+  activeSessionId = null;
+  refreshSessionMeta();
+  stopSessionBtn.disabled = true;
+  renderPromptQueue();
+  clearComposerImages();
+  restorePromptDraftForActiveSession();
+  updateContextLeftIndicator();
+  updatePermissionLevelIndicator();
+  updatePromptActionState();
+  timelineCursor = null;
+  timelineWatchMaxEntries = TIMELINE_INITIAL_WINDOW_DEFAULT;
+  timeline.clear();
+  timelineHasTruncatedHead = false;
+  timelineSelectionSnapshot = null;
+  renderTimelineSelectionIndicator();
+  updateTimelineTruncationNotice();
+  renderProjectSidebar();
+  closeSessionRecoveryModal();
+  restartTimelinePolling();
+  updateScrollToBottomButton();
+}
+
+function updateSessionSelect(activeIdFromServer = null) {
+  const current = sessionSelect ? sessionSelect.value : "";
+  if (sessionSelect) {
+    sessionSelect.textContent = "";
+  }
+
+  const ids = Array.from(sessions.keys()).sort();
+  const visibleIds = ids;
+  if (sessionSelect) {
+    for (const id of visibleIds) {
+      const state = sessions.get(id);
+      const option = document.createElement("option");
+      option.value = id;
+      const namedCatalogEntry = getCatalogEntryByThreadId(state.threadId);
+      const threadShort = state.threadId ? state.threadId.slice(0, 8) : "unknown";
+      const threadName = namedCatalogEntry && namedCatalogEntry.threadName ? namedCatalogEntry.threadName : null;
+      option.textContent = threadName || `${id.slice(0, 8)} (${threadShort})`;
+      option.title = `session=${id} thread=${state.threadId || "unknown"}`;
+      sessionSelect.appendChild(option);
+    }
+  }
+
+  const preferredSessionId = typeof activeIdFromServer === "string" && sessions.has(activeIdFromServer)
+    ? activeIdFromServer
+    : null;
+  const pendingAttachedSessionId = getPendingSessionLoadAttachedSessionId();
+  const hasPendingSelectionIntent = !!getPendingSessionLoadThreadId();
+  const pinnedActiveSessionId =
+    !hasPendingSelectionIntent &&
+    activeSessionId &&
+    sessions.has(activeSessionId) &&
+    (isTurnInFlight(activeSessionId) || isTurnStartGraceActive(activeSessionId))
+      ? activeSessionId
+      : null;
+  const firstVisibleSessionId = visibleIds.length > 0 ? visibleIds[0] : null;
+  const toSelect = pendingAttachedSessionId ||
+    pinnedActiveSessionId ||
+    preferredSessionId ||
+    activeSessionId ||
+    current ||
+    firstVisibleSessionId ||
+    null;
+  let selectionReason = "none";
+  if (pendingAttachedSessionId && toSelect === pendingAttachedSessionId) {
+    selectionReason = "pending_thread_intent_attached";
+  } else if (pinnedActiveSessionId && toSelect === pinnedActiveSessionId) {
+    selectionReason = "keep_inflight_or_pending";
+  } else if (preferredSessionId && toSelect === preferredSessionId) {
+    selectionReason = "prefer_explicit_session";
+  } else if (toSelect && toSelect === activeSessionId) {
+    selectionReason = "preserve_current_active";
+  } else if (toSelect && toSelect === current) {
+    selectionReason = "preserve_selector_value";
+  } else if (toSelect && toSelect === firstVisibleSessionId) {
+    selectionReason = "fallback_first_visible";
+  }
+  if (toSelect && sessions.has(toSelect)) {
+    const changed = activeSessionId !== toSelect;
+    setActiveSession(toSelect, { restartTimeline: changed, reason: `update_session_select:${selectionReason}` });
+  } else {
+    clearActiveSession();
+  }
+
+  renderProjectSidebar();
+}
+
+function updateExistingSessionSelect() {
+  if (existingSessionSelect) {
+    const prior = existingSessionSelect.value;
+    existingSessionSelect.textContent = "";
+
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "(select existing thread)";
+    existingSessionSelect.appendChild(placeholder);
+
+    const groups = buildCatalogDirectoryGroups();
+    for (const group of groups) {
+      const optgroup = document.createElement("optgroup");
+      optgroup.label = `${group.label} (${group.sessions.length})`;
+
+      for (const s of group.sessions) {
+        const option = document.createElement("option");
+        option.value = s.threadId || "";
+        const name = s.threadName ? `${s.threadName} ` : "";
+        const updated = s.updatedAtUtc ? ` @ ${new Date(s.updatedAtUtc).toLocaleString()}` : "";
+        option.textContent = `${name}${s.threadId || "unknown"}${updated}`;
+        option.title = `thread=${s.threadId || "unknown"} cwd=${s.cwd || "(unknown)"}`;
+        optgroup.appendChild(option);
+      }
+
+      existingSessionSelect.appendChild(optgroup);
+    }
+
+    if (prior && Array.from(existingSessionSelect.options).some((o) => o.value === prior)) {
+      existingSessionSelect.value = prior;
+    }
+  }
+
+  renderProjectSidebar();
+}
+
+function modelValueForCreate() {
+  const selection = modelSelect.value || "";
+  if (selection === "__custom__") {
+    const custom = modelCustomInput.value.trim();
+    return custom ? custom : null;
+  }
+  return selection.trim() ? selection.trim() : null;
+}
+
+function resolveDefaultModelName(models, fallbackDefaultModel = "") {
+  const preferred = normalizeModelValue(fallbackDefaultModel);
+  if (preferred) {
+    return preferred;
+  }
+
+  const listedDefault = Array.isArray(models)
+    ? normalizeModelValue((models.find((model) => model && model.isDefault)?.model) || "")
+    : "";
+  return listedDefault;
+}
+
+function populateModelSelect(models, fallbackDefaultModel = "") {
+  const prior = modelSelect.value;
+  configuredDefaultModel = resolveDefaultModelName(models, fallbackDefaultModel);
+  const listedDefaultModel = Array.isArray(models)
+    ? normalizeModelValue((models.find((model) => model && model.isDefault)?.model) || "")
+    : "";
+  const hasDualDefaults =
+    !!configuredDefaultModel &&
+    !!listedDefaultModel &&
+    configuredDefaultModel.toLowerCase() !== listedDefaultModel.toLowerCase();
+  modelSelect.textContent = "";
+
+  const optDefault = document.createElement("option");
+  optDefault.value = "";
+  if (configuredDefaultModel) {
+    optDefault.textContent = hasDualDefaults
+      ? `(default: ${configuredDefaultModel}, server: ${listedDefaultModel})`
+      : `(default: ${configuredDefaultModel})`;
+  } else if (listedDefaultModel) {
+    optDefault.textContent = `(default: ${listedDefaultModel})`;
+  } else {
+    optDefault.textContent = "(default)";
+  }
+  modelSelect.appendChild(optDefault);
+
+  for (const m of models) {
+    const opt = document.createElement("option");
+    opt.value = m.model;
+    const isConfiguredDefault = configuredDefaultModel && normalizeModelValue(m.model) === configuredDefaultModel;
+    const isServerDefault = listedDefaultModel && normalizeModelValue(m.model) === listedDefaultModel;
+    let defaultSuffix = "";
+    if (isConfiguredDefault && isServerDefault) {
+      defaultSuffix = " (default)";
+    } else if (isConfiguredDefault) {
+      defaultSuffix = " (configured default)";
+    } else if (isServerDefault || m.isDefault) {
+      defaultSuffix = hasDualDefaults ? " (server default)" : " (default)";
+    }
+    opt.textContent = `${m.displayName || m.model}${defaultSuffix}`;
+    modelSelect.appendChild(opt);
+  }
+
+  const optCustom = document.createElement("option");
+  optCustom.value = "__custom__";
+  optCustom.textContent = "Custom...";
+  modelSelect.appendChild(optCustom);
+
+  if (prior && Array.from(modelSelect.options).some((o) => o.value === prior)) {
+    modelSelect.value = prior;
+  }
+
+  if (modelSelect.value === "__custom__") {
+    modelCustomInput.classList.remove("hidden");
+  } else {
+    modelCustomInput.classList.add("hidden");
+  }
+
+  syncModelCommandOptionsFromToolbar();
+  syncNewSessionModelOptions(newSessionModelValue() || "");
+  updateNewSessionModelDefaultHint();
+}
+
+function syncModelCommandOptionsFromToolbar() {
+  if (modelCommandSelect) {
+    const previous = modelCommandSelect.value;
+    modelCommandSelect.textContent = "";
+    for (const option of Array.from(modelSelect.options)) {
+      const next = document.createElement("option");
+      next.value = option.value;
+      next.textContent = option.textContent || option.value;
+      modelCommandSelect.appendChild(next);
+    }
+
+    if (previous && Array.from(modelCommandSelect.options).some((x) => x.value === previous)) {
+      modelCommandSelect.value = previous;
+    } else {
+      modelCommandSelect.value = modelSelect.value || "";
+    }
+
+    if (modelCommandSelect.value === "__custom__") {
+      modelCommandCustomInput.classList.remove("hidden");
+      modelCommandCustomInput.value = modelCustomInput.value || "";
+    } else {
+      modelCommandCustomInput.classList.add("hidden");
+    }
+  }
+
+  syncConversationModelOptions();
+}
+
+function selectedReasoningValue() {
+  if (!conversationReasoningSelect) {
+    return "";
+  }
+
+  return normalizeReasoningEffort(conversationReasoningSelect.value || "");
+}
+
+function selectedApprovalValue() {
+  if (!conversationApprovalSelect) {
+    return "";
+  }
+
+  return normalizeApprovalPolicy(conversationApprovalSelect.value || "");
+}
+
+function selectedSandboxValue() {
+  if (!conversationSandboxSelect) {
+    return "";
+  }
+
+  return normalizeSandboxMode(conversationSandboxSelect.value || "");
+}
+
+function syncConversationPermissionOptions(approval = null, sandbox = null) {
+  if (conversationApprovalSelect) {
+    const desiredApproval = approval === null
+      ? normalizeApprovalPolicy(conversationApprovalSelect.value || "")
+      : normalizeApprovalPolicy(approval);
+    const nextApproval = Array.from(conversationApprovalSelect.options).some((option) => option.value === desiredApproval)
+      ? desiredApproval
+      : "";
+    conversationApprovalSelect.value = nextApproval;
+  }
+
+  if (conversationSandboxSelect) {
+    const desiredSandbox = sandbox === null
+      ? normalizeSandboxMode(conversationSandboxSelect.value || "")
+      : normalizeSandboxMode(sandbox);
+    const nextSandbox = Array.from(conversationSandboxSelect.options).some((option) => option.value === desiredSandbox)
+      ? desiredSandbox
+      : "";
+    conversationSandboxSelect.value = nextSandbox;
+  }
+}
+
+function applySessionModelSettingsToActiveSession(selectedModel, selectedEffort = null) {
+  const state = getActiveSessionState();
+  if (!state || !state.threadId || !activeSessionId) {
+    return;
+  }
+
+  const normalizedModel = normalizeModelValue(selectedModel);
+  const normalizedEffort = selectedEffort === null || selectedEffort === undefined
+    ? normalizeReasoningEffort(state.reasoningEffort || "")
+    : normalizeReasoningEffort(selectedEffort);
+
+  state.model = normalizedModel || null;
+  state.reasoningEffort = normalizedEffort || null;
+  setPreferredModelForThread(state.threadId, normalizedModel);
+  setPreferredReasoningForThread(state.threadId, normalizedEffort);
+  trySendSessionModelSync(activeSessionId, normalizedModel, normalizedEffort);
+}
+
+function applySessionPermissionSettingsToActiveSession(selectedApproval, selectedSandbox) {
+  const state = getActiveSessionState();
+  if (!state || !state.threadId || !activeSessionId) {
+    return;
+  }
+
+  const normalizedApproval = normalizeApprovalPolicy(selectedApproval);
+  const normalizedSandbox = normalizeSandboxMode(selectedSandbox);
+  state.approvalPolicy = normalizedApproval || null;
+  state.sandboxPolicy = normalizedSandbox || null;
+  setPreferredPermissionForThread(state.threadId, { approval: normalizedApproval, sandbox: normalizedSandbox });
+  replacePermissionLevelForThread(state.threadId, { approval: normalizedApproval, sandbox: normalizedSandbox });
+  trySendSessionPermissionSync(activeSessionId, normalizedApproval, normalizedSandbox);
+}
+
+function applyModelSelection(value) {
+  const normalized = normalizeModelValue(value);
+  if (!normalized) {
+    modelSelect.value = "";
+    modelCustomInput.classList.add("hidden");
+    syncModelCommandOptionsFromToolbar();
+    applySessionModelSettingsToActiveSession("", selectedReasoningValue());
+    refreshSessionMeta();
+    renderProjectSidebar();
+    return;
+  }
+
+  const matching = Array.from(modelSelect.options).find((o) => o.value === normalized);
+  if (matching) {
+    modelSelect.value = normalized;
+    if (normalized === "__custom__") {
+      modelCustomInput.classList.remove("hidden");
+      modelCustomInput.focus();
+    } else {
+      modelCustomInput.classList.add("hidden");
+    }
+    syncModelCommandOptionsFromToolbar();
+    applySessionModelSettingsToActiveSession(modelValueForCreate() || "", selectedReasoningValue());
+    refreshSessionMeta();
+    renderProjectSidebar();
+    return;
+  }
+
+  modelSelect.value = "__custom__";
+  modelCustomInput.classList.remove("hidden");
+  modelCustomInput.value = normalized;
+  syncModelCommandOptionsFromToolbar();
+  applySessionModelSettingsToActiveSession(modelValueForCreate() || "", selectedReasoningValue());
+  refreshSessionMeta();
+  renderProjectSidebar();
+}
+
+function openModelCommandModal() {
+  syncModelCommandOptionsFromToolbar();
+  modelCommandModal.classList.remove("hidden");
+  if (modelCommandSelect.value === "__custom__") {
+    modelCommandCustomInput.classList.remove("hidden");
+    modelCommandCustomInput.focus();
+  } else {
+    modelCommandCustomInput.classList.add("hidden");
+    modelCommandSelect.focus();
+  }
+}
+
+function closeModelCommandModal() {
+  modelCommandModal.classList.add("hidden");
+  modelCommandCustomInput.classList.add("hidden");
+  promptInput.focus();
+}
+
+function applyModelFromCommandModal() {
+  const selected = modelCommandSelect.value || "";
+  if (selected === "__custom__") {
+    const custom = modelCommandCustomInput.value.trim();
+    if (!custom) {
+      appendLog("[model] custom model cannot be empty");
+      modelCommandCustomInput.focus();
+      return;
+    }
+
+    applyModelSelection(custom);
+    appendLog(`[model] selected custom model '${custom}'`);
+    closeModelCommandModal();
+    return;
+  }
+
+  applyModelSelection(selected);
+  if (selected) {
+    appendLog(`[model] selected '${selected}'`);
+  } else {
+    appendLog("[model] reverted to default");
+  }
+  closeModelCommandModal();
+}
+
+function applySavedUiSettings() {
+  loadProjectUiState();
+  loadPromptDraftState();
+  loadThreadModelState();
+  loadThreadReasoningState();
+  loadThreadPermissionState();
+  const savedCwd = localStorage.getItem(STORAGE_CWD_KEY);
+  if (savedCwd) {
+    cwdInput.value = normalizeProjectCwd(savedCwd);
+    if (cwdInput.value) {
+      selectedProjectKey = getProjectKeyFromCwd(cwdInput.value);
+    }
+  }
+
+  const savedVerbosity = localStorage.getItem(STORAGE_LOG_VERBOSITY_KEY);
+  if (savedVerbosity && Array.from(logVerbositySelect.options).some((o) => o.value === savedVerbosity)) {
+    logVerbositySelect.value = savedVerbosity;
+  }
+
+  const sidebarCollapsed = localStorage.getItem(STORAGE_SIDEBAR_COLLAPSED_KEY) === "1";
+  const sidebarExtrasExpanded = localStorage.getItem(STORAGE_SIDEBAR_EXTRAS_EXPANDED_KEY) === "1";
+  applySidebarCollapsed(sidebarCollapsed);
+  setSidebarExtrasExpanded(sidebarExtrasExpanded, { persist: false });
+  setMobileProjectsOpen(false);
+  renderWorkspaceTabUi();
+  restorePromptDraftForActiveSession();
+}
+
+function getCurrentLogVerbosity() {
+  return logVerbositySelect.value || "normal";
+}
+
+function sendCurrentLogVerbosity() {
+  send("log_verbosity_set", { verbosity: getCurrentLogVerbosity() });
+}
+
+function requestModelsListForSession(sessionId, options = {}) {
+  const normalizedSessionId = typeof sessionId === "string" ? sessionId.trim() : "";
+  if (!normalizedSessionId || !sessions.has(normalizedSessionId)) {
+    if (options.logOnMissing === true) {
+      appendLog("[models] select a session before refreshing models");
+    }
+    return false;
+  }
+
+  const force = options.force === true;
+  const inFlight = turnInFlightBySession.get(normalizedSessionId) === true;
+  if (!force && inFlight) {
+    uiAuditLog("out.models_list_skipped", { sessionId: normalizedSessionId, reason: "turn_in_flight" });
+    return false;
+  }
+
+  const nowMs = Date.now();
+  const lastRequestAtMs = Number(lastModelsRequestAtBySession.get(normalizedSessionId) || 0);
+  if (!force && (nowMs - lastRequestAtMs) < MODELS_LIST_MIN_INTERVAL_MS) {
+    uiAuditLog("out.models_list_skipped", { sessionId: normalizedSessionId, reason: "rate_limited", elapsedMs: nowMs - lastRequestAtMs });
+    return false;
+  }
+
+  lastModelsRequestAtBySession.set(normalizedSessionId, nowMs);
+
+  return send("models_list", { sessionId: normalizedSessionId });
+}
+
+function requestModelsListForActiveSession(options = {}) {
+  return requestModelsListForSession(activeSessionId, options);
+}
+
+function stopSessionListSync() {
+  if (sessionListPollTimer) {
+    clearInterval(sessionListPollTimer);
+    sessionListPollTimer = null;
+  }
+}
+
+function startSessionListSync() {
+  stopSessionListSync();
+  if (!socket || socket.readyState !== WebSocket.OPEN) {
+    return;
+  }
+
+  sessionListPollTimer = setInterval(() => {
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+      stopSessionListSync();
+      return;
+    }
+    if (!isDocumentVisible()) {
+      return;
+    }
+    send("session_list");
+  }, SESSION_LIST_SYNC_INTERVAL_MS);
+}
+
+function ensureSocket() {
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    clearWsReconnectTimer();
+    wsReconnectAttempt = 0;
+    startSessionListSync();
+    setConnectionStatusBannerState("connected", "");
+    return Promise.resolve();
+  }
+
+  if (socket && socket.readyState === WebSocket.CONNECTING && socketReadyPromise) {
+    return socketReadyPromise;
+  }
+
+  setConnectionStatusBannerState("reconnecting", "Connecting to websocket bridge...", { showReconnect: true });
+  socket = new WebSocket(wsUrl());
+  socketReadyPromise = new Promise((resolve, reject) => {
+    socket.addEventListener("open", () => resolve(), { once: true });
+    socket.addEventListener("error", () => reject(new Error("websocket connect error")), { once: true });
+    socket.addEventListener("close", () => reject(new Error("websocket closed before open")), { once: true });
+  });
+
+  socket.addEventListener("open", () => {
+    appendLog("[ws] connected");
+    uiAuditLog("ws.connected", { reconnectAttempt: wsReconnectAttempt });
+    socketReadyPromise = null;
+    clearWsReconnectTimer();
+    wsReconnectAttempt = 0;
+    startSessionListSync();
+    send("session_list");
+    send("session_catalog_list");
+    if (!requestModelsListForActiveSession()) {
+      appendLog("[models] skipped refresh on connect: no selected session");
+    }
+    sendCurrentLogVerbosity();
+    setConnectionStatusBannerState("connected", "");
+  });
+  socket.addEventListener("close", () => {
+    appendLog("[ws] disconnected");
+    uiAuditLog("ws.disconnected");
+    socketReadyPromise = null;
+    stopSessionListSync();
+    setMobileProjectsOpen(false);
+    clearPendingSessionLoad();
+    autoAttachAttempted = false;
+    pendingApproval = null;
+    setApprovalVisible(false);
+    pendingToolUserInput = null;
+    closeToolUserInputModal();
+    closeSessionRecoveryModal();
+    setConnectionStatusBannerState(
+      "disconnected",
+      "Disconnected from websocket bridge.",
+      { showReconnect: true });
+    scheduleWsReconnect("close");
+  });
+  socket.addEventListener("error", () => {
+    appendLog("[ws] error");
+    uiAuditLog("ws.error", null, "warn");
+    setConnectionStatusBannerState(
+      "error",
+      "Websocket error. Waiting for reconnect.",
+      { showReconnect: true });
+  });
+  socket.addEventListener("message", (event) => {
+    try {
+      const frame = JSON.parse(event.data);
+      handleServerEvent(frame);
+    } catch (error) {
+      uiAuditLog("ws.invalid_frame", { error: String(error || "") }, "warn");
+      appendLog(`[ws] invalid server frame: ${error}`);
+    }
+  });
+
+  return socketReadyPromise;
+}
+
+function send(type, payload = {}) {
+  if (!socket || socket.readyState !== WebSocket.OPEN) {
+    uiAuditLog("ws.send_blocked", { type, reason: "socket_not_open" }, "warn");
+    appendLog(`[client] cannot send ${type}; websocket is closed`);
+    setConnectionStatusBannerState(
+      "disconnected",
+      "Websocket is disconnected. Reconnect to continue.",
+      { showReconnect: true });
+    scheduleWsReconnect("send");
+    return false;
+  }
+  if (UI_AUDIT_OUTGOING_TYPES.has(type)) {
+    uiAuditLog(`out.${type}`, summarizeOutgoingAuditPayload(type, payload));
+  }
+  socket.send(JSON.stringify({ type, ...payload }));
+  return true;
+}
+
+function buildSessionModelSyncKey(model, effort) {
+  const normalizedModel = normalizeModelValue(model);
+  const normalizedEffort = normalizeReasoningEffort(effort);
+  return `${normalizedModel}||${normalizedEffort}`;
+}
+
+function trySendSessionModelSync(sessionId, model, effort) {
+  const normalizedSessionId = typeof sessionId === "string" ? sessionId.trim() : "";
+  if (!normalizedSessionId) {
+    return false;
+  }
+
+  const key = buildSessionModelSyncKey(model, effort);
+  if (lastConfirmedSessionModelSyncBySession.get(normalizedSessionId) === key) {
+    return false;
+  }
+  if (pendingSessionModelSyncBySession.get(normalizedSessionId) === key) {
+    return false;
+  }
+
+  const normalizedModel = normalizeModelValue(model);
+  const normalizedEffort = normalizeReasoningEffort(effort);
+  if (!send("session_set_model", { sessionId: normalizedSessionId, model: normalizedModel, effort: normalizedEffort })) {
+    return false;
+  }
+
+  pendingSessionModelSyncBySession.set(normalizedSessionId, key);
+  return true;
+}
+
+function acknowledgeSessionModelSync(sessionId, model, effort) {
+  const normalizedSessionId = typeof sessionId === "string" ? sessionId.trim() : "";
+  if (!normalizedSessionId) {
+    return;
+  }
+
+  const serverKey = buildSessionModelSyncKey(model, effort);
+  lastConfirmedSessionModelSyncBySession.set(normalizedSessionId, serverKey);
+
+  const pending = pendingSessionModelSyncBySession.get(normalizedSessionId);
+  if (!pending) {
+    return;
+  }
+
+  if (pending === serverKey) {
+    pendingSessionModelSyncBySession.delete(normalizedSessionId);
+  }
+}
+
+function buildSessionPermissionSyncKey(approval, sandbox) {
+  const normalizedApproval = normalizeApprovalPolicy(approval);
+  const normalizedSandbox = normalizeSandboxMode(sandbox);
+  return `${normalizedApproval}||${normalizedSandbox}`;
+}
+
+function trySendSessionPermissionSync(sessionId, approval, sandbox) {
+  const normalizedSessionId = typeof sessionId === "string" ? sessionId.trim() : "";
+  if (!normalizedSessionId) {
+    return false;
+  }
+
+  const key = buildSessionPermissionSyncKey(approval, sandbox);
+  if (lastConfirmedSessionPermissionSyncBySession.get(normalizedSessionId) === key) {
+    return false;
+  }
+  if (pendingSessionPermissionSyncBySession.get(normalizedSessionId) === key) {
+    return false;
+  }
+
+  const normalizedApproval = normalizeApprovalPolicy(approval);
+  const normalizedSandbox = normalizeSandboxMode(sandbox);
+  if (!send("session_set_permissions", {
+    sessionId: normalizedSessionId,
+    approvalPolicy: normalizedApproval,
+    sandbox: normalizedSandbox
+  })) {
+    return false;
+  }
+
+  pendingSessionPermissionSyncBySession.set(normalizedSessionId, key);
+  return true;
+}
+
+function acknowledgeSessionPermissionSync(sessionId, approval, sandbox) {
+  const normalizedSessionId = typeof sessionId === "string" ? sessionId.trim() : "";
+  if (!normalizedSessionId) {
+    return;
+  }
+
+  const serverKey = buildSessionPermissionSyncKey(approval, sandbox);
+  lastConfirmedSessionPermissionSyncBySession.set(normalizedSessionId, serverKey);
+
+  const pending = pendingSessionPermissionSyncBySession.get(normalizedSessionId);
+  if (!pending) {
+    return;
+  }
+
+  if (pending === serverKey) {
+    pendingSessionPermissionSyncBySession.delete(normalizedSessionId);
+  }
+}
+
+function prunePendingSessionModelSync(validSessionIds) {
+  const valid = new Set(Array.isArray(validSessionIds) ? validSessionIds.filter((x) => typeof x === "string" && x.trim()) : []);
+  for (const sessionId of Array.from(pendingSessionModelSyncBySession.keys())) {
+    if (!valid.has(sessionId)) {
+      pendingSessionModelSyncBySession.delete(sessionId);
+    }
+  }
+  for (const sessionId of Array.from(lastConfirmedSessionModelSyncBySession.keys())) {
+    if (!valid.has(sessionId)) {
+      lastConfirmedSessionModelSyncBySession.delete(sessionId);
+    }
+  }
+}
+
+function prunePendingSessionPermissionSync(validSessionIds) {
+  const valid = new Set(Array.isArray(validSessionIds) ? validSessionIds.filter((x) => typeof x === "string" && x.trim()) : []);
+  for (const sessionId of Array.from(pendingSessionPermissionSyncBySession.keys())) {
+    if (!valid.has(sessionId)) {
+      pendingSessionPermissionSyncBySession.delete(sessionId);
+    }
+  }
+  for (const sessionId of Array.from(lastConfirmedSessionPermissionSyncBySession.keys())) {
+    if (!valid.has(sessionId)) {
+      lastConfirmedSessionPermissionSyncBySession.delete(sessionId);
+    }
+  }
+}
+
+function pruneTurnActivityState(validSessionIds) {
+  const valid = new Set(Array.isArray(validSessionIds) ? validSessionIds.filter((x) => typeof x === "string" && x.trim()) : []);
+  for (const sessionId of Array.from(turnStartedAtBySession.keys())) {
+    if (!valid.has(sessionId)) {
+      turnStartedAtBySession.delete(sessionId);
+    }
+  }
+}
+
+function pruneRateLimitState(validSessionIds) {
+  const valid = new Set(Array.isArray(validSessionIds) ? validSessionIds.filter((x) => typeof x === "string" && x.trim()) : []);
+  for (const sessionId of Array.from(rateLimitBySession.keys())) {
+    if (!valid.has(sessionId)) {
+      rateLimitBySession.delete(sessionId);
+    }
+  }
+}
+
+function applySessionLifecyclePayload(sessionId, payload) {
+  const state = ensureSessionState(sessionId);
+  ensurePlanStateShape(state);
+  state.threadId = payload.threadId || state.threadId;
+  state.threadName = payload.threadName || state.threadName || "";
+  state.cwd = payload.cwd || state.cwd;
+  state.isAppServerRecovering = false;
+
+  let persistedPreferenceUpdated = false;
+  let persistedPermissionPreferenceUpdated = false;
+  if (state.threadId) {
+    const serverModel = normalizeModelValue(payload.model || "");
+    const serverEffort = normalizeReasoningEffort(payload.reasoningEffort ?? payload.effort ?? "");
+    const preferred = getPreferredModelForThread(state.threadId);
+    const preferredEffort = getPreferredReasoningForThread(state.threadId);
+    const targetModel = preferred.found ? preferred.model : serverModel;
+    const targetEffort = preferredEffort.found ? preferredEffort.effort : serverEffort;
+    acknowledgeSessionModelSync(sessionId, serverModel, serverEffort);
+
+    state.model = targetModel || null;
+    state.reasoningEffort = targetEffort || null;
+
+    if (preferred.found) {
+      state.model = preferred.model || null;
+    } else if (payload.model !== undefined) {
+      persistedPreferenceUpdated = ensureThreadModelPreference(state.threadId, serverModel, { persist: false }) || persistedPreferenceUpdated;
+    }
+
+    if (preferredEffort.found) {
+      state.reasoningEffort = preferredEffort.effort || null;
+    } else if (payload.reasoningEffort !== undefined || payload.effort !== undefined) {
+      persistedPreferenceUpdated = ensureThreadReasoningPreference(state.threadId, serverEffort, { persist: false }) || persistedPreferenceUpdated;
+    }
+
+    const serverPermission = readPermissionInfoFromPayload(payload);
+    const preferredPermission = getPreferredPermissionForThread(state.threadId);
+    const hasPermissionFromPayload = hasAnyPermissionField(payload);
+    if (preferredPermission.found || hasPermissionFromPayload) {
+      const targetApproval = preferredPermission.found
+        ? preferredPermission.approval
+        : (serverPermission?.approval || "");
+      const targetSandbox = preferredPermission.found
+        ? preferredPermission.sandbox
+        : (serverPermission?.sandbox || "");
+      acknowledgeSessionPermissionSync(
+        sessionId,
+        serverPermission?.approval || "",
+        serverPermission?.sandbox || "");
+      state.approvalPolicy = targetApproval || null;
+      state.sandboxPolicy = targetSandbox || null;
+      replacePermissionLevelForThread(state.threadId, {
+        approval: state.approvalPolicy || "",
+        sandbox: state.sandboxPolicy || ""
+      });
+    }
+    if (!preferredPermission.found && hasPermissionFromPayload) {
+      persistedPermissionPreferenceUpdated =
+        ensureThreadPermissionPreference(
+          state.threadId,
+          {
+            approval: serverPermission?.approval || "",
+            sandbox: serverPermission?.sandbox || ""
+          },
+          { persist: false })
+        || persistedPermissionPreferenceUpdated;
+    }
+  }
+
+  let pendingCreate = null;
+  const createRequestId = payload.requestId || null;
+  if (createRequestId && pendingCreateRequests.has(createRequestId)) {
+    pendingCreate = pendingCreateRequests.get(createRequestId) || null;
+    pendingCreateRequests.delete(createRequestId);
+  }
+
+  if (!normalizeProjectCwd(state.cwd || "") && pendingCreate?.cwd) {
+    state.cwd = pendingCreate.cwd;
+  }
+  if (!state.createdAtTick) {
+    state.createdAtTick = Date.now();
+  }
+  if (state.threadId && state.threadName) {
+    setLocalThreadName(state.threadId, state.threadName);
+  }
+  if (state.threadId && normalizeProjectCwd(state.cwd || "")) {
+    const entry = getCatalogEntryByThreadId(state.threadId);
+    if (entry && !normalizeProjectCwd(entry.cwd || "")) {
+      entry.cwd = state.cwd;
+    }
+    if (entry && state.model !== null && state.model !== undefined) {
+      entry.model = state.model;
+    }
+  }
+  if (persistedPreferenceUpdated) {
+    persistThreadModelState();
+    persistThreadReasoningState();
+  }
+  if (persistedPermissionPreferenceUpdated) {
+    persistThreadPermissionState();
+  }
+
+  return { state, pendingCreate };
+}
+
+function handleAppServerErrorEvent(payload) {
+  const sessionId = typeof payload.sessionId === "string" ? payload.sessionId : null;
+  const code = typeof payload.code === "string" ? payload.code : "unknown";
+  const severity = typeof payload.severity === "string" ? payload.severity : "error";
+  const message = typeof payload.message === "string" && payload.message.trim()
+    ? payload.message.trim()
+    : "Codex app-server reported an error.";
+  const detail = typeof payload.detail === "string" ? payload.detail.trim() : "";
+  const recommendedAction = typeof payload.recommendedAction === "string" ? payload.recommendedAction.trim() : "";
+  const isAuthError = payload.isAuthError === true;
+  const shouldSurfaceBanner = isAuthError || !sessionId || sessionId === activeSessionId;
+
+  uiAuditLog("in.appserver_error", {
+    sessionId: sessionId || null,
+    code,
+    severity,
+    isAuthError
+  }, severity === "warn" ? "warn" : "error");
+  appendLog(
+    `[appserver_error] session=${sessionId || "unknown"} code=${code} severity=${severity} message=${message}${detail ? ` detail=${detail}` : ""}`);
+
+  if (!shouldSurfaceBanner) {
+    return;
+  }
+
+  const bannerMessage = recommendedAction
+    ? `${message} ${recommendedAction}`
+    : message;
+  showAppServerErrorBanner(bannerMessage, {
+    detail,
+    recommendedAction,
+    sticky: isAuthError
+  });
+}
+
+function handlePendingRenameAfterAttach(sessionId, threadId) {
+  if (!threadId || !pendingRenameOnAttach.has(threadId)) {
+    return;
+  }
+
+  const requestedName = pendingRenameOnAttach.get(threadId) || "";
+  pendingRenameOnAttach.delete(threadId);
+  if (!requestedName) {
+    return;
+  }
+
+  send("session_rename", { sessionId, threadName: requestedName });
+  send("session_catalog_list");
+}
+
+function handleSessionCreatedEvent(payload) {
+  const sessionId = payload.sessionId;
+  if (!sessionId) {
+    return;
+  }
+
+  const { state, pendingCreate } = applySessionLifecyclePayload(sessionId, payload);
+  touchSessionActivity(sessionId);
+  setTurnInFlight(sessionId, false);
+  uiAuditLog("in.session_created", {
+    sessionId,
+    threadId: state.threadId || null,
+    activeSessionId
+  });
+  appendLog(`[session] created id=${sessionId} thread=${state.threadId || "unknown"} log=${payload.logPath || "n/a"}`);
+
+  if (pendingCreate && pendingCreate.threadName) {
+    send("session_rename", { sessionId, threadName: pendingCreate.threadName });
+    send("session_catalog_list");
+  }
+
+  setActiveSession(sessionId, { persistSelection: true, reason: "session_created" });
+}
+
+function handleSessionAttachedEvent(payload) {
+  const sessionId = payload.sessionId;
+  if (!sessionId) {
+    return;
+  }
+
+  const { state } = applySessionLifecyclePayload(sessionId, payload);
+  const pendingThreadId = getPendingSessionLoadThreadId();
+  const matchedPendingSessionLoad = isPendingSessionLoadForThread(state.threadId);
+  const shouldFocusAttachedSession =
+    matchedPendingSessionLoad ||
+    (!pendingThreadId &&
+      (currentWorkspaceTab === WORKSPACE_TAB_CODE_REVIEWS ||
+        !activeSessionId ||
+        !sessions.has(activeSessionId)));
+
+  if (matchedPendingSessionLoad) {
+    clearPendingSessionLoad();
+  }
+
+  setTurnInFlight(sessionId, false);
+  uiAuditLog("in.session_attached", {
+    sessionId,
+    threadId: state.threadId || null,
+    activeSessionId
+  });
+  appendLog(`[session] attached id=${sessionId} thread=${state.threadId || "unknown"} log=${payload.logPath || "n/a"}`);
+  handlePendingRenameAfterAttach(sessionId, state.threadId);
+
+  uiAuditLog("in.session_attached_focus_decision", {
+    sessionId,
+    threadId: state.threadId || null,
+    pendingThreadId: pendingThreadId || null,
+    matchedPendingSessionLoad,
+    hadActiveSession: !!activeSessionId,
+    activeSessionExists: !!(activeSessionId && sessions.has(activeSessionId)),
+    preferAttachedSession: shouldFocusAttachedSession
+  });
+
+  if (shouldFocusAttachedSession) {
+    setActiveSession(sessionId, {
+      persistSelection: true,
+      reason: matchedPendingSessionLoad ? "session_attached_pending_selection" : "session_attached"
+    });
+    return;
+  }
+
+  updateSessionSelect(activeSessionId || null);
+}
+
+function handleSessionAttachFailedEvent(payload) {
+  const threadId = normalizeThreadId(payload.threadId || "");
+  const message = typeof payload.message === "string" && payload.message.trim()
+    ? payload.message.trim()
+    : "Attach failed.";
+  const matchedPendingSessionLoad = isPendingSessionLoadForThread(threadId);
+  uiAuditLog("in.session_attach_failed", {
+    threadId: threadId || null,
+    matchedPendingSessionLoad,
+    pendingThreadId: getPendingSessionLoadThreadId() || null
+  }, "warn");
+  appendLog(`[session_attach_failed] thread=${threadId || "unknown"} message=${message}`);
+  if (matchedPendingSessionLoad) {
+    handlePendingSessionLoadFailure();
+  }
+}
+
+function applySessionListEntry(existingState, sessionSummary, flags) {
+  const state = existingState || createEmptySessionState();
+  ensurePlanStateShape(state);
+  state.threadId = sessionSummary.threadId || state.threadId || null;
+  state.threadName = sessionSummary.threadName || state.threadName || "";
+  state.cwd = sessionSummary.cwd || state.cwd || null;
+  const serverModel = normalizeModelValue(sessionSummary.model);
+  const serverEffort = normalizeReasoningEffort(sessionSummary.reasoningEffort ?? sessionSummary.effort ?? "");
+
+  if (state.threadId) {
+    const preferred = getPreferredModelForThread(state.threadId);
+    const preferredEffort = getPreferredReasoningForThread(state.threadId);
+    const targetModel = preferred.found ? preferred.model : serverModel;
+    const targetEffort = preferredEffort.found ? preferredEffort.effort : serverEffort;
+    acknowledgeSessionModelSync(sessionSummary.sessionId, serverModel, serverEffort);
+
+    state.model = targetModel || state.model || null;
+    state.reasoningEffort = targetEffort || state.reasoningEffort || null;
+
+    if (preferred.found) {
+      state.model = preferred.model || null;
+    } else {
+      state.model = serverModel || state.model || null;
+      if (sessionSummary.model !== undefined) {
+        flags.persistedPreferenceUpdated =
+          ensureThreadModelPreference(state.threadId, serverModel, { persist: false })
+          || flags.persistedPreferenceUpdated;
+      }
+    }
+
+    if (preferredEffort.found) {
+      state.reasoningEffort = preferredEffort.effort || null;
+    } else if (sessionSummary.reasoningEffort !== undefined || sessionSummary.effort !== undefined) {
+      flags.persistedPreferenceUpdated =
+        ensureThreadReasoningPreference(state.threadId, serverEffort, { persist: false })
+        || flags.persistedPreferenceUpdated;
+    }
+
+    const serverPermission = readPermissionInfoFromPayload(sessionSummary);
+    const preferredPermission = getPreferredPermissionForThread(state.threadId);
+    const hasPermissionFromPayload = hasAnyPermissionField(sessionSummary);
+    if (preferredPermission.found || hasPermissionFromPayload) {
+      const targetApproval = preferredPermission.found
+        ? preferredPermission.approval
+        : (serverPermission?.approval || "");
+      const targetSandbox = preferredPermission.found
+        ? preferredPermission.sandbox
+        : (serverPermission?.sandbox || "");
+      acknowledgeSessionPermissionSync(
+        sessionSummary.sessionId,
+        serverPermission?.approval || "",
+        serverPermission?.sandbox || "");
+      state.approvalPolicy = targetApproval || null;
+      state.sandboxPolicy = targetSandbox || null;
+      replacePermissionLevelForThread(state.threadId, {
+        approval: state.approvalPolicy || "",
+        sandbox: state.sandboxPolicy || ""
+      });
+    }
+    if (!preferredPermission.found && hasPermissionFromPayload) {
+      flags.persistedPermissionPreferenceUpdated =
+        ensureThreadPermissionPreference(
+          state.threadId,
+          {
+            approval: serverPermission?.approval || "",
+            sandbox: serverPermission?.sandbox || ""
+          },
+          { persist: false })
+        || flags.persistedPermissionPreferenceUpdated;
+    }
+  } else {
+    state.model = serverModel || state.model || null;
+    state.reasoningEffort = serverEffort || state.reasoningEffort || null;
+    if (hasApprovalPolicyField(sessionSummary)) {
+      state.approvalPolicy = normalizeApprovalPolicy(sessionSummary.approvalPolicy ?? sessionSummary.approval_policy ?? "") || null;
+    }
+    if (hasSandboxPolicyField(sessionSummary)) {
+      state.sandboxPolicy = normalizeSandboxMode(sessionSummary.sandboxPolicy ?? sessionSummary.sandbox_policy ?? sessionSummary.sandbox ?? "") || null;
+    }
+    acknowledgeSessionPermissionSync(
+      sessionSummary.sessionId,
+      state.approvalPolicy || "",
+      state.sandboxPolicy || "");
+  }
+
+  state.createdAtTick = state.createdAtTick || Date.now();
+  state.lastActivityTick = Number.isFinite(state.lastActivityTick) ? state.lastActivityTick : state.createdAtTick;
+
+  const pending =
+    sessionSummary.pendingApproval && typeof sessionSummary.pendingApproval === "object" && !Array.isArray(sessionSummary.pendingApproval)
+      ? sessionSummary.pendingApproval
+      : null;
+  state.pendingApproval = pending && typeof pending.approvalId === "string" && pending.approvalId.trim() ? pending : null;
+  state.pendingRecoveryOffer = normalizeRecoveryOffer(sessionSummary.pendingRecoveryOffer);
+  state.pendingTurnRetryOffer = normalizeTurnRetryOffer(sessionSummary.pendingTurnRetryOffer);
+  state.queuedTurns = normalizeQueuedTurnSummaryList(sessionSummary.queuedTurns || sessionSummary.queuedMessages || []);
+  state.queuedTurnCount = Number.isFinite(sessionSummary.queuedTurnCount)
+    ? Math.max(0, Math.floor(sessionSummary.queuedTurnCount))
+    : state.queuedTurns.length;
+  state.turnCountInMemory = Number.isFinite(sessionSummary.turnCountInMemory)
+    ? Math.max(0, Math.floor(sessionSummary.turnCountInMemory))
+    : Number.isFinite(state.turnCountInMemory) ? state.turnCountInMemory : 0;
+  state.isAppServerRecovering = sessionSummary.isAppServerRecovering === true;
+
+  return state;
+}
+
+function syncPendingApprovalFromActiveSession() {
+  const activeState = getActiveSessionState();
+  const activePending = activeState && activeState.pendingApproval ? activeState.pendingApproval : null;
+  if (activeSessionId && activePending && typeof activePending.approvalId === "string" && activePending.approvalId.trim()) {
+    const approvalId = activePending.approvalId.trim();
+    if (!pendingApproval || pendingApproval.sessionId !== activeSessionId || pendingApproval.approvalId !== approvalId) {
+      pendingApproval = { sessionId: activeSessionId, approvalId };
+      approvalSummary.textContent = activePending.summary || "Approval requested";
+      const lines = [];
+      if (activePending.reason) lines.push(`Reason: ${activePending.reason}`);
+      if (activePending.cwd) lines.push(`CWD: ${activePending.cwd}`);
+      if (Array.isArray(activePending.actions) && activePending.actions.length > 0) lines.push(`Actions: ${activePending.actions.join("; ")}`);
+      approvalDetails.textContent = lines.join("\n");
+      setApprovalVisible(true);
+      appendLog(`[approval] pending session=${activeSessionId} approvalId=${approvalId}`);
+    }
+    return;
+  }
+
+  if (!pendingApproval) {
+    return;
+  }
+
+  const priorState = pendingApproval.sessionId ? sessions.get(pendingApproval.sessionId) : null;
+  const stillPending =
+    priorState &&
+    priorState.pendingApproval &&
+    typeof priorState.pendingApproval.approvalId === "string" &&
+    priorState.pendingApproval.approvalId === pendingApproval.approvalId;
+  if (!stillPending) {
+    pendingApproval = null;
+    setApprovalVisible(false);
+  }
+}
+
+function handleSessionListEvent(payload) {
+  syncCodexAccountFromPayload(payload.codexAccount, "session_list");
+  const list = Array.isArray(payload.sessions) ? payload.sessions : [];
+  const nextSessionListViewKey = buildSessionListViewKey(
+    payload.activeSessionId || null,
+    list,
+    payload.processingByThread);
+  const shouldRefreshSessionViews = nextSessionListViewKey !== lastSessionListViewKey;
+  lastSessionListViewKey = nextSessionListViewKey;
+
+  const next = new Map();
+  const nextProcessingByThread = new Map();
+  const flags = {
+    persistedPreferenceUpdated: false,
+    persistedPermissionPreferenceUpdated: false
+  };
+
+  for (const sessionSummary of list) {
+    const state = applySessionListEntry(sessions.get(sessionSummary.sessionId), sessionSummary, flags);
+    const inFlightFromServer = sessionSummary.isTurnInFlight === true || sessionSummary.turnInFlight === true;
+    const inFlight = resolveTurnInFlightFromServer(sessionSummary.sessionId, inFlightFromServer);
+    setTurnInFlight(sessionSummary.sessionId, inFlight);
+    if (inFlight && state.threadId) {
+      nextProcessingByThread.set(state.threadId, true);
+    }
+    next.set(sessionSummary.sessionId, state);
+  }
+
+  if (payload.processingByThread && typeof payload.processingByThread === "object" && !Array.isArray(payload.processingByThread)) {
+    for (const [threadId, processing] of Object.entries(payload.processingByThread)) {
+      const normalizedThreadId = typeof threadId === "string" ? threadId.trim() : "";
+      if (!normalizedThreadId || processing !== true) {
+        continue;
+      }
+
+      nextProcessingByThread.set(normalizedThreadId, true);
+    }
+  }
+
+  if (flags.persistedPreferenceUpdated) {
+    persistThreadModelState();
+    persistThreadReasoningState();
+  }
+  if (flags.persistedPermissionPreferenceUpdated) {
+    persistThreadPermissionState();
+  }
+
+  sessions = next;
+  prunePendingSessionModelSync(Array.from(next.keys()));
+  prunePendingSessionPermissionSync(Array.from(next.keys()));
+  pruneTurnActivityState(Array.from(next.keys()));
+  pruneRateLimitState(Array.from(next.keys()));
+  applyProcessingByThread(nextProcessingByThread);
+  prunePromptState();
+
+  if (shouldRefreshSessionViews || !!getPendingSessionLoadThreadId()) {
+    updateSessionSelect(payload.activeSessionId || null);
+    uiAuditLog("in.session_list_applied", {
+      activeFromServer: payload.activeSessionId || null,
+      activeLocal: activeSessionId || null,
+      sessionCount: list.length,
+      processingThreads: nextProcessingByThread.size
+    });
+  } else {
+    updatePromptActionState();
+  }
+
+  syncPendingApprovalFromActiveSession();
+  syncSessionRecoveryModal();
+}
+
+function handleSessionCatalogEvent(payload) {
+  syncCodexAccountFromPayload(payload.codexAccount, "session_catalog");
+  sessionCatalogLoadedOnce = true;
+  const list = Array.isArray(payload.sessions) ? payload.sessions : [];
+  const nextProcessingByThread = new Map();
+  for (const [sessionId, state] of sessions.entries()) {
+    if (!sessionId || !state || !state.threadId) {
+      continue;
+    }
+
+    if (isTurnInFlight(sessionId)) {
+      const normalizedThreadId = normalizeThreadId(state.threadId);
+      if (normalizedThreadId) {
+        nextProcessingByThread.set(normalizedThreadId, true);
+      }
+    }
+  }
+
+  let persistedPreferenceUpdated = false;
+  const normalizedCatalog = list
+    .filter((entry) => entry && entry.threadId)
+    .map((entry) => {
+      const normalizedThreadId = typeof entry.threadId === "string" ? entry.threadId.trim() : "";
+      if (normalizedThreadId) {
+        if (entry.isProcessing === true) {
+          nextProcessingByThread.set(normalizedThreadId, true);
+        } else if (entry.isProcessing === false) {
+          nextProcessingByThread.delete(normalizedThreadId);
+        }
+      }
+
+      const preferred = getPreferredModelForThread(entry.threadId);
+      const preferredEffort = getPreferredReasoningForThread(entry.threadId);
+      if (preferred.found) {
+        return {
+          ...entry,
+          cwd: getEffectiveProjectCwd(entry.cwd || ""),
+          model: preferred.model,
+          reasoningEffort: preferredEffort.found ? preferredEffort.effort : normalizeReasoningEffort(entry.reasoningEffort ?? entry.effort ?? "")
+        };
+      }
+
+      const normalizedServerModel = normalizeModelValue(entry.model);
+      const normalizedServerEffort = normalizeReasoningEffort(entry.reasoningEffort ?? entry.effort ?? "");
+      if (ensureThreadModelPreference(entry.threadId, normalizedServerModel, { persist: false })) {
+        persistedPreferenceUpdated = true;
+      }
+      if (ensureThreadReasoningPreference(entry.threadId, normalizedServerEffort, { persist: false })) {
+        persistedPreferenceUpdated = true;
+      }
+      return {
+        ...entry,
+        cwd: getEffectiveProjectCwd(entry.cwd || ""),
+        model: normalizedServerModel,
+        reasoningEffort: preferredEffort.found ? preferredEffort.effort : normalizedServerEffort
+      };
+    })
+    .sort((a, b) => (b.updatedAtUtc || "").localeCompare(a.updatedAtUtc || ""));
+
+  const perProjectCounts = new Map();
+  sessionCatalog = normalizedCatalog.filter((entry) => {
+    const projectKey = getProjectKeyFromCwd(entry.cwd || "");
+    const count = perProjectCounts.get(projectKey) || 0;
+    if (count >= MAX_PROJECT_SESSIONS_LOADED) {
+      return false;
+    }
+
+    perProjectCounts.set(projectKey, count + 1);
+    return true;
+  });
+
+  if (payload.processingByThread && typeof payload.processingByThread === "object" && !Array.isArray(payload.processingByThread)) {
+    nextProcessingByThread.clear();
+    for (const [threadId, processing] of Object.entries(payload.processingByThread)) {
+      const normalizedThreadId = typeof threadId === "string" ? threadId.trim() : "";
+      if (!normalizedThreadId || processing !== true) {
+        continue;
+      }
+
+      nextProcessingByThread.set(normalizedThreadId, true);
+    }
+  }
+
+  applyProcessingByThread(nextProcessingByThread);
+  uiAuditLog("in.session_catalog", {
+    sessionCount: sessionCatalog.length,
+    processingThreads: nextProcessingByThread.size
+  });
+  if (persistedPreferenceUpdated) {
+    persistThreadModelState();
+    persistThreadReasoningState();
+  }
+  updateExistingSessionSelect();
+  refreshSessionMeta();
+  appendLog(`[catalog] loaded ${sessionCatalog.length} existing sessions from ${payload.codexHomePath || "default CODEX_HOME"}`);
+}
+
+function handleSessionStoppedEvent(payload) {
+  const sessionId = payload.sessionId;
+  if (sessionId && sessions.has(sessionId)) {
+    sessions.delete(sessionId);
+    pendingSessionModelSyncBySession.delete(sessionId);
+    lastConfirmedSessionModelSyncBySession.delete(sessionId);
+    pendingSessionPermissionSyncBySession.delete(sessionId);
+    lastConfirmedSessionPermissionSyncBySession.delete(sessionId);
+  }
+  if (sessionId) {
+    turnInFlightBySession.delete(sessionId);
+    turnStartedAtBySession.delete(sessionId);
+    turnStartGraceUntilBySession.delete(sessionId);
+    lastSentPromptBySession.delete(sessionId);
+    rateLimitBySession.delete(sessionId);
+    if (pendingToolUserInput && pendingToolUserInput.sessionId === sessionId) {
+      pendingToolUserInput = null;
+      closeToolUserInputModal();
+    }
+  }
+  uiAuditLog("in.session_stopped", {
+    sessionId: sessionId || null,
+    activeSessionId
+  });
+  appendLog(`[session] stopped id=${sessionId || "unknown"}`);
+  updateSessionSelect(payload.activeSessionId || null);
+}
+
+function handleAssistantDoneEvent(payload) {
+  refreshReviewCatalogsForEvent(payload, { force: true }).catch(() => { });
+}
+
+function handleTurnCompleteEvent(payload) {
+  const sessionId = payload.sessionId || null;
+  const status = payload.status || "unknown";
+  const isPlanTurn = payload.isPlanTurn === true || normalizeCollaborationMode(payload.collaborationMode || "") === "plan";
+  let sidebarStateChanged = false;
+  if (sessionId) {
+    touchSessionActivity(sessionId);
+    const state = sessions.get(sessionId) || null;
+    const threadId = normalizeThreadId(state?.threadId || "");
+    if (threadId) {
+      const wasProcessing = processingByThread.get(threadId) === true;
+      processingByThread.delete(threadId);
+      if (wasProcessing) {
+        sidebarStateChanged = true;
+      }
+      if (status === "completed") {
+        sidebarStateChanged = markThreadCompletionUnread(threadId, { requireAttached: true }) || sidebarStateChanged;
+      }
+    }
+    setTurnInFlight(sessionId, false);
+    finalizePlanTurn(sessionId, status, isPlanTurn);
+  }
+
+  const errorMessage = payload.errorMessage || null;
+  uiAuditLog("in.turn_complete", {
+    sessionId: sessionId || null,
+    status,
+    hasError: !!errorMessage
+  });
+  appendLog(`[turn] session=${payload.sessionId || "unknown"} status=${status}${errorMessage ? " error=" + errorMessage : ""}`);
+  if (sidebarStateChanged) {
+    renderProjectSidebar();
+  }
+  refreshReviewCatalogsForEvent(payload, { force: true }).catch(() => { });
+  renderPromptQueue();
+}
+
+function handleTurnStartedEvent(payload) {
+  const sessionId = payload.sessionId || null;
+  const isPlanTurn = payload.isPlanTurn === true || normalizeCollaborationMode(payload.collaborationMode || "") === "plan";
+  let sidebarStateChanged = false;
+  if (sessionId) {
+    touchSessionActivity(sessionId);
+    const state = sessions.get(sessionId) || null;
+    const threadId = normalizeThreadId(state?.threadId || "");
+    if (threadId) {
+      if (processingByThread.get(threadId) !== true) {
+        sidebarStateChanged = true;
+      }
+      processingByThread.set(threadId, true);
+      sidebarStateChanged = completedUnreadThreadIds.delete(threadId) || sidebarStateChanged;
+    }
+    setTurnStartGrace(sessionId, false);
+    setTurnInFlight(sessionId, true);
+    markPlanTurnStarted(sessionId, isPlanTurn);
+  }
+
+  if (sidebarStateChanged) {
+    renderProjectSidebar();
+  }
+  refreshReviewCatalogsForEvent(payload, { force: true }).catch(() => { });
+  uiAuditLog("in.turn_started", {
+    sessionId: sessionId || null,
+    isPlanTurn
+  });
+}
+
+function handleTurnCancelRequestedEvent(payload) {
+  const sessionId = payload.sessionId || null;
+  if (sessionId) {
+    setTurnStartGrace(sessionId, false);
+    if (payload.forcedReset === true || payload.hadTurnInFlight === true) {
+      applyTurnOverrideReset(sessionId, { renderSidebar: false });
+    }
+    send("session_list");
+  }
+
+  appendLog(
+    `[turn] cancel requested for session=${sessionId || "unknown"} interruptSent=${payload.interruptSent === true ? "true" : "false"} forcedReset=${payload.forcedReset === true ? "true" : "false"} clearedQueued=${Number.isFinite(payload.clearedQueuedTurnCount) ? payload.clearedQueuedTurnCount : 0}`);
+  uiAuditLog("in.turn_cancel_requested", {
+    sessionId: sessionId || null,
+    interruptSent: payload.interruptSent === true,
+    forcedReset: payload.forcedReset === true,
+    clearedQueued: Number.isFinite(payload.clearedQueuedTurnCount) ? payload.clearedQueuedTurnCount : 0
+  });
+}
+
+function handleSessionRecoveryStateEvent(payload) {
+  const sessionId = payload.sessionId || null;
+  if (!sessionId) {
+    return;
+  }
+
+  const state = ensureSessionState(sessionId);
+  const recoveryState = typeof payload.state === "string" ? payload.state.trim().toLowerCase() : "";
+  state.isAppServerRecovering = recoveryState === "recovering";
+  if (recoveryState === "recovering" || recoveryState === "recovered" || recoveryState === "failed") {
+    state.pendingRecoveryOffer = null;
+  }
+  if (recoveryState === "failed") {
+    state.pendingTurnRetryOffer = null;
+  }
+  if (sessionId === activeSessionId) {
+    updatePromptActionState();
+  }
+
+  const errorSuffix = payload.errorMessage ? ` error=${payload.errorMessage}` : "";
+  uiAuditLog("in.session_recovery_state", {
+    sessionId,
+    state: recoveryState || "unknown",
+    errorMessage: payload.errorMessage || null
+  });
+  appendLog(`[session_recovery] session=${sessionId} state=${recoveryState || "unknown"}${errorSuffix}`);
+  syncSessionRecoveryModal();
+  if (recoveryState === "recovered" || recoveryState === "failed") {
+    send("session_list");
+  }
+}
+
+function handleSessionRecoveryOfferEvent(payload) {
+  const sessionId = payload.sessionId || null;
+  if (!sessionId) {
+    return;
+  }
+
+  const state = ensureSessionState(sessionId);
+  const offerState = typeof payload.state === "string" ? payload.state.trim().toLowerCase() : "";
+  const offered = normalizeRecoveryOffer(payload);
+  if (offerState === "dismissed") {
+    state.pendingRecoveryOffer = null;
+  } else if (offered) {
+    state.pendingRecoveryOffer = offered;
+    state.pendingTurnRetryOffer = null;
+  } else {
+    state.pendingRecoveryOffer = null;
+  }
+
+  uiAuditLog("in.session_recovery_offer", {
+    sessionId,
+    offerId: offered ? offered.offerId : null,
+    reason: offered ? offered.reason : null,
+    state: offerState || null
+  });
+  syncSessionRecoveryModal();
+  renderProjectSidebar();
+}
+
+function handleTurnRetryOfferEvent(payload) {
+  const sessionId = payload.sessionId || null;
+  if (!sessionId) {
+    return;
+  }
+
+  const state = ensureSessionState(sessionId);
+  const offerState = typeof payload.state === "string" ? payload.state.trim().toLowerCase() : "";
+  const offered = normalizeTurnRetryOffer(payload);
+  if (offerState === "dismissed") {
+    state.pendingTurnRetryOffer = null;
+  } else if (offered) {
+    state.pendingTurnRetryOffer = offered;
+  } else {
+    state.pendingTurnRetryOffer = null;
+  }
+
+  uiAuditLog("in.turn_retry_offer", {
+    sessionId,
+    offerId: offered ? offered.offerId : null,
+    state: offerState || null,
+    textChars: offered ? offered.textChars : null,
+    imageCount: offered ? offered.imageCount : null
+  });
+  syncSessionRecoveryModal();
+  renderProjectSidebar();
+}
+
+function normalizeQueuedEditImages(images) {
+  return Array.isArray(images)
+    ? images
+        .filter((image) => image && typeof image.url === "string" && image.url.trim().length > 0)
+        .map((image) => ({
+          url: image.url,
+          name: typeof image.name === "string" ? image.name : "image",
+          mimeType: typeof image.mimeType === "string" ? image.mimeType : "image/*",
+          size: typeof image.size === "number" ? image.size : 0
+        }))
+    : [];
+}
+
+function handleTurnQueueEditItemEvent(payload) {
+  const sessionId = payload.sessionId || null;
+  if (!sessionId || !activeSessionId || sessionId !== activeSessionId) {
+    return;
+  }
+
+  const images = normalizeQueuedEditImages(payload.images);
+  restoreQueuedPromptForEditing(payload.text || "", images);
+  appendLog(`[queue] restored queued prompt ${payload.queueItemId || ""} for editing`);
+}
+
+function handleRateLimitsUpdatedEvent(payload) {
+  const sessionId = payload.sessionId || null;
+  latestRateLimitSnapshot = payload && typeof payload === "object" ? payload : latestRateLimitSnapshot;
+  if (sessionId) {
+    rateLimitBySession.set(sessionId, payload);
+    if (sessionId === activeSessionId) {
+      refreshSessionMetaUsage();
+    }
+  }
+
+  const summary = typeof payload.summary === "string" && payload.summary.trim()
+    ? payload.summary.trim()
+    : "Rate limits updated";
+  appendLog(`[rate_limit] session=${sessionId || "unknown"} ${summary}`);
+  refreshLatestRateLimitSnapshot();
+}
+
+function handlePlanDeltaEvent(payload) {
+  const sessionId = payload.sessionId || null;
+  const text = typeof payload.text === "string" ? payload.text : "";
+  if (!sessionId || !text) {
+    return;
+  }
+
+  appendPlanDeltaToSession(sessionId, text);
+}
+
+function handlePlanUpdatedEvent(payload) {
+  const sessionId = payload.sessionId || null;
+  if (!sessionId) {
+    return;
+  }
+
+  const text = typeof payload.text === "string" ? payload.text : "";
+  applyPlanUpdatedToSession(sessionId, text);
+}
+
+function buildSessionConfiguredSummary(payload) {
+  const summaryParts = [];
+  if (payload.model) summaryParts.push(`model=${payload.model}`);
+  if (payload.reasoningEffort || payload.effort) summaryParts.push(`effort=${payload.reasoningEffort || payload.effort}`);
+  if (payload.approvalPolicy || payload.approval_policy) summaryParts.push(`approval=${payload.approvalPolicy || payload.approval_policy}`);
+  if (payload.sandboxPolicy || payload.sandbox_policy) summaryParts.push(`sandbox=${payload.sandboxPolicy || payload.sandbox_policy}`);
+  return summaryParts.length > 0 ? summaryParts.join(" | ") : "Session configured";
+}
+
+function handleSessionConfiguredEvent(payload) {
+  const sessionId = payload.sessionId || null;
+  let sidebarStateChanged = false;
+  let sessionConfigChanged = false;
+  if (sessionId && sessions.has(sessionId)) {
+    const state = sessions.get(sessionId);
+    if (state) {
+      if (typeof payload.threadId === "string" && payload.threadId.trim()) {
+        const nextThreadId = payload.threadId.trim();
+        if ((state.threadId || "") !== nextThreadId) {
+          state.threadId = nextThreadId;
+          sidebarStateChanged = true;
+          sessionConfigChanged = true;
+        }
+      }
+      if (typeof payload.cwd === "string" && payload.cwd.trim()) {
+        const nextCwd = payload.cwd.trim();
+        if ((state.cwd || "") !== nextCwd) {
+          state.cwd = nextCwd;
+          sidebarStateChanged = true;
+          sessionConfigChanged = true;
+          if (sessionId === activeSessionId) {
+            syncCwdInputFromSessionState(state, { force: true });
+          }
+        }
+      }
+
+      const configuredModel = normalizeModelValue(payload.model);
+      const configuredEffort = normalizeReasoningEffort(payload.reasoningEffort ?? payload.effort ?? "");
+      if (payload.model !== undefined) {
+        if ((state.model || "") !== configuredModel) {
+          sidebarStateChanged = true;
+          sessionConfigChanged = true;
+        }
+        state.model = configuredModel || null;
+      }
+      if (payload.reasoningEffort !== undefined || payload.effort !== undefined) {
+        if ((state.reasoningEffort || "") !== configuredEffort) {
+          sidebarStateChanged = true;
+          sessionConfigChanged = true;
+        }
+        state.reasoningEffort = configuredEffort || null;
+      }
+
+      if (payload.model !== undefined || payload.reasoningEffort !== undefined || payload.effort !== undefined) {
+        acknowledgeSessionModelSync(sessionId, state.model || "", state.reasoningEffort || "");
+      }
+
+      const hasApprovalOverride = hasApprovalPolicyField(payload);
+      const hasSandboxOverride = hasSandboxPolicyField(payload);
+      if (hasApprovalOverride || hasSandboxOverride) {
+        const configuredPermission = readPermissionInfoFromPayload(payload);
+        const nextApproval = hasApprovalOverride
+          ? (configuredPermission?.approval || "")
+          : normalizeApprovalPolicy(state.approvalPolicy || "");
+        const nextSandbox = hasSandboxOverride
+          ? (configuredPermission?.sandbox || "")
+          : normalizeSandboxMode(state.sandboxPolicy || "");
+        if ((state.approvalPolicy || "") !== nextApproval || (state.sandboxPolicy || "") !== nextSandbox) {
+          sidebarStateChanged = true;
+          sessionConfigChanged = true;
+        }
+        state.approvalPolicy = nextApproval || null;
+        state.sandboxPolicy = nextSandbox || null;
+        acknowledgeSessionPermissionSync(sessionId, state.approvalPolicy || "", state.sandboxPolicy || "");
+        if (state.threadId) {
+          replacePermissionLevelForThread(state.threadId, {
+            approval: state.approvalPolicy || "",
+            sandbox: state.sandboxPolicy || ""
+          });
+        }
+      }
+    }
+  }
+
+  if (sessionId && sessionConfigChanged) {
+    touchSessionActivity(sessionId);
+  }
+
+  appendLog(`[session_configured] session=${sessionId || "unknown"} ${buildSessionConfiguredSummary(payload)}`);
+  if (sessionId && activeSessionId === sessionId) {
+    refreshSessionMeta();
+  }
+  if (sidebarStateChanged) {
+    renderProjectSidebar();
+  }
+}
+
+function handleServerEvent(frame) {
+  const type = frame.type;
+  const payload = frame.payload || {};
+
+  switch (type) {
+    case "status":
+      appendLog(`[status] ${payload.message || ""}`);
+      return;
+
+    case "appserver_error":
+      handleAppServerErrorEvent(payload);
+      return;
+
+    case "session_created":
+      handleSessionCreatedEvent(payload);
+      return;
+
+    case "session_attached":
+      handleSessionAttachedEvent(payload);
+      return;
+
+    case "session_attach_failed":
+      handleSessionAttachFailedEvent(payload);
+      return;
+
+    case "session_list":
+      handleSessionListEvent(payload);
+      return;
+
+    case "session_catalog":
+      handleSessionCatalogEvent(payload);
+      return;
+
+    case "session_stopped":
+      handleSessionStoppedEvent(payload);
+      return;
+
+    case "assistant_delta":
+      return;
+
+    case "assistant_response_started":
+      return;
+
+    case "assistant_done":
+      handleAssistantDoneEvent(payload);
+      return;
+
+    case "turn_complete":
+      handleTurnCompleteEvent(payload);
+      return;
+
+    case "turn_started":
+      handleTurnStartedEvent(payload);
+      return;
+
+    case "turn_cancel_requested":
+      handleTurnCancelRequestedEvent(payload);
+      return;
+
+    case "session_recovery_state":
+      handleSessionRecoveryStateEvent(payload);
+      return;
+
+    case "session_recovery_offer":
+      handleSessionRecoveryOfferEvent(payload);
+      return;
+
+    case "turn_retry_offer":
+      handleTurnRetryOfferEvent(payload);
+      return;
+
+    case "turn_queue_edit_item":
+      handleTurnQueueEditItemEvent(payload);
+      return;
+
+    case "rate_limits_updated":
+      handleRateLimitsUpdatedEvent(payload);
+      return;
+
+    case "plan_delta":
+      handlePlanDeltaEvent(payload);
+      return;
+
+    case "plan_updated":
+      handlePlanUpdatedEvent(payload);
+      return;
+
+    case "session_configured":
+      handleSessionConfiguredEvent(payload);
+      return;
+
+    case "thread_compacted": {
+      const sessionId = payload.sessionId || null;
+      let threadId = typeof payload.threadId === "string" ? payload.threadId.trim() : "";
+      if (!threadId && sessionId && sessions.has(sessionId)) {
+        const state = sessions.get(sessionId);
+        threadId = normalizeThreadId(state?.threadId || "");
+      }
+
+      const compactionPieces = readThreadCompactedInfo({ ...payload, type: "thread_compacted" });
+      if (threadId && compactionPieces) {
+        applyContextUsageForThread(
+          threadId,
+          {
+            contextWindow: compactionPieces.contextWindow,
+            usedTokensAfter: compactionPieces.usedTokensAfter,
+            percentLeft: compactionPieces.percentLeft
+          },
+          "thread_compacted"
+        );
+      }
+
+      const summary = compactionPieces?.summary
+        || (typeof payload.summary === "string" && payload.summary.trim() ? payload.summary.trim() : "Context compressed");
+      appendLog(`[thread_compacted] thread=${threadId || "unknown"} ${summary}`);
+      return;
+    }
+
+    case "thread_name_updated": {
+      const sessionId = payload.sessionId || null;
+      const threadId = normalizeThreadId(payload.threadId || "");
+      const threadName = String(payload.threadName || "").trim();
+      if (!threadId || !threadName) {
+        return;
+      }
+
+      let priorName = "";
+      for (const state of sessions.values()) {
+        if (state && normalizeThreadId(state.threadId || "") === threadId && typeof state.threadName === "string" && state.threadName.trim()) {
+          priorName = state.threadName.trim();
+          break;
+        }
+      }
+      if (!priorName) {
+        const entry = getCatalogEntryByThreadId(threadId);
+        if (entry && typeof entry.threadName === "string" && entry.threadName.trim()) {
+          priorName = entry.threadName.trim();
+        }
+      }
+      if (priorName && priorName === threadName) {
+        return;
+      }
+
+      setLocalThreadName(threadId, threadName);
+      const activeThreadId = normalizeThreadId(getActiveSessionState()?.threadId || "");
+      if (activeThreadId === threadId) {
+        refreshSessionMeta();
+      }
+      updateSessionSelect(activeSessionId || null);
+      renderProjectSidebar();
+
+      if (sessionId) {
+        touchSessionActivity(sessionId);
+      }
+
+      appendLog(`[thread_name_updated] thread=${threadId} name=${threadName}`);
+      return;
+    }
+
+    case "approval_request": {
+      const sessionId = payload.sessionId;
+      const approvalId = payload.approvalId;
+      pendingApproval = sessionId && approvalId ? { sessionId, approvalId } : null;
+
+      approvalSummary.textContent = payload.summary || "Approval requested";
+      const lines = [];
+      if (payload.reason) lines.push(`Reason: ${payload.reason}`);
+      if (payload.cwd) lines.push(`CWD: ${payload.cwd}`);
+      if (Array.isArray(payload.actions) && payload.actions.length > 0) lines.push(`Actions: ${payload.actions.join("; ")}`);
+      approvalDetails.textContent = lines.join("\n");
+      setApprovalVisible(true);
+      uiAuditLog("in.approval_request", {
+        sessionId: sessionId || null,
+        approvalId: approvalId || null
+      });
+      appendLog(`[approval] requested session=${sessionId || "unknown"} approvalId=${approvalId || "unknown"}`);
+      return;
+    }
+
+    case "approval_resolved": {
+      const sessionId = payload.sessionId || null;
+      const approvalId = payload.approvalId || null;
+      const decision = payload.decision || "unknown";
+      if (pendingApproval && pendingApproval.sessionId === sessionId && pendingApproval.approvalId === approvalId) {
+        pendingApproval = null;
+        setApprovalVisible(false);
+      }
+      uiAuditLog("in.approval_resolved", {
+        sessionId: sessionId || null,
+        approvalId: approvalId || null,
+        decision
+      });
+      appendLog(`[approval] resolved session=${sessionId || "unknown"} approvalId=${approvalId || "unknown"} decision=${decision}`);
+      return;
+    }
+
+    case "tool_user_input_request": {
+      const sessionId = payload.sessionId || null;
+      const requestId = payload.requestId || null;
+      const questions = normalizeToolUserInputQuestions(payload.questions);
+      if (!sessionId || !requestId) {
+        appendLog("[tool_input] invalid request payload");
+        return;
+      }
+
+      if (sessionId && sessions.has(sessionId) && sessionId !== activeSessionId) {
+        setActiveSession(sessionId, { reason: "tool_user_input_request_focus" });
+      }
+
+      pendingToolUserInput = {
+        sessionId,
+        requestId,
+        questions
+      };
+      renderToolUserInputModal();
+      uiAuditLog("in.tool_user_input_request", { sessionId, requestId, questionCount: questions.length });
+      appendLog(`[tool_input] requested session=${sessionId} requestId=${requestId} questions=${questions.length}`);
+      return;
+    }
+
+    case "tool_user_input_resolved": {
+      const sessionId = payload.sessionId || null;
+      const requestId = payload.requestId || null;
+      if (pendingToolUserInput &&
+          pendingToolUserInput.sessionId === sessionId &&
+          pendingToolUserInput.requestId === requestId) {
+        pendingToolUserInput = null;
+        closeToolUserInputModal();
+      }
+
+      uiAuditLog("in.tool_user_input_resolved", {
+        sessionId: sessionId || null,
+        requestId: requestId || null
+      });
+      appendLog(`[tool_input] resolved session=${sessionId || "unknown"} requestId=${requestId || "unknown"}`);
+      return;
+    }
+
+    case "models_list": {
+      if (payload.error) {
+        appendLog(`[models] error: ${payload.error}`);
+        return;
+      }
+      const models = Array.isArray(payload.models) ? payload.models : [];
+      const defaultModel = normalizeModelValue(payload.defaultModel || "");
+      populateModelSelect(models, defaultModel);
+      appendLog(`[models] loaded (${models.length})`);
+      return;
+    }
+
+    case "log_verbosity":
+      if (payload.verbosity && Array.from(logVerbositySelect.options).some((o) => o.value === payload.verbosity)) {
+        logVerbositySelect.value = payload.verbosity;
+      }
+      appendLog(`[log] verbosity=${payload.verbosity || "unknown"}`);
+      return;
+
+    case "log": {
+      if (payload.source === "connection" && typeof payload.message === "string" && payload.message.startsWith("[client] raw")) {
+        return;
+      }
+      const parts = [];
+      if (payload.source) parts.push(payload.source);
+      if (payload.sessionId) parts.push(`session=${payload.sessionId}`);
+      if (payload.level) parts.push(payload.level);
+      if (payload.eventType) parts.push(payload.eventType);
+      const prefix = parts.length > 0 ? `[${parts.join(":")}] ` : "";
+      appendLog(`${prefix}${payload.message || ""}`);
+      return;
+    }
+
+    case "error":
+      uiAuditLog("in.error", { message: payload.message || "unknown error" }, "warn");
+      appendLog(`[error] ${payload.message || "unknown error"}`);
+      return;
+
+    case "session_started":
+      return;
+
+    default:
+      appendLog(`[ws] unknown event type: ${type}`);
+      return;
+  }
+}
+
+if (newSessionBtn) {
+  newSessionBtn.addEventListener("click", () => {
+    const selectedGroup = buildSidebarProjectGroups().find((x) => x.key === selectedProjectKey) || null;
+    const preferredCwd = selectedGroup?.cwd || cwdInput.value.trim();
+    openNewSessionModal(preferredCwd);
+  });
+}
+
+if (workspaceTabTasksBtn) {
+  workspaceTabTasksBtn.addEventListener("click", () => {
+    setWorkspaceTab(WORKSPACE_TAB_TASKS, { reason: "workspace_tab_tasks_click" }).catch((error) => appendLog(`[workspace] failed to switch to tasks: ${error}`));
+  });
+}
+
+if (newProjectBtn) {
+  newProjectBtn.addEventListener("click", () => {
+    promptCreateProject();
+  });
+}
+
+if (newProjectSidebarBtn) {
+  newProjectSidebarBtn.addEventListener("click", () => {
+    promptCreateProject();
+  });
+}
+
+if (attachSessionBtn) {
+  attachSessionBtn.addEventListener("click", async () => {
+    const threadId = existingSessionSelect ? existingSessionSelect.value : "";
+    if (!threadId) {
+      appendLog("[catalog] select an existing thread to attach");
+      return;
+    }
+
+    const catalogEntry = getCatalogEntryByThreadId(threadId);
+    await selectThreadById(threadId, catalogEntry?.cwd || cwdInput.value.trim(), {
+      displayName: catalogEntry?.threadName || threadId,
+      persistSelection: true,
+      reason: "session_attach_button"
+    });
+  });
+}
+
+stopSessionBtn.addEventListener("click", () => {
+  if (!activeSessionId) return;
+  const targetSessionId = activeSessionId;
+  if (!send("session_stop", { sessionId: targetSessionId })) {
+    appendLog("[session] failed to send stop request; websocket is closed");
+    return;
+  }
+
+  applyTurnOverrideReset(targetSessionId);
+  appendLog(`[session] stop requested id=${targetSessionId}`);
+});
+
+if (sessionSelect) {
+  sessionSelect.addEventListener("change", () => {
+    const sessionId = sessionSelect.value;
+    if (!sessionId) return;
+    if (!sessions.has(sessionId)) return;
+    setActiveSession(sessionId, { persistSelection: true, reason: "session_select_dropdown_change" });
+  });
+}
+
+modelSelect.addEventListener("change", () => {
+  if (modelSelect.value === "__custom__") {
+    modelCustomInput.classList.remove("hidden");
+    modelCustomInput.focus();
+  } else {
+    modelCustomInput.classList.add("hidden");
+  }
+  syncModelCommandOptionsFromToolbar();
+
+  const nextModel = modelValueForCreate();
+  if (modelSelect.value === "__custom__" && !nextModel) {
+    return;
+  }
+  if (activeSessionId && sessions.has(activeSessionId)) {
+    applySessionModelSettingsToActiveSession(nextModel || "", selectedReasoningValue());
+    refreshSessionMeta();
+    renderProjectSidebar();
+  }
+});
+
+if (conversationModelSelect) {
+  conversationModelSelect.addEventListener("change", () => {
+    if (syncingConversationModelSelect) {
+      return;
+    }
+
+    let selectedValue = conversationModelSelect.value || "";
+    if (selectedValue === "__custom__") {
+      const proposed = window.prompt("Custom model:", modelCustomInput.value || "");
+      if (proposed === null) {
+        syncConversationModelOptions(normalizeModelValue(getActiveSessionState()?.model || ""));
+        return;
+      }
+
+      const custom = String(proposed || "").trim();
+      if (!custom) {
+        appendLog("[model] custom model cannot be empty");
+        syncConversationModelOptions(normalizeModelValue(getActiveSessionState()?.model || ""));
+        return;
+      }
+
+      selectedValue = custom;
+    }
+
+    applyModelSelection(selectedValue);
+    const nextModel = modelValueForCreate();
+    if (nextModel) {
+      appendLog(`[model] selected '${nextModel}'`);
+    } else {
+      appendLog("[model] reverted to default");
+    }
+  });
+}
+
+if (conversationReasoningSelect) {
+  conversationReasoningSelect.addEventListener("change", () => {
+    if (syncingConversationModelSelect) {
+      return;
+    }
+
+    const nextEffort = normalizeReasoningEffort(conversationReasoningSelect.value || "");
+    const nextModel = modelValueForCreate() || "";
+    applySessionModelSettingsToActiveSession(nextModel, nextEffort);
+    refreshSessionMeta();
+    renderProjectSidebar();
+    appendLog(nextEffort ? `[reasoning] set to '${nextEffort}'` : "[reasoning] reverted to default");
+  });
+}
+
+if (conversationApprovalSelect) {
+  conversationApprovalSelect.addEventListener("change", () => {
+    if (!getActiveSessionState()) {
+      return;
+    }
+
+    const nextApproval = normalizeApprovalPolicy(conversationApprovalSelect.value || "");
+    const nextSandbox = selectedSandboxValue();
+    applySessionPermissionSettingsToActiveSession(nextApproval, nextSandbox);
+    refreshSessionMeta();
+    renderProjectSidebar();
+    appendLog(nextApproval ? `[permissions] approval set to '${nextApproval}'` : "[permissions] approval reverted to inherit");
+  });
+}
+
+if (conversationSandboxSelect) {
+  conversationSandboxSelect.addEventListener("change", () => {
+    if (!getActiveSessionState()) {
+      return;
+    }
+
+    const nextApproval = selectedApprovalValue();
+    const nextSandbox = normalizeSandboxMode(conversationSandboxSelect.value || "");
+    applySessionPermissionSettingsToActiveSession(nextApproval, nextSandbox);
+    refreshSessionMeta();
+    renderProjectSidebar();
+    appendLog(nextSandbox ? `[permissions] sandbox set to '${nextSandbox}'` : "[permissions] sandbox reverted to inherit");
+  });
+}
+
+if (conversationMetaMenuBtn) {
+  conversationMetaMenuBtn.addEventListener("click", (event) => {
+    event.preventDefault();
+    setConversationMetaMenuOpen(!conversationMetaMenuOpen);
+  });
+}
+
+if (sessionMetaThreadCopyBtn) {
+  sessionMetaThreadCopyBtn.addEventListener("click", async () => {
+    const threadId = (sessionMetaThreadValue?.textContent || "").trim();
+    if (!threadId || threadId === "(none)") {
+      return;
+    }
+
+    try {
+      if (!navigator?.clipboard?.writeText) {
+        throw new Error("clipboard API unavailable");
+      }
+      await navigator.clipboard.writeText(threadId);
+      setSessionThreadCopyButtonCopied();
+      uiAuditLog("ui.thread_id_copied", { threadId });
+    } catch (error) {
+      appendLog(`[copy] failed to copy thread id: ${error}`);
+      uiAuditLog("ui.thread_id_copy_failed", { error: String(error || "") }, "warn");
+    }
+  });
+}
+
+document.addEventListener("click", (event) => {
+  if (!conversationMetaMenuOpen || !sessionMeta) {
+    return;
+  }
+
+  const target = event.target;
+  if (target instanceof Node && sessionMeta.contains(target)) {
+    return;
+  }
+
+  setConversationMetaMenuOpen(false);
+});
+
+modelCommandSelect.addEventListener("change", () => {
+  if (modelCommandSelect.value === "__custom__") {
+    modelCommandCustomInput.classList.remove("hidden");
+    modelCommandCustomInput.focus();
+  } else {
+    modelCommandCustomInput.classList.add("hidden");
+  }
+});
+
+modelCommandApplyBtn.addEventListener("click", () => {
+  applyModelFromCommandModal();
+});
+
+modelCommandCancelBtn.addEventListener("click", () => {
+  closeModelCommandModal();
+});
+
+modelCommandSelect.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    applyModelFromCommandModal();
+  }
+});
+
+modelCommandCustomInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    applyModelFromCommandModal();
+  }
+});
+
+modelCommandModal.addEventListener("click", (event) => {
+  if (event.target === modelCommandModal) {
+    closeModelCommandModal();
+  }
+});
+
+if (newProjectCreateBtn) {
+  newProjectCreateBtn.addEventListener("click", () => {
+    submitNewProjectModal().catch((error) => appendLog(`[project] create failed: ${error}`));
+  });
+}
+
+if (newProjectCancelBtn) {
+  newProjectCancelBtn.addEventListener("click", () => {
+    closeNewProjectModal();
+  });
+}
+
+if (newProjectCwdInput) {
+  newProjectCwdInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      submitNewProjectModal().catch((error) => appendLog(`[project] create failed: ${error}`));
+    }
+  });
+}
+
+if (newProjectFirstSessionInput) {
+  newProjectFirstSessionInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      submitNewProjectModal().catch((error) => appendLog(`[project] create failed: ${error}`));
+    }
+  });
+}
+
+if (newProjectModal) {
+  newProjectModal.addEventListener("click", (event) => {
+    if (event.target === newProjectModal) {
+      closeNewProjectModal();
+    }
+  });
+}
+
+if (newSessionCreateBtn) {
+  newSessionCreateBtn.addEventListener("click", () => {
+    submitNewSessionModal().catch((error) => appendLog(`[session] create failed: ${error}`));
+  });
+}
+
+if (newSessionCancelBtn) {
+  newSessionCancelBtn.addEventListener("click", () => {
+    closeNewSessionModal();
+  });
+}
+
+if (newSessionModelSelect) {
+  newSessionModelSelect.addEventListener("change", () => {
+    const selected = newSessionModelSelect.value || "";
+    if (selected === "__custom__") {
+      if (newSessionModelCustomInput) {
+        newSessionModelCustomInput.classList.remove("hidden");
+        newSessionModelCustomInput.focus();
+      }
+      updateNewSessionModelDefaultHint();
+      return;
+    }
+
+    if (newSessionModelCustomInput) {
+      newSessionModelCustomInput.classList.add("hidden");
+    }
+    updateNewSessionModelDefaultHint();
+  });
+}
+
+if (newSessionReasoningSelect) {
+  newSessionReasoningSelect.addEventListener("change", () => {
+    updateNewSessionReasoningHelp();
+  });
+}
+
+if (newSessionApprovalSelect) {
+  newSessionApprovalSelect.addEventListener("change", () => {
+    updateNewSessionApprovalHelp();
+    updateNewSessionPermissionVisuals();
+  });
+}
+
+if (newSessionSandboxSelect) {
+  newSessionSandboxSelect.addEventListener("change", () => {
+    updateNewSessionPermissionVisuals();
+  });
+}
+
+if (newSessionModelCustomInput) {
+  newSessionModelCustomInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      submitNewSessionModal().catch((error) => appendLog(`[session] create failed: ${error}`));
+    }
+  });
+}
+
+if (newSessionNameInput) {
+  newSessionNameInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      submitNewSessionModal().catch((error) => appendLog(`[session] create failed: ${error}`));
+    }
+  });
+}
+
+if (newSessionCwdInput) {
+  newSessionCwdInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      submitNewSessionModal().catch((error) => appendLog(`[session] create failed: ${error}`));
+    }
+  });
+}
+
+if (newSessionModal) {
+  newSessionModal.addEventListener("click", (event) => {
+    if (event.target === newSessionModal) {
+      closeNewSessionModal();
+    }
+  });
+}
+
+if (aboutBtn) {
+  aboutBtn.addEventListener("click", () => {
+    openAboutModal();
+  });
+}
+
+if (sidebarExtrasToggleBtn) {
+  sidebarExtrasToggleBtn.addEventListener("click", () => {
+    const expanded = sidebarExtrasToggleBtn.getAttribute("aria-expanded") === "true";
+    setSidebarExtrasExpanded(!expanded);
+  });
+}
+
+if (aboutModalCloseBtn) {
+  aboutModalCloseBtn.addEventListener("click", () => {
+    closeAboutModal();
+  });
+}
+
+if (aboutModal) {
+  aboutModal.addEventListener("click", (event) => {
+    if (event.target === aboutModal) {
+      closeAboutModal();
+    }
+  });
+}
+
+if (toolUserInputSubmitBtn) {
+  toolUserInputSubmitBtn.addEventListener("click", () => {
+    submitPendingToolUserInput();
+  });
+}
+
+if (toolUserInputCancelBtn) {
+  toolUserInputCancelBtn.addEventListener("click", () => {
+    cancelPendingToolUserInput();
+  });
+}
+
+if (toolUserInputModal) {
+  toolUserInputModal.addEventListener("click", (event) => {
+    if (event.target === toolUserInputModal) {
+      cancelPendingToolUserInput();
+    }
+  });
+
+  toolUserInputModal.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && !event.shiftKey && !event.ctrlKey && !event.metaKey && !event.altKey) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  });
+}
+
+if (sessionRecoveryRecoverBtn) {
+  sessionRecoveryRecoverBtn.addEventListener("click", () => {
+    submitSessionRecoveryDecision(true);
+  });
+}
+
+if (sessionRecoveryDismissBtn) {
+  sessionRecoveryDismissBtn.addEventListener("click", () => {
+    submitSessionRecoveryDecision(false);
+  });
+}
+
+if (sessionRecoveryModal) {
+  sessionRecoveryModal.addEventListener("click", (event) => {
+    if (event.target === sessionRecoveryModal) {
+      submitSessionRecoveryDecision(false);
+    }
+  });
+}
+
+logVerbositySelect.addEventListener("change", async () => {
+  localStorage.setItem(STORAGE_LOG_VERBOSITY_KEY, getCurrentLogVerbosity());
+  try {
+    await ensureSocket();
+  } catch (error) {
+    appendLog(`[ws] connect failed: ${error}`);
+    return;
+  }
+  sendCurrentLogVerbosity();
+});
+
+reloadModelsBtn.addEventListener("click", async () => {
+  try {
+    await ensureSocket();
+  } catch (error) {
+    appendLog(`[ws] connect failed: ${error}`);
+    return;
+  }
+  requestModelsListForActiveSession({ logOnMissing: true, force: true });
+});
+
+cwdInput.addEventListener("change", () => {
+  const normalized = normalizeProjectCwd(cwdInput.value.trim());
+  cwdInput.value = normalized;
+  localStorage.setItem(STORAGE_CWD_KEY, normalized);
+  const activeState = getActiveSessionState();
+  if (activeState) {
+    activeState.cwd = normalized || null;
+  }
+  if (normalized) {
+    selectedProjectKey = getProjectKeyFromCwd(normalized);
+  }
+  renderProjectSidebar();
+});
+
+if (sidebarToggleBtn) {
+  sidebarToggleBtn.addEventListener("click", () => {
+    if (isMobileViewport()) {
+      setMobileProjectsOpen(false);
+      return;
+    }
+    applySidebarCollapsed(!isSidebarCollapsed());
+  });
+}
+
+if (projectSearchInput) {
+  sidebarProjectSearchQuery = normalizeSidebarSearchQuery(projectSearchInput.value || "");
+  projectSearchInput.addEventListener("input", () => {
+    sidebarProjectSearchQuery = normalizeSidebarSearchQuery(projectSearchInput.value || "");
+    if (sidebarProjectSearchQuery.length > 0) {
+      sidebarProjectSearchExpanded = true;
+    }
+    renderProjectSidebar();
+  });
+  projectSearchInput.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      if (sidebarProjectSearchQuery.length > 0) {
+        sidebarProjectSearchQuery = "";
+        projectSearchInput.value = "";
+        sidebarProjectSearchExpanded = false;
+        renderProjectSidebar();
+        return;
+      }
+
+      if (sidebarProjectSearchExpanded) {
+        sidebarProjectSearchExpanded = false;
+        applyProjectSearchUi();
+      }
+    }
+  });
+}
+
+if (projectSearchToggleBtn) {
+  projectSearchToggleBtn.addEventListener("click", () => {
+    const currentlyVisible = sidebarProjectSearchExpanded || sidebarProjectSearchQuery.length > 0;
+    if (currentlyVisible) {
+      sidebarProjectSearchQuery = "";
+      sidebarProjectSearchExpanded = false;
+      if (projectSearchInput) {
+        projectSearchInput.value = "";
+      }
+      renderProjectSidebar();
+      return;
+    }
+
+    sidebarProjectSearchExpanded = true;
+    applyProjectSearchUi({ focus: true });
+  });
+}
+
+if (mobileProjectsBtn) {
+  mobileProjectsBtn.addEventListener("click", () => {
+    setMobileProjectsOpen(!isMobileProjectsOpen());
+  });
+}
+
+if (sidebarBackdrop) {
+  sidebarBackdrop.addEventListener("click", () => {
+    setMobileProjectsOpen(false);
+  });
+}
+
+if (sessionMetaDetailsBtn) {
+  sessionMetaDetailsBtn.addEventListener("click", () => {
+    sessionMetaDetailsExpanded = !sessionMetaDetailsExpanded;
+    updateConversationMetaVisibility();
+  });
+}
+
+if (chatMessages) {
+  chatMessages.addEventListener("scroll", () => {
+    updateScrollToBottomButton();
+    updateTimelineTruncationNotice();
+  });
+
+  chatMessages.addEventListener("codex:timeline-updated", () => {
+    updateScrollToBottomButton();
+    updateTimelineTruncationNotice();
+    refreshTimelineSelectionSnapshot({ force: true });
+  });
+
+  chatMessages.addEventListener("mouseup", () => {
+    refreshTimelineSelectionSnapshot({ force: true });
+  });
+
+  chatMessages.addEventListener("keyup", () => {
+    refreshTimelineSelectionSnapshot({ force: true });
+  });
+
+  chatMessages.addEventListener("codex:turn-detail-request", (event) => {
+    const turnId = event?.detail?.turnId;
+    const activeThreadId = normalizeThreadId(getActiveSessionState()?.threadId || "");
+    if (!activeThreadId || typeof turnId !== "string" || !turnId.trim()) {
+      return;
+    }
+
+    fetchTurnDetailForThread(activeThreadId, turnId.trim()).catch((error) => {
+      appendLog(`[timeline] turn detail request failed: ${error}`);
+    });
+  });
+}
+
+if (scrollToBottomBtn) {
+  scrollToBottomBtn.addEventListener("click", () => {
+    scrollMessagesToBottom(true);
+  });
+}
+
+if (jumpToBtn) {
+  jumpToBtn.addEventListener("click", () => {
+    setJumpCollapseMode(!jumpCollapseMode);
+  });
+}
+
+if (imageUploadBtn && imageUploadInput) {
+  imageUploadBtn.addEventListener("click", () => {
+    imageUploadInput.click();
+  });
+
+  imageUploadInput.addEventListener("change", async () => {
+    const files = imageUploadInput.files;
+    if (!files || files.length === 0) {
+      return;
+    }
+
+    await addComposerFiles(files);
+    imageUploadInput.value = "";
+    promptInput.focus();
+  });
+}
+
+initializeScribeControl();
+
+promptInput.addEventListener("paste", async (event) => {
+  const items = Array.from(event.clipboardData?.items || []);
+  const files = [];
+  for (const item of items) {
+    if (!item || item.kind !== "file" || !item.type.startsWith("image/")) {
+      continue;
+    }
+
+    const file = item.getAsFile();
+    if (file) {
+      files.push(file);
+    }
+  }
+
+  if (files.length === 0) {
+    return;
+  }
+
+  event.preventDefault();
+  await addComposerFiles(files);
+});
+
+promptInput.addEventListener("input", () => {
+  refreshPromptInputHeight({ reset: promptInput.value.length === 0 });
+  rememberPromptDraftForState(getActiveSessionState());
+  refreshVsSelectionSnapshot().catch(() => {});
+});
+
+promptInput.addEventListener("focus", () => {
+  refreshVsSelectionSnapshot({ force: true }).catch(() => {});
+});
+
+promptInput.addEventListener("dragover", (event) => {
+  const hasFiles = Array.from(event.dataTransfer?.types || []).includes("Files");
+  if (!hasFiles) {
+    return;
+  }
+
+  event.preventDefault();
+  promptInput.classList.add("drag-over");
+});
+
+promptInput.addEventListener("dragleave", () => {
+  promptInput.classList.remove("drag-over");
+});
+
+promptInput.addEventListener("drop", async (event) => {
+  const files = Array.from(event.dataTransfer?.files || []);
+  if (files.length === 0) {
+    return;
+  }
+
+  event.preventDefault();
+  promptInput.classList.remove("drag-over");
+  await addComposerFiles(files);
+});
+
+async function tryHandleSlashCommand(inputText) {
+  const raw = (inputText || "").trim();
+  if (!raw.startsWith("/")) {
+    return false;
+  }
+
+  const body = raw.slice(1);
+  const firstSpace = body.indexOf(" ");
+  const command = (firstSpace >= 0 ? body.slice(0, firstSpace) : body).trim().toLowerCase();
+  const args = firstSpace >= 0 ? body.slice(firstSpace + 1).trim() : "";
+
+  if (!command) {
+    appendLog("[client] empty slash command");
+    return true;
+  }
+
+  if (command === "model") {
+    if (args.length > 0) {
+      applyModelSelection(args);
+      appendLog(`[model] selected '${args}'`);
+      return true;
+    }
+
+    try {
+      await ensureSocket();
+      requestModelsListForActiveSession({ logOnMissing: true, force: true });
+    } catch (error) {
+      appendLog(`[models] refresh failed: ${error}`);
+    }
+
+    openModelCommandModal();
+    return true;
+  }
+
+  if (command === "rename") {
+    if (!activeSessionId || !sessions.has(activeSessionId)) {
+      appendLog("[rename] no active session selected");
+      return true;
+    }
+
+    const nextName = args;
+    if (!nextName) {
+      appendLog("[rename] usage: /rename <new name>");
+      return true;
+    }
+
+    if (nextName.length > 200) {
+      appendLog("[rename] name must be 200 characters or fewer");
+      return true;
+    }
+
+    try {
+      await ensureSocket();
+    } catch (error) {
+      appendLog(`[ws] connect failed: ${error}`);
+      return true;
+    }
+
+    send("session_rename", { sessionId: activeSessionId, threadName: nextName });
+    send("session_catalog_list");
+    appendLog(`[rename] requested '${nextName}'`);
+    return true;
+  }
+
+  appendLog(`[client] unknown slash command: /${command}`);
+  return true;
+}
+
+function appendDiffNotesToPrompt(promptText) {
+  const basePrompt = typeof promptText === "string" ? promptText : "";
+  const consume = window.codexDiffNotesConsumePromptMetadata;
+  if (typeof consume !== "function") {
+    return basePrompt;
+  }
+
+  try {
+    const payload = consume();
+    if (!payload || typeof payload !== "object") {
+      return basePrompt;
+    }
+
+    const metadataText = typeof payload.metadataText === "string" ? payload.metadataText.trim() : "";
+    const noteCount = Number.isFinite(payload.noteCount) ? payload.noteCount : 0;
+    if (!metadataText) {
+      return basePrompt;
+    }
+
+    if (noteCount > 0) {
+      appendLog(`[diff-notes] attached ${noteCount} line note(s) to prompt`);
+    }
+
+    return `${basePrompt}\n\n${metadataText}`;
+  } catch (error) {
+    appendLog(`[diff-notes] failed to attach notes: ${error}`);
+    return basePrompt;
+  }
+}
+
+function hasPendingDiffNotes() {
+  const hasPending = window.codexDiffNotesHasPending;
+  return typeof hasPending === "function" && hasPending() === true;
+}
+
+async function queueCurrentComposerPrompt() {
+  await settleScribeBeforeSubmit();
+  const prompt = promptInput.value.trim();
+  const images = pendingComposerImages.map((x) => ({ ...x }));
+  const hasDiffNotes = hasPendingDiffNotes();
+  const usePlanMode = planModeNextTurn === true;
+  if (!prompt && images.length === 0 && !hasDiffNotes && !pendingBuildFixClip) {
+    return false;
+  }
+
+  if (!activeSessionId) {
+    appendLog("[client] no active session; create or attach one first");
+    return true;
+  }
+  if (isSessionAppServerRecovering(activeSessionId)) {
+    appendLog(`[session_recovery] session=${activeSessionId} is recovering; queue is temporarily disabled`);
+    return true;
+  }
+
+  if (!isTurnInFlight(activeSessionId)) {
+    appendLog(`[queue] no running turn for session=${activeSessionId}; send directly instead`);
+    return true;
+  }
+
+  try {
+    await ensureSocket();
+  } catch (error) {
+    appendLog(`[ws] connect failed: ${error}`);
+    return true;
+  }
+
+  const timelineComposed = composePromptWithTimelineSelection(prompt);
+  const composed = await composePromptWithVsSelection(timelineComposed.prompt);
+  const withBuildFix = composePromptWithBuildFix(composed.prompt);
+  const promptWithDiffNotes = appendDiffNotesToPrompt(withBuildFix.prompt);
+  if (timelineComposed.includedSelection && timelineComposed.selection) {
+    appendLog(
+      `[timeline] included selected timeline text (${timelineComposed.selection.selectionText.length} chars)`);
+  }
+  if (composed.includedSelection && composed.selection) {
+    appendLog(
+      `[bridge] included VS selection from ${composed.selection.fileName || composed.selection.filePath} (${composed.selection.selectionText.length} chars)`);
+  }
+  if (withBuildFix.includedBuildFix) {
+    appendLog("[build-fix] included latest Visual Studio build errors");
+  }
+
+  const queued = await queuePrompt(activeSessionId, promptWithDiffNotes, images, { planMode: usePlanMode });
+  if (!queued) {
+    appendLog(`[queue] failed to queue prompt for session=${activeSessionId}`);
+    return true;
+  }
+  if (timelineComposed.includedSelection && timelineComposed.selectionSignature) {
+    consumedTimelineSelectionSignature = timelineComposed.selectionSignature;
+    renderTimelineSelectionIndicator();
+  }
+  if (composed.includedSelection && composed.selectionSignature) {
+    consumedVsSelectionSignature = composed.selectionSignature;
+    renderVsSelectionIndicator();
+  }
+  if (withBuildFix.includedBuildFix && withBuildFix.buildFixSignature) {
+    dismissedBuildFixSignature = withBuildFix.buildFixSignature;
+    pendingBuildFixClip = null;
+    renderBuildFixIndicator();
+  }
+
+  promptInput.value = "";
+  refreshPromptInputHeight({ reset: true });
+  clearCurrentPromptDraft();
+  clearComposerImages();
+  resetPlanModeNextTurn();
+  appendLog(`[turn] queued prompt for session=${activeSessionId}`);
+  return true;
+}
+
+function cancelCurrentTurn() {
+  if (!activeSessionId) {
+    appendLog("[turn] no active session to cancel");
+    return;
+  }
+
+  const targetSessionId = activeSessionId;
+  const hadInFlight = isTurnInFlight(targetSessionId);
+
+  if (!send("turn_cancel", { sessionId: targetSessionId })) {
+    appendLog("[turn] failed to send cancel; websocket is closed");
+    return;
+  }
+
+  applyTurnOverrideReset(targetSessionId);
+  appendLog(
+    `[turn] cancel override requested for session=${targetSessionId}${hadInFlight ? "" : " (local state did not show in-flight)"}`);
+}
+
+promptForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  await settleScribeBeforeSubmit();
+  const prompt = promptInput.value.trim();
+  const images = pendingComposerImages.map((x) => ({ ...x }));
+  const hasDiffNotes = hasPendingDiffNotes();
+  const usePlanMode = planModeNextTurn === true;
+  if (pendingToolUserInput) {
+    if (prompt.localeCompare("cancel", undefined, { sensitivity: "accent" }) === 0) {
+      cancelPendingToolUserInput();
+      promptInput.value = "";
+      refreshPromptInputHeight({ reset: true });
+      clearCurrentPromptDraft();
+      clearComposerImages();
+      return;
+    }
+
+    appendLog("[tool_input] complete the selection dialog and click Submit (or type 'cancel')");
+    return;
+  }
+
+  if (!prompt && images.length === 0 && !hasDiffNotes && !pendingBuildFixClip) {
+    return;
+  }
+
+  if (!pendingBuildFixClip && images.length === 0 && await tryHandleSlashCommand(prompt)) {
+    promptInput.value = "";
+    refreshPromptInputHeight({ reset: true });
+    clearCurrentPromptDraft();
+    return;
+  }
+
+  if (!activeSessionId) {
+    appendLog("[client] no active session; create or attach one first");
+    return;
+  }
+  if (isSessionAppServerRecovering(activeSessionId)) {
+    appendLog(`[session_recovery] session=${activeSessionId} is recovering; wait and retry`);
+    return;
+  }
+
+  try {
+    await ensureSocket();
+  } catch (error) {
+    appendLog(`[ws] connect failed: ${error}`);
+    return;
+  }
+
+  const timelineComposed = composePromptWithTimelineSelection(prompt);
+  const composed = await composePromptWithVsSelection(timelineComposed.prompt);
+  const withBuildFix = composePromptWithBuildFix(composed.prompt);
+  const promptWithDiffNotes = appendDiffNotesToPrompt(withBuildFix.prompt);
+  if (timelineComposed.includedSelection && timelineComposed.selection) {
+    appendLog(
+      `[timeline] included selected timeline text (${timelineComposed.selection.selectionText.length} chars)`);
+  }
+  if (composed.includedSelection && composed.selection) {
+    appendLog(
+      `[bridge] included VS selection from ${composed.selection.fileName || composed.selection.filePath} (${composed.selection.selectionText.length} chars)`);
+  }
+  if (withBuildFix.includedBuildFix) {
+    appendLog("[build-fix] included latest Visual Studio build errors");
+  }
+
+  const processingActive = isTurnInFlight(activeSessionId);
+  if (processingActive) {
+    if (usePlanMode) {
+      const queued = await queuePrompt(activeSessionId, promptWithDiffNotes, images, { planMode: true });
+      if (!queued) {
+        appendLog(`[queue] failed to queue prompt for session=${activeSessionId}`);
+        return;
+      }
+      if (timelineComposed.includedSelection && timelineComposed.selectionSignature) {
+        consumedTimelineSelectionSignature = timelineComposed.selectionSignature;
+        renderTimelineSelectionIndicator();
+      }
+      if (composed.includedSelection && composed.selectionSignature) {
+        consumedVsSelectionSignature = composed.selectionSignature;
+        renderVsSelectionIndicator();
+      }
+      if (withBuildFix.includedBuildFix && withBuildFix.buildFixSignature) {
+        dismissedBuildFixSignature = withBuildFix.buildFixSignature;
+        pendingBuildFixClip = null;
+        renderBuildFixIndicator();
+      }
+      appendLog(`[turn] queued prompt for session=${activeSessionId}`);
+    } else {
+      const steered = steerTurn(activeSessionId, promptWithDiffNotes, images);
+      if (!steered) {
+        appendLog(`[turn] failed to steer prompt for session=${activeSessionId}`);
+        return;
+      }
+      if (timelineComposed.includedSelection && timelineComposed.selectionSignature) {
+        consumedTimelineSelectionSignature = timelineComposed.selectionSignature;
+        renderTimelineSelectionIndicator();
+      }
+      if (composed.includedSelection && composed.selectionSignature) {
+        consumedVsSelectionSignature = composed.selectionSignature;
+        renderVsSelectionIndicator();
+      }
+      if (withBuildFix.includedBuildFix && withBuildFix.buildFixSignature) {
+        dismissedBuildFixSignature = withBuildFix.buildFixSignature;
+        pendingBuildFixClip = null;
+        renderBuildFixIndicator();
+      }
+      appendLog(`[turn] steer prompt sent for session=${activeSessionId}`);
+    }
+  } else {
+    const started = startTurn(activeSessionId, promptWithDiffNotes, images, { planMode: usePlanMode });
+    if (!started) {
+      appendLog(`[turn] failed to send prompt for session=${activeSessionId}`);
+      return;
+    }
+    if (timelineComposed.includedSelection && timelineComposed.selectionSignature) {
+      consumedTimelineSelectionSignature = timelineComposed.selectionSignature;
+      renderTimelineSelectionIndicator();
+    }
+    if (composed.includedSelection && composed.selectionSignature) {
+      consumedVsSelectionSignature = composed.selectionSignature;
+      renderVsSelectionIndicator();
+    }
+    if (withBuildFix.includedBuildFix && withBuildFix.buildFixSignature) {
+      dismissedBuildFixSignature = withBuildFix.buildFixSignature;
+      pendingBuildFixClip = null;
+      renderBuildFixIndicator();
+    }
+  }
+
+  promptInput.value = "";
+  refreshPromptInputHeight({ reset: true });
+  clearCurrentPromptDraft();
+  clearComposerImages();
+  resetPlanModeNextTurn();
+});
+
+promptInput.addEventListener("keydown", (event) => {
+  if (event.key === "Tab" && !event.shiftKey && !event.ctrlKey && !event.metaKey && !event.altKey) {
+    if (!promptInput.value.trim() && pendingComposerImages.length === 0 && !hasPendingDiffNotes()) {
+      return;
+    }
+
+    if (!activeSessionId || !isTurnInFlight(activeSessionId)) {
+      return;
+    }
+
+    event.preventDefault();
+    queueCurrentComposerPrompt().catch((error) => appendLog(`[queue] failed: ${error}`));
+    return;
+  }
+
+  if (event.key === "ArrowUp" && !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
+    const isEmpty = promptInput.value.trim().length === 0;
+    const isAtStart = promptInput.selectionStart === 0 && promptInput.selectionEnd === 0;
+    if (!isEmpty && !isAtStart) {
+      return;
+    }
+
+    if (!activeSessionId) {
+      return;
+    }
+
+    const lastSent = lastSentPromptBySession.get(activeSessionId);
+    if (!lastSent) {
+      return;
+    }
+
+    event.preventDefault();
+    promptInput.value = lastSent;
+    refreshPromptInputHeight({ reset: false });
+    promptInput.selectionStart = promptInput.selectionEnd = promptInput.value.length;
+    rememberPromptDraftForState(getActiveSessionState());
+    return;
+  }
+
+  if (event.key === "Enter" && !event.shiftKey && !event.ctrlKey && !event.metaKey && !event.altKey) {
+    event.preventDefault();
+    promptForm.requestSubmit();
+  }
+});
+
+if (queuePromptBtn) {
+  queuePromptBtn.addEventListener("click", () => {
+    queueCurrentComposerPrompt().catch((error) => appendLog(`[queue] failed: ${error}`));
+    promptInput.focus();
+  });
+}
+
+if (planTurnToggleBtn) {
+  planTurnToggleBtn.addEventListener("click", () => {
+    setPlanModeNextTurn(!planModeNextTurn);
+    if (promptInput) {
+      promptInput.focus();
+    }
+  });
+}
+
+if (cancelTurnBtn) {
+  cancelTurnBtn.addEventListener("click", () => {
+    cancelCurrentTurn();
+    promptInput.focus();
+  });
+}
+
+if (turnActivityCancelLink) {
+  turnActivityCancelLink.addEventListener("click", (event) => {
+    event.preventDefault();
+    cancelCurrentTurn();
+    if (promptInput) {
+      promptInput.focus();
+    }
+  });
+}
+
+if (connectionReconnectBtn) {
+  connectionReconnectBtn.addEventListener("click", () => {
+    reconnectWebSocketNow().catch((error) => appendLog(`[ws] reconnect button failed: ${error}`));
+  });
+}
+
+document.addEventListener("selectionchange", () => {
+  refreshTimelineSelectionSnapshot();
+});
+
+if (appServerErrorDismissBtn) {
+  appServerErrorDismissBtn.addEventListener("click", () => {
+    hideAppServerErrorBanner({ force: true });
+  });
+}
+
+approvalPanel.querySelectorAll("button[data-decision]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const decision = button.getAttribute("data-decision");
+    if (!decision) return;
+    if (!pendingApproval) {
+      appendLog("[approval] no pending approval to respond to");
+      setApprovalVisible(false);
+      return;
+    }
+    send("approval_response", {
+      sessionId: pendingApproval.sessionId,
+      approvalId: pendingApproval.approvalId,
+      decision
+    });
+    appendLog(`[approval] decision=${decision} session=${pendingApproval.sessionId} approvalId=${pendingApproval.approvalId}`);
+    pendingApproval = null;
+    setApprovalVisible(false);
+  });
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") {
+    return;
+  }
+
+  if (conversationMetaMenuOpen) {
+    event.preventDefault();
+    setConversationMetaMenuOpen(false);
+    return;
+  }
+
+  if (jumpCollapseMode) {
+    event.preventDefault();
+    setJumpCollapseMode(false);
+    return;
+  }
+
+  if (sessionRecoveryModal && !sessionRecoveryModal.classList.contains("hidden")) {
+    event.preventDefault();
+    submitSessionRecoveryDecision(false);
+    return;
+  }
+
+  if (toolUserInputModal && !toolUserInputModal.classList.contains("hidden")) {
+    event.preventDefault();
+    cancelPendingToolUserInput();
+    return;
+  }
+
+  if (newSessionModal && !newSessionModal.classList.contains("hidden")) {
+    event.preventDefault();
+    closeNewSessionModal();
+    return;
+  }
+
+  if (newProjectModal && !newProjectModal.classList.contains("hidden")) {
+    event.preventDefault();
+    closeNewProjectModal();
+    return;
+  }
+
+  if (aboutModal && !aboutModal.classList.contains("hidden")) {
+    event.preventDefault();
+    closeAboutModal();
+    return;
+  }
+
+  if (!modelCommandModal.classList.contains("hidden")) {
+    event.preventDefault();
+    closeModelCommandModal();
+    return;
+  }
+
+  if (isMobileProjectsOpen()) {
+    event.preventDefault();
+    setMobileProjectsOpen(false);
+  }
+});
+
+window.addEventListener("resize", () => {
+  setConversationMetaMenuOpen(false);
+  if (!isMobileViewport()) {
+    setMobileProjectsOpen(false);
+  }
+  refreshPromptInputHeight({ reset: promptInput.value.length === 0 });
+  updateMobileProjectsButton();
+  updateConversationMetaVisibility();
+  updateScrollToBottomButton();
+  updateTimelineTruncationNotice();
+});
+
+window.addEventListener("beforeunload", () => {
+  rememberPromptDraftForState(getActiveSessionState());
+  clearWsReconnectTimer();
+  localStorage.removeItem(STORAGE_STARTUP_RESTORE_GUARD_KEY);
+  if (vsSelectionPollTimer) {
+    clearInterval(vsSelectionPollTimer);
+    vsSelectionPollTimer = null;
+  }
+  if (buildFixPollTimer) {
+    clearInterval(buildFixPollTimer);
+    buildFixPollTimer = null;
+  }
+  try {
+    if (scribeController && typeof scribeController.dispose === "function") {
+      scribeController.dispose();
+    }
+  } catch {
+  }
+});
+
+window.addEventListener("focus", () => {
+  refreshVsSelectionSnapshot({ force: true }).catch(() => {});
+  refreshBuildFixClipFromBridge();
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    refreshVsSelectionSnapshot({ force: true }).catch(() => {});
+    refreshBuildFixClipFromBridge();
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      startSessionListSync();
+      send("session_list");
+    }
+    restartTimelinePolling();
+    if (projectSidebarRenderPendingWhileHidden) {
+      renderProjectSidebar();
+    }
+    return;
+  }
+
+  if (timelinePollTimer) {
+    clearInterval(timelinePollTimer);
+    timelinePollTimer = null;
+  }
+  stopSessionListSync();
+});
+
+applySavedUiSettings();
+setWorkspaceTab(currentWorkspaceTab, { reason: "startup_workspace_restore", forceRestore: true }).catch((error) => {
+  appendLog(`[workspace] startup restore failed: ${error}`);
+});
+initializeStartupRestoreGuard();
+refreshPromptInputHeight({ reset: promptInput.value.length === 0 });
+renderComposerImages();
+renderTimelineSelectionIndicator();
+renderVsSelectionIndicator();
+startVsSelectionPolling();
+renderBuildFixIndicator();
+startBuildFixPolling();
+renderProjectSidebar();
+updateScrollToBottomButton();
+updateTimelineTruncationNotice();
+updatePromptActionState();
+updateContextLeftIndicator();
+updatePermissionLevelIndicator();
+setPlanModeNextTurn(false);
+updatePlanPanel();
+updateMobileProjectsButton();
+updateConversationMetaVisibility();
+updateGettingStartedPanelVisibility();
+
+turnActivityTickTimer = setInterval(() => {
+  updateTurnActivityStrip();
+}, TURN_ACTIVITY_TICK_INTERVAL_MS);
+logFlushTimer = setInterval(() => flushPendingClientLogs(), LOG_FLUSH_INTERVAL_MS);
+if (timelineDiagEnabled) {
+  appendLog("[timeline_diag] enabled (set ?timelineDiag=1 in URL to force-enable on load)");
+}
+
+window.codexAppendTextToPrompt = function codexAppendTextToPrompt(text, options = {}) {
+  if (!promptInput) {
+    return false;
+  }
+
+  const appended = typeof text === "string" ? text.trim() : "";
+  if (!appended) {
+    return false;
+  }
+
+  const current = promptInput.value || "";
+  const separator = current.trim().length > 0 ? "\n\n" : "";
+  const nextValue = `${current}${separator}${appended}`;
+  promptInput.value = nextValue;
+  refreshPromptInputHeight({ reset: nextValue.length === 0 });
+  rememberPromptDraftForState(getActiveSessionState());
+  if (options.focus !== false) {
+    promptInput.focus();
+    promptInput.selectionStart = promptInput.selectionEnd = promptInput.value.length;
+  }
+  return true;
+};
+
+window.codexWorkspaceGetTabMode = function codexWorkspaceGetTabMode() {
+  return currentWorkspaceTab;
+};
+
+loadRuntimeSecurityConfig()
+  .catch((error) => {
+    appendLog(`[security] config load failed: ${error}`);
+    setSecurityWarningVisible(SECURITY_WARNING_TEXT, ["Security posture could not be loaded from the server."]);
+  })
+  .finally(() => {
+    ensureSocket().catch((error) => appendLog(`[ws] connect failed: ${error}`));
+  });

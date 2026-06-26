@@ -1,0 +1,31 @@
+reference Buffaly.Agent.Tools.SqlServer Buffaly.Agent.Tools.SqlServer;
+import Buffaly.Agent.Tools.SqlServer Buffaly.Agent.Tools.SqlServer.SqlServerOperations SqlServerOperations;
+import System.Data System.Data.DataTable DataTable;
+
+import BasicUtilities BasicUtilities.DBUtilities DBUtilities;
+import BasicUtilities BasicUtilities.StringUtil StringUtil;
+
+
+import mscorlib System.Text.StringBuilder StringBuilder;
+
+prototype SqlServerSkillAction : OpsAction
+{
+	Description = @"Base action type for SQL Server skill tools.";
+}
+
+[SemanticEntity("sql server skill")]
+prototype SqlServerSkill : SkillEntity
+{
+	Description = "SQL Server discovery and read-only query actions with SQL ontology objects.";
+	ActionRoot = SqlServerSkillAction;
+}
+include "Actions.pts";
+include "PromptActions.pts";
+
+
+
+
+
+
+
+

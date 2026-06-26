@@ -1,0 +1,245 @@
+[SemanticProgram.InfinitivePhrase("to troubleshoot the buffaly agent")]
+[SemanticProgram.InfinitivePhrase("to diagnose a runtime issue")]
+[SemanticProgram.InfinitivePhrase("to run buffaly agent troubleshooting workflow")]
+prototype ToTroubleshootBuffalyAgentRuntimeSkill : BuffalySelfManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/BuffalySelfManagement/Prompts/TroubleshootBuffalyAgentRuntime.prompt.md";
+	Description = @"This skill describes the steps you can take when you run into a problem. Refer to it for guidance on problem solving strategies.";
+}
+
+[SemanticProgram.InfinitivePhrase("to capture a troubleshooting retrospective")]
+[SemanticProgram.InfinitivePhrase("to summarize what worked vs failed in troubleshooting")]
+prototype ToCaptureTroubleshootingRetrospectiveSkill : BuffalySelfManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/BuffalySelfManagement/Prompts/CaptureTroubleshootingRetrospective.prompt.md";
+	Description = @"Loads the trusted workflow for summarizing troubleshooting attempts, outcomes, root cause, applied fixes, and next steps.";
+}
+
+[SemanticProgram.InfinitivePhrase("to critique a failed agent session")]
+[SemanticProgram.InfinitivePhrase("to analyze a poor agent interaction")]
+[SemanticProgram.InfinitivePhrase("to review session tool calls and outcomes")]
+[SemanticProgram.InfinitivePhrase("to inspect a failed turn and recommend improvements")]
+prototype ToCritiqueAgentSessionInteractionSkill : BuffalySelfManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/BuffalySelfManagement/Prompts/CritiqueAgentSessionInteraction.prompt.md";
+	Description = @"Loads the trusted workflow for offline critique of a session, turn, or session region by inspecting tool calls, arguments, results, artifacts, logs, and better-route opportunities.";
+}
+
+[SemanticProgram.InfinitivePhrase("to troubleshoot protoscript dll compilation")]
+[SemanticProgram.InfinitivePhrase("to diagnose protoscript dll import errors")]
+[SemanticProgram.InfinitivePhrase("to fix protoscript method binding errors")]
+[SemanticProgram.InfinitivePhrase("to troubleshoot dll binding resolution in a skill")]
+[SemanticProgram.InfinitivePhrase("to troubleshoot protoscript dll compilation issues")]
+[SemanticProgram.InfinitivePhrase("to diagnose a missing assembly in a protoscript skill")]
+[SemanticProgram.InfinitivePhrase("to isolate dll loading issues with a local harness")]
+prototype ToTroubleshootProtoScriptDllCompilationSkill : BuffalySelfManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/BuffalySelfManagement/Prompts/TroubleshootProtoScriptDllCompilation.prompt.md";
+	Description = @"Loads the trusted workflow for diagnosing ProtoScript DLL/type/method binding failures (missing types, missing methods, stale skill-local DLLs, import/reference mismatches) and applying a deterministic fix sequence.";
+}
+
+[SemanticProgram.InfinitivePhrase("to improve code quality and reduce redundancy")]
+[SemanticProgram.InfinitivePhrase("to refactor for cleaner less redundant code")]
+[SemanticProgram.InfinitivePhrase("to enforce one canonical contract and remove normalization layers")]
+[SemanticProgram.InfinitivePhrase("to simplify and deduplicate csharp ui and protoscript paths")]
+prototype ToImproveCodeQualityAndReduceRedundancySkill : BuffalySelfManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/BuffalySelfManagement/Prompts/ImproveCodeQualityAndReduceRedundancy.prompt.md";
+	Description = @"Loads the trusted workflow for reducing code bloat by enforcing canonical contracts, deleting compatibility branches, and simplifying C#/UI/ProtoScript paths.";
+}
+
+[SemanticProgram.InfinitivePhrase("to improve ontology quality and organization")]
+[SemanticProgram.InfinitivePhrase("to clean up ontology inheritance and file placement")]
+[SemanticProgram.InfinitivePhrase("to normalize ontology parents and organize instances")]
+[SemanticProgram.InfinitivePhrase("to improve protoscript ontology structure")]
+prototype ToImproveOntologyQualityAndOrganizationSkill : BuffalySelfManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/BuffalySelfManagement/Prompts/ImproveOntologyQualityAndOrganization.prompt.md";
+	Description = @"Loads a trusted workflow for improving ontology structure, inheritance quality, and file organization, including removing redundant parents and placing instances under appropriate parents/files.";
+}
+
+[SemanticProgram.InfinitivePhrase("to add dll backed capabilities to the agent")]
+[SemanticProgram.InfinitivePhrase("to add a dll backed skill bundle")]
+[SemanticProgram.InfinitivePhrase("to import a dll into opsagent skills")]
+prototype ToAddDllBackedCapabilitiesSkill : BuffalySelfManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/BuffalySelfManagement/Prompts/AddDllBackedCapabilities.prompt.md";
+	Description = @"Loads the trusted workflow for adding an existing DLL capabilities as skill bundles under Skills/<SkillName>.";
+}
+
+[SemanticProgram.InfinitivePhrase("to create a dll backed capability from scratch")]
+[SemanticProgram.InfinitivePhrase("to create a csharp dll backed skill from scratch")]
+prototype ToCreateDllBackedCapabilityFromScratchSkill : BuffalySelfManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/BuffalySelfManagement/Prompts/CreateDllBackedCapabilityFromScratch.prompt.md";
+	Description = @"Loads the trusted workflow for creating new C# code capability first, with stable API and passing tests, before ProtoScript installation.";
+}
+
+[SemanticProgram.InfinitivePhrase("to install an existing dll into protoscript")]
+[SemanticProgram.InfinitivePhrase("to integrate an existing dll backed capability into opsagent")]
+prototype ToInstallExistingDllIntoProtoScriptSkill : BuffalySelfManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/BuffalySelfManagement/Prompts/InstallExistingDllIntoProtoScript.prompt.md";
+	Description = @"Loads the trusted workflow for integrating an already-built and tested DLL-backed capability into OpsAgent/ProtoScript.";
+}
+
+[SemanticProgram.InfinitivePhrase("to expose a c sharp class to protoscript")]
+[SemanticProgram.InfinitivePhrase("to expose a c# class to protoscript")]
+[SemanticProgram.InfinitivePhrase("to create thin protoscript wrappers for a c sharp class")]
+[SemanticProgram.InfinitivePhrase("to expose csharp class methods as protoscript actions")]
+prototype ToExposeCSharpClassToProtoScriptSkill : BuffalySelfManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/BuffalySelfManagement/Prompts/ToExposeCSharpClassToProtoScriptSkill.prompt.md";
+	Description = @"Loads the canonical workflow for exposing an existing C# class to ProtoScript using thin class-based wrapper files with preserved native return types and no ProtoScript-side business logic.";
+}
+
+[SemanticProgram.InfinitivePhrase("to run a model quorum workflow")]
+[SemanticProgram.InfinitivePhrase("to compare multiple models on the same task")]
+[SemanticProgram.InfinitivePhrase("to orchestrate child sessions for model evaluation")]
+[SemanticProgram.InfinitivePhrase("to create a quorum of models and score their outputs")]
+prototype ToRunModelQuorumWorkflowSkill : BuffalySelfManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/BuffalySelfManagement/Prompts/RunModelQuorumWorkflow.prompt.md";
+	Description = @"Loads the standard workflow for running a model quorum: create or reuse multiple child sessions with user-selected or agent-selected models, dispatch the same task without waiting, collect durable markdown artifacts, then score, compare, or synthesize the results.";
+}
+
+[SemanticProgram.InfinitivePhrase("to create a subject matter expert research brief")]
+[SemanticProgram.InfinitivePhrase("to build a subject matter expert document")]
+[SemanticProgram.InfinitivePhrase("to create an sme background document")]
+[SemanticProgram.InfinitivePhrase("to mine prior session history for a topic brief")]
+prototype ToCreateSubjectMatterExpertResearchBriefSkill : BuffalySelfManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/BuffalySelfManagement/Prompts/CreateSubjectMatterExpertResearchBrief.prompt.md";
+	Description = @"Loads the standard workflow for creating an evidence-first SME research brief from ontology anchors, topic expansion, local session-message searches, source-linked evidence, workstreams, conclusions, operational guidance, risks, and open questions.";
+}
+
+[SemanticProgram.InfinitivePhrase("to create an automaton")]
+[SemanticProgram.InfinitivePhrase("to design an automaton")]
+[SemanticProgram.InfinitivePhrase("to explain an automaton")]
+[SemanticProgram.InfinitivePhrase("to create a recurring stateful agent loop")]
+prototype ToCreateAutomatonSkill : BuffalySelfManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/BuffalySelfManagement/Prompts/CreateAutomaton.prompt.md";
+	Description = @"Loads the standard workflow for designing or creating an Automaton: a recurring, stateful, evidence-driven agent loop with durable state, bounded worker assignments, verification, and clean stop/resume behavior.";
+}
+
+[SemanticProgram.InfinitivePhrase("to design a buffaly result type renderer")]
+[SemanticProgram.InfinitivePhrase("to return a structured ui result from an assistant response")]
+[SemanticProgram.InfinitivePhrase("to explain how result type and result payload work")]
+[SemanticProgram.InfinitivePhrase("to add a custom result renderer to the buffaly timeline")]
+prototype ToDesignBuffalyResultTypeRendererSkill : BuffalySelfManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/BuffalySelfManagement/Prompts/DesignBuffalyResultTypeRenderer.prompt.md";
+	Description = @"Loads shared Buffaly guidance for returning structured UI results with metadata.result_type/result_payload and rendering them through the timeline result-type handler pipeline.";
+}
+
+[SemanticProgram.InfinitivePhrase("to call protoscript methods from the buffaly api")]
+[SemanticProgram.InfinitivePhrase("to call protoscript from javascript through run protoscript method")]
+[SemanticProgram.InfinitivePhrase("to explain run protoscript method async")]
+[SemanticProgram.InfinitivePhrase("to invoke a live worker protoscript method from jsonws")]
+prototype ToCallProtoScriptMethodsFromBuffalyApiSkill : BuffalySelfManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/BuffalySelfManagement/Prompts/CallProtoScriptMethodsFromBuffalyApi.prompt.md";
+	Description = @"Loads shared Buffaly guidance for calling ProtoScript methods from JavaScript/JsonWs through RunProtoScriptMethodAsync on the current live worker session runtime.";
+}
+
+[SemanticProgram.InfinitivePhrase("to design a protoscript preview grid")]
+[SemanticProgram.InfinitivePhrase("to render a grid from a protoscript method")]
+[SemanticProgram.InfinitivePhrase("to return a grid result from a buffaly assistant response")]
+[SemanticProgram.InfinitivePhrase("to build a buffaly preview grid result type")]
+prototype ToDesignProtoScriptPreviewGridSkill : BuffalySelfManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/BuffalySelfManagement/Prompts/DesignProtoScriptPreviewGrid.prompt.md";
+	Description = @"Loads shared Buffaly guidance for combining result_type metadata, RunProtoScriptMethodAsync, returned JSON text, and JavaScript table rendering into a reusable preview-grid flow.";
+}
+[SemanticProgram.InfinitivePhrase("to return a protoscript preview grid result")]
+[SemanticProgram.InfinitivePhrase("to show a protoscript method result as a grid")]
+[SemanticProgram.InfinitivePhrase("to create a protoscript preview grid response")]
+[SemanticProgram.InfinitivePhrase("to render sample protoscript preview grid")]
+prototype ToReturnProtoScriptPreviewGridResult : BuffalySelfManagementSkillAction
+{
+	IsPromptAction = false;
+	ResponseFormat = "text";
+	ResponseResultType = "ProtoScriptPreviewGrid";
+	Description = @"Return a structured Buffaly result envelope for rendering a ProtoScript-backed preview grid. sessionKey - target session key for the live ProtoScript runtime. prototypeName - ProtoScript prototype to call. args - JsonObject of named method parameters. methodName - method to call, default Preview. title - visible card title.";
+
+	function Execute(string sessionKey, string prototypeName, JsonObject args, string methodName = "Preview", string title = "ProtoScript Preview") : JsonObject
+	{
+		if (sessionKey == "")
+		{
+			JsonObject error = new JsonObject();
+			error["Message"] = "ERROR: sessionKey is required.";
+			return error;
+		}
+
+		JsonObject payload = new JsonObject();
+		payload["Title"] = title;
+		payload["SessionKey"] = sessionKey;
+		payload["PrototypeName"] = prototypeName;
+		payload["MethodName"] = methodName;
+		payload["Args"] = args;
+
+		JsonObject result = new JsonObject();
+		result["Message"] = "Rendering " + title + " as a ProtoScriptPreviewGrid card.";
+		result["ResultPayload"] = payload;
+		return result;
+	}
+}
+
+prototype BuffalySamplePreviewGrid : SemanticEntityBase
+{
+	Description = @"Sample ProtoScript preview data producer for testing RunProtoScriptMethod-backed grid renderers. Call Preview() and parse the returned JSON string.";
+
+	function Preview() : string
+	{
+		return @"{""Columns"":[{""Key"":""Name"",""Label"":""Name""},{""Key"":""Amount"",""Label"":""Amount""},{""Key"":""Status"",""Label"":""Status""}],""Rows"":[{""Name"":""Alpha Clinic"",""Amount"":125.50,""Status"":""Ready""},{""Name"":""Beta Lab"",""Amount"":89.00,""Status"":""Review""},{""Name"":""Gamma Pharmacy"",""Amount"":242.10,""Status"":""Ready""}],""Summary"":{""Title"":""Sample Preview Grid"",""RequestedMaxRows"":""3""}}";
+	}
+}

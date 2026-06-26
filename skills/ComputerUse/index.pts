@@ -1,0 +1,71 @@
+reference Buffaly.OpenAI.ComputerUse.WebHarness Buffaly.OpenAI.ComputerUse.WebHarness;
+import Buffaly.Agent.Host Buffaly.Agent.Host.OpenAIFeature OpenAIFeature;
+import BasicUtilities BasicUtilities.JsonObject JsonObject;
+import BasicUtilities BasicUtilities.JsonValue JsonValue;
+import BasicUtilities BasicUtilities.StringUtil StringUtil;
+import Buffaly.OpenAI.ComputerUse.WebHarness Buffaly.OpenAI.ComputerUse.WebHarness.ComputerUseWorkbenchServiceHost ComputerUseWorkbenchServiceHost;
+import Buffaly.OpenAI.ComputerUse.WebHarness Buffaly.OpenAI.ComputerUse.WebHarness.StartComputerUseRunRequest StartComputerUseRunRequest;
+
+prototype ComputerUseSkillAction : OpsAction
+{
+	Description = @"Base action type for cohesive ComputerUse module tools.";
+}
+
+[SemanticEntity("computer use skill")]
+prototype ComputerUseSkill : SkillEntity
+{
+	Description = "Run an end-to-end OpenAI Computer Use task through the installed ComputerUse web module and desktop runner.";
+	ActionRoot = ComputerUseSkillAction;
+}
+
+prototype ComputerUseWebModuleService : Service
+{
+	ServiceName = "ComputerUseWebModuleService";
+	Scope = "singleton";
+	Description = @"Installed ComputerUse web-module binding using direct ComputerUse workbench runtime APIs.";
+
+	function Initialize() : string
+	{
+		string apiKey = OpenAIFeature.Feature.ApiKey;
+		if (StringUtil.IsEmpty(apiKey))
+		{
+			throw "OpenAI Feature ApiKey is required before using the ComputerUse web module.";
+		}
+
+		return ComputerUseWorkbenchServiceHost.Initialize(apiKey);
+	}
+}
+
+[SemanticEntity("local computer use web module service")]
+partial prototype ComputerUseWebModuleService#Local : ComputerUseWebModuleService
+{
+	Description = "Local installed ComputerUse web module binding using direct ComputerUse workbench runtime APIs.";
+}
+
+[SemanticProgram.InfinitivePhrase("to run a computer use task")]
+[SemanticProgram.InfinitivePhrase("to use the computer")]
+prototype ToRunComputerUseTask : ComputerUseSkillAction
+{
+	Description = @"instruction, model(optional), maxSteps(optional integer), captureScope(optional), windowTitle(optional). Runs one cohesive ComputerUse task through the installed web module; this replaces the old primitive OpenAIComputerUse response/action tools.";
+
+	ComputerUseWebModuleService Service = ComputerUseWebModuleService#Local;
+
+	function Execute(string instruction, string model, int maxSteps = 40, string captureScope, string windowTitle) : string
+	{
+		if (StringUtil.IsEmpty(instruction))
+		{
+			return "Error: instruction is required.";
+		}
+
+		StartComputerUseRunRequest request = new StartComputerUseRunRequest();
+		request.Direction = instruction;
+		if (!StringUtil.IsEmpty(model)) request.Model = model;
+		request.MaxSteps = maxSteps;
+		if (!StringUtil.IsEmpty(captureScope)) request.CaptureScope = captureScope;
+		if (!StringUtil.IsEmpty(windowTitle)) request.WindowTitle = windowTitle;
+
+		return JsonUtil.ToFriendlyJSON(new JsonValue(ComputerUseWorkbenchServiceHost.StartRun(request))).ToString();
+	}
+}
+
+

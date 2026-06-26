@@ -1,0 +1,16 @@
+prototype TwitterXApiPromptAction : PromptAction
+{
+	Description = "Base action type for Twitter/X API prompt workflows.";
+}
+
+[SemanticProgram.InfinitivePhrase("to setup twitter x oauth2 authorization")]
+[SemanticProgram.InfinitivePhrase("to configure x api oauth2 user tokens")]
+[SemanticProgram.InfinitivePhrase("to authorize the twitter x api skill")]
+prototype ToSetupTwitterXOAuth2AuthorizationSkill : TwitterXApiPromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/TwitterXApi/Prompts/SetupTwitterXOAuth2Authorization.prompt.md";
+	Description = @"Loads the runbook for configuring the existing X Developer App, generating OAuth 2.0 user-context access/refresh tokens from the portal, saving them into the database-backed Twitter/X OAuth2 Feature row, and validating ToGetXMe without posting.";
+}

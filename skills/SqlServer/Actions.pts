@@ -1,0 +1,98 @@
+prototype ToListSqlDatabases : SqlServerSkillAction
+{
+	Description = "to connect to local sql server and list databases\nRuns the local SQL Server listing workflow through ToAccessLocalSqlServerSkill.";
+
+	function Execute() : string
+	{
+		return ToAccessLocalSqlServerSkill.Execute();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to run a read only sql query using a secret key")]
+prototype ToRunReadOnlySqlQuery : SqlServerSkillAction
+{
+	Description = @"server - SQL Server host name (for example localhost)
+database - target database name
+username - SQL login user name
+secretKey - user-secret key that stores the SQL password (never pass plaintext password)
+query - read-only SQL query (SELECT/CTE only)
+maxRows - maximum preview rows to return (default 200, max 1000).";
+
+	function Execute(string server, string database, string username, string secretKey, string query, int maxRows) : string
+	{
+		return SqlServerOperations.RunReadOnlySqlQuery(server, database, username, secretKey, query, maxRows);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to run a read only sql query and return in-memory rows json")]
+prototype ToRunReadOnlySqlQueryToRowsJson : SqlServerSkillAction
+{
+	Description = @"server - SQL Server host name (for example localhost)
+database - target database name
+username - SQL login user name
+secretKey - user-secret key that stores the SQL password (never pass plaintext password)
+query - read-only SQL query (SELECT/CTE only)
+maxRows - maximum rows to include in preview payload";
+
+	function Execute(string server, string database, string username, string secretKey, string query, int maxRows) : string
+	{
+		return SqlServerOperations.RunReadOnlySqlQuery(server, database, username, secretKey, query, maxRows);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to run a read only sql query and return a tabular handle key")]
+prototype ToRunReadOnlySqlQueryToHandleKey : SqlServerSkillAction
+{
+	Description = @"server - SQL Server host name (for example localhost)
+database - target database name
+username - SQL login user name
+secretKey - user-secret key that stores the SQL password (never pass plaintext password)
+query - read-only SQL query (SELECT/CTE only)
+maxRows - maximum rows in in-memory tabular payload
+Returns opaque handle key only.";
+
+	function Execute(string server, string database, string username, string secretKey, string query, int maxRows) : string
+	{
+		return SqlServerOperations.RunReadOnlySqlQueryToHandleKey(server, database, username, secretKey, query, maxRows);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to run a sql stored procedure as a native datatable")]
+[SemanticProgram.InfinitivePhrase("to execute a stored procedure and return a datatable")]
+prototype ToRunStoredProcedureAsDataTable : SqlServerSkillAction
+{
+	Description = @"server - SQL Server host name (for example localhost)
+database - target database name
+username - SQL login user name
+secretKey - user-secret key that stores the SQL password
+procedureName - stored procedure name
+parametersJson - JSON object of stored procedure parameters. Returns a native DataTable reference.";
+
+	function Execute(string server, string database, string username, string secretKey, string procedureName, string parametersJson) : DataTable
+	{
+		return SqlServerOperations.RunStoredProcedureToDataTable(server, database, username, secretKey, procedureName, parametersJson);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to ensure a local sql server database exists")]
+[SemanticProgram.InfinitivePhrase("to create local sql server database if missing")]
+prototype ToEnsureLocalSqlServerDatabaseExists : SqlServerSkillAction
+{
+	Description = @"server - SQL Server host (default localhost)
+databaseName - database name to ensure exists (letters/numbers/underscore recommended)";
+
+	function Execute(string server, string databaseName) : string
+	{
+		if (StringUtil.IsEmpty(server))
+			server = "localhost";
+		if (StringUtil.IsEmpty(databaseName))
+			return "Error: databaseName is required.";
+		if (StringUtil.InString(databaseName, "'"))
+			return "Error: databaseName contains unsupported character: '";
+
+		string connectionString = "Server=" + server + ";Database=master;Integrated Security=True;Encrypt=False;TrustServerCertificate=True;";
+		string sql = "IF DB_ID('" + databaseName + "') IS NULL BEGIN CREATE DATABASE [" + databaseName + "] END";
+		DBUtilities.ExecQuery(sql, connectionString);
+
+		return "EnsuredSqlDatabase server=" + server + "; database=" + databaseName;
+	}
+}

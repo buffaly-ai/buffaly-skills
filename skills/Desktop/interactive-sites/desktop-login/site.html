@@ -1,0 +1,23 @@
+<div class="desktop-login-shell">
+	<div class="desktop-login-toolbar">
+		<div class="desktop-login-title">Desktop Login</div>
+		<div class="desktop-login-actions">
+			<button type="button" class="desktop-login-button desktop-login-button-release" data-release-input>Release input</button>
+			<button type="button" class="desktop-login-button" data-mobile-keyboard>Keyboard</button>
+			<button type="button" class="desktop-login-button" data-action="done">Done</button>
+			<button type="button" class="desktop-login-button" data-action="cancel">Cancel</button>
+			<button type="button" class="desktop-login-button desktop-login-button-close" data-action="close">Close</button>
+		</div>
+	</div>
+	<form class="desktop-login-mobile-input-row" hidden>
+		<input class="desktop-login-mobile-input" type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Type text to send to the remote window" />
+		<button type="button" class="desktop-login-button" data-mobile-send>Send</button>
+		<span class="desktop-login-mobile-status" aria-live="polite"></span>
+	</form>
+	<div class="desktop-login-stage">
+		<canvas class="desktop-login-canvas" tabindex="0"></canvas>
+		<div class="desktop-login-capture-badge" aria-live="polite">Input not captured</div>
+		<div class="desktop-login-input-status" aria-live="polite">Click the canvas once to capture remote input. Press Escape or Release input to stop capturing.</div>
+		<div class="desktop-login-empty">Waiting for desktop stream...</div>
+	</div>
+</div>
