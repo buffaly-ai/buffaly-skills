@@ -86,10 +86,15 @@ prototype ToCallMetabaseJsonWsMethod : MetabaseJsonWsSkillAction
 }
 
 include "Applications.pts";
+include "Databases.pts";
 include "Projects.pts";
 include "Objects.pts";
 include "Properties.pts";
 include "Features.pts";
+include "Links.pts";
+include "ObjectDefinition.pts";
+include "ObjectMethods.pts";
+
 
 
 

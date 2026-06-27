@@ -1,0 +1,38 @@
+[SemanticProgram.InfinitivePhrase("to upsert roottrax metabase object definition through jsonws")]
+prototype MetabaseObjectDefinitionLoader_UpsertObject : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.ObjectDefinitionLoader.UpsertObject(definition, applicationId). definitionJson must be an object definition JSON string.";
+	function Execute(MetabaseJsonWsService service, string definitionJson, int applicationId) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		if (StringUtil.IsEmpty(definitionJson)) return "Error: definitionJson is required.";
+		JsonObject args = new JsonObject();
+		args["definition"] = new JsonObject(definitionJson);
+		args["applicationId"] = applicationId;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.ObjectDefinitionLoader.ashx", "UpsertObject", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get local metabase object edit url through jsonws skill")]
+prototype MetabaseJsonWs_GetLocalObjectEditUrl : MetabaseJsonWsSkillAction
+{
+	Description = @"Builds a local Metabase object edit URL. This mirrors the runtime helper and does not call JSONWS.";
+	function Execute(int ObjectID, string BaseUrl) : string
+	{
+		if (ObjectID <= 0) return "Error: ObjectID must be > 0.";
+		string root = StringUtil.IsEmpty(BaseUrl) ? "http://localhost:5197" : BaseUrl;
+		if (StringUtil.EndsWith(root, "/")) return root + "object?ObjectID=" + ObjectID;
+		return root + "/object?ObjectID=" + ObjectID;
+	}
+}
+
+prototype MetabaseProjectsAdmin_GetDetails : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.UI.ProjectsAdmin.GetDetails(ProjectID). Returns HTML string.";
+	function Execute(MetabaseJsonWsService service, string ProjectID) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["ProjectID"] = ProjectID;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.UI.ProjectsAdmin.ashx", "GetDetails", args);
+	}
+}

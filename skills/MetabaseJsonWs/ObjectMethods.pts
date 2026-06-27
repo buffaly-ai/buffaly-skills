@@ -1,0 +1,47 @@
+[SemanticProgram.InfinitivePhrase("to infer roottrax metabase object methods through jsonws")]
+prototype MetabaseObjectMethods_InferBasicMethods : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.ObjectMethods.InferBasicMethods(ObjectID, ProjectID).";
+	function Execute(MetabaseJsonWsService service, int ObjectID, int ProjectID) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["ObjectID"] = ObjectID; args["ProjectID"] = ProjectID;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.ObjectMethods.ashx", "InferBasicMethods", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to generate roottrax metabase stored procedures through jsonws")]
+prototype MetabaseObjectMethods_GenerateAllMethods : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.ObjectMethods.GenerateAllMethods(ObjectID, ConnectionName, WriteToDirectory).";
+	function Execute(MetabaseJsonWsService service, int ObjectID, string ConnectionName, string WriteToDirectory) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["ObjectID"] = ObjectID; args["ConnectionName"] = ConnectionName; args["WriteToDirectory"] = WriteToDirectory;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.ObjectMethods.ashx", "GenerateAllMethods", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to generate roottrax metabase repository through jsonws")]
+prototype MetabaseObjectMethods_GenerateRepositoryFromSchemaWithRelationships : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.ObjectMethods.GenerateRepositoryFromSchemaWithRelationships(...).";
+	function Execute(MetabaseJsonWsService service, int ObjectID, string Namespace, string ConnectionName, string WriteToFile, string StandardProcs) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["ObjectID"] = ObjectID; args["Namespace"] = Namespace; args["ConnectionName"] = ConnectionName; args["WriteToFile"] = WriteToFile; args["StandardProcs"] = StandardProcs;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.ObjectMethods.ashx", "GenerateRepositoryFromSchemaWithRelationships", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to generate roottrax metabase jsonws class through jsonws")]
+prototype MetabaseObjectMethods_GenerateJsonWsFromSchema : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.ObjectMethods.GenerateJsonWsFromSchema(ObjectID, Dataset, Namespace, WriteToFile, JsonWsDirectory).";
+	function Execute(MetabaseJsonWsService service, int ObjectID, string Dataset, string Namespace, string WriteToFile, string JsonWsDirectory) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["ObjectID"] = ObjectID; args["Dataset"] = Dataset; args["Namespace"] = Namespace; args["WriteToFile"] = WriteToFile; args["JsonWsDirectory"] = JsonWsDirectory;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.ObjectMethods.ashx", "GenerateJsonWsFromSchema", args);
+	}
+}

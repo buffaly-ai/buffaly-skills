@@ -1,0 +1,34 @@
+[SemanticProgram.InfinitivePhrase("to get roottrax metabase databases through jsonws")]
+prototype MetabaseDatabases_GetDatabases : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Databases.GetDatabases().";
+	function Execute(MetabaseJsonWsService service) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Databases.ashx", "GetDatabases", new JsonObject());
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to insert roottrax metabase database metadata through jsonws")]
+prototype MetabaseDatabases_InsertDatabase : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Databases.InsertDatabase(...).";
+	function Execute(MetabaseJsonWsService service, string DatabaseName, string DatabaseHandle, string ConnectionHandleReadWrite, string ConnectionHandleReadOnly, string ConnectionHandleAdmin, string Data) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["DatabaseName"] = DatabaseName; args["DatabaseHandle"] = DatabaseHandle; args["ConnectionHandleReadWrite"] = ConnectionHandleReadWrite; args["ConnectionHandleReadOnly"] = ConnectionHandleReadOnly; args["ConnectionHandleAdmin"] = ConnectionHandleAdmin; args["Data"] = StringUtil.IsEmpty(Data) ? "{}" : Data;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Databases.ashx", "InsertDatabase", args);
+	}
+}
+
+prototype MetabaseDatabases_GetDatabasesByDatabaseHandle : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Databases.GetDatabasesByDatabaseHandle(DatabaseHandle).";
+	function Execute(MetabaseJsonWsService service, string DatabaseHandle) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["DatabaseHandle"] = DatabaseHandle;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Databases.ashx", "GetDatabasesByDatabaseHandle", args);
+	}
+}
