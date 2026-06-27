@@ -7,7 +7,6 @@ import XApiClient.Core XApiClient.Core.XClient XClient;
 import XApiClient.Core XApiClient.Core.Authentication.XCredentials XCredentials;
 import System.Net.Http System.Net.Http.HttpClient HttpClient;
 import BasicUtilities BasicUtilities.JsonObject JsonObject;
-import BasicUtilities BasicUtilities.JsonArray JsonArray;
 import Buffaly.Agent.Tools.Secrets Buffaly.Agent.Tools.Secrets.TwitterXApiSecretsFeature TwitterXApiSecretsFeature;
 import mscorlib System.Threading.CancellationToken CancellationToken;
 import mscorlib System.IO.File File;
@@ -341,48 +340,11 @@ prototype ToPostXThread : TwitterXApiSkillAction
 			return "Error: threadJson is required.";
 		}
 
-		JsonArray tweets = new JsonArray(threadJson);
-		if (tweets.Count == 0)
-		{
-			return "Error: threadJson must contain at least one tweet text.";
-		}
-
 		XCredentials credentials = ToCreateXCredentialsForUserContext();
 		HttpClient xHttpClient = new HttpClient();
 		XClient xApiClient = new XClient(xHttpClient, credentials, null);
 
-		string previousTweetId = "";
-		JsonArray results = new JsonArray();
-		for (int i = 0; i < tweets.Count; i++)
-		{
-			string tweetText = tweets.GetString(i);
-			if (StringUtil.IsEmpty(tweetText))
-			{
-				return "Error: tweet text at index " + i + " is required.";
-			}
-
-			string rawJson = "";
-			if (StringUtil.IsEmpty(previousTweetId))
-			{
-				rawJson = xApiClient.PostTweetRawJsonAsync(tweetText, new CancellationToken(false));
-			}
-			else
-			{
-				rawJson = xApiClient.PostTweetReplyRawJsonAsync(tweetText, previousTweetId, new CancellationToken(false));
-			}
-
-			JsonObject response = new JsonObject(rawJson);
-			JsonObject data = response.GetJsonObjectOrDefault("data");
-			previousTweetId = data.GetStringOrNull("id") ?? "";
-			if (StringUtil.IsEmpty(previousTweetId))
-			{
-				return "Error: X post response at index " + i + " did not include data.id. Raw response: " + rawJson;
-			}
-
-			results.Add(response);
-		}
-
-		return results.ToString();
+		return xApiClient.PostThreadRawJsonAsync(threadJson, new CancellationToken(false));
 	}
 }
 
