@@ -9,13 +9,6 @@ function ToNormalizeOffice365TeamsSpace(string space) : string
 	return "spaces/" + space;
 }
 
-function ToEscapeForSingleQuotedPowerShell(string value) : string
-{
-	if (value == null)
-		return "";
-
-	return value.Replace("'", "''");
-}
 
 function ToNormalizeOffice365TeamsScopePreset(string scopePreset, bool forWrite) : string
 {
@@ -39,32 +32,6 @@ function ToNormalizeOffice365TeamsScopePreset(string scopePreset, bool forWrite)
 	// }
 
 	return scopePreset;
-}
-
-function ToFilterOffice365TeamsSpacesFacadeJson(string facadeJson, bool joinedOnly, string spaceType) : string
-{
-	if (StringUtil.IsEmpty(facadeJson))
-		return facadeJson;
-
-	string joinedOnlyText = "false";
-	if (joinedOnly)
-		joinedOnlyText = "true";
-
-	string safeFacadeJson = ToEscapeForSingleQuotedPowerShell(facadeJson);
-	string safeSpaceType = ToEscapeForSingleQuotedPowerShell(spaceType);
-	string safeJoinedOnly = ToEscapeForSingleQuotedPowerShell(joinedOnlyText);
-
-	string script = "$root = ConvertFrom-Json -InputObject '" + safeFacadeJson + "'; " +
-		"if ($root -ne $null -and $root.ok -eq $true -and $root.data -ne $null -and $root.data.spaces -ne $null) { " +
-		"  $spaces = @($root.data.spaces); " +
-		"  if ('" + safeSpaceType + "' -ne '') { $spaces = @($spaces | Where-Object { $_.spaceType -eq '" + safeSpaceType + "' -or $_.type -eq '" + safeSpaceType + "' }) }; " +
-		"  if ('" + safeJoinedOnly + "' -eq 'true') { $spaces = @($spaces | Where-Object { ($_.membershipState -eq $null) -or ($_.membershipState -eq 'JOINED') -or ($_.membership -eq 'JOINED') }) }; " +
-		"  $root.data.spaces = $spaces; " +
-		"  $root.data.count = @($spaces).Count; " +
-		"}; " +
-		"$root | ConvertTo-Json -Depth 50";
-
-	return SystemOperations.RunPowerShell(script);
 }
 
 [SemanticProgram.InfinitivePhrase("to list office 365 teams channels/spaces from account")]
@@ -131,5 +98,7 @@ prototype ToListOffice365TeamsMessagesByAccount : Office365SkillAction
 		return ToListOffice365TeamsMessagesPageByAccount.Execute(accountKey, scopePreset, space, pageSize, "");
 	}
 }
+
+
 
 
