@@ -78,3 +78,14 @@ prototype MetabaseObjects_UpdateDefaultProjectID : MetabaseJsonWsSkillAction
 		return service.CallMetabaseJsonWs("RooTrax.VDB.Objects.ashx", "UpdateDefaultProjectID", args);
 	}
 }
+
+prototype MetabaseObjects_CopyObject : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Objects.CopyObject(ObjectID). Use UpdateObject afterwards to retarget ApplicationID when mirroring ToCopyRootTraxVdbObjectIntoApplication.";
+	function Execute(MetabaseJsonWsService service, int ObjectID) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["ObjectID"] = ObjectID;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Objects.ashx", "CopyObject", args);
+	}
+}

@@ -23,3 +23,4 @@ The default binding is `MetabaseJsonWsService#Localhost_5197`, matching the loca
 
 This is not default-installed. Several methods can mutate Metabase metadata, local databases, or generated project artifacts through the running Metabase host. Load and call it only for explicit Metabase JSONWS work.
 
+
