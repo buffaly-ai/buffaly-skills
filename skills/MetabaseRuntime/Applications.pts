@@ -1,0 +1,29 @@
+[SemanticProgram.InfinitivePhrase("to get all metabase applications")]
+[SemanticProgram.InfinitivePhrase("to list roottrax vdb applications")]
+prototype Applications_GetAll : MetabaseRuntimeSkillAction
+{
+	Description = @"Thin wrapper over RooTrax.VDB.Applications.GetAll().
+Returns native ApplicationsDataTable with no ProtoScript-side validation or reshaping.";
+
+	function Execute() : ApplicationsDataTable
+	{
+		ToEnsureRootTraxVdbConnection();
+		return Applications.GetAll();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to insert a metabase application")]
+[SemanticProgram.InfinitivePhrase("to create a roottrax vdb application row")]
+prototype Applications_InsertApplication : MetabaseRuntimeSkillAction
+{
+	Description = @"Thin wrapper over RooTrax.VDB.Applications.InsertApplication(applicationName, data).
+applicationName - passed directly to C#.
+data - passed directly to C#.
+Returns native int application id with no ProtoScript-side validation or reshaping.";
+
+	function Execute(string applicationName, string data) : int
+	{
+		ToEnsureRootTraxVdbConnection();
+		return Applications.InsertApplication(applicationName, data);
+	}
+}

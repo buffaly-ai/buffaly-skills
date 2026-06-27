@@ -1,0 +1,16 @@
+import RooTrax.VDB.UI RooTrax.VDB.UI.ProjectsAdmin ProjectsAdmin;
+
+[SemanticProgram.InfinitivePhrase("to get roottrax metabase project details html")]
+[SemanticProgram.InfinitivePhrase("to render projects admin details html")]
+prototype ProjectsAdmin_GetDetails : MetabaseRuntimeSkillAction
+{
+	Description = @"Thin wrapper over RooTrax.VDB.UI.ProjectsAdmin.GetDetails(ProjectID).
+projectId - passed directly as string.
+Returns raw string html with no ProtoScript-side validation or reshaping.";
+
+	function Execute(string projectId) : string
+	{
+		ToEnsureRootTraxVdbConnection();
+		return ProjectsAdmin.GetDetails(projectId);
+	}
+}

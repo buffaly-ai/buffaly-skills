@@ -949,6 +949,31 @@
       "IsDefaultPackage": true
     },
     {
+      "SkillName": "Level2Watcher",
+      "Title": "Level2 Watcher",
+      "Description": "Buffaly OpsAgent skill package for Level2Watcher.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Level2Watcher"
+      ],
+      "Path": "skills/Level2Watcher",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "c7f513d0b4373f41a01b243aa3e71306352d882d7b6ef149432c5a5e21f23b87"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "2069223198f565d01f46e2e1ed31cc6b40b1070417ccc268428fb25c07fd5a01"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsDefaultPackage": true
+    },
+    {
       "SkillName": "LLM",
       "Title": "L L M",
       "Description": "Buffaly OpsAgent skill package for LLM.",
@@ -1006,31 +1031,6 @@
       "IsDefaultPackage": true
     },
     {
-      "SkillName": "Level2Watcher",
-      "Title": "Level2 Watcher",
-      "Description": "Buffaly OpsAgent skill package for Level2Watcher.",
-      "Version": "0.1.0",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [
-        "Level2Watcher"
-      ],
-      "Path": "skills/Level2Watcher",
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "c7f513d0b4373f41a01b243aa3e71306352d882d7b6ef149432c5a5e21f23b87"
-        },
-        {
-          "Path": "index.pts.md",
-          "Sha256": "2069223198f565d01f46e2e1ed31cc6b40b1070417ccc268428fb25c07fd5a01"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsDefaultPackage": true
-    },
-    {
       "SkillName": "LocalTask",
       "Title": "Local Task",
       "Description": "Buffaly OpsAgent skill package for LocalTask.",
@@ -1058,6 +1058,157 @@
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
       "IsDefaultPackage": true
+    },
+    {
+      "SkillName": "MetabaseRuntime",
+      "Title": "Metabase Runtime",
+      "Description": "DLL-backed RootTrax Metabase runtime skill for applications, projects, objects, and generation/materialization workflows.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "metabase runtime",
+        "roottrax metabase runtime",
+        "dll backed metabase skill",
+        "roottrax vdb generation"
+      ],
+      "Path": "skills/MetabaseRuntime",
+      "Files": [
+        {
+          "Path": "Actions.pts",
+          "Sha256": "f11835d2978e77228ae8a7ee5924a4f103964fbf0158408528c10c9b34422ef9"
+        },
+        {
+          "Path": "Applications.pts",
+          "Sha256": "9f5402c48588a5d18ee31fdfce6ffec405501dc892191078887d8907f12be9a7"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "3e9baf185795919732491515ba4c726d23e8a3f734931880402b65855465ae3e"
+        },
+        {
+          "Path": "lib/Buffaly.Data.dll",
+          "Sha256": "be56dba8f5cde04ec597ca2464f9a3e35a9fdf14bfd2531edfddcb6167cca7c5"
+        },
+        {
+          "Path": "lib/Microsoft.SqlServer.ConnectionInfo.dll",
+          "Sha256": "829c560b19b03c4d9dec9a12cdc273f4aa75573cafb59fd55d22cefed8c01b2e"
+        },
+        {
+          "Path": "lib/Microsoft.SqlServer.Dmf.Common.dll",
+          "Sha256": "2dfd5ed46980a449baff04ed3893e82ca3ea3f36043729b9f124b8ad58f78332"
+        },
+        {
+          "Path": "lib/Microsoft.SqlServer.Management.Sdk.Sfc.dll",
+          "Sha256": "3462861851f26471c7f3d9ece92852d66edc326783d08dc1336350b360fb16a1"
+        },
+        {
+          "Path": "lib/Microsoft.SqlServer.ServiceBrokerEnum.dll",
+          "Sha256": "4785b3139e5e3b69be6e083e8f49496f668ef0b57abc4127fdba68ac7f42ef42"
+        },
+        {
+          "Path": "lib/Microsoft.SqlServer.Smo.dll",
+          "Sha256": "ed8214d54df8fb7bf67da8d1f510a5893066b5ab1769411261e049c1063de9db"
+        },
+        {
+          "Path": "lib/Microsoft.SqlServer.SqlEnum.dll",
+          "Sha256": "e87de8d5ae2ba4a4555ba2d92801df948fb5948fa75be0f2d1d35754af2ef508"
+        },
+        {
+          "Path": "lib/RooTrax.Common.DB.dll",
+          "Sha256": "e1c7916c4b3a1eaccc23b6e97b7b8599c70d1987b9b1ea31a0e8a49b2e5af4c3"
+        },
+        {
+          "Path": "lib/RooTrax.Common.dll",
+          "Sha256": "db652586a3d14ca7197dca7f8830b87b6fe28ecab258964531e94b235f625a54"
+        },
+        {
+          "Path": "lib/RooTrax.Creator.DB.dll",
+          "Sha256": "a578096162af10a827bd221d951341169852061a10ea1d2c8a8f3e42a717258e"
+        },
+        {
+          "Path": "lib/RooTrax.SqlGenerator.dll",
+          "Sha256": "d98d1a188d88607d3d1fafc104bc0475949b373ed53a14fdb099d9704ff339ba"
+        },
+        {
+          "Path": "lib/RooTrax.VDB.DB.dll",
+          "Sha256": "3314e93291935a979ce415d3a265076d5456ad26e356ee2823e22231eaf932cf"
+        },
+        {
+          "Path": "lib/RooTrax.VDB.dll",
+          "Sha256": "4f40e6ba3a968404d96d1c57ba36b9ad8bf146ba18045b41ba09372aac0ffd91"
+        },
+        {
+          "Path": "lib/RooTrax.VDB.UI.dll",
+          "Sha256": "210cccb267336141006132f4999483c98d7285718389e0e38b98819300858c5c"
+        },
+        {
+          "Path": "MetabaseSkillBacklog.md",
+          "Sha256": "0028cc5ce7596aec7c036c001fc6d18d60e10c3d7e953f027f874f2554c20573"
+        },
+        {
+          "Path": "MetabaseSystemOverview.md",
+          "Sha256": "0dc8549c5f05a7367db29e8084a2799979fabe651e6aebdcc0a41afd33616b6f"
+        },
+        {
+          "Path": "Ontology.pts",
+          "Sha256": "13d547c99d8bed7595d0257b0d750ccec312b8172f2e20d39a461a17058ea86e"
+        },
+        {
+          "Path": "ProjectsAdmin.pts",
+          "Sha256": "1b7f156396ca524bb5254bf7ed6bfe9539333131782064a4902afe65b0f624ae"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "35e882e025346f06e35e9b51fdb1833ea6d8f9e83255a8e7c4b8e1fd623d6ea9"
+        },
+        {
+          "Path": "Prompts/AddRelatedObjectsTabToRootTraxDetailsPage.prompt.md",
+          "Sha256": "d7eb4aa8cc7846b1f1c7d179df91e9aa7ab2c8d9a78612c32e9cd77058ab8374"
+        },
+        {
+          "Path": "Prompts/LaunchLocalMetabase.prompt.md",
+          "Sha256": "7cfc25232821c1c8da942f5c313f1dbc0b735fb14e430edf8d494f58a7df86ab"
+        },
+        {
+          "Path": "Prompts/NLtoObjectSpec.md",
+          "Sha256": "ef950c9c67a551a73a42a552a7a8fc55196f38ac11d66944c8a4ee4b1bd6b191"
+        },
+        {
+          "Path": "Prompts/RootTraxPortalArchitectureMasterGuide.prompt.md",
+          "Sha256": "7c1d8bb94dddd2fce39a3ad3486f15d793affd6a20253ff256908474ca3e0018"
+        },
+        {
+          "Path": "Prompts/RunLocalRootTraxMetabaseJsonWsWorkflow.prompt.md",
+          "Sha256": "871a68810d6f711f6b50bece7335204f4eee73ff3c2d484768dd611909a9f01e"
+        },
+        {
+          "Path": "Prompts/UseMermaidDiagramArtifactWorkflow.prompt.md",
+          "Sha256": "0c26a91bedb17f3d271698e5ea731b073eb8504efad6d6feafff558ca2777f6c"
+        },
+        {
+          "Path": "Prompts/UseRootTraxMetabase.prompt.md",
+          "Sha256": "7552b9d0199b7aef26137806d68045a378099c9bf009bf5f91fd7261d5e43219"
+        },
+        {
+          "Path": "README.md",
+          "Sha256": "e2f3e4d9dad6c32c5524d86521003c654d4c6be52eca4e23c22e230b6277e750"
+        },
+        {
+          "Path": "RootTraxMetabaseOntology.md",
+          "Sha256": "c5010fa7838a8dff25a58f9a850dcb2d8c9989c33581383fd9efa3fbe142fea9"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "26c45082d25ecaea52a9cf22dedcd7fecf266c5d39924a6b09a13dbb6889025a"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [
+        "Local RooTrax Metabase runtime dependencies available",
+        "Use only for explicit Metabase Runtime work"
+      ],
+      "IsDefaultPackage": false
     },
     {
       "SkillName": "Office365",

@@ -1,0 +1,355 @@
+function ToEnsureRootTraxVdbConnection() : string
+{
+	MetabaseExecutionFacade.InitializeDatabaseAndKScript();
+	return "Initialized via RooTrax.VDB.MetabaseExecutionFacade.InitializeDatabaseAndKScript";
+}
+
+[SemanticProgram.InfinitivePhrase("to ensure a roottrax vdb application")]
+prototype ToEnsureRootTraxVdbApplication : MetabaseRuntimeSkillAction
+{
+	function Execute(string applicationName, string dataJson) : string
+	{
+		if (StringUtil.IsEmpty(applicationName))
+			return "Error: applicationName is required.";
+
+		ToEnsureRootTraxVdbConnection();
+		ApplicationsDataTable apps = Applications.GetAll();
+		foreach (ApplicationsRow app in apps)
+		{
+			if (StringUtil.EqualNoCase(app.ApplicationName, applicationName))
+				return "Exists ApplicationID=" + app.ApplicationID + "; ApplicationName=" + app.ApplicationName;
+		}
+
+		string payload = StringUtil.IsEmpty(dataJson) ? "{}" : dataJson;
+		int id = Applications.InsertApplication(applicationName, payload);
+		return "Created ApplicationID=" + id + "; ApplicationName=" + applicationName;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to find a roottrax vdb object id by name")]
+prototype ToFindRootTraxVdbObjectIdByName : MetabaseRuntimeSkillAction
+{
+	function Execute(string nameLike) : string
+	{
+		if (StringUtil.IsEmpty(nameLike))
+			return "Error: nameLike is required.";
+
+		ToEnsureRootTraxVdbConnection();
+		ObjectsDataTable objs = Objects.GetAll();
+		foreach (ObjectsRow o in objs)
+		{
+			if (StringUtil.InString(o.ObjectName, nameLike) || StringUtil.InString(o.ObjectsName, nameLike))
+			{
+				return "Found ObjectID=" + o.ObjectID + "; ObjectName=" + o.ObjectName + "; ObjectsName=" + o.ObjectsName;
+			}
+		}
+		return "Not found: " + nameLike;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to copy a roottrax vdb object into application")]
+prototype ToCopyRootTraxVdbObjectIntoApplication : MetabaseRuntimeSkillAction
+{
+	function Execute(int sourceObjectId, int targetApplicationId) : string
+	{
+		if (sourceObjectId <= 0) return "Error: sourceObjectId must be > 0.";
+		if (targetApplicationId <= 0) return "Error: targetApplicationId must be > 0.";
+
+		ToEnsureRootTraxVdbConnection();
+		ObjectsRow source = Objects.GetObject(sourceObjectId);
+		if (source == null) return "Error: source object not found.";
+
+		int newObjectId = Objects.CopyObject(sourceObjectId);
+		Objects.UpdateObject(newObjectId, source.ObjectName, source.ObjectsName, source.FriendlyObjectName, source.FriendlyObjectsName, targetApplicationId, source.Data);
+		return "Copied NewObjectID=" + newObjectId + "; SourceObjectID=" + sourceObjectId + "; TargetApplicationID=" + targetApplicationId;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to ensure roottrax vdb database metadata")]
+prototype ToEnsureRootTraxVdbDatabaseMetadata : MetabaseRuntimeSkillAction
+{
+	function Execute(string databaseName, string databaseHandle, string connectionHandleReadWrite, string connectionHandleReadOnly, string connectionHandleAdmin, string dataJson) : string
+	{
+		if (StringUtil.IsEmpty(databaseName)) return "Error: databaseName required.";
+		if (StringUtil.IsEmpty(databaseHandle)) return "Error: databaseHandle required.";
+
+		ToEnsureRootTraxVdbConnection();
+		string payload = StringUtil.IsEmpty(dataJson) ? "{}" : dataJson;
+		int id = VdbDatabases.InsertDatabase(databaseName, databaseHandle, connectionHandleReadWrite, connectionHandleReadOnly, connectionHandleAdmin, payload);
+		return "Created DatabaseID=" + id + "; DatabaseHandle=" + databaseHandle;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to ensure a roottrax vdb project")]
+prototype ToEnsureRootTraxVdbProject : MetabaseRuntimeSkillAction
+{
+	function Execute(string projectName, int databaseId, string businessLayerNamespace, string dbLayerNamespace, string uiLayerNamespace, string rootDirectory, string dbScriptDirectory, string jsonWsDirectory, string kScriptDirectory, string dataJson) : string
+	{
+		if (StringUtil.IsEmpty(projectName)) return "Error: projectName is required.";
+		if (databaseId <= 0) return "Error: databaseId must be > 0.";
+
+		ToEnsureRootTraxVdbConnection();
+		ProjectsRow existing = Projects.GetProjectByProjectName(projectName);
+		if (existing != null)
+			return "Exists ProjectID=" + existing.ProjectID + "; ProjectName=" + existing.ProjectName;
+
+		string payload = StringUtil.IsEmpty(dataJson) ? "{}" : dataJson;
+		int id = Projects.InsertProject(projectName, databaseId, businessLayerNamespace, dbLayerNamespace, uiLayerNamespace, rootDirectory, dbScriptDirectory, jsonWsDirectory, kScriptDirectory, payload);
+		return "Created ProjectID=" + id + "; ProjectName=" + projectName;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to implement roottrax vdb object into project database")]
+prototype ToImplementRootTraxVdbObjectIntoProjectDatabase : MetabaseRuntimeSkillAction
+{
+	function Execute(int objectId, int projectId) : string
+	{
+		if (objectId <= 0) return "Error: objectId must be > 0.";
+		if (projectId <= 0) return "Error: projectId must be > 0.";
+
+				ToEnsureRootTraxVdbConnection();
+		Features.ImplementObjectIntoProjectDatabase(objectId, projectId);
+		return "Implemented ObjectID=" + objectId + " into ProjectID=" + projectId;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create roottrax vdb object specification from llm")]
+prototype ToCreateRootTraxVdbObjectSpecificationFromLLM : MetabaseRuntimeSkillAction
+{
+	function Execute(string objectDescription) : string
+	{
+		if (StringUtil.IsEmpty(objectDescription))
+			return "Error: objectDescription is required.";
+		if (_opsAgent == null)
+			return "Error: _opsAgent runtime is not available.";
+
+		string projectDirectory = _opsAgent.GetCurrentProjectDirectory();
+		if (StringUtil.IsEmpty(projectDirectory))
+			return "Error: current project directory is unavailable.";
+
+		string promptPath = Path.Combine(projectDirectory, "Skills", "Metabase", "Prompts", "NLtoObjectSpec.md");
+		if (!File.Exists(promptPath))
+			return "Error: NLtoObjectSpec prompt file not found at " + promptPath;
+
+		string prompt = File.ReadAllText(promptPath);
+		JsonObject response = LLMs.ExecuteLLMPromptAndInput(prompt, objectDescription);
+		if (response == null) return "Error: LLM returned null.";
+		return response.ToJSON();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to upsert roottrax vdb object definition")]
+prototype ToUpsertRootTraxVdbObjectDefinition : MetabaseRuntimeSkillAction
+{
+	function Execute(string definitionJson, int applicationId) : string
+	{
+		if (StringUtil.IsEmpty(definitionJson))
+			return "Error: definitionJson is required.";
+
+		JsonObject definition = new JsonObject(definitionJson);
+		int? appId = null;
+		if (applicationId > 0) appId = applicationId;
+
+		ToEnsureRootTraxVdbConnection();
+		int objectId = ObjectDefinitionLoader.UpsertObject(definition, appId);
+		return "Upserted ObjectID=" + objectId;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get local metabase object edit url")]
+[SemanticProgram.InfinitivePhrase("to build local metabase object link")]
+prototype ToGetLocalMetabaseObjectEditUrl : MetabaseRuntimeSkillAction
+{
+	function Execute(int objectId, string baseUrl) : string
+	{
+		if (objectId <= 0)
+			return "Error: objectId must be > 0.";
+
+		string resolvedBaseUrl = baseUrl;
+		if (StringUtil.IsEmpty(resolvedBaseUrl))
+			resolvedBaseUrl = "http://localhost:5197";
+
+		if (StringUtil.EndsWith(resolvedBaseUrl, "/"))
+			return resolvedBaseUrl + "object?ObjectID=" + objectId;
+
+		return resolvedBaseUrl + "/object?ObjectID=" + objectId;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to ensure a roottrax vdb feature")]
+prototype ToEnsureRootTraxVdbFeature : MetabaseRuntimeSkillAction
+{
+	function Execute(string featureName, string version, bool isEnabled, string settingsAssembly, string settingsClass, string settingsJson, string dataJson) : string
+	{
+		if (StringUtil.IsEmpty(featureName))
+			return "Error: featureName is required.";
+
+		ToEnsureRootTraxVdbConnection();
+		FeaturesRow existing = Features.GetFeatureByFeatureName(featureName);
+		if (existing != null)
+			return "Exists FeatureID=" + existing.FeatureID + "; FeatureName=" + existing.FeatureName;
+
+		string v = StringUtil.IsEmpty(version) ? "1.0" : version;
+		string sa = StringUtil.IsEmpty(settingsAssembly) ? "n/a" : settingsAssembly;
+		string sc = StringUtil.IsEmpty(settingsClass) ? "n/a" : settingsClass;
+		string sj = StringUtil.IsEmpty(settingsJson) ? "{}" : settingsJson;
+		string dj = StringUtil.IsEmpty(dataJson) ? "{}" : dataJson;
+
+		int id = Features.InsertFeature(featureName, v, isEnabled, sa, sc, sj, dj);
+		return "Created FeatureID=" + id + "; FeatureName=" + featureName;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to ensure roottrax vdb project feature link")]
+prototype ToEnsureRootTraxVdbProjectFeatureLink : MetabaseRuntimeSkillAction
+{
+	function Execute(int projectId, int featureId, string dataJson) : string
+	{
+		if (projectId <= 0) return "Error: projectId must be > 0.";
+		if (featureId <= 0) return "Error: featureId must be > 0.";
+
+		ToEnsureRootTraxVdbConnection();
+		ProjectFeaturesDataTable links = ProjectFeatures.GetProjectFeaturesByProjectID(projectId);
+		foreach (ProjectFeaturesRow link in links)
+		{
+			if (link.FeatureID == featureId)
+				return "Exists ProjectFeatureID=" + link.ProjectFeatureID + "; ProjectID=" + projectId + "; FeatureID=" + featureId;
+		}
+
+		string payload = StringUtil.IsEmpty(dataJson) ? "{}" : dataJson;
+		int id = ProjectFeatures.InsertProjectFeature(projectId, featureId, payload);
+		return "Created ProjectFeatureID=" + id + "; ProjectID=" + projectId + "; FeatureID=" + featureId;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to ensure roottrax vdb feature object link")]
+prototype ToEnsureRootTraxVdbFeatureObjectLink : MetabaseRuntimeSkillAction
+{
+	function Execute(int featureId, int objectId, string dataJson) : string
+	{
+		if (featureId <= 0) return "Error: featureId must be > 0.";
+		if (objectId <= 0) return "Error: objectId must be > 0.";
+
+		ToEnsureRootTraxVdbConnection();
+		FeatureObjectsDataTable links = FeatureObjects.GetFeatureObjectsByFeatureID(featureId);
+		foreach (FeatureObjectsRow link in links)
+		{
+			if (link.ObjectID == objectId)
+				return "Exists FeatureObjectID=" + link.FeatureObjectID + "; FeatureID=" + featureId + "; ObjectID=" + objectId;
+		}
+
+		string payload = StringUtil.IsEmpty(dataJson) ? "{}" : dataJson;
+		int id = FeatureObjects.InsertFeatureObject(featureId, objectId, payload);
+		return "Created FeatureObjectID=" + id + "; FeatureID=" + featureId + "; ObjectID=" + objectId;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to update roottrax vdb project directories")]
+prototype ToUpdateRootTraxVdbProjectDirectories : MetabaseRuntimeSkillAction
+{
+	function Execute(int projectId, string rootDirectory, string dbScriptDirectory, string jsonWsDirectory, string kScriptDirectory, string dataJson) : string
+	{
+		if (projectId <= 0) return "Error: projectId must be > 0.";
+		if (StringUtil.IsEmpty(rootDirectory)) return "Error: rootDirectory is required.";
+
+		ToEnsureRootTraxVdbConnection();
+		ProjectsRow existing = Projects.GetProject(projectId);
+		if (existing == null)
+			return "Error: project not found.";
+
+		string nextDbScript = StringUtil.IsEmpty(dbScriptDirectory) ? existing.DBScriptDirectory : dbScriptDirectory;
+		string nextJsonWs = StringUtil.IsEmpty(jsonWsDirectory) ? existing.JsonWsDirectory : jsonWsDirectory;
+		string nextKScript = StringUtil.IsEmpty(kScriptDirectory) ? existing.kScriptDirectory : kScriptDirectory;
+		string payload = StringUtil.IsEmpty(dataJson) ? existing.Data : dataJson;
+
+		Projects.UpdateProject(existing.ProjectID, existing.ProjectName, existing.DatabaseID, existing.BusinessLayerNamespace, existing.DBLayerNamespace, existing.UILayerNamespace, rootDirectory, nextDbScript, nextJsonWs, nextKScript, payload);
+		return "Updated ProjectID=" + existing.ProjectID + "; ProjectName=" + existing.ProjectName;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to implement roottrax vdb feature into project database")]
+prototype ToImplementRootTraxVdbFeatureIntoProjectDatabase : MetabaseRuntimeSkillAction
+{
+	function Execute(int featureId, int projectId) : string
+	{
+		if (featureId <= 0) return "Error: featureId must be > 0.";
+		if (projectId <= 0) return "Error: projectId must be > 0.";
+
+		ToEnsureRootTraxVdbConnection();
+		Features.ImplementFeatureIntoProjectDatabase(featureId, projectId);
+		return "Implemented FeatureID=" + featureId + " into ProjectID=" + projectId + " database layer";
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to implement roottrax vdb repositories into project")]
+prototype ToImplementRootTraxVdbRepositoriesIntoProject : MetabaseRuntimeSkillAction
+{
+	function Execute(int featureId, int projectId) : string
+	{
+		if (featureId <= 0) return "Error: featureId must be > 0.";
+		if (projectId <= 0) return "Error: projectId must be > 0.";
+
+		ToEnsureRootTraxVdbConnection();
+		Features.ImplementRepositoriesIntoProject(featureId, projectId);
+		return "Implemented repositories for FeatureID=" + featureId + " into ProjectID=" + projectId;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to implement roottrax vdb business layer into project")]
+prototype ToImplementRootTraxVdbBusinessIntoProject : MetabaseRuntimeSkillAction
+{
+	function Execute(int featureId, int projectId) : string
+	{
+		if (featureId <= 0) return "Error: featureId must be > 0.";
+		if (projectId <= 0) return "Error: projectId must be > 0.";
+
+		ToEnsureRootTraxVdbConnection();
+		Features.ImplementBusinessIntoProject(featureId, projectId);
+		return "Implemented business layer for FeatureID=" + featureId + " into ProjectID=" + projectId;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to implement roottrax vdb feature ui into project")]
+prototype ToImplementRootTraxVdbFeatureUiIntoProject : MetabaseRuntimeSkillAction
+{
+	function Execute(int featureId, int projectId) : string
+	{
+		if (featureId <= 0) return "Error: featureId must be > 0.";
+		if (projectId <= 0) return "Error: projectId must be > 0.";
+
+		ToEnsureRootTraxVdbConnection();
+		Features.ImplementFeatureIntoProject2(featureId, projectId);
+		return "Implemented UI for FeatureID=" + featureId + " into ProjectID=" + projectId;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to implement roottrax vdb kscript pages into project")]
+prototype ToImplementRootTraxVdbKScriptPagesIntoProject : MetabaseRuntimeSkillAction
+{
+	function Execute(int featureId, int projectId) : string
+	{
+		if (featureId <= 0) return "Error: featureId must be > 0.";
+		if (projectId <= 0) return "Error: projectId must be > 0.";
+
+		ToEnsureRootTraxVdbConnection();
+		Features.ImplementkScriptPagesIntoProject(featureId, projectId);
+		return "Implemented kScript pages for FeatureID=" + featureId + " into ProjectID=" + projectId;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to implement roottrax vdb default admin ks into project")]
+prototype ToImplementRootTraxVdbDefaultAdminKsIntoProject : MetabaseRuntimeSkillAction
+{
+	function Execute(int featureId, int projectId) : string
+	{
+		if (featureId <= 0) return "Error: featureId must be > 0.";
+		if (projectId <= 0) return "Error: projectId must be > 0.";
+
+		ToEnsureRootTraxVdbConnection();
+		Features.ImplementDefaultAdminKsIntoProject(featureId, projectId);
+		return "Implemented default admin kScripts for FeatureID=" + featureId + " into ProjectID=" + projectId;
+	}
+}
+
+
+

@@ -1,0 +1,65 @@
+reference "lib/Buffaly.Data.dll" Buffaly.Data;
+reference "lib/RooTrax.Common.dll" RooTrax.Common;
+reference "lib/RooTrax.Common.DB.dll" RooTrax.Common.DB;
+reference "lib/RooTrax.Creator.DB.dll" RooTrax.Creator.DB;
+reference "lib/RooTrax.SqlGenerator.dll" RooTrax.SqlGenerator;
+reference "lib/RooTrax.VDB.dll" RooTrax.VDB;
+reference "lib/RooTrax.VDB.DB.dll" RooTrax.VDB.DB;
+reference "lib/RooTrax.VDB.UI.dll" RooTrax.VDB.UI;
+reference "lib/Microsoft.SqlServer.ConnectionInfo.dll" Microsoft.SqlServer.ConnectionInfo;
+reference "lib/Microsoft.SqlServer.Dmf.Common.dll" Microsoft.SqlServer.Dmf.Common;
+reference "lib/Microsoft.SqlServer.Management.Sdk.Sfc.dll" Microsoft.SqlServer.Management.Sdk.Sfc;
+reference "lib/Microsoft.SqlServer.ServiceBrokerEnum.dll" Microsoft.SqlServer.ServiceBrokerEnum;
+reference "lib/Microsoft.SqlServer.Smo.dll" Microsoft.SqlServer.Smo;
+reference "lib/Microsoft.SqlServer.SqlEnum.dll" Microsoft.SqlServer.SqlEnum;
+
+import BasicUtilities BasicUtilities.StringUtil StringUtil;
+import BasicUtilities BasicUtilities.JsonObject JsonObject;
+
+import RooTrax.VDB RooTrax.VDB.Applications Applications;
+import RooTrax.VDB RooTrax.VDB.Projects Projects;
+import RooTrax.VDB RooTrax.VDB.Objects Objects;
+import RooTrax.VDB RooTrax.VDB.Features Features;
+import RooTrax.VDB RooTrax.VDB.Databases VdbDatabases;
+import RooTrax.VDB RooTrax.VDB.ObjectDefinitionLoader ObjectDefinitionLoader;
+import RooTrax.VDB RooTrax.VDB.ProjectFeatures ProjectFeatures;
+import RooTrax.VDB RooTrax.VDB.FeatureObjects FeatureObjects;
+import RooTrax.VDB RooTrax.VDB.MetabaseExecutionFacade MetabaseExecutionFacade;
+
+import RooTrax.VDB.DB RooTrax.VDB.DB.FeaturesRow FeaturesRow;
+import RooTrax.VDB.DB RooTrax.VDB.DB.ProjectFeaturesDataTable ProjectFeaturesDataTable;
+import RooTrax.VDB.DB RooTrax.VDB.DB.ProjectFeaturesRow ProjectFeaturesRow;
+import RooTrax.VDB.DB RooTrax.VDB.DB.FeatureObjectsDataTable FeatureObjectsDataTable;
+import RooTrax.VDB.DB RooTrax.VDB.DB.FeatureObjectsRow FeatureObjectsRow;
+
+import RooTrax.VDB.DB RooTrax.VDB.DB.ApplicationsDataTable ApplicationsDataTable;
+import RooTrax.VDB.DB RooTrax.VDB.DB.ApplicationsRow ApplicationsRow;
+import RooTrax.VDB.DB RooTrax.VDB.DB.ObjectsDataTable ObjectsDataTable;
+import RooTrax.VDB.DB RooTrax.VDB.DB.ObjectsRow ObjectsRow;
+import RooTrax.VDB.DB RooTrax.VDB.DB.ProjectsDataTable ProjectsDataTable;
+import RooTrax.VDB.DB RooTrax.VDB.DB.ProjectsRow ProjectsRow;
+import RooTrax.VDB.DB RooTrax.VDB.DB.DataAccess RooTraxVdbDataAccess;
+import RooTrax.Creator.DB RooTrax.Creator.DB.DataAccess RooTraxCreatorDataAccess;
+import RooTrax.Common RooTrax.Common.RooTraxState RooTraxCommonState;
+import RooTrax.Common RooTrax.Common.RooTraxStateSettings RooTraxStateSettings;
+import Buffaly.Data Buffaly.Data.DataAccess BuffalyDataAccess;
+prototype MetabaseRuntimeSkillAction : OpsAction
+{
+	Description = @"Base action type for Metabase Runtime DLL-backed skill tools.";
+}
+
+[SemanticEntity("metabase runtime skill")]
+[SemanticEntity("roottrax metabase runtime skill")]
+prototype MetabaseRuntimeSkill : SkillEntity
+{
+	Description = "Metabase Runtime DLL-backed database scaffolding skill for creating/updating objects, tables, procedures, repositories, and JsonWs layers through RooTrax Metabase workflows.";
+	ActionRoot = MetabaseRuntimeSkillAction;
+}
+
+include "Ontology.pts";
+include "Actions.pts";
+include "PromptActions.pts";
+include "Applications.pts";
+include "ProjectsAdmin.pts";
+
+

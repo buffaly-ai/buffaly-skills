@@ -1,0 +1,80 @@
+﻿[SemanticEntity("roottrax metabase application")]
+[SemanticEntity("roottrax application")]
+prototype RootTraxApplication : SemanticEntityBase
+{
+	String ApplicationId = new String();
+	String ApplicationName = new String();
+	String DataRowClass = "RooTrax.VDB.DB.ApplicationsRow";
+	EntityName = "roottrax application";
+}
+
+[SemanticEntity("roottrax metabase project")]
+[SemanticEntity("roottrax project")]
+prototype RootTraxProject : SemanticEntityBase
+{
+	RootTraxApplication Application = null;
+	String ProjectId = new String();
+	String ProjectName = new String();
+	String ConnectionName = new String();
+	String DataRowClass = "RooTrax.VDB.DB.ProjectsRow";
+	EntityName = "roottrax project";
+}
+
+[SemanticEntity("roottrax metabase feature")]
+[SemanticEntity("roottrax feature")]
+prototype RootTraxFeature : SemanticEntityBase
+{
+	RootTraxApplication Application = null;
+	String FeatureId = new String();
+	String FeatureName = new String();
+	String DataRowClass = "RooTrax.VDB.DB.FeaturesRow";
+	EntityName = "roottrax feature";
+}
+
+[SemanticEntity("roottrax metabase object")]
+[SemanticEntity("roottrax object")]
+prototype RootTraxObject : SemanticEntityBase
+{
+	RootTraxApplication Application = null;
+	String ObjectId = new String();
+	String ObjectName = new String();
+	String ObjectsName = new String();
+	String DataRowClass = "RooTrax.VDB.DB.ObjectsRow";
+	EntityName = "roottrax object";
+}
+
+[SemanticEntity("roottrax metabase property")]
+[SemanticEntity("roottrax property")]
+prototype RootTraxProperty : SemanticEntityBase
+{
+	RootTraxObject Object = null;
+	String PropertyId = new String();
+	String PropertyName = new String();
+	String DataType = new String();
+	String DataRowClass = "RooTrax.VDB.DB.PropertiesRow";
+	EntityName = "roottrax property";
+}
+
+[SemanticEntity("roottrax metabase method")]
+[SemanticEntity("roottrax method")]
+prototype RootTraxMethod : SemanticEntityBase
+{
+	RootTraxObject Object = null;
+	String MethodId = new String();
+	String MethodName = new String();
+	String StoredProcedure = new String();
+	String DataRowClass = "RooTrax.VDB.DB.MethodsRow";
+	EntityName = "roottrax method";
+}
+
+[SemanticEntity("roottrax metabase relationship")]
+[SemanticEntity("roottrax relationship")]
+prototype RootTraxRelationship : SemanticEntityBase
+{
+	RootTraxObject SourceObject = null;
+	RootTraxObject TargetObject = null;
+	String RelationshipId = new String();
+	String RelationshipName = new String();
+	String DataRowClass = "RooTrax.VDB.DB.RelationshipsRow";
+	EntityName = "roottrax relationship";
+}

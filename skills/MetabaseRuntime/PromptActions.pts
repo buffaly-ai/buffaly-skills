@@ -1,0 +1,81 @@
+[SemanticProgram.InfinitivePhrase("to use roottrax metabase for application scaffolding")]
+[SemanticProgram.InfinitivePhrase("to plan roottrax metabase application and object workflow")]
+[SemanticProgram.InfinitivePhrase("to use roottrax metabase")]
+prototype ToUseRootTraxMetabaseSkill : PromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/MetabaseRuntime/Prompts/UseRootTraxMetabase.prompt.md";
+	Description = @"Loads consolidated RootTrax Metabase guidance for application/project/feature/object planning and data+repository generation workflows.";
+}
+
+[SemanticProgram.InfinitivePhrase("to run the local roottrax metabase jsonws workflow")]
+[SemanticProgram.InfinitivePhrase("to use local metabase jsonws runbook")]
+prototype ToRunLocalRootTraxMetabaseJsonWsWorkflowSkill : PromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/MetabaseRuntime/Prompts/RunLocalRootTraxMetabaseJsonWsWorkflow.prompt.md";
+	Description = @"Loads the local Metabase JSONWS runbook for Buffaly.Development including endpoint, methods, payload contract, and execution checklist.";
+}
+
+[SemanticProgram.InfinitivePhrase("to launch metabase locally")]
+[SemanticProgram.InfinitivePhrase("to start local metabase with dotnet run")]
+[SemanticProgram.InfinitivePhrase("to run rootrax metabase locally with http fallback")]
+prototype ToLaunchLocalRootTraxMetabaseSkill : PromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/MetabaseRuntime/Prompts/LaunchLocalMetabase.prompt.md";
+	Description = @"Loads a practical runbook to launch RooTrax Metabase locally via dotnet with HTTP fallback when IIS Express/HTTPS binding fails.";
+}
+
+[SemanticProgram.InfinitivePhrase("to create and launch a mermaid diagram artifact")]
+[SemanticProgram.InfinitivePhrase("to use the local mermaid artifact viewer workflow")]
+[SemanticProgram.InfinitivePhrase("to save a mermaid diagram file and open it with file query")]
+prototype ToUseMermaidDiagramArtifactWorkflowSkill : PromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/MetabaseRuntime/Prompts/UseMermaidDiagramArtifactWorkflow.prompt.md";
+	Description = @"Loads a runbook for creating Mermaid diagram artifacts, saving them under Metabase tools, and launching them through the local file-based viewer.";
+}
+
+[SemanticProgram.InfinitivePhrase("to launch and verify local metabase")]
+[SemanticProgram.InfinitivePhrase("to start local metabase and validate http endpoint")]
+prototype ToLaunchAndVerifyLocalMetabase : PromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/MetabaseRuntime/Prompts/LaunchLocalMetabase.prompt.md";
+	Description = @"Loads the local Metabase launch workflow and includes endpoint verification guidance for localhost health checks.";
+}
+
+[SemanticProgram.InfinitivePhrase("to audit roottrax admin portal architecture")]
+[SemanticProgram.InfinitivePhrase("to create a roottrax portal implementation guide")]
+[SemanticProgram.InfinitivePhrase("to use roottrax portal architecture master guide")]
+[SemanticProgram.InfinitivePhrase("how to create or maintain a rootrax admin portal")]
+prototype ToUseRootTraxPortalArchitectureMasterGuide : PromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/MetabaseRuntime/Prompts/RootTraxPortalArchitectureMasterGuide.prompt.md";
+	Description = @"Loads the canonical audit and implementation guide for RootTrax-style admin portals (layout, KCs scripts, PageLayouts routing, kScript pages, and shared base classes).";
+}
+
+[SemanticProgram.InfinitivePhrase("to add a related objects tab to a roottrax details page")]
+[SemanticProgram.InfinitivePhrase("to implement related objects tabs in roottrax kscript details pages")]
+prototype ToAddRelatedObjectsTabToRootTraxDetailsPageGuide : PromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/MetabaseRuntime/Prompts/AddRelatedObjectsTabToRootTraxDetailsPage.prompt.md";
+	Description = @"Loads implementation guidance for adding a Related Objects tab to RootTrax SimpleObjectDetails pages, including reference patterns, initializer wiring, JsonWs methods, and verification steps.";
+}
