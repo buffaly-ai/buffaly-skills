@@ -9,6 +9,21 @@ prototype LeadsAdmin_GetDetails : FeedingFrenzyJsonWsSkillAction
 	}
 }
 
+prototype LeadsAdmin_GetGrid : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["Search"] = Search;
+		args["SortColumn"] = SortColumn;
+		args["SortAscending"] = SortAscending ? "true" : "false";
+		args["SkipRows"] = SkipRows.ToString();
+		args["NumRows"] = NumRows.ToString();
+		return service.CallUiRoute("leads-admin/get-grid", args);
+	}
+}
+
 prototype LeadsAdmin_GetGridCount : FeedingFrenzyJsonWsSkillAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, string Search) : string

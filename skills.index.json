@@ -535,16 +535,12 @@
     {
       "SkillName": "FeedingFrenzyJsonWs",
       "Title": "Feeding Frenzy JsonWs",
-      "Description": "Feeding Frenzy JSON web service wrappers for selected lead, source, tag, and sales representative surfaces.",
+      "Description": "Buffaly skill package for Feeding Frenzy JsonWs.",
       "Version": "0.1.0",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
-        "feeding frenzy json ws",
-        "feeding frenzy json web service",
-        "call feeding frenzy service",
-        "search feeding frenzy leads",
-        "feeding frenzy route wrappers",
-        "get feeding frenzy lead"
+        "Feeding Frenzy JsonWs",
+        "FeedingFrenzyJsonWs"
       ],
       "Path": "skills/FeedingFrenzyJsonWs",
       "Files": [
@@ -574,7 +570,7 @@
         },
         {
           "Path": "LeadsAdmin.pts",
-          "Sha256": "57bc07d1a368dae4fdb84a2c502527c7000c5cdbfae3c3b0ca6e6a2b2e908b8f"
+          "Sha256": "7b1a6180f418519bd865c33c7b1e720e638599736b26e8fb62a167066b027554"
         },
         {
           "Path": "LeadsAdmin.pts.md",
@@ -634,13 +630,8 @@
         }
       ],
       "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [
-        "reference/skill-directory"
-      ],
-      "Prerequisites": [
-        "Configured FeedingFrenzy.ApiKey or FeedingFrenzy.Local.ApiKey UserSecrets value for protected calls",
-        "Network access to the configured Feeding Frenzy service endpoint"
-      ],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
       "IsDefaultPackage": true
     },
     {
