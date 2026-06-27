@@ -1,0 +1,54 @@
+[SemanticProgram.InfinitivePhrase("to create a roottrax metabase object using jsonws")]
+[SemanticProgram.InfinitivePhrase("to add a metabase object and id property using jsl1")]
+prototype ToCreateRootTraxMetabaseObjectJsonWsSkill : PromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/MetabaseJsonWs/Prompts/CreateRootTraxMetabaseObjectJsonWs.prompt.md";
+	Description = @"Loads the JSL1 JSONWS workflow for creating a RootTrax Metabase object, adding its ID property, and validating object/property state.";
+}
+
+[SemanticProgram.InfinitivePhrase("to add roottrax metabase object properties using jsonws")]
+[SemanticProgram.InfinitivePhrase("to model metabase object fields through jsl1")]
+prototype ToAddRootTraxMetabasePropertiesJsonWsSkill : PromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/MetabaseJsonWs/Prompts/AddRootTraxMetabasePropertiesJsonWs.prompt.md";
+	Description = @"Loads the JSONWS workflow for adding, reviewing, and updating RootTrax Metabase object properties.";
+}
+
+[SemanticProgram.InfinitivePhrase("to materialize a roottrax metabase object database using jsonws")]
+[SemanticProgram.InfinitivePhrase("to implement metabase object data layer through jsl1")]
+prototype ToMaterializeRootTraxMetabaseDatabaseJsonWsSkill : PromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/MetabaseJsonWs/Prompts/MaterializeRootTraxMetabaseDatabaseJsonWs.prompt.md";
+	Description = @"Loads the JSONWS workflow for linking context and implementing a Metabase object or feature into the project database.";
+}
+
+[SemanticProgram.InfinitivePhrase("to generate roottrax metabase stored procedures repository business jsonws and kscript using jsonws")]
+[SemanticProgram.InfinitivePhrase("to materialize metabase repository business jsonws and kscript through jsl1")]
+prototype ToMaterializeRootTraxMetabaseCodeJsonWsSkill : PromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/MetabaseJsonWs/Prompts/MaterializeRootTraxMetabaseCodeJsonWs.prompt.md";
+	Description = @"Loads the JSONWS workflow for stored procedures, repository, business layer, JsonWs class, UI, kScript pages, and default admin KS generation.";
+}
+
+[SemanticProgram.InfinitivePhrase("to run the end to end roottrax metabase jsonws scaffold workflow")]
+[SemanticProgram.InfinitivePhrase("to create and materialize a metabase object using jsl1")]
+prototype ToRunRootTraxMetabaseJsonWsScaffoldWorkflowSkill : PromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/MetabaseJsonWs/Prompts/RunRootTraxMetabaseJsonWsScaffoldWorkflow.prompt.md";
+	Description = @"Loads the end-to-end preferred Metabase JSONWS workflow for object modeling, properties, database materialization, repository/business/JsonWs generation, and kScript/UI materialization.";
+}
