@@ -19,7 +19,7 @@ prototype ToLoginTebraIfNeeded : TebraWebSkillAction
 {
 	Description = @"Thin wrapper over TebraWebTools.LoginIfNeeded(_opsAgent, profileName, email, passwordSecret). passwordSecret should be a StringRef from ToGetUserSecret. Returns redacted JSON.";
 
-	function Execute(string profileName, string email, StringRef passwordSecret) : string
+	function Execute(string profileName, string email, string passwordSecret) : string
 	{
 		return TebraWebTools.LoginIfNeeded(_opsAgent, profileName, email, passwordSecret);
 	}
