@@ -18,20 +18,9 @@ param(
     [int]$Cols = 3,
     [string]$Width = "4",
     [string]$Height = "3",
-   [string]$StartX = "-5",
-   [string]$StartY = "1",
-   [string]$StartZ = "5"
-   [string]$Color = "",
-   [string]$CameraX = "0",
-   [string]$CameraY = "10",
-   [string]$CameraZ = "-20",
-   [string]$LookX = "0",
-   [string]$LookY = "0",
-   [string]$LookZ = "0",
-   [string]$FOV = "60",
-   [string]$Angle = "0",
-   [string]$Radius = "25",
-   [string]$CameraHeight = "15"
+    [string]$StartX = "-5",
+    [string]$StartY = "1",
+    [string]$StartZ = "5"
 )
 
 function Send-Command($cmd) {
@@ -55,9 +44,7 @@ function Build-Position($x, $y, $z) {
 }
 
 function Build-SpawnCommand($type, $x, $y, $z) {
-    $colorPart = ""
-    if ($Color) { $colorPart = ',"color":"' + $Color + '"' }
-    return '{"command":"Spawn","type":"' + $type + '","position":' + (Build-Position $x $y $z) + $colorPart + '}'
+    return '{"command":"Spawn","type":"' + $type + '","position":' + (Build-Position $x $y $z) + '}'
 }
 
 if ($Mode -eq "Single") {
@@ -66,11 +53,8 @@ if ($Mode -eq "Single") {
         "GetSceneState" { $json = '{"command":"GetSceneState"}' }
         "Spawn" { $json = Build-SpawnCommand $ObjectType $X $Y $Z }
         "Move" { $json = '{"command":"Move","objectId":"' + $ObjectId + '","position":' + (Build-Position $X $Y $Z) + '}' }
-       "Destroy" { $json = '{"command":"Destroy","objectId":"' + $ObjectId + '"}' }
-       "SetCamera" { $json = '{"command":"SetCamera","cameraPosition":[' + $CameraX + ',' + $CameraY + ',' + $CameraZ + '],"lookAt":[' + $LookX + ',' + $LookY + ',' + $LookZ + '],"fov":' + $FOV + '}' }
-       "OrbitCamera" { $json = '{"command":"OrbitCamera","angle":' + $Angle + ',"radius":' + $Radius + ',"height":' + $CameraHeight + ',"center":[' + $LookX + ',' + $LookY + ',' + $LookZ + ']}' }
-       "SetColor" { $json = '{"command":"SetColor","objectId":"' + $ObjectId + '","color":"' + $Color + '"}' }
-       default { $json = '{"command":"GetSceneState"}' }
+        "Destroy" { $json = '{"command":"Destroy","objectId":"' + $ObjectId + '"}' }
+        default { $json = '{"command":"GetSceneState"}' }
     }
     $result = Send-Command $json
     Write-Output $result

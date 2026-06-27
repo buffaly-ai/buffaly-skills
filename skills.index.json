@@ -1683,10 +1683,11 @@
     {
       "SkillName": "Unity",
       "Title": "Unity",
-      "Description": "UnityInteractionSkill",
+      "Description": "Buffaly skill package for Unity.",
       "Version": "0.1.0",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "Unity",
         "Unity"
       ],
       "Path": "skills/Unity",
@@ -1705,7 +1706,7 @@
         },
         {
           "Path": "unity-host-client.ps1",
-          "Sha256": "1fc143df36aaa7a5deaa9d91e82ac87bb9bcfe466c224f1f7aea487c158716db"
+          "Sha256": "fcca87006fca3c7855cecffb8d54a6fe3853f03390eddba892733473a2088bee"
         }
       ],
       "EntryPoint": "index.pts",
