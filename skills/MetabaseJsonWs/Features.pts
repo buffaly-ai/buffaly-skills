@@ -1,0 +1,135 @@
+prototype MetabaseFeatures_GetFeatures : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Features.GetFeatures().";
+	function Execute(MetabaseJsonWsService service) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Features.ashx", "GetFeatures", new JsonObject());
+	}
+}
+
+prototype MetabaseFeatures_GetFeature : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Features.GetFeature(FeatureID).";
+	function Execute(MetabaseJsonWsService service, int FeatureID) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["FeatureID"] = FeatureID;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Features.ashx", "GetFeature", args);
+	}
+}
+
+prototype MetabaseFeatures_GetFeatureByFeatureName : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Features.GetFeatureByFeatureName(FeatureName).";
+	function Execute(MetabaseJsonWsService service, string FeatureName) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["FeatureName"] = FeatureName;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Features.ashx", "GetFeatureByFeatureName", args);
+	}
+}
+
+prototype MetabaseFeatures_InsertFeature : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Features.InsertFeature(...).";
+	function Execute(MetabaseJsonWsService service, string FeatureName, string Version, bool IsEnabled, string SettingsAssembly, string SettingsClass, string Settings, string Data) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["FeatureName"] = FeatureName; args["Version"] = Version; args["IsEnabled"] = IsEnabled; args["SettingsAssembly"] = SettingsAssembly; args["SettingsClass"] = SettingsClass; args["Settings"] = StringUtil.IsEmpty(Settings) ? "{}" : Settings; args["Data"] = StringUtil.IsEmpty(Data) ? "{}" : Data;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Features.ashx", "InsertFeature", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to materialize a roottrax metabase object through jsonws")]
+[SemanticProgram.InfinitivePhrase("to implement a roottrax metabase object into project database through jsonws")]
+prototype MetabaseFeatures_ImplementObjectIntoProjectDatabase : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Features.ImplementObjectIntoProjectDatabase(ObjectID, ProjectID).";
+	function Execute(MetabaseJsonWsService service, int ObjectID, int ProjectID) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		if (ObjectID <= 0) return "Error: ObjectID must be > 0.";
+		if (ProjectID <= 0) return "Error: ProjectID must be > 0.";
+		JsonObject args = new JsonObject(); args["ObjectID"] = ObjectID; args["ProjectID"] = ProjectID;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Features.ashx", "ImplementObjectIntoProjectDatabase", args);
+	}
+}
+
+prototype MetabaseFeatures_ImplementObjectUIIntoProject : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Features.ImplementObjectUIIntoProject(ObjectID, ProjectID).";
+	function Execute(MetabaseJsonWsService service, int ObjectID, int ProjectID) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["ObjectID"] = ObjectID; args["ProjectID"] = ProjectID;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Features.ashx", "ImplementObjectUIIntoProject", args);
+	}
+}
+
+prototype MetabaseFeatures_ImplementFeatureIntoProjectDatabase : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Features.ImplementFeatureIntoProjectDatabase(FeatureID, ProjectID).";
+	function Execute(MetabaseJsonWsService service, int FeatureID, int ProjectID) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["FeatureID"] = FeatureID; args["ProjectID"] = ProjectID;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Features.ashx", "ImplementFeatureIntoProjectDatabase", args);
+	}
+}
+
+prototype MetabaseFeatures_ImplementRepositoriesIntoProject : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Features.ImplementRepositoriesIntoProject(FeatureID, ProjectID).";
+	function Execute(MetabaseJsonWsService service, int FeatureID, int ProjectID) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["FeatureID"] = FeatureID; args["ProjectID"] = ProjectID;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Features.ashx", "ImplementRepositoriesIntoProject", args);
+	}
+}
+
+prototype MetabaseFeatures_ImplementBusinessIntoProject : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Features.ImplementBusinessIntoProject(FeatureID, ProjectID).";
+	function Execute(MetabaseJsonWsService service, int FeatureID, int ProjectID) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["FeatureID"] = FeatureID; args["ProjectID"] = ProjectID;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Features.ashx", "ImplementBusinessIntoProject", args);
+	}
+}
+
+prototype MetabaseFeatures_ImplementFeatureUIIntoProject : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Features.ImplementFeatureIntoProject2(FeatureID, ProjectID).";
+	function Execute(MetabaseJsonWsService service, int FeatureID, int ProjectID) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["FeatureID"] = FeatureID; args["ProjectID"] = ProjectID;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Features.ashx", "ImplementFeatureIntoProject2", args);
+	}
+}
+
+prototype MetabaseFeatures_ImplementKScriptPagesIntoProject : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Features.ImplementkScriptPagesIntoProject(FeatureID, ProjectID).";
+	function Execute(MetabaseJsonWsService service, int FeatureID, int ProjectID) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["FeatureID"] = FeatureID; args["ProjectID"] = ProjectID;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Features.ashx", "ImplementkScriptPagesIntoProject", args);
+	}
+}
+
+prototype MetabaseFeatures_ImplementDefaultAdminKsIntoProject : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Features.ImplementDefaultAdminKsIntoProject(FeatureID, ProjectID).";
+	function Execute(MetabaseJsonWsService service, int FeatureID, int ProjectID) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["FeatureID"] = FeatureID; args["ProjectID"] = ProjectID;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Features.ashx", "ImplementDefaultAdminKsIntoProject", args);
+	}
+}

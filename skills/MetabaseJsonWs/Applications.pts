@@ -1,0 +1,44 @@
+prototype MetabaseApplications_GetAll : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Applications.GetAll().";
+	function Execute(MetabaseJsonWsService service) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Applications.ashx", "GetAll", new JsonObject());
+	}
+}
+
+prototype MetabaseApplications_GetApplication : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Applications.GetApplication(ApplicationID).";
+	function Execute(MetabaseJsonWsService service, int ApplicationID) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["ApplicationID"] = ApplicationID;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Applications.ashx", "GetApplication", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to insert a roottrax metabase application through jsonws")]
+prototype MetabaseApplications_InsertApplication : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Applications.InsertApplication(ApplicationName, Data).";
+	function Execute(MetabaseJsonWsService service, string ApplicationName, string Data) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		if (StringUtil.IsEmpty(ApplicationName)) return "Error: ApplicationName is required.";
+		JsonObject args = new JsonObject(); args["ApplicationName"] = ApplicationName; args["Data"] = StringUtil.IsEmpty(Data) ? "{}" : Data;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Applications.ashx", "InsertApplication", args);
+	}
+}
+
+prototype MetabaseApplications_UpdateApplication : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Applications.UpdateApplication(ApplicationID, ApplicationName, Data).";
+	function Execute(MetabaseJsonWsService service, int ApplicationID, string ApplicationName, string Data) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["ApplicationID"] = ApplicationID; args["ApplicationName"] = ApplicationName; args["Data"] = StringUtil.IsEmpty(Data) ? "{}" : Data;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Applications.ashx", "UpdateApplication", args);
+	}
+}

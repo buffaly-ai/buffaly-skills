@@ -1,0 +1,95 @@
+import Buffaly.Agent.Tools.Http Buffaly.Agent.Tools.Http.JsonWsHelper JsonWsHelper;
+import BasicUtilities BasicUtilities.JsonObject JsonObject;
+import BasicUtilities BasicUtilities.StringUtil StringUtil;
+
+prototype MetabaseJsonWsSkillAction : OpsAction
+{
+	Description = @"Base action type for RootTrax Metabase JSONWS/JSL1 service tools.";
+}
+
+[SemanticEntity("metabase json ws skill")]
+[SemanticEntity("metabase jsonws skill")]
+[SemanticEntity("roottrax metabase jsl1 skill")]
+prototype MetabaseJsonWsSkill : SkillEntity
+{
+	Description = "JSL1 JSONWS skill for RootTrax Metabase application, project, object, property, and materialization endpoints.";
+	ActionRoot = MetabaseJsonWsSkillAction;
+}
+
+prototype MetabaseJsonWsService : Service
+{
+	ServiceName = "MetabaseJsonWsService";
+	Scope = "per-binding";
+	Description = @"Classic RootTrax Metabase JSONWS service. Calls /JsonWS/<service>.ashx methods through JsonWsHelper.CallJsonWsSecure. TokenKey may be empty for local unauthenticated Metabase.";
+
+	String BaseUrl = new String();
+	String JsonWsPath = "JsonWS";
+	String TokenKey = "";
+
+	function Initialize() : string
+	{
+		if (StringUtil.IsEmpty(this.BaseUrl))
+			return "Error: MetabaseJsonWsService.BaseUrl must be set on the binding.";
+		return "MetabaseJsonWsService initialized (BaseUrl = " + this.BaseUrl + ").";
+	}
+
+	function BuildJsonWsUrl(string serviceFileName) : string
+	{
+		if (StringUtil.IsEmpty(this.BaseUrl))
+			return "Error: MetabaseJsonWsService.BaseUrl must be set on the binding.";
+		if (StringUtil.IsEmpty(serviceFileName))
+			return "Error: serviceFileName is required.";
+
+		string root = this.BaseUrl;
+		if (StringUtil.EndsWith(root, "/"))
+			root = root.Substring(0, root.Length - 1);
+
+		string path = this.JsonWsPath;
+		if (StringUtil.IsEmpty(path)) path = "JsonWS";
+		if (StringUtil.EndsWith(path, "/"))
+			path = path.Substring(0, path.Length - 1);
+
+		return root + "/" + path + "/" + serviceFileName;
+	}
+
+	function CallMetabaseJsonWs(string serviceFileName, string methodName, JsonObject args) : string
+	{
+		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
+		string url = this.BuildJsonWsUrl(serviceFileName);
+		return JsonWsHelper.CallJsonWsSecure(url, methodName, this.TokenKey, normalizedArgs);
+	}
+}
+
+[SemanticEntity("local roottrax metabase json ws service")]
+[SemanticEntity("localhost metabase json ws")]
+partial prototype MetabaseJsonWsService#Localhost_5197 : MetabaseJsonWsService
+{
+	BaseUrl = "http://localhost:5197";
+	JsonWsPath = "JsonWS";
+	TokenKey = "";
+	Description = "Local RootTrax Metabase JSONWS binding for the HTTP fallback runtime.";
+}
+
+[SemanticProgram.InfinitivePhrase("to call a roottrax metabase jsonws method")]
+prototype ToCallMetabaseJsonWsMethod : MetabaseJsonWsSkillAction
+{
+	Description = @"Low-level escape hatch. service - MetabaseJsonWsService binding. serviceFileName - for example RooTrax.VDB.Objects.ashx. methodName - JSONWS method. argsJson - optional JSON object string.";
+
+	function Execute(MetabaseJsonWsService service, string serviceFileName, string methodName, string argsJson) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		if (StringUtil.IsEmpty(serviceFileName)) return "Error: serviceFileName is required.";
+		if (StringUtil.IsEmpty(methodName)) return "Error: methodName is required.";
+		JsonObject args = StringUtil.IsEmpty(argsJson) ? new JsonObject() : new JsonObject(argsJson);
+		return service.CallMetabaseJsonWs(serviceFileName, methodName, args);
+	}
+}
+
+include "Applications.pts";
+include "Projects.pts";
+include "Objects.pts";
+include "Properties.pts";
+include "Features.pts";
+
+
+

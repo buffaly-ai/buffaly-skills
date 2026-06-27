@@ -1,0 +1,80 @@
+[SemanticProgram.InfinitivePhrase("to get roottrax metabase objects through jsonws")]
+prototype MetabaseObjects_GetAll : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Objects.GetAll().";
+	function Execute(MetabaseJsonWsService service) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Objects.ashx", "GetAll", new JsonObject());
+	}
+}
+
+prototype MetabaseObjects_GetObject : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Objects.GetObject(ObjectID).";
+	function Execute(MetabaseJsonWsService service, int ObjectID) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["ObjectID"] = ObjectID;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Objects.ashx", "GetObject", args);
+	}
+}
+
+prototype MetabaseObjects_GetObjectsByObjectName : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Objects.GetObjectsByObjectName(ObjectName).";
+	function Execute(MetabaseJsonWsService service, string ObjectName) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["ObjectName"] = ObjectName;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Objects.ashx", "GetObjectsByObjectName", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to insert a roottrax metabase object through jsonws")]
+prototype MetabaseObjects_InsertObject : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Objects.InsertObject(ObjectName, ObjectsName, FriendlyObjectName, FriendlyObjectsName, ApplicationID, Data).";
+	function Execute(MetabaseJsonWsService service, string ObjectName, string ObjectsName, string FriendlyObjectName, string FriendlyObjectsName, int ApplicationID, string Data) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		if (StringUtil.IsEmpty(ObjectName)) return "Error: ObjectName is required.";
+		JsonObject args = new JsonObject();
+		args["ObjectName"] = ObjectName; args["ObjectsName"] = ObjectsName; args["FriendlyObjectName"] = FriendlyObjectName; args["FriendlyObjectsName"] = FriendlyObjectsName; args["ApplicationID"] = ApplicationID; args["Data"] = StringUtil.IsEmpty(Data) ? "{}" : Data;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Objects.ashx", "InsertObject", args);
+	}
+}
+
+prototype MetabaseObjects_InsertStandardFields : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Objects.InsertStandardFields(ObjectID).";
+	function Execute(MetabaseJsonWsService service, int ObjectID) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["ObjectID"] = ObjectID;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Objects.ashx", "InsertStandardFields", args);
+	}
+}
+
+prototype MetabaseObjects_UpdateObject : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Objects.UpdateObject(...).";
+	function Execute(MetabaseJsonWsService service, int ObjectID, string ObjectName, string ObjectsName, string FriendlyObjectName, string FriendlyObjectsName, int ApplicationID, string Data) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["ObjectID"] = ObjectID; args["ObjectName"] = ObjectName; args["ObjectsName"] = ObjectsName; args["FriendlyObjectName"] = FriendlyObjectName; args["FriendlyObjectsName"] = FriendlyObjectsName; args["ApplicationID"] = ApplicationID; args["Data"] = StringUtil.IsEmpty(Data) ? "{}" : Data;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Objects.ashx", "UpdateObject", args);
+	}
+}
+
+prototype MetabaseObjects_UpdateDefaultProjectID : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Objects.UpdateDefaultProjectID(ObjectID, ProjectID).";
+	function Execute(MetabaseJsonWsService service, int ObjectID, int ProjectID) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["ObjectID"] = ObjectID; args["ProjectID"] = ProjectID;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Objects.ashx", "UpdateDefaultProjectID", args);
+	}
+}

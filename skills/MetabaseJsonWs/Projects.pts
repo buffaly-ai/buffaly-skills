@@ -1,0 +1,45 @@
+prototype MetabaseProjects_GetProjects : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Projects.GetProjects().";
+	function Execute(MetabaseJsonWsService service) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Projects.ashx", "GetProjects", new JsonObject());
+	}
+}
+
+prototype MetabaseProjects_GetProject : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Projects.GetProject(ProjectID).";
+	function Execute(MetabaseJsonWsService service, int ProjectID) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["ProjectID"] = ProjectID;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Projects.ashx", "GetProject", args);
+	}
+}
+
+prototype MetabaseProjects_GetProjectByProjectName : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Projects.GetProjectByProjectName(ProjectName).";
+	function Execute(MetabaseJsonWsService service, string ProjectName) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["ProjectName"] = ProjectName;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Projects.ashx", "GetProjectByProjectName", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to insert a roottrax metabase project through jsonws")]
+prototype MetabaseProjects_InsertProject : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Projects.InsertProject(...).";
+	function Execute(MetabaseJsonWsService service, string ProjectName, int DatabaseID, string BusinessLayerNamespace, string DBLayerNamespace, string UILayerNamespace, string RootDirectory, string DBScriptDirectory, string JsonWsDirectory, string kScriptDirectory, string Data) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		if (StringUtil.IsEmpty(ProjectName)) return "Error: ProjectName is required.";
+		JsonObject args = new JsonObject();
+		args["ProjectName"] = ProjectName; args["DatabaseID"] = DatabaseID; args["BusinessLayerNamespace"] = BusinessLayerNamespace; args["DBLayerNamespace"] = DBLayerNamespace; args["UILayerNamespace"] = UILayerNamespace; args["RootDirectory"] = RootDirectory; args["DBScriptDirectory"] = DBScriptDirectory; args["JsonWsDirectory"] = JsonWsDirectory; args["kScriptDirectory"] = kScriptDirectory; args["Data"] = StringUtil.IsEmpty(Data) ? "{}" : Data;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Projects.ashx", "InsertProject", args);
+	}
+}

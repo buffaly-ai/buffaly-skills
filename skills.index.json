@@ -1060,6 +1060,60 @@
       "IsDefaultPackage": true
     },
     {
+      "SkillName": "MetabaseJsonWs",
+      "Title": "Metabase JsonWs",
+      "Description": "JSL1 JSONWS skill for RootTrax Metabase application, project, object, property, and materialization endpoints.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "metabase jsonws",
+        "metabase json ws",
+        "roottrax metabase jsl1",
+        "roottrax metabase jsonws"
+      ],
+      "Path": "skills/MetabaseJsonWs",
+      "Files": [
+        {
+          "Path": "Applications.pts",
+          "Sha256": "6b6382ca313cd66fd69d75428845246d7fd36d35eee4ef139a29bc9d03e336a2"
+        },
+        {
+          "Path": "Features.pts",
+          "Sha256": "4711f340b596b99df4d69970ee310624fca8d4ea0b5b4bdc0121e7345a00e764"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "2857a0d060e72914e66336bb5a100dfe25976b9858917505517b0b07a45d712e"
+        },
+        {
+          "Path": "Objects.pts",
+          "Sha256": "81c61dabc3edf787f9f7ea2fd8bb9d806b0a088258988bcbb818bb62e284d226"
+        },
+        {
+          "Path": "Projects.pts",
+          "Sha256": "dfdee94e905c960e74128b4f389952511f36843fa9c9785dd60bb8cc2429feb2"
+        },
+        {
+          "Path": "Properties.pts",
+          "Sha256": "69b5cec8a2de2009a57139510f9902d85154893293e9ad652f373f44e28efe63"
+        },
+        {
+          "Path": "README.md",
+          "Sha256": "3a4ac9860560e537b3f14b5f1cdffbbcdbbccb849c62edab86980452b2e6ed34"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "0f3838ba4e4e1d3679553a1823434d09176977e8bb7f94e0e92db983a49e4a05"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [
+        "Running RootTrax Metabase web host, for example http://localhost:5197"
+      ],
+      "IsDefaultPackage": false
+    },
+    {
       "SkillName": "MetabaseRuntime",
       "Title": "Metabase Runtime",
       "Description": "DLL-backed RootTrax Metabase runtime skill for applications, projects, objects, and generation/materialization workflows.",

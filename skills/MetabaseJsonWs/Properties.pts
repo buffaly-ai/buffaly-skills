@@ -1,0 +1,48 @@
+prototype MetabaseProperties_GetPropertiesByObjectID : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Properties.GetPropertiesByObjectID(ObjectID).";
+	function Execute(MetabaseJsonWsService service, int ObjectID) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["ObjectID"] = ObjectID;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Properties.ashx", "GetPropertiesByObjectID", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to insert a roottrax metabase property through jsonws")]
+prototype MetabaseProperties_InsertProperty : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Properties.InsertProperty(ObjectID, PropertyName, FriendlyPropertyName, TypeID, IsNullable, DefaultValue, IsUnique, IsNaturalKey).";
+	function Execute(MetabaseJsonWsService service, int ObjectID, string PropertyName, string FriendlyPropertyName, int TypeID, bool IsNullable, string DefaultValue, bool IsUnique, bool IsNaturalKey) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		if (ObjectID <= 0) return "Error: ObjectID must be > 0.";
+		if (StringUtil.IsEmpty(PropertyName)) return "Error: PropertyName is required.";
+		JsonObject args = new JsonObject();
+		args["ObjectID"] = ObjectID; args["PropertyName"] = PropertyName; args["FriendlyPropertyName"] = FriendlyPropertyName; args["TypeID"] = TypeID; args["IsNullable"] = IsNullable; args["DefaultValue"] = DefaultValue; args["IsUnique"] = IsUnique; args["IsNaturalKey"] = IsNaturalKey;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Properties.ashx", "InsertProperty", args);
+	}
+}
+
+prototype MetabaseProperties_UpdateProperty : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Properties.UpdateProperty(...).";
+	function Execute(MetabaseJsonWsService service, int PropertyID, int ObjectID, string PropertyName, string FriendlyPropertyName, int TypeID, bool IsNullable, string DefaultValue, bool IsUnique, bool IsNaturalKey) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["PropertyID"] = PropertyID; args["ObjectID"] = ObjectID; args["PropertyName"] = PropertyName; args["FriendlyPropertyName"] = FriendlyPropertyName; args["TypeID"] = TypeID; args["IsNullable"] = IsNullable; args["DefaultValue"] = DefaultValue; args["IsUnique"] = IsUnique; args["IsNaturalKey"] = IsNaturalKey;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Properties.ashx", "UpdateProperty", args);
+	}
+}
+
+prototype MetabaseProperties_RemoveProperty : MetabaseJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over RooTrax.VDB.Properties.RemoveProperty(PropertyID).";
+	function Execute(MetabaseJsonWsService service, int PropertyID) : string
+	{
+		if (service == null) return "Error: MetabaseJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["PropertyID"] = PropertyID;
+		return service.CallMetabaseJsonWs("RooTrax.VDB.Properties.ashx", "RemoveProperty", args);
+	}
+}
