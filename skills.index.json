@@ -637,44 +637,35 @@
     {
       "SkillName": "FFmpeg",
       "Title": "FFmpeg Media Tools",
-      "Description": "FFmpeg and ffprobe media recording, validation, transformation, and session artifact publishing actions.",
+      "Description": "Buffaly skill package for FFmpeg Media Tools.",
       "Version": "0.1.0",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
-        "ffmpeg media tools",
-        "record desktop video",
-        "record browser demo",
-        "probe media file",
-        "normalize video for web",
-        "extract video thumbnail",
-        "trim video artifact",
-        "compress video artifact",
-        "create video contact sheet",
-        "add text overlay to video"
+        "FFmpeg Media Tools",
+        "FFmpeg"
       ],
       "Path": "skills/FFmpeg",
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "2f3364173dcdf2f1dde559e04d41d0177958643e9062f1888d9bbb1fe043a5a9"
+          "Sha256": "fc2fbc27f9794cb1545b6adce7e53dc7b6bc2d002a41970c380aaa8ea22269a4"
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "5efb556074e3bd3f367d7b801b9638645f3220173f08e03c2037faa9244109ca"
+          "Sha256": "81d185c293526b969b1a2465e882d8ddfe80f9fbb230d9534c54d313f82a21f9"
+        },
+        {
+          "Path": "Prompts/ToReconstructVisualStoryFromRawVideo.prompt.md",
+          "Sha256": "bb01abd77509f495464f386d21f7375740c6d8b2a6e034c2d06e8a5873c1dd85"
         },
         {
           "Path": "SKILL.md",
-          "Sha256": "e41f453caf160462c3b24a6f2480fc4d188b74acf3a53dcd1c6378e03ccf2e40"
+          "Sha256": "c01480f9b38ed6c048e9ee7f76d1dd89ca2f7b578fc196c57d914675693e560d"
         }
       ],
       "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [
-        "reference/skill-directory"
-      ],
-      "Prerequisites": [
-        "FFmpeg installed on the host",
-        "ffmpeg and ffprobe available at C:\\ffmpeg\\bin or provided explicitly"
-      ],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
       "IsDefaultPackage": true
     },
     {

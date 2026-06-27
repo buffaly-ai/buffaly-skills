@@ -14,7 +14,7 @@ Use semantic file refs in final assistant responses:
 [[file:C:/inetpub/wwwroot/matt.buffaly.local/data/sessions/<SessionKey>/<filename>|<filename>]]
 ```
 
-The renderer can detect `.mp4`, `.png`, `.jpg`, `.gif`, `.webp`, `.mp3`, or `.wav` and add inline previews.
+The renderer can detect `.mp4`, `.png`, `.jpg`, `.gif`, `.webp`, `.m4a`, `.mp3`, or `.wav` and add inline previews.
 
 ## FFmpeg defaults
 
@@ -22,6 +22,8 @@ The renderer can detect `.mp4`, `.png`, `.jpg`, `.gif`, `.webp`, `.mp3`, or `.wa
 - Pixel format: yuv420p
 - MP4 dimensions are forced even with `scale=trunc(iw/2)*2:trunc(ih/2)*2`
 - Browser-safe outputs should be validated with ffprobe before returning success.
+- Extracted audio defaults to `.m4a` / `audio/mp4` using AAC and is staged separately under `artifacts/audio/` without mutating the source video.
+- Desktop/browser recording actions record to MKV first, then finalize MP4 previews. MKV is kept as the recoverable source artifact for manually stopped or interrupted captures.
 
 ## High-value actions
 
@@ -29,9 +31,10 @@ The renderer can detect `.mp4`, `.png`, `.jpg`, `.gif`, `.webp`, `.mp3`, or `.wa
 2. `ToProbeFFmpegMediaFile`
 3. `ToRecordFFmpegDesktopVideoArtifact`
 4. `ToRecordFFmpegBrowserDemoArtifact`
-5. `ToNormalizeFFmpegVideoForWebArtifact`
-6. `ToExtractFFmpegVideoThumbnailArtifact`
-7. `ToTrimFFmpegVideoArtifact`
-8. `ToCompressFFmpegVideoArtifact`
-9. `ToCreateFFmpegContactSheetArtifact`
-10. `ToAddFFmpegTextOverlayArtifact`
+5. `ToFinalizeFFmpegMkvRecordingArtifact`
+6. `ToNormalizeFFmpegVideoForWebArtifact`
+7. `ToExtractFFmpegVideoThumbnailArtifact`
+8. `ToTrimFFmpegVideoArtifact`
+9. `ToCompressFFmpegVideoArtifact`
+10. `ToCreateFFmpegContactSheetArtifact`
+11. `ToAddFFmpegTextOverlayArtifact`
