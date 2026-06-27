@@ -2,7 +2,7 @@
   "Module": {
     "Enabled": true,
     "Name": "CodeReviews",
-    "AssemblyPath": "CodeReviews/Buffaly.CodeReviews.WebHarness.dll",
+    "AssemblyPath": "Buffaly.CodeReviews.WebHarness.dll",
     "TypeName": "Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessModule",
     "LoadOrder": 900,
     "Pages": [
@@ -31,6 +31,8 @@
     ],
     "ClientConfig": {
       "CodeReviewsBaseUrl": "/web-modules/CodeReviews"
-    }
+    },
+    "DisplayName": "CodeReviews",
+    "Description": "Buffaly web module package for CodeReviews."
   }
 }
