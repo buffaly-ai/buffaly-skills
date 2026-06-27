@@ -105,7 +105,7 @@
       "SkillName": "BuffalyMaintenance",
       "Title": "Buffaly Maintenance",
       "Description": "Buffaly OpsAgent skill package for BuffalyMaintenance.",
-      "Version": "0.1.0",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "BuffalyMaintenance"
@@ -119,6 +119,14 @@
         {
           "Path": "index.pts.md",
           "Sha256": "ed27e9d82194dc03a3902cc4f4485efe781e24d7965d991c1cf30ecb37d2e8d5"
+        },
+        {
+          "Path": "lib/Buffaly.Agent.Provisioning.dll",
+          "Sha256": "8a5fd4c723a829083f54f8d098b4bf14ced6a70740e97a4a86f8b679c5d6feb8"
+        },
+        {
+          "Path": "lib/Buffaly.Maintenance.Client.dll",
+          "Sha256": "b0a9ad6c950b59acf11e26935a9cd77418996d87d630b605ba07fce99696e0f1"
         }
       ],
       "EntryPoint": "index.pts",
@@ -1063,7 +1071,7 @@
       "SkillName": "MetabaseJsonWs",
       "Title": "Metabase JsonWs",
       "Description": "JSL1 JSONWS skill for RootTrax Metabase application, project, object, property, and materialization endpoints.",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "metabase jsonws",
@@ -1075,75 +1083,75 @@
       "Files": [
         {
           "Path": "Applications.pts",
-          "Sha256": "6b6382ca313cd66fd69d75428845246d7fd36d35eee4ef139a29bc9d03e336a2"
+          "Sha256": "94b822a1f06211dc04493205c9694de8fa740ccf2fa3020d8504b0c4aa439dd2"
         },
         {
           "Path": "Databases.pts",
-          "Sha256": "0e92b9e885bb8bda46605f118b23835e1c6665b1933647ebb10fa1192609e17e"
+          "Sha256": "a382cee1146880c1aea5be4483aacb402f61e3c60bad5744dcfc2c5eb4f4477a"
         },
         {
           "Path": "Features.pts",
-          "Sha256": "4711f340b596b99df4d69970ee310624fca8d4ea0b5b4bdc0121e7345a00e764"
+          "Sha256": "810781541095b4dc1984cf3f55ad699a1aa1e9704a6516721bd6c522fa550349"
         },
         {
           "Path": "index.pts",
-          "Sha256": "9ea4c23747b19d0caeb93fa3e091a7a0265ed60ad339a38f3ae0f012597e55bf"
+          "Sha256": "f01f0c3d97dbf45eeee7dd4911e00b0f5521f74087afbdbcd92195ad98136b41"
         },
         {
           "Path": "Links.pts",
-          "Sha256": "7151cf37754e8d4d340ccaed12a7ab8cb637e18321d00a875f8bbffbfd80c25d"
+          "Sha256": "5a775a80dd6a9cfd3420b1d817998d7cd197defbb58b00a61259067ff7791ac5"
         },
         {
           "Path": "ObjectDefinition.pts",
-          "Sha256": "61c2cca442d340cd799dfde4b8c4671d0e143b6b3333df6346f560abe2ca4efb"
+          "Sha256": "939590a34ce5489d5c1c94814bdba8e7f67af1b8f76e7b74423ad914d41e8fc1"
         },
         {
           "Path": "ObjectMethods.pts",
-          "Sha256": "25b5bc3d386655513ce3ad9bd85e2bb08c59a58a87d46a6bcbf8fb30ea506786"
+          "Sha256": "d404baabd54cfe570c98e37665417872d83a8ebf8b57103723f1a813267bab8d"
         },
         {
           "Path": "Objects.pts",
-          "Sha256": "da8265c474c82157174d63d919598d295e85ba3525017694acaf056f284eeea6"
+          "Sha256": "3ee98fdf0e484f8233b3adb6931a8a40642a2024b48b951581c37e183e2dcbbe"
         },
         {
           "Path": "Projects.pts",
-          "Sha256": "2c7ecbbe09a57fe03639a20afafd78c414d308d57989908f67d929bc620b9faa"
+          "Sha256": "db1a41ea7eecb6d27663dff5721544b7e4d620017dc5c0b386447278701ab091"
         },
         {
           "Path": "PromptActions.pts",
-          "Sha256": "0b7fdfecead64874294857dee8ecb9688bb91062dd036f72248a2d2c42897ccb"
+          "Sha256": "3fce38ed6ab6b621ce446c7f327909eeff477cc4d68f917227b88a3da35cf407"
         },
         {
           "Path": "Prompts/AddRootTraxMetabasePropertiesJsonWs.prompt.md",
-          "Sha256": "c0b8bf616033fa742cb4b047046f124ac189ccc578aceb8ff834cdfce702dbb0"
+          "Sha256": "e6cd4a252b8928e538da21b851c8e777948d0eb6e1f150fec9faef34fd615ef4"
         },
         {
           "Path": "Prompts/CreateRootTraxMetabaseObjectJsonWs.prompt.md",
-          "Sha256": "644ef1fde8e1f5ca5d3bdbcf5320abf1fdc277da3812b6db5bc28b565779df12"
+          "Sha256": "d73b6b49c7098a1cfc32c212c14b44e4c66dd2e830571ef0a3cbbb362b44590a"
         },
         {
           "Path": "Prompts/MaterializeRootTraxMetabaseCodeJsonWs.prompt.md",
-          "Sha256": "bea14f13a812908ce57911ce02b1d74909bb436c803d964202b2f002d6a81ed4"
+          "Sha256": "d7f128397485a7e1c7bc792337a0bc96a5bcbb5bbd942625d5a14666b021a8b3"
         },
         {
           "Path": "Prompts/MaterializeRootTraxMetabaseDatabaseJsonWs.prompt.md",
-          "Sha256": "00b79fed3ce381a313040fdbe423908bfa5bf5e330bf6d6ca66e2cfc66b0a142"
+          "Sha256": "a791c1d470dfd549ac60c868ae0e6529ba0de4550331ea1e69a28496f4c03802"
         },
         {
           "Path": "Prompts/RunRootTraxMetabaseJsonWsScaffoldWorkflow.prompt.md",
-          "Sha256": "4aa529c8e80aff7aeaa77c7b0b0990a8db9a6e030a828779cd64bcf197ac00d1"
+          "Sha256": "3627b55afb1f504e668ff001304797f476c71d805e80d6b1af94f12d30eefc4a"
         },
         {
           "Path": "Properties.pts",
-          "Sha256": "69b5cec8a2de2009a57139510f9902d85154893293e9ad652f373f44e28efe63"
+          "Sha256": "1f7da7a95045c0c4a9027a2270641d1e8195736a4ace963df225ca6b75eddcbc"
         },
         {
           "Path": "README.md",
-          "Sha256": "3a4ac9860560e537b3f14b5f1cdffbbcdbbccb849c62edab86980452b2e6ed34"
+          "Sha256": "5985e0e306056520e99d66ddee3d53ab84f228be5737389a19f05880c2107531"
         },
         {
           "Path": "SKILL.md",
-          "Sha256": "3d557152b8b6a1cd084e6e2ac11d8a837bf294e54283d13fec0b9ac4702dd48e"
+          "Sha256": "669dda73e94a0b22e10f0b443c1d019ae10708ac8d83b96773ab39af833933ea"
         }
       ],
       "EntryPoint": "index.pts",
@@ -1157,7 +1165,7 @@
       "SkillName": "MetabaseRuntime",
       "Title": "Metabase Runtime",
       "Description": "DLL-backed RootTrax Metabase runtime skill for applications, projects, objects, and generation/materialization workflows.",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "metabase runtime",
@@ -1169,15 +1177,15 @@
       "Files": [
         {
           "Path": "Actions.pts",
-          "Sha256": "f11835d2978e77228ae8a7ee5924a4f103964fbf0158408528c10c9b34422ef9"
+          "Sha256": "226db0a06fcec581c2b071ba8adf339e0fd2b0b8873783ec7a86f45d2e78edbf"
         },
         {
           "Path": "Applications.pts",
-          "Sha256": "9f5402c48588a5d18ee31fdfce6ffec405501dc892191078887d8907f12be9a7"
+          "Sha256": "494849e59926b0be893b2237911d89dc4a653031555b0cc2ce7cea720cddec6e"
         },
         {
           "Path": "index.pts",
-          "Sha256": "3e9baf185795919732491515ba4c726d23e8a3f734931880402b65855465ae3e"
+          "Sha256": "c394082deb0400b139b75b9a9bdb9361c5da8572258b564e31325550724d6082"
         },
         {
           "Path": "lib/Buffaly.Data.dll",
@@ -1241,19 +1249,19 @@
         },
         {
           "Path": "MetabaseSystemOverview.md",
-          "Sha256": "0dc8549c5f05a7367db29e8084a2799979fabe651e6aebdcc0a41afd33616b6f"
+          "Sha256": "94a115effdf9ebece55f694bdb55d9533e54dc9cbfcef0b46f4d0dff33aab7c9"
         },
         {
           "Path": "Ontology.pts",
-          "Sha256": "13d547c99d8bed7595d0257b0d750ccec312b8172f2e20d39a461a17058ea86e"
+          "Sha256": "c2fddce4c83254fc16a955b1e0827975a4c1ff6b74de5d52d9bde7167a3e5205"
         },
         {
           "Path": "ProjectsAdmin.pts",
-          "Sha256": "1b7f156396ca524bb5254bf7ed6bfe9539333131782064a4902afe65b0f624ae"
+          "Sha256": "57bc93b4f5e37f639b72887cbc5dfb6bd4710259b4978d1cc491abdae6fd9202"
         },
         {
           "Path": "PromptActions.pts",
-          "Sha256": "35e882e025346f06e35e9b51fdb1833ea6d8f9e83255a8e7c4b8e1fd623d6ea9"
+          "Sha256": "d8680965df62472767fe929982c75588083e6da3519582cbaec100d435d3c8ab"
         },
         {
           "Path": "Prompts/AddRelatedObjectsTabToRootTraxDetailsPage.prompt.md",
@@ -1261,39 +1269,39 @@
         },
         {
           "Path": "Prompts/LaunchLocalMetabase.prompt.md",
-          "Sha256": "7cfc25232821c1c8da942f5c313f1dbc0b735fb14e430edf8d494f58a7df86ab"
+          "Sha256": "22bb7d7283f4aa5d15e7145319d1c4ae3463d0dbce91229a125cad28a2be6893"
         },
         {
           "Path": "Prompts/NLtoObjectSpec.md",
-          "Sha256": "ef950c9c67a551a73a42a552a7a8fc55196f38ac11d66944c8a4ee4b1bd6b191"
+          "Sha256": "a6ca1d19c5753c401810284d24b71852826e9c820864d2c1a2f7c1b96d7780bf"
         },
         {
           "Path": "Prompts/RootTraxPortalArchitectureMasterGuide.prompt.md",
-          "Sha256": "7c1d8bb94dddd2fce39a3ad3486f15d793affd6a20253ff256908474ca3e0018"
+          "Sha256": "a86618f94e891007b5f1ae9b110b9261408b9fe67395f4f4036b47310c37122d"
         },
         {
           "Path": "Prompts/RunLocalRootTraxMetabaseJsonWsWorkflow.prompt.md",
-          "Sha256": "871a68810d6f711f6b50bece7335204f4eee73ff3c2d484768dd611909a9f01e"
+          "Sha256": "cfc1390e60dff5823a6be306056d93934b025906c845cbe2ac7093bea4aa3ba7"
         },
         {
           "Path": "Prompts/UseMermaidDiagramArtifactWorkflow.prompt.md",
-          "Sha256": "0c26a91bedb17f3d271698e5ea731b073eb8504efad6d6feafff558ca2777f6c"
+          "Sha256": "abac323fbabafa91d7c145b271119036c2bff245bd32354f4387b8c34ee289ab"
         },
         {
           "Path": "Prompts/UseRootTraxMetabase.prompt.md",
-          "Sha256": "7552b9d0199b7aef26137806d68045a378099c9bf009bf5f91fd7261d5e43219"
+          "Sha256": "b8d05ea2ff1f1085cdb5dd424481f1db1e511cb93e018a52061f57b126220693"
         },
         {
           "Path": "README.md",
-          "Sha256": "e2f3e4d9dad6c32c5524d86521003c654d4c6be52eca4e23c22e230b6277e750"
+          "Sha256": "15f00398574999b45ccc07bb7d0f9d006523cb430173156f78171bff2048024d"
         },
         {
           "Path": "RootTraxMetabaseOntology.md",
-          "Sha256": "c5010fa7838a8dff25a58f9a850dcb2d8c9989c33581383fd9efa3fbe142fea9"
+          "Sha256": "4a2e715e21e8af8d3c1632db3b4bcedb9d5f27be14854d69b7a5374228294a55"
         },
         {
           "Path": "SKILL.md",
-          "Sha256": "26c45082d25ecaea52a9cf22dedcd7fecf266c5d39924a6b09a13dbb6889025a"
+          "Sha256": "04b8e775cb5de630d5285f755797aa4bb6b4f526d7abc66940a65129b41eaeca"
         }
       ],
       "EntryPoint": "index.pts",
@@ -1308,7 +1316,7 @@
       "SkillName": "Office365",
       "Title": "O ff ic e365",
       "Description": "Buffaly skill package for O ff ic e365.",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "O ff ic e365",
@@ -1350,7 +1358,7 @@
         },
         {
           "Path": "Teams.pts",
-          "Sha256": "ef188b9360a9142a3e55329571fb2092736826dff8d89c52cf3a6b4cff21ba50"
+          "Sha256": "11e4928744de1de91908e08940f8af63b2a45edde2a3adb6d8e8fc8021460198"
         }
       ],
       "EntryPoint": "index.pts",
