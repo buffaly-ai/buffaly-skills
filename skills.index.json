@@ -1077,6 +1077,60 @@
       "IsDefaultPackage": true
     },
     {
+      "SkillName": "Office365",
+      "Title": "O ff ic e365",
+      "Description": "Buffaly skill package for O ff ic e365.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "O ff ic e365",
+        "Office365"
+      ],
+      "Path": "skills/Office365",
+      "Files": [
+        {
+          "Path": "Auth.pts",
+          "Sha256": "047cb309170bb891b321f28ab0ae1dee3ca3650837e75b7467052032b31e4798"
+        },
+        {
+          "Path": "Calendar.pts",
+          "Sha256": "65b39a659c45fbfb2a10b80e11808663f1bd27be33af95fb5ad0ec1ff3ce0be3"
+        },
+        {
+          "Path": "Common.pts",
+          "Sha256": "0e80a0709b4ae20a1e75a562f2e988eb4e00a407fac57bd21a476d14bfdb809d"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "80cadd1ec63024693e603e8554f81f55de88e515e2f897abff6e6d63c97b9351"
+        },
+        {
+          "Path": "Mail.pts",
+          "Sha256": "76430d9bc0159131698c1fc03b9dc18eb588115328b0e365d69c19644a8abfd1"
+        },
+        {
+          "Path": "Office365Service.pts",
+          "Sha256": "f1bfbce9c08ba419fdecb0218ae1cc41d353ab2c14c98d6ea41432e201f9b19d"
+        },
+        {
+          "Path": "OneDrive.pts",
+          "Sha256": "dc0af40e4128fb1816666e908f5ef7b5980a24dc444d49b1e87104f8c3b9f5e6"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "846f186b00172683bc2bb5f848ff8f0e12fe72fc2e2edcfa754fd19c8d079be7"
+        },
+        {
+          "Path": "Teams.pts",
+          "Sha256": "ef188b9360a9142a3e55329571fb2092736826dff8d89c52cf3a6b4cff21ba50"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsDefaultPackage": true
+    },
+    {
       "SkillName": "Onboarding",
       "Title": "Onboarding",
       "Description": "Buffaly OpsAgent skill package for Onboarding.",

@@ -1,0 +1,106 @@
+[SemanticProgram.InfinitivePhrase("to list office 365 calendar events")]
+prototype ToListOffice365CalendarEvents : Office365SkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to calendar.readonly when empty. calendarId/timeMinIso/timeMaxIso/maxResults/query control listing. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string calendarId, string timeMinIso, string timeMaxIso, int maxResults, string query) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "calendars.read";
+
+		return Office365ServiceHost.ListEventsAsync(			Office365Service.NormalizeOffice365AccountKey(accountKey),
+			scopePreset,
+			calendarId,
+			timeMinIso,
+			timeMaxIso,
+			maxResults,
+			query,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get an office 365 calendar event")]
+prototype ToGetOffice365CalendarEvent : Office365SkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to calendar.readonly when empty. calendarId and eventId required. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string calendarId, string eventId) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "calendars.read";
+
+		// Return facade JSON without reshaping.
+		return Office365ServiceHost.GetEventAsync(			Office365Service.NormalizeOffice365AccountKey(accountKey),
+			NormalizeOffice365OperationScopePreset(scopePreset),
+			eventId,
+			calendarId,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create an office 365 calendar event")]
+prototype ToCreateOffice365CalendarEvent : Office365SkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to calendar when empty. calendarId/summary/startIso/endIso required. timeZone/description/location/attendeesJson optional. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string calendarId, string summary, string startIso, string endIso, string timeZone, string description, string location, string attendeesJson) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "calendars.readwrite";
+
+		string eventJson = "{\"summary\":\"" + summary + "\",\"description\":\"" + description + "\",\"location\":\"" + location + "\",\"start\":{\"dateTime\":\"" + startIso + "\",\"timeZone\":\"" + timeZone + "\"},\"end\":{\"dateTime\":\"" + endIso + "\",\"timeZone\":\"" + timeZone + "\"}}";
+
+		// Return facade JSON without reshaping.
+		return Office365ServiceHost.CreateEventAsync(			Office365Service.NormalizeOffice365AccountKey(accountKey),
+			NormalizeOffice365OperationScopePreset(scopePreset),
+			eventJson,
+			calendarId,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to update an office 365 calendar event")]
+prototype ToUpdateOffice365CalendarEvent : Office365SkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to calendar when empty. calendarId/eventId/eventJson required. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string calendarId, string eventId, string eventJson) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "calendars.readwrite";
+
+		// Return facade JSON without reshaping.
+		return Office365ServiceHost.UpdateEventAsync(			Office365Service.NormalizeOffice365AccountKey(accountKey),
+			NormalizeOffice365OperationScopePreset(scopePreset),
+			eventId,
+			eventJson,
+			calendarId,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to delete an office 365 calendar event")]
+prototype ToDeleteOffice365CalendarEvent : Office365SkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to calendar when empty. calendarId and eventId required. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string calendarId, string eventId) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "calendars.readwrite";
+
+		// Return facade JSON without reshaping.
+		return Office365ServiceHost.DeleteEventAsync(			Office365Service.NormalizeOffice365AccountKey(accountKey),
+			NormalizeOffice365OperationScopePreset(scopePreset),
+			eventId,
+			calendarId,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+
