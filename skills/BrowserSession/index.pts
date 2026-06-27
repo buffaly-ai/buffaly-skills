@@ -55,6 +55,7 @@ prototype ToCloseBrowserSession : BrowserSessionSkillAction
 
 [SemanticProgram.InfinitivePhrase("to open a browser url")]
 [SemanticProgram.InfinitivePhrase("to navigate a browser session")]
+[SemanticProgram.InfinitivePhrase("to navigate a browser page")]
 prototype ToOpenBrowserUrl : BrowserSessionSkillAction
 {
 	Description = @"Thin wrapper over BrowserTools.BrowserOpenTool(_opsAgent, subAgentId, url).";
@@ -135,6 +136,7 @@ prototype ToGetBrowserSelectorAttribute : BrowserSessionSkillAction
 [SemanticProgram.InfinitivePhrase("to run browser script")]
 [SemanticProgram.InfinitivePhrase("to run JavaScript in the browser")]
 [SemanticProgram.InfinitivePhrase("to evaluate JavaScript in a browser session")]
+[SemanticProgram.InfinitivePhrase("to inspect a browser page")]
 prototype ToRunBrowserScript : BrowserSessionSkillAction
 {
 	Description = @"Runs inline JavaScript in the active browser page using BrowserSessionTools.RunBrowserScript. script - JavaScript function/source. argsJson - JSON argument payload. mutationPolicy - audit label: readOnly or allowMutation.";
@@ -147,6 +149,7 @@ prototype ToRunBrowserScript : BrowserSessionSkillAction
 
 [SemanticProgram.InfinitivePhrase("to capture browser screenshot")]
 [SemanticProgram.InfinitivePhrase("to take browser screenshot")]
+[SemanticProgram.InfinitivePhrase("to take a browser page screenshot")]
 prototype ToCaptureBrowserScreenshot : BrowserSessionSkillAction
 {
 	Description = @"Thin wrapper over BrowserTools.BrowserScreenshotTool(_opsAgent, subAgentId, relativePath).";
@@ -169,13 +172,26 @@ prototype ToGetBrowserConsoleEvents : BrowserSessionSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to run playwright script")]
+[SemanticProgram.InfinitivePhrase("to execute playwright automation")]
+[SemanticProgram.InfinitivePhrase("to interact with a browser using playwright")]
+prototype ToRunPlaywrightScript : BrowserSessionSkillAction
+{
+	Description = @"Runs a Playwright-style automation script natively through Buffaly's Microsoft.Playwright runtime. This is not page JavaScript and does not run command-line Playwright.";
+
+	function Execute(string subAgentId, string script, string argsJson = "{}", int timeoutMs = 30000) : string
+	{
+		return BrowserSessionTools.RunPlaywrightScript(_opsAgent, subAgentId, script, argsJson, timeoutMs);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to fill a browser selector with a secret")]
 [SemanticProgram.InfinitivePhrase("to type a secret into a browser password field")]
 prototype ToFillBrowserSelectorWithSecret : BrowserSessionSkillAction
 {
 	Description = @"Fills a browser selector with a StringRef secret without returning or logging the secret. secretValue - StringRef returned by ToGetUserSecret and materialized only at this typed boundary. Returns redacted JSON only.";
 
-	function Execute(string subAgentId, string selector, StringRef secretValue, int timeoutMs = 15000) : string
+	function Execute(string subAgentId, string selector, string secretValue, int timeoutMs = 15000) : string
 	{
 		return BrowserSessionTools.FillBrowserSelectorWithSecret(_opsAgent, subAgentId, selector, secretValue, timeoutMs);
 	}

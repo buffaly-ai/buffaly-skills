@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Buffaly Code Reviews - Repositories</title>
+	<link rel="stylesheet" href="js/plugins/codemirror/lib/codemirror.css">
+	<link rel="stylesheet" href="styles/code-reviews-harness.css?v=20260509.1">
+</head>
+<body>
+	<main class="app-shell">
+		<header class="hero-card">
+			<div>
+				<p class="eyebrow">Buffaly Agent Tools</p>
+				<h1>Repository Activity</h1>
+				<p class="hero-copy">Choose a recently active repository, then inspect its check-ins and diffs.</p>
+			</div>
+			<div class="hero-actions"><a class="settings-link" href="settings.html" aria-label="Agent target settings" title="Agent target settings"><span aria-hidden="true">&#9881;</span><span>Settings</span></a>
+				<button id="refreshButton" class="icon-button compact-action-button" type="button" title="Refresh repositories" aria-label="Refresh repositories"><span aria-hidden="true">&#8635;</span></button>
+			</div>
+		</header>
+		<section class="toolbar-card">
+			<label><span>GitHub organizations</span><input id="orgNameInput" value="Intelligence-Factory-LLC, buffaly-ai"></label>
+			<label><span>Local root</span><input id="localRootInput" value="C:\dev"></label>
+			<label><span>Filter</span><input id="repoFilterInput" placeholder="Filter repositories"></label>
+		</section>
+		<section class="page-card">
+			<div class="page-header"><h2>Repositories</h2><p id="repoCount" class="subtle">Loading...</p></div>
+			<div id="repositoryList" class="repo-list empty">Loading repositories...</div>
+		</section>
+		<section class="details-panel"><h2>Status</h2><pre id="statusLog">Ready.</pre></section>
+	</main>
+	<script>window.Page = window.Page || { HandleUnexpectedError: function(error){ if (window.console && console.error) console.error(error); } };</script>
+	<script src="//static.buffa.ly/v2/js/global.js"></script>
+	<script src="//static.buffa.ly/v2/js/LocalStorage2.js"></script>
+	<script src="//static.buffa.ly/v2/js/moremoo4.js?v=2"></script>
+	<script src="//static.buffa.ly/v2/js/JsonMethod.js?v=2"></script>
+	<script src="//static.buffa.ly/v2/js/validators.js?v=2"></script>
+	<script src="//static.buffa.ly/v2/js/moment.min.js"></script>
+	<script src="//static.buffa.ly/v2/js/DateUtil.js"></script>
+	<script src="/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js?v=20260509.1"></script>
+	<script src="js/code-reviews-common.js?v=20260509.1"></script>
+	<script src="js/code-reviews-repositories.js?v=20260524.1"></script>
+</body>
+</html>
+

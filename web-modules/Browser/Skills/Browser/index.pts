@@ -42,11 +42,11 @@ partial prototype BrowserWebModuleService#Local : BrowserWebModuleService
 	Description = "Local installed Browser web module binding using direct Browser workbench runtime APIs.";
 }
 
-[SemanticProgram.InfinitivePhrase("to run a browser task")]
-[SemanticProgram.InfinitivePhrase("to use the browser module")]
+[SemanticProgram.InfinitivePhrase("to run an autonomous browser workbench task")]
+[SemanticProgram.InfinitivePhrase("to run a nested browser agent task")]
 prototype ToRunBrowserModuleTask : BrowserSkillAction
 {
-	Description = @"instruction(required), maxSteps(optional integer), profileName(optional). Runs one browser task through the installed Browser web module using the module default model.";
+	Description = @"Developer/test harness action. Launches an inner LLM-driven Browser Workbench runner using the module default model. Do not use for normal browser automation; prefer UseBrowserSkill and BrowserSessionSkill primitives.";
 
 	BrowserWebModuleService Service = BrowserWebModuleService#Local;
 

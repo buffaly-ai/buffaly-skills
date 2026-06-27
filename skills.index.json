@@ -39,7 +39,7 @@
       "SkillName": "BrowserSession",
       "Title": "Browser Session",
       "Description": "BrowserSession Skill",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "BrowserSession"
@@ -48,11 +48,11 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "49e076c1ba6d40b5e5a7bb3bbb717cd5cc59fb23b9497112c34c89c631f78cbd"
+          "Sha256": "7960c4cf5ebaac8779009659af260ebdfa63605896ca76ce34ed413ae7d9e4c9"
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "07e0921810e2a5a49f733b989e4e18926d8a3bd1ba804c00c50e41c37557d58a"
+          "Sha256": "212be8db5ec1b4ec8f2bc3225996119f345930cfeb401152b64fe0801936abfb"
         },
         {
           "Path": "PromptActions.pts",
@@ -60,7 +60,7 @@
         },
         {
           "Path": "Prompts/UseBrowserSkill.prompt.md",
-          "Sha256": "c7281ea14c02bc552825646be43b10875da2eb41a5f9e46a0de9540a98830544"
+          "Sha256": "cc3ef70426bffd2344f1b78a9d044d2ebd64bd9294d89acc5e7ef9eeea89b458"
         },
         {
           "Path": "SKILL.md",
@@ -370,12 +370,12 @@
       "Path": "skills/DllEchoSample",
       "Files": [
         {
-          "Path": "index.pts",
-          "Sha256": "57200a3aeba308102aef1c901cf0cfd05ab8ba2ad13ae82ffb3368088d28c0cf"
-        },
-        {
           "Path": "Actions.pts",
           "Sha256": "58bfe71764c2ec931e2a879e7aeef8b3a36de1b13675bbd95c5b834498980a02"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "57200a3aeba308102aef1c901cf0cfd05ab8ba2ad13ae82ffb3368088d28c0cf"
         },
         {
           "Path": "lib/Buffaly.SkillSamples.dll",
@@ -514,23 +514,6 @@
         "Network access to the configured FairPath service endpoint"
       ],
       "IsDefaultPackage": false
-    },
-    {
-      "SkillName": "FeedingFrenzy",
-      "Title": "Feeding Frenzy",
-      "Description": "Buffaly skill package for Feeding Frenzy.",
-      "Version": "0.1.0",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [
-        "Feeding Frenzy",
-        "FeedingFrenzy"
-      ],
-      "Path": "skills/FeedingFrenzy",
-      "Files": [],
-      "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsDefaultPackage": true
     },
     {
       "SkillName": "FeedingFrenzyJsonWs",
@@ -1586,12 +1569,12 @@
       "Path": "skills/TailscaleExposure",
       "Files": [
         {
-          "Path": "index.pts",
-          "Sha256": "b59d0f6ffbd46a8d1f0424f3ea0e1f0fe2dbd67b644898275e156e44e80daca0"
-        },
-        {
           "Path": "Actions.pts",
           "Sha256": "a413b8883e812d6c839a91eaeb597a939b00976f7f9bd76d9bc884851bd11bf2"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "b59d0f6ffbd46a8d1f0424f3ea0e1f0fe2dbd67b644898275e156e44e80daca0"
         }
       ],
       "EntryPoint": "index.pts",
@@ -1718,7 +1701,7 @@
       "SkillName": "UserSecrets",
       "Title": "User Secrets",
       "Description": "Buffaly OpsAgent skill package for UserSecrets.",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "UserSecrets"
@@ -1743,7 +1726,7 @@
         },
         {
           "Path": "interactive-sites/user-secret-collector/site.js",
-          "Sha256": "e8a839d0c4a7b16c0d1caa64b9121a88de541fefba9af5c677b5a514528d9db8"
+          "Sha256": "30253de61876bb81b71cecd4cc5de3d1302f69511ff9114cccfa3d93b66f543c"
         }
       ],
       "EntryPoint": "index.pts",

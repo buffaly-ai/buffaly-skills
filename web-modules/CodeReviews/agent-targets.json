@@ -1,0 +1,16 @@
+{
+  "targets": [
+    {
+      "environment": "Dev",
+      "displayName": "Matt / local agent",
+      "baseUrl": "http://matt.local:58177/",
+      "notes": "Matt agent-web local endpoint."
+    },
+    {
+      "environment": "Staging",
+      "displayName": "Staging",
+      "baseUrl": "http://buffaly-staging.local/",
+      "notes": "Staging agent-web local endpoint."
+    }
+  ]
+}

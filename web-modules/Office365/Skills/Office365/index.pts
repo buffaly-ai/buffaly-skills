@@ -1,0 +1,26 @@
+prototype Office365SkillAction : OpsAction
+{
+	Description = @"Base action type for Office 365 skill tools.";
+}
+
+[SemanticEntity("office 365 skill")]
+prototype Office365Skill : SkillEntity
+{
+	Description = "Office 365 / Microsoft 365 auth, Mail, Calendar, OneDrive, and Teams actions.";
+	ActionRoot = Office365SkillAction;
+}
+
+include "Common.pts";
+include "Office365Service.pts";
+include "Auth.pts";
+include "Mail.pts";
+include "Calendar.pts";
+include "OneDrive.pts";
+include "Teams.pts";
+
+reference Buffaly.Office365 Buffaly.Office365;
+
+import Buffaly.Office365 Buffaly.Office365.Services.Office365ServiceHost Office365ServiceHost;
+import Buffaly.Office365 Buffaly.Office365.Storage.Office365SecretsFeature Office365SecretsFeature;
+import BasicUtilities BasicUtilities.StringUtil StringUtil;
+import mscorlib System.Threading.CancellationToken CancellationToken;

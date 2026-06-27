@@ -1,0 +1,36 @@
+{
+  "Module": {
+    "Enabled": true,
+    "Name": "CodeReviews",
+    "AssemblyPath": "CodeReviews/Buffaly.CodeReviews.WebHarness.dll",
+    "TypeName": "Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessModule",
+    "LoadOrder": 900,
+    "Pages": [
+      {
+        "Name": "CodeReviews",
+        "DisplayName": "Code Reviews",
+        "Path": "/code-reviews",
+        "Description": "Open the CodeReviews check-in browser."
+      },
+      {
+        "Name": "CodeReviewsDiff",
+        "DisplayName": "Code Reviews Diff",
+        "Path": "/code-reviews/diff",
+        "Description": "Open a CodeReviews diff view."
+      },
+      {
+        "Name": "CodeReviewsCheckIns",
+        "DisplayName": "Code Reviews Check-ins",
+        "Path": "/code-reviews/checkins",
+        "Description": "Open the CodeReviews check-ins view."
+      }
+    ],
+    "AgentScripts": [
+      "/api/web-modules/CodeReviews/config.js",
+      "/web-modules/CodeReviews/js/code-reviews-semantic-refs.js?v=20260521.1"
+    ],
+    "ClientConfig": {
+      "CodeReviewsBaseUrl": "/web-modules/CodeReviews"
+    }
+  }
+}

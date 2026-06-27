@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Buffaly Code Reviews - Diff</title>
+	<link rel="stylesheet" href="js/plugins/codemirror/lib/codemirror.css">
+	<link rel="stylesheet" href="styles/code-reviews-harness.css?v=20260521.6">
+</head>
+<body>
+	<main class="app-shell">
+		<header class="hero-card compact-hero diff-hero-card">
+			<div class="diff-hero-main">
+				<nav class="breadcrumb-nav" aria-label="Code review navigation"><a id="repositoriesBreadcrumb" href="index.html">Repositories</a><span aria-hidden="true">/</span><a id="checkinsLink" href="checkins.html">Check-ins</a><span aria-hidden="true">/</span><span>Diff</span></nav>
+				<p class="eyebrow">Diff Browser</p>
+				<h1 id="diffTitle">Diff</h1>
+				<p id="diffSummary" class="hero-copy">Loading diff...</p>
+				<p id="repoMeta" class="subtle"></p>
+				<div class="connection-summary hero-connection-summary"><div id="connectionSummary">Loading session connection...</div><button id="configureSessionButton" type="button">Configure session</button></div>
+			</div>
+			<div class="hero-actions"><a class="settings-link" href="settings.html" aria-label="Agent target settings" title="Agent target settings"><span aria-hidden="true">&#9881;</span><span>Settings</span></a></div>
+		</header>
+		<section class="toolbar-card compact-toolbar diff-toolbar">
+			<div class="toolbar-group primary-actions">
+				<label><span>Context</span><select id="contextSelect"><option value="5">5 lines</option><option value="10">10 lines</option><option value="30">30 lines</option><option value="full">Entire file</option></select></label>
+				<label><span>Check-in</span><select id="checkInSelect"><option value="">Loading check-ins...</option></select></label>
+				<label class="toggle-control"><input id="hideBinaryFilesToggle" type="checkbox"> <span>Hide binary files</span></label>
+			</div>
+			<div class="toolbar-group secondary-actions icon-toolbar">
+				<button id="collapseAllButton" class="icon-button compact-action-button" type="button" title="Collapse all files" aria-label="Collapse all files"><span aria-hidden="true">&#8863;</span><span>Collapse</span></button>
+				<button id="expandAllButton" class="icon-button compact-action-button" type="button" title="Expand all files" aria-label="Expand all files"><span aria-hidden="true">&#8862;</span><span>Expand</span></button>
+				<button id="reloadButton" class="icon-button compact-action-button" type="button" title="Reload diff" aria-label="Reload diff"><span aria-hidden="true">&#8635;</span><span>Reload</span></button>
+			</div>
+		</section>
+		<section class="page-card"><div id="diffFiles" class="diff-files empty">Loading diff...</div></section>
+		<section class="details-panel"><h2>Status</h2><pre id="statusLog">Ready.</pre></section>
+	</main>
+	<div id="annotationModal" class="annotation-modal hidden" role="dialog" aria-modal="true" aria-labelledby="annotationModalTitle">
+		<div class="annotation-modal-card">
+			<h2 id="annotationModalTitle">Add review note</h2>
+			<p id="annotationModalPath" class="subtle"></p>
+			<pre id="annotationModalSnippet" class="annotation-snippet"></pre>
+			<label><span>Requested change / review note</span><textarea id="annotationModalText" rows="7" placeholder="Describe what should change here"></textarea></label>
+			<div class="annotation-modal-actions">
+				<button id="annotationModalSave" type="button">Save note</button>
+				<button id="annotationModalRemove" type="button">Remove</button>
+				<button id="annotationModalCancel" type="button">Cancel</button>
+			</div>
+		</div>
+	</div>
+	<div id="sessionConfigModal" class="annotation-modal hidden" role="dialog" aria-modal="true" aria-labelledby="sessionConfigTitle">
+		<div class="annotation-modal-card session-config-card">
+			<h2 id="sessionConfigTitle">Configure Buffaly session</h2>
+			<p class="subtle">Choose where review notes should be sent. The server uses the configured local JsonWs target for each environment.</p>
+			<div class="session-env-options">
+				<button id="sessionEnvStaging" type="button" data-session-env="Staging">Staging</button>
+				<button id="sessionEnvDev" type="button" data-session-env="Dev">Dev / local agent</button>
+			</div>
+			<label><span>Recent sessions</span><select id="recentSessionsSelect"><option value="">Select an environment to load sessions...</option></select></label>
+			<label><span>Selected session key</span><input id="sessionKeyInput" type="text" placeholder="Choose a loaded session above" readonly></label>
+			<p id="sessionDestinationSummary" class="session-target-summary subtle">Choose an existing loaded session. CodeReviews cannot create a new session.</p>
+			<div class="annotation-modal-actions">
+				<button id="sessionConfigSave" type="button">Save</button>
+				<button id="sessionConfigCancel" type="button">Cancel</button>
+			</div>
+		</div>
+	</div>
+	<script>window.Page = window.Page || { HandleUnexpectedError: function(error){ if (window.console && console.error) console.error(error); } };</script>
+	<script src="//static.buffa.ly/v2/js/global.js"></script>
+	<script src="//static.buffa.ly/v2/js/LocalStorage2.js"></script>
+	<script src="//static.buffa.ly/v2/js/moremoo4.js?v=2"></script>
+	<script src="//static.buffa.ly/v2/js/JsonMethod.js?v=2"></script>
+	<script src="//static.buffa.ly/v2/js/validators.js?v=2"></script>
+	<script src="//static.buffa.ly/v2/js/moment.min.js"></script>
+	<script src="//static.buffa.ly/v2/js/DateUtil.js"></script>
+	<script src="js/plugins/codemirror/lib/codemirror.js"></script>
+	<script src="js/plugins/codemirror/mode/diff/diff.js"></script>
+	<script src="js/plugins/codemirror/mode/javascript/javascript.js"></script>
+	<script src="js/plugins/codemirror/mode/clike/clike.js"></script>
+	<script src="js/plugins/codemirror/mode/xml/xml.js"></script>
+	<script src="js/plugins/codemirror/mode/css/css.js"></script>
+	<script src="js/plugins/codemirror/mode/markdown/markdown.js"></script>
+	<script src="/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js?v=20260509.4"></script>
+	<script src="js/code-reviews-common.js?v=20260509.4"></script>
+	<script src="js/code-reviews-agent-bridge.js?v=20260510.6"></script>
+	<script src="js/code-reviews-diff.js?v=20260524.2"></script>
+</body>
+</html>
+

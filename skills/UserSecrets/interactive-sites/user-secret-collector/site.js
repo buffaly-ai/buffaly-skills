@@ -113,14 +113,27 @@
 		}
 	});
 
-	visibilityButton.addEventListener("click", function (event) {
+	function toggleSecretVisibility(event) {
 		event.preventDefault();
 		event.stopPropagation();
-		var showing = valueInput.type === "text";
-		valueInput.type = showing ? "password" : "text";
+		var showing = visibilityButton.getAttribute("data-visible") === "true";
+		valueInput.setAttribute("type", showing ? "password" : "text");
+		visibilityButton.setAttribute("data-visible", showing ? "false" : "true");
 		visibilityButton.textContent = showing ? "👁" : "🙈";
 		visibilityButton.setAttribute("aria-label", showing ? "Show private value" : "Hide private value");
 		visibilityButton.setAttribute("title", showing ? "Show private value" : "Hide private value");
+		valueInput.focus();
+	}
+
+	visibilityButton.addEventListener("pointerdown", function (event) {
+		event.preventDefault();
+		event.stopPropagation();
+	});
+
+	context.root.addEventListener("click", function (event) {
+		if (event.target && event.target.closest && event.target.closest("[data-toggle-visibility]")) {
+			toggleSecretVisibility(event);
+		}
 	});
 
 	context.root.querySelector("[data-cancel]").addEventListener("click", function () {

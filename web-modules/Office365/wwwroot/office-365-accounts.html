@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Connect Office 365 to Buffaly</title>
+	<link rel="icon" type="image/png" href="/images/bf_logo_fav_Large.png">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/custom_css/buffaly-page.css?v=20260526.1">
+	<link rel="stylesheet" href="/custom_css/buffaly-navigation.css?v=20260530.4">
+	<style>
+		.buffaly-page-shell { padding-bottom: 64px; }
+		.status-ready { border-color: rgba(22,163,74,.35); color: var(--buffaly-page-success); }
+		.status-warning { border-color: rgba(180,83,9,.35); color: var(--buffaly-page-warning); }
+		.status-error { border-color: rgba(220,38,38,.35); color: var(--buffaly-page-danger); }
+		.status-neutral { border-color: var(--buffaly-page-line); color: var(--buffaly-page-muted); }
+		.consent-list { list-style: none; margin: 0; padding-left: 0; }
+		.consent-list li { position: relative; padding-left: 1.25rem; margin-bottom: .65rem; font-size: .92rem; line-height: 1.4; }
+		.consent-list li::before { content: "•"; position: absolute; left: 0; top: -.05rem; color: var(--buffaly-page-accent); font-size: 1.25rem; }
+		.hidden-config { display: none; }
+		.account-list { display: grid; gap: 1rem; }
+		.account-item { border: 1px solid var(--buffaly-page-line); border-radius: var(--buffaly-page-radius); padding: 1rem; background: var(--buffaly-page-panel-soft); }
+		.account-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+	</style>
+</head>
+<body class="buffaly-page">
+	<div class="buffaly-app-strip" role="banner">
+		<a class="buffaly-app-strip-brand" href="/buffaly-agent.html">
+			<img src="/images/bf_logo_fav_Large.png" alt="">
+			<span>Buffaly</span>
+		</a>
+		<div class="buffaly-app-strip-center">
+			<buffaly-navigation-launcher label="Navigation" variant="strip" current-href="web-modules/Office365/office-365-accounts.html"></buffaly-navigation-launcher>
+		</div>
+		<div class="buffaly-app-strip-page">Office 365</div>
+	</div>
+	<div class="buffaly-page-shell">
+		<section class="buffaly-page-hero">
+			<div class="buffaly-page-hero-main">
+				<div class="buffaly-kicker">Connect your tools</div>
+				<h1 class="buffaly-title">Connect Office 365 to Buffaly</h1>
+				<p class="buffaly-subtitle">Authorize your Microsoft account once so Buffaly can help with Mail, Calendar, and other Microsoft 365 tasks.</p>
+			</div>
+			<div class="buffaly-page-hero-actions">
+				<span id="statusChip" class="buffaly-status-pill status-warning">Checking connection status...</span>
+			</div>
+		</section>
+
+		<div class="buffaly-grid">
+			<div class="buffaly-span-8">
+				<section class="buffaly-panel">
+					<h2 class="buffaly-panel-title">Set up your connection</h2>
+					<div id="connectFormPanel" class="buffaly-field mb-3">
+						<label for="accountLabel" class="buffaly-field-label">Connection label</label>
+						<input id="accountLabel" class="buffaly-input" type="text" placeholder="primary" value="primary">
+					</div>
+					<div id="connectActionPanel" class="buffaly-action-row">
+						<button id="startAuthorizationBtn" class="buffaly-button" type="button">Connect Office 365</button>
+						<button id="refreshAccountsBtn" class="buffaly-button secondary" type="button">Refresh status</button>
+					</div>
+					<div id="launchUrlPanel" class="mt-3 d-none">
+						<label class="buffaly-field-label">Sign-in URL (if popup blocked)</label>
+						<textarea id="launchUrl" class="buffaly-textarea" rows="3" readonly></textarea>
+					</div>
+					<div id="connectHelpPanel" class="mt-4 d-none">
+						<h2 class="buffaly-panel-title">Finish sign-in</h2>
+						<p class="buffaly-muted">Sign in and approve access in the popup. If it does not complete, paste the callback URL here.</p>
+						<div class="buffaly-field mb-3">
+							<label class="buffaly-field-label">Paste full callback URL</label>
+							<textarea id="manualCallbackUrl" class="buffaly-textarea" rows="3"></textarea>
+						</div>
+						<button id="completeAuthorizationBtn" class="buffaly-button secondary" type="button">Finish connection manually</button>
+					</div>
+				</section>
+			</div>
+
+			<div class="buffaly-span-4">
+				<section class="buffaly-panel">
+					<h2 class="buffaly-panel-title">Permissions requested</h2>
+					<ul id="consentSummary" class="consent-list mt-2"></ul>
+				</section>
+			</div>
+		</div>
+
+		<section class="buffaly-panel">
+			<h2 class="buffaly-panel-title">Connected accounts</h2>
+			<div id="accountsPanel" class="account-list"></div>
+		</section>
+	</div>
+
+	<script src="/js/services/office365/office-365-accounts.js"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			console.log('Office 365 accounts page loaded');
+			// The JS file will handle initialization if present
+		});
+	</script>
+</body>
+</html>

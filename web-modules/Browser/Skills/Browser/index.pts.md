@@ -18,3 +18,8 @@
 ## Stop forwarding model overrides (2026-06-16)
 - Kept the `model` parameter in `ToRunBrowserModuleTask.Execute(...)` for backward compatibility with older callers, but stopped copying it into `StartBrowserRunRequest.Model`.
 - Design Decision: the Browser web module owns model selection so stale prompts, UI fields, or old sessions cannot force obsolete model names such as `gpt-4o`.
+
+## Demote autonomous workbench routing (2026-06-26)
+- Replaced broad semantic phrases (`to run a browser task`, `to use the browser module`) with explicit autonomous workbench phrases.
+- Updated the action description to identify `ToRunBrowserModuleTask` as a developer/test harness action that launches an inner LLM runner.
+- Design Decision: normal browser automation should route through `UseBrowserSkill` and BrowserSession primitives without Browser web-module URLs, endpoints, or nested LLM control loops.

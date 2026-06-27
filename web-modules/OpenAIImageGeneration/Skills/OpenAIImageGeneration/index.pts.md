@@ -9,5 +9,5 @@
 - Aligned ProtoScript imports with OpenAIImageGenerationServiceRuntime facade methods so action calls bind to the actual C# runtime type.
 
 ## Initialize web module from OpenAIFeature (2026-05-30)
-- Packaged OpenAIImageGenerationWebModuleService.Initialize and direct image actions now read OpenAIFeature.Feature.ApiKey directly.
+- Packaged module OpenAIImageGenerationWebModuleService.Initialize and direct image actions now read OpenAIFeature.Feature.ApiKey directly.
 - Removed the image-generation JsonWs initialize route and LLMs.GetResponsesApiKeyOrEmpty dependency; direct generation/editing continues through OpenAIImageGenerationServiceRuntime.

@@ -1,0 +1,384 @@
+function ToNormalizeOffice365OneDriveScopePreset(string scopePreset, string fallbackPreset) : string
+{
+	if (StringUtil.IsEmpty(scopePreset))
+		return fallbackPreset;
+
+	string normalized = scopePreset.Trim().ToLowerInvariant();
+	if (normalized == "files.readwrite")
+		return "files.readwrite";
+	if (normalized == "files.readonly")
+		return "files.read";
+
+	return scopePreset;
+}
+
+[SemanticProgram.InfinitivePhrase("to search office 365 OneDrive files")]
+prototype ToSearchOffice365OneDriveFiles : Office365SkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to files.read when empty. query - OneDrive query. maxResults - number of rows. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string query, int maxResults) : string
+	{
+		scopePreset = ToNormalizeOffice365OneDriveScopePreset(scopePreset, "files.read");
+
+		// Return facade JSON without reshaping.
+		return Office365ServiceHost.SearchFilesAsync(			Office365Service.NormalizeOffice365AccountKey(accountKey),
+			NormalizeOffice365OperationScopePreset(scopePreset),
+			query,
+			maxResults,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get office 365 onedrive file metadata")]
+prototype ToGetOffice365OneDriveMetadata : Office365SkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to files.read when empty. fileId required. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string fileId) : string
+	{
+		scopePreset = ToNormalizeOffice365OneDriveScopePreset(scopePreset, "files.read");
+
+		// Return facade JSON without reshaping.
+		return Office365ServiceHost.GetMetadataAsync(			Office365Service.NormalizeOffice365AccountKey(accountKey),
+			NormalizeOffice365OperationScopePreset(scopePreset),
+			fileId,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to download office 365 onedrive text")]
+prototype ToDownloadOffice365OneDriveText : Office365SkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to files.read when empty. fileId required. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string fileId) : string
+	{
+		scopePreset = ToNormalizeOffice365OneDriveScopePreset(scopePreset, "files.read");
+
+		// Return facade JSON without reshaping.
+		return Office365ServiceHost.DownloadTextAsync(			Office365Service.NormalizeOffice365AccountKey(accountKey),
+			NormalizeOffice365OperationScopePreset(scopePreset),
+			fileId,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to download an office 365 onedrive file as base64")]
+prototype ToDownloadOffice365OneDriveFileBase64 : Office365SkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to files.read when empty. fileId required. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string fileId) : StringRef
+	{
+		scopePreset = ToNormalizeOffice365OneDriveScopePreset(scopePreset, "files.read");
+
+		// Return facade JSON without reshaping.
+		return Office365ServiceHost.DownloadFileBase64Async(			Office365Service.NormalizeOffice365AccountKey(accountKey),
+			NormalizeOffice365OperationScopePreset(scopePreset),
+			fileId,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to upload text to office 365 onedrive")]
+prototype ToUploadOffice365OneDriveText : Office365SkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to files.readwrite when empty. parentFolderId/fileName/mimeType/textContent are upload inputs. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string parentFolderId, string fileName, string mimeType, string textContent) : string
+	{
+		scopePreset = ToNormalizeOffice365OneDriveScopePreset(scopePreset, "files.readwrite");
+
+		// Return facade JSON without reshaping.
+		return Office365ServiceHost.UploadTextAsync(			Office365Service.NormalizeOffice365AccountKey(accountKey),
+			NormalizeOffice365OperationScopePreset(scopePreset),
+			fileName,
+			textContent,
+			parentFolderId,
+			mimeType,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to upload a base64 file to office 365 onedrive")]
+prototype ToUploadOffice365OneDriveFileBase64 : Office365SkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to files.readwrite when empty. parentFolderId/fileName/mimeType/base64Content are upload inputs. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string parentFolderId, string fileName, string mimeType, string base64Content) : string
+	{
+		scopePreset = ToNormalizeOffice365OneDriveScopePreset(scopePreset, "files.readwrite");
+
+		// Return facade JSON without reshaping.
+		return Office365ServiceHost.UploadFileBase64Async(			Office365Service.NormalizeOffice365AccountKey(accountKey),
+			NormalizeOffice365OperationScopePreset(scopePreset),
+			fileName,
+			base64Content,
+			parentFolderId,
+			mimeType,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to upload a local file to office 365 onedrive")]
+prototype ToUploadOffice365OneDriveFileFromDisk : Office365SkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to files.readwrite when empty. parentFolderId/localFilePath/fileName/mimeType are required by schema. Pass empty fileName and/or mimeType to use runtime defaults. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string parentFolderId, string localFilePath, string fileName, string mimeType) : string
+	{
+		scopePreset = ToNormalizeOffice365OneDriveScopePreset(scopePreset, "files.readwrite");
+
+		if (StringUtil.IsEmpty(localFilePath))
+			return "localFilePath is required.";
+
+		if (StringUtil.IsEmpty(fileName))
+			fileName = Path.GetFileName(localFilePath);
+
+		if (StringUtil.IsEmpty(fileName))
+			return "fileName is required.";
+
+		if (StringUtil.IsEmpty(mimeType))
+			mimeType = "application/octet-stream";
+
+		string base64Content = Convert.ToBase64String(File.ReadAllBytes(localFilePath));
+
+		// Return facade JSON without reshaping.
+		return Office365ServiceHost.UploadFileBase64Async(			Office365Service.NormalizeOffice365AccountKey(accountKey),
+			NormalizeOffice365OperationScopePreset(scopePreset),
+			fileName,
+			base64Content,
+			parentFolderId,
+			mimeType,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to upload a local file to office 365 onedrive")]
+prototype ToUploadOffice365OneDriveFileFromDiskQuick : Office365SkillAction
+{
+	Description = @"Convenience overload with minimal inputs. Uses scopePreset files.readwrite and defaults fileName/mimeType. accountKey/parentFolderId/localFilePath are required. Returns JSON.";
+
+	function Execute(string accountKey, string parentFolderId, string localFilePath) : string
+	{
+		return ToUploadOffice365OneDriveFileFromDisk.Execute(accountKey, "files.readwrite", parentFolderId, localFilePath, "", "");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to update an office 365 onedrive file")]
+prototype ToUpdateOffice365OneDriveFile : Office365SkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to files.readwrite when empty. fileId required. fileName/mimeType/textContent/base64Content are update inputs. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string fileId, string fileName, string mimeType, string textContent, string base64Content) : string
+	{
+		scopePreset = ToNormalizeOffice365OneDriveScopePreset(scopePreset, "files.readwrite");
+
+		// Return facade JSON without reshaping.
+		return Office365ServiceHost.UpdateFileAsync(			Office365Service.NormalizeOffice365AccountKey(accountKey),
+			NormalizeOffice365OperationScopePreset(scopePreset),
+			fileId,
+			fileName,
+			base64Content,
+			mimeType,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to delete an office 365 onedrive file")]
+prototype ToDeleteOffice365OneDriveFile : Office365SkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to files.readwrite when empty. fileId required. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string fileId) : string
+	{
+		scopePreset = ToNormalizeOffice365OneDriveScopePreset(scopePreset, "files.readwrite");
+
+		// Return facade JSON without reshaping.
+		return Office365ServiceHost.DeleteFileAsync(			Office365Service.NormalizeOffice365AccountKey(accountKey),
+			NormalizeOffice365OperationScopePreset(scopePreset),
+			fileId,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list a page of office 365 OneDrive files")]
+prototype ToListOffice365OneDriveFilesPage : Office365SkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to files.read when empty. query/pageSize/pageToken control paging. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string query, int pageSize, string pageToken) : string
+	{
+		scopePreset = ToNormalizeOffice365OneDriveScopePreset(scopePreset, "files.read");
+
+		// Return facade JSON without reshaping.
+		return Office365ServiceHost.ListFilesPageAsync(			Office365Service.NormalizeOffice365AccountKey(accountKey),
+			NormalizeOffice365OperationScopePreset(scopePreset),
+			query,
+			pageSize,
+			pageToken,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to ensure a onedrive folder exists")]
+prototype ToEnsureOffice365OneDriveFolder : Office365SkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to files.readwrite when empty. parentFolderId/folderName determine the target folder. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string parentFolderId, string folderName) : string
+	{
+		scopePreset = ToNormalizeOffice365OneDriveScopePreset(scopePreset, "files.readwrite");
+
+		// Return facade JSON without reshaping.
+		return Office365ServiceHost.EnsureFolderAsync(			Office365Service.NormalizeOffice365AccountKey(accountKey),
+			NormalizeOffice365OperationScopePreset(scopePreset),
+			folderName,
+			parentFolderId,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to grant a onedrive file permission")]
+prototype ToGrantOffice365OneDriveFilePermission : Office365SkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset defaults to files.readwrite. fileId/permissionType/role required. user/group requires emailAddress. domain requires domain. Optional allowFileDiscovery/sendNotificationEmail/emailMessage/transferOwnership.";
+
+	function Execute(string accountKey, string scopePreset, string fileId, string permissionType, string role, string emailAddress, string domain, bool allowFileDiscovery, bool sendNotificationEmail, string emailMessage, bool transferOwnership) : string
+	{
+		scopePreset = ToNormalizeOffice365OneDriveScopePreset(scopePreset, "files.readwrite");
+
+		return Office365ServiceHost.CreatePermissionAsync(			Office365Service.NormalizeOffice365AccountKey(accountKey),
+			NormalizeOffice365OperationScopePreset(scopePreset),
+			fileId,
+			permissionType,
+			role,
+			emailAddress,
+			domain,
+			allowFileDiscovery,
+			sendNotificationEmail,
+			emailMessage,
+			transferOwnership,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to share a onedrive file")]
+prototype ToShareOffice365OneDriveFile : Office365SkillAction
+{
+	Description = @"Alias for granting a OneDrive permission with scopePreset defaulted to files.readwrite.";
+
+	function Execute(string accountKey, string scopePreset, string fileId, string permissionType, string role, string emailAddress, string domain, bool allowFileDiscovery, bool sendNotificationEmail, string emailMessage, bool transferOwnership) : string
+	{
+		return ToGrantOffice365OneDriveFilePermission.Execute(
+			Office365Service.NormalizeOffice365AccountKey(accountKey),
+			NormalizeOffice365OperationScopePreset(scopePreset),
+			fileId,
+			permissionType,
+			role,
+			emailAddress,
+			domain,
+			allowFileDiscovery,
+			sendNotificationEmail,
+			emailMessage,
+			transferOwnership);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list onedrive file permissions")]
+prototype ToListOffice365OneDriveFilePermissions : Office365SkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset defaults to files.read. fileId required. pageSize/pageToken are optional paging controls.";
+
+	function Execute(string accountKey, string scopePreset, string fileId, int pageSize, string pageToken) : string
+	{
+		scopePreset = ToNormalizeOffice365OneDriveScopePreset(scopePreset, "files.read");
+
+		return Office365ServiceHost.ListPermissionsAsync(			Office365Service.NormalizeOffice365AccountKey(accountKey),
+			NormalizeOffice365OperationScopePreset(scopePreset),
+			fileId,
+			pageSize,
+			pageToken,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to delete an office 365 onedrive file permission")]
+prototype ToDeleteOffice365OneDriveFilePermission : Office365SkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset defaults to files.readwrite. fileId and permissionId required. useDomainAdminAccess enables admin override for shared-OneDrive contexts.";
+
+	function Execute(string accountKey, string scopePreset, string fileId, string permissionId, bool useDomainAdminAccess) : string
+	{
+		scopePreset = ToNormalizeOffice365OneDriveScopePreset(scopePreset, "files.readwrite");
+
+		return Office365ServiceHost.DeletePermissionAsync(			Office365Service.NormalizeOffice365AccountKey(accountKey),
+			NormalizeOffice365OperationScopePreset(scopePreset),
+			fileId,
+			permissionId,
+			useDomainAdminAccess,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to revoke a onedrive file permission")]
+prototype ToRevokeOffice365OneDriveFilePermission : Office365SkillAction
+{
+	Description = @"Alias for deleting a OneDrive file permission.";
+
+	function Execute(string accountKey, string scopePreset, string fileId, string permissionId, bool useDomainAdminAccess) : string
+	{
+		return ToDeleteOffice365OneDriveFilePermission.Execute(
+			Office365Service.NormalizeOffice365AccountKey(accountKey),
+			NormalizeOffice365OperationScopePreset(scopePreset),
+			fileId,
+			permissionId,
+			useDomainAdminAccess);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to grant a onedrive file permission")]
+prototype ToGrantOffice365OneDriveFilePermission : Office365SkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset defaults to files.readwrite. fileId/permissionType/role required. user/group requires emailAddress. domain requires domain. Optional allowFileDiscovery/sendNotificationEmail/emailMessage/transferOwnership.";
+
+	function Execute(string accountKey, string scopePreset, string fileId, string permissionType, string role, string emailAddress, string domain, bool allowFileDiscovery, bool sendNotificationEmail, string emailMessage, bool transferOwnership) : string
+	{
+		scopePreset = ToNormalizeOffice365OneDriveScopePreset(scopePreset, "files.readwrite");
+
+		bool sendAllowFileDiscovery = allowFileDiscovery;
+		if (StringUtil.EqualNoCase(permissionType, "user") || StringUtil.EqualNoCase(permissionType, "group"))
+			sendAllowFileDiscovery = false;
+
+		return Office365ServiceHost.CreatePermissionAsync(			Office365Service.NormalizeOffice365AccountKey(accountKey),
+			NormalizeOffice365OperationScopePreset(scopePreset),
+			fileId,
+			permissionType,
+			role,
+			emailAddress,
+			domain,
+			sendAllowFileDiscovery,
+			sendNotificationEmail,
+			emailMessage,
+			transferOwnership,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+

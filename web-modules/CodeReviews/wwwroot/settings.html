@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Buffaly Code Reviews - Agent Targets</title>
+	<link rel="stylesheet" href="styles/code-reviews-harness.css?v=20260514.1">
+</head>
+<body>
+	<main class="app-shell">
+		<header class="hero-card">
+			<div>
+				<p class="eyebrow">Buffaly Agent Tools</p>
+				<h1>Agent Targets</h1>
+				<p class="hero-copy">Manage the local JsonWs base URLs used when CodeReviews loads sessions or sends review notes.</p>
+			</div>
+			<div class="hero-actions">
+				<a class="button-link" href="shortcuts.html">Shortcuts</a>
+				<a class="button-link" href="index.html">Repositories</a>
+				<button id="reloadTargetsButton" type="button">Reload targets</button>
+			</div>
+		</header>
+		<section class="page-card">
+			<div class="page-header"><h2>Configured targets</h2><p class="subtle">Dev currently points at the Matt instance by default.</p></div>
+			<div id="agentTargetList" class="agent-target-list empty">Loading targets...</div>
+			<div class="annotation-modal-actions settings-actions">
+				<button id="saveTargetsButton" type="button">Save target URLs</button>
+			</div>
+		</section>
+		<section class="details-panel"><h2>Status</h2><pre id="statusLog">Ready.</pre></section>
+	</main>
+	<script>window.Page = window.Page || { HandleUnexpectedError: function(error){ if (window.console && console.error) console.error(error); } };</script>
+	<script src="//static.buffa.ly/v2/js/global.js"></script>
+	<script src="//static.buffa.ly/v2/js/LocalStorage2.js"></script>
+	<script src="//static.buffa.ly/v2/js/moremoo4.js?v=2"></script>
+	<script src="//static.buffa.ly/v2/js/JsonMethod.js?v=2"></script>
+	<script src="//static.buffa.ly/v2/js/validators.js?v=2"></script>
+	<script src="/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js?v=20260514.1"></script>
+	<script src="js/code-reviews-common.js?v=20260509.4"></script>
+	<script src="js/code-reviews-settings.js?v=20260514.1"></script>
+</body>
+</html>

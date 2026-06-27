@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Buffaly Code Reviews - Check-ins</title>
+	<link rel="stylesheet" href="js/plugins/codemirror/lib/codemirror.css">
+	<link rel="stylesheet" href="styles/code-reviews-harness.css?v=20260521.8">
+</head>
+<body>
+	<main class="app-shell">
+		<header class="hero-card compact-hero diff-hero-card">
+			<div class="diff-hero-main">
+				<nav class="breadcrumb-nav" aria-label="Code review navigation"><a id="repositoriesBreadcrumb" href="index.html">Repositories</a><span aria-hidden="true">/</span><span>Check-ins</span></nav>
+				<p class="eyebrow">Repository Check-ins</p>
+				<h1 id="selectedRepoTitle">Repository</h1>
+				<p id="selectedRepoMeta" class="hero-copy"></p>
+			</div>
+			<div class="hero-actions"><a class="settings-link" href="settings.html" aria-label="Agent target settings" title="Agent target settings"><span aria-hidden="true">&#9881;</span><span>Settings</span></a><button id="refreshButton" class="icon-button compact-action-button refresh-checkins-button" type="button" title="Refresh check-ins" aria-label="Refresh check-ins"><span aria-hidden="true">&#8635;</span></button></div>
+		</header>
+		<section class="page-card">
+			<div class="page-header checkins-header"><h2>Recent check-ins</h2><div class="actions checkins-actions"><span id="syncSummary" class="sync-summary">Checking branch sync...</span><button id="pushAllButton" type="button" class="hidden">Push all</button><a id="worktreeLink" class="button-link" href="diff.html?mode=worktree">Open worktree</a></div></div>
+			<div class="checkins-control-card"><label class="branch-control"><span>Branch</span><select id="branchSelect"><option value="">Current branch</option></select></label><div class="review-filter-toggle" role="group" aria-label="Review status filter"><button id="reviewFilterAll" type="button" class="selected" data-review-filter="all">All</button><button id="reviewFilterUnreviewed" type="button" data-review-filter="unreviewed">Unreviewed</button><button id="reviewFilterReviewed" type="button" data-review-filter="reviewed">Reviewed</button></div></div><div id="worktreeStatus" class="worktree-status-host"></div>
+			<div id="checkInList" class="checkin-list empty">Loading check-ins...</div>
+		</section>
+		<section class="details-panel"><h2>Status</h2><pre id="statusLog">Ready.</pre></section>
+	</main>
+	<script>window.Page = window.Page || { HandleUnexpectedError: function(error){ if (window.console && console.error) console.error(error); } };</script>
+	<script src="//static.buffa.ly/v2/js/global.js"></script>
+	<script src="//static.buffa.ly/v2/js/LocalStorage2.js"></script>
+	<script src="//static.buffa.ly/v2/js/moremoo4.js?v=2"></script>
+	<script src="//static.buffa.ly/v2/js/JsonMethod.js?v=2"></script>
+	<script src="//static.buffa.ly/v2/js/validators.js?v=2"></script>
+	<script src="//static.buffa.ly/v2/js/moment.min.js"></script>
+	<script src="//static.buffa.ly/v2/js/DateUtil.js"></script>
+	<script src="/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js?v=20260508.4"></script>
+	<script src="js/code-reviews-common.js?v=20260508.4"></script>
+	<script src="js/code-reviews-checkins.js?v=20260521.7"></script>
+</body>
+</html>
+
+
