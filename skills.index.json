@@ -38,10 +38,11 @@
     {
       "SkillName": "BrowserSession",
       "Title": "Browser Session",
-      "Description": "BrowserSession Skill",
+      "Description": "Buffaly skill package for Browser Session.",
       "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "Browser Session",
         "BrowserSession"
       ],
       "Path": "skills/BrowserSession",
@@ -957,31 +958,6 @@
       "IsDefaultPackage": true
     },
     {
-      "SkillName": "Level2Watcher",
-      "Title": "Level2 Watcher",
-      "Description": "Buffaly OpsAgent skill package for Level2Watcher.",
-      "Version": "0.1.0",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [
-        "Level2Watcher"
-      ],
-      "Path": "skills/Level2Watcher",
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "c7f513d0b4373f41a01b243aa3e71306352d882d7b6ef149432c5a5e21f23b87"
-        },
-        {
-          "Path": "index.pts.md",
-          "Sha256": "2069223198f565d01f46e2e1ed31cc6b40b1070417ccc268428fb25c07fd5a01"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsDefaultPackage": true
-    },
-    {
       "SkillName": "LLM",
       "Title": "L L M",
       "Description": "Buffaly OpsAgent skill package for LLM.",
@@ -1031,6 +1007,31 @@
         {
           "Path": "RuntimeProfiles.pts.md",
           "Sha256": "4b20b09f4eda3bbbb6f04e3d200b76ec1dea4d753c6167bf047e1ae98c6830ca"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsDefaultPackage": true
+    },
+    {
+      "SkillName": "Level2Watcher",
+      "Title": "Level2 Watcher",
+      "Description": "Buffaly OpsAgent skill package for Level2Watcher.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Level2Watcher"
+      ],
+      "Path": "skills/Level2Watcher",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "c7f513d0b4373f41a01b243aa3e71306352d882d7b6ef149432c5a5e21f23b87"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "2069223198f565d01f46e2e1ed31cc6b40b1070417ccc268428fb25c07fd5a01"
         }
       ],
       "EntryPoint": "index.pts",
