@@ -11,7 +11,7 @@
       "SourcePath": "web-modules/Browser",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/Browser",
       "Phrases": [
-        "browser",
+        "Browser",
         "Browser"
       ],
       "Files": [
@@ -118,18 +118,6 @@
         {
           "Path": ".playwright/package/lib/browserServerImpl.js",
           "Sha256": "3df6f0a25d59014836d0d011a33f75eb248431a6fdbc23ed7f1c53a0514a7c61"
-        },
-        {
-          "Path": ".playwright/package/lib/cli/driver.js",
-          "Sha256": "f86aca7cc5acc30c07e9b46fee077fc53e0f97d238124d8695c7ee82e49362ae"
-        },
-        {
-          "Path": ".playwright/package/lib/cli/program.js",
-          "Sha256": "fb0fd436604cb464f1d32d0e92e4e615b1aa9a5b68f6243cadeeda8f7a111d74"
-        },
-        {
-          "Path": ".playwright/package/lib/cli/programWithTestStub.js",
-          "Sha256": "62b87c6d280c321fac8351f95dafbd9f8cb7d2778700462ced9c0325f6ca46f5"
         },
         {
           "Path": ".playwright/package/lib/client/accessibility.js",
@@ -322,6 +310,18 @@
         {
           "Path": ".playwright/package/lib/client/writableStream.js",
           "Sha256": "62d9d8e4be5975d3a1f948a80a99a149351382abc019fc8d5696b1311a107977"
+        },
+        {
+          "Path": ".playwright/package/lib/cli/driver.js",
+          "Sha256": "f86aca7cc5acc30c07e9b46fee077fc53e0f97d238124d8695c7ee82e49362ae"
+        },
+        {
+          "Path": ".playwright/package/lib/cli/program.js",
+          "Sha256": "fb0fd436604cb464f1d32d0e92e4e615b1aa9a5b68f6243cadeeda8f7a111d74"
+        },
+        {
+          "Path": ".playwright/package/lib/cli/programWithTestStub.js",
+          "Sha256": "62b87c6d280c321fac8351f95dafbd9f8cb7d2778700462ced9c0325f6ca46f5"
         },
         {
           "Path": ".playwright/package/lib/generated/clockSource.js",
@@ -792,16 +792,16 @@
           "Sha256": "ea5878f7e2c4ac99dd81c5767db2f1148eddc57ad939778196386c9889c7cbc6"
         },
         {
+          "Path": ".playwright/package/lib/server/harBackend.js",
+          "Sha256": "f98df2109b57c23f324f3864077c1806dd8e62e778e538acfaa51eb7f3a17643"
+        },
+        {
           "Path": ".playwright/package/lib/server/har/harRecorder.js",
           "Sha256": "8360ccd69f1420c54e71a7cb29f830c264b7e7fbdafb0fb06c62562782fcca78"
         },
         {
           "Path": ".playwright/package/lib/server/har/harTracer.js",
           "Sha256": "67fb82622e6a1b38f110f38abbd6759341105379553231e049412552e5b3a748"
-        },
-        {
-          "Path": ".playwright/package/lib/server/harBackend.js",
-          "Sha256": "f98df2109b57c23f324f3864077c1806dd8e62e778e538acfaa51eb7f3a17643"
         },
         {
           "Path": ".playwright/package/lib/server/helper.js",
@@ -1144,6 +1144,18 @@
           "Sha256": "38c2ba78554c1d48fa18bfc32cb1bae64657d2694ecfb2e2a293fdef2c12d0b6"
         },
         {
+          "Path": ".playwright/package/lib/utilsBundle.js",
+          "Sha256": "7c3bb4397a6c3ec61bcb76fa0032ca8027747471bc5096ef577a7c1addda287b"
+        },
+        {
+          "Path": ".playwright/package/lib/utilsBundleImpl/index.js",
+          "Sha256": "672b9141fc7ccea86fd8c0dd4e128e3701d50ef172a46b6eeac9ce84b47c6b1a"
+        },
+        {
+          "Path": ".playwright/package/lib/utilsBundleImpl/xdg-open",
+          "Sha256": "2e79a4d5171dd384d20a75b023dfe0e9f4330cdb5d441f6c3859a11fce3db51a"
+        },
+        {
           "Path": ".playwright/package/lib/utils/isomorphic/ariaSnapshot.js",
           "Sha256": "dd02871677674cde3091ce8b544324f7b890e116509c7783816a45d1d7a5b787"
         },
@@ -1238,18 +1250,6 @@
         {
           "Path": ".playwright/package/lib/utils/isomorphic/utilityScriptSerializers.js",
           "Sha256": "d336888f2177efcece64db99fa7a18c01e941fa061e27d9590f477ca8ed062b4"
-        },
-        {
-          "Path": ".playwright/package/lib/utilsBundle.js",
-          "Sha256": "7c3bb4397a6c3ec61bcb76fa0032ca8027747471bc5096ef577a7c1addda287b"
-        },
-        {
-          "Path": ".playwright/package/lib/utilsBundleImpl/index.js",
-          "Sha256": "672b9141fc7ccea86fd8c0dd4e128e3701d50ef172a46b6eeac9ce84b47c6b1a"
-        },
-        {
-          "Path": ".playwright/package/lib/utilsBundleImpl/xdg-open",
-          "Sha256": "2e79a4d5171dd384d20a75b023dfe0e9f4330cdb5d441f6c3859a11fce3db51a"
         },
         {
           "Path": ".playwright/package/lib/vite/htmlReport/index.html",
@@ -1648,18 +1648,6 @@
           "Sha256": "3df6f0a25d59014836d0d011a33f75eb248431a6fdbc23ed7f1c53a0514a7c61"
         },
         {
-          "Path": "runner/.playwright/package/lib/cli/driver.js",
-          "Sha256": "f86aca7cc5acc30c07e9b46fee077fc53e0f97d238124d8695c7ee82e49362ae"
-        },
-        {
-          "Path": "runner/.playwright/package/lib/cli/program.js",
-          "Sha256": "fb0fd436604cb464f1d32d0e92e4e615b1aa9a5b68f6243cadeeda8f7a111d74"
-        },
-        {
-          "Path": "runner/.playwright/package/lib/cli/programWithTestStub.js",
-          "Sha256": "62b87c6d280c321fac8351f95dafbd9f8cb7d2778700462ced9c0325f6ca46f5"
-        },
-        {
           "Path": "runner/.playwright/package/lib/client/accessibility.js",
           "Sha256": "f9a8cc72758845c8c8c40499c36194f56f2540a0037b9e34b62d2c5a9f2cccb8"
         },
@@ -1850,6 +1838,18 @@
         {
           "Path": "runner/.playwright/package/lib/client/writableStream.js",
           "Sha256": "62d9d8e4be5975d3a1f948a80a99a149351382abc019fc8d5696b1311a107977"
+        },
+        {
+          "Path": "runner/.playwright/package/lib/cli/driver.js",
+          "Sha256": "f86aca7cc5acc30c07e9b46fee077fc53e0f97d238124d8695c7ee82e49362ae"
+        },
+        {
+          "Path": "runner/.playwright/package/lib/cli/program.js",
+          "Sha256": "fb0fd436604cb464f1d32d0e92e4e615b1aa9a5b68f6243cadeeda8f7a111d74"
+        },
+        {
+          "Path": "runner/.playwright/package/lib/cli/programWithTestStub.js",
+          "Sha256": "62b87c6d280c321fac8351f95dafbd9f8cb7d2778700462ced9c0325f6ca46f5"
         },
         {
           "Path": "runner/.playwright/package/lib/generated/clockSource.js",
@@ -2320,16 +2320,16 @@
           "Sha256": "ea5878f7e2c4ac99dd81c5767db2f1148eddc57ad939778196386c9889c7cbc6"
         },
         {
+          "Path": "runner/.playwright/package/lib/server/harBackend.js",
+          "Sha256": "f98df2109b57c23f324f3864077c1806dd8e62e778e538acfaa51eb7f3a17643"
+        },
+        {
           "Path": "runner/.playwright/package/lib/server/har/harRecorder.js",
           "Sha256": "8360ccd69f1420c54e71a7cb29f830c264b7e7fbdafb0fb06c62562782fcca78"
         },
         {
           "Path": "runner/.playwright/package/lib/server/har/harTracer.js",
           "Sha256": "67fb82622e6a1b38f110f38abbd6759341105379553231e049412552e5b3a748"
-        },
-        {
-          "Path": "runner/.playwright/package/lib/server/harBackend.js",
-          "Sha256": "f98df2109b57c23f324f3864077c1806dd8e62e778e538acfaa51eb7f3a17643"
         },
         {
           "Path": "runner/.playwright/package/lib/server/helper.js",
@@ -2672,6 +2672,18 @@
           "Sha256": "38c2ba78554c1d48fa18bfc32cb1bae64657d2694ecfb2e2a293fdef2c12d0b6"
         },
         {
+          "Path": "runner/.playwright/package/lib/utilsBundle.js",
+          "Sha256": "7c3bb4397a6c3ec61bcb76fa0032ca8027747471bc5096ef577a7c1addda287b"
+        },
+        {
+          "Path": "runner/.playwright/package/lib/utilsBundleImpl/index.js",
+          "Sha256": "672b9141fc7ccea86fd8c0dd4e128e3701d50ef172a46b6eeac9ce84b47c6b1a"
+        },
+        {
+          "Path": "runner/.playwright/package/lib/utilsBundleImpl/xdg-open",
+          "Sha256": "2e79a4d5171dd384d20a75b023dfe0e9f4330cdb5d441f6c3859a11fce3db51a"
+        },
+        {
           "Path": "runner/.playwright/package/lib/utils/isomorphic/ariaSnapshot.js",
           "Sha256": "dd02871677674cde3091ce8b544324f7b890e116509c7783816a45d1d7a5b787"
         },
@@ -2766,18 +2778,6 @@
         {
           "Path": "runner/.playwright/package/lib/utils/isomorphic/utilityScriptSerializers.js",
           "Sha256": "d336888f2177efcece64db99fa7a18c01e941fa061e27d9590f477ca8ed062b4"
-        },
-        {
-          "Path": "runner/.playwright/package/lib/utilsBundle.js",
-          "Sha256": "7c3bb4397a6c3ec61bcb76fa0032ca8027747471bc5096ef577a7c1addda287b"
-        },
-        {
-          "Path": "runner/.playwright/package/lib/utilsBundleImpl/index.js",
-          "Sha256": "672b9141fc7ccea86fd8c0dd4e128e3701d50ef172a46b6eeac9ce84b47c6b1a"
-        },
-        {
-          "Path": "runner/.playwright/package/lib/utilsBundleImpl/xdg-open",
-          "Sha256": "2e79a4d5171dd384d20a75b023dfe0e9f4330cdb5d441f6c3859a11fce3db51a"
         },
         {
           "Path": "runner/.playwright/package/lib/vite/htmlReport/index.html",
@@ -3048,15 +3048,9 @@
           "Sha256": "947a5d00376723812291a68872bd910c615ef699ccf383706135bc24ee411383"
         }
       ],
-      "Dependencies": [
-        null
-      ],
-      "RelatedWikiSlugs": [
-        null
-      ],
-      "Prerequisites": [
-        null
-      ],
+      "Dependencies": [],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
       "IsDefaultPackage": true,
       "RequiresRestart": true,
       "RequiresPreStartInstall": true
