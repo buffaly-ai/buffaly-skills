@@ -6,7 +6,8 @@
 	var sha = C.decode(C.query("sha"));
 	var mode = C.query("mode") === "worktree" ? "worktree" : "commit";
 	var selectedBranch = C.decode(C.query("branch"));
-	var state = { snapshot: null, files: [], editors: {}, annotations: [], editTarget: null, selectedTarget: null, fullFilePaths: {}, reviewed: false };
+	var sourceSessionKey = C.decode(C.query("sourceSessionKey"));
+	var state = { snapshot: null, files: [], editors: {}, annotations: [], editTarget: null, selectedTarget: null, fullFilePaths: {}, reviewed: false, codeReviewAgentTrigger: { running: false, childSessionKey: "", message: "", error: "" } };
 	function contextLines() { var value = C.byId("contextSelect").value; return value === "full" ? 200000 : Number(value || 5); }
 	function total(files, property) { return files.reduce(function (sum, file) { return sum + Number(file[property] || 0); }, 0); }
 	function sortFiles(files) { return files.slice().sort(function (a, b) { return (a.IsBinary === b.IsBinary) ? C.text(a.Path).localeCompare(C.text(b.Path)) : (a.IsBinary ? 1 : -1); }); }
@@ -91,6 +92,41 @@
 		if (!button) return;
 		var pendingCount = Bridge.getPendingReviewCount ? Bridge.getPendingReviewCount() : 0;
 		button.textContent = pendingCount > 0 ? "Send notes (" + pendingCount + " pending)" : "Send notes";
+	}
+	function setCodeReviewAgentStatus(message, stateName) {
+		var node = C.byId("codeReviewAgentStatus");
+		if (node) {
+			node.textContent = message || "";
+			node.className = "code-review-agent-status" + (stateName ? " " + stateName : "");
+		}
+		var button = C.byId("runCodeReviewAgentButton");
+		if (button) button.disabled = state.codeReviewAgentTrigger.running || mode !== "commit";
+	}
+	function buildCodeReviewAgentRequest() {
+		if (mode !== "commit") throw new Error("Code Review Agent can only review committed diffs.");
+		if (!sourceSessionKey) throw new Error("sourceSessionKey is required. Open this diff from a session commit link before running agent review.");
+		if (!path || !sha) throw new Error("repository path and commit SHA are required.");
+		return { Environment: "Dev", SourceSessionKey: sourceSessionKey, RepositoryName: repo, RepositoryPath: path, CommitSha: sha, CodeReviewUrl: window.location.pathname + window.location.search, ReviewMode: "Manual" };
+	}
+	function triggerCodeReviewAgent() {
+		var request;
+		try { request = buildCodeReviewAgentRequest(); }
+		catch (error) { setCodeReviewAgentStatus(error.message || String(error), "error"); C.log(error.message || String(error)); return; }
+		state.codeReviewAgentTrigger.running = true;
+		setCodeReviewAgentStatus("Starting Code Review Agent...", "pending");
+		C.call("TriggerCodeReviewAgent", request)
+			.then(function (response) {
+				state.codeReviewAgentTrigger.childSessionKey = C.text(response.ChildSessionKey || response.childSessionKey);
+				state.codeReviewAgentTrigger.message = C.text(response.Message || response.message || "Code review started.");
+				setCodeReviewAgentStatus(state.codeReviewAgentTrigger.message + (state.codeReviewAgentTrigger.childSessionKey ? " Child: " + state.codeReviewAgentTrigger.childSessionKey : ""), "sent");
+				C.log(state.codeReviewAgentTrigger.message);
+			})
+			.catch(function (error) {
+				state.codeReviewAgentTrigger.error = C.errorMessage(error);
+				setCodeReviewAgentStatus("Code review trigger failed: " + state.codeReviewAgentTrigger.error, "error");
+				C.log("Code review trigger failed: " + state.codeReviewAgentTrigger.error);
+			})
+			.then(function () { state.codeReviewAgentTrigger.running = false; setCodeReviewAgentStatus(C.byId("codeReviewAgentStatus") ? C.byId("codeReviewAgentStatus").textContent : "", state.codeReviewAgentTrigger.error ? "error" : "sent"); });
 	}
 	function setAllFilesOpen(open) {
 		document.querySelectorAll("#diffFiles details.diff-file").forEach(function (details) { details.open = open; details.classList.toggle("collapsed-by-toolbar", !open); });
@@ -328,7 +364,7 @@
 		state.editors = {};
 		C.byId("diffTitle").textContent = snapshot.Mode === "worktree" ? "Uncommitted worktree" : (snapshot.CommitShortSha + " " + snapshot.CommitSubject);
 		state.reviewed = snapshot.Reviewed === true;
-		var html = renderSummary(snapshot, state.files) + '<div class="annotation-toolbar"><div><strong id="annotationSummary">0 pending notes</strong><span id="reviewStatusSummary" class="review-status-summary">' + reviewedBadgeHtml(state.reviewed) + '</span><p id="sendAnnotationsStatus" class="send-annotations-status" role="status" aria-live="polite"></p></div><span class="annotation-toolbar-actions"><button id="reviewToggleButton" class="review-toggle" type="button" aria-pressed="' + (state.reviewed ? 'true' : 'false') + '"><span aria-hidden="true">' + (state.reviewed ? '&#10003;' : '&#9675;') + '</span><span>' + (state.reviewed ? 'Reviewed' : 'Unreviewed') + '</span></button><button id="sendAnnotationsButton" type="button">Send notes</button></span></div>' + (state.files.map(function (file) {
+		var html = renderSummary(snapshot, state.files) + '<div class="annotation-toolbar"><div><strong id="annotationSummary">0 pending notes</strong><span id="reviewStatusSummary" class="review-status-summary">' + reviewedBadgeHtml(state.reviewed) + '</span><p id="sendAnnotationsStatus" class="send-annotations-status" role="status" aria-live="polite"></p><p id="codeReviewAgentStatus" class="code-review-agent-status" role="status" aria-live="polite"></p></div><span class="annotation-toolbar-actions"><button id="reviewToggleButton" class="review-toggle" type="button" aria-pressed="' + (state.reviewed ? 'true' : 'false') + '"><span aria-hidden="true">' + (state.reviewed ? '&#10003;' : '&#9675;') + '</span><span>' + (state.reviewed ? 'Reviewed' : 'Unreviewed') + '</span></button><button id="sendAnnotationsButton" type="button">Send notes</button><button id="runCodeReviewAgentButton" type="button">Run Code Review Agent</button></span></div>' + (state.files.map(function (file) {
 			var isBinary = isBinaryLikeFile(file);
 			var patch = isBinary ? "Binary file changed. Diff body is hidden." : C.text(file.Patch || file.patch);
 			var filePath = C.text(file.Path || file.path);
@@ -340,7 +376,7 @@
 		C.byId("diffFiles").innerHTML = html;
 		C.enhanceCodeBlocks(C.byId("diffFiles"), function (textarea, editor) { var filePath = textarea.getAttribute("data-path") || ""; state.editors[filePath] = editor; applyDiffLineGutter(editor, editor.getValue()); editor.on("cursorActivity", function () { handleEditorSelection(filePath, editor); }); });
 		setBinaryFilesHidden(C.byId("hideBinaryFilesToggle").checked);
-		renderAllAnnotations(); updatePendingReviewButton(); updateConnectionSummary();
+		renderAllAnnotations(); updatePendingReviewButton(); updateConnectionSummary(); setCodeReviewAgentStatus(state.codeReviewAgentTrigger.message || state.codeReviewAgentTrigger.error, state.codeReviewAgentTrigger.error ? "error" : "");
 	}
 	function buildReviewPayload() {
 		var files = state.files || [];
@@ -478,10 +514,11 @@
 	C.byId("recentSessionsSelect").addEventListener("change", function (event) { C.byId("sessionKeyInput").value = event.target.value || ""; updateSessionDestinationSummary(); updateConnectionSummary(); });
 	C.byId("sessionKeyInput").addEventListener("input", updateSessionDestinationSummary);
 	document.querySelectorAll("[data-session-env]").forEach(function (button) { button.addEventListener("click", function () { selectSessionEnvironment(button.getAttribute("data-session-env") || "Dev", true); }); });
-	document.addEventListener("click", function (event) {
+		document.addEventListener("click", function (event) {
 		if (event.target.id === "copySelectionButton") { copySelectedSnippet(); return; }
 		if (event.target.id === "annotateSelectionButton") { if (state.selectedTarget) openAnnotationModal(state.selectedTarget); return; }
 		if (event.target.id === "sendAnnotationsButton") { sendAnnotations(); return; }
+		if (event.target.id === "runCodeReviewAgentButton") { triggerCodeReviewAgent(); return; }
 		if (event.target.closest && event.target.closest("#reviewToggleButton")) { setCurrentReviewed(!state.reviewed); return; }
 		if (event.target.id === "configureSessionButton") { configureSession(); return; }
 		var fullFile = event.target.closest("[data-full-file]");

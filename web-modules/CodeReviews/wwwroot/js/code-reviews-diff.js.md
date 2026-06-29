@@ -33,3 +33,7 @@
 - Normalized successfully loaded commit snapshots to the authoritative full SHA returned by the server.
 - Stopped using the recent check-in dropdown as a commit existence validator, preventing valid short-SHA links from being overwritten by a false "Commit not found" redirect.
 - Added the current commit to the selector when it is outside the recent check-in list, so older direct links remain selectable after the diff loads.
+
+## Manual Code Review Agent Trigger (2026-06-27)
+- Added a `Run Code Review Agent` action to committed diff pages.
+- The action sends the current repository, normalized commit SHA, same-origin CodeReviews URL, and `sourceSessionKey` to `TriggerCodeReviewAgent` and displays child-session queue status in the diff toolbar.

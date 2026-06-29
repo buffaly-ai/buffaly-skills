@@ -9,7 +9,9 @@
     { "IsStatic":"true", "IsReturnTypeArray":"false", "KebabName":"set-check-in-reviewed", "Parameters":[{ "Type":"SetCheckInReviewedRequest", "IsNullable":"false", "Name":"request", "IsArray":"false", "IsEnum":"false" }], "ReturnType":"SetCheckInReviewedResponse", "UrlName":null, "Name":"SetCheckInReviewed", "DataObject":{} },
     { "IsStatic":"true", "IsReturnTypeArray":"false", "KebabName":"push-repository", "Parameters":[{ "Type":"PushRepositoryRequest", "IsNullable":"false", "Name":"request", "IsArray":"false", "IsEnum":"false" }], "ReturnType":"PushRepositoryResponse", "UrlName":null, "Name":"PushRepository", "DataObject":{} },
     { "IsStatic":"true", "IsReturnTypeArray":"false", "KebabName":"get-diff-snapshot", "Parameters":[{ "Type":"DiffSnapshotRequest", "IsNullable":"false", "Name":"request", "IsArray":"false", "IsEnum":"false" }], "ReturnType":"DiffSnapshotResponse", "UrlName":null, "Name":"GetDiffSnapshot", "DataObject":{} },
+    { "IsStatic":"true", "IsReturnTypeArray":"false", "KebabName":"trigger-code-review-agent", "Parameters":[{ "Type":"TriggerCodeReviewAgentRequest", "IsNullable":"false", "Name":"request", "IsArray":"false", "IsEnum":"false" }], "ReturnType":"TriggerCodeReviewAgentResponse", "UrlName":null, "Name":"TriggerCodeReviewAgent", "DataObject":{} },
     { "IsStatic":"true", "IsReturnTypeArray":"false", "KebabName":"get-file-content", "Parameters":[{ "Type":"FileContentRequest", "IsNullable":"false", "Name":"request", "IsArray":"false", "IsEnum":"false" }], "ReturnType":"FileContentResponse", "UrlName":null, "Name":"GetFileContent", "DataObject":{} }
   ],
   "Namespace":"Buffaly.CodeReviews.WebHarness"
 }
+

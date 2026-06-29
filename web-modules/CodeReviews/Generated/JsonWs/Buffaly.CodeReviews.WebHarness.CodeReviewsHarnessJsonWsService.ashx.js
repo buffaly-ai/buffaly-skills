@@ -23,6 +23,8 @@ class CodeReviewsHarnessJsonWsServiceService {
   async PushRepositoryAsync(request) { return await ObjectUtil.Promisify(this, this.PushRepository, [request]); }
   GetDiffSnapshot(request, Callback, ErrorCallback) { return this._invokeWrap("get-diff-snapshot", "GetDiffSnapshot", request, Callback, ErrorCallback); }
   async GetDiffSnapshotAsync(request) { return await ObjectUtil.Promisify(this, this.GetDiffSnapshot, [request]); }
+  TriggerCodeReviewAgent(request, Callback, ErrorCallback) { return this._invokeWrap("trigger-code-review-agent", "TriggerCodeReviewAgent", request, Callback, ErrorCallback); }
+  async TriggerCodeReviewAgentAsync(request) { return await ObjectUtil.Promisify(this, this.TriggerCodeReviewAgent, [request]); }
   GetFileContent(request, Callback, ErrorCallback) { return this._invokeWrap("get-file-content", "GetFileContent", request, Callback, ErrorCallback); }
   async GetFileContentAsync(request) { return await ObjectUtil.Promisify(this, this.GetFileContent, [request]); }
   _invokeWrap(kebab, methodName, request, Callback, ErrorCallback) {
@@ -50,4 +52,5 @@ window.Buffaly = window.Buffaly || {};
 window.Buffaly.CodeReviews = window.Buffaly.CodeReviews || {};
 window.Buffaly.CodeReviews.WebHarness = window.Buffaly.CodeReviews.WebHarness || {};
 window.Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService = CodeReviewsHarnessJsonWsService;
+
 
