@@ -1,19 +1,19 @@
-{
-  "Module": {
-    "Enabled": true,
-    "Name": "Heartbeat",
-    "DisplayName": "Heartbeat",
-    "Description": "Monitor heartbeat subscriptions, scheduling, and delivery status.",
-    "AssemblyPath": "Buffaly.Agent.Heartbeat/Buffaly.Agent.Heartbeat.dll",
-    "TypeName": "Buffaly.Agent.Heartbeat.HeartbeatModule",
-    "LoadOrder": 100,
-    "Pages": [
-      {
-        "Name": "heartbeat-subscriptions",
-        "DisplayName": "Heartbeat Service",
-        "Path": "/heartbeat-subscriptions",
-        "Description": "Inspect heartbeat subscription scheduling and delivery."
-      }
-    ]
-  }
+﻿{
+    "Module":  {
+                   "Enabled":  true,
+                   "Name":  "Heartbeat",
+                   "DisplayName":  "Heartbeat",
+                   "Description":  "Monitor heartbeat subscriptions, scheduling, and delivery status.",
+                   "AssemblyPath":  "Buffaly.Agent.Heartbeat/Buffaly.Agent.Heartbeat.dll",
+                   "TypeName":  "Buffaly.Agent.Heartbeat.HeartbeatModule",
+                   "LoadOrder":  100,
+                   "Pages":  [
+                                 {
+                                     "Name":  "heartbeat-subscriptions",
+                                     "DisplayName":  "Heartbeat Service",
+                                     "Path":  "/heartbeat-subscriptions",
+                                     "Description":  "Inspect heartbeat subscription scheduling and delivery."
+                                 }
+                             ]
+               }
 }

@@ -1,0 +1,271 @@
+import OfflineOntologyCritic.Web OfflineOntologyCritic.Web.OfflineOntologyCriticTools OfflineOntologyCriticWebTools;
+[SemanticEntity("offline ontology critic action root")]
+prototype OfflineOntologyCriticActionRoot : OpsAction
+{
+	Description = @"Limited action root for the separate offline ontology critic agent. Exposes only offline ontology critic prompt skills plus narrow session, ontology, ledger, and checkpoint tools.";
+}
+
+[SemanticEntity("offline ontology critic entity root")]
+prototype OfflineOntologyCriticEntityRoot : SemanticEntityBase
+{
+	Description = @"Limited entity root for the separate offline ontology critic agent.";
+}
+
+prototype OfflineOntologyCriticSkillAction : OfflineOntologyCriticActionRoot
+{
+	Description = @"Base action type for non-prompt offline ontology critic tools.";
+}
+
+include "PromptActions.pts";
+
+[SemanticProgram.InfinitivePhrase("to run offline ontology critic phase one")]
+[SemanticProgram.InfinitivePhrase("to attach phase one offline critic to a session")]
+prototype ToRunOfflineOntologyCriticPhase1 : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
+{
+	Description = @"sourceSessionKey - source session to review. requestedCriticSessionKey - optional exact critic child session key. provider/modelName/reasoningLevel are optional and default to ollama/glm-5.2/medium. Creates or reuses an attached child and seeds the Phase 1 run prompt.";
+
+	function Execute(string sourceSessionKey, string requestedCriticSessionKey = "", string provider = "", string modelName = "", string reasoningLevel = "", int timeoutSeconds = 1200) : string
+	{
+		return OfflineOntologyCriticWebTools.RunPhase1CriticMarkdown(sourceSessionKey, requestedCriticSessionKey, provider, modelName, reasoningLevel, timeoutSeconds);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to run the offline critic against a session")]
+[SemanticProgram.InfinitivePhrase("to run named offline ontology critic phase one")]
+prototype ToRunNamedOfflineOntologyCriticPhase1 : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
+{
+	Description = @"sourceSessionKey - source session to review. Enforces child session name '<source> - offline critic', offline-ontology-critic agent/profile roots, empty context, and provider/model/reasoning defaults ollama/glm-5.2/medium unless explicitly overridden.";
+
+	function Execute(string sourceSessionKey, string provider = "", string modelName = "", string reasoningLevel = "", int timeoutSeconds = 1200) : string
+	{
+		return OfflineOntologyCriticWebTools.RunNamedPhase1CriticMarkdownForProtoScript(_opsAgent, sourceSessionKey, provider, modelName, reasoningLevel, timeoutSeconds);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to run the offline critic materializer against a session")]
+[SemanticProgram.InfinitivePhrase("to run named offline ontology critic phase two materializer")]
+prototype ToRunNamedOfflineOntologyCriticMaterializer : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
+{
+	Description = @"sourceSessionKey - source session whose '<source> - offline critic' Phase 1 artifact should be materialized. phase1ArtifactPath - optional explicit Phase 1 artifact path. Enforces child session name '<source> - critic materializer' using the normal buffaly-agent profile with provider/model/reasoning defaults ollama/glm-5.2/medium unless explicitly overridden.";
+
+	function Execute(string sourceSessionKey, string phase1ArtifactPath = "", string provider = "", string modelName = "", string reasoningLevel = "", int timeoutSeconds = 1800) : string
+	{
+		return OfflineOntologyCriticWebTools.RunNamedCriticMaterializerMarkdownForProtoScript(_opsAgent, sourceSessionKey, phase1ArtifactPath, provider, modelName, reasoningLevel, timeoutSeconds);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to get offline ontology critic run status")]
+prototype ToGetOfflineOntologyCriticRunStatus : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
+{
+	Description = @"criticSessionKey - exact offline ontology critic child session key. Returns checkpoint, artifact paths, and artifact existence as markdown.";
+
+	function Execute(string criticSessionKey) : string
+	{
+		return OfflineOntologyCriticWebTools.GetRunStatusMarkdown(criticSessionKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to prepare offline critic buffaly review handoff")]
+prototype ToPrepareOfflineCriticBuffalyReviewHandoff : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
+{
+	Description = @"criticSessionKey - exact offline ontology critic child session key. Writes and returns a handoff markdown pointing normal Buffaly at the critic artifacts for Phase 2 review/materialization.";
+
+	function Execute(string criticSessionKey) : string
+	{
+		return OfflineOntologyCriticWebTools.PrepareBuffalyReviewHandoff(criticSessionKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to resolve offline ontology critic artifact paths")]
+prototype ToResolveOfflineOntologyCriticArtifactPaths : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
+{
+	Description = @"criticSessionKey - exact offline ontology critic child session key. Returns the predictable module-owned ledger and checkpoint paths as markdown.";
+
+	function Execute(string criticSessionKey) : string
+	{
+		return OfflineOntologyCriticWebTools.ResolveArtifactPathsMarkdown(criticSessionKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read offline ontology critic ledger")]
+prototype ToReadOfflineOntologyCriticLedger : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
+{
+	Description = @"criticSessionKey - exact offline ontology critic child session key. Reads the predictable markdown ledger file, creating an empty ledger template when missing.";
+
+	function Execute(string criticSessionKey) : string
+	{
+		return OfflineOntologyCriticWebTools.ReadLedger(criticSessionKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read offline ontology critic artifact")]
+[SemanticProgram.InfinitivePhrase("to read offline ontology critic phase artifact")]
+prototype ToReadOfflineOntologyCriticArtifact : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
+{
+	Description = @"criticSessionKey - exact offline ontology critic child session key. artifactName - one of phase1, phase2, preview, materialization, or index. Reads the bounded markdown artifact, creating a small placeholder when missing.";
+
+	function Execute(string criticSessionKey, string artifactName) : string
+	{
+		return OfflineOntologyCriticWebTools.ReadArtifact(criticSessionKey, artifactName);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to write offline ontology critic artifact")]
+[SemanticProgram.InfinitivePhrase("to write offline ontology critic phase artifact")]
+prototype ToWriteOfflineOntologyCriticArtifact : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
+{
+	Description = @"criticSessionKey - exact offline ontology critic child session key. artifactName - one of phase1, phase2, preview, materialization, or index. markdown - full replacement markdown for only that bounded artifact.";
+
+	function Execute(string criticSessionKey, string artifactName, string markdown) : string
+	{
+		return OfflineOntologyCriticWebTools.WriteArtifact(criticSessionKey, artifactName, markdown);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to write offline ontology critic ledger")]
+prototype ToWriteOfflineOntologyCriticLedger : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
+{
+	Description = @"criticSessionKey - exact offline ontology critic child session key. markdown - full replacement ledger markdown to write to the predictable ledger file.";
+
+	function Execute(string criticSessionKey, string markdown) : string
+	{
+		return OfflineOntologyCriticWebTools.WriteLedger(criticSessionKey, markdown);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read offline ontology critic checkpoint")]
+prototype ToReadOfflineOntologyCriticCheckpoint : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
+{
+	Description = @"criticSessionKey - exact offline ontology critic child session key. Reads the predictable checkpoint JSON file or returns an empty checkpoint object when missing.";
+
+	function Execute(string criticSessionKey) : string
+	{
+		return OfflineOntologyCriticWebTools.ReadCheckpoint(criticSessionKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to save offline ontology critic checkpoint")]
+prototype ToSaveOfflineOntologyCriticCheckpoint : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
+{
+	Description = @"criticSessionKey - exact offline ontology critic child session key. checkpointJson - full checkpoint JSON text to write to the predictable checkpoint file.";
+
+	function Execute(string criticSessionKey, string checkpointJson) : string
+	{
+		return OfflineOntologyCriticWebTools.SaveCheckpoint(criticSessionKey, checkpointJson);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get recent session turns for offline ontology critic")]
+prototype ToOfflineCriticGetRecentSessionTurns : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
+{
+	Description = @"Limited wrapper for ToGetRecentSessionTurns. sessionKey - target source session key. maxTurns - small bounded count.";
+
+	function Execute(string sessionKey, int maxTurns = 5) : GetSessionTurnBootstrapResponse
+	{
+		return SessionTools.GetRecentSessionTurnsTool(sessionKey, maxTurns);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to page older session turns for offline ontology critic")]
+prototype ToOfflineCriticGetSessionTurnPage : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
+{
+	Description = @"Limited wrapper for ToGetSessionTurnPage. sessionKey - target source session key. skipTurns - newest turns to skip. maxTurns - small bounded count.";
+
+	function Execute(string sessionKey, int skipTurns, int maxTurns = 5) : GetSessionTurnPageResponse
+	{
+		return SessionTools.GetSessionTurnPageTool(sessionKey, skipTurns, maxTurns);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to inspect session turn detail for offline ontology critic")]
+prototype ToOfflineCriticGetSessionTurnDetail : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
+{
+	Description = @"Limited wrapper for ToGetSessionTurnDetail. Use only when summaries are insufficient for evidence.";
+
+	function Execute(string sessionKey, string turnId, int maxRows = 200) : GetTurnDetailResponse
+	{
+		return SessionTools.GetSessionTurnDetailTool(sessionKey, turnId, maxRows);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to search source session user messages for offline ontology critic")]
+prototype ToOfflineCriticSearchSessionMessages : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
+{
+	Description = @"Limited wrapper for user-message search across session history.";
+
+	function Execute(string search, int maxRows = 25) : string
+	{
+		return SessionTools.SearchSessionMessagesTool(search, maxRows);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to search source session final assistant messages for offline ontology critic")]
+prototype ToOfflineCriticSearchSessionFinalAssistantMessages : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
+{
+	Description = @"Limited wrapper for final assistant message search across session history.";
+
+	function Execute(string search, int maxRows = 25) : string
+	{
+		return SessionTools.SearchSessionFinalAssistantMessagesTool(search, maxRows);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to search ontology entities for offline ontology critic")]
+prototype ToOfflineCriticSearchCandidateEntities : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
+{
+	Description = @"Limited wrapper for ontology entity search used during Phase 2 and preview.";
+
+	function Execute(string semanticQuery, int maxResults = 10, bool includeParentType = true) : string
+	{
+		return ToSearchCandidateEntities.Execute(semanticQuery, maxResults, includeParentType);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to search ontology actions for offline ontology critic")]
+prototype ToOfflineCriticSearchCandidateActions : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
+{
+	Description = @"Limited wrapper for semantic action search used during Phase 2 and preview.";
+
+	function Execute(string semanticQuery, int maxResults = 10) : string
+	{
+		return ToSearchCandidateActions.Execute(semanticQuery, maxResults);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to inspect prototype details for offline ontology critic")]
+prototype ToOfflineCriticGetPrototypeDetails : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
+{
+	Description = @"Limited wrapper for prototype detail inspection.";
+
+	function Execute(string prototype) : string
+	{
+		return ToGetPrototypeDetails.Execute(prototype);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to inspect prototype notes for offline ontology critic")]
+prototype ToOfflineCriticGetPrototypeNotes : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
+{
+	Description = @"Limited wrapper for prototype notes inspection.";
+
+	function Execute(string prototype) : string
+	{
+		return ToGetPrototypeNotes.Execute(prototype);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list prototype descendants for offline ontology critic")]
+prototype ToOfflineCriticListPrototypeFirstLevelDescendants : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
+{
+	Description = @"Limited wrapper for first-level prototype descendant inspection.";
+
+	function Execute(Prototype prototype) : Collection
+	{
+		return ToListPrototypeFirstLevelDescendants.Execute(prototype);
+	}
+}
+
+
+
+
+
+

@@ -1,19 +1,19 @@
-{
-  "Module": {
-    "Enabled": true,
-    "Name": "CodexEmbedded",
-    "DisplayName": "Codex Embedded",
-    "Description": "Manage embedded Codex sessions, timelines, and replay workflows.",
-    "AssemblyPath": "CodexEmbedded/Buffaly.CodexEmbedded.WebModule.dll",
-    "TypeName": "Buffaly.CodexEmbedded.WebModule.CodexEmbeddedWebModule",
-    "LoadOrder": 1100,
-    "Pages": [
-      {
-        "Name": "index",
-        "DisplayName": "Codex Embedded",
-        "Path": "/web-modules/CodexEmbedded/index.html",
-        "Description": "Open the managed Codex Embedded server and timeline UI."
-      }
-    ]
-  }
+﻿{
+    "Module":  {
+                   "Enabled":  true,
+                   "Name":  "CodexEmbedded",
+                   "DisplayName":  "Codex Embedded",
+                   "Description":  "Manage embedded Codex sessions, timelines, and replay workflows.",
+                   "AssemblyPath":  "CodexEmbedded/Buffaly.CodexEmbedded.WebModule.dll",
+                   "TypeName":  "Buffaly.CodexEmbedded.WebModule.CodexEmbeddedWebModule",
+                   "LoadOrder":  1100,
+                   "Pages":  [
+                                 {
+                                     "Name":  "index",
+                                     "DisplayName":  "Codex Embedded",
+                                     "Path":  "/web-modules/CodexEmbedded/index.html",
+                                     "Description":  "Open the managed Codex Embedded server and timeline UI."
+                                 }
+                             ]
+               }
 }

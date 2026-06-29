@@ -1,19 +1,19 @@
-{
-  "Module": {
-    "Enabled": true,
-    "Name": "ComputerUse",
-    "DisplayName": "Computer Use",
-    "Description": "OpenAI computer-use workbench for visual desktop automation tasks.",
-    "AssemblyPath": "ComputerUse/Buffaly.OpenAI.ComputerUse.WebHarness.dll",
-    "TypeName": "Buffaly.OpenAI.ComputerUse.WebHarness.ComputerUseWorkbenchModule",
-    "LoadOrder": 1000,
-    "Pages": [
-      {
-        "Name": "index",
-        "DisplayName": "Computer Use Workbench",
-        "Path": "/web-modules/ComputerUse/index.html",
-        "Description": "Open the computer-use automation workbench."
-      }
-    ]
-  }
+﻿{
+    "Module":  {
+                   "Enabled":  true,
+                   "Name":  "ComputerUse",
+                   "DisplayName":  "Computer Use",
+                   "Description":  "OpenAI computer-use workbench for visual desktop automation tasks.",
+                   "AssemblyPath":  "ComputerUse/Buffaly.OpenAI.ComputerUse.WebHarness.dll",
+                   "TypeName":  "Buffaly.OpenAI.ComputerUse.WebHarness.ComputerUseWorkbenchModule",
+                   "LoadOrder":  1000,
+                   "Pages":  [
+                                 {
+                                     "Name":  "index",
+                                     "DisplayName":  "Computer Use Workbench",
+                                     "Path":  "/web-modules/ComputerUse/index.html",
+                                     "Description":  "Open the computer-use automation workbench."
+                                 }
+                             ]
+               }
 }
