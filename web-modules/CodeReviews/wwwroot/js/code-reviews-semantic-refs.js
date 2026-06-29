@@ -87,19 +87,24 @@
 		};
 	}
 
+	function setReviewButtonState(button, state, label, title) {
+		button.setAttribute("data-code-review-state", state);
+		button.innerHTML = '<span class="code-reviews-trigger-agent-review-icon" aria-hidden="true">&#x2726;</span><span class="code-reviews-trigger-agent-review-label"></span>';
+		button.querySelector(".code-reviews-trigger-agent-review-label").textContent = label;
+		button.title = title;
+	}
+
 	function triggerCodeReviewAgent(request, button) {
 		button.disabled = true;
-		button.textContent = "Reviewing...";
+		setReviewButtonState(button, "loading", "Reviewing", "Starting Code Review Agent...");
 		call("TriggerCodeReviewAgent", request)
 			.then(function (response) {
 				const child = text(response && (response.ChildSessionKey || response.childSessionKey));
-				button.textContent = child ? "Review queued: " + child : "Review queued";
-				button.title = text(response && (response.Message || response.message)) || "Code review child session started.";
+				setReviewButtonState(button, "queued", child ? "Queued " + child : "Queued", text(response && (response.Message || response.message)) || "Code review child session started.");
 			})
 			.catch(function (error) {
 				button.disabled = false;
-				button.textContent = "Review";
-				button.title = "Code review trigger failed: " + errorMessage(error);
+				setReviewButtonState(button, "error", "Retry review", "Code review trigger failed: " + errorMessage(error));
 			});
 	}
 
@@ -110,8 +115,7 @@
 			const button = document.createElement("button");
 			button.type = "button";
 			button.className = "code-reviews-trigger-agent-review";
-			button.textContent = "Review";
-			button.title = "Run Code Review Agent";
+			setReviewButtonState(button, "ready", "Review", "Run Code Review Agent");
 			button.addEventListener("click", function (event) {
 				event.preventDefault();
 				event.stopPropagation();
@@ -121,7 +125,26 @@
 		});
 	}
 
+	function installReviewButtonStyles() {
+		if (document.getElementById("code-reviews-semantic-ref-styles")) return;
+		const style = document.createElement("style");
+		style.id = "code-reviews-semantic-ref-styles";
+		style.textContent = "\n"
+			+ ".code-reviews-trigger-agent-review{appearance:none;border:0;border-radius:999px;margin-left:.45rem;padding:.23rem .62rem .25rem .5rem;display:inline-flex;align-items:center;gap:.32rem;vertical-align:baseline;font:600 11px/1.2 system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#fff;background:linear-gradient(135deg,#7c3aed 0%,#2563eb 52%,#06b6d4 100%);box-shadow:0 5px 14px rgba(37,99,235,.24),inset 0 1px 0 rgba(255,255,255,.26);cursor:pointer;transition:transform .14s ease,box-shadow .14s ease,filter .14s ease;white-space:nowrap;}\n"
+			+ ".code-reviews-trigger-agent-review:hover:not(:disabled){transform:translateY(-1px);filter:saturate(1.08);box-shadow:0 7px 18px rgba(37,99,235,.32),inset 0 1px 0 rgba(255,255,255,.32);}\n"
+			+ ".code-reviews-trigger-agent-review:active:not(:disabled){transform:translateY(0);box-shadow:0 3px 10px rgba(37,99,235,.24),inset 0 1px 0 rgba(255,255,255,.22);}\n"
+			+ ".code-reviews-trigger-agent-review:focus-visible{outline:2px solid rgba(6,182,212,.55);outline-offset:2px;}\n"
+			+ ".code-reviews-trigger-agent-review:disabled{cursor:default;opacity:.92;}\n"
+			+ ".code-reviews-trigger-agent-review-icon{display:inline-grid;place-items:center;width:1.05em;height:1.05em;border-radius:999px;background:rgba(255,255,255,.2);font-size:10px;line-height:1;}\n"
+			+ ".code-reviews-trigger-agent-review[data-code-review-state='loading'] .code-reviews-trigger-agent-review-icon{animation:codeReviewsReviewSpin .9s linear infinite;}\n"
+			+ ".code-reviews-trigger-agent-review[data-code-review-state='queued']{background:linear-gradient(135deg,#16a34a 0%,#0d9488 100%);box-shadow:0 5px 14px rgba(13,148,136,.24),inset 0 1px 0 rgba(255,255,255,.24);}\n"
+			+ ".code-reviews-trigger-agent-review[data-code-review-state='error']{background:linear-gradient(135deg,#f97316 0%,#dc2626 100%);box-shadow:0 5px 14px rgba(220,38,38,.22),inset 0 1px 0 rgba(255,255,255,.24);}\n"
+			+ "@keyframes codeReviewsReviewSpin{to{transform:rotate(360deg);}}\n";
+		(document.head || document.documentElement).appendChild(style);
+	}
+
 	function startCommitLinkEnhancer() {
+		installReviewButtonStyles();
 		enhanceRenderedCommitLinks(document);
 		if (typeof MutationObserver !== "function") return;
 		const observer = new MutationObserver(function (mutations) {
