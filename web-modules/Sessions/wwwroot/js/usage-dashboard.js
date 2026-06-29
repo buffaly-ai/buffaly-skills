@@ -12,7 +12,7 @@
 	var palette = ["#0f766e", "#2563eb", "#9333ea", "#c2410c", "#475569", "#be123c", "#15803d"];
 
 	function initialize() {
-		ensureChartLegendStyles();
+		ensureDynamicDashboardStyles();
 		document.querySelectorAll("[data-range]").forEach(function (button) {
 			button.addEventListener("click", function () {
 				state.Range = button.getAttribute("data-range");
@@ -68,6 +68,7 @@
 		renderWarning(response.Warnings && response.Warnings.length > 0 ? response.Warnings.join(" ") : "");
 		renderFilters(response.Filters);
 		renderSummary(response.Summary);
+		renderAggregatePies(response.Summary, response.ProviderModelRows);
 		renderChart(response.TimeBuckets);
 		renderLimit(response.LatestProviderLimit);
 		renderProviderRows(response.ProviderModelRows);
@@ -121,6 +122,84 @@
 		container.innerHTML = cards.map(function (card) {
 			return "<div class=\"col-md-6 col-xl-3\"><div class=\"usage-card\"><div class=\"usage-label\">" + escapeHtml(card[0]) + "</div><div class=\"usage-value\">" + formatNumber(card[1]) + "</div></div></div>";
 		}).join("");
+	}
+
+	function renderAggregatePies(summary, providerRows) {
+		var container = getAggregatePieContainer();
+		if (!container) {
+			return;
+		}
+		var rows = providerRows || [];
+		var providerSlices = aggregateSlices(rows, function (row) { return row.Provider || "(unknown)"; });
+		var modelSlices = aggregateSlices(rows, function (row) { return row.ModelName || "(unknown)"; });
+		var totalTokens = Number(summary && summary.TotalTokens ? summary.TotalTokens : 0);
+		var cachedTokens = Number(summary && summary.CachedTokens ? summary.CachedTokens : 0);
+		var cacheSlices = totalTokens > 0
+			? [{ Label: "Cached", Value: Math.max(0, cachedTokens) }, { Label: "Not cached", Value: Math.max(0, totalTokens - cachedTokens) }]
+			: [];
+		container.innerHTML = [
+			renderPieCard("Provider share", "Total tokens by provider", providerSlices, palette, "tokens"),
+			renderPieCard("Model share", "Total tokens by model", modelSlices, palette, "tokens"),
+			renderPieCard("Cached share", "Cached tokens vs all selected tokens", cacheSlices, ["#0f766e", "#cbd5e1"], "tokens")
+		].join("");
+	}
+
+	function getAggregatePieContainer() {
+		var container = document.querySelector("[data-aggregate-pies]");
+		if (container) {
+			return container;
+		}
+		var summary = document.querySelector("[data-summary-cards]");
+		if (!summary || !summary.parentElement) {
+			return null;
+		}
+		container = document.createElement("div");
+		container.className = "usage-pie-grid mb-4";
+		container.setAttribute("data-aggregate-pies", "");
+		summary.parentElement.insertBefore(container, summary.nextSibling);
+		return container;
+	}
+
+	function aggregateSlices(rows, getLabel) {
+		var totals = {};
+		rows.forEach(function (row) {
+			var label = getLabel(row);
+			totals[label] = (totals[label] || 0) + Number(row.TotalTokens || 0);
+		});
+		return Object.keys(totals).map(function (label) {
+			return { Label: label, Value: totals[label] };
+		}).filter(function (slice) {
+			return slice.Value > 0;
+		}).sort(function (a, b) {
+			return b.Value - a.Value;
+		});
+	}
+
+	function renderPieCard(title, subtitle, slices, colors, unitLabel) {
+		if (!slices || slices.length === 0) {
+			return "<div class=\"usage-pie-card\"><h4 class=\"mb-1\">" + escapeHtml(title) + "</h4><div class=\"text-muted\">" + escapeHtml(subtitle) + "</div><div class=\"usage-empty\">No usage rows for this filter.</div></div>";
+		}
+		var total = slices.reduce(function (sum, slice) { return sum + slice.Value; }, 0);
+		var pieStyle = buildConicGradient(slices, colors, total);
+		var primaryPercent = total <= 0 ? 0 : slices[0].Value / total * 100;
+		var legend = slices.map(function (slice, index) {
+			var percent = total <= 0 ? 0 : slice.Value / total * 100;
+			return "<div class=\"usage-pie-legend-item\"><span class=\"usage-pie-swatch\" style=\"background:" + colors[index % colors.length] + ";\"></span><span>" + escapeHtml(slice.Label) + "</span><span>" + formatPercent(percent) + "</span></div>";
+		}).join("");
+		return "<div class=\"usage-pie-card\"><h4 class=\"mb-1\">" + escapeHtml(title) + "</h4><div class=\"text-muted\">" + escapeHtml(subtitle) + "</div><div class=\"usage-pie-body\"><div class=\"usage-pie\" style=\"background:" + pieStyle + ";\"><div class=\"usage-pie-center\">" + escapeHtml(formatPercent(primaryPercent)) + "</div></div><div class=\"usage-pie-legend\">" + legend + "<div class=\"text-muted small\">Total: " + escapeHtml(formatNumber(total)) + " " + escapeHtml(unitLabel) + "</div></div></div></div>";
+	}
+
+	function buildConicGradient(slices, colors, total) {
+		if (total <= 0) {
+			return "#e2e8f0";
+		}
+		var cursor = 0;
+		var segments = slices.map(function (slice, index) {
+			var start = cursor;
+			cursor += slice.Value / total * 100;
+			return colors[index % colors.length] + " " + start.toFixed(4) + "% " + cursor.toFixed(4) + "%";
+		});
+		return "conic-gradient(" + segments.join(",") + ")";
 	}
 
 	function renderChart(rows) {
@@ -179,13 +258,13 @@
 		return legend;
 	}
 
-	function ensureChartLegendStyles() {
-		if (document.getElementById("usage-chart-legend-style")) {
+	function ensureDynamicDashboardStyles() {
+		if (document.getElementById("usage-dashboard-dynamic-style")) {
 			return;
 		}
 		var style = document.createElement("style");
-		style.id = "usage-chart-legend-style";
-		style.textContent = ".usage-chart-legend{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-top:.75rem}.usage-chart-legend-item{align-items:center;color:#475569;display:inline-flex;font-size:.84rem;gap:.4rem;white-space:nowrap}.usage-chart-legend-swatch{border-radius:999px;display:inline-block;height:.7rem;width:.7rem}";
+		style.id = "usage-dashboard-dynamic-style";
+		style.textContent = ".usage-chart-legend{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-top:.75rem}.usage-chart-legend-item{align-items:center;color:#475569;display:inline-flex;font-size:.84rem;gap:.4rem;white-space:nowrap}.usage-chart-legend-swatch{border-radius:999px;display:inline-block;height:.7rem;width:.7rem}.usage-pie-grid{display:grid;gap:1rem;grid-template-columns:repeat(3,minmax(0,1fr))}.usage-pie-card{background:#fff;border:1px solid rgba(148,163,184,.28);border-radius:8px;padding:1rem}.usage-pie-body{align-items:center;display:grid;gap:1rem;grid-template-columns:auto minmax(0,1fr);margin-top:.75rem}.usage-pie{background:#e2e8f0;border-radius:999px;height:8.5rem;position:relative;width:8.5rem}.usage-pie::after{background:#fff;border-radius:999px;content:'';height:4.6rem;left:50%;position:absolute;top:50%;transform:translate(-50%,-50%);width:4.6rem}.usage-pie-center{font-size:1.1rem;font-weight:800;left:50%;position:absolute;text-align:center;top:50%;transform:translate(-50%,-50%);z-index:1}.usage-pie-legend{display:grid;gap:.45rem}.usage-pie-legend-item{align-items:center;color:#475569;display:grid;font-size:.84rem;gap:.4rem;grid-template-columns:auto minmax(0,1fr) auto}.usage-pie-swatch{border-radius:999px;display:inline-block;height:.7rem;width:.7rem}@media(max-width:1100px){.usage-pie-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:720px){.usage-pie-grid{grid-template-columns:1fr}.usage-pie-body{grid-template-columns:1fr}.usage-pie{justify-self:center}}";
 		document.head.appendChild(style);
 	}
 
@@ -258,6 +337,10 @@
 			return "0";
 		}
 		return Number(value).toLocaleString(undefined, { maximumFractionDigits: 2 });
+	}
+
+	function formatPercent(value) {
+		return Number(value || 0).toLocaleString(undefined, { maximumFractionDigits: 1 }) + "%";
 	}
 
 	function formatDate(value) {
