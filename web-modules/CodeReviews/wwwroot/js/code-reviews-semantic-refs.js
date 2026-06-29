@@ -52,23 +52,18 @@
 		return text(sessionContext.getActiveSessionKey()).trim();
 	}
 
+	function service() {
+		return window.Buffaly && window.Buffaly.CodeReviews && window.Buffaly.CodeReviews.WebHarness && window.Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService;
+	}
+
 	function call(methodName, request) {
-		if (methodName !== "TriggerCodeReviewAgent") {
-			return Promise.reject(new Error("Unsupported CodeReviews semantic-ref method: " + methodName));
+		const api = service();
+		if (!api || typeof api[methodName] !== "function") {
+			return Promise.reject(new Error("CodeReviews JsonWs client is not loaded from the web-module: " + methodName));
 		}
 
-		return fetch("/api/buffaly.codereviews.webharness/code-reviews-harness-json-ws-service/trigger-code-review-agent", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ request: request || {} })
-		}).then(function (response) {
-			return response.text().then(function (body) {
-				if (!response.ok) {
-					throw new Error(body || ("HTTP " + response.status));
-				}
-
-				return isEmpty(body) ? {} : JSON.parse(body);
-			});
+		return new Promise(function (resolve, reject) {
+			try { api[methodName](request, resolve, reject); } catch (error) { reject(error); }
 		});
 	}
 

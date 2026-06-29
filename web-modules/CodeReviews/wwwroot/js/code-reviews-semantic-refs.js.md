@@ -21,4 +21,4 @@
 - Upgraded the injected `Review` button from an unstyled native button to a self-contained gradient pill with sparkle icon, hover/focus polish, and loading/queued/error visual states.
 - Design Decision: inject the small style block from this formatter script because the button is added into Buffaly timeline content where the CodeReviews harness stylesheet is not otherwise loaded.
 - Added an inline status chip beside the button so click progress and failures are visible in the timeline instead of being hidden in the button title or browser console.
-- Switched the timeline-triggered review call to direct browser `fetch` against the CodeReviews JsonWs endpoint because Buffaly timeline pages do not load the generated CodeReviews JsonWs stub or its `JsonMethod` dependency.
+- The formatter uses the generated CodeReviews JsonWs client; `web-module.json` must list the module-owned generated client script before this formatter in `AgentScripts`.
