@@ -94,17 +94,33 @@
 		button.title = title;
 	}
 
+	function setReviewStatus(button, state, message) {
+		let status = button.nextElementSibling;
+		if (!status || !status.classList || !status.classList.contains("code-reviews-trigger-agent-review-status")) {
+			status = document.createElement("span");
+			status.className = "code-reviews-trigger-agent-review-status";
+			status.setAttribute("role", "status");
+			status.setAttribute("aria-live", "polite");
+			button.insertAdjacentElement("afterend", status);
+		}
+		status.setAttribute("data-code-review-state", state);
+		status.textContent = message;
+	}
+
 	function triggerCodeReviewAgent(request, button) {
 		button.disabled = true;
 		setReviewButtonState(button, "loading", "Reviewing", "Starting Code Review Agent...");
+		setReviewStatus(button, "loading", "Starting review agent...");
 		call("TriggerCodeReviewAgent", request)
 			.then(function (response) {
 				const child = text(response && (response.ChildSessionKey || response.childSessionKey));
 				setReviewButtonState(button, "queued", child ? "Queued " + child : "Queued", text(response && (response.Message || response.message)) || "Code review child session started.");
+				setReviewStatus(button, "queued", child ? "Queued child session " + child : "Review agent queued.");
 			})
 			.catch(function (error) {
 				button.disabled = false;
 				setReviewButtonState(button, "error", "Retry review", "Code review trigger failed: " + errorMessage(error));
+				setReviewStatus(button, "error", "Review trigger failed: " + errorMessage(error));
 			});
 	}
 
@@ -139,6 +155,9 @@
 			+ ".code-reviews-trigger-agent-review[data-code-review-state='loading'] .code-reviews-trigger-agent-review-icon{animation:codeReviewsReviewSpin .9s linear infinite;}\n"
 			+ ".code-reviews-trigger-agent-review[data-code-review-state='queued']{background:linear-gradient(135deg,#16a34a 0%,#0d9488 100%);box-shadow:0 5px 14px rgba(13,148,136,.24),inset 0 1px 0 rgba(255,255,255,.24);}\n"
 			+ ".code-reviews-trigger-agent-review[data-code-review-state='error']{background:linear-gradient(135deg,#f97316 0%,#dc2626 100%);box-shadow:0 5px 14px rgba(220,38,38,.22),inset 0 1px 0 rgba(255,255,255,.24);}\n"
+			+ ".code-reviews-trigger-agent-review-status{display:inline-flex;align-items:center;margin-left:.38rem;padding:.15rem .45rem;border-radius:999px;font:600 11px/1.2 system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#eef2ff;color:#3730a3;vertical-align:baseline;}\n"
+			+ ".code-reviews-trigger-agent-review-status[data-code-review-state='queued']{background:#dcfce7;color:#166534;}\n"
+			+ ".code-reviews-trigger-agent-review-status[data-code-review-state='error']{background:#fee2e2;color:#991b1b;}\n"
 			+ "@keyframes codeReviewsReviewSpin{to{transform:rotate(360deg);}}\n";
 		(document.head || document.documentElement).appendChild(style);
 	}

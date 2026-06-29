@@ -20,3 +20,4 @@
 ## Styled Manual Review Button (2026-06-29)
 - Upgraded the injected `Review` button from an unstyled native button to a self-contained gradient pill with sparkle icon, hover/focus polish, and loading/queued/error visual states.
 - Design Decision: inject the small style block from this formatter script because the button is added into Buffaly timeline content where the CodeReviews harness stylesheet is not otherwise loaded.
+- Added an inline status chip beside the button so click progress and failures are visible in the timeline instead of being hidden in the button title or browser console.
