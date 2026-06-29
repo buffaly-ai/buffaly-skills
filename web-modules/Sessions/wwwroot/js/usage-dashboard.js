@@ -12,6 +12,7 @@
 	var palette = ["#0f766e", "#2563eb", "#9333ea", "#c2410c", "#475569", "#be123c", "#15803d"];
 
 	function initialize() {
+		ensureChartLegendStyles();
 		document.querySelectorAll("[data-range]").forEach(function (button) {
 			button.addEventListener("click", function () {
 				state.Range = button.getAttribute("data-range");
@@ -124,8 +125,12 @@
 
 	function renderChart(rows) {
 		var container = document.querySelector("[data-time-chart]");
+		var legend = getChartLegend(container);
 		if (!rows || rows.length === 0) {
 			container.innerHTML = "<div class=\"usage-empty\">No usage rows for this filter.</div>";
+			if (legend) {
+				legend.innerHTML = "";
+			}
 			return;
 		}
 
@@ -155,6 +160,33 @@
 			}).join("");
 			return "<div class=\"usage-chart-column\"><div class=\"usage-chart-stack\">" + segments + "</div><div class=\"usage-chart-label\">" + escapeHtml(formatBucket(bucket)) + "</div></div>";
 		}).join("");
+		if (legend) {
+			legend.innerHTML = providers.map(function (provider, index) {
+				return "<span class=\"usage-chart-legend-item\"><span class=\"usage-chart-legend-swatch\" style=\"background:" + palette[index % palette.length] + ";\"></span>" + escapeHtml(provider) + "</span>";
+			}).join("");
+		}
+	}
+
+	function getChartLegend(container) {
+		var legend = document.querySelector("[data-chart-legend]");
+		if (legend || !container || !container.parentElement) {
+			return legend;
+		}
+		legend = document.createElement("div");
+		legend.className = "usage-chart-legend";
+		legend.setAttribute("data-chart-legend", "");
+		container.parentElement.insertBefore(legend, container.nextSibling);
+		return legend;
+	}
+
+	function ensureChartLegendStyles() {
+		if (document.getElementById("usage-chart-legend-style")) {
+			return;
+		}
+		var style = document.createElement("style");
+		style.id = "usage-chart-legend-style";
+		style.textContent = ".usage-chart-legend{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-top:.75rem}.usage-chart-legend-item{align-items:center;color:#475569;display:inline-flex;font-size:.84rem;gap:.4rem;white-space:nowrap}.usage-chart-legend-swatch{border-radius:999px;display:inline-block;height:.7rem;width:.7rem}";
+		document.head.appendChild(style);
 	}
 
 	function renderLimit(limit) {
