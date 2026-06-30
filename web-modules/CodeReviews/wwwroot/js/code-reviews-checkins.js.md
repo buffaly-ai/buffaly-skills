@@ -21,3 +21,7 @@
 - Reworked the check-ins list markup so title, badges, date, stats, and review action render in stable columns instead of crowding each other.
 - Removed duplicate branch-sync rendering from the worktree status area because the page header already shows the sync summary and push action.
 
+## Phase 1 Agent Review Badges (2026-06-30)
+- Added a separate `Agent: ...` badge sourced from `AgentReviewStatus` beside the existing human review badge.
+- Design Decision: check-ins now show agent progress without filtering or mutating human reviewed state.
+

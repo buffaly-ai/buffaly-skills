@@ -7,7 +7,7 @@
 	var selectedBranch = C.decode(C.query("branch"));
 	var checkInLimit = 60;
 	var reviewFilter = C.decode(C.query("review")) || "all";
-	var cacheVersion = "20260521.6";
+	var cacheVersion = "20260630.1";
 	function cacheKey() {
 		return "Buffaly.CodeReviews.CheckIns:" + cacheVersion + ":" + path + ":" + (selectedBranch || "") + ":" + checkInLimit;
 	}
@@ -53,6 +53,12 @@
 	function renderReviewedBadge(item) {
 		return item.Reviewed ? '<span class="reviewed-badge reviewed">Reviewed</span>' : '<span class="reviewed-badge unreviewed">Unreviewed</span>';
 	}
+	function renderAgentReviewBadge(item) {
+		var status = C.text(item.AgentReviewStatus || item.agentReviewStatus || "NotReviewed");
+		var label = status === "NotReviewed" ? "Not reviewed" : status;
+		var css = status === "Reviewed" ? "reviewed" : (status === "Running" ? "agent-running" : (status === "Failed" ? "agent-failed" : "unreviewed"));
+		return '<span class="reviewed-badge ' + css + '">Agent: ' + C.escapeHtml(label) + '</span>';
+	}
 	function filteredCheckIns(checkIns) {
 		if (reviewFilter === "reviewed") return checkIns.filter(function (item) { return item.Reviewed === true; });
 		if (reviewFilter === "unreviewed") return checkIns.filter(function (item) { return item.Reviewed !== true; });
@@ -75,7 +81,7 @@
 			var isUnpushed = index < aheadCount;
 			var toggleText = item.Reviewed ? "Mark as unreviewed" : "Mark as reviewed";
 			return '<a class="checkin-row ' + (item.Reviewed ? 'reviewed-row' : 'unreviewed-row') + (isUnpushed ? ' unpushed' : '') + '" href="' + href + '" data-checkin-sha="' + C.escapeHtml(item.Sha) + '">' +
-				'<span class="checkin-title"><strong>' + C.escapeHtml(item.ShortSha) + ' ' + C.escapeHtml(item.Subject) + '</strong><span class="checkin-badges">' + renderReviewedBadge(item) + (isUnpushed ? ' <span class="unpushed-badge">Unpushed</span>' : '') + '</span></span>' +
+				'<span class="checkin-title"><strong>' + C.escapeHtml(item.ShortSha) + ' ' + C.escapeHtml(item.Subject) + '</strong><span class="checkin-badges">' + renderReviewedBadge(item) + renderAgentReviewBadge(item) + (isUnpushed ? ' <span class="unpushed-badge">Unpushed</span>' : '') + '</span></span>' +
 				'<span class="checkin-date">' + C.escapeHtml(C.formatWhen(item.CommittedAtUtc)) + '</span>' +
 				'<span class="checkin-stats">' + statHtml(item.ChangedFileCount, item.Insertions, item.Deletions) + '</span>' +
 				'<span class="checkin-review-action"><button class="review-toggle ' + (item.Reviewed ? 'reviewed' : 'unreviewed') + '" type="button" data-review-toggle="' + C.escapeHtml(item.Sha) + '" data-reviewed="' + (item.Reviewed ? 'true' : 'false') + '" title="' + toggleText + '" aria-label="' + toggleText + '"><span aria-hidden="true">' + (item.Reviewed ? '&#10003;' : '&#9675;') + '</span><span>' + (item.Reviewed ? 'Reviewed' : 'Unreviewed') + '</span></button></span>' +

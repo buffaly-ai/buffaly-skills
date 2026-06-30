@@ -224,6 +224,17 @@ pre { margin: 0; padding: 13px; overflow: auto; background: #fbfdff; color: #102
 .checkin-title { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .checkin-title strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .checkin-badges { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 7px; }
+.agent-review-panel { border: 1px solid #dbe6f4; border-radius: 8px; background: #fbfdff; padding: 16px; }
+.agent-review-header { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
+.agent-review-header h2 { margin: 0 0 4px; font-size: 18px; }
+.agent-review-meta { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; font-size: 12px; color: #53657d; }
+.agent-review-body { min-height: 70px; max-height: 360px; overflow: auto; white-space: pre-wrap; border: 1px solid #dbe6f4; border-radius: 8px; background: #fff; padding: 12px; margin: 0 0 12px; }
+.agent-review-submit { display: grid; gap: 6px; font-weight: 700; color: #2f3f55; }
+.agent-review-submit textarea { width: 100%; box-sizing: border-box; resize: vertical; border: 1px solid #cfdbea; border-radius: 8px; padding: 10px; font: inherit; font-weight: 400; }
+.agent-review-actions { display: flex; justify-content: flex-end; margin-top: 10px; }
+.agent-review-actions button { padding: 8px 13px; font-weight: 700; }
+.reviewed-badge.agent-running { background: #fff8e5; color: #936600; border-color: #f1d28a; }
+.reviewed-badge.agent-failed { background: #fff0f0; color: #a33030; border-color: #efb8b8; }
 .checkin-date { color: #435b7d; white-space: nowrap; }
 .checkin-stats { color: #334d73; font-weight: 800; text-align: right; white-space: nowrap; }
 .checkin-review-action { display: flex; justify-content: flex-end; }

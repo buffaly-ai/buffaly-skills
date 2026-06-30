@@ -24,3 +24,6 @@
 ## Standalone Web Module Client (2026-06-29)
 - Replaced the JsonMethod/ObjectUtil dependency with direct `fetch` calls while keeping the generated CodeReviews JsonWs client namespace and method names.
 - Design Decision: Buffaly timeline web-module `AgentScripts` load module-owned scripts before timeline rendering, but the timeline does not guarantee KCS `JsonMethod` globals, so the CodeReviews-owned generated client must be self-contained.
+
+## Phase 1 Commit Review Methods (2026-06-30)
+- Added generated-client methods for `GetCommitReview` and `SubmitCommitReviewText`.

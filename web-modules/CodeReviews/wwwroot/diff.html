@@ -32,6 +32,15 @@
 				<button id="reloadButton" class="icon-button compact-action-button" type="button" title="Reload diff" aria-label="Reload diff"><span aria-hidden="true">&#8635;</span><span>Reload</span></button>
 			</div>
 		</section>
+		<section id="agentReviewPanel" class="agent-review-panel">
+			<div class="agent-review-header">
+				<div><h2>Agent Review</h2><p id="agentReviewStatus" class="subtle">Loading agent review status...</p></div>
+				<div id="agentReviewMeta" class="agent-review-meta"></div>
+			</div>
+			<pre id="agentReviewBody" class="agent-review-body">No agent review text submitted.</pre>
+			<label class="agent-review-submit"><span>Paste review text / findings</span><textarea id="agentReviewText" rows="7" placeholder="Paste raw markdown or plain text from the review agent"></textarea></label>
+			<div class="agent-review-actions"><button id="agentReviewSubmitButton" type="button">Submit review text</button></div>
+		</section>
 		<section class="page-card"><div id="diffFiles" class="diff-files empty">Loading diff...</div></section>
 		<section class="details-panel"><h2>Status</h2><pre id="statusLog">Ready.</pre></section>
 	</main>
@@ -80,10 +89,9 @@
 	<script src="js/plugins/codemirror/mode/xml/xml.js"></script>
 	<script src="js/plugins/codemirror/mode/css/css.js"></script>
 	<script src="js/plugins/codemirror/mode/markdown/markdown.js"></script>
-	<script src="/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js?v=20260509.4"></script>
+	<script src="/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js?v=20260630.1"></script>
 	<script src="js/code-reviews-common.js?v=20260509.4"></script>
 	<script src="js/code-reviews-agent-bridge.js?v=20260510.6"></script>
-	<script src="js/code-reviews-diff.js?v=20260524.2"></script>
+	<script src="js/code-reviews-diff.js?v=20260630.1"></script>
 </body>
 </html>
-

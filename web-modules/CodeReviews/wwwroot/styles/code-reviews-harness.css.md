@@ -15,3 +15,6 @@
 ## Worktree Status Styling (2026-05-08)
 - Added green/red stat coloring and clean/dirty worktree status card styles.
 
+## Phase 1 Agent Review Styling (2026-06-30)
+- Added compact styling for the diff-page Agent Review panel, raw text body, submission form, and running/failed agent badges.
+

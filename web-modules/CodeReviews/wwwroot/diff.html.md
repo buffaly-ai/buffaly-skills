@@ -13,3 +13,7 @@
 
 ## Diff toolbar source/format fix (2026-05-21)
 - Kept the toolbar as one visual card by removing nested card styling from its control groups.
+
+## Phase 1 Agent Review Panel (2026-06-30)
+- Added a diff-page Agent Review panel with persisted status, raw review text display, and a manual raw-text submission box.
+- Design Decision: keep agent review UI separate from the human reviewed toolbar state and render raw text safely through JavaScript.

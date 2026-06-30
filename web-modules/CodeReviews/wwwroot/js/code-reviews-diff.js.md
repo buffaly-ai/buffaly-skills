@@ -37,3 +37,10 @@
 ## Manual Code Review Agent Trigger (2026-06-27)
 - Added a `Run Code Review Agent` action to committed diff pages.
 - The action sends the current repository, normalized commit SHA, same-origin CodeReviews URL, and `sourceSessionKey` to `TriggerCodeReviewAgent` and displays child-session queue status in the diff toolbar.
+
+## Phase 1 Agent Review Record Panel (2026-06-30)
+- Added loading/rendering for `GetCommitReview`, raw review text submission through `SubmitCommitReviewText`, and immediate panel refresh from trigger responses.
+- Design Decision: render raw review text as escaped preformatted content and keep agent review state separate from human reviewed state.
+
+## Submit Review Environment Routing (2026-06-30)
+- `SubmitCommitReviewText` requests now include the bridge-configured environment so findings callbacks are routed to the selected agent target instead of hardcoding Dev.

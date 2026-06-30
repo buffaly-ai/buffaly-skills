@@ -7,7 +7,7 @@
 	var mode = C.query("mode") === "worktree" ? "worktree" : "commit";
 	var selectedBranch = C.decode(C.query("branch"));
 	var sourceSessionKey = C.decode(C.query("sourceSessionKey"));
-	var state = { snapshot: null, files: [], editors: {}, annotations: [], editTarget: null, selectedTarget: null, fullFilePaths: {}, reviewed: false, codeReviewAgentTrigger: { running: false, childSessionKey: "", message: "", error: "" } };
+	var state = { snapshot: null, files: [], editors: {}, annotations: [], editTarget: null, selectedTarget: null, fullFilePaths: {}, reviewed: false, agentReview: null, agentReviewLoading: false, agentReviewError: "", codeReviewAgentTrigger: { running: false, childSessionKey: "", message: "", error: "" } };
 	function contextLines() { var value = C.byId("contextSelect").value; return value === "full" ? 200000 : Number(value || 5); }
 	function total(files, property) { return files.reduce(function (sum, file) { return sum + Number(file[property] || 0); }, 0); }
 	function sortFiles(files) { return files.slice().sort(function (a, b) { return (a.IsBinary === b.IsBinary) ? C.text(a.Path).localeCompare(C.text(b.Path)) : (a.IsBinary ? 1 : -1); }); }
@@ -54,6 +54,87 @@
 	}
 	function reviewedBadgeHtml(reviewed) {
 		return reviewed ? '<span class="reviewed-badge reviewed">Reviewed</span>' : '<span class="reviewed-badge unreviewed">Unreviewed</span>';
+	}
+	function currentCommitSha() {
+		return C.text((state.snapshot && state.snapshot.CommitSha) || sha).trim();
+	}
+	function agentReviewStatus(record) {
+		return C.text(record && (record.Status || record.status) || "NotReviewed");
+	}
+	function agentReviewStatusLabel(status) {
+		if (status === "NotReviewed") return "Not reviewed";
+		return status || "Not reviewed";
+	}
+	function agentReviewBadgeClass(status) {
+		if (status === "Reviewed") return "reviewed";
+		if (status === "Running") return "agent-running";
+		if (status === "Failed") return "agent-failed";
+		return "unreviewed";
+	}
+	function renderAgentReviewPanel() {
+		var panel = C.byId("agentReviewPanel");
+		if (!panel) return;
+		panel.classList.toggle("hidden", mode !== "commit");
+		var statusNode = C.byId("agentReviewStatus");
+		var metaNode = C.byId("agentReviewMeta");
+		var bodyNode = C.byId("agentReviewBody");
+		var submitButton = C.byId("agentReviewSubmitButton");
+		if (mode !== "commit") {
+			if (statusNode) statusNode.textContent = "Agent review is available for committed diffs only.";
+			if (submitButton) submitButton.disabled = true;
+			return;
+		}
+		if (submitButton) submitButton.disabled = state.agentReviewLoading || !currentCommitSha();
+		if (state.agentReviewLoading) {
+			if (statusNode) statusNode.textContent = "Loading agent review status...";
+			return;
+		}
+		if (state.agentReviewError) {
+			if (statusNode) statusNode.textContent = "Agent review load failed: " + state.agentReviewError;
+			return;
+		}
+		var record = state.agentReview || {};
+		var status = agentReviewStatus(record);
+		var rawText = C.text(record.RawReviewText || record.rawReviewText);
+		var childSessionKey = C.text(record.ChildSessionKey || record.childSessionKey);
+		var sourceSession = C.text(record.SourceSessionKey || record.sourceSessionKey);
+		var reviewedUtc = record.ReviewedUtc || record.reviewedUtc;
+		var failedReason = C.text(record.FailureReason || record.failureReason);
+		if (statusNode) statusNode.innerHTML = '<span class="reviewed-badge ' + agentReviewBadgeClass(status) + '">Agent: ' + C.escapeHtml(agentReviewStatusLabel(status)) + '</span>' + (reviewedUtc ? ' <span>' + C.escapeHtml(C.formatWhen(reviewedUtc)) + '</span>' : '') + (failedReason ? ' <span>' + C.escapeHtml(failedReason) + '</span>' : '');
+		if (metaNode) {
+			var meta = [];
+			if (childSessionKey) meta.push("Child: " + childSessionKey);
+			if (sourceSession) meta.push("Source: " + sourceSession);
+			if (record.Provider || record.provider || record.ModelName || record.modelName) meta.push(C.text(record.Provider || record.provider) + " / " + C.text(record.ModelName || record.modelName));
+			metaNode.innerHTML = meta.map(function (item) { return '<span>' + C.escapeHtml(item) + '</span>'; }).join("");
+		}
+		if (bodyNode) bodyNode.textContent = rawText || "No agent review text submitted.";
+	}
+	function loadAgentReview() {
+		if (mode !== "commit" || !path || !currentCommitSha()) { renderAgentReviewPanel(); return Promise.resolve(null); }
+		state.agentReviewLoading = true;
+		state.agentReviewError = "";
+		renderAgentReviewPanel();
+		return C.call("GetCommitReview", { RepositoryPath: path, CommitSha: currentCommitSha() })
+			.then(function (response) { state.agentReview = response.Record || response.record || null; })
+			.catch(function (error) { state.agentReviewError = C.errorMessage(error); })
+			.then(function () { state.agentReviewLoading = false; renderAgentReviewPanel(); });
+	}
+	function submitCommitReviewText() {
+		var text = C.text(C.byId("agentReviewText").value).trim();
+		if (!text) { C.log("Paste review text before submitting."); return; }
+		var button = C.byId("agentReviewSubmitButton");
+		if (button) { button.disabled = true; button.textContent = "Submitting..."; }
+		var config = Bridge.getConfig ? Bridge.getConfig() : { Environment: "Dev" };
+		var environment = Bridge.normalizeEnvironment ? Bridge.normalizeEnvironment(config.Environment || "Dev") : (config.Environment || "Dev");
+		return C.call("SubmitCommitReviewText", { Environment: environment, RepositoryPath: path, CommitSha: currentCommitSha(), ReviewText: text, SourceSessionKey: sourceSessionKey, ChildSessionKey: C.text(state.agentReview && (state.agentReview.ChildSessionKey || state.agentReview.childSessionKey)) })
+			.then(function (response) {
+				state.agentReview = response.Record || response.record || null;
+				C.byId("agentReviewText").value = "";
+				C.log("Agent review text submitted.");
+			})
+			.catch(function (error) { C.log("Agent review text submit failed: " + C.errorMessage(error)); })
+			.then(function () { if (button) { button.disabled = false; button.textContent = "Submit review text"; } renderAgentReviewPanel(); });
 	}
 	function updateReviewStatusSummary() {
 		var node = C.byId("reviewStatusSummary");
@@ -118,6 +199,8 @@
 			.then(function (response) {
 				state.codeReviewAgentTrigger.childSessionKey = C.text(response.ChildSessionKey || response.childSessionKey);
 				state.codeReviewAgentTrigger.message = C.text(response.Message || response.message || "Code review started.");
+				state.agentReview = response.CommitReview || response.commitReview || state.agentReview;
+				renderAgentReviewPanel();
 				setCodeReviewAgentStatus(state.codeReviewAgentTrigger.message + (state.codeReviewAgentTrigger.childSessionKey ? " Child: " + state.codeReviewAgentTrigger.childSessionKey : ""), "sent");
 				C.log(state.codeReviewAgentTrigger.message);
 			})
@@ -376,6 +459,7 @@
 		C.byId("diffFiles").innerHTML = html;
 		C.enhanceCodeBlocks(C.byId("diffFiles"), function (textarea, editor) { var filePath = textarea.getAttribute("data-path") || ""; state.editors[filePath] = editor; applyDiffLineGutter(editor, editor.getValue()); editor.on("cursorActivity", function () { handleEditorSelection(filePath, editor); }); });
 		setBinaryFilesHidden(C.byId("hideBinaryFilesToggle").checked);
+		renderAgentReviewPanel();
 		renderAllAnnotations(); updatePendingReviewButton(); updateConnectionSummary(); setCodeReviewAgentStatus(state.codeReviewAgentTrigger.message || state.codeReviewAgentTrigger.error, state.codeReviewAgentTrigger.error ? "error" : "");
 	}
 	function buildReviewPayload() {
@@ -485,7 +569,7 @@
 		C.log("Loading diff...");
 		loadAnnotations();
 		return C.call("GetDiffSnapshot", { RepositoryPath: path, Mode: mode, CommitSha: sha, MaxFiles: 240, MaxPatchChars: 1000000, ContextLines: contextLines() })
-			.then(function (response) { renderDiff(response); normalizeLoadedCommit(response); populateCheckInSelect(state.checkIns || []); C.log("Diff loaded."); })
+			.then(function (response) { renderDiff(response); normalizeLoadedCommit(response); populateCheckInSelect(state.checkIns || []); return loadAgentReview().then(function () { C.log("Diff loaded."); }); })
 			.catch(function (error) {
 				var message = C.errorMessage ? C.errorMessage(error) : (error.message || error);
 				if (mode === "commit" && /Commit was not found/i.test(message || "")) {
@@ -519,6 +603,7 @@
 		if (event.target.id === "annotateSelectionButton") { if (state.selectedTarget) openAnnotationModal(state.selectedTarget); return; }
 		if (event.target.id === "sendAnnotationsButton") { sendAnnotations(); return; }
 		if (event.target.id === "runCodeReviewAgentButton") { triggerCodeReviewAgent(); return; }
+		if (event.target.id === "agentReviewSubmitButton") { submitCommitReviewText(); return; }
 		if (event.target.closest && event.target.closest("#reviewToggleButton")) { setCurrentReviewed(!state.reviewed); return; }
 		if (event.target.id === "configureSessionButton") { configureSession(); return; }
 		var fullFile = event.target.closest("[data-full-file]");
