@@ -9,7 +9,6 @@ function ToNormalizeOffice365TeamsSpace(string space) : string
 	return "spaces/" + space;
 }
 
-
 function ToNormalizeOffice365TeamsScopePreset(string scopePreset, bool forWrite) : string
 {
 	if (StringUtil.IsEmpty(scopePreset))
@@ -98,7 +97,5 @@ prototype ToListOffice365TeamsMessagesByAccount : Office365SkillAction
 		return ToListOffice365TeamsMessagesPageByAccount.Execute(accountKey, scopePreset, space, pageSize, "");
 	}
 }
-
-
 
 

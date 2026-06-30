@@ -276,6 +276,7 @@ prototype ToDownloadOffice365AttachmentInMemory : Office365SkillAction
 
 		// Return facade JSON without reshaping.
 		return Office365ServiceHost.DownloadAttachmentInMemoryAsync(
+			Office365Service.NormalizeOffice365AccountKey(accountKey),
 			NormalizeOffice365OperationScopePreset(scopePreset),
 			messageId,
 			attachmentId,
@@ -296,6 +297,7 @@ prototype ToDownloadOffice365AttachmentToFile : Office365SkillAction
 
 		// Return facade JSON without reshaping.
 		return Office365ServiceHost.DownloadAttachmentToFileAsync(
+			Office365Service.NormalizeOffice365AccountKey(accountKey),
 			NormalizeOffice365OperationScopePreset(scopePreset),
 			messageId,
 			attachmentId,

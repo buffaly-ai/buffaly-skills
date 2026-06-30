@@ -50,13 +50,17 @@ prototype ToCreateOffice365CalendarEvent : Office365SkillAction
 		if (StringUtil.IsEmpty(scopePreset))
 			scopePreset = "calendars.readwrite";
 
-		string eventJson = "{\"summary\":\"" + summary + "\",\"description\":\"" + description + "\",\"location\":\"" + location + "\",\"start\":{\"dateTime\":\"" + startIso + "\",\"timeZone\":\"" + timeZone + "\"},\"end\":{\"dateTime\":\"" + endIso + "\",\"timeZone\":\"" + timeZone + "\"}}";
-
 		// Return facade JSON without reshaping.
 		return Office365ServiceHost.CreateEventAsync(			Office365Service.NormalizeOffice365AccountKey(accountKey),
 			NormalizeOffice365OperationScopePreset(scopePreset),
-			eventJson,
 			calendarId,
+			summary,
+			startIso,
+			endIso,
+			timeZone,
+			description,
+			location,
+			attendeesJson,
 			false,
 			new CancellationToken(false));
 	}

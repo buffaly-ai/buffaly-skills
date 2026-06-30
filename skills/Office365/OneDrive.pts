@@ -251,31 +251,6 @@ prototype ToEnsureOffice365OneDriveFolder : Office365SkillAction
 	}
 }
 
-[SemanticProgram.InfinitivePhrase("to grant a onedrive file permission")]
-prototype ToGrantOffice365OneDriveFilePermission : Office365SkillAction
-{
-	Description = @"accountKey - authorized account key. scopePreset defaults to files.readwrite. fileId/permissionType/role required. user/group requires emailAddress. domain requires domain. Optional allowFileDiscovery/sendNotificationEmail/emailMessage/transferOwnership.";
-
-	function Execute(string accountKey, string scopePreset, string fileId, string permissionType, string role, string emailAddress, string domain, bool allowFileDiscovery, bool sendNotificationEmail, string emailMessage, bool transferOwnership) : string
-	{
-		scopePreset = ToNormalizeOffice365OneDriveScopePreset(scopePreset, "files.readwrite");
-
-		return Office365ServiceHost.CreatePermissionAsync(			Office365Service.NormalizeOffice365AccountKey(accountKey),
-			NormalizeOffice365OperationScopePreset(scopePreset),
-			fileId,
-			permissionType,
-			role,
-			emailAddress,
-			domain,
-			allowFileDiscovery,
-			sendNotificationEmail,
-			emailMessage,
-			transferOwnership,
-			false,
-			new CancellationToken(false));
-	}
-}
-
 [SemanticProgram.InfinitivePhrase("to share a onedrive file")]
 prototype ToShareOffice365OneDriveFile : Office365SkillAction
 {
@@ -380,5 +355,6 @@ prototype ToGrantOffice365OneDriveFilePermission : Office365SkillAction
 			new CancellationToken(false));
 	}
 }
+
 
 

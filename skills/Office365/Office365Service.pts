@@ -35,7 +35,7 @@ prototype Office365Service : Service
 
 				return "";
 			}
-			if (!normalized.StartsWith("Office365#", StringComparison.OrdinalIgnoreCase))
+			if (!normalized.ToLowerInvariant().StartsWith("office365#"))
 				normalized = "Office365#" + normalized;
 			return normalized;
 		}
@@ -48,3 +48,4 @@ prototype Office365Service : Service
 		return Office365ServiceHost.InitializeFromFeature();
 	}
 }
+

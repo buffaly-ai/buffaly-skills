@@ -1,0 +1,28 @@
+reference "lib/Buffaly.Agent.AudioTranscription.dll" Buffaly.Agent.AudioTranscription;
+import Buffaly.Agent.AudioTranscription Buffaly.Agent.AudioTranscription.AudioArtifactTranscriptionTool AudioArtifactTranscriptionTool;
+
+[SemanticEntity("audio transcription skill")]
+prototype AudioTranscriptionSkill : SkillEntity, CoreEntity
+{
+	Description = "Transcription-only audio artifact tools that reuse the existing Buffaly voice transcription endpoint.";
+	ActionRoot = AudioTranscriptionSkillAction;
+}
+
+prototype AudioTranscriptionSkillAction : OpsAction
+{
+	Description = @"Base action type for transcription-only audio tools.";
+}
+
+[SemanticProgram.InfinitivePhrase("to transcribe an audio artifact")]
+[SemanticProgram.InfinitivePhrase("to transcribe an audio file")]
+[SemanticProgram.InfinitivePhrase("to convert audio to text")]
+prototype ToTranscribeAudioArtifact : AudioTranscriptionSkillAction
+{
+	Description = @"sourceAudio - semantic file ref, session artifact path, local path, or approved URL for an audio file.
+instruction - optional transcription prompt/instruction passed to the existing transcription-only endpoint as prompt. Provider/model/API-key settings remain internal to the existing voice service. This action does not call /api/voice/agent-interact or evaluate-with-input.";
+
+	function Execute(string sourceAudio, string instruction) : string
+	{
+		return AudioArtifactTranscriptionTool.TranscribeAudioArtifact(sourceAudio, instruction);
+	}
+}

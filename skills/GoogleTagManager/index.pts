@@ -1,0 +1,99 @@
+reference "lib/Buffaly.Marketing.dll" Buffaly.Marketing;
+import Buffaly.Marketing Buffaly.Marketing.GoogleTagManager.GoogleTagManagerProtoScriptFacade GoogleTagManagerProtoScriptFacade;
+
+prototype GoogleTagManagerSkillAction : OpsAction
+{
+	Description = @"Base action type for Google Tag Manager API tools.";
+}
+
+[SemanticEntity("google tag manager skill")]
+prototype GoogleTagManagerSkill : SkillEntity
+{
+	Description = "Google Tag Manager API inspection tools for accounts, containers, workspaces, tags, triggers, and variables.";
+	EntityName = "google tag manager skill";
+	ActionRoot = GoogleTagManagerSkillAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to list google tag manager accounts")]
+[SemanticProgram.InfinitivePhrase("to list gtm accounts")]
+prototype ToListGoogleTagManagerAccounts : GoogleTagManagerSkillAction
+{
+	Description = @"Returns all GTM accounts accessible by the authenticated user as JSON.";
+
+	function Execute() : string
+	{
+		return GoogleTagManagerProtoScriptFacade.ListAccounts();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list google tag manager containers")]
+[SemanticProgram.InfinitivePhrase("to list gtm containers")]
+prototype ToListGoogleTagManagerContainers : GoogleTagManagerSkillAction
+{
+	Description = @"accountId - GTM account ID. Returns all containers for the account as JSON.";
+
+	function Execute(string accountId) : string
+	{
+		return GoogleTagManagerProtoScriptFacade.ListContainers(accountId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list google tag manager workspaces")]
+[SemanticProgram.InfinitivePhrase("to list gtm workspaces")]
+prototype ToListGoogleTagManagerWorkspaces : GoogleTagManagerSkillAction
+{
+	Description = @"accountId - GTM account ID. containerId - GTM container ID. Returns all workspaces for the container as JSON.";
+
+	function Execute(string accountId, string containerId) : string
+	{
+		return GoogleTagManagerProtoScriptFacade.ListWorkspaces(accountId, containerId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list google tag manager tags")]
+[SemanticProgram.InfinitivePhrase("to list gtm tags")]
+prototype ToListGoogleTagManagerTags : GoogleTagManagerSkillAction
+{
+	Description = @"accountId - GTM account ID. containerId - GTM container ID. workspaceId - GTM workspace ID. Returns all tags in the workspace as JSON.";
+
+	function Execute(string accountId, string containerId, string workspaceId) : string
+	{
+		return GoogleTagManagerProtoScriptFacade.ListTags(accountId, containerId, workspaceId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list google tag manager triggers")]
+[SemanticProgram.InfinitivePhrase("to list gtm triggers")]
+prototype ToListGoogleTagManagerTriggers : GoogleTagManagerSkillAction
+{
+	Description = @"accountId - GTM account ID. containerId - GTM container ID. workspaceId - GTM workspace ID. Returns all triggers in the workspace as JSON.";
+
+	function Execute(string accountId, string containerId, string workspaceId) : string
+	{
+		return GoogleTagManagerProtoScriptFacade.ListTriggers(accountId, containerId, workspaceId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list google tag manager variables")]
+[SemanticProgram.InfinitivePhrase("to list gtm variables")]
+prototype ToListGoogleTagManagerVariables : GoogleTagManagerSkillAction
+{
+	Description = @"accountId - GTM account ID. containerId - GTM container ID. workspaceId - GTM workspace ID. Returns all variables in the workspace as JSON.";
+
+	function Execute(string accountId, string containerId, string workspaceId) : string
+	{
+		return GoogleTagManagerProtoScriptFacade.ListVariables(accountId, containerId, workspaceId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get google tag manager container summary")]
+[SemanticProgram.InfinitivePhrase("to get gtm container summary")]
+prototype ToGetGoogleTagManagerContainerSummary : GoogleTagManagerSkillAction
+{
+	Description = @"accountId - GTM account ID. containerId - GTM container ID. workspaceId - GTM workspace ID. Returns a comprehensive summary including container metadata, workspaces, tags, triggers, variables, and analysis of detected tracking pixels and events.";
+
+	function Execute(string accountId, string containerId, string workspaceId) : string
+	{
+		return GoogleTagManagerProtoScriptFacade.GetContainerSummary(accountId, containerId, workspaceId);
+	}
+}
