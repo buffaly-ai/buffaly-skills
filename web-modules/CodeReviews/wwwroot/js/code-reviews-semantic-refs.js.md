@@ -22,3 +22,9 @@
 - Design Decision: inject the small style block from this formatter script because the button is added into Buffaly timeline content where the CodeReviews harness stylesheet is not otherwise loaded.
 - Added an inline status chip beside the button so click progress and failures are visible in the timeline instead of being hidden in the button title or browser console.
 - The formatter uses the generated CodeReviews JsonWs client; `web-module.json` must list the module-owned generated client script before this formatter in `AgentScripts`.
+
+## State-Aware Review Buttons (2026-06-30)
+- After inserting a timeline `Review` button, the enhancer now calls `GetCommitReview` using the repository path and commit SHA already present in the rendered CodeReviews diff URL.
+- Persisted agent review state changes the button label and style: `Review` for missing/not reviewed records, `Reviewing` for running records, `Reviewed` for completed findings, and `Review failed` for failed records.
+- `Running` buttons are disabled to avoid duplicate agent review starts; `Reviewed` buttons navigate to the diff page with `showReview=1`; failed and not-reviewed buttons still trigger or retry the review agent.
+- Lookup failures are intentionally quiet and leave the button in its default usable `Review` state so transcript rendering does not become noisy when CodeReviews is unavailable.

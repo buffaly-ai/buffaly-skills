@@ -124,6 +124,57 @@
 			});
 	}
 
+	function recordFromResponse(response) {
+		return response && (response.Record || response.record) || null;
+	}
+
+	function reviewStatusFromRecord(record) {
+		return text(record && (record.Status || record.status)).trim() || "NotReviewed";
+	}
+
+	function diffUrlForAnchor(anchor, showReview) {
+		const url = new URL(anchor.href, window.location.href);
+		if (showReview) url.searchParams.set("showReview", "1");
+		return url.toString();
+	}
+
+	function applyReviewRecordToButton(anchor, button, record) {
+		const status = reviewStatusFromRecord(record);
+		button.disabled = false;
+		if (status === "Running") {
+			button.disabled = true;
+			setReviewButtonState(button, "running", "Reviewing", "Code Review Agent is already reviewing this commit.");
+			return;
+		}
+
+		if (status === "Reviewed") {
+			setReviewButtonState(button, "reviewed", "Reviewed", "Open reviewed CodeReviews diff.");
+			return;
+		}
+
+		if (status === "Failed") {
+			setReviewButtonState(button, "failed", "Review failed", text(record && (record.FailureReason || record.failureReason)) || "Retry Code Review Agent.");
+			return;
+		}
+
+		setReviewButtonState(button, "ready", "Review", "Run Code Review Agent");
+	}
+
+	function loadReviewButtonStatus(anchor, button) {
+		const request = buildRequestFromAnchor(anchor);
+		if (isEmpty(request.RepositoryPath) || isEmpty(request.CommitSha)) return;
+		button.setAttribute("data-code-review-status-loaded", "false");
+		call("GetCommitReview", { RepositoryPath: request.RepositoryPath, CommitSha: request.CommitSha })
+			.then(function (response) {
+				button.setAttribute("data-code-review-status-loaded", "true");
+				applyReviewRecordToButton(anchor, button, recordFromResponse(response));
+			})
+			.catch(function () {
+				button.setAttribute("data-code-review-status-loaded", "error");
+				setReviewButtonState(button, "ready", "Review", "Run Code Review Agent");
+			});
+	}
+
 	function enhanceRenderedCommitLinks(root) {
 		const scope = root && root.querySelectorAll ? root : document;
 		scope.querySelectorAll("a.code-reviews-semantic-ref-git-commit:not([data-code-review-trigger-enhanced='true'])").forEach(function (anchor) {
@@ -135,9 +186,15 @@
 			button.addEventListener("click", function (event) {
 				event.preventDefault();
 				event.stopPropagation();
+				if (button.getAttribute("data-code-review-state") === "reviewed") {
+					window.location.href = diffUrlForAnchor(anchor, true);
+					return;
+				}
+				if (button.getAttribute("data-code-review-state") === "running") return;
 				triggerCodeReviewAgent(buildRequestFromAnchor(anchor), button);
 			});
 			anchor.insertAdjacentElement("afterend", button);
+			loadReviewButtonStatus(anchor, button);
 		});
 	}
 
@@ -153,8 +210,9 @@
 			+ ".code-reviews-trigger-agent-review:disabled{cursor:default;opacity:.92;}\n"
 			+ ".code-reviews-trigger-agent-review-icon{display:inline-grid;place-items:center;width:1.05em;height:1.05em;border-radius:999px;background:rgba(255,255,255,.2);font-size:10px;line-height:1;}\n"
 			+ ".code-reviews-trigger-agent-review[data-code-review-state='loading'] .code-reviews-trigger-agent-review-icon{animation:codeReviewsReviewSpin .9s linear infinite;}\n"
-			+ ".code-reviews-trigger-agent-review[data-code-review-state='queued']{background:linear-gradient(135deg,#16a34a 0%,#0d9488 100%);box-shadow:0 5px 14px rgba(13,148,136,.24),inset 0 1px 0 rgba(255,255,255,.24);}\n"
-			+ ".code-reviews-trigger-agent-review[data-code-review-state='error']{background:linear-gradient(135deg,#f97316 0%,#dc2626 100%);box-shadow:0 5px 14px rgba(220,38,38,.22),inset 0 1px 0 rgba(255,255,255,.24);}\n"
+			+ ".code-reviews-trigger-agent-review[data-code-review-state='queued'],.code-reviews-trigger-agent-review[data-code-review-state='reviewed']{background:linear-gradient(135deg,#16a34a 0%,#0d9488 100%);box-shadow:0 5px 14px rgba(13,148,136,.24),inset 0 1px 0 rgba(255,255,255,.24);}\n"
+			+ ".code-reviews-trigger-agent-review[data-code-review-state='running']{background:linear-gradient(135deg,#2563eb 0%,#0891b2 100%);box-shadow:0 5px 14px rgba(37,99,235,.2),inset 0 1px 0 rgba(255,255,255,.24);}\n"
+			+ ".code-reviews-trigger-agent-review[data-code-review-state='error'],.code-reviews-trigger-agent-review[data-code-review-state='failed']{background:linear-gradient(135deg,#f97316 0%,#dc2626 100%);box-shadow:0 5px 14px rgba(220,38,38,.22),inset 0 1px 0 rgba(255,255,255,.24);}\n"
 			+ ".code-reviews-trigger-agent-review-status{display:inline-flex;align-items:center;margin-left:.38rem;padding:.15rem .45rem;border-radius:999px;font:600 11px/1.2 system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#eef2ff;color:#3730a3;vertical-align:baseline;}\n"
 			+ ".code-reviews-trigger-agent-review-status[data-code-review-state='queued']{background:#dcfce7;color:#166534;}\n"
 			+ ".code-reviews-trigger-agent-review-status[data-code-review-state='error']{background:#fee2e2;color:#991b1b;}\n"
