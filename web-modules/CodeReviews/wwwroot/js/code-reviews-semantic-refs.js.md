@@ -27,5 +27,7 @@
 - After inserting a timeline `Review` button, the enhancer now calls `GetCommitReview` using the repository path and commit SHA already present in the rendered CodeReviews diff URL.
 - Persisted agent review state changes the button label and style: `Review` for missing/not reviewed records, `Reviewing` for running records, `Reviewed` for completed findings, and `Review failed` for failed records.
 - `Running` buttons are disabled to avoid duplicate agent review starts; `Reviewed` buttons navigate to the diff page with `showReview=1`; failed and not-reviewed buttons still trigger or retry the review agent.
-- Lookup failures are intentionally quiet and leave the button in its default usable `Review` state so transcript rendering does not become noisy when CodeReviews is unavailable.
+- Lookup failures leave the button in its default usable `Review` state so transcript rendering does not become noisy when CodeReviews is unavailable, but they now log `console.warn` diagnostics for debugging.
 - Running records now also call `SyncCommitReview`; when the child session has completed, the server persists findings and the button changes from `Reviewing` to `Reviewed` without another manual trigger.
+- Status lookups do not override a button already in `loading` state, preventing the async lookup response from racing with a user click that is currently starting a review.
+- The status lookup path uses the PascalCase response contract only and avoids unused/write-only DOM metadata.

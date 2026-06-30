@@ -118,8 +118,8 @@
 		setReviewStatus(button, "loading", "Starting review agent...");
 		call("TriggerCodeReviewAgent", request)
 			.then(function (response) {
-				const child = text(response && (response.ChildSessionKey || response.childSessionKey));
-				setReviewButtonState(button, "queued", child ? "Queued " + child : "Queued", text(response && (response.Message || response.message)) || "Code review child session started.");
+				const child = text(response && response.ChildSessionKey);
+				setReviewButtonState(button, "queued", child ? "Queued " + child : "Queued", text(response && response.Message) || "Code review child session started.");
 				setReviewStatus(button, "queued", child ? "Queued child session " + child : "Review agent queued.");
 			})
 			.catch(function (error) {
@@ -130,11 +130,11 @@
 	}
 
 	function recordFromResponse(response) {
-		return response && (response.Record || response.record) || null;
+		return response && response.Record || null;
 	}
 
 	function reviewStatusFromRecord(record) {
-		return text(record && (record.Status || record.status)).trim() || "NotReviewed";
+		return text(record && record.Status).trim() || "NotReviewed";
 	}
 
 	function diffUrlForAnchor(anchor, showReview) {
@@ -143,7 +143,8 @@
 		return url.toString();
 	}
 
-	function applyReviewRecordToButton(anchor, button, record) {
+	function applyReviewRecordToButton(button, record) {
+		if (button.getAttribute("data-code-review-state") === "loading") return;
 		const status = reviewStatusFromRecord(record);
 		button.disabled = false;
 		if (status === "Running") {
@@ -158,7 +159,7 @@
 		}
 
 		if (status === "Failed") {
-			setReviewButtonState(button, "failed", "Review failed", text(record && (record.FailureReason || record.failureReason)) || "Retry Code Review Agent.");
+			setReviewButtonState(button, "failed", "Review failed", text(record && record.FailureReason) || "Retry Code Review Agent.");
 			return;
 		}
 
@@ -168,20 +169,18 @@
 	function loadReviewButtonStatus(anchor, button) {
 		const request = buildRequestFromAnchor(anchor);
 		if (isEmpty(request.RepositoryPath) || isEmpty(request.CommitSha)) return;
-		button.setAttribute("data-code-review-status-loaded", "false");
 		call("GetCommitReview", { RepositoryPath: request.RepositoryPath, CommitSha: request.CommitSha })
 			.then(function (response) {
-				button.setAttribute("data-code-review-status-loaded", "true");
 				const record = recordFromResponse(response);
-				applyReviewRecordToButton(anchor, button, record);
+				applyReviewRecordToButton(button, record);
 				if (reviewStatusFromRecord(record) === "Running") {
 					call("SyncCommitReview", { Environment: environmentName(), RepositoryPath: request.RepositoryPath, CommitSha: request.CommitSha, SourceSessionKey: request.SourceSessionKey, ChildSessionKey: text(record && record.ChildSessionKey) })
-						.then(function (syncResponse) { applyReviewRecordToButton(anchor, button, recordFromResponse(syncResponse)); })
-						.catch(function () { });
+						.then(function (syncResponse) { applyReviewRecordToButton(button, recordFromResponse(syncResponse)); })
+						.catch(function (error) { console.warn("CodeReviews review status sync failed", error); });
 				}
 			})
-			.catch(function () {
-				button.setAttribute("data-code-review-status-loaded", "error");
+			.catch(function (error) {
+				console.warn("CodeReviews review status lookup failed", error);
 				setReviewButtonState(button, "ready", "Review", "Run Code Review Agent");
 			});
 	}
