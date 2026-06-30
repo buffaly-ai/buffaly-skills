@@ -27,7 +27,9 @@ AS
 		END,
 		Provider = ISNULL(Provider, ''),
 		Requests = CONVERT(bigint, COUNT_BIG(*)),
-		TotalTokens = CONVERT(bigint, ISNULL(SUM(CONVERT(bigint, TotalTokens)), 0))
+		CachedTokens = CONVERT(bigint, ISNULL(SUM(CONVERT(bigint, CachedTokens)), 0)),
+		TotalTokens = CONVERT(bigint, ISNULL(SUM(CONVERT(bigint, TotalTokens)), 0)),
+		AverageLatencyMs = CONVERT(decimal(18, 2), ISNULL(AVG(CONVERT(decimal(18, 2), LatencyMs)), 0))
 	FROM dbo.UsageEvents WITH (NOLOCK)
 	WHERE UsageOperation = 'completion'
 		AND (@StartUtc IS NULL OR DateCreated >= @StartUtc)

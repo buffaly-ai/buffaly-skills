@@ -34,6 +34,7 @@ AS
 		CachedTokens = CONVERT(bigint, ue.CachedTokens),
 		ReasoningTokens = CONVERT(bigint, ue.ReasoningTokens),
 		TotalTokens = CONVERT(bigint, ue.TotalTokens),
+		LatencyMs = ue.LatencyMs,
 		ue.ProviderLimitSnapshotUsageEventID,
 		DateCreatedUtc = ue.DateCreated
 	FROM dbo.UsageEvents ue WITH (NOLOCK)

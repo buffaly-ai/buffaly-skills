@@ -1,4 +1,4 @@
-# ToSetupSqlServer2025ExpressSkill
+﻿# ToSetupSqlServer2025ExpressSkill
 
 Use this workflow to install and validate SQL Server 2025 Express on a Windows host with reliable troubleshooting and hardening.
 

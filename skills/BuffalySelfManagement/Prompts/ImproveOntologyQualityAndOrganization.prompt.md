@@ -1,4 +1,4 @@
-# Improve Ontology Quality And Organization
+﻿# Improve Ontology Quality And Organization
 
 Goal
 - Improve ontology quality in ProtoScript while preserving behavior.

@@ -1,4 +1,4 @@
-# Expose A C# Class To ProtoScript
+﻿# Expose A C# Class To ProtoScript
 
 Goal
 - Expose an existing C# class into OpsAgent ProtoScript using the canonical thin-wrapper pattern.

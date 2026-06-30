@@ -11,7 +11,8 @@
 	var lastResponse = null;
 	var lazyGraphs = {
 		cache: false,
-		requests: false
+		requests: false,
+		latency: false
 	};
 
 	var palette = ["#0f766e", "#2563eb", "#9333ea", "#c2410c", "#475569", "#be123c", "#15803d"];
@@ -135,11 +136,13 @@
 			["Cached tokens", summary.CachedTokens],
 			["Reasoning tokens", summary.ReasoningTokens],
 			["Requests", summary.Requests],
-			["Avg tokens / request", summary.AverageTokensPerRequest]
+			["Avg tokens / request", summary.AverageTokensPerRequest],
+			["Avg latency", summary.AverageLatencyMs, "latency"]
 		];
 		var container = document.querySelector("[data-summary-cards]");
 		container.innerHTML = cards.map(function (card) {
-			return "<div class=\"col-md-6 col-xl-3\"><div class=\"usage-card\"><div class=\"usage-label\">" + escapeHtml(card[0]) + "</div><div class=\"usage-value\">" + formatNumber(card[1]) + "</div></div></div>";
+			var value = card[2] === "latency" ? formatMilliseconds(card[1]) : formatNumber(card[1]);
+			return "<div class=\"col-md-6 col-xl-3\"><div class=\"usage-card\"><div class=\"usage-label\">" + escapeHtml(card[0]) + "</div><div class=\"usage-value\">" + escapeHtml(value) + "</div></div></div>";
 		}).join("");
 	}
 
@@ -224,6 +227,7 @@
 	function resetLazyGraphs() {
 		lazyGraphs.cache = false;
 		lazyGraphs.requests = false;
+		lazyGraphs.latency = false;
 		document.querySelectorAll("[data-lazy-graph]").forEach(function (button) {
 			button.disabled = false;
 		});
@@ -247,6 +251,9 @@
 		}
 		if (lazyGraphs.requests) {
 			cards.push(renderTrendCard("Requests over time", "Completion requests per bucket.", buildRequestTrend(lastResponse.TimeBuckets), "requests", "#2563eb"));
+		}
+		if (lazyGraphs.latency) {
+			cards.push(renderTrendCard("Average latency over time", "Average provider callout latency per bucket.", buildLatencyTrend(lastResponse.TimeBuckets), "latency", "#c2410c"));
 		}
 		container.style.display = cards.length > 0 ? "grid" : "none";
 		container.innerHTML = cards.join("");
@@ -278,18 +285,33 @@
 		});
 	}
 
+	function buildLatencyTrend(rows) {
+		return aggregateTimeBuckets(rows).map(function (bucket) {
+			return {
+				BucketStartUtc: bucket.BucketStartUtc,
+				Value: bucket.AverageLatencyMs,
+				Title: formatBucket(bucket.BucketStartUtc) + ": " + formatMilliseconds(bucket.AverageLatencyMs)
+			};
+		});
+	}
+
 	function aggregateTimeBuckets(rows) {
 		var buckets = {};
 		(rows || []).forEach(function (row) {
 			var key = row.BucketStartUtc;
 			if (!buckets[key]) {
-				buckets[key] = { BucketStartUtc: key, Requests: 0, CachedTokens: 0, TotalTokens: 0 };
+				buckets[key] = { BucketStartUtc: key, Requests: 0, CachedTokens: 0, TotalTokens: 0, LatencyWeightedTotal: 0 };
 			}
-			buckets[key].Requests += Number(row.Requests || 0);
+			var requests = Number(row.Requests || 0);
+			buckets[key].Requests += requests;
 			buckets[key].CachedTokens += Number(row.CachedTokens || 0);
 			buckets[key].TotalTokens += Number(row.TotalTokens || 0);
+			buckets[key].LatencyWeightedTotal += Number(row.AverageLatencyMs || 0) * requests;
 		});
-		return Object.keys(buckets).sort().map(function (key) { return buckets[key]; });
+		return Object.keys(buckets).sort().map(function (key) {
+			buckets[key].AverageLatencyMs = buckets[key].Requests <= 0 ? 0 : buckets[key].LatencyWeightedTotal / buckets[key].Requests;
+			return buckets[key];
+		});
 	}
 
 	function renderTrendCard(title, subtitle, points, unitLabel, color) {
@@ -301,7 +323,7 @@
 			var height = maxValue <= 0 ? 2 : Math.max(2, Math.round(point.Value / maxValue * 140));
 			return "<div class=\"usage-line-point\"><div class=\"usage-line-bar\" title=\"" + escapeHtml(point.Title) + "\" style=\"height:" + height + "px;background:" + color + ";\"></div><div class=\"usage-chart-label\">" + escapeHtml(formatBucket(point.BucketStartUtc)) + "</div></div>";
 		}).join("");
-		return "<div class=\"usage-pie-card\"><h4 class=\"mb-1\">" + escapeHtml(title) + "</h4><div class=\"text-muted\">" + escapeHtml(subtitle) + "</div><div class=\"usage-line-chart\">" + bars + "</div><div class=\"text-muted small mt-2\">Peak: " + escapeHtml(unitLabel === "%" ? formatPercent(maxValue) : formatNumber(maxValue) + " " + unitLabel) + "</div></div>";
+		return "<div class=\"usage-pie-card\"><h4 class=\"mb-1\">" + escapeHtml(title) + "</h4><div class=\"text-muted\">" + escapeHtml(subtitle) + "</div><div class=\"usage-line-chart\">" + bars + "</div><div class=\"text-muted small mt-2\">Peak: " + escapeHtml(unitLabel === "%" ? formatPercent(maxValue) : unitLabel === "latency" ? formatMilliseconds(maxValue) : formatNumber(maxValue) + " " + unitLabel) + "</div></div>";
 	}
 
 	function renderTrendUnavailableCard(title, message) {
@@ -320,7 +342,7 @@
 		panel = document.createElement("div");
 		panel.className = "usage-panel mb-4";
 		panel.setAttribute("data-lazy-graph-panel", "");
-		panel.innerHTML = "<div class=\"d-flex justify-content-between align-items-start flex-wrap gap-2\"><div><h4 class=\"mb-1\">Optional trend graphs</h4><div class=\"text-muted\">Loaded only when requested for the selected time range and filters.</div></div><div class=\"usage-lazy-graph-toolbar\"><button type=\"button\" class=\"btn btn-outline-secondary btn-sm\" data-lazy-graph=\"cache\">Show cached % over time</button><button type=\"button\" class=\"btn btn-outline-secondary btn-sm\" data-lazy-graph=\"requests\">Show requests over time</button></div></div><div class=\"usage-trend-grid\" data-lazy-graphs style=\"display:none;\"></div>";
+		panel.innerHTML = "<div class=\"d-flex justify-content-between align-items-start flex-wrap gap-2\"><div><h4 class=\"mb-1\">Optional trend graphs</h4><div class=\"text-muted\">Loaded only when requested for the selected time range and filters.</div></div><div class=\"usage-lazy-graph-toolbar\"><button type=\"button\" class=\"btn btn-outline-secondary btn-sm\" data-lazy-graph=\"cache\">Show cached % over time</button><button type=\"button\" class=\"btn btn-outline-secondary btn-sm\" data-lazy-graph=\"requests\">Show requests over time</button><button type=\"button\" class=\"btn btn-outline-secondary btn-sm\" data-lazy-graph=\"latency\">Show average latency over time</button></div></div><div class=\"usage-trend-grid\" data-lazy-graphs style=\"display:none;\"></div>";
 		chart.parentElement.parentElement.insertBefore(panel, chart.parentElement);
 		return panel;
 	}
@@ -417,11 +439,11 @@
 	function renderProviderRows(rows) {
 		var body = document.querySelector("[data-provider-rows]");
 		if (!rows || rows.length === 0) {
-			body.innerHTML = emptyRow(7);
+			body.innerHTML = emptyRow(8);
 			return;
 		}
 		body.innerHTML = rows.map(function (row) {
-			return "<tr><td>" + escapeHtml(row.Provider || "(unknown)") + "</td><td>" + escapeHtml(row.ModelName || "(unknown)") + "</td><td>" + escapeHtml(row.Transport || "(unknown)") + "</td><td class=\"text-end\">" + formatNumber(row.Requests) + "</td><td class=\"text-end fw-bold\">" + formatNumber(row.TotalTokens) + "</td><td class=\"text-end\">" + formatDimension(row.CachedTokens, row.DimensionAvailability.CachedTokensAvailable) + "</td><td class=\"text-end\">" + formatDimension(row.ReasoningTokens, row.DimensionAvailability.ReasoningTokensAvailable) + "</td></tr>";
+			return "<tr><td>" + escapeHtml(row.Provider || "(unknown)") + "</td><td>" + escapeHtml(row.ModelName || "(unknown)") + "</td><td>" + escapeHtml(row.Transport || "(unknown)") + "</td><td class=\"text-end\">" + formatNumber(row.Requests) + "</td><td class=\"text-end fw-bold\">" + formatNumber(row.TotalTokens) + "</td><td class=\"text-end\">" + escapeHtml(formatMilliseconds(row.AverageLatencyMs)) + "</td><td class=\"text-end\">" + formatDimension(row.CachedTokens, row.DimensionAvailability.CachedTokensAvailable) + "</td><td class=\"text-end\">" + formatDimension(row.ReasoningTokens, row.DimensionAvailability.ReasoningTokensAvailable) + "</td></tr>";
 		}).join("");
 	}
 
@@ -439,11 +461,11 @@
 	function renderDetailRows(rows) {
 		var body = document.querySelector("[data-detail-rows]");
 		if (!rows || rows.length === 0) {
-			body.innerHTML = emptyRow(10);
+			body.innerHTML = emptyRow(11);
 			return;
 		}
 		body.innerHTML = rows.map(function (row) {
-			return "<tr><td>" + escapeHtml(formatDate(row.DateCreatedUtc)) + "</td><td>" + escapeHtml(row.SessionName || row.SessionKey) + "</td><td>" + escapeHtml(row.Provider || "(unknown)") + "</td><td>" + escapeHtml(row.ModelName || "(unknown)") + "</td><td>" + escapeHtml(row.Transport || "(unknown)") + "</td><td class=\"text-end\">" + formatNumber(row.InputTokens) + "</td><td class=\"text-end\">" + formatNumber(row.OutputTokens) + "</td><td class=\"text-end\">" + formatDimension(row.CachedTokens, row.DimensionAvailability.CachedTokensAvailable) + "</td><td class=\"text-end\">" + formatDimension(row.ReasoningTokens, row.DimensionAvailability.ReasoningTokensAvailable) + "</td><td class=\"text-end fw-bold\">" + formatNumber(row.TotalTokens) + "</td></tr>";
+			return "<tr><td>" + escapeHtml(formatDate(row.DateCreatedUtc)) + "</td><td>" + escapeHtml(row.SessionName || row.SessionKey) + "</td><td>" + escapeHtml(row.Provider || "(unknown)") + "</td><td>" + escapeHtml(row.ModelName || "(unknown)") + "</td><td>" + escapeHtml(row.Transport || "(unknown)") + "</td><td class=\"text-end\">" + formatNumber(row.InputTokens) + "</td><td class=\"text-end\">" + formatNumber(row.OutputTokens) + "</td><td class=\"text-end\">" + formatDimension(row.CachedTokens, row.DimensionAvailability.CachedTokensAvailable) + "</td><td class=\"text-end\">" + formatDimension(row.ReasoningTokens, row.DimensionAvailability.ReasoningTokensAvailable) + "</td><td class=\"text-end fw-bold\">" + formatNumber(row.TotalTokens) + "</td><td class=\"text-end\">" + escapeHtml(formatMilliseconds(row.LatencyMs)) + "</td></tr>";
 		}).join("");
 	}
 
@@ -464,6 +486,10 @@
 
 	function formatPercent(value) {
 		return Number(value || 0).toLocaleString(undefined, { maximumFractionDigits: 1 }) + "%";
+	}
+
+	function formatMilliseconds(value) {
+		return formatNumber(value) + " ms";
 	}
 
 	function formatDate(value) {

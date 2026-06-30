@@ -128,6 +128,10 @@
         {
           "Path": "lib/Buffaly.Maintenance.Client.dll",
           "Sha256": "b0a9ad6c950b59acf11e26935a9cd77418996d87d630b605ba07fce99696e0f1"
+        },
+        {
+          "Path": "lib/Buffaly.Maintenance.Client.pdb",
+          "Sha256": "31df3837d06b77583c6065587c6c57dca8b98da8b3f51cb6a839afe18afe8cc4"
         }
       ],
       "EntryPoint": "index.pts",
@@ -735,7 +739,11 @@
         },
         {
           "Path": "lib/Buffaly.Marketing.dll",
-          "Sha256": "a5b19a2a59fda039b56efbdea0cbbc5a98dc55c94b252ab96efa43df4d4a1ad5"
+          "Sha256": "76202805325e4e869569fdd51c87fb51db5cd5ec92531a88812d4653dedea961"
+        },
+        {
+          "Path": "lib/Buffaly.Marketing.pdb",
+          "Sha256": "7784b1ff0e1738403adba18a2393e9322d6cfb1fe1fe3876c090016b490fe628"
         },
         {
           "Path": "SKILL.md",
@@ -958,6 +966,31 @@
       "IsDefaultPackage": true
     },
     {
+      "SkillName": "Level2Watcher",
+      "Title": "Level2 Watcher",
+      "Description": "Buffaly OpsAgent skill package for Level2Watcher.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Level2Watcher"
+      ],
+      "Path": "skills/Level2Watcher",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "c7f513d0b4373f41a01b243aa3e71306352d882d7b6ef149432c5a5e21f23b87"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "2069223198f565d01f46e2e1ed31cc6b40b1070417ccc268428fb25c07fd5a01"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsDefaultPackage": true
+    },
+    {
       "SkillName": "LLM",
       "Title": "L L M",
       "Description": "Buffaly OpsAgent skill package for LLM.",
@@ -1007,31 +1040,6 @@
         {
           "Path": "RuntimeProfiles.pts.md",
           "Sha256": "4b20b09f4eda3bbbb6f04e3d200b76ec1dea4d753c6167bf047e1ae98c6830ca"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsDefaultPackage": true
-    },
-    {
-      "SkillName": "Level2Watcher",
-      "Title": "Level2 Watcher",
-      "Description": "Buffaly OpsAgent skill package for Level2Watcher.",
-      "Version": "0.1.0",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [
-        "Level2Watcher"
-      ],
-      "Path": "skills/Level2Watcher",
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "c7f513d0b4373f41a01b243aa3e71306352d882d7b6ef149432c5a5e21f23b87"
-        },
-        {
-          "Path": "index.pts.md",
-          "Sha256": "2069223198f565d01f46e2e1ed31cc6b40b1070417ccc268428fb25c07fd5a01"
         }
       ],
       "EntryPoint": "index.pts",

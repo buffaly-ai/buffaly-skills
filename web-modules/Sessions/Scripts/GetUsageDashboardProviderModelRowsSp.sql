@@ -27,7 +27,8 @@ AS
 		OutputTokens = CONVERT(bigint, ISNULL(SUM(CONVERT(bigint, OutputTokens)), 0)),
 		CachedTokens = CONVERT(bigint, ISNULL(SUM(CONVERT(bigint, CachedTokens)), 0)),
 		ReasoningTokens = CONVERT(bigint, ISNULL(SUM(CONVERT(bigint, ReasoningTokens)), 0)),
-		TotalTokens = CONVERT(bigint, ISNULL(SUM(CONVERT(bigint, TotalTokens)), 0))
+		TotalTokens = CONVERT(bigint, ISNULL(SUM(CONVERT(bigint, TotalTokens)), 0)),
+		AverageLatencyMs = CONVERT(decimal(18, 2), ISNULL(AVG(CONVERT(decimal(18, 2), LatencyMs)), 0))
 	FROM dbo.UsageEvents WITH (NOLOCK)
 	WHERE UsageOperation = 'completion'
 		AND (@StartUtc IS NULL OR DateCreated >= @StartUtc)
