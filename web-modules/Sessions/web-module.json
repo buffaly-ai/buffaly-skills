@@ -1,37 +1,37 @@
-﻿{
-    "Module":  {
-                   "Enabled":  true,
-                   "Name":  "Sessions",
-                   "DisplayName":  "Sessions",
-                   "Description":  "Browse session records, messages, dashboards, processes, and scheduled process activity.",
-                   "AssemblyPath":  "Sessions/Buffaly.Sessions.Web.dll",
-                   "TypeName":  "Buffaly.Sessions.Web.SessionsWebModule",
-                   "LoadOrder":  800,
-                   "Pages":  [
-                                 {
-                                     "Name":  "sessions",
-                                     "DisplayName":  "Sessions",
-                                     "Path":  "/web-modules/Sessions/sessions",
-                                     "Description":  "Browse stored sessions."
-                                 },
-                                 {
-                                     "Name":  "messages",
-                                     "DisplayName":  "Messages",
-                                     "Path":  "/web-modules/Sessions/messages",
-                                     "Description":  "Browse stored session messages."
-                                 },
-                                 {
-                                     "Name":  "dashboard",
-                                     "DisplayName":  "Dashboard",
-                                     "Path":  "/web-modules/Sessions/dashboard",
-                                     "Description":  "Review session activity and governance metrics."
-                                 },
-                                 {
-                                     "Name":  "processes",
-                                     "DisplayName":  "Processes",
-                                     "Path":  "/web-modules/Sessions/processes",
-                                     "Description":  "Browse and run Sessions system processes."
-                                 }
-                             ]
-               }
+{
+  "Module": {
+    "Enabled": true,
+    "Name": "Sessions",
+    "DisplayName": "Sessions",
+    "Description": "Browse session records, messages, dashboards, processes, and scheduled process activity.",
+    "AssemblyPath": "Sessions/Buffaly.Sessions.Web.dll",
+    "TypeName": "Buffaly.Sessions.Web.SessionsWebModule",
+    "LoadOrder": 800,
+    "Pages": [
+      {
+        "Name": "sessions",
+        "DisplayName": "Sessions",
+        "Path": "/web-modules/Sessions/sessions",
+        "Description": "Browse stored sessions."
+      },
+      {
+        "Name": "messages",
+        "DisplayName": "Messages",
+        "Path": "/web-modules/Sessions/messages",
+        "Description": "Browse stored session messages."
+      },
+      {
+        "Name": "dashboard",
+        "DisplayName": "Dashboard",
+        "Path": "/web-modules/Sessions/dashboard",
+        "Description": "Review session activity and governance metrics."
+      },
+      {
+        "Name": "processes",
+        "DisplayName": "Processes",
+        "Path": "/web-modules/Sessions/processes",
+        "Description": "Browse and run Sessions system processes."
+      }
+    ]
+  }
 }

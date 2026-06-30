@@ -8,6 +8,11 @@
 		Transport: "",
 		SessionID: ""
 	};
+	var lastResponse = null;
+	var lazyGraphs = {
+		cache: false,
+		requests: false
+	};
 
 	var palette = ["#0f766e", "#2563eb", "#9333ea", "#c2410c", "#475569", "#be123c", "#15803d"];
 
@@ -16,23 +21,35 @@
 		document.querySelectorAll("[data-range]").forEach(function (button) {
 			button.addEventListener("click", function () {
 				state.Range = button.getAttribute("data-range");
-				document.querySelectorAll("[data-range]").forEach(function (rangeButton) {
-					rangeButton.classList.toggle("active", rangeButton === button);
-				});
-				loadDashboard();
+			document.querySelectorAll("[data-range]").forEach(function (rangeButton) {
+				rangeButton.classList.toggle("active", rangeButton === button);
 			});
+			resetLazyGraphs();
+			loadDashboard();
 		});
+	});
 
 		document.querySelectorAll("[data-filter]").forEach(function (select) {
 			select.addEventListener("change", function () {
-				var field = select.getAttribute("data-filter");
-				state[field] = select.value;
-				loadDashboard();
-			});
+			var field = select.getAttribute("data-filter");
+			state[field] = select.value;
+			resetLazyGraphs();
+			loadDashboard();
 		});
+	});
 
-		loadDashboard();
-	}
+	getLazyGraphPanel();
+	document.querySelectorAll("[data-lazy-graph]").forEach(function (button) {
+		button.addEventListener("click", function () {
+			var graph = button.getAttribute("data-lazy-graph");
+			lazyGraphs[graph] = true;
+			button.disabled = true;
+			renderLazyGraphs();
+		});
+	});
+
+	loadDashboard();
+}
 
 	async function loadDashboard() {
 		setLoading(true);
@@ -65,10 +82,12 @@
 	}
 
 	function renderDashboard(response) {
+		lastResponse = response;
 		renderWarning(response.Warnings && response.Warnings.length > 0 ? response.Warnings.join(" ") : "");
 		renderFilters(response.Filters);
 		renderSummary(response.Summary);
 		renderAggregatePies(response.Summary, response.ProviderModelRows);
+		renderLazyGraphs();
 		renderChart(response.TimeBuckets);
 		renderLimit(response.LatestProviderLimit);
 		renderProviderRows(response.ProviderModelRows);
@@ -202,6 +221,110 @@
 		return "conic-gradient(" + segments.join(",") + ")";
 	}
 
+	function resetLazyGraphs() {
+		lazyGraphs.cache = false;
+		lazyGraphs.requests = false;
+		document.querySelectorAll("[data-lazy-graph]").forEach(function (button) {
+			button.disabled = false;
+		});
+		var container = document.querySelector("[data-lazy-graphs]");
+		if (container) {
+			container.style.display = "none";
+			container.innerHTML = "";
+		}
+	}
+
+	function renderLazyGraphs() {
+		var container = document.querySelector("[data-lazy-graphs]");
+		if (!container || !lastResponse) {
+			return;
+		}
+		var cards = [];
+		if (lazyGraphs.cache) {
+			cards.push(hasCachedBucketData(lastResponse.TimeBuckets)
+				? renderTrendCard("Cached % over time", "Cached tokens divided by total tokens per bucket.", buildCachedPercentTrend(lastResponse.TimeBuckets), "%", "#0f766e")
+				: renderTrendUnavailableCard("Cached % over time", "This graph needs the updated time-bucket backend that returns CachedTokens per bucket."));
+		}
+		if (lazyGraphs.requests) {
+			cards.push(renderTrendCard("Requests over time", "Completion requests per bucket.", buildRequestTrend(lastResponse.TimeBuckets), "requests", "#2563eb"));
+		}
+		container.style.display = cards.length > 0 ? "grid" : "none";
+		container.innerHTML = cards.join("");
+	}
+
+	function hasCachedBucketData(rows) {
+		return (rows || []).some(function (row) {
+			return Object.prototype.hasOwnProperty.call(row, "CachedTokens");
+		});
+	}
+
+	function buildCachedPercentTrend(rows) {
+		return aggregateTimeBuckets(rows).map(function (bucket) {
+			return {
+				BucketStartUtc: bucket.BucketStartUtc,
+				Value: bucket.TotalTokens <= 0 ? 0 : bucket.CachedTokens / bucket.TotalTokens * 100,
+				Title: formatBucket(bucket.BucketStartUtc) + ": " + formatPercent(bucket.TotalTokens <= 0 ? 0 : bucket.CachedTokens / bucket.TotalTokens * 100) + " cached"
+			};
+		});
+	}
+
+	function buildRequestTrend(rows) {
+		return aggregateTimeBuckets(rows).map(function (bucket) {
+			return {
+				BucketStartUtc: bucket.BucketStartUtc,
+				Value: bucket.Requests,
+				Title: formatBucket(bucket.BucketStartUtc) + ": " + formatNumber(bucket.Requests) + " requests"
+			};
+		});
+	}
+
+	function aggregateTimeBuckets(rows) {
+		var buckets = {};
+		(rows || []).forEach(function (row) {
+			var key = row.BucketStartUtc;
+			if (!buckets[key]) {
+				buckets[key] = { BucketStartUtc: key, Requests: 0, CachedTokens: 0, TotalTokens: 0 };
+			}
+			buckets[key].Requests += Number(row.Requests || 0);
+			buckets[key].CachedTokens += Number(row.CachedTokens || 0);
+			buckets[key].TotalTokens += Number(row.TotalTokens || 0);
+		});
+		return Object.keys(buckets).sort().map(function (key) { return buckets[key]; });
+	}
+
+	function renderTrendCard(title, subtitle, points, unitLabel, color) {
+		if (!points || points.length === 0) {
+			return "<div class=\"usage-pie-card\"><h4 class=\"mb-1\">" + escapeHtml(title) + "</h4><div class=\"text-muted\">" + escapeHtml(subtitle) + "</div><div class=\"usage-empty\">No usage rows for this filter.</div></div>";
+		}
+		var maxValue = Math.max.apply(null, points.map(function (point) { return point.Value; }));
+		var bars = points.map(function (point) {
+			var height = maxValue <= 0 ? 2 : Math.max(2, Math.round(point.Value / maxValue * 140));
+			return "<div class=\"usage-line-point\"><div class=\"usage-line-bar\" title=\"" + escapeHtml(point.Title) + "\" style=\"height:" + height + "px;background:" + color + ";\"></div><div class=\"usage-chart-label\">" + escapeHtml(formatBucket(point.BucketStartUtc)) + "</div></div>";
+		}).join("");
+		return "<div class=\"usage-pie-card\"><h4 class=\"mb-1\">" + escapeHtml(title) + "</h4><div class=\"text-muted\">" + escapeHtml(subtitle) + "</div><div class=\"usage-line-chart\">" + bars + "</div><div class=\"text-muted small mt-2\">Peak: " + escapeHtml(unitLabel === "%" ? formatPercent(maxValue) : formatNumber(maxValue) + " " + unitLabel) + "</div></div>";
+	}
+
+	function renderTrendUnavailableCard(title, message) {
+		return "<div class=\"usage-pie-card\"><h4 class=\"mb-1\">" + escapeHtml(title) + "</h4><div class=\"usage-empty\">" + escapeHtml(message) + "</div></div>";
+	}
+
+	function getLazyGraphPanel() {
+		var panel = document.querySelector("[data-lazy-graph-panel]");
+		if (panel) {
+			return panel;
+		}
+		var chart = document.querySelector("[data-time-chart]");
+		if (!chart || !chart.parentElement) {
+			return null;
+		}
+		panel = document.createElement("div");
+		panel.className = "usage-panel mb-4";
+		panel.setAttribute("data-lazy-graph-panel", "");
+		panel.innerHTML = "<div class=\"d-flex justify-content-between align-items-start flex-wrap gap-2\"><div><h4 class=\"mb-1\">Optional trend graphs</h4><div class=\"text-muted\">Loaded only when requested for the selected time range and filters.</div></div><div class=\"usage-lazy-graph-toolbar\"><button type=\"button\" class=\"btn btn-outline-secondary btn-sm\" data-lazy-graph=\"cache\">Show cached % over time</button><button type=\"button\" class=\"btn btn-outline-secondary btn-sm\" data-lazy-graph=\"requests\">Show requests over time</button></div></div><div class=\"usage-trend-grid\" data-lazy-graphs style=\"display:none;\"></div>";
+		chart.parentElement.parentElement.insertBefore(panel, chart.parentElement);
+		return panel;
+	}
+
 	function renderChart(rows) {
 		var container = document.querySelector("[data-time-chart]");
 		var legend = getChartLegend(container);
@@ -264,7 +387,7 @@
 		}
 		var style = document.createElement("style");
 		style.id = "usage-dashboard-dynamic-style";
-		style.textContent = ".usage-chart-legend{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-top:.75rem}.usage-chart-legend-item{align-items:center;color:#475569;display:inline-flex;font-size:.84rem;gap:.4rem;white-space:nowrap}.usage-chart-legend-swatch{border-radius:999px;display:inline-block;height:.7rem;width:.7rem}.usage-pie-grid{display:grid;gap:1rem;grid-template-columns:repeat(3,minmax(0,1fr))}.usage-pie-card{background:#fff;border:1px solid rgba(148,163,184,.28);border-radius:8px;padding:1rem}.usage-pie-body{align-items:center;display:grid;gap:1rem;grid-template-columns:auto minmax(0,1fr);margin-top:.75rem}.usage-pie{background:#e2e8f0;border-radius:999px;height:8.5rem;position:relative;width:8.5rem}.usage-pie::after{background:#fff;border-radius:999px;content:'';height:4.6rem;left:50%;position:absolute;top:50%;transform:translate(-50%,-50%);width:4.6rem}.usage-pie-center{font-size:1.1rem;font-weight:800;left:50%;position:absolute;text-align:center;top:50%;transform:translate(-50%,-50%);z-index:1}.usage-pie-legend{display:grid;gap:.45rem}.usage-pie-legend-item{align-items:center;color:#475569;display:grid;font-size:.84rem;gap:.4rem;grid-template-columns:auto minmax(0,1fr) auto}.usage-pie-swatch{border-radius:999px;display:inline-block;height:.7rem;width:.7rem}@media(max-width:1100px){.usage-pie-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:720px){.usage-pie-grid{grid-template-columns:1fr}.usage-pie-body{grid-template-columns:1fr}.usage-pie{justify-self:center}}";
+		style.textContent = ".usage-chart-legend{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-top:.75rem}.usage-chart-legend-item{align-items:center;color:#475569;display:inline-flex;font-size:.84rem;gap:.4rem;white-space:nowrap}.usage-chart-legend-swatch{border-radius:999px;display:inline-block;height:.7rem;width:.7rem}.usage-pie-grid{display:grid;gap:1rem;grid-template-columns:repeat(3,minmax(0,1fr))}.usage-pie-card{background:#fff;border:1px solid rgba(148,163,184,.28);border-radius:8px;padding:1rem}.usage-pie-body{align-items:center;display:grid;gap:1rem;grid-template-columns:auto minmax(0,1fr);margin-top:.75rem}.usage-pie{background:#e2e8f0;border-radius:999px;height:8.5rem;position:relative;width:8.5rem}.usage-pie::after{background:#fff;border-radius:999px;content:'';height:4.6rem;left:50%;position:absolute;top:50%;transform:translate(-50%,-50%);width:4.6rem}.usage-pie-center{font-size:1.1rem;font-weight:800;left:50%;position:absolute;text-align:center;top:50%;transform:translate(-50%,-50%);z-index:1}.usage-pie-legend{display:grid;gap:.45rem}.usage-pie-legend-item{align-items:center;color:#475569;display:grid;font-size:.84rem;gap:.4rem;grid-template-columns:auto minmax(0,1fr) auto}.usage-pie-swatch{border-radius:999px;display:inline-block;height:.7rem;width:.7rem}.usage-lazy-graph-toolbar{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.75rem}.usage-trend-grid{display:grid;gap:1rem;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:1rem}.usage-line-chart{align-items:end;display:grid;gap:.35rem;grid-auto-flow:column;grid-auto-columns:minmax(24px,1fr);min-height:180px;overflow-x:auto;padding-top:.75rem}.usage-line-point{align-items:center;display:flex;flex-direction:column;justify-content:end;min-height:150px}.usage-line-bar{background:#0f766e;border-radius:999px 999px 0 0;min-height:2px;width:100%}@media(max-width:1100px){.usage-pie-grid,.usage-trend-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:720px){.usage-pie-grid,.usage-trend-grid{grid-template-columns:1fr}.usage-pie-body{grid-template-columns:1fr}.usage-pie{justify-self:center}}";
 		document.head.appendChild(style);
 	}
 

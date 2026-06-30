@@ -27,6 +27,7 @@ AS
 		END,
 		Provider = ISNULL(Provider, ''),
 		Requests = CONVERT(bigint, COUNT_BIG(*)),
+		CachedTokens = CONVERT(bigint, ISNULL(SUM(CONVERT(bigint, CachedTokens)), 0)),
 		TotalTokens = CONVERT(bigint, ISNULL(SUM(CONVERT(bigint, TotalTokens)), 0))
 	FROM dbo.UsageEvents WITH (NOLOCK)
 	WHERE UsageOperation = 'completion'
