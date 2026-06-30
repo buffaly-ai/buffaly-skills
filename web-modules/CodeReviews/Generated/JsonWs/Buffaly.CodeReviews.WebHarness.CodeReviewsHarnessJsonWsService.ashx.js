@@ -21,6 +21,8 @@ class CodeReviewsHarnessJsonWsServiceService {
   async SetCheckInReviewedAsync(request) { return await this.SetCheckInReviewed(request); }
   GetCommitReview(request, Callback, ErrorCallback) { return this._invokeWrap("get-commit-review", "GetCommitReview", request, Callback, ErrorCallback); }
   async GetCommitReviewAsync(request) { return await this.GetCommitReview(request); }
+  SyncCommitReview(request, Callback, ErrorCallback) { return this._invokeWrap("sync-commit-review", "SyncCommitReview", request, Callback, ErrorCallback); }
+  async SyncCommitReviewAsync(request) { return await this.SyncCommitReview(request); }
   SubmitCommitReviewText(request, Callback, ErrorCallback) { return this._invokeWrap("submit-commit-review-text", "SubmitCommitReviewText", request, Callback, ErrorCallback); }
   async SubmitCommitReviewTextAsync(request) { return await this.SubmitCommitReviewText(request); }
   PushRepository(request, Callback, ErrorCallback) { return this._invokeWrap("push-repository", "PushRepository", request, Callback, ErrorCallback); }

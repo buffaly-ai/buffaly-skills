@@ -28,3 +28,4 @@
 - Persisted agent review state changes the button label and style: `Review` for missing/not reviewed records, `Reviewing` for running records, `Reviewed` for completed findings, and `Review failed` for failed records.
 - `Running` buttons are disabled to avoid duplicate agent review starts; `Reviewed` buttons navigate to the diff page with `showReview=1`; failed and not-reviewed buttons still trigger or retry the review agent.
 - Lookup failures are intentionally quiet and leave the button in its default usable `Review` state so transcript rendering does not become noisy when CodeReviews is unavailable.
+- Running records now also call `SyncCommitReview`; when the child session has completed, the server persists findings and the button changes from `Reviewing` to `Reviewed` without another manual trigger.

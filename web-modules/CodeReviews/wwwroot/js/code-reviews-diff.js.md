@@ -44,3 +44,7 @@
 
 ## Submit Review Environment Routing (2026-06-30)
 - `SubmitCommitReviewText` requests now include the bridge-configured environment so findings callbacks are routed to the selected agent target instead of hardcoding Dev.
+
+## Sync Completed Child Review Findings (2026-06-30)
+- When the diff page loads an agent review record with `Status=Running`, it now calls `SyncCommitReview` so the server can read the completed child session, persist final assistant findings, and dispatch the parent timeline event.
+- Design Decision: the diff page remains the authoritative review display, but persistence now happens through a server-side child-session sync path instead of requiring a user to paste findings manually.

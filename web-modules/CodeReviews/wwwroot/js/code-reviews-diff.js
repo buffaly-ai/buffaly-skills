@@ -71,6 +71,10 @@
 		if (status === "Failed") return "agent-failed";
 		return "unreviewed";
 	}
+	function agentReviewEnvironment() {
+		var config = Bridge.getConfig ? Bridge.getConfig() : { Environment: "Dev" };
+		return Bridge.normalizeEnvironment ? Bridge.normalizeEnvironment(config.Environment || "Dev") : (config.Environment || "Dev");
+	}
 	function renderAgentReviewPanel() {
 		var panel = C.byId("agentReviewPanel");
 		if (!panel) return;
@@ -116,18 +120,24 @@
 		state.agentReviewError = "";
 		renderAgentReviewPanel();
 		return C.call("GetCommitReview", { RepositoryPath: path, CommitSha: currentCommitSha() })
-			.then(function (response) { state.agentReview = response.Record || response.record || null; })
+			.then(function (response) {
+				state.agentReview = response.Record || null;
+				if (agentReviewStatus(state.agentReview) === "Running") return syncAgentReview();
+				return null;
+			})
 			.catch(function (error) { state.agentReviewError = C.errorMessage(error); })
 			.then(function () { state.agentReviewLoading = false; renderAgentReviewPanel(); });
+	}
+	function syncAgentReview() {
+		return C.call("SyncCommitReview", { Environment: agentReviewEnvironment(), RepositoryPath: path, CommitSha: currentCommitSha(), SourceSessionKey: sourceSessionKey, ChildSessionKey: C.text(state.agentReview && state.agentReview.ChildSessionKey) })
+			.then(function (response) { state.agentReview = response.Record || state.agentReview; return response; });
 	}
 	function submitCommitReviewText() {
 		var text = C.text(C.byId("agentReviewText").value).trim();
 		if (!text) { C.log("Paste review text before submitting."); return; }
 		var button = C.byId("agentReviewSubmitButton");
 		if (button) { button.disabled = true; button.textContent = "Submitting..."; }
-		var config = Bridge.getConfig ? Bridge.getConfig() : { Environment: "Dev" };
-		var environment = Bridge.normalizeEnvironment ? Bridge.normalizeEnvironment(config.Environment || "Dev") : (config.Environment || "Dev");
-		return C.call("SubmitCommitReviewText", { Environment: environment, RepositoryPath: path, CommitSha: currentCommitSha(), ReviewText: text, SourceSessionKey: sourceSessionKey, ChildSessionKey: C.text(state.agentReview && (state.agentReview.ChildSessionKey || state.agentReview.childSessionKey)) })
+		return C.call("SubmitCommitReviewText", { Environment: agentReviewEnvironment(), RepositoryPath: path, CommitSha: currentCommitSha(), ReviewText: text, SourceSessionKey: sourceSessionKey, ChildSessionKey: C.text(state.agentReview && state.agentReview.ChildSessionKey) })
 			.then(function (response) {
 				state.agentReview = response.Record || response.record || null;
 				C.byId("agentReviewText").value = "";

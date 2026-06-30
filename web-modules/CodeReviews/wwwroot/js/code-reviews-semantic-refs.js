@@ -87,6 +87,11 @@
 		};
 	}
 
+	function environmentName() {
+		const moduleConfig = window.BuffalyWebModuleConfig && window.BuffalyWebModuleConfig.CodeReviews;
+		return text(moduleConfig && moduleConfig.Environment).trim() || "Dev";
+	}
+
 	function setReviewButtonState(button, state, label, title) {
 		button.setAttribute("data-code-review-state", state);
 		button.innerHTML = '<span class="code-reviews-trigger-agent-review-icon" aria-hidden="true">&#x2726;</span><span class="code-reviews-trigger-agent-review-label"></span>';
@@ -167,7 +172,13 @@
 		call("GetCommitReview", { RepositoryPath: request.RepositoryPath, CommitSha: request.CommitSha })
 			.then(function (response) {
 				button.setAttribute("data-code-review-status-loaded", "true");
-				applyReviewRecordToButton(anchor, button, recordFromResponse(response));
+				const record = recordFromResponse(response);
+				applyReviewRecordToButton(anchor, button, record);
+				if (reviewStatusFromRecord(record) === "Running") {
+					call("SyncCommitReview", { Environment: environmentName(), RepositoryPath: request.RepositoryPath, CommitSha: request.CommitSha, SourceSessionKey: request.SourceSessionKey, ChildSessionKey: text(record && record.ChildSessionKey) })
+						.then(function (syncResponse) { applyReviewRecordToButton(anchor, button, recordFromResponse(syncResponse)); })
+						.catch(function () { });
+				}
 			})
 			.catch(function () {
 				button.setAttribute("data-code-review-status-loaded", "error");
