@@ -122,15 +122,10 @@
 		return C.call("GetCommitReview", { RepositoryPath: path, CommitSha: currentCommitSha() })
 			.then(function (response) {
 				state.agentReview = response.Record || null;
-				if (agentReviewStatus(state.agentReview) === "Running") return syncAgentReview();
 				return null;
 			})
 			.catch(function (error) { state.agentReviewError = C.errorMessage(error); })
 			.then(function () { state.agentReviewLoading = false; renderAgentReviewPanel(); });
-	}
-	function syncAgentReview() {
-		return C.call("SyncCommitReview", { Environment: agentReviewEnvironment(), RepositoryPath: path, CommitSha: currentCommitSha(), SourceSessionKey: sourceSessionKey, ChildSessionKey: C.text(state.agentReview && state.agentReview.ChildSessionKey) })
-			.then(function (response) { state.agentReview = response.Record || state.agentReview; return response; });
 	}
 	function submitCommitReviewText() {
 		var text = C.text(C.byId("agentReviewText").value).trim();

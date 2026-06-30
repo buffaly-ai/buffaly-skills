@@ -173,11 +173,6 @@
 			.then(function (response) {
 				const record = recordFromResponse(response);
 				applyReviewRecordToButton(button, record);
-				if (reviewStatusFromRecord(record) === "Running") {
-					call("SyncCommitReview", { Environment: environmentName(), RepositoryPath: request.RepositoryPath, CommitSha: request.CommitSha, SourceSessionKey: request.SourceSessionKey, ChildSessionKey: text(record && record.ChildSessionKey) })
-						.then(function (syncResponse) { applyReviewRecordToButton(button, recordFromResponse(syncResponse)); })
-						.catch(function (error) { console.warn("CodeReviews review status sync failed", error); });
-				}
 			})
 			.catch(function (error) {
 				console.warn("CodeReviews review status lookup failed", error);
