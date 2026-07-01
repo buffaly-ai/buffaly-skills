@@ -154,6 +154,18 @@ prototype ToSaveOfflineOntologyCriticCheckpoint : OfflineOntologyCriticSkillActi
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to publish feedback review completion event")]
+[SemanticProgram.InfinitivePhrase("to notify the source session that feedback review is complete")]
+prototype ToPublishFeedbackReviewCompletedEvent : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot, OpsAction
+{
+	Description = @"Publish a FeedbackReview.Completed event to the original source session after a feedback worker completes. sourceSessionKey - original session receiving the event. turnKey - selected source turn key. artifactPath - markdown review artifact path. reviewTarget - offlineCritic or buffalyAgent. reviewMode - suggestion, diagnostic, materialization, or quality. reviewWorkflow/requiredSkill - workflow metadata. resultPreview - short review summary or final markdown excerpt.";
+
+	function Execute(string sourceSessionKey, string turnKey, string artifactPath, string reviewTarget, string reviewMode, string reviewWorkflow = "", string requiredSkill = "", string resultPreview = "") : string
+	{
+		return OfflineOntologyCriticWebTools.PublishFeedbackReviewCompletedEventForProtoScript(_opsAgent, sourceSessionKey, turnKey, artifactPath, reviewTarget, reviewMode, reviewWorkflow, requiredSkill, resultPreview);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to get recent session turns for offline ontology critic")]
 prototype ToOfflineCriticGetRecentSessionTurns : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
 {

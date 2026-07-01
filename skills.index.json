@@ -2,6 +2,67 @@
   "SchemaVersion": 1,
   "Skills": [
     {
+      "SkillName": "AudioTranscription",
+      "Title": "Audio Transcription",
+      "Description": "Transcription-only audio artifact tools that reuse the existing Buffaly voice transcription endpoint.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Path": "skills/AudioTranscription",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/skills/AudioTranscription",
+      "Phrases": [
+        "audio transcription",
+        "transcribe audio",
+        "transcribe an audio artifact",
+        "convert audio to text"
+      ],
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "590e41788b6b1d14a78d5adb7f7460338f06450cb1c82966a6f56eccf9b6c1e0"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "5757797c851c25ec5b2dcf2bf664b35f44b433afc2f43a44de2af7842937ded5"
+        },
+        {
+          "Path": "lib/Buffaly.Agent.AudioTranscription.dll",
+          "Sha256": "0504a3edc1463f06e233a36dc7000432eb6249274a01cd1a9a32672ca0682540"
+        },
+        {
+          "Path": "lib/Buffaly.Agent.AudioTranscription.pdb",
+          "Sha256": "dc50d9bc92eeeb2f90937e5bd51a08a8f8cb25ffdbb2cf73d4487a998e1e08b8"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "87d5aa8ac149b84b0bf8224748a6ddc322f7ddc267d3ded1c397d475f8a4a192"
+        },
+        {
+          "Path": "src/Buffaly.Agent.AudioTranscription/AudioArtifactTranscriptionTool.cs",
+          "Sha256": "9215e664a61b592a910e73844a0b752b5a91100741a753d898eff45e7408b40a"
+        },
+        {
+          "Path": "src/Buffaly.Agent.AudioTranscription/AudioArtifactTranscriptionTool.cs.md",
+          "Sha256": "d1362c30392cbbab3cd6bb44424e4d9de1c978ad33615d5cf019cf5c23fdecd8"
+        },
+        {
+          "Path": "src/Buffaly.Agent.AudioTranscription/Buffaly.Agent.AudioTranscription.csproj",
+          "Sha256": "d4a31a263bf06d82c70df0c650a3337b7e2eccb5532e01986bdfd5212e529616"
+        },
+        {
+          "Path": "tests/Buffaly.Agent.AudioTranscription.Tests/Buffaly.Agent.AudioTranscription.Tests.csproj",
+          "Sha256": "822930393b3a78baad35bddb4c925e48db52fe2a2d0fe640d8dab4e7d08829ed"
+        },
+        {
+          "Path": "tests/Buffaly.Agent.AudioTranscription.Tests/Program.cs",
+          "Sha256": "2df6106076f2a0cc8f8631cfd62ed62beaec1d5d6dcc68b5a3c1bfc0dab958b3"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "IsDefaultPackage": false,
+      "RequiresRestart": false,
+      "RequiresPreStartInstall": false
+    },
+    {
       "SkillName": "Browser",
       "Title": "Browser",
       "Description": "Buffaly skill package for Browser.",
@@ -781,6 +842,39 @@
       "IsDefaultPackage": true
     },
     {
+      "SkillName": "GoogleTagManager",
+      "Title": "Google Tag Manager",
+      "Description": "Google Tag Manager API inspection tools for accounts, containers, workspaces, tags, triggers, and variables.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Path": "skills/GoogleTagManager",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/skills/GoogleTagManager",
+      "Phrases": [
+        "google tag manager",
+        "gtm",
+        "list google tag manager accounts",
+        "inspect gtm container"
+      ],
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "19f204a0b64afd64e107ce87a2d5c9e207b01ae448f7439083f0ac858ad0d29e"
+        },
+        {
+          "Path": "lib/Buffaly.Marketing.dll",
+          "Sha256": "76202805325e4e869569fdd51c87fb51db5cd5ec92531a88812d4653dedea961"
+        },
+        {
+          "Path": "lib/Buffaly.Marketing.pdb",
+          "Sha256": "7784b1ff0e1738403adba18a2393e9322d6cfb1fe1fe3876c090016b490fe628"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "IsDefaultPackage": false,
+      "RequiresRestart": false,
+      "RequiresPreStartInstall": false
+    },
+    {
       "SkillName": "GoogleWorkspace",
       "Title": "Google Workspace",
       "Description": "GoogleWorkspace Skill",
@@ -1320,6 +1414,84 @@
         "Use only for explicit Metabase Runtime work"
       ],
       "IsDefaultPackage": false
+    },
+    {
+      "SkillName": "Office365",
+      "Title": "Office365",
+      "Description": "Office365 ProtoScript skill for mail, calendar, OneDrive, Teams, and Office365 service actions.",
+      "Version": "0.1.2",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Path": "skills/Office365",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/skills/Office365",
+      "Phrases": [
+        "office365",
+        "office 365",
+        "microsoft 365",
+        "send office365 mail",
+        "list office365 calendar"
+      ],
+      "Files": [
+        {
+          "Path": "Auth.pts",
+          "Sha256": "047cb309170bb891b321f28ab0ae1dee3ca3650837e75b7467052032b31e4798"
+        },
+        {
+          "Path": "Calendar.pts",
+          "Sha256": "0cc3d78cc202f3cd103d02abe28a21ad22492a64e0692dee572e9ebe43d45e1c"
+        },
+        {
+          "Path": "Calendar.pts.md",
+          "Sha256": "d123f4745a29c6a3380aa2afd4cedbd70ef4aceff7190b7eb586adfc199d2d1c"
+        },
+        {
+          "Path": "Common.pts",
+          "Sha256": "0e80a0709b4ae20a1e75a562f2e988eb4e00a407fac57bd21a476d14bfdb809d"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "80cadd1ec63024693e603e8554f81f55de88e515e2f897abff6e6d63c97b9351"
+        },
+        {
+          "Path": "Mail.pts",
+          "Sha256": "965296a4148d59a88d84a74a7815172c11447d11858fb4b4ab36595bf28f3897"
+        },
+        {
+          "Path": "Mail.pts.md",
+          "Sha256": "4298cdd1b3beeffbd4c150476c8348123c1cad74135d203d58fa65993cf73aa7"
+        },
+        {
+          "Path": "Office365Service.pts",
+          "Sha256": "a27741260b55a207db927c3dc55df83f2360d6946be321d32c7ba40cbf01cbf8"
+        },
+        {
+          "Path": "Office365Service.pts.md",
+          "Sha256": "8525b225d96c478e955a84c3aa878c51f0abb88ac2a916c4f1243be9b5e84037"
+        },
+        {
+          "Path": "OneDrive.pts",
+          "Sha256": "bb2abf17c0e66d717e90bde0828edb61a8b3bf790b9e1721c02e17e2a49710ae"
+        },
+        {
+          "Path": "OneDrive.pts.md",
+          "Sha256": "70c70a87395ca6a5de3e7426667f97cd2519c6f2e4db1dfaceafc1bcf8375ce8"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "846f186b00172683bc2bb5f848ff8f0e12fe72fc2e2edcfa754fd19c8d079be7"
+        },
+        {
+          "Path": "Teams.pts",
+          "Sha256": "69e68f06b172309df3c45f67631f1a7781940f3befedfbcc33559d5b212f3050"
+        },
+        {
+          "Path": "Teams.pts.md",
+          "Sha256": "617486437be6526599bfba6e1857c94bb99b1ddc65631fe9428fa614c8128273"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "IsDefaultPackage": true,
+      "RequiresRestart": false,
+      "RequiresPreStartInstall": false
     },
     {
       "SkillName": "Onboarding",
@@ -2047,178 +2219,6 @@
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
       "IsDefaultPackage": true
-    },
-    {
-      "SkillName": "AudioTranscription",
-      "Title": "Audio Transcription",
-      "Description": "Transcription-only audio artifact tools that reuse the existing Buffaly voice transcription endpoint.",
-      "Version": "0.1.0",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Path": "skills/AudioTranscription",
-      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/skills/AudioTranscription",
-      "Phrases": [
-        "audio transcription",
-        "transcribe audio",
-        "transcribe an audio artifact",
-        "convert audio to text"
-      ],
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "590e41788b6b1d14a78d5adb7f7460338f06450cb1c82966a6f56eccf9b6c1e0"
-        },
-        {
-          "Path": "index.pts.md",
-          "Sha256": "5757797c851c25ec5b2dcf2bf664b35f44b433afc2f43a44de2af7842937ded5"
-        },
-        {
-          "Path": "lib/Buffaly.Agent.AudioTranscription.dll",
-          "Sha256": "0504a3edc1463f06e233a36dc7000432eb6249274a01cd1a9a32672ca0682540"
-        },
-        {
-          "Path": "lib/Buffaly.Agent.AudioTranscription.pdb",
-          "Sha256": "dc50d9bc92eeeb2f90937e5bd51a08a8f8cb25ffdbb2cf73d4487a998e1e08b8"
-        },
-        {
-          "Path": "SKILL.md",
-          "Sha256": "87d5aa8ac149b84b0bf8224748a6ddc322f7ddc267d3ded1c397d475f8a4a192"
-        },
-        {
-          "Path": "src/Buffaly.Agent.AudioTranscription/AudioArtifactTranscriptionTool.cs",
-          "Sha256": "9215e664a61b592a910e73844a0b752b5a91100741a753d898eff45e7408b40a"
-        },
-        {
-          "Path": "src/Buffaly.Agent.AudioTranscription/AudioArtifactTranscriptionTool.cs.md",
-          "Sha256": "d1362c30392cbbab3cd6bb44424e4d9de1c978ad33615d5cf019cf5c23fdecd8"
-        },
-        {
-          "Path": "src/Buffaly.Agent.AudioTranscription/Buffaly.Agent.AudioTranscription.csproj",
-          "Sha256": "d4a31a263bf06d82c70df0c650a3337b7e2eccb5532e01986bdfd5212e529616"
-        },
-        {
-          "Path": "tests/Buffaly.Agent.AudioTranscription.Tests/Buffaly.Agent.AudioTranscription.Tests.csproj",
-          "Sha256": "822930393b3a78baad35bddb4c925e48db52fe2a2d0fe640d8dab4e7d08829ed"
-        },
-        {
-          "Path": "tests/Buffaly.Agent.AudioTranscription.Tests/Program.cs",
-          "Sha256": "2df6106076f2a0cc8f8631cfd62ed62beaec1d5d6dcc68b5a3c1bfc0dab958b3"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "IsDefaultPackage": false,
-      "RequiresRestart": false,
-      "RequiresPreStartInstall": false
-    },
-    {
-      "SkillName": "GoogleTagManager",
-      "Title": "Google Tag Manager",
-      "Description": "Google Tag Manager API inspection tools for accounts, containers, workspaces, tags, triggers, and variables.",
-      "Version": "0.1.0",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Path": "skills/GoogleTagManager",
-      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/skills/GoogleTagManager",
-      "Phrases": [
-        "google tag manager",
-        "gtm",
-        "list google tag manager accounts",
-        "inspect gtm container"
-      ],
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "19f204a0b64afd64e107ce87a2d5c9e207b01ae448f7439083f0ac858ad0d29e"
-        },
-        {
-          "Path": "lib/Buffaly.Marketing.dll",
-          "Sha256": "76202805325e4e869569fdd51c87fb51db5cd5ec92531a88812d4653dedea961"
-        },
-        {
-          "Path": "lib/Buffaly.Marketing.pdb",
-          "Sha256": "7784b1ff0e1738403adba18a2393e9322d6cfb1fe1fe3876c090016b490fe628"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "IsDefaultPackage": false,
-      "RequiresRestart": false,
-      "RequiresPreStartInstall": false
-    },
-    {
-      "SkillName": "Office365",
-      "Title": "Office365",
-      "Description": "Office365 ProtoScript skill for mail, calendar, OneDrive, Teams, and Office365 service actions.",
-      "Version": "0.1.2",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Path": "skills/Office365",
-      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/skills/Office365",
-      "Phrases": [
-        "office365",
-        "office 365",
-        "microsoft 365",
-        "send office365 mail",
-        "list office365 calendar"
-      ],
-      "Files": [
-        {
-          "Path": "Auth.pts",
-          "Sha256": "047cb309170bb891b321f28ab0ae1dee3ca3650837e75b7467052032b31e4798"
-        },
-        {
-          "Path": "Calendar.pts",
-          "Sha256": "0cc3d78cc202f3cd103d02abe28a21ad22492a64e0692dee572e9ebe43d45e1c"
-        },
-        {
-          "Path": "Calendar.pts.md",
-          "Sha256": "d123f4745a29c6a3380aa2afd4cedbd70ef4aceff7190b7eb586adfc199d2d1c"
-        },
-        {
-          "Path": "Common.pts",
-          "Sha256": "0e80a0709b4ae20a1e75a562f2e988eb4e00a407fac57bd21a476d14bfdb809d"
-        },
-        {
-          "Path": "index.pts",
-          "Sha256": "80cadd1ec63024693e603e8554f81f55de88e515e2f897abff6e6d63c97b9351"
-        },
-        {
-          "Path": "Mail.pts",
-          "Sha256": "965296a4148d59a88d84a74a7815172c11447d11858fb4b4ab36595bf28f3897"
-        },
-        {
-          "Path": "Mail.pts.md",
-          "Sha256": "4298cdd1b3beeffbd4c150476c8348123c1cad74135d203d58fa65993cf73aa7"
-        },
-        {
-          "Path": "Office365Service.pts",
-          "Sha256": "a27741260b55a207db927c3dc55df83f2360d6946be321d32c7ba40cbf01cbf8"
-        },
-        {
-          "Path": "Office365Service.pts.md",
-          "Sha256": "8525b225d96c478e955a84c3aa878c51f0abb88ac2a916c4f1243be9b5e84037"
-        },
-        {
-          "Path": "OneDrive.pts",
-          "Sha256": "bb2abf17c0e66d717e90bde0828edb61a8b3bf790b9e1721c02e17e2a49710ae"
-        },
-        {
-          "Path": "OneDrive.pts.md",
-          "Sha256": "70c70a87395ca6a5de3e7426667f97cd2519c6f2e4db1dfaceafc1bcf8375ce8"
-        },
-        {
-          "Path": "SKILL.md",
-          "Sha256": "846f186b00172683bc2bb5f848ff8f0e12fe72fc2e2edcfa754fd19c8d079be7"
-        },
-        {
-          "Path": "Teams.pts",
-          "Sha256": "69e68f06b172309df3c45f67631f1a7781940f3befedfbcc33559d5b212f3050"
-        },
-        {
-          "Path": "Teams.pts.md",
-          "Sha256": "617486437be6526599bfba6e1857c94bb99b1ddc65631fe9428fa614c8128273"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "IsDefaultPackage": true,
-      "RequiresRestart": false,
-      "RequiresPreStartInstall": false
     }
   ]
 }

@@ -12,7 +12,8 @@
 	var lazyGraphs = {
 		cache: false,
 		requests: false,
-		latency: false
+		latency: false,
+		limits: false
 	};
 
 	var palette = ["#0f766e", "#2563eb", "#9333ea", "#c2410c", "#475569", "#be123c", "#15803d"];
@@ -228,6 +229,7 @@
 		lazyGraphs.cache = false;
 		lazyGraphs.requests = false;
 		lazyGraphs.latency = false;
+		lazyGraphs.limits = false;
 		document.querySelectorAll("[data-lazy-graph]").forEach(function (button) {
 			button.disabled = false;
 		});
@@ -254,6 +256,12 @@
 		}
 		if (lazyGraphs.latency) {
 			cards.push(renderTrendCard("Average latency over time", "Average provider callout latency per bucket.", buildLatencyTrend(lastResponse.TimeBuckets), "latency", "#c2410c"));
+		}
+		if (lazyGraphs.limits) {
+			var limitTrend = buildProviderLimitTrend(lastResponse.ProviderLimitHistory);
+			cards.push(limitTrend.length > 0
+				? renderTrendCard("Available Codex usage over time", "Remaining provider limit percentage from captured Codex snapshots.", limitTrend, "%", "#be123c")
+				: renderTrendUnavailableCard("Available Codex usage over time", "No provider-limit snapshots with remaining and limit values are available for this filter."));
 		}
 		container.style.display = cards.length > 0 ? "grid" : "none";
 		container.innerHTML = cards.join("");
@@ -295,6 +303,26 @@
 		});
 	}
 
+	function buildProviderLimitTrend(rows) {
+		return (rows || []).map(function (row) {
+			var remaining = Number(row.Remaining);
+			var limit = Number(row.Limit);
+			if (!Number.isFinite(remaining) || !Number.isFinite(limit) || limit <= 0) {
+				return null;
+			}
+			var percent = Math.max(0, Math.min(100, remaining / limit * 100));
+			var reset = row.ResetAtUtc ? "; resets " + formatDateTime(row.ResetAtUtc) : "";
+			var scope = row.Scope ? " (" + row.Scope + ")" : "";
+			return {
+				BucketStartUtc: row.SnapshotDateCreatedUtc || row.UpdatedAtUtc,
+				Value: percent,
+				Title: formatBucket(row.SnapshotDateCreatedUtc || row.UpdatedAtUtc) + ": " + formatPercent(percent) + " remaining" + scope + "; " + formatNumber(remaining) + " / " + formatNumber(limit) + reset
+			};
+		}).filter(function (point) {
+			return point && point.BucketStartUtc;
+		});
+	}
+
 	function aggregateTimeBuckets(rows) {
 		var buckets = {};
 		(rows || []).forEach(function (row) {
@@ -319,11 +347,12 @@
 			return "<div class=\"usage-pie-card\"><h4 class=\"mb-1\">" + escapeHtml(title) + "</h4><div class=\"text-muted\">" + escapeHtml(subtitle) + "</div><div class=\"usage-empty\">No usage rows for this filter.</div></div>";
 		}
 		var maxValue = Math.max.apply(null, points.map(function (point) { return point.Value; }));
+		var scaleMax = unitLabel === "%" ? Math.max(100, maxValue) : maxValue;
 		var bars = points.map(function (point) {
-			var height = maxValue <= 0 ? 2 : Math.max(2, Math.round(point.Value / maxValue * 140));
+			var height = scaleMax <= 0 ? 2 : Math.max(2, Math.round(point.Value / scaleMax * 160));
 			return "<div class=\"usage-line-point\"><div class=\"usage-line-bar\" title=\"" + escapeHtml(point.Title) + "\" style=\"height:" + height + "px;background:" + color + ";\"></div><div class=\"usage-chart-label\">" + escapeHtml(formatBucket(point.BucketStartUtc)) + "</div></div>";
 		}).join("");
-		return "<div class=\"usage-pie-card\"><h4 class=\"mb-1\">" + escapeHtml(title) + "</h4><div class=\"text-muted\">" + escapeHtml(subtitle) + "</div><div class=\"usage-line-chart\">" + bars + "</div><div class=\"text-muted small mt-2\">Peak: " + escapeHtml(unitLabel === "%" ? formatPercent(maxValue) : unitLabel === "latency" ? formatMilliseconds(maxValue) : formatNumber(maxValue) + " " + unitLabel) + "</div></div>";
+		return "<div class=\"usage-pie-card\"><h4 class=\"mb-1\">" + escapeHtml(title) + "</h4><div class=\"text-muted\">" + escapeHtml(subtitle) + "</div>" + renderScaledChart(scaleMax, unitLabel, "<div class=\"usage-line-chart\">" + bars + "</div>") + "<div class=\"text-muted small mt-2\">Peak: " + escapeHtml(formatScaleValue(maxValue, unitLabel)) + "</div></div>";
 	}
 
 	function renderTrendUnavailableCard(title, message) {
@@ -342,7 +371,7 @@
 		panel = document.createElement("div");
 		panel.className = "usage-panel mb-4";
 		panel.setAttribute("data-lazy-graph-panel", "");
-		panel.innerHTML = "<div class=\"d-flex justify-content-between align-items-start flex-wrap gap-2\"><div><h4 class=\"mb-1\">Optional trend graphs</h4><div class=\"text-muted\">Loaded only when requested for the selected time range and filters.</div></div><div class=\"usage-lazy-graph-toolbar\"><button type=\"button\" class=\"btn btn-outline-secondary btn-sm\" data-lazy-graph=\"cache\">Show cached % over time</button><button type=\"button\" class=\"btn btn-outline-secondary btn-sm\" data-lazy-graph=\"requests\">Show requests over time</button><button type=\"button\" class=\"btn btn-outline-secondary btn-sm\" data-lazy-graph=\"latency\">Show average latency over time</button></div></div><div class=\"usage-trend-grid\" data-lazy-graphs style=\"display:none;\"></div>";
+		panel.innerHTML = "<div class=\"d-flex justify-content-between align-items-start flex-wrap gap-2\"><div><h4 class=\"mb-1\">Optional trend graphs</h4><div class=\"text-muted\">Loaded only when requested for the selected time range and filters.</div></div><div class=\"usage-lazy-graph-toolbar\"><button type=\"button\" class=\"btn btn-outline-secondary btn-sm\" data-lazy-graph=\"cache\">Show cached % over time</button><button type=\"button\" class=\"btn btn-outline-secondary btn-sm\" data-lazy-graph=\"requests\">Show requests over time</button><button type=\"button\" class=\"btn btn-outline-secondary btn-sm\" data-lazy-graph=\"latency\">Show average latency over time</button><button type=\"button\" class=\"btn btn-outline-secondary btn-sm\" data-lazy-graph=\"limits\">Show available Codex usage over time</button></div></div><div class=\"usage-trend-grid\" data-lazy-graphs style=\"display:none;\"></div>";
 		chart.parentElement.parentElement.insertBefore(panel, chart.parentElement);
 		return panel;
 	}
@@ -371,7 +400,7 @@
 			return providers.reduce(function (total, provider) { return total + (buckets[bucket][provider] || 0); }, 0);
 		}));
 
-		container.innerHTML = Object.keys(buckets).map(function (bucket) {
+		var columns = Object.keys(buckets).map(function (bucket) {
 			var bucketTotal = providers.reduce(function (total, provider) { return total + (buckets[bucket][provider] || 0); }, 0);
 			var stackHeight = maxBucketTotal <= 0 ? 0 : Math.max(3, Math.round(bucketTotal / maxBucketTotal * 160));
 			var segments = providers.map(function (provider, index) {
@@ -384,6 +413,7 @@
 			}).join("");
 			return "<div class=\"usage-chart-column\"><div class=\"usage-chart-stack\">" + segments + "</div><div class=\"usage-chart-label\">" + escapeHtml(formatBucket(bucket)) + "</div></div>";
 		}).join("");
+		container.innerHTML = renderScaledChart(maxBucketTotal, "tokens", "<div class=\"usage-chart\">" + columns + "</div>");
 		if (legend) {
 			legend.innerHTML = providers.map(function (provider, index) {
 				return "<span class=\"usage-chart-legend-item\"><span class=\"usage-chart-legend-swatch\" style=\"background:" + palette[index % palette.length] + ";\"></span>" + escapeHtml(provider) + "</span>";
@@ -403,13 +433,33 @@
 		return legend;
 	}
 
+	// Renders a compact three-line y-axis so small dashboard charts keep numeric context.
+	function renderScaledChart(maxValue, unitLabel, chartHtml) {
+		var midValue = maxValue / 2;
+		return "<div class=\"usage-scaled-chart\"><div class=\"usage-scale-axis\"><span>" + escapeHtml(formatScaleValue(maxValue, unitLabel)) + "</span><span>" + escapeHtml(formatScaleValue(midValue, unitLabel)) + "</span><span>" + escapeHtml(formatScaleValue(0, unitLabel)) + "</span></div><div class=\"usage-scale-plot\"><span class=\"usage-scale-grid usage-scale-grid-top\"></span><span class=\"usage-scale-grid usage-scale-grid-mid\"></span><span class=\"usage-scale-grid usage-scale-grid-bottom\"></span>" + chartHtml + "</div></div>";
+	}
+
+	// Formats y-axis values with the same units used by each chart.
+	function formatScaleValue(value, unitLabel) {
+		if (unitLabel === "%") {
+			return formatPercent(value);
+		}
+		if (unitLabel === "latency") {
+			return value >= 1000 ? formatNumber(value / 1000) + " sec" : formatMilliseconds(value);
+		}
+		if (unitLabel === "tokens") {
+			return formatNumber(value);
+		}
+		return formatNumber(value) + " " + unitLabel;
+	}
+
 	function ensureDynamicDashboardStyles() {
 		if (document.getElementById("usage-dashboard-dynamic-style")) {
 			return;
 		}
 		var style = document.createElement("style");
 		style.id = "usage-dashboard-dynamic-style";
-		style.textContent = ".usage-chart-legend{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-top:.75rem}.usage-chart-legend-item{align-items:center;color:#475569;display:inline-flex;font-size:.84rem;gap:.4rem;white-space:nowrap}.usage-chart-legend-swatch{border-radius:999px;display:inline-block;height:.7rem;width:.7rem}.usage-pie-grid{display:grid;gap:1rem;grid-template-columns:repeat(3,minmax(0,1fr))}.usage-pie-card{background:#fff;border:1px solid rgba(148,163,184,.28);border-radius:8px;padding:1rem}.usage-pie-body{align-items:center;display:grid;gap:1rem;grid-template-columns:auto minmax(0,1fr);margin-top:.75rem}.usage-pie{background:#e2e8f0;border-radius:999px;height:8.5rem;position:relative;width:8.5rem}.usage-pie::after{background:#fff;border-radius:999px;content:'';height:4.6rem;left:50%;position:absolute;top:50%;transform:translate(-50%,-50%);width:4.6rem}.usage-pie-center{font-size:1.1rem;font-weight:800;left:50%;position:absolute;text-align:center;top:50%;transform:translate(-50%,-50%);z-index:1}.usage-pie-legend{display:grid;gap:.45rem}.usage-pie-legend-item{align-items:center;color:#475569;display:grid;font-size:.84rem;gap:.4rem;grid-template-columns:auto minmax(0,1fr) auto}.usage-pie-swatch{border-radius:999px;display:inline-block;height:.7rem;width:.7rem}.usage-lazy-graph-toolbar{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.75rem}.usage-trend-grid{display:grid;gap:1rem;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:1rem}.usage-line-chart{align-items:end;display:grid;gap:.35rem;grid-auto-flow:column;grid-auto-columns:minmax(24px,1fr);min-height:180px;overflow-x:auto;padding-top:.75rem}.usage-line-point{align-items:center;display:flex;flex-direction:column;justify-content:end;min-height:150px}.usage-line-bar{background:#0f766e;border-radius:999px 999px 0 0;min-height:2px;width:100%}@media(max-width:1100px){.usage-pie-grid,.usage-trend-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:720px){.usage-pie-grid,.usage-trend-grid{grid-template-columns:1fr}.usage-pie-body{grid-template-columns:1fr}.usage-pie{justify-self:center}}";
+		style.textContent = ".usage-chart-legend{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-top:.75rem}.usage-chart-legend-item{align-items:center;color:#475569;display:inline-flex;font-size:.84rem;gap:.4rem;white-space:nowrap}.usage-chart-legend-swatch{border-radius:999px;display:inline-block;height:.7rem;width:.7rem}.usage-scaled-chart{display:grid;gap:.5rem;grid-template-columns:auto minmax(0,1fr);margin-top:.75rem}.usage-scale-axis{color:#64748b;display:flex;flex-direction:column;font-size:.72rem;justify-content:space-between;line-height:1;min-height:180px;text-align:right;white-space:nowrap}.usage-scale-plot{position:relative}.usage-scale-grid{border-top:1px solid rgba(148,163,184,.35);left:0;pointer-events:none;position:absolute;right:0;z-index:0}.usage-scale-grid-top{top:.75rem}.usage-scale-grid-mid{top:calc(.75rem + 80px)}.usage-scale-grid-bottom{top:calc(.75rem + 160px)}.usage-pie-grid{display:grid;gap:1rem;grid-template-columns:repeat(3,minmax(0,1fr))}.usage-pie-card{background:#fff;border:1px solid rgba(148,163,184,.28);border-radius:8px;padding:1rem}.usage-pie-body{align-items:center;display:grid;gap:1rem;grid-template-columns:auto minmax(0,1fr);margin-top:.75rem}.usage-pie{background:#e2e8f0;border-radius:999px;height:8.5rem;position:relative;width:8.5rem}.usage-pie::after{background:#fff;border-radius:999px;content:'';height:4.6rem;left:50%;position:absolute;top:50%;transform:translate(-50%,-50%);width:4.6rem}.usage-pie-center{font-size:1.1rem;font-weight:800;left:50%;position:absolute;text-align:center;top:50%;transform:translate(-50%,-50%);z-index:1}.usage-pie-legend{display:grid;gap:.45rem}.usage-pie-legend-item{align-items:center;color:#475569;display:grid;font-size:.84rem;gap:.4rem;grid-template-columns:auto minmax(0,1fr) auto}.usage-pie-swatch{border-radius:999px;display:inline-block;height:.7rem;width:.7rem}.usage-lazy-graph-toolbar{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.75rem}.usage-trend-grid{display:grid;gap:1rem;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:1rem}.usage-line-chart{align-items:end;display:grid;gap:.35rem;grid-auto-flow:column;grid-auto-columns:minmax(24px,1fr);min-height:180px;overflow-x:auto;padding-top:.75rem;position:relative;z-index:1}.usage-line-point{align-items:center;display:flex;flex-direction:column;justify-content:end;min-height:170px}.usage-line-bar{background:#0f766e;border-radius:999px 999px 0 0;min-height:2px;width:100%}@media(max-width:1100px){.usage-pie-grid,.usage-trend-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:720px){.usage-pie-grid,.usage-trend-grid{grid-template-columns:1fr}.usage-pie-body{grid-template-columns:1fr}.usage-pie{justify-self:center}}";
 		document.head.appendChild(style);
 	}
 
@@ -532,3 +582,9 @@
 		initialize();
 	}
 })();
+
+
+
+
+
+

@@ -23,12 +23,50 @@ Use scoped OfflineCritic tools only:
 - `ToOfflineCriticGetRecentSessionTurns` and `ToOfflineCriticGetSessionTurnPage` for nearby context when needed,
 - `ToOfflineCriticSearchSessionMessages` only if turn summaries/details are insufficient,
 - `ToOfflineCriticSearchSessionFinalAssistantMessages` only to verify grounded outcomes,
-- optional scoped ontology inspection tools only when checking whether a suggested routing improvement appears already covered.
+- optional scoped ontology inspection tools only when checking whether a suggested routing improvement appears already covered,
+- `ToWriteOfflineOntologyCriticArtifact` or the runner-provided artifact path contract to persist the final markdown review when available,
+- `ToPublishFeedbackReviewCompletedEvent` after the review artifact/final markdown is complete. This is mandatory so the original source session receives the completion attention event.
 
 Do not use Plan.md or Scratch.md as evidence for human wording.
 Do not browse the filesystem for source-session evidence.
 Do not propose changes based only on assistant wording or internal tool names.
 Do not apply ontology changes.
+
+## Completion event requirement
+
+Before your final visible answer, publish a completion event to the original source session by calling `ToPublishFeedbackReviewCompletedEvent` exactly once.
+
+Use the runner-provided values:
+
+- `sourceSessionKey`: original source session key,
+- `turnKey`: selected source turn key,
+- `artifactPath`: expected review artifact path,
+- `reviewTarget`: runner-provided review target,
+- `reviewMode`: runner-provided review mode,
+- `reviewWorkflow`: runner-provided review workflow,
+- `requiredSkill`: runner-provided required skill, if any,
+- `resultPreview`: concise summary of the final review or a short excerpt from the final markdown.
+
+The tool publishes this event shape to the source session:
+
+- EventType: `FeedbackReview.Completed`
+- SourceSessionKey: current feedback worker session
+- TargetSessionKey: original source session
+- Data.SourceSessionKey
+- Data.ChildSessionKey
+- Data.TurnKey
+- Data.ReviewTarget
+- Data.ReviewMode
+- Data.ReviewWorkflow
+- Data.RequiredSkill
+- Data.ArtifactPath
+- Data.Summary
+- Data.Status = `completed`
+- Data.AttentionLevel = `action`
+- Data.ResultPreview
+- Data.CompletedUtc
+
+If publishing fails, say so explicitly in the final answer and include the tool error. Do not silently skip this step.
 
 ## Review algorithm
 

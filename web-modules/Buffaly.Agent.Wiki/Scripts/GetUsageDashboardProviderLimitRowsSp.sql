@@ -18,7 +18,7 @@ AS
 
 	SET NOCOUNT ON
 
-	SELECT TOP 25
+	SELECT TOP 200
 		CompletionUsageEventID = c.UsageEventID,
 		c.ProviderLimitSnapshotUsageEventID,
 		SnapshotUsageEventID = s.UsageEventID,
@@ -40,3 +40,4 @@ AS
 	ORDER BY c.DateCreated DESC, c.UsageEventID DESC
 
 GO
+

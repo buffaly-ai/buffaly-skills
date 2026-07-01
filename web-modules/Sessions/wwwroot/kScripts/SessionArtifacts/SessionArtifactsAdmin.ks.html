@@ -154,13 +154,10 @@ class SessionArtifactsAdmin
 	
 	(function GetDropDown Name Value FieldName PreOptions
 	{
-		(ado.view Options GetSessionArtifactsSp)
 		(returnex {%>
-			<select kcs:FieldName="<%FieldName%>" class="form-control">
+			<select kcs:FieldName="<%FieldName%>" class="form-control" disabled="disabled">
 				<%PreOptions%>
-				<%Options.each Option{%>
-				<option value="<%Option.get (Value)%>"><%Option.get (Name)%></option>
-				<%}%>
+				<option value="">SessionArtifact dropdown disabled; use a session-scoped selector.</option>
 			</select>
 		<%})
 	})	
