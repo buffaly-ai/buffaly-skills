@@ -49,6 +49,27 @@ prototype ToGetGoogleWorkspaceDriveMetadata : GoogleWorkspaceSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to copy a google drive file")]
+[SemanticProgram.InfinitivePhrase("to copy a google document")]
+[SemanticProgram.InfinitivePhrase("to duplicate a google document")]
+prototype ToCopyGoogleWorkspaceDriveFile : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to drive.write when empty. fileId/source document required. fileName is the new copy name. parentFolderId optional. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string fileId, string fileName, string parentFolderId) : string
+	{
+		scopePreset = ToNormalizeGoogleWorkspaceDriveScopePreset(scopePreset, "drive.write");
+
+		return GoogleWorkspaceServiceHost.CopyFileAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			fileId,
+			fileName,
+			parentFolderId,
+			false,
+			new CancellationToken(false));
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to download google drive text")]
 prototype ToDownloadGoogleWorkspaceDriveText : GoogleWorkspaceSkillAction
 {
