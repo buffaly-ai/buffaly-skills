@@ -31,3 +31,7 @@
 - Running records no longer call `SyncCommitReview`; the timeline button stays read-only in `Reviewing` state until the child explicitly persists findings through `SubmitCommitReviewText` for that commit.
 - Status lookups do not override a button already in `loading` state, preventing the async lookup response from racing with a user click that is currently starting a review.
 - The status lookup path uses the PascalCase response contract only and avoids unused/write-only DOM metadata.
+
+## Skip Non-Hex Commit Refs Before Status Lookup (2026-07-01)
+- Added client-side hex commit validation before rendering CodeReviews `git-commit` refs and before calling `GetCommitReview` from injected timeline review buttons.
+- Design Decision: keep `CodeReviewCommitReviewStore.NormalizeCommitSha(...)` strict and fail-fast for invalid service inputs while preventing malformed timeline refs from generating noisy server errors during opportunistic status lookups.

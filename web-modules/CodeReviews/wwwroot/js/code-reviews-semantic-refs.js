@@ -10,6 +10,10 @@
 		return text(value).trim().length === 0;
 	}
 
+	function isHexCommitSha(value) {
+		return /^[0-9a-fA-F]+$/.test(text(value).trim());
+	}
+
 	function encode(value) {
 		return encodeURIComponent(text(value));
 	}
@@ -168,7 +172,7 @@
 
 	function loadReviewButtonStatus(anchor, button) {
 		const request = buildRequestFromAnchor(anchor);
-		if (isEmpty(request.RepositoryPath) || isEmpty(request.CommitSha)) return;
+		if (isEmpty(request.RepositoryPath) || isEmpty(request.CommitSha) || !isHexCommitSha(request.CommitSha)) return;
 		call("GetCommitReview", { RepositoryPath: request.RepositoryPath, CommitSha: request.CommitSha })
 			.then(function (response) {
 				const record = recordFromResponse(response);
@@ -242,7 +246,7 @@
 	window.BuffalySemanticRefFormatters = window.BuffalySemanticRefFormatters || {};
 	window.BuffalySemanticRefFormatters["git-commit"] = function (ref) {
 		const parsed = splitGitCommitValue(ref && ref.value);
-		if (!parsed || isEmpty(parsed.repositoryPath) || isEmpty(parsed.commitSha)) {
+		if (!parsed || isEmpty(parsed.repositoryPath) || isEmpty(parsed.commitSha) || !isHexCommitSha(parsed.commitSha)) {
 			return null;
 		}
 
