@@ -1,0 +1,18 @@
+[SemanticProgram.InfinitivePhrase("to attach a google doc to a feeding frenzy lead")]
+[SemanticProgram.InfinitivePhrase("to insert a google doc file into lead documents")]
+[SemanticProgram.InfinitivePhrase("to add a google document to a feeding frenzy lead")]
+[SemanticProgram.InfinitivePhrase("to link a google doc to a feeding frenzy lead")]
+prototype LeadDocuments_InsertGoogleDocFile : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.LeadDocuments.InsertGoogleDocFile(LeadID, SalesRepresentativeID, DocumentID). Attaches an existing Google Doc to a Feeding Frenzy lead as a lead document. The Feeding Frenzy backend service account (aaron-david@sheets-integration-436118.iam.gserviceaccount.com) must have reader access to the Google Doc or the call will fail with a Google permission error. If it fails, share the doc as reader with that service account and retry. Returns raw response JSON string containing the new LeadNoteID.";
+
+	function Execute(FeedingFrenzyJsonWsService service, int LeadID, int SalesRepresentativeID, string DocumentID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["LeadID"] = LeadID;
+		args["SalesRepresentativeID"] = SalesRepresentativeID;
+		args["DocumentID"] = DocumentID;
+		return service.CallBusinessRoute("lead-documents/insert-google-doc-file", args);
+	}
+}
