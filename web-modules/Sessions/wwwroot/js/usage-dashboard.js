@@ -546,6 +546,10 @@
 		return new Date(value).toLocaleString();
 	}
 
+	function formatDateTime(value) {
+		return new Date(value).toLocaleString();
+	}
+
 	function formatBucket(value) {
 		var date = new Date(value);
 		return state.Range === "hour" || state.Range === "day"
