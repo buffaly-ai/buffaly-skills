@@ -132,7 +132,7 @@
 		if (!text) { C.log("Paste review text before submitting."); return; }
 		var button = C.byId("agentReviewSubmitButton");
 		if (button) { button.disabled = true; button.textContent = "Submitting..."; }
-		return C.call("SubmitCommitReviewText", { Environment: agentReviewEnvironment(), RepositoryPath: path, CommitSha: currentCommitSha(), ReviewText: text, SourceSessionKey: sourceSessionKey, ChildSessionKey: C.text(state.agentReview && state.agentReview.ChildSessionKey) })
+		return C.call("SubmitCodeReviewFindings", { RepositoryPath: path, CommitSha: currentCommitSha(), ReviewText: text })
 			.then(function (response) {
 				state.agentReview = response.Record || response.record || null;
 				C.byId("agentReviewText").value = "";

@@ -48,3 +48,7 @@
 ## Explicit Per-Commit Agent Findings (2026-06-30)
 - Removed automatic `SyncCommitReview` calls when the diff page loads an agent review record with `Status=Running`.
 - Design Decision: the diff page is now a read-only display for running agent reviews; findings must be written explicitly through `SubmitCommitReviewText` for the exact repository path and commit SHA instead of inferred from the shared child session's latest final answer.
+
+## Simplified Manual Findings Submit (2026-07-04)
+- Manual findings submission now calls SubmitCodeReviewFindings with only repository path, commit SHA, and review text.
+- Design Decision: browser/manual compatibility should match the typed agent contract and should not send source/child session keys.

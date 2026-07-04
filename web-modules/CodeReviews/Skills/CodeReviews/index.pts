@@ -1,0 +1,51 @@
+reference Buffaly.CodeReviews Buffaly.CodeReviews;
+reference Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness;
+import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewFindingsService CodeReviewFindingsService;
+
+[SemanticEntity("code reviews agent tools")]
+prototype CodeReviewsAgentToolsSkill : SkillEntity
+{
+	Description = "Typed CodeReviews lifecycle tools for code review agents.";
+	ActionRoot = CodeReviewsAgentToolsAction;
+}
+
+prototype CodeReviewsAgentToolsAction : OpsAction
+{
+	Description = @"Base action type for CodeReviews agent lifecycle tools.";
+}
+
+[SemanticProgram.InfinitivePhrase("to submit code review findings")]
+[SemanticProgram.InfinitivePhrase("to deliver code review findings")]
+prototype ToSubmitCodeReviewFindings : CodeReviewsAgentToolsAction
+{
+	Description = @"RepositoryPath - local repository path. CommitSha - full or short hexadecimal commit SHA. ReviewText - full markdown/plain-text review findings. Stores findings in CodeReviews, marks the commit reviewed, and notifies the parent session from stored running-review metadata. Do not pass source or child session keys.";
+
+	function Execute(string RepositoryPath, string CommitSha, string ReviewText) : string
+	{
+		return CodeReviewFindingsService.SubmitFindingsJson(RepositoryPath, CommitSha, ReviewText);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get code review status")]
+[SemanticProgram.InfinitivePhrase("to check code review status")]
+prototype ToGetCodeReviewStatus : CodeReviewsAgentToolsAction
+{
+	Description = @"RepositoryPath - local repository path. CommitSha - full or short hexadecimal commit SHA. Returns the CodeReviews commit review record as JSON.";
+
+	function Execute(string RepositoryPath, string CommitSha) : string
+	{
+		return CodeReviewFindingsService.GetStatusJson(RepositoryPath, CommitSha);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to mark code review failed")]
+[SemanticProgram.InfinitivePhrase("to record code review failure")]
+prototype ToMarkCodeReviewFailed : CodeReviewsAgentToolsAction
+{
+	Description = @"RepositoryPath - local repository path. CommitSha - full or short hexadecimal commit SHA. FailureReason - concise reason the review could not be completed. Marks the CodeReviews commit review record failed.";
+
+	function Execute(string RepositoryPath, string CommitSha, string FailureReason) : string
+	{
+		return CodeReviewFindingsService.MarkFailedJson(RepositoryPath, CommitSha, FailureReason);
+	}
+}
