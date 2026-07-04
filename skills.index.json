@@ -2115,6 +2115,39 @@
       "IsDefaultPackage": true
     },
     {
+      "SkillName": "ValidatedPrompt",
+      "Title": "Validated Prompt",
+      "Description": "Buffaly skill package for ValidatedPrompt.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "ValidatedPrompt"
+      ],
+      "Path": "skills/ValidatedPrompt",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "e5eb6ab41e04722b2bc242328cc94620d1fdf3f99a39a210156c406d994b1814"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "783bff8882a952932dc9cdbd50ce561b0559a8713c019f4d6619bf31fb5f9052"
+        },
+        {
+          "Path": "Prompts/SummarizeTextInOneSentence.validation.prompt.md",
+          "Sha256": "9323fb87fdbb1ef0a30ed9d02b591cdc41b577ba6a3964070a22d42a95c3ffc7"
+        },
+        {
+          "Path": "Prompts/SummarizeTextInOneSentence.work.prompt.md",
+          "Sha256": "bfba5641a4ccc4a224d84cc9e8a0370c3a921fda0a4aec2fb9ce2c705874aa02"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsDefaultPackage": true
+    },
+    {
       "SkillName": "VisualStudio",
       "Title": "Visual Studio",
       "Description": "Buffaly OpsAgent skill package for VisualStudio.",

@@ -1,0 +1,66 @@
+import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.ValidatedPromptTools ValidatedPromptTools;
+
+prototype ValidatedPromptSkillAction : OpsAction
+{
+	Description = @"Base action type for Validated Prompt skill tools.";
+}
+
+[SemanticEntity("validated prompt skill")]
+prototype ValidatedPromptSkill : SkillEntity, Level2ObserverEntityRoot
+{
+	Description = "Validated prompt runner and sample validated prompt actions.";
+	ActionRoot = ValidatedPromptSkillAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to run a validated prompt skill")]
+[SemanticProgram.InfinitivePhrase("to execute a validated prompt action")]
+prototype ToRunValidatedPromptSkill : ValidatedPromptSkillAction
+{
+	Description = @"validatedPromptActionName - prototype name for one ValidatedPromptAction. userInput - input for the work prompt. maxAttempts - maximum validation attempts. childSessionKeyOverride - optional deterministic child key override for diagnostics or reruns.";
+
+	function Execute(string validatedPromptActionName, string userInput, int maxAttempts = 2, string childSessionKeyOverride = "") : string
+	{
+		if (_opsAgent == null)
+			return "Error: _opsAgent runtime is not available.";
+		string prototypeName = validatedPromptActionName.Trim();
+		if (StringUtil.IsEmpty(prototypeName))
+			return "Error: validatedPromptActionName is required.";
+
+		ValidatedPromptAction validatedPromptAction = null;
+		Collection validatedPromptActions = ValidatedPromptAction.GetDescendants();
+		foreach (Prototype candidatePrototype in validatedPromptActions)
+		{
+			if (candidatePrototype.PrototypeName == prototypeName)
+			{
+				if (candidatePrototype typeof ValidatedPromptAction)
+					validatedPromptAction = candidatePrototype;
+			}
+		}
+
+		if (validatedPromptAction == null)
+			return "Error: ValidatedPromptAction prototype not found: " + prototypeName;
+
+		return ValidatedPromptTools.RunValidatedPromptSkill(
+			_opsAgent,
+			validatedPromptAction.PrototypeName,
+			validatedPromptAction.WorkPrompt,
+			validatedPromptAction.WorkPromptPath,
+			validatedPromptAction.ValidationPrompt,
+			validatedPromptAction.ValidationPromptPath,
+			userInput,
+			maxAttempts,
+			childSessionKeyOverride);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to summarize text in one sentence with validation")]
+[SemanticProgram.InfinitivePhrase("to summarize text in exactly one faithful sentence")]
+prototype ToSummarizeTextInOneSentenceSkill : ValidatedPromptAction, ValidatedPromptSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "validated-prompt";
+	SkillVersion = "1.0.0";
+	Description = "Summarize provided text in exactly one faithful sentence without adding facts.";
+	WorkPromptPath = @"Skills/ValidatedPrompt/Prompts/SummarizeTextInOneSentence.work.prompt.md";
+	ValidationPromptPath = @"Skills/ValidatedPrompt/Prompts/SummarizeTextInOneSentence.validation.prompt.md";
+}
