@@ -16,7 +16,52 @@
 		limits: false
 	};
 
-	var palette = ["#0f766e", "#2563eb", "#9333ea", "#c2410c", "#475569", "#be123c", "#15803d"];
+	var palette = ["#2563eb", "#16a34a", "#9333ea", "#d97706", "#0f766e", "#be123c", "#475569", "#0891b2", "#ca8a04"];
+
+	// Assigns colors from the series label instead of local chart position so a provider/model keeps one meaning across the whole page.
+	function getSeriesColor(label, fallbackIndex) {
+		var key = normalizeSeriesColorKey(label);
+		var reserved = getReservedSeriesColor(key);
+		if (reserved) {
+			return reserved;
+		}
+		var hash = 0;
+		for (var index = 0; index < key.length; index++) {
+			hash = ((hash << 5) - hash) + key.charCodeAt(index);
+			hash |= 0;
+		}
+		var paletteIndex = key.length === 0 && Number.isFinite(fallbackIndex) ? fallbackIndex : Math.abs(hash);
+		return palette[paletteIndex % palette.length];
+	}
+
+	function normalizeSeriesColorKey(label) {
+		return String(label || "").toLowerCase().replace(/[^a-z0-9.]+/g, " ").trim();
+	}
+
+	function getReservedSeriesColor(key) {
+		if (key.indexOf("not cached") >= 0) {
+			return "#cbd5e1";
+		}
+		if (key.indexOf("cached") >= 0) {
+			return "#0f766e";
+		}
+		if (key.indexOf("openai") >= 0 || key.indexOf("gpt ") >= 0 || key.indexOf("gpt-") >= 0 || key.indexOf("gpt.") >= 0) {
+			return "#2563eb";
+		}
+		if (key.indexOf("ollama") >= 0 || key.indexOf("glm") >= 0) {
+			return "#16a34a";
+		}
+		if (key.indexOf("anthropic") >= 0 || key.indexOf("claude") >= 0) {
+			return "#d97706";
+		}
+		if (key.indexOf("xai") >= 0 || key.indexOf("grok") >= 0) {
+			return "#be123c";
+		}
+		if (key.indexOf("gemini") >= 0 || key.indexOf("google") >= 0) {
+			return "#9333ea";
+		}
+		return "";
+	}
 
 	function initialize() {
 		ensureDynamicDashboardStyles();
@@ -161,8 +206,8 @@
 			? [{ Label: "Cached", Value: Math.max(0, cachedTokens) }, { Label: "Not cached", Value: Math.max(0, totalTokens - cachedTokens) }]
 			: [];
 		container.innerHTML = [
-			renderPieCard("Provider share", "Total tokens by provider", providerSlices, palette, "tokens"),
-			renderPieCard("Model share", "Total tokens by model", modelSlices, palette, "tokens"),
+			renderPieCard("Provider share", "Total tokens by provider", providerSlices, null, "tokens"),
+			renderPieCard("Model share", "Total tokens by model", modelSlices, null, "tokens"),
 			renderPieCard("Cached share", "Cached tokens vs all selected tokens", cacheSlices, ["#0f766e", "#cbd5e1"], "tokens")
 		].join("");
 	}
@@ -207,7 +252,8 @@
 		var primaryPercent = total <= 0 ? 0 : slices[0].Value / total * 100;
 		var legend = slices.map(function (slice, index) {
 			var percent = total <= 0 ? 0 : slice.Value / total * 100;
-			return "<div class=\"usage-pie-legend-item\"><span class=\"usage-pie-swatch\" style=\"background:" + colors[index % colors.length] + ";\"></span><span>" + escapeHtml(slice.Label) + "</span><span>" + formatPercent(percent) + "</span></div>";
+			var color = colors ? colors[index % colors.length] : getSeriesColor(slice.Label, index);
+			return "<div class=\"usage-pie-legend-item\"><span class=\"usage-pie-swatch\" style=\"background:" + color + ";\"></span><span>" + escapeHtml(slice.Label) + "</span><span>" + formatPercent(percent) + "</span></div>";
 		}).join("");
 		return "<div class=\"usage-pie-card\"><h4 class=\"mb-1\">" + escapeHtml(title) + "</h4><div class=\"text-muted\">" + escapeHtml(subtitle) + "</div><div class=\"usage-pie-body\"><div class=\"usage-pie\" style=\"background:" + pieStyle + ";\"><div class=\"usage-pie-center\">" + escapeHtml(formatPercent(primaryPercent)) + "</div></div><div class=\"usage-pie-legend\">" + legend + "<div class=\"text-muted small\">Total: " + escapeHtml(formatNumber(total)) + " " + escapeHtml(unitLabel) + "</div></div></div></div>";
 	}
@@ -220,7 +266,8 @@
 		var segments = slices.map(function (slice, index) {
 			var start = cursor;
 			cursor += slice.Value / total * 100;
-			return colors[index % colors.length] + " " + start.toFixed(4) + "% " + cursor.toFixed(4) + "%";
+			var color = colors ? colors[index % colors.length] : getSeriesColor(slice.Label, index);
+			return color + " " + start.toFixed(4) + "% " + cursor.toFixed(4) + "%";
 		});
 		return "conic-gradient(" + segments.join(",") + ")";
 	}
@@ -259,8 +306,8 @@
 		}
 		if (lazyGraphs.limits) {
 			var limitTrend = buildProviderLimitTrend(lastResponse.ProviderLimitHistory);
-			cards.push(limitTrend.length > 0
-				? renderTrendCard("Available Codex usage over time", "Remaining provider limit percentage from captured Codex snapshots.", limitTrend, "%", "#be123c")
+			cards.push(limitTrend.some(function (series) { return series.Points.length > 0; })
+				? renderLineTrendCard("Available Codex usage over time", "Remaining provider limit percentage from captured Codex snapshots.", limitTrend, "%", "#be123c")
 				: renderTrendUnavailableCard("Available Codex usage over time", "No provider-limit snapshots with remaining and limit values are available for this filter."));
 		}
 		container.style.display = cards.length > 0 ? "grid" : "none";
@@ -304,23 +351,46 @@
 	}
 
 	function buildProviderLimitTrend(rows) {
-		return (rows || []).map(function (row) {
-			var remaining = Number(row.Remaining);
-			var limit = Number(row.Limit);
-			if (!Number.isFinite(remaining) || !Number.isFinite(limit) || limit <= 0) {
-				return null;
+		var fiveHourPoints = [];
+		var weeklyPoints = [];
+		(rows || []).forEach(function (row) {
+			var snapshotUtc = row.SnapshotDateCreatedUtc || row.UpdatedAtUtc;
+			var primaryPoint = buildProviderLimitWindowPoint(row, row.Primary, "5-hour", snapshotUtc);
+			if (primaryPoint) {
+				fiveHourPoints.push(primaryPoint);
 			}
-			var percent = Math.max(0, Math.min(100, remaining / limit * 100));
-			var reset = row.ResetAtUtc ? "; resets " + formatDateTime(row.ResetAtUtc) : "";
-			var scope = row.Scope ? " (" + row.Scope + ")" : "";
-			return {
-				BucketStartUtc: row.SnapshotDateCreatedUtc || row.UpdatedAtUtc,
-				Value: percent,
-				Title: formatBucket(row.SnapshotDateCreatedUtc || row.UpdatedAtUtc) + ": " + formatPercent(percent) + " remaining" + scope + "; " + formatNumber(remaining) + " / " + formatNumber(limit) + reset
-			};
-		}).filter(function (point) {
-			return point && point.BucketStartUtc;
+			var secondaryPoint = buildProviderLimitWindowPoint(row, row.Secondary, "weekly", snapshotUtc);
+			if (secondaryPoint) {
+				weeklyPoints.push(secondaryPoint);
+			}
 		});
+		return [
+			{ Label: "5-hour", Color: "#be123c", Points: fiveHourPoints },
+			{ Label: "Weekly", Color: "#2563eb", Points: weeklyPoints }
+		].filter(function (series) { return series.Points.length > 0; });
+	}
+
+	function buildProviderLimitWindowPoint(row, window, label, snapshotUtc) {
+		if (!snapshotUtc) {
+			return null;
+		}
+		if (!window && label === "5-hour" && row.Remaining != null) {
+			window = { RemainingPercent: row.Remaining, ResetsAtUtc: row.ResetAtUtc };
+		}
+		if (!window) {
+			return null;
+		}
+		var percent = Number(window.RemainingPercent);
+		if (!Number.isFinite(percent)) {
+			return null;
+		}
+		var reset = window.ResetsAtUtc ? "; resets " + formatDateTime(window.ResetsAtUtc) : "";
+		return {
+			BucketStartUtc: snapshotUtc,
+			Label: formatSnapshotTime(snapshotUtc),
+			Value: Math.max(0, Math.min(100, percent)),
+			Title: label + " limit at " + formatDateTime(snapshotUtc) + ": " + formatPercent(percent) + " remaining" + reset
+		};
 	}
 
 	function aggregateTimeBuckets(rows) {
@@ -350,9 +420,63 @@
 		var scaleMax = unitLabel === "%" ? Math.max(100, maxValue) : maxValue;
 		var bars = points.map(function (point) {
 			var height = scaleMax <= 0 ? 2 : Math.max(2, Math.round(point.Value / scaleMax * 160));
-			return "<div class=\"usage-line-point\"><div class=\"usage-line-bar\" title=\"" + escapeHtml(point.Title) + "\" style=\"height:" + height + "px;background:" + color + ";\"></div><div class=\"usage-chart-label\">" + escapeHtml(formatBucket(point.BucketStartUtc)) + "</div></div>";
+			return "<div class=\"usage-line-point\"><div class=\"usage-line-bar\" title=\"" + escapeHtml(point.Title) + "\" style=\"height:" + height + "px;background:" + color + ";\"></div><div class=\"usage-chart-label\">" + escapeHtml(point.Label || formatBucket(point.BucketStartUtc)) + "</div></div>";
 		}).join("");
 		return "<div class=\"usage-pie-card\"><h4 class=\"mb-1\">" + escapeHtml(title) + "</h4><div class=\"text-muted\">" + escapeHtml(subtitle) + "</div>" + renderScaledChart(scaleMax, unitLabel, "<div class=\"usage-line-chart\">" + bars + "</div>") + "<div class=\"text-muted small mt-2\">Peak: " + escapeHtml(formatScaleValue(maxValue, unitLabel)) + "</div></div>";
+	}
+
+	function renderLineTrendCard(title, subtitle, seriesList, unitLabel, color) {
+		if (!seriesList || seriesList.length === 0) {
+			return "<div class=\"usage-pie-card\"><h4 class=\"mb-1\">" + escapeHtml(title) + "</h4><div class=\"text-muted\">" + escapeHtml(subtitle) + "</div><div class=\"usage-empty\">No usage rows for this filter.</div></div>";
+		}
+		var flatPoints = seriesList.reduce(function (all, series) { return all.concat(series.Points); }, []);
+		if (flatPoints.length === 0) {
+			return "<div class=\"usage-pie-card\"><h4 class=\"mb-1\">" + escapeHtml(title) + "</h4><div class=\"text-muted\">" + escapeHtml(subtitle) + "</div><div class=\"usage-empty\">No usage rows for this filter.</div></div>";
+		}
+		var sortedPoints = flatPoints.slice().sort(function (left, right) {
+			return new Date(left.BucketStartUtc).getTime() - new Date(right.BucketStartUtc).getTime();
+		});
+		var maxValue = Math.max.apply(null, sortedPoints.map(function (point) { return point.Value; }));
+		var scaleMax = unitLabel === "%" ? Math.max(100, maxValue) : maxValue;
+		return "<div class=\"usage-pie-card\"><h4 class=\"mb-1\">" + escapeHtml(title) + "</h4><div class=\"text-muted\">" + escapeHtml(subtitle) + "</div>" + renderScaledChart(scaleMax, unitLabel, renderLineChart(seriesList, sortedPoints, scaleMax, color)) + renderLineLegend(seriesList) + "</div>";
+	}
+
+	function renderLineChart(seriesList, allPoints, scaleMax, color) {
+		var plotWidth = 640;
+		var plotHeight = 160;
+		var topPadding = 12;
+		var minTime = new Date(allPoints[0].BucketStartUtc).getTime();
+		var maxTime = new Date(allPoints[allPoints.length - 1].BucketStartUtc).getTime();
+		var timeRange = Math.max(1, maxTime - minTime);
+		var seriesMarkup = seriesList.map(function (series) {
+			var coordinates = series.Points.map(function (point) {
+				var time = new Date(point.BucketStartUtc).getTime();
+				var x = series.Points.length === 1 ? plotWidth / 2 : Math.round((time - minTime) / timeRange * plotWidth);
+				var y = topPadding + Math.round((1 - point.Value / scaleMax) * plotHeight);
+				return { X: x, Y: y, Point: point };
+			});
+			var path = coordinates.map(function (coordinate, index) {
+				return (index === 0 ? "M" : "L") + coordinate.X + " " + coordinate.Y;
+			}).join(" ");
+			var markers = coordinates.map(function (coordinate) {
+				return "<circle cx=\"" + coordinate.X + "\" cy=\"" + coordinate.Y + "\" r=\"4\" fill=\"" + series.Color + "\" stroke=\"#fff\" stroke-width=\"1.5\"><title>" + escapeHtml(coordinate.Point.Title) + "</title></circle>";
+			}).join("");
+			return "<path d=\"" + path + "\" fill=\"none\" stroke=\"" + (series.Color || color) + "\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"4\"></path>" + markers;
+		}).join("");
+		return "<div class=\"usage-line-graph\"><svg viewBox=\"0 0 " + plotWidth + " 190\" preserveAspectRatio=\"none\" role=\"img\" aria-label=\"Usage trend line\">" + seriesMarkup + "</svg>" + renderLineAxisLabels(allPoints) + "</div>";
+	}
+
+	function renderLineLegend(seriesList) {
+		return "<div class=\"usage-line-legend\">" + seriesList.map(function (series) {
+			return "<span><i style=\"background:" + escapeHtml(series.Color) + ";\"></i>" + escapeHtml(series.Label) + "</span>";
+		}).join("") + "</div>";
+	}
+
+	function renderLineAxisLabels(points) {
+		var first = points[0];
+		var middle = points[Math.floor(points.length / 2)];
+		var last = points[points.length - 1];
+		return "<div class=\"usage-line-axis-labels\"><span>" + escapeHtml(formatAxisTime(first.BucketStartUtc)) + "</span><span>" + escapeHtml(formatAxisTime(middle.BucketStartUtc)) + "</span><span>" + escapeHtml(formatAxisTime(last.BucketStartUtc)) + "</span></div>";
 	}
 
 	function renderTrendUnavailableCard(title, message) {
@@ -387,14 +511,14 @@
 			return;
 		}
 
-		var providers = [...new Set(rows.map(function (row) { return row.Provider || "(unknown)"; }))];
+		var providers = [...new Set(rows.map(function (row) { return formatProviderModelKey(row); }))];
 		var buckets = {};
 		rows.forEach(function (row) {
 			var key = row.BucketStartUtc;
 			if (!buckets[key]) {
 				buckets[key] = {};
 			}
-			buckets[key][row.Provider || "(unknown)"] = row.TotalTokens;
+			buckets[key][formatProviderModelKey(row)] = Number(row.TotalTokens || 0);
 		});
 		var maxBucketTotal = Math.max.apply(null, Object.keys(buckets).map(function (bucket) {
 			return providers.reduce(function (total, provider) { return total + (buckets[bucket][provider] || 0); }, 0);
@@ -409,16 +533,22 @@
 					return "";
 				}
 				var height = Math.max(2, Math.round(value / bucketTotal * stackHeight));
-				return "<div class=\"usage-chart-segment\" title=\"" + escapeHtml(provider + ": " + formatNumber(value)) + "\" style=\"height:" + height + "px;background:" + palette[index % palette.length] + ";\"></div>";
+				return "<div class=\"usage-chart-segment\" title=\"" + escapeHtml(provider + ": " + formatNumber(value) + " tokens") + "\" style=\"height:" + height + "px;background:" + getSeriesColor(provider, index) + ";\"></div>";
 			}).join("");
 			return "<div class=\"usage-chart-column\"><div class=\"usage-chart-stack\">" + segments + "</div><div class=\"usage-chart-label\">" + escapeHtml(formatBucket(bucket)) + "</div></div>";
 		}).join("");
 		container.innerHTML = renderScaledChart(maxBucketTotal, "tokens", "<div class=\"usage-chart\">" + columns + "</div>");
 		if (legend) {
 			legend.innerHTML = providers.map(function (provider, index) {
-				return "<span class=\"usage-chart-legend-item\"><span class=\"usage-chart-legend-swatch\" style=\"background:" + palette[index % palette.length] + ";\"></span>" + escapeHtml(provider) + "</span>";
+				return "<span class=\"usage-chart-legend-item\"><span class=\"usage-chart-legend-swatch\" style=\"background:" + getSeriesColor(provider, index) + ";\"></span>" + escapeHtml(provider) + "</span>";
 			}).join("");
 		}
+	}
+
+	function formatProviderModelKey(row) {
+		var provider = row.Provider || "(unknown)";
+		var model = row.ModelName || "(unknown model)";
+		return provider + " / " + model;
 	}
 
 	function getChartLegend(container) {
@@ -459,7 +589,7 @@
 		}
 		var style = document.createElement("style");
 		style.id = "usage-dashboard-dynamic-style";
-		style.textContent = ".usage-chart-legend{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-top:.75rem}.usage-chart-legend-item{align-items:center;color:#475569;display:inline-flex;font-size:.84rem;gap:.4rem;white-space:nowrap}.usage-chart-legend-swatch{border-radius:999px;display:inline-block;height:.7rem;width:.7rem}.usage-scaled-chart{display:grid;gap:.5rem;grid-template-columns:auto minmax(0,1fr);margin-top:.75rem}.usage-scale-axis{color:#64748b;display:flex;flex-direction:column;font-size:.72rem;justify-content:space-between;line-height:1;min-height:180px;text-align:right;white-space:nowrap}.usage-scale-plot{position:relative}.usage-scale-grid{border-top:1px solid rgba(148,163,184,.35);left:0;pointer-events:none;position:absolute;right:0;z-index:0}.usage-scale-grid-top{top:.75rem}.usage-scale-grid-mid{top:calc(.75rem + 80px)}.usage-scale-grid-bottom{top:calc(.75rem + 160px)}.usage-pie-grid{display:grid;gap:1rem;grid-template-columns:repeat(3,minmax(0,1fr))}.usage-pie-card{background:#fff;border:1px solid rgba(148,163,184,.28);border-radius:8px;padding:1rem}.usage-pie-body{align-items:center;display:grid;gap:1rem;grid-template-columns:auto minmax(0,1fr);margin-top:.75rem}.usage-pie{background:#e2e8f0;border-radius:999px;height:8.5rem;position:relative;width:8.5rem}.usage-pie::after{background:#fff;border-radius:999px;content:'';height:4.6rem;left:50%;position:absolute;top:50%;transform:translate(-50%,-50%);width:4.6rem}.usage-pie-center{font-size:1.1rem;font-weight:800;left:50%;position:absolute;text-align:center;top:50%;transform:translate(-50%,-50%);z-index:1}.usage-pie-legend{display:grid;gap:.45rem}.usage-pie-legend-item{align-items:center;color:#475569;display:grid;font-size:.84rem;gap:.4rem;grid-template-columns:auto minmax(0,1fr) auto}.usage-pie-swatch{border-radius:999px;display:inline-block;height:.7rem;width:.7rem}.usage-lazy-graph-toolbar{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.75rem}.usage-trend-grid{display:grid;gap:1rem;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:1rem}.usage-line-chart{align-items:end;display:grid;gap:.35rem;grid-auto-flow:column;grid-auto-columns:minmax(24px,1fr);min-height:180px;overflow-x:auto;padding-top:.75rem;position:relative;z-index:1}.usage-line-point{align-items:center;display:flex;flex-direction:column;justify-content:end;min-height:170px}.usage-line-bar{background:#0f766e;border-radius:999px 999px 0 0;min-height:2px;width:100%}@media(max-width:1100px){.usage-pie-grid,.usage-trend-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:720px){.usage-pie-grid,.usage-trend-grid{grid-template-columns:1fr}.usage-pie-body{grid-template-columns:1fr}.usage-pie{justify-self:center}}";
+		style.textContent = ".usage-chart-legend{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-top:.75rem}.usage-chart-legend-item{align-items:center;color:#475569;display:inline-flex;font-size:.84rem;gap:.4rem;white-space:nowrap}.usage-chart-legend-swatch{border-radius:999px;display:inline-block;height:.7rem;width:.7rem}.usage-scaled-chart{display:grid;gap:.5rem;grid-template-columns:auto minmax(0,1fr);margin-top:.75rem}.usage-scale-axis{color:#64748b;display:flex;flex-direction:column;font-size:.72rem;justify-content:space-between;line-height:1;min-height:180px;text-align:right;white-space:nowrap}.usage-scale-plot{position:relative}.usage-scale-grid{border-top:1px solid rgba(148,163,184,.35);left:0;pointer-events:none;position:absolute;right:0;z-index:0}.usage-scale-grid-top{top:.75rem}.usage-scale-grid-mid{top:calc(.75rem + 80px)}.usage-scale-grid-bottom{top:calc(.75rem + 160px)}.usage-pie-grid{display:grid;gap:1rem;grid-template-columns:repeat(3,minmax(0,1fr))}.usage-pie-card{background:#fff;border:1px solid rgba(148,163,184,.28);border-radius:8px;padding:1rem}.usage-pie-body{align-items:center;display:grid;gap:1rem;grid-template-columns:auto minmax(0,1fr);margin-top:.75rem}.usage-pie{background:#e2e8f0;border-radius:999px;height:8.5rem;position:relative;width:8.5rem}.usage-pie::after{background:#fff;border-radius:999px;content:'';height:4.6rem;left:50%;position:absolute;top:50%;transform:translate(-50%,-50%);width:4.6rem}.usage-pie-center{font-size:1.1rem;font-weight:800;left:50%;position:absolute;text-align:center;top:50%;transform:translate(-50%,-50%);z-index:1}.usage-pie-legend{display:grid;gap:.45rem}.usage-pie-legend-item{align-items:center;color:#475569;display:grid;font-size:.84rem;gap:.4rem;grid-template-columns:auto minmax(0,1fr) auto}.usage-pie-swatch{border-radius:999px;display:inline-block;height:.7rem;width:.7rem}.usage-lazy-graph-toolbar{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.75rem}.usage-trend-grid{display:grid;gap:1rem;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:1rem}.usage-line-chart{align-items:end;display:grid;gap:.35rem;grid-auto-flow:column;grid-auto-columns:minmax(24px,1fr);min-height:180px;overflow-x:auto;padding-top:.75rem;position:relative;z-index:1}.usage-line-point{align-items:center;display:flex;flex-direction:column;justify-content:end;min-height:170px}.usage-line-bar{background:#0f766e;border-radius:999px 999px 0 0;min-height:2px;width:100%}.usage-line-graph{background:linear-gradient(180deg,rgba(248,250,252,.9),rgba(255,255,255,.65));border-radius:8px;min-height:180px;padding:.75rem .5rem .35rem;position:relative;z-index:1}.usage-line-graph svg{display:block;height:170px;overflow:visible;width:100%}.usage-line-axis-labels{color:#64748b;display:flex;font-size:.72rem;justify-content:space-between;margin-top:.25rem}.usage-line-legend{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-top:.75rem}.usage-line-legend span{align-items:center;color:#475569;display:inline-flex;font-size:.84rem;font-weight:600;gap:.4rem}.usage-line-legend i{border-radius:999px;display:inline-block;height:.7rem;width:.7rem}@media(max-width:1100px){.usage-pie-grid,.usage-trend-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:720px){.usage-pie-grid,.usage-trend-grid{grid-template-columns:1fr}.usage-pie-body{grid-template-columns:1fr}.usage-pie{justify-self:center}}";
 		document.head.appendChild(style);
 	}
 
@@ -548,6 +678,16 @@
 
 	function formatDateTime(value) {
 		return new Date(value).toLocaleString();
+	}
+
+	function formatSnapshotTime(value) {
+		return new Date(value).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+	}
+
+	function formatAxisTime(value) {
+		return state.Range === "month" || state.Range === "all"
+			? new Date(value).toLocaleDateString(undefined, { month: "short", day: "numeric" })
+			: new Date(value).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
 	}
 
 	function formatBucket(value) {

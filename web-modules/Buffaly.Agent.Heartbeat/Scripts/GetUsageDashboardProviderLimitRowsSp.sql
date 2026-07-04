@@ -13,31 +13,50 @@ CREATE PROCEDURE [dbo].[GetUsageDashboardProviderLimitRowsSp]
 	@Provider [nvarchar](255),
 	@ModelName [nvarchar](255),
 	@Transport [nvarchar](255),
-	@SessionID [int]
+	@SessionID [int],
+	@BucketGranularity [nvarchar](32) = 'hour'
 AS
 
 	SET NOCOUNT ON
 
-	SELECT TOP 200
-		CompletionUsageEventID = c.UsageEventID,
-		c.ProviderLimitSnapshotUsageEventID,
-		SnapshotUsageEventID = s.UsageEventID,
-		Provider = ISNULL(c.Provider, ''),
-		ModelName = ISNULL(c.ModelName, ''),
-		Transport = ISNULL(c.Transport, ''),
-		s.ProviderResponseID,
-		s.Data,
-		SnapshotDateCreatedUtc = s.DateCreated
-	FROM dbo.UsageEvents c WITH (NOLOCK)
-	LEFT JOIN dbo.UsageEvents s WITH (NOLOCK) ON s.UsageEventID = c.ProviderLimitSnapshotUsageEventID
-	WHERE c.UsageOperation = 'completion'
-		AND c.ProviderLimitSnapshotUsageEventID IS NOT NULL
-		AND (@StartUtc IS NULL OR c.DateCreated >= @StartUtc)
-		AND (ISNULL(@Provider, '') = '' OR c.Provider = @Provider)
-		AND (ISNULL(@ModelName, '') = '' OR c.ModelName = @ModelName)
-		AND (ISNULL(@Transport, '') = '' OR c.Transport = @Transport)
-		AND (@SessionID IS NULL OR c.SessionID = @SessionID)
-	ORDER BY c.DateCreated DESC, c.UsageEventID DESC
+	;WITH SnapshotRows AS (
+		SELECT
+			s.UsageEventID,
+			s.Provider,
+			s.ModelName,
+			s.Transport,
+			s.ProviderResponseID,
+			s.Data,
+			s.DateCreated,
+			BucketStartUtc = CASE
+				WHEN @BucketGranularity = 'hour' THEN DATEADD(hour, DATEDIFF(hour, 0, s.DateCreated), 0)
+				WHEN @BucketGranularity = 'day' THEN DATEADD(day, DATEDIFF(day, 0, s.DateCreated), 0)
+				ELSE DATEADD(day, DATEDIFF(day, 0, s.DateCreated), 0)
+			END
+		FROM dbo.UsageEvents s WITH (NOLOCK)
+		WHERE s.UsageOperation = 'provider_limit_snapshot'
+			AND (@StartUtc IS NULL OR s.DateCreated >= @StartUtc)
+			AND (ISNULL(@Provider, '') = '' OR s.Provider = @Provider)
+			AND (ISNULL(@ModelName, '') = '' OR s.ModelName = @ModelName)
+			AND (ISNULL(@Transport, '') = '' OR s.Transport = @Transport)
+			AND (@SessionID IS NULL OR s.SessionID = @SessionID)
+	), RankedRows AS (
+		SELECT *, RowNumber = ROW_NUMBER() OVER (PARTITION BY BucketStartUtc ORDER BY DateCreated DESC, UsageEventID DESC)
+		FROM SnapshotRows
+	)
+	SELECT
+		CompletionUsageEventID = UsageEventID,
+		ProviderLimitSnapshotUsageEventID = NULL,
+		SnapshotUsageEventID = UsageEventID,
+		Provider = ISNULL(Provider, ''),
+		ModelName = ISNULL(ModelName, ''),
+		Transport = ISNULL(Transport, ''),
+		ProviderResponseID,
+		Data,
+		SnapshotDateCreatedUtc = BucketStartUtc
+	FROM RankedRows
+	WHERE RowNumber = 1
+	ORDER BY BucketStartUtc DESC, UsageEventID DESC
 
 GO
 

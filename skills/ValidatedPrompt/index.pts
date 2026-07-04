@@ -1,4 +1,4 @@
-import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.ValidatedPromptTools ValidatedPromptTools;
+import Buffaly.Agent.Tools.ValidatedPrompt Buffaly.Agent.Tools.ValidatedPrompt.ValidatedPromptTools ValidatedPromptTools;
 
 prototype ValidatedPromptSkillAction : OpsAction
 {
@@ -6,7 +6,7 @@ prototype ValidatedPromptSkillAction : OpsAction
 }
 
 [SemanticEntity("validated prompt skill")]
-prototype ValidatedPromptSkill : SkillEntity, Level2ObserverEntityRoot
+prototype ValidatedPromptSkill : SkillEntity, CoreEntity
 {
 	Description = "Validated prompt runner and sample validated prompt actions.";
 	ActionRoot = ValidatedPromptSkillAction;
@@ -53,6 +53,46 @@ prototype ToRunValidatedPromptSkill : ValidatedPromptSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to run a validated prompt skill from a session file")]
+[SemanticProgram.InfinitivePhrase("to execute a validated prompt action using a staged input file")]
+prototype ToRunValidatedPromptSkillFromSessionFile : ValidatedPromptSkillAction
+{
+	Description = @"validatedPromptActionName - prototype name for one ValidatedPromptAction. userInputRelativePath - file path under the current session directory containing the full user input. maxAttempts - maximum validation attempts. childSessionKeyOverride - optional deterministic child key override.";
+
+	function Execute(string validatedPromptActionName, string userInputRelativePath, int maxAttempts = 2, string childSessionKeyOverride = "") : string
+	{
+		if (_opsAgent == null)
+			return "Error: _opsAgent runtime is not available.";
+		string prototypeName = validatedPromptActionName.Trim();
+		if (StringUtil.IsEmpty(prototypeName))
+			return "Error: validatedPromptActionName is required.";
+
+		ValidatedPromptAction validatedPromptAction = null;
+		Collection validatedPromptActions = ValidatedPromptAction.GetDescendants();
+		foreach (Prototype candidatePrototype in validatedPromptActions)
+		{
+			if (candidatePrototype.PrototypeName == prototypeName)
+			{
+				if (candidatePrototype typeof ValidatedPromptAction)
+					validatedPromptAction = candidatePrototype;
+			}
+		}
+
+		if (validatedPromptAction == null)
+			return "Error: ValidatedPromptAction prototype not found: " + prototypeName;
+
+		return ValidatedPromptTools.RunValidatedPromptSkillFromSessionFile(
+			_opsAgent,
+			validatedPromptAction.PrototypeName,
+			validatedPromptAction.WorkPrompt,
+			validatedPromptAction.WorkPromptPath,
+			validatedPromptAction.ValidationPrompt,
+			validatedPromptAction.ValidationPromptPath,
+			userInputRelativePath,
+			maxAttempts,
+			childSessionKeyOverride);
+	}
+}
 [SemanticProgram.InfinitivePhrase("to summarize text in one sentence with validation")]
 [SemanticProgram.InfinitivePhrase("to summarize text in exactly one faithful sentence")]
 prototype ToSummarizeTextInOneSentenceSkill : ValidatedPromptAction, ValidatedPromptSkillAction
@@ -63,4 +103,127 @@ prototype ToSummarizeTextInOneSentenceSkill : ValidatedPromptAction, ValidatedPr
 	Description = "Summarize provided text in exactly one faithful sentence without adding facts.";
 	WorkPromptPath = @"Skills/ValidatedPrompt/Prompts/SummarizeTextInOneSentence.work.prompt.md";
 	ValidationPromptPath = @"Skills/ValidatedPrompt/Prompts/SummarizeTextInOneSentence.validation.prompt.md";
+}
+
+
+[SemanticProgram.InfinitivePhrase("to analyze an existing website for SEO improvements with validation")]
+[SemanticProgram.InfinitivePhrase("to run the validated SEO website analysis prompt")]
+prototype ToAnalyzeExistingWebsiteForImprovementsValidatedSkill : ValidatedPromptAction, ValidatedPromptSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "validated-prompt";
+	SkillVersion = "1.0.0";
+	Description = @"Validated SEO / website improvement audit prompt for small-business sales packet analysis. Use through ToRunValidatedPromptSkill so the work result is followed by a separate validation turn.";
+	WorkPromptPath = @"Skills/ValidatedPrompt/Prompts/AnalyzeExistingWebsiteForImprovements.work.prompt.md";
+	ValidationPromptPath = @"Skills/ValidatedPrompt/Prompts/AnalyzeExistingWebsiteForImprovements.validation.prompt.md";
+}
+
+[SemanticProgram.InfinitivePhrase("to run the required SEO packet review with validation")]
+[SemanticProgram.InfinitivePhrase("to validate sales readiness of an SEO website analysis")]
+prototype ToRunRequiredSeoPacketReviewValidatedSkill : ValidatedPromptAction, ValidatedPromptSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "validated-prompt";
+	SkillVersion = "1.0.0";
+	Description = @"Validated review pass for an SEO website analysis before it is used in sales packet materials.";
+	WorkPromptPath = @"Skills/ValidatedPrompt/Prompts/RequiredSeoPacketReview.work.prompt.md";
+	ValidationPromptPath = @"Skills/ValidatedPrompt/Prompts/RequiredSeoPacketReview.validation.prompt.md";
+}
+
+[SemanticProgram.InfinitivePhrase("to create competitor positioning for an SEO sales packet with validation")]
+[SemanticProgram.InfinitivePhrase("to find competitors and positioning for a validated SEO sales packet")]
+prototype ToCreateCompetitorPositioningForSeoSalesPacketValidatedSkill : ValidatedPromptAction, ValidatedPromptSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "validated-prompt";
+	SkillVersion = "1.0.0";
+	Description = @"Validated competitor and positioning section for an SEO website analysis sales packet.";
+	WorkPromptPath = @"Skills/ValidatedPrompt/Prompts/CompetitorPositioningForSeoSalesPacket.work.prompt.md";
+	ValidationPromptPath = @"Skills/ValidatedPrompt/Prompts/CompetitorPositioningForSeoSalesPacket.validation.prompt.md";
+}
+
+[SemanticProgram.InfinitivePhrase("to create a client facing website improvement report with validation")]
+[SemanticProgram.InfinitivePhrase("to create the client facing report for a validated SEO sales packet")]
+prototype ToCreateClientFacingWebsiteImprovementReportValidatedSkill : ValidatedPromptAction, ValidatedPromptSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "validated-prompt";
+	SkillVersion = "1.0.0";
+	Description = @"Validated client-facing website improvement report for an SEO sales packet.";
+	WorkPromptPath = @"Skills/ValidatedPrompt/Prompts/ClientFacingWebsiteImprovementReport.work.prompt.md";
+	ValidationPromptPath = @"Skills/ValidatedPrompt/Prompts/ClientFacingWebsiteImprovementReport.validation.prompt.md";
+}
+
+[SemanticProgram.InfinitivePhrase("to create a demo website for an SEO sales packet with validation")]
+[SemanticProgram.InfinitivePhrase("to create the validated demo website artifact for an SEO sales packet")]
+prototype ToCreateDemoWebsiteForSeoSalesPacketValidatedSkill : ValidatedPromptAction, ValidatedPromptSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "validated-prompt";
+	SkillVersion = "1.0.0";
+	Description = @"Validated demo website concept and preview-ready artifact for an SEO sales packet.";
+	WorkPromptPath = @"Skills/ValidatedPrompt/Prompts/DemoWebsiteForSeoSalesPacket.work.prompt.md";
+	ValidationPromptPath = @"Skills/ValidatedPrompt/Prompts/DemoWebsiteForSeoSalesPacket.validation.prompt.md";
+}
+
+[SemanticProgram.InfinitivePhrase("to review a demo website for an SEO sales packet with validation")]
+[SemanticProgram.InfinitivePhrase("to run the validated demo sales readiness review")]
+prototype ToReviewDemoWebsiteForSeoSalesPacketValidatedSkill : ValidatedPromptAction, ValidatedPromptSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "validated-prompt";
+	SkillVersion = "1.0.0";
+	Description = @"Validated visual/content/sales-readiness review for an SEO sales packet demo website artifact.";
+	WorkPromptPath = @"Skills/ValidatedPrompt/Prompts/DemoReviewForSeoSalesPacket.work.prompt.md";
+	ValidationPromptPath = @"Skills/ValidatedPrompt/Prompts/DemoReviewForSeoSalesPacket.validation.prompt.md";
+}
+
+[SemanticProgram.InfinitivePhrase("to create a proposal deck for an SEO sales packet with validation")]
+[SemanticProgram.InfinitivePhrase("to create the validated proposal deck content for an SEO sales packet")]
+prototype ToCreateProposalDeckForSeoSalesPacketValidatedSkill : ValidatedPromptAction, ValidatedPromptSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "validated-prompt";
+	SkillVersion = "1.0.0";
+	Description = @"Validated proposal deck content and sales narrative for an SEO website analysis sales packet.";
+	WorkPromptPath = @"Skills/ValidatedPrompt/Prompts/ProposalDeckForSeoSalesPacket.work.prompt.md";
+	ValidationPromptPath = @"Skills/ValidatedPrompt/Prompts/ProposalDeckForSeoSalesPacket.validation.prompt.md";
+}
+
+[SemanticProgram.InfinitivePhrase("to package an SEO sales packet with validation")]
+[SemanticProgram.InfinitivePhrase("to assemble the final validated SEO sales packet")]
+prototype ToPackageSeoSalesPacketValidatedSkill : ValidatedPromptAction, ValidatedPromptSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "validated-prompt";
+	SkillVersion = "1.0.0";
+	Description = @"Validated final package manifest and sales-rep README for an SEO website analysis sales packet.";
+	WorkPromptPath = @"Skills/ValidatedPrompt/Prompts/SeoSalesPacketPackage.work.prompt.md";
+	ValidationPromptPath = @"Skills/ValidatedPrompt/Prompts/SeoSalesPacketPackage.validation.prompt.md";
+}
+
+[SemanticProgram.InfinitivePhrase("to create website analysis from evidence for an SEO sales packet with validation")]
+[SemanticProgram.InfinitivePhrase("to synthesize the validated SEO sales packet website analysis from supplied evidence")]
+prototype ToCreateWebsiteAnalysisFromEvidenceForSeoSalesPacketValidatedSkill : ValidatedPromptAction, ValidatedPromptSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "validated-prompt";
+	SkillVersion = "1.0.0";
+	Description = @"Validated evidence-only website analysis synthesis for an SEO website analysis sales packet.";
+	WorkPromptPath = @"Skills/ValidatedPrompt/Prompts/WebsiteAnalysisFromEvidenceForSeoSalesPacket.work.prompt.md";
+	ValidationPromptPath = @"Skills/ValidatedPrompt/Prompts/WebsiteAnalysisFromEvidenceForSeoSalesPacket.validation.prompt.md";
+}
+
+[SemanticProgram.InfinitivePhrase("to debug validated prompt string binding")]
+prototype ToDebugEchoValidatedPromptStringBinding : ValidatedPromptSkillAction
+{
+	Description = @"Diagnostic action for direct ProtoScript method string binding. Returns the input length and leading text.";
+
+	function Execute(string text) : string
+	{
+		string start = text;
+		if (start.Length > 200)
+			start = start.Substring(0, 200);
+		return "length=" + text.Length + "\nstart=" + start;
+	}
 }
