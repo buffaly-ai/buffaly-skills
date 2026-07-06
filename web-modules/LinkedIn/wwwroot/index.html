@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>LinkedIn - Buffaly</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/css/buffaly-page.css">
+	<link rel="stylesheet" href="/css/linkedin.css?v=1">
+</head>
+<body class="buffaly-page">
+	<div class="buffaly-app-strip" role="banner">
+		<a class="buffaly-app-strip-brand" href="/">
+			<span>Buffaly</span>
+		</a>
+		<div class="buffaly-app-strip-page">LinkedIn</div>
+	</div>
+	<div class="linkedin-shell">
+		<section class="linkedin-hero">
+			<div class="buffaly-page-hero-main">
+				<div class="buffaly-kicker">LinkedIn command center</div>
+				<h1 class="buffaly-title">LinkedIn</h1>
+				<p class="buffaly-subtitle">Plan, draft, publish, analyze, and manage your LinkedIn presence from one governed workspace.</p>
+			</div>
+			<div class="buffaly-page-hero-actions">
+				<span id="statusChip" class="buffaly-status-pill status-warning">Checking connection status...</span>
+				<span id="statusDetail" class="buffaly-muted"></span>
+			</div>
+		</section>
+
+		<div id="toastRegion" class="toast-region" aria-live="polite"></div>
+		<div id="modalRoot" class="modal-root" aria-live="polite"></div>
+
+		<div class="linkedin-grid">
+			<div class="buffaly-span-8">
+				<!-- Account / Connection -->
+				<section class="buffaly-panel" id="accountPanel">
+					<h2 class="buffaly-panel-title">Account Connection</h2>
+					<p class="buffaly-muted" id="accountStatusText">Loading account status...</p>
+					<div id="accountDetails" class="mt-3"></div>
+					<div class="buffaly-action-row mt-3" id="accountActions">
+						<button id="configureBtn" class="buffaly-button secondary" type="button">Configure App Credentials</button>
+						<button id="authorizeBtn" class="buffaly-button" type="button" disabled>Authorize</button>
+						<button id="disconnectBtn" class="buffaly-button secondary" type="button" disabled>Disconnect</button>
+					</div>
+				</section>
+
+			<!-- Drafts Board -->
+			<section class="buffaly-panel mt-4" id="draftsPanel">
+				<h2 class="buffaly-panel-title">Drafts</h2>
+				<div class="draft-filters mt-2 mb-2">
+					<button class="buffaly-button secondary draft-filter-btn active" data-filter="">All</button>
+					<button class="buffaly-button secondary draft-filter-btn" data-filter="draft">Draft</button>
+					<button class="buffaly-button secondary draft-filter-btn" data-filter="approved">Approved</button>
+					<button class="buffaly-button secondary draft-filter-btn" data-filter="scheduled">Scheduled</button>
+					<button class="buffaly-button secondary draft-filter-btn" data-filter="published">Published</button>
+				</div>
+				<p class="buffaly-muted" id="draftsStatusText">Loading drafts...</p>
+				<div id="draftsList" class="drafts-board mt-3"></div>
+				<div class="buffaly-action-row mt-3">
+					<button id="createDraftBtn" class="buffaly-button" type="button">Create Draft</button>
+				</div>
+				</section>
+			</div>
+
+			<div class="buffaly-span-4 side-stack">
+				<!-- LLM Info -->
+				<section class="buffaly-panel" id="llmPanel">
+					<h2 class="buffaly-panel-title">Content Intelligence</h2>
+					<p class="buffaly-muted" id="llmStatusText">Loading LLM info...</p>
+				</section>
+
+				<section class="buffaly-panel" id="voicePanel">
+					<h2 class="buffaly-panel-title">Brand Voice</h2>
+					<p class="buffaly-muted" id="voiceStatusText">Loading voice profile...</p>
+					<div id="voiceSummary" class="voice-summary"></div>
+					<div class="buffaly-action-row mt-3">
+						<button id="editVoiceBtn" class="buffaly-button secondary" type="button">Edit Voice</button>
+					</div>
+				</section>
+			</div>
+		</div>
+
+		<div class="linkedin-grid mt-4">
+			<div class="buffaly-span-7">
+				<section class="buffaly-panel" id="composerPanel">
+					<h2 class="buffaly-panel-title">Publishing Workspace</h2>
+					<p class="buffaly-muted">Create immediate posts, share links or images, and use governed draft workflows.</p>
+					<div id="quickComposer" class="composer-card"></div>
+				</section>
+			</div>
+			<div class="buffaly-span-5">
+				<section class="buffaly-panel" id="contentToolsPanel">
+					<h2 class="buffaly-panel-title">Content Tools</h2>
+					<div id="contentToolTabs" class="tool-tabs"></div>
+					<div id="contentToolResult" class="tool-result buffaly-muted">Choose a tool to generate, polish, optimize, vary, or repurpose content.</div>
+				</section>
+			</div>
+		</div>
+
+		<div class="linkedin-grid mt-4">
+			<div class="buffaly-span-12">
+				<!-- Published Posts -->
+				<section class="buffaly-panel" id="publishedPostsPanel">
+					<h2 class="buffaly-panel-title">Published Posts</h2>
+					<p class="buffaly-muted" id="publishedPostsStatus">Loading published posts...</p>
+					<div id="publishedPostsList" class="drafts-board mt-3"></div>
+				</section>
+			</div>
+		</div>
+
+		<section class="buffaly-panel mt-4" id="coveragePanel">
+			<div class="panel-heading-row">
+				<div>
+					<h2 class="buffaly-panel-title">Function Coverage Matrix</h2>
+					<p class="buffaly-muted">Every converted Octopus LinkedIn capability and how it is represented in this UI.</p>
+				</div>
+				<span class="coverage-pill">35 / 35 represented</span>
+			</div>
+			<div id="coverageMatrix" class="coverage-matrix"></div>
+		</section>
+	</div>
+
+	<script src="/js/linkedin.js?v=1"></script>
+</body>
+</html>

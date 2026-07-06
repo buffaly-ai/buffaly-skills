@@ -5974,6 +5974,132 @@
                          "RequiresPreStartInstall":  true
                      },
                      {
+                       "PackageId": "LinkedIn",
+                       "PackageType": "WebModule",
+                       "Title": "LinkedIn",
+                       "Description": "Buffaly Web Module package for LinkedIn.",
+                       "Version": "0.1.0",
+                       "PackageKind": "BuffalyWebModule",
+                       "SourcePath": "web-modules/LinkedIn",
+                       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/LinkedIn",
+                       "Phrases": [
+                         "LinkedIn",
+                         "LinkedIn"
+                       ],
+                       "Files": [
+                         {
+                           "Path": "BasicUtilities.dll",
+                           "Sha256": "4e2ff7119d1697a758ee7228e1a249a89fd12feb3e961f32bda3885787b8a905"
+                         },
+                         {
+                           "Path": "Buffaly.Agent.Web.Common.dll",
+                           "Sha256": "1e364ee4f6478e49d31ec4a331562ff2246448351b91bdba10b6b9d45fd60b07"
+                         },
+                         {
+                           "Path": "Buffaly.LinkedIn.deps.json",
+                           "Sha256": "0c6622e4007524eebbaecf07e7f64d6471c2b16f76b4fcaadd61d67cb9121953"
+                         },
+                         {
+                           "Path": "Buffaly.LinkedIn.dll",
+                           "Sha256": "63e16672a05a9f85948d46cfffb7a12d553874f2236a56e1ed0b8c206b95c7da"
+                         },
+                         {
+                           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
+                           "Sha256": "6e9b997f45393346cf2f96da99f7fa868f2286964a49ce66a59988defdaf84b6"
+                         },
+                         {
+                           "Path": "de/Microsoft.Data.SqlClient.resources.dll",
+                           "Sha256": "30e111759eb091735455f8a7e3cb2a5aff16287149cf3d4e7a67624f00320fc3"
+                         },
+                         {
+                           "Path": "es/Microsoft.Data.SqlClient.resources.dll",
+                           "Sha256": "6bb867e62e3aef301cecc99311603339301a086bdcfc8683c2c21f9f99850b34"
+                         },
+                         {
+                           "Path": "fr/Microsoft.Data.SqlClient.resources.dll",
+                           "Sha256": "2eac255e2a16495d0bb89aeafa5aa668f74e12358e76eb1756de271b8b91e1de"
+                         },
+                         {
+                           "Path": "Generated/JsonWs/Buffaly.LinkedIn.LinkedInService.ashx.js",
+                           "Sha256": "603ed1606559bbc0349beb9c4d0be568ff507fae00740288c5b73927300eeaa4"
+                         },
+                         {
+                           "Path": "Generated/JsonWs/Buffaly.LinkedIn.LinkedInService.json",
+                           "Sha256": "76f8808caa56d0784b023227ef2172b3dda8da189fcb13739c91f51219e2634c"
+                         },
+                         {
+                           "Path": "it/Microsoft.Data.SqlClient.resources.dll",
+                           "Sha256": "5a50867ea6c62b3be1fe4429360fe8018f3002b95c4c7b2d306daf19b4a50053"
+                         },
+                         {
+                           "Path": "ja/Microsoft.Data.SqlClient.resources.dll",
+                           "Sha256": "75539952a99301eba174bcaeeaded6da4d758c6f12565bed4208dc50b0344abe"
+                         },
+                         {
+                           "Path": "ko/Microsoft.Data.SqlClient.resources.dll",
+                           "Sha256": "a5eac865982205ce0d1b94ae4cae4ec003b514829542140c91e67cf86312d5fc"
+                         },
+                         {
+                           "Path": "Microsoft.Data.SqlClient.dll",
+                           "Sha256": "5a34e2fa3479b1508dbc20fbeb2c9172f18c3868bdb147a185213a446645b400"
+                         },
+                         {
+                           "Path": "Microsoft.Identity.Client.dll",
+                           "Sha256": "10d59df4170053ea9597e3c20adc9607ad17318ad5d8747eda3d930a5a4b463a"
+                         },
+                         {
+                           "Path": "pl/Microsoft.Data.SqlClient.resources.dll",
+                           "Sha256": "ca9d25b7405908146f988c7fad48ded63e7f02df0e43bd1406803010428338be"
+                         },
+                         {
+                           "Path": "pt-BR/Microsoft.Data.SqlClient.resources.dll",
+                           "Sha256": "2a295a383e9076b24f47c1759e1c43176dfd876bc6444a661dee21170cde6b52"
+                         },
+                         {
+                           "Path": "ru/Microsoft.Data.SqlClient.resources.dll",
+                           "Sha256": "f7d51f47b1eba12021161ee39a7d08d24df1dcd52c131d1d94ee2c7e432f4cb4"
+                         },
+                         {
+                           "Path": "tr/Microsoft.Data.SqlClient.resources.dll",
+                           "Sha256": "fc8df599a964558fc9587aeaa6c956e1d375944283907193660fa3e96ee38980"
+                         },
+                         {
+                           "Path": "web-module.json",
+                           "Sha256": "f344e0e3c73bcc3b9c33fdeeea92b237f27daffc95ff17c88c2f09fe1819380d"
+                         },
+                         {
+                           "Path": "wwwroot/css/buffaly-page.css",
+                           "Sha256": "85fd25e4a8342565fbc759b926eed3378f4fdca1b86b6829b1ba07f4304bea56"
+                         },
+                         {
+                           "Path": "wwwroot/css/linkedin.css",
+                           "Sha256": "a78a56d99881505c8879d5133429185934c7af66e936703611bb04ceef9b437a"
+                         },
+                         {
+                           "Path": "wwwroot/index.html",
+                           "Sha256": "1365566a65c430116d397561a43d12c8f3a36e8bfd9ea42ec457793d25bed238"
+                         },
+                         {
+                           "Path": "wwwroot/js/linkedin.js",
+                           "Sha256": "8a5a230f4b1086158b317cff7eda92fede81c99188e412754ba458707f0e0ccd"
+                         },
+                         {
+                           "Path": "zh-Hans/Microsoft.Data.SqlClient.resources.dll",
+                           "Sha256": "d12450a0c88feaafbf3db907ba9e66e0735ecf43f9089a1b6b583675e561a571"
+                         },
+                         {
+                           "Path": "zh-Hant/Microsoft.Data.SqlClient.resources.dll",
+                           "Sha256": "6a045428a176c4a42518ef6918b93ba0ee4a126dd15b523cc123bb14cad55e21"
+                         }
+                       ],
+                       "Dependencies": [],
+                       "RelatedWikiSlugs": [],
+                       "Prerequisites": [],
+                       "IsDefaultPackage": true,
+                       "RequiresRestart": true,
+                       "RequiresPreStartInstall": true
+                     },
+                     {
                          "PackageId":  "Office365",
                          "PackageType":  "WebModule",
                          "Title":  "O ff ic e365",
