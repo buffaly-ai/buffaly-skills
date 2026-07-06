@@ -135,11 +135,13 @@
 		// Wire up buttons
 		var configureBtn = document.getElementById('configureBtn');
 		var authorizeBtn = document.getElementById('authorizeBtn');
+		var completeCallbackBtn = document.getElementById('completeCallbackBtn');
 		var disconnectBtn = document.getElementById('disconnectBtn');
 		var createDraftBtn = document.getElementById('createDraftBtn');
 
 	if (configureBtn) configureBtn.addEventListener('click', showConfigForm);
 	if (authorizeBtn) authorizeBtn.addEventListener('click', doAuthorize);
+	if (completeCallbackBtn) completeCallbackBtn.addEventListener('click', showCallbackForm);
 	if (disconnectBtn) disconnectBtn.addEventListener('click', doDisconnect);
 
 	var createDraftBtn = document.getElementById('createDraftBtn');
@@ -336,6 +338,57 @@ var currentDraftFilter = null;
 			loadAccountStatus();
 		});
 		return true;
+	}
+
+	function showCallbackForm() {
+		var panel = document.getElementById('accountPanel');
+		var existing = document.getElementById('callbackForm');
+		if (existing) { existing.remove(); return; }
+
+		var form = document.createElement('div');
+		form.id = 'callbackForm';
+		form.className = 'mt-3';
+		form.innerHTML = '<div class="buffaly-field"><label class="buffaly-field-label">LinkedIn callback URL</label><textarea class="buffaly-input" id="callbackUrlInput" rows="4" placeholder="Paste the full http://localhost:8000/callback?code=...&state=... URL from LinkedIn"></textarea></div>' +
+			'<p class="buffaly-muted mt-2">Use this when LinkedIn redirects to localhost and the browser cannot automatically return to this web module.</p>' +
+			'<div class="buffaly-action-row mt-3"><button class="buffaly-button" id="completeCallbackSubmit" type="button">Complete Authorization</button><button class="buffaly-button secondary" id="cancelCallbackBtn" type="button">Cancel</button></div>';
+		panel.appendChild(form);
+
+		document.getElementById('completeCallbackSubmit').addEventListener('click', function() {
+			completeAuthorizationFromCallbackUrl(document.getElementById('callbackUrlInput').value, form);
+		});
+		document.getElementById('cancelCallbackBtn').addEventListener('click', function() { form.remove(); });
+	}
+
+	function completeAuthorizationFromCallbackUrl(callbackUrl, form) {
+		var parsed;
+		try {
+			parsed = new URL(callbackUrl);
+		} catch (err) {
+			showError('Paste the full LinkedIn callback URL, including code and state.');
+			return;
+		}
+
+		var code = parsed.searchParams.get('code');
+		var state = parsed.searchParams.get('state');
+		var error = parsed.searchParams.get('error_description') || parsed.searchParams.get('error');
+		if (error) {
+			showError('LinkedIn authorization failed: ' + error);
+			return;
+		}
+		if (!code || !state) {
+			showError('Callback URL must include both code and state.');
+			return;
+		}
+
+		LinkedInService.CompleteAuthorization(code, state, function(result) {
+			if (result && result.error) {
+				showError(result.error);
+				return;
+			}
+			if (form) form.remove();
+			showSuccess('LinkedIn authorization completed.');
+			loadAccountStatus();
+		});
 	}
 
 	function loadAccountStatus() {
