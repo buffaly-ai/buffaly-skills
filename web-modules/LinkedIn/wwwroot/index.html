@@ -31,11 +31,38 @@
 		<div id="toastRegion" class="toast-region" aria-live="polite"></div>
 		<div id="modalRoot" class="modal-root" aria-live="polite"></div>
 
-		<div class="linkedin-grid">
+		<div class="linkedin-grid mt-4 editor-first-grid">
+			<div class="buffaly-span-7">
+				<section class="buffaly-panel primary-editor-panel" id="composerPanel">
+					<h2 class="buffaly-panel-title">Post Editor</h2>
+					<p class="buffaly-muted">Draft, generate, attach media, and publish from one primary workspace.</p>
+					<div id="quickComposer" class="composer-card"></div>
+				</section>
+			</div>
+			<div class="buffaly-span-5">
+				<section class="buffaly-panel" id="contentToolsPanel">
+					<h2 class="buffaly-panel-title">Generate & Media</h2>
+					<p class="buffaly-muted" id="llmStatusText">Loading provider info...</p>
+					<div id="contentToolTabs" class="tool-tabs"></div>
+					<div id="contentToolResult" class="tool-result buffaly-muted">Choose a provider-backed tool to generate, polish, optimize, vary, or repurpose content.</div>
+					<div id="imageGeneratorPanel" class="mt-3">
+						<h3 class="buffaly-panel-title" style="font-size:1rem">Image Generator</h3>
+						<p class="buffaly-muted">Generate an AI image for your LinkedIn post through Buffaly image tooling.</p>
+						<textarea id="imagePromptInput" class="buffaly-input mt-2" placeholder="Describe the image you want..."></textarea>
+						<div class="buffaly-action-row mt-2">
+							<button id="generateImageBtn" class="buffaly-button" type="button">Generate Image</button>
+						</div>
+						<div id="imageResultArea" class="mt-2"></div>
+					</div>
+				</section>
+			</div>
+		</div>
+
+		<div class="linkedin-grid mt-4 secondary-workspace-grid">
 			<div class="buffaly-span-8">
 				<!-- Account / Connection -->
-				<section class="buffaly-panel" id="accountPanel">
-					<h2 class="buffaly-panel-title">Account Connection</h2>
+				<section class="buffaly-panel compact-settings-panel" id="accountPanel">
+					<h2 class="buffaly-panel-title">Connection & Settings</h2>
 					<p class="buffaly-muted" id="accountStatusText">Loading account status...</p>
 					<div id="accountDetails" class="mt-3"></div>
 					<div class="buffaly-action-row mt-3" id="accountActions">
@@ -65,12 +92,6 @@
 			</div>
 
 			<div class="buffaly-span-4 side-stack">
-				<!-- LLM Info -->
-				<section class="buffaly-panel" id="llmPanel">
-					<h2 class="buffaly-panel-title">Content Intelligence</h2>
-					<p class="buffaly-muted" id="llmStatusText">Loading LLM info...</p>
-				</section>
-
 				<section class="buffaly-panel" id="voicePanel">
 					<h2 class="buffaly-panel-title">Brand Voice</h2>
 					<p class="buffaly-muted" id="voiceStatusText">Loading voice profile...</p>
@@ -78,23 +99,6 @@
 					<div class="buffaly-action-row mt-3">
 						<button id="editVoiceBtn" class="buffaly-button secondary" type="button">Edit Voice</button>
 					</div>
-				</section>
-			</div>
-		</div>
-
-		<div class="linkedin-grid mt-4">
-			<div class="buffaly-span-7">
-				<section class="buffaly-panel" id="composerPanel">
-					<h2 class="buffaly-panel-title">Publishing Workspace</h2>
-					<p class="buffaly-muted">Create immediate posts, share links or images, and use governed draft workflows.</p>
-					<div id="quickComposer" class="composer-card"></div>
-				</section>
-			</div>
-			<div class="buffaly-span-5">
-				<section class="buffaly-panel" id="contentToolsPanel">
-					<h2 class="buffaly-panel-title">Content Tools</h2>
-					<div id="contentToolTabs" class="tool-tabs"></div>
-					<div id="contentToolResult" class="tool-result buffaly-muted">Choose a tool to generate, polish, optimize, vary, or repurpose content.</div>
 				</section>
 			</div>
 		</div>

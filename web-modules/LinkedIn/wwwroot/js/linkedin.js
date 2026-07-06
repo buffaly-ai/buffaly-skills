@@ -11,7 +11,7 @@
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: '{}'
-		}).then(function(r) { return r.json(); });
+		}).then(readJsonResponse);
 	},
 
 	_postJson: function(path, payload) {
@@ -19,7 +19,7 @@
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(payload || {})
-		}).then(function(r) { return r.json(); });
+		}).then(readJsonResponse);
 	},
 
 	GetAccountStatus: function(Callback) {
@@ -110,11 +110,11 @@
 	GetVoice: function(Callback) { this._post('/get-voice').then(function(result) { Callback(result); }).catch(function(err) { Callback({ error: err.message }); }); },
 	SetVoice: function(tone, audience, Callback) { this._postJson('/set-voice', { tone: tone, audience: audience }).then(function(result) { Callback(result); }).catch(function(err) { Callback({ error: err.message }); }); },
 	ClearVoice: function(Callback) { this._post('/clear-voice').then(function(result) { Callback(result); }).catch(function(err) { Callback({ error: err.message }); }); },
-	GenerateContent: function(brief, Callback) { this._postJson('/generate-content', { brief: brief }).then(function(result) { Callback(result); }).catch(function(err) { Callback({ error: err.message }); }); },
-	PolishContent: function(text, Callback) { this._postJson('/polish-content', { text: text }).then(function(result) { Callback(result); }).catch(function(err) { Callback({ error: err.message }); }); },
-	OptimizeContent: function(text, Callback) { this._postJson('/optimize-content', { text: text }).then(function(result) { Callback(result); }).catch(function(err) { Callback({ error: err.message }); }); },
-	GenerateVariants: function(text, n, Callback) { this._postJson('/generate-variants', { text: text, n: n }).then(function(result) { Callback(result); }).catch(function(err) { Callback({ error: err.message }); }); },
-	RepurposeUrl: function(url, angle, Callback) { this._postJson('/repurpose-url', { url: url, angle: angle }).then(function(result) { Callback(result); }).catch(function(err) { Callback({ error: err.message }); }); },
+	GenerateContent: function(brief, provider, model, Callback) { this._postJson('/generate-content', { brief: brief, provider: provider, model: model }).then(function(result) { Callback(result); }).catch(function(err) { Callback({ error: err.message }); }); },
+	PolishContent: function(text, provider, model, Callback) { this._postJson('/polish-content', { text: text, provider: provider, model: model }).then(function(result) { Callback(result); }).catch(function(err) { Callback({ error: err.message }); }); },
+	OptimizeContent: function(text, provider, model, Callback) { this._postJson('/optimize-content', { text: text, provider: provider, model: model }).then(function(result) { Callback(result); }).catch(function(err) { Callback({ error: err.message }); }); },
+	GenerateVariants: function(text, n, provider, model, Callback) { this._postJson('/generate-variants', { text: text, n: n, provider: provider, model: model }).then(function(result) { Callback(result); }).catch(function(err) { Callback({ error: err.message }); }); },
+	RepurposeUrl: function(url, angle, provider, model, Callback) { this._postJson('/repurpose-url', { url: url, angle: angle, provider: provider, model: model }).then(function(result) { Callback(result); }).catch(function(err) { Callback({ error: err.message }); }); },
 	PublishDue: function(Callback) { this._post('/publish-due').then(function(result) { Callback(result); }).catch(function(err) { Callback({ error: err.message }); }); },
 	ListComments: function(postUrn, Callback) { this._postJson('/list-comments', { postUrn: postUrn }).then(function(result) { Callback(result); }).catch(function(err) { Callback({ error: err.message }); }); },
 	GetStats: function(postUrn, Callback) { this._postJson('/get-stats', { postUrn: postUrn }).then(function(result) { Callback(result); }).catch(function(err) { Callback({ error: err.message }); }); },
@@ -162,6 +162,22 @@
 });
 
 var currentDraftFilter = null;
+
+	function readJsonResponse(response) {
+		return response.text().then(function(text) {
+			var parsed = null;
+			if (text) {
+				try { parsed = JSON.parse(text); }
+				catch (err) {
+					return { error: 'Endpoint returned non-JSON response (' + response.status + '): ' + text.slice(0, 160) };
+				}
+			}
+			if (!response.ok) {
+				return parsed && parsed.error ? parsed : { error: 'Endpoint failed with HTTP ' + response.status };
+			}
+			return parsed || {};
+		});
+	}
 
 	function showToast(message, type) {
 		var region = document.getElementById('toastRegion');
@@ -291,17 +307,20 @@ var currentDraftFilter = null;
 		var host = document.getElementById('contentToolTabs');
 		if (!host) return;
 		var tools = [['Generate', 'Turn a brief into a LinkedIn post', 'GenerateContent'], ['Polish', 'Improve clarity and tone', 'PolishContent'], ['Optimize', 'Optimize for engagement', 'OptimizeContent'], ['Variants', 'Create alternate versions', 'GenerateVariants'], ['Repurpose URL', 'Convert a URL into a post angle', 'RepurposeUrl']];
-		host.innerHTML = tools.map(function(t) { return '<div class="tool-card"><h3>' + t[0] + '</h3><p>' + t[1] + '</p><textarea class="buffaly-input tool-input" data-tool="' + t[2] + '" placeholder="Paste text, brief, or URL..."></textarea><button class="buffaly-button secondary mt-2 run-tool" data-tool="' + t[2] + '" type="button">Run</button></div>'; }).join('');
-		document.querySelectorAll('.run-tool').forEach(function(btn) {
+		host.innerHTML = '<div class="provider-model-row"><div><label class="buffaly-field-label">Provider</label><input id="providerInput" class="buffaly-input" placeholder="Default Buffaly provider, or openai / anthropic / gemini / xai"></div><div><label class="buffaly-field-label">Model</label><input id="modelInput" class="buffaly-input" placeholder="Default model, or provider model id"></div></div>' +
+			tools.map(function(t) { return '<div class="tool-card"><h3>' + t[0] + '</h3><p>' + t[1] + '</p><textarea class="buffaly-input tool-input" data-tool="' + t[2] + '" placeholder="Paste text, brief, or URL..."></textarea><button class="buffaly-button secondary mt-2 run-tool" data-tool="' + t[2] + '" type="button">Run</button></div>'; }).join('');
+			document.querySelectorAll('.run-tool').forEach(function(btn) {
 			btn.addEventListener('click', function() {
 				var tool = btn.getAttribute('data-tool');
 				var input = document.querySelector('.tool-input[data-tool="' + tool + '"]').value;
+				var provider = document.getElementById('providerInput').value || '';
+				var model = document.getElementById('modelInput').value || '';
 				var done = function(result) { var out = document.getElementById('contentToolResult'); if (result.error) { showError(result.error); out.textContent = result.error; } else { out.textContent = JSON.stringify(result, null, 2); } };
-				if (tool === 'GenerateContent') LinkedInService.GenerateContent(input, done);
-				else if (tool === 'PolishContent') LinkedInService.PolishContent(input, done);
-				else if (tool === 'OptimizeContent') LinkedInService.OptimizeContent(input, done);
-				else if (tool === 'GenerateVariants') LinkedInService.GenerateVariants(input, 3, done);
-				else if (tool === 'RepurposeUrl') LinkedInService.RepurposeUrl(input, '', done);
+				if (tool === 'GenerateContent') LinkedInService.GenerateContent(input, provider, model, done);
+				else if (tool === 'PolishContent') LinkedInService.PolishContent(input, provider, model, done);
+				else if (tool === 'OptimizeContent') LinkedInService.OptimizeContent(input, provider, model, done);
+				else if (tool === 'GenerateVariants') LinkedInService.GenerateVariants(input, 3, provider, model, done);
+				else if (tool === 'RepurposeUrl') LinkedInService.RepurposeUrl(input, '', provider, model, done);
 			});
 		});
 	}
