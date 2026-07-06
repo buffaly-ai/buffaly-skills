@@ -343,12 +343,16 @@ var currentDraftFilter = null;
 		var statusDetail = document.getElementById('statusDetail');
 		var accountStatusText = document.getElementById('accountStatusText');
 		var accountDetails = document.getElementById('accountDetails');
+		var authorizeBtn = document.getElementById('authorizeBtn');
+		var disconnectBtn = document.getElementById('disconnectBtn');
 
 		LinkedInService.GetAccountStatus(function(result) {
 			if (result && result.error) {
 				statusChip.textContent = 'Error';
 				statusChip.className = 'buffaly-status-pill status-error';
 				accountStatusText.textContent = 'Failed to load account status: ' + result.error;
+				if (authorizeBtn) authorizeBtn.disabled = true;
+				if (disconnectBtn) disconnectBtn.disabled = true;
 				return;
 			}
 
@@ -358,18 +362,24 @@ var currentDraftFilter = null;
 				statusDetail.textContent = 'Configure app credentials to get started.';
 				accountStatusText.textContent = 'No LinkedIn app credentials configured. Click "Configure App Credentials" to set up your LinkedIn OAuth app.';
 				accountDetails.innerHTML = '';
+				if (authorizeBtn) authorizeBtn.disabled = true;
+				if (disconnectBtn) disconnectBtn.disabled = true;
 			} else if (!result.hasToken) {
 				statusChip.textContent = 'Not authorized';
 				statusChip.className = 'buffaly-status-pill status-warning';
 				statusDetail.textContent = 'Click Authorize to connect your LinkedIn account.';
 				accountStatusText.textContent = 'App credentials are configured but no access token has been obtained yet.';
 				accountDetails.innerHTML = '';
+				if (authorizeBtn) authorizeBtn.disabled = false;
+				if (disconnectBtn) disconnectBtn.disabled = true;
 			} else {
 				statusChip.textContent = 'Connected';
 				statusChip.className = 'buffaly-status-pill status-ready';
 				statusDetail.textContent = result.profileName || 'Connected';
 				accountStatusText.textContent = 'Connected as ' + (result.profileName || 'Unknown') + ' (' + (result.profileEmail || 'No email') + ')';
 				accountDetails.innerHTML = formatAccountDetails(result);
+				if (authorizeBtn) authorizeBtn.disabled = true;
+				if (disconnectBtn) disconnectBtn.disabled = false;
 			}
 		});
 	}
