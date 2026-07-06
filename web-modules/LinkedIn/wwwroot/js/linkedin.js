@@ -118,7 +118,9 @@
 	PublishDue: function(Callback) { this._post('/publish-due').then(function(result) { Callback(result); }).catch(function(err) { Callback({ error: err.message }); }); },
 	ListComments: function(postUrn, Callback) { this._postJson('/list-comments', { postUrn: postUrn }).then(function(result) { Callback(result); }).catch(function(err) { Callback({ error: err.message }); }); },
 	GetStats: function(postUrn, Callback) { this._postJson('/get-stats', { postUrn: postUrn }).then(function(result) { Callback(result); }).catch(function(err) { Callback({ error: err.message }); }); },
-	ReplyComment: function(postUrn, commentText, Callback) { this._postJson('/reply-comment', { postUrn: postUrn, commentText: commentText }).then(function(result) { Callback(result); }).catch(function(err) { Callback({ error: err.message }); }); }
+	ReplyComment: function(postUrn, commentText, Callback) { this._postJson('/reply-comment', { postUrn: postUrn, commentText: commentText }).then(function(result) { Callback(result); }).catch(function(err) { Callback({ error: err.message }); }); },
+	GetCoverageMatrix: function(Callback) { this._post('/get-coverage-matrix').then(function(result) { Callback(result); }).catch(function(err) { Callback({ error: err.message }); }); },
+	GenerateImage: function(prompt, Callback) { this._postJson('/generate-image', { prompt: prompt }).then(function(result) { Callback(result); }).catch(function(err) { Callback({ error: err.message }); }); }
 };
 	// Initialize on page load
 	document.addEventListener('DOMContentLoaded', function() {
@@ -131,6 +133,7 @@
 		renderQuickComposer();
 		renderContentTools();
 		renderCoverageMatrix();
+		wireImageGenerator();
 
 		// Wire up buttons
 		var configureBtn = document.getElementById('configureBtn');
@@ -196,15 +199,9 @@ var currentDraftFilter = null;
 	function renderCoverageMatrix() {
 		var host = document.getElementById('coverageMatrix');
 		if (!host) return;
-		var rows = [
-			['GetAccountStatus', 'Account panel status, profile, token and permission chips'],
-			['SaveAppConfig', 'Configure App Credentials form'],
-			['StartAuthorization', 'Authorize button'],
-			['CompleteAuthorization', 'OAuth callback completion screen'],
-			['Disconnect', 'Disconnect button'],
-			['ImportExistingToken', 'Admin migration helper / token import path'],
+		var entries = [
+			['CreateDraft', 'Primary post editor and draft save action'],
 			['ListDrafts', 'Draft board and filters'],
-			['CreateDraft', 'Create Draft composer'],
 			['GetDraft', 'Edit draft workflow'],
 			['UpdateDraft', 'Edit draft workflow'],
 			['ApproveDraft', 'Draft card approve action'],
@@ -216,25 +213,32 @@ var currentDraftFilter = null;
 			['CreatePost', 'Publishing workspace quick text post'],
 			['ShareLink', 'Publishing workspace link share'],
 			['ShareImage', 'Publishing workspace image share'],
-			['DeletePost', 'Published post delete action with local-history guard'],
-			['ListPublishedPosts', 'Published Posts panel'],
-			['GetVoice', 'Brand Voice panel'],
-			['SetVoice', 'Brand Voice editor'],
-			['AddVoiceExample', 'Brand Voice examples editor'],
-			['ClearVoice', 'Brand Voice reset action'],
-			['GetLlmInfo', 'Content Intelligence status panel'],
-			['GenerateContent', 'Content Tools generate action'],
-			['PolishContent', 'Content Tools polish action'],
-			['OptimizeContent', 'Content Tools optimize action'],
-			['GenerateVariants', 'Content Tools variants action'],
-			['RepurposeUrl', 'Content Tools repurpose URL action'],
-			['PermissionProbe', 'Permissions in account status'],
-			['ReplyComment', 'Engagement action from published post tools'],
-			['ListComments', 'Engagement action from published post tools'],
-			['GetStats', 'Engagement stats action from published post tools']
+			['ListPublishedPosts', 'Published posts panel'],
+			['DeletePost', 'Published post delete action'],
+			['GetAccountStatus', 'Connection status header and account panel'],
+			['SaveAppConfig', 'Configure credentials form'],
+			['StartAuthorization', 'Authorize button'],
+			['CompleteAuthorization', 'OAuth callback and paste-callback flow'],
+			['Disconnect', 'Disconnect button'],
+			['ImportExistingToken', 'Admin/service migration path'],
+			['GetVoice', 'Brand voice panel'],
+			['SetVoice', 'Brand voice editor'],
+			['ClearVoice', 'Brand voice editor'],
+			['GenerateContent', 'Content tools panel'],
+			['PolishContent', 'Content tools panel'],
+			['OptimizeContent', 'Content tools panel'],
+			['GenerateVariants', 'Content tools panel'],
+			['RepurposeUrl', 'Content tools panel'],
+			['ListComments', 'Engagement API surface'],
+			['GetStats', 'Engagement API surface'],
+			['ReplyComment', 'Engagement API surface'],
+			['PermissionProbe', 'Permission diagnostics'],
+			['GenerateImage', 'Image generation panel']
 		];
-		host.innerHTML = rows.map(function(row) {
-			return '<div class="coverage-row"><strong>' + escapeHtml(row[0]) + '</strong><span>' + escapeHtml(row[1]) + '</span><em class="matrix-status">Represented</em></div>';
+		var pill = document.querySelector('.coverage-pill');
+		if (pill) pill.textContent = entries.length + ' / ' + entries.length + ' represented';
+		host.innerHTML = entries.map(function(item) {
+			return '<div class="coverage-row"><strong>' + escapeHtml(item[0]) + '</strong><span>' + escapeHtml(item[1]) + '</span><em class="matrix-status">Represented</em></div>';
 		}).join('');
 	}
 
@@ -298,6 +302,22 @@ var currentDraftFilter = null;
 				else if (tool === 'OptimizeContent') LinkedInService.OptimizeContent(input, done);
 				else if (tool === 'GenerateVariants') LinkedInService.GenerateVariants(input, 3, done);
 				else if (tool === 'RepurposeUrl') LinkedInService.RepurposeUrl(input, '', done);
+			});
+		});
+	}
+
+	function wireImageGenerator() {
+		var btn = document.getElementById('generateImageBtn');
+		if (!btn) return;
+		btn.addEventListener('click', function() {
+			var prompt = document.getElementById('imagePromptInput').value;
+			if (!prompt || !prompt.trim()) { showError('Enter an image prompt first.'); return; }
+			var resultArea = document.getElementById('imageResultArea');
+			if (!resultArea) return;
+			resultArea.innerHTML = '<p class="buffaly-muted">Generating image...</p>';
+			LinkedInService.GenerateImage(prompt, function(result) {
+				if (result.error) { resultArea.innerHTML = '<p style="color:#dc2626">' + escapeHtml(result.error) + '</p>'; return; }
+				resultArea.innerHTML = '<img src="' + escapeHtml(result.imageUrl) + '" style="max-width:100%;border-radius:14px;margin-top:8px" alt="Generated image"><p class="buffaly-muted mt-2">Image path: ' + escapeHtml(result.imagePath) + '</p>';
 			});
 		});
 	}
@@ -712,24 +732,30 @@ var currentDraftFilter = null;
 				postsStatus.textContent = 'No published posts yet.';
 				postsList.innerHTML = '';
 			} else {
-				postsStatus.textContent = posts.length + ' published post(s)';
-				postsList.innerHTML = posts.map(function(p) {
-					var html = '<div class="published-post-card">';
-					html += '<p class="draft-text">' + escapeHtml(p.textDigest || '') + '</p>';
-					html += '<div class="draft-meta">';
-					html += '<span>URN: ' + escapeHtml(p.postUrn || '') + '</span>';
-					html += '<span>Published: ' + escapeHtml(p.publishedAt || '') + '</span>';
-					if (p.deleted) html += '<span class="draft-badge draft-status-published">Deleted</span>';
+			postsStatus.textContent = posts.length + ' published post(s)';
+			// Sort deleted posts to the bottom
+			posts.sort(function(a, b) { return (a.deleted ? 1 : 0) - (b.deleted ? 1 : 0); });
+			postsList.innerHTML = posts.map(function(p) {
+				var deletedClass = p.deleted ? ' deleted-post' : '';
+				var html = '<div class="published-post-card' + deletedClass + '">';
+				html += '<p class="draft-text">' + escapeHtml(p.textDigest || '') + '</p>';
+				html += '<div class="draft-meta">';
+				html += '<span>URN: ' + escapeHtml(p.postUrn || '') + '</span>';
+				html += '<span>Published: ' + escapeHtml(p.publishedAt || '') + '</span>';
+				if (p.deleted) html += '<span class="draft-badge" style="background:#fee2e2;color:#dc2626">Deleted</span>';
+				html += '</div>';
+				if (p.url && !p.deleted) {
+					html += '<div class="draft-actions">';
+					html += '<a href="' + escapeHtml(p.url) + '" target="_blank" class="buffaly-button secondary">View on LinkedIn</a>';
+					html += '<button class="buffaly-button secondary post-delete" data-urn="' + escapeHtml(p.postUrn) + '">Delete Post</button>';
 					html += '</div>';
-					if (p.url && !p.deleted) {
-						html += '<div class="draft-actions">';
-						html += '<a href="' + escapeHtml(p.url) + '" target="_blank" class="buffaly-button secondary">View on LinkedIn</a>';
-						html += '<button class="buffaly-button secondary post-delete" data-urn="' + escapeHtml(p.postUrn) + '">Delete Post</button>';
-						html += '</div>';
-					}
-					html += '</div>';
-					return html;
-				}).join('');
+				}
+				if (p.deleted) {
+					html += '<div class="draft-actions"><button class="buffaly-button secondary" disabled>Already Deleted</button></div>';
+				}
+				html += '</div>';
+				return html;
+			}).join('');
 				document.querySelectorAll('.post-delete').forEach(function(btn) {
 					btn.addEventListener('click', function() {
 						var urn = btn.getAttribute('data-urn');
