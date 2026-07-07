@@ -164,3 +164,178 @@ prototype ToGetCareCascadeIcd10SpecialtyCapability : CareCascadeSkillAction
 	}
 	Description = @"service - CareCascadeIcd10JsonWsService binding, normally CareCascadeIcd10JsonWsService#Published. icd10Code - ICD-10 code such as E11.9. Calls GetSpecialtyCapability and returns raw JSON object with AllowAPCM, AllowRTM, AllowCCM, AllowRPM and count fields. Use this after a diagnosis code is already selected or imported.";
 }
+
+// ─── SNOMED CT native database-backed service ───────────────────────────────
+
+[SemanticEntity("CareCascade SNOMED JsonWS service")]
+prototype CareCascadeSnomedJsonWsService : Service
+{
+	String BaseUrl = "https://api.carecascade.com";
+
+	String ApiPrefix = "api/buffaly.medont";
+
+	String ServiceRoute = "sno-med-service";
+
+	String TokenKey = "CareCascade.ApiKey";
+
+	function CallSnomedRoute(string routePath, JsonObject args) : string
+	{
+		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
+		return JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.ApiPrefix, this.ServiceRoute + "/" + routePath, this.TokenKey, normalizedArgs);
+	}
+	ServiceName = "CareCascadeSnomedJsonWsService";
+	Scope = "per-binding";
+	Description = @"CareCascade MedOnt SNOMED CT route-based JsonWS service. Uses JsonMethod request shape: Method plus parameters in the JSON body. Token is resolved from TokenKey and sent by JsonWsHelper when configured.";
+}
+
+[SemanticEntity("published CareCascade SNOMED JsonWS service")]
+[SemanticEntity("api.carecascade.com SNOMED service")]
+partial prototype CareCascadeSnomedJsonWsService#Published : CareCascadeSnomedJsonWsService
+{
+	BaseUrl = "https://api.carecascade.com";
+	ApiPrefix = "api/buffaly.medont";
+	ServiceRoute = "sno-med-service";
+	TokenKey = "CareCascade.ApiKey";
+	Description = @"Published CareCascade MedOnt SNOMED CT API binding. Calls the native database-backed SnoMedService at api.carecascade.com.";
+}
+
+[SemanticProgram.InfinitivePhrase("to search SNOMED concepts by exact term or concept ID")]
+[SemanticProgram.InfinitivePhrase("to find SNOMED CT concepts by exact match")]
+[SemanticProgram.InfinitivePhrase("to look up a SNOMED concept by ID")]
+prototype ToSearchCareCascadeSnomedConceptsExact : CareCascadeSkillAction
+{
+	function Execute(CareCascadeSnomedJsonWsService service, string query) : string
+	{
+		if (service == null)
+		{
+			return "Error: CareCascadeSnomedJsonWsService binding is required.";
+		}
+		if (StringUtil.IsEmpty(query))
+		{
+			return "Error: query is required.";
+		}
+		JsonObject args = new JsonObject();
+		args["Method"] = "SearchConceptsExact";
+		args["query"] = query;
+		return service.CallSnomedRoute("search-concepts-exact", args);
+	}
+	Description = @"service - CareCascadeSnomedJsonWsService binding, normally CareCascadeSnomedJsonWsService#Published. query - SNOMED concept ID (numeric) or exact term text. Calls SearchConceptsExact and returns raw JSON array of matching SNOMED concepts with ConceptId, PreferredTerm, FullySpecifiedName, and Synonyms.";
+}
+
+[SemanticProgram.InfinitivePhrase("to search SNOMED concepts broadly by text")]
+[SemanticProgram.InfinitivePhrase("to find SNOMED CT concepts by keyword search")]
+[SemanticProgram.InfinitivePhrase("to search clinical concepts in SNOMED")]
+[SemanticProgram.InfinitivePhrase("to look up SNOMED concepts by description")]
+prototype ToSearchCareCascadeSnomedConceptsBroad : CareCascadeSkillAction
+{
+	function Execute(CareCascadeSnomedJsonWsService service, string query, int maxResults) : string
+	{
+		if (service == null)
+		{
+			return "Error: CareCascadeSnomedJsonWsService binding is required.";
+		}
+		if (StringUtil.IsEmpty(query))
+		{
+			return "Error: query is required.";
+		}
+		JsonObject args = new JsonObject();
+		args["Method"] = "SearchConceptsBroad";
+		args["query"] = query;
+		args["maxResults"] = maxResults > 0 ? maxResults : 50;
+		return service.CallSnomedRoute("search-concepts-broad", args);
+	}
+	Description = @"service - CareCascadeSnomedJsonWsService binding, normally CareCascadeSnomedJsonWsService#Published. query - search text such as 'diabetes'. maxResults - maximum results to return (default 50, hard cap 100). Calls SearchConceptsBroad and returns ranked, deduplicated JSON array of SNOMED concepts.";
+}
+
+[SemanticProgram.InfinitivePhrase("to get SNOMED concept details")]
+[SemanticProgram.InfinitivePhrase("to retrieve a SNOMED CT concept with full details")]
+[SemanticProgram.InfinitivePhrase("to look up SNOMED concept by ID with hierarchy and maps")]
+prototype ToGetCareCascadeSnomedConcept : CareCascadeSkillAction
+{
+	function Execute(CareCascadeSnomedJsonWsService service, string conceptId) : string
+	{
+		if (service == null)
+		{
+			return "Error: CareCascadeSnomedJsonWsService binding is required.";
+		}
+		JsonObject args = new JsonObject();
+		args["Method"] = "GetConcept";
+		args["conceptId"] = conceptId;
+		return service.CallSnomedRoute("get-concept", args);
+	}
+	Description = @"service - CareCascadeSnomedJsonWsService binding, normally CareCascadeSnomedJsonWsService#Published. conceptId - SNOMED CT concept ID such as 409794001. Calls GetConcept and returns full concept payload with PreferredTerm, FullySpecifiedName, Synonyms, Children, Ancestors, and LinkedIcd10Codes.";
+}
+
+[SemanticProgram.InfinitivePhrase("to get SNOMED concept children")]
+[SemanticProgram.InfinitivePhrase("to find direct is-a children of a SNOMED concept")]
+prototype ToGetCareCascadeSnomedChildren : CareCascadeSkillAction
+{
+	function Execute(CareCascadeSnomedJsonWsService service, string conceptId) : string
+	{
+		if (service == null)
+		{
+			return "Error: CareCascadeSnomedJsonWsService binding is required.";
+		}
+		JsonObject args = new JsonObject();
+		args["Method"] = "GetChildren";
+		args["conceptId"] = conceptId;
+		return service.CallSnomedRoute("get-children", args);
+	}
+	Description = @"service - CareCascadeSnomedJsonWsService binding, normally CareCascadeSnomedJsonWsService#Published. conceptId - SNOMED CT concept ID. Calls GetChildren and returns direct is-a children (typeId=116680003) as JSON array.";
+}
+
+[SemanticProgram.InfinitivePhrase("to get SNOMED concept ancestors")]
+[SemanticProgram.InfinitivePhrase("to find transitive is-a ancestors of a SNOMED concept")]
+prototype ToGetCareCascadeSnomedAncestors : CareCascadeSkillAction
+{
+	function Execute(CareCascadeSnomedJsonWsService service, string conceptId) : string
+	{
+		if (service == null)
+		{
+			return "Error: CareCascadeSnomedJsonWsService binding is required.";
+		}
+		JsonObject args = new JsonObject();
+		args["Method"] = "GetAncestors";
+		args["conceptId"] = conceptId;
+		return service.CallSnomedRoute("get-ancestors", args);
+	}
+	Description = @"service - CareCascadeSnomedJsonWsService binding, normally CareCascadeSnomedJsonWsService#Published. conceptId - SNOMED CT concept ID. Calls GetAncestors and returns the full transitive is-a ancestor chain as JSON array.";
+}
+
+[SemanticProgram.InfinitivePhrase("to get SNOMED concept synonyms")]
+[SemanticProgram.InfinitivePhrase("to find synonyms for a SNOMED CT concept")]
+prototype ToGetCareCascadeSnomedSynonyms : CareCascadeSkillAction
+{
+	function Execute(CareCascadeSnomedJsonWsService service, string conceptId) : string
+	{
+		if (service == null)
+		{
+			return "Error: CareCascadeSnomedJsonWsService binding is required.";
+		}
+		JsonObject args = new JsonObject();
+		args["Method"] = "GetSynonyms";
+		args["conceptId"] = conceptId;
+		return service.CallSnomedRoute("get-synonyms", args);
+	}
+	Description = @"service - CareCascadeSnomedJsonWsService binding, normally CareCascadeSnomedJsonWsService#Published. conceptId - SNOMED CT concept ID. Calls GetSynonyms and returns active synonym terms (excluding FSN and preferred term) as JSON string array.";
+}
+
+[SemanticProgram.InfinitivePhrase("to get ICD-10 codes linked to a SNOMED concept")]
+[SemanticProgram.InfinitivePhrase("to find ICD-10 map targets for a SNOMED concept")]
+[SemanticProgram.InfinitivePhrase("to map a SNOMED concept to ICD-10 codes")]
+prototype ToGetCareCascadeSnomedLinkedIcd10Codes : CareCascadeSkillAction
+{
+	function Execute(CareCascadeSnomedJsonWsService service, string conceptId) : string
+	{
+		if (service == null)
+		{
+			return "Error: CareCascadeSnomedJsonWsService binding is required.";
+		}
+		JsonObject args = new JsonObject();
+		args["Method"] = "GetLinkedIcd10Codes";
+		args["conceptId"] = conceptId;
+		return service.CallSnomedRoute("get-linked-icd10-codes", args);
+	}
+	Description = @"service - CareCascadeSnomedJsonWsService binding, normally CareCascadeSnomedJsonWsService#Published. conceptId - SNOMED CT concept ID. Calls GetLinkedIcd10Codes and returns ICD-10 mapTarget values from ExtendedMapSnapshot as JSON string array. Returns empty array if no maps exist.";
+}
+
