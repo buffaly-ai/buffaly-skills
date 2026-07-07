@@ -122,7 +122,7 @@ prototype ToReadTextFile : FileSystemSkillAction, CodingContext
 [SemanticProgram.InfinitivePhrase("to read a file from a directory as raw text")]
 prototype ToReadTextFileRaw : FileSystemSkillAction, CodingContext
 {
-	Description = @"directoryPath - optional base directory for relative paths. filePath - relative or absolute file path. Use when immediate raw text is required for display or inspection; materializes and returns raw text string immediately.";
+	Description = @"directoryPath - optional base directory for relative paths. filePath - relative or absolute file path. Use when immediate raw text is required for display or inspection; materializes and returns raw text string immediately. Files larger than 10 KB are rejected — use ToSearchTextInFile to find specific text or ToGetFileBlock to read a line range instead.";
 
 	function Execute(string directoryPath, string filePath) : string
 	{
@@ -143,6 +143,13 @@ prototype ToReadTextFileRaw : FileSystemSkillAction, CodingContext
 			{
 				return "Error: directoryPath is required for relative file paths.";
 			}
+		}
+
+		// Check file size before reading — large files should use targeted tools instead.
+		string sizeGuidance = FileSystemTools.GetFileSizeGuidance(normalizedDirectoryPath, filePath);
+		if (!StringUtil.IsEmpty(sizeGuidance))
+		{
+			return sizeGuidance;
 		}
 
 		return FileSystemTools.ReadFile(normalizedDirectoryPath, filePath);

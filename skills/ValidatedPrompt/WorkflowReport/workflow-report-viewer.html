@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Buffaly Workflow Report Viewer</title>
+	<style>
+		body{margin:0;padding:24px;background:#0f172a;color:#e5e7eb;font-family:Segoe UI,Arial,sans-serif;line-height:1.45}.wrap{max-width:1320px;margin:0 auto}.hero,.node,.panel{border:1px solid #334155;border-radius:14px;background:#111827;padding:16px;margin:14px 0}.node{background:#0b1220}h1,h2,h3{margin-top:0}.muted{color:#9ca3af}.chip{display:inline-block;background:#1e293b;border:1px solid #334155;border-radius:999px;padding:3px 8px;margin:2px;color:#cbd5e1;font-size:12px}.pass{color:#86efac}.fail{color:#fca5a5}.warn{color:#fde68a}button,input{border:1px solid #334155;border-radius:10px;background:#020617;color:#e5e7eb;padding:8px 10px}button{cursor:pointer}pre{white-space:pre-wrap;background:#020617;border:1px solid #334155;border-radius:10px;padding:10px;overflow:auto;max-height:560px}summary{cursor:pointer;color:#93c5fd}a{color:#93c5fd}.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.jsonInput{min-width:min(520px,100%);flex:1}.error{border-color:#991b1b;background:#450a0a;color:#fecaca}.hidden{display:none}
+	</style>
+</head>
+<body>
+	<div class="wrap">
+		<section class="hero">
+			<h1>Buffaly Workflow Report Viewer</h1>
+			<p class="muted">Loads and renders a <code>buffaly.workflowRunReport.v1</code> JSON report. The viewer renders the report only; it does not infer status, mutate data, or call the agent.</p>
+			<p class="muted">Supported node types: <code>workflow</code>, <code>validatedPromptAction</code>, <code>validationGate</code>, <code>workflowValidation</code>, <code>deterministicStep</code>.</p>
+			<div class="toolbar">
+				<input id="jsonUrl" class="jsonInput" placeholder="workflow-report-viewer.html?json=path/to/workflow-run.json">
+				<button id="loadButton" type="button">Load JSON</button>
+				<button id="expandButton" type="button">Expand all</button>
+				<button id="collapseButton" type="button">Collapse all</button>
+				<input id="fileInput" type="file" accept="application/json">
+			</div>
+		</section>
+		<section id="message" class="panel hidden"></section>
+		<section id="summary" class="panel hidden"></section>
+		<section id="tree"></section>
+		<details id="rawJsonPanel" class="panel hidden"><summary>Raw workflow report JSON</summary><pre id="rawJson"></pre></details>
+	</div>
+	<script>
+		const RequiredSchema = 'buffaly.workflowRunReport.v1';
+		let currentReport = null;
+		let expanded = new Set();
+		function getRequestedJsonUrl(){const query = new URLSearchParams(window.location.search);if(query.has('json')) return query.get('json');if(window.location.hash.startsWith('#json=')) return decodeURIComponent(window.location.hash.substring(6));return '';}
+		function escapeHtml(value){return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+		function statusClass(status){const s = String(status ?? '').toLowerCase();if(s === 'pass' || s === 'passed' || s === 'completed') return 'pass';if(s === 'fail' || s === 'failed' || s === 'blocked') return 'fail';return 'warn';}
+		function showMessage(text, isError){const el = document.getElementById('message');el.className = 'panel' + (isError ? ' error' : '');el.textContent = text;}
+		function validateReport(report){if(!report || typeof report !== 'object') throw new Error('Workflow report must be a JSON object.');if(report.schema !== RequiredSchema) throw new Error(`Unsupported workflow report schema: ${report.schema || '(missing)'}`);if(!report.root || typeof report.root !== 'object') throw new Error('Workflow report root node is required.');if(!Array.isArray(report.root.children)) throw new Error('Workflow report root.children must be an array.');}
+		async function loadFromUrl(url){if(!url) throw new Error('Provide a JSON report URL or choose a local JSON file.');const response = await fetch(url, { cache: 'no-store' });if(!response.ok) throw new Error(`Unable to load ${url}: HTTP ${response.status}`);return await response.json();}
+		function renderSummary(report){const summary = report.summary || {};const source = report.source || {};document.getElementById('summary').className = 'panel';document.getElementById('summary').innerHTML = `<h2>${escapeHtml(summary.title || report.root.name || 'Workflow report')}</h2><div><span class="chip ${statusClass(summary.status || report.root.status)}">${escapeHtml(summary.status || report.root.status || 'unknown')}</span><span class="chip">schema: ${escapeHtml(report.schema)}</span><span class="chip">generated: ${escapeHtml(report.generatedUtc || '')}</span></div><p class="muted">${escapeHtml(source.runId || source.sessionKey || source.kind || '')}</p><pre>${escapeHtml(JSON.stringify(summary, null, 2))}</pre>`;}
+		function renderNode(node, depth){const children = Array.isArray(node.children) ? node.children : [];const id = String(node.id || `node-${depth}-${Math.random()}`);const isOpen = expanded.has(id);const artifacts = Array.isArray(node.artifacts) ? node.artifacts : [];const artifactHtml = artifacts.length === 0 ? '' : `<div>${artifacts.map(a => `<a class="chip" href="${escapeHtml(a.href || a.path || a.file || '#')}">${escapeHtml(a.label || a.file || a.path || 'artifact')}</a>`).join('')}</div>`;const body = isOpen ? `<pre>${escapeHtml(node.output || node.summary || '')}</pre>${artifactHtml}${node.result ? `<details><summary>Node result JSON</summary><pre>${escapeHtml(JSON.stringify(node.result, null, 2))}</pre></details>` : ''}` : '';return `<div class="node" style="margin-left:${depth * 24}px"><h3>${children.length ? `<button type="button" data-toggle="${escapeHtml(id)}">${isOpen ? '▾' : '▸'}</button> ` : ''}${escapeHtml(node.name || node.title || id)}</h3><div><span class="chip">${escapeHtml(node.type || 'unknown')}</span><span class="chip ${statusClass(node.status)}">${escapeHtml(node.status || 'unknown')}</span><span class="chip">${escapeHtml(id)}</span></div>${body}${isOpen ? children.map(child => renderNode(child, depth + 1)).join('') : ''}</div>`;}
+		function collectIds(node){const ids = [String(node.id || '')];for(const child of Array.isArray(node.children) ? node.children : []) ids.push(...collectIds(child));return ids.filter(Boolean);}
+		function render(){if(!currentReport) return;renderSummary(currentReport);document.getElementById('tree').innerHTML = renderNode(currentReport.root, 0);document.getElementById('rawJsonPanel').className = 'panel';document.getElementById('rawJson').textContent = JSON.stringify(currentReport, null, 2);document.querySelectorAll('[data-toggle]').forEach(button => button.addEventListener('click', event => {const id = event.currentTarget.getAttribute('data-toggle');if(expanded.has(id)) expanded.delete(id); else expanded.add(id);render();}));}
+		async function loadAndRender(url){try{showMessage('Loading workflow report...', false);const report = await loadFromUrl(url);validateReport(report);currentReport = report;expanded = new Set(collectIds(report.root));render();showMessage(`Loaded ${url}`, false);}catch(error){showMessage(error.message, true);}}
+		document.getElementById('loadButton').addEventListener('click', () => loadAndRender(document.getElementById('jsonUrl').value.trim()));
+		document.getElementById('expandButton').addEventListener('click', () => { if(currentReport) expanded = new Set(collectIds(currentReport.root)); render(); });
+		document.getElementById('collapseButton').addEventListener('click', () => { expanded = new Set(); render(); });
+		document.getElementById('fileInput').addEventListener('change', async event => {try{const file = event.target.files[0];if(!file) return;const report = JSON.parse(await file.text());validateReport(report);currentReport = report;expanded = new Set(collectIds(report.root));render();showMessage(`Loaded local file ${file.name}`, false);}catch(error){showMessage(error.message, true);}});
+		const requestedUrl = getRequestedJsonUrl();document.getElementById('jsonUrl').value = requestedUrl;if(requestedUrl) loadAndRender(requestedUrl); else showMessage('Choose a workflow report JSON file or provide ?json=...', false);
+	</script>
+</body>
+</html>

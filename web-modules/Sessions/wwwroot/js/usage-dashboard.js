@@ -133,6 +133,7 @@
 		renderWarning(response.Warnings && response.Warnings.length > 0 ? response.Warnings.join(" ") : "");
 		renderFilters(response.Filters);
 		renderSummary(response.Summary);
+		renderProgressiveEvictionSavings(response.ProgressiveEvictionSavings);
 		renderAggregatePies(response.Summary, response.ProviderModelRows);
 		renderLazyGraphs();
 		renderChart(response.TimeBuckets);
@@ -190,6 +191,29 @@
 			var value = card[2] === "latency" ? formatMilliseconds(card[1]) : formatNumber(card[1]);
 			return "<div class=\"col-md-6 col-xl-3\"><div class=\"usage-card\"><div class=\"usage-label\">" + escapeHtml(card[0]) + "</div><div class=\"usage-value\">" + escapeHtml(value) + "</div></div></div>";
 		}).join("");
+	}
+
+	function renderProgressiveEvictionSavings(savings) {
+		var summary = document.querySelector("[data-summary-cards]");
+		if (!summary) {
+			return;
+		}
+		var existing = summary.querySelector("[data-progressive-eviction-savings]");
+		if (existing) {
+			existing.remove();
+		}
+		var row = savings || {};
+		var evictedTokens = Number(row.EvictedToolResultTokens || 0);
+		var totalTokens = Number(row.TotalToolResultTokens || 0);
+		var evictedRows = Number(row.EvictedToolResultRows || 0);
+		var percent = Number(row.ToolTokenEvictedPercent || 0);
+		var detail = totalTokens <= 0 ? "No tool results in range" : formatNumber(evictedTokens) + " / " + formatNumber(totalTokens) + " est. tokens";
+		var rowsDetail = evictedRows <= 0 ? "" : " · " + formatNumber(evictedRows) + " rows evicted";
+		var container = document.createElement("div");
+		container.className = "col-md-6 col-xl-3";
+		container.setAttribute("data-progressive-eviction-savings", "");
+		container.innerHTML = "<div class=\"usage-card usage-eviction-savings-card\"><div class=\"usage-label\">Tool context evicted</div><div class=\"usage-value\">" + escapeHtml(formatPercent(percent)) + "</div><div class=\"text-muted small\">" + escapeHtml(detail + rowsDetail) + "</div></div>";
+		summary.appendChild(container);
 	}
 
 	function renderAggregatePies(summary, providerRows) {

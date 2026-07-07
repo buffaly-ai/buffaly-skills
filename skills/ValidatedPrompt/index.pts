@@ -93,6 +93,43 @@ prototype ToRunValidatedPromptSkillFromSessionFile : ValidatedPromptSkillAction
 			childSessionKeyOverride);
 	}
 }
+[SemanticProgram.InfinitivePhrase("to inspect a validated prompt action definition")]
+prototype ToInspectValidatedPromptActionDefinition : ValidatedPromptSkillAction
+{
+	Description = @"validatedPromptActionName - prototype name for one ValidatedPromptAction. Returns resolution details for debugging deployed validated prompt definitions.";
+
+	function Execute(string validatedPromptActionName) : string
+	{
+		if (_opsAgent == null)
+			return "Error: _opsAgent runtime is not available.";
+		string prototypeName = validatedPromptActionName.Trim();
+		if (StringUtil.IsEmpty(prototypeName))
+			return "Error: validatedPromptActionName is required.";
+
+		ValidatedPromptAction validatedPromptAction = null;
+		Collection validatedPromptActions = ValidatedPromptAction.GetDescendants();
+		foreach (Prototype candidatePrototype in validatedPromptActions)
+		{
+			if (candidatePrototype.PrototypeName == prototypeName)
+			{
+				if (candidatePrototype typeof ValidatedPromptAction)
+					validatedPromptAction = candidatePrototype;
+			}
+		}
+
+		if (validatedPromptAction == null)
+			return "found=false; action=" + prototypeName;
+		string workPrompt = validatedPromptAction.WorkPrompt;
+		string validationPrompt = validatedPromptAction.ValidationPrompt;
+		string workPromptPath = validatedPromptAction.WorkPromptPath;
+		string validationPromptPath = validatedPromptAction.ValidationPromptPath;
+		if (StringUtil.IsEmpty(workPrompt))
+			workPrompt = _opsAgent.LoadTrustedPromptText(workPromptPath);
+		if (StringUtil.IsEmpty(validationPrompt))
+			validationPrompt = _opsAgent.LoadTrustedPromptText(validationPromptPath);
+		return "found=true; action=" + validatedPromptAction.PrototypeName + "; workPath=" + workPromptPath + "; validationPath=" + validationPromptPath + "; workLength=" + workPrompt.Length.ToString() + "; validationLength=" + validationPrompt.Length.ToString();
+	}
+}
 [SemanticProgram.InfinitivePhrase("to summarize text in one sentence with validation")]
 [SemanticProgram.InfinitivePhrase("to summarize text in exactly one faithful sentence")]
 prototype ToSummarizeTextInOneSentenceSkill : ValidatedPromptAction, ValidatedPromptSkillAction
@@ -106,112 +143,37 @@ prototype ToSummarizeTextInOneSentenceSkill : ValidatedPromptAction, ValidatedPr
 }
 
 
-[SemanticProgram.InfinitivePhrase("to analyze an existing website for SEO improvements with validation")]
-[SemanticProgram.InfinitivePhrase("to run the validated SEO website analysis prompt")]
-prototype ToAnalyzeExistingWebsiteForImprovementsValidatedSkill : ValidatedPromptAction, ValidatedPromptSkillAction
+
+
+
+
+
+
+
+
+
+
+[SemanticProgram.InfinitivePhrase("to generate a workflow report narrative")]
+[SemanticProgram.InfinitivePhrase("to summarize a workflow run report")]
+prototype ToGenerateWorkflowReportNarrativeSkill : PromptAction, ValidatedPromptSkillAction
 {
 	IsPromptAction = true;
-	SkillKind = "validated-prompt";
+	SkillKind = "prompt";
 	SkillVersion = "1.0.0";
-	Description = @"Validated SEO / website improvement audit prompt for small-business sales packet analysis. Use through ToRunValidatedPromptSkill so the work result is followed by a separate validation turn.";
-	WorkPromptPath = @"Skills/ValidatedPrompt/Prompts/AnalyzeExistingWebsiteForImprovements.work.prompt.md";
-	ValidationPromptPath = @"Skills/ValidatedPrompt/Prompts/AnalyzeExistingWebsiteForImprovements.validation.prompt.md";
+	Description = @"Generate a human-readable narrative summary from a buffaly.workflowRunReport.v1 JSON document without changing deterministic workflow status.";
+	PromptPath = @"Skills/ValidatedPrompt/WorkflowReport/Prompts/GenerateWorkflowReportNarrative.prompt.md";
 }
 
-[SemanticProgram.InfinitivePhrase("to run the required SEO packet review with validation")]
-[SemanticProgram.InfinitivePhrase("to validate sales readiness of an SEO website analysis")]
-prototype ToRunRequiredSeoPacketReviewValidatedSkill : ValidatedPromptAction, ValidatedPromptSkillAction
+[SemanticProgram.InfinitivePhrase("to generate a validated workflow report narrative")]
+[SemanticProgram.InfinitivePhrase("to validate a workflow report narrative summary")]
+prototype ToGenerateWorkflowReportNarrativeValidatedSkill : ValidatedPromptAction, ValidatedPromptSkillAction
 {
 	IsPromptAction = true;
 	SkillKind = "validated-prompt";
 	SkillVersion = "1.0.0";
-	Description = @"Validated review pass for an SEO website analysis before it is used in sales packet materials.";
-	WorkPromptPath = @"Skills/ValidatedPrompt/Prompts/RequiredSeoPacketReview.work.prompt.md";
-	ValidationPromptPath = @"Skills/ValidatedPrompt/Prompts/RequiredSeoPacketReview.validation.prompt.md";
-}
-
-[SemanticProgram.InfinitivePhrase("to create competitor positioning for an SEO sales packet with validation")]
-[SemanticProgram.InfinitivePhrase("to find competitors and positioning for a validated SEO sales packet")]
-prototype ToCreateCompetitorPositioningForSeoSalesPacketValidatedSkill : ValidatedPromptAction, ValidatedPromptSkillAction
-{
-	IsPromptAction = true;
-	SkillKind = "validated-prompt";
-	SkillVersion = "1.0.0";
-	Description = @"Validated competitor and positioning section for an SEO website analysis sales packet.";
-	WorkPromptPath = @"Skills/ValidatedPrompt/Prompts/CompetitorPositioningForSeoSalesPacket.work.prompt.md";
-	ValidationPromptPath = @"Skills/ValidatedPrompt/Prompts/CompetitorPositioningForSeoSalesPacket.validation.prompt.md";
-}
-
-[SemanticProgram.InfinitivePhrase("to create a client facing website improvement report with validation")]
-[SemanticProgram.InfinitivePhrase("to create the client facing report for a validated SEO sales packet")]
-prototype ToCreateClientFacingWebsiteImprovementReportValidatedSkill : ValidatedPromptAction, ValidatedPromptSkillAction
-{
-	IsPromptAction = true;
-	SkillKind = "validated-prompt";
-	SkillVersion = "1.0.0";
-	Description = @"Validated client-facing website improvement report for an SEO sales packet.";
-	WorkPromptPath = @"Skills/ValidatedPrompt/Prompts/ClientFacingWebsiteImprovementReport.work.prompt.md";
-	ValidationPromptPath = @"Skills/ValidatedPrompt/Prompts/ClientFacingWebsiteImprovementReport.validation.prompt.md";
-}
-
-[SemanticProgram.InfinitivePhrase("to create a demo website for an SEO sales packet with validation")]
-[SemanticProgram.InfinitivePhrase("to create the validated demo website artifact for an SEO sales packet")]
-prototype ToCreateDemoWebsiteForSeoSalesPacketValidatedSkill : ValidatedPromptAction, ValidatedPromptSkillAction
-{
-	IsPromptAction = true;
-	SkillKind = "validated-prompt";
-	SkillVersion = "1.0.0";
-	Description = @"Validated demo website concept and preview-ready artifact for an SEO sales packet.";
-	WorkPromptPath = @"Skills/ValidatedPrompt/Prompts/DemoWebsiteForSeoSalesPacket.work.prompt.md";
-	ValidationPromptPath = @"Skills/ValidatedPrompt/Prompts/DemoWebsiteForSeoSalesPacket.validation.prompt.md";
-}
-
-[SemanticProgram.InfinitivePhrase("to review a demo website for an SEO sales packet with validation")]
-[SemanticProgram.InfinitivePhrase("to run the validated demo sales readiness review")]
-prototype ToReviewDemoWebsiteForSeoSalesPacketValidatedSkill : ValidatedPromptAction, ValidatedPromptSkillAction
-{
-	IsPromptAction = true;
-	SkillKind = "validated-prompt";
-	SkillVersion = "1.0.0";
-	Description = @"Validated visual/content/sales-readiness review for an SEO sales packet demo website artifact.";
-	WorkPromptPath = @"Skills/ValidatedPrompt/Prompts/DemoReviewForSeoSalesPacket.work.prompt.md";
-	ValidationPromptPath = @"Skills/ValidatedPrompt/Prompts/DemoReviewForSeoSalesPacket.validation.prompt.md";
-}
-
-[SemanticProgram.InfinitivePhrase("to create a proposal deck for an SEO sales packet with validation")]
-[SemanticProgram.InfinitivePhrase("to create the validated proposal deck content for an SEO sales packet")]
-prototype ToCreateProposalDeckForSeoSalesPacketValidatedSkill : ValidatedPromptAction, ValidatedPromptSkillAction
-{
-	IsPromptAction = true;
-	SkillKind = "validated-prompt";
-	SkillVersion = "1.0.0";
-	Description = @"Validated proposal deck content and sales narrative for an SEO website analysis sales packet.";
-	WorkPromptPath = @"Skills/ValidatedPrompt/Prompts/ProposalDeckForSeoSalesPacket.work.prompt.md";
-	ValidationPromptPath = @"Skills/ValidatedPrompt/Prompts/ProposalDeckForSeoSalesPacket.validation.prompt.md";
-}
-
-[SemanticProgram.InfinitivePhrase("to package an SEO sales packet with validation")]
-[SemanticProgram.InfinitivePhrase("to assemble the final validated SEO sales packet")]
-prototype ToPackageSeoSalesPacketValidatedSkill : ValidatedPromptAction, ValidatedPromptSkillAction
-{
-	IsPromptAction = true;
-	SkillKind = "validated-prompt";
-	SkillVersion = "1.0.0";
-	Description = @"Validated final package manifest and sales-rep README for an SEO website analysis sales packet.";
-	WorkPromptPath = @"Skills/ValidatedPrompt/Prompts/SeoSalesPacketPackage.work.prompt.md";
-	ValidationPromptPath = @"Skills/ValidatedPrompt/Prompts/SeoSalesPacketPackage.validation.prompt.md";
-}
-
-[SemanticProgram.InfinitivePhrase("to create website analysis from evidence for an SEO sales packet with validation")]
-[SemanticProgram.InfinitivePhrase("to synthesize the validated SEO sales packet website analysis from supplied evidence")]
-prototype ToCreateWebsiteAnalysisFromEvidenceForSeoSalesPacketValidatedSkill : ValidatedPromptAction, ValidatedPromptSkillAction
-{
-	IsPromptAction = true;
-	SkillKind = "validated-prompt";
-	SkillVersion = "1.0.0";
-	Description = @"Validated evidence-only website analysis synthesis for an SEO website analysis sales packet.";
-	WorkPromptPath = @"Skills/ValidatedPrompt/Prompts/WebsiteAnalysisFromEvidenceForSeoSalesPacket.work.prompt.md";
-	ValidationPromptPath = @"Skills/ValidatedPrompt/Prompts/WebsiteAnalysisFromEvidenceForSeoSalesPacket.validation.prompt.md";
+	Description = @"Generate and validate a narrative summary from a buffaly.workflowRunReport.v1 JSON document while treating the JSON as the source of truth.";
+	WorkPromptPath = @"Skills/ValidatedPrompt/WorkflowReport/Prompts/GenerateWorkflowReportNarrative.prompt.md";
+	ValidationPromptPath = @"Skills/ValidatedPrompt/WorkflowReport/Prompts/ValidateWorkflowReportNarrative.prompt.md";
 }
 
 [SemanticProgram.InfinitivePhrase("to debug validated prompt string binding")]
@@ -227,3 +189,4 @@ prototype ToDebugEchoValidatedPromptStringBinding : ValidatedPromptSkillAction
 		return "length=" + text.Length + "\nstart=" + start;
 	}
 }
+
