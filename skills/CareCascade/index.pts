@@ -334,7 +334,7 @@ prototype ToGetCareCascadeSnomedLinkedIcd10Codes : CareCascadeSkillAction
 		JsonObject args = new JsonObject();
 		args["Method"] = "GetLinkedIcd10Codes";
 		args["conceptId"] = conceptId;
-		return service.CallSnomedRoute("get-linked-icd10-codes", args);
+		return service.CallSnomedRoute("get-linked-icd-10-codes", args);
 	}
 	Description = @"service - CareCascadeSnomedJsonWsService binding, normally CareCascadeSnomedJsonWsService#Published. conceptId - SNOMED CT concept ID. Calls GetLinkedIcd10Codes and returns ICD-10 mapTarget values from ExtendedMapSnapshot as JSON string array. Returns empty array if no maps exist.";
 }
