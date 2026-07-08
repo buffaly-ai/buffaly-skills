@@ -138,6 +138,7 @@ AS
     SELECT *
     FROM Sessions WITH (NOLOCK) 
     WHERE [ParentSessionID] = @ParentSessionID
+		AND ISNULL([IsArchived], 0) = 0
 					) sub
 		where		
 					[SessionID] like '%' + @Search + '%' or

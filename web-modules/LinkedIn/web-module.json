@@ -1,19 +1,19 @@
-{
-  "Module": {
-    "Enabled": true,
-    "Name": "LinkedIn",
-    "DisplayName": "LinkedIn",
-    "Description": "Buffaly LinkedIn integration for OAuth, draft workflows, publishing, brand voice, content intelligence, and engagement.",
-    "AssemblyPath": "LinkedIn/Buffaly.LinkedIn.dll",
-    "TypeName": "Buffaly.LinkedIn.LinkedInWebModule",
-    "LoadOrder": 1200,
-    "Pages": [
-      {
-        "Name": "linkedin",
-        "DisplayName": "LinkedIn",
-        "Path": "/web-modules/LinkedIn/index.html",
-        "Description": "Open the LinkedIn integration UI."
-      }
-    ]
-  }
+﻿{
+    "Module":  {
+                   "Enabled":  true,
+                   "Name":  "LinkedIn",
+                   "DisplayName":  "LinkedIn",
+                   "Description":  "Buffaly LinkedIn integration for OAuth, draft workflows, publishing, brand voice, content intelligence, and engagement.",
+                   "AssemblyPath":  "LinkedIn/Buffaly.LinkedIn.dll",
+                   "TypeName":  "Buffaly.LinkedIn.LinkedInWebModule",
+                   "LoadOrder":  1200,
+                   "Pages":  [
+                                 {
+                                     "Name":  "linkedin",
+                                     "DisplayName":  "LinkedIn",
+                                     "Path":  "/web-modules/LinkedIn/index.html",
+                                     "Description":  "Open the LinkedIn integration UI."
+                                 }
+                             ]
+               }
 }

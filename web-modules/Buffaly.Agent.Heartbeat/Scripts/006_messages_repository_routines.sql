@@ -146,6 +146,40 @@ LANGUAGE sql AS $$
 SELECT * FROM update_messages_compaction_epoch_by_message_keys_json_sp(p_session_id,p_message_keys_json,p_compaction_epoch,p_compaction_epoch_key);
 $$;
 
+CREATE OR REPLACE FUNCTION update_message_compaction_epoch_atomic_sp(p_session_id integer,p_message_key text,p_compaction_epoch integer,p_compaction_epoch_key text)
+RETURNS TABLE ("UpdatedRows" integer)
+LANGUAGE plpgsql AS $$
+DECLARE
+	v_message_id integer;
+BEGIN
+	SELECT message_id INTO v_message_id
+	FROM messages
+	WHERE session_id = p_session_id
+		AND message_key = p_message_key
+	ORDER BY message_id ASC
+	LIMIT 1;
+
+	IF v_message_id IS NULL THEN
+		RETURN QUERY SELECT 0;
+		RETURN;
+	END IF;
+
+	UPDATE messages
+	SET compaction_epoch = p_compaction_epoch,
+		compaction_epoch_key = p_compaction_epoch_key,
+		last_updated = now()
+	WHERE message_id = v_message_id;
+
+	RETURN QUERY SELECT 1;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION "UpdateMessageCompactionEpochAtomicSp"(p_session_id integer,p_message_key text,p_compaction_epoch integer,p_compaction_epoch_key text)
+RETURNS TABLE ("UpdatedRows" integer)
+LANGUAGE sql AS $$
+SELECT * FROM update_message_compaction_epoch_atomic_sp(p_session_id,p_message_key,p_compaction_epoch,p_compaction_epoch_key);
+$$;
+
 CREATE OR REPLACE FUNCTION update_message_date_created_sp(p_message_id integer,p_date_created timestamp)
 RETURNS void LANGUAGE sql AS $$
 	UPDATE messages SET date_created = p_date_created WHERE message_id = p_message_id;

@@ -3,129 +3,37 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>LinkedIn - Buffaly</title>
+	<title>LinkedIn Post Workspace - Buffaly</title>
+	<link rel="icon" href="data:,">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/buffaly-page.css">
-	<link rel="stylesheet" href="css/linkedin.css?v=1">
+<link rel="stylesheet" href="css/linkedin.css?v=17">
 </head>
 <body class="buffaly-page">
-	<div class="buffaly-app-strip" role="banner">
-		<a class="buffaly-app-strip-brand" href="/">
-			<span>Buffaly</span>
-		</a>
-		<div class="buffaly-app-strip-page">LinkedIn</div>
-	</div>
-	<div class="linkedin-shell">
-		<section class="linkedin-hero">
-			<div class="buffaly-page-hero-main">
-				<div class="buffaly-kicker">LinkedIn command center</div>
-				<h1 class="buffaly-title">LinkedIn</h1>
-				<p class="buffaly-subtitle">Plan, draft, publish, analyze, and manage your LinkedIn presence from one governed workspace.</p>
-			</div>
-			<div class="buffaly-page-hero-actions">
-				<span id="statusChip" class="buffaly-status-pill status-warning">Checking connection status...</span>
-				<span id="statusDetail" class="buffaly-muted"></span>
+	<div class="buffaly-app-strip" role="banner"><a class="buffaly-app-strip-brand" href="/"><span>Buffaly</span></a><div class="buffaly-app-strip-page">LinkedIn</div></div>
+	<main class="linkedin-shell">
+		<section class="workspace-topbar">
+			<div><div class="buffaly-kicker">LinkedIn post workspace</div><h1 class="buffaly-title">Create great LinkedIn posts iteratively.</h1><p class="buffaly-subtitle">Pick an existing draft or published post, or start a new post. The chat produces the post artifact.</p></div>
+
+<div class="workspace-status-row"><span id="statusChip" class="buffaly-status-pill status-warning">Checking connection...</span><select id="voiceSelect" class="voice-select" aria-label="Select voice"><option value="default">Default voice</option><option value="executive">Executive Thought Leader</option><option value="founder">Startup Founder</option><option value="expert">Industry Expert</option><option value="casual">Casual Professional</option><option value="storyteller">Brand Storyteller</option></select><button id="openSettingsBtn" class="buffaly-button secondary" type="button"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/><path d="M9.795 1.144a.75.75 0 0 1-.44 1.052l-.803.246a.75.75 0 0 0-.44 1.052l.246.803a.75.75 0 0 1-.44 1.052l-.803.246a.75.75 0 0 1-.95-.44l-.246-.803a.75.75 0 0 0-.95-.44l-.803.246a.75.75 0 0 1-.95-.44l-.246-.803a.75.75 0 0 1 .44-.95l.803-.246a.75.75 0 0 0 .44-.95l-.246-.803a.75.75 0 0 1 .44-.95l.803-.246a.75.75 0 0 1 .95.44l.246.803a.75.75 0 0 0 .95.44l.803-.246a.75.75 0 0 1 .95.44l.246.803z"/></svg>Settings</button></div>
+		</section>
+		<div id="toastRegion" class="toast-region" aria-live="polite"></div><div id="modalRoot" class="modal-root" aria-live="polite"><div id="configModal" class="config-modal-overlay" aria-hidden="true"><div class="config-modal"><div class="config-modal-header"><h2>Configure App Credentials</h2><button id="closeConfigModalBtn" class="buffaly-button secondary" type="button">Close</button></div><div class="config-modal-body"><label for="configClientId">Client ID</label><input id="configClientId" type="text" placeholder="LinkedIn Client ID" autocomplete="off" /><label for="configClientSecret">Client Secret</label><input id="configClientSecret" type="password" placeholder="LinkedIn Client Secret" autocomplete="off" /><label for="configRedirectUri">Redirect URI</label><input id="configRedirectUri" type="text" placeholder="http://127.0.0.1:5110/oauth/callback" autocomplete="off" /><label for="configScopes">Scopes</label><input id="configScopes" type="text" placeholder="openid profile email w_member_social" autocomplete="off" /></div><div class="config-modal-footer"><button id="saveConfigBtn" class="buffaly-button" type="button">Save</button><button id="cancelConfigBtn" class="buffaly-button secondary" type="button">Cancel</button></div></div></div><div id="callbackModal" class="config-modal-overlay" aria-hidden="true"><div class="config-modal"><div class="config-modal-header"><h2>Paste Callback URL</h2><button id="closeCallbackModalBtn" class="buffaly-button secondary" type="button">Close</button></div><div class="config-modal-body"><p class="buffaly-muted">After authorizing on LinkedIn, paste the full callback URL here:</p><textarea id="callbackUrlInput" rows="4" placeholder="http://localhost:8000/callback?code=...&state=..." autocomplete="off" style="width:100%;font-family:monospace;font-size:.8125rem;padding:8px 12px;border:1px solid #d0ccc4;border-radius:4px;resize:vertical"></textarea></div><div class="config-modal-footer"><button id="submitCallbackBtn" class="buffaly-button" type="button">Complete Authorization</button><button id="cancelCallbackBtn" class="buffaly-button secondary" type="button">Cancel</button></div></div></div><div id="voiceEditModal" class="config-modal-overlay" aria-hidden="true"><div class="config-modal"><div class="config-modal-header"><h2>Edit Global Voice</h2><button id="closeVoiceModalBtn" class="buffaly-button secondary" type="button">Close</button></div><div class="config-modal-body"><label for="voiceToneInput">Tone</label><input id="voiceToneInput" type="text" placeholder="e.g. Authoritative, strategic, concise" autocomplete="off" /><label for="voiceAudienceInput">Audience</label><input id="voiceAudienceInput" type="text" placeholder="e.g. C-suite, board members" autocomplete="off" /></div><div class="config-modal-footer"><button id="saveVoiceBtn" class="buffaly-button" type="button">Save Voice</button><button id="cancelVoiceBtn" class="buffaly-button secondary" type="button">Cancel</button></div></div></div></div>		<section id="postListView" class="post-list-view buffaly-panel">
+			<div class="list-view-header"><div><h2 class="buffaly-panel-title">Choose a post</h2><p class="buffaly-muted">Select a draft or published post, or create a new post conversation.</p></div><button id="newDraftBtn" class="buffaly-button" type="button"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 2a.75.75 0 0 1 .75.75v4.5h4.5a.75.75 0 0 1 0 1.5h-4.5v4.5a.75.75 0 0 1-1.5 0v-4.5h-4.5a.75.75 0 0 1 0-1.5h4.5v-4.5A.75.75 0 0 1 8 2z"/></svg>Create New Post</button></div>
+			<div class="switcher-tabs"><button class="switcher-tab active" data-switcher="drafts" type="button">Drafts</button><button class="switcher-tab" data-switcher="published" type="button">Published</button></div>
+			<p id="draftsStatusText" class="buffaly-muted">Loading drafts...</p><div id="draftsList" class="selectable-post-list"></div>
+			<p id="publishedPostsStatus" class="buffaly-muted mt-3">Loading published posts...</p><div id="publishedPostsList" class="selectable-post-list hidden"></div>
+		</section>
+		<section id="postDetailView" class="post-detail-view hidden">
+			<div class="detail-toolbar"><button id="backToListBtn" class="buffaly-button secondary" type="button"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M7.78 12.53a.75.75 0 0 1-1.06 0L2.47 8.28a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 1.06L4.06 7.75H13a.75.75 0 0 1 0 1.5H4.06l3.72 3.72a.75.75 0 0 1 0 1.06z"/></svg>Back to posts</button><div><div id="activeModeLabel" class="buffaly-kicker">Draft mode</div><h2 id="activePostTitle" class="buffaly-panel-title">Untitled draft</h2></div><div class="buffaly-action-row"><button id="saveDraftBtn" class="buffaly-button" type="button"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2.75A.75.75 0 0 1 2.75 2h8.5a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-8.5a.75.75 0 0 1-.75-.75V2.75zM3.5 4v8h7V4h-7z"/></svg>Save Artifact</button><button id="approveDraftBtn" class="buffaly-button secondary" type="button"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 0 1-1.06 0l-3.5-3.5a.75.75 0 0 1 1.06-1.06l2.97 2.97 6.97-6.97a.75.75 0 0 1 1.06 0z"/></svg>Approve</button><button id="publishDraftBtn" class="buffaly-button" type="button"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1.75 2a.75.75 0 0 1 .75.75v8.5h11.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1-.75-.75V2.75A.75.75 0 0 1 1.75 2zM14.47 3.97a.75.75 0 0 1 1.06 1.06l-2.5 2.5a.75.75 0 0 1-1.06 0l-2.5-2.5a.75.75 0 1 1 1.06-1.06l1.97 1.97 1.97-1.97z"/></svg>Publish</button></div></div>
+			<div class="conversation-layout">
+				<section class="artifact-panel buffaly-panel"><div class="artifact-panel-header"><h3>Post artifact</h3><div class="edit-preview-toggle"><button id="editModeBtn" class="ep-tab active" type="button">Edit</button><button id="previewModeBtn" class="ep-tab" type="button">Preview</button></div></div><div id="editModeView"><textarea id="postTextInput" class="post-editor-input" placeholder="The chat result will appear here. You can still edit directly."></textarea><div class="editor-meta-row"><span id="characterCount" class="buffaly-muted">0 characters</span><select id="visibilitySelect" class="buffaly-input compact-input"><option value="PUBLIC">Public</option><option value="CONNECTIONS">Connections</option></select></div><div class="media-strip"><strong>Media</strong><p id="mediaStatus" class="buffaly-muted">No media attached.</p><div id="imagePreviewArea"></div><div id="mediaCycler" class="media-cycler hidden"></div></div><div id="variantsSection" class="variants-section hidden"><strong>Variants</strong><p id="variantsStatus" class="buffaly-muted">No variants saved.</p><div id="variantsList" class="variants-list"></div></div></div><div id="previewModeView" class="hidden"><div id="linkedinPreviewCard"></div></div><div id="publishedReportSurface" class="published-report-surface hidden"><h3>Published report</h3><p id="publishedPostMeta" class="buffaly-muted"></p><pre id="publishedPostText" class="published-text"></pre><button id="deletePublishedBtn" class="buffaly-button danger" type="button"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M6.5 1.75a.25.25 0 0 1 .25-.25h2.5a.25.25 0 0 1 .25.25V3h3.75a.75.75 0 0 1 0 1.5H13v8.75A1.75 1.75 0 0 1 11.25 15h-6.5A1.75 1.75 0 0 1 3 13.25V4.5h-.25a.75.75 0 0 1 0-1.5H6.5V1.75zM5 4.5v8.75a.25.25 0 0 0 .25.25h6.5a.25.25 0 0 0 .25-.25V4.5H5zm1.5 1.75a.75.75 0 0 1 1.5 0v5a.75.75 0 0 1-1.5 0v-5zm2.5 0a.75.75 0 0 1 1.5 0v5a.75.75 0 0 1-1.5 0v-5z"/></svg>Delete Published Post</button></div></section>
+				<section class="chat-panel buffaly-panel"><div class="chat-heading"><div><div class="buffaly-kicker">Buffaly post assistant</div><h3>Chat about this post</h3></div><span id="conversationIdChip" class="buffaly-status-pill">New conversation</span></div><div id="chatTranscript" class="chat-transcript"><div class="chat-message assistant">Tell me what the post should be about. I can help draft text, refine it, and decide whether an image belongs with it.</div></div><div class="chat-compose"><textarea id="assistantInstructionInput" class="buffaly-input" placeholder="Message Buffaly about the post..."></textarea><div class="buffaly-action-row"><label class="image-toggle"><input id="wantsImageToggle" type="checkbox"> include image direction</label><button id="sendChatBtn" class="buffaly-button" type="button"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M.98 1.37a.75.75 0 0 1 .93-.27l13.5 6.75a.75.75 0 0 1 0 1.34l-13.5 6.75a.75.75 0 0 1-1.05-.85L2.5 8 .36 2.22a.75.75 0 0 1 .62-.85zM3.7 8L2.3 3.5 12.5 8 2.3 12.5 3.7 8z"/></svg>Send</button></div></div></section>
 			</div>
 		</section>
-
-		<div id="toastRegion" class="toast-region" aria-live="polite"></div>
-		<div id="modalRoot" class="modal-root" aria-live="polite"></div>
-
-		<div class="linkedin-grid mt-4 editor-first-grid">
-			<div class="buffaly-span-7">
-				<section class="buffaly-panel primary-editor-panel" id="composerPanel">
-					<h2 class="buffaly-panel-title">Post Editor</h2>
-					<p class="buffaly-muted">Draft, generate, attach media, and publish from one primary workspace.</p>
-					<div id="quickComposer" class="composer-card"></div>
-				</section>
-			</div>
-			<div class="buffaly-span-5">
-				<section class="buffaly-panel" id="contentToolsPanel">
-					<h2 class="buffaly-panel-title">Generate & Media</h2>
-					<p class="buffaly-muted" id="llmStatusText">Loading provider info...</p>
-					<div id="contentToolTabs" class="tool-tabs"></div>
-					<div id="contentToolResult" class="tool-result buffaly-muted">Choose a provider-backed tool to generate, polish, optimize, vary, or repurpose content.</div>
-					<div id="imageGeneratorPanel" class="mt-3">
-						<h3 class="buffaly-panel-title" style="font-size:1rem">Image Generator</h3>
-						<p class="buffaly-muted">Generate an AI image for your LinkedIn post through Buffaly image tooling.</p>
-						<textarea id="imagePromptInput" class="buffaly-input mt-2" placeholder="Describe the image you want..."></textarea>
-						<div class="buffaly-action-row mt-2">
-							<button id="generateImageBtn" class="buffaly-button" type="button">Generate Image</button>
-						</div>
-						<div id="imageResultArea" class="mt-2"></div>
-					</div>
-				</section>
-			</div>
-		</div>
-
-		<div class="linkedin-grid mt-4 secondary-workspace-grid">
-			<div class="buffaly-span-8">
-				<!-- Account / Connection -->
-				<section class="buffaly-panel compact-settings-panel" id="accountPanel">
-					<h2 class="buffaly-panel-title">Connection & Settings</h2>
-					<p class="buffaly-muted" id="accountStatusText">Loading account status...</p>
-					<div id="accountDetails" class="mt-3"></div>
-					<div class="buffaly-action-row mt-3" id="accountActions">
-						<button id="configureBtn" class="buffaly-button secondary" type="button">Configure App Credentials</button>
-						<button id="authorizeBtn" class="buffaly-button" type="button" disabled>Authorize</button>
-						<button id="completeCallbackBtn" class="buffaly-button secondary" type="button">Paste Callback URL</button>
-						<button id="disconnectBtn" class="buffaly-button secondary" type="button" disabled>Disconnect</button>
-					</div>
-				</section>
-
-			<!-- Drafts Board -->
-			<section class="buffaly-panel mt-4" id="draftsPanel">
-				<h2 class="buffaly-panel-title">Drafts</h2>
-				<div class="draft-filters mt-2 mb-2">
-					<button class="buffaly-button secondary draft-filter-btn active" data-filter="">All</button>
-					<button class="buffaly-button secondary draft-filter-btn" data-filter="draft">Draft</button>
-					<button class="buffaly-button secondary draft-filter-btn" data-filter="approved">Approved</button>
-					<button class="buffaly-button secondary draft-filter-btn" data-filter="scheduled">Scheduled</button>
-					<button class="buffaly-button secondary draft-filter-btn" data-filter="published">Published</button>
-				</div>
-				<p class="buffaly-muted" id="draftsStatusText">Loading drafts...</p>
-				<div id="draftsList" class="drafts-board mt-3"></div>
-				<div class="buffaly-action-row mt-3">
-					<button id="createDraftBtn" class="buffaly-button" type="button">Create Draft</button>
-				</div>
-				</section>
-			</div>
-
-			<div class="buffaly-span-4 side-stack">
-				<section class="buffaly-panel" id="voicePanel">
-					<h2 class="buffaly-panel-title">Brand Voice</h2>
-					<p class="buffaly-muted" id="voiceStatusText">Loading voice profile...</p>
-					<div id="voiceSummary" class="voice-summary"></div>
-					<div class="buffaly-action-row mt-3">
-						<button id="editVoiceBtn" class="buffaly-button secondary" type="button">Edit Voice</button>
-					</div>
-				</section>
-			</div>
-		</div>
-
-		<div class="linkedin-grid mt-4">
-			<div class="buffaly-span-12">
-				<!-- Published Posts -->
-				<section class="buffaly-panel" id="publishedPostsPanel">
-					<h2 class="buffaly-panel-title">Published Posts</h2>
-					<p class="buffaly-muted" id="publishedPostsStatus">Loading published posts...</p>
-					<div id="publishedPostsList" class="drafts-board mt-3"></div>
-				</section>
-			</div>
-		</div>
-
-		<section class="buffaly-panel mt-4" id="coveragePanel">
-			<div class="panel-heading-row">
-				<div>
-					<h2 class="buffaly-panel-title">Function Coverage Matrix</h2>
-					<p class="buffaly-muted">Every converted Octopus LinkedIn capability and how it is represented in this UI.</p>
-				</div>
-				<span class="coverage-pill">35 / 35 represented</span>
-			</div>
-			<div id="coverageMatrix" class="coverage-matrix"></div>
-		</section>
-	</div>
-
-	<script src="js/linkedin.js?v=1"></script>
+	</main>
+	<aside id="settingsDrawer" class="settings-drawer" aria-hidden="true"><div class="settings-card"><div class="settings-header"><h2>Settings</h2><button id="closeSettingsBtn" class="buffaly-button secondary" type="button">Close</button></div><section class="settings-section"><h3>Connection</h3><div id="accountDetails"></div><div class="buffaly-action-row mt-2"><button id="configureBtn" class="buffaly-button secondary" type="button">Configure App Credentials</button><button id="authorizeBtn" class="buffaly-button" type="button" disabled>Authorize</button><button id="completeCallbackBtn" class="buffaly-button secondary" type="button">Paste Callback URL</button><button id="disconnectBtn" class="buffaly-button secondary" type="button" disabled>Disconnect</button></div></section><section class="settings-section"><h3>Voice</h3><p id="voiceStatusText" class="buffaly-muted">Loading voice profile...</p><div id="voiceSummary"></div><button id="editVoiceBtn" class="buffaly-button secondary mt-2" type="button">Edit Voice</button></section><section class="settings-section"><h3>Runtime</h3><p id="llmStatusText" class="buffaly-muted">Post creation uses Buffaly session prompt routing.</p></section></div></aside>
+	<script src="/js/kcs/buffaly-standalone-foundation.js?v=20260416.1"></script>
+	<script src="/JsonWs/Buffaly.Agent.Host.BuffalyAgentService.ashx.js?v=20260514.1"></script>
+<script src="js/linkedin.js?v=17"></script>
 </body>
 </html>

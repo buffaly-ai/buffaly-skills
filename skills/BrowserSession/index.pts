@@ -196,3 +196,15 @@ prototype ToFillBrowserSelectorWithSecret : BrowserSessionSkillAction
 		return BrowserSessionTools.FillBrowserSelectorWithSecret(_opsAgent, subAgentId, selector, secretValue, timeoutMs);
 	}
 }
+
+[SemanticProgram.InfinitivePhrase("to fill a browser password field with a secret")]
+[SemanticProgram.InfinitivePhrase("to type a secret into a browser password input")]
+prototype ToFillBrowserPasswordWithSecret : BrowserSessionSkillAction
+{
+	Description = @"Fills a browser password field with a StringRef secret without returning or logging the secret. secretValue - StringRef returned by ToGetUserSecret and materialized only at this typed boundary. selector defaults to input[type=password]. Returns redacted JSON only.";
+
+	function Execute(string subAgentId, string secretValue, string selector = "input[type=password]", int timeoutMs = 15000) : string
+	{
+		return BrowserSessionTools.FillBrowserPasswordWithSecret(_opsAgent, subAgentId, selector, secretValue, timeoutMs);
+	}
+}
