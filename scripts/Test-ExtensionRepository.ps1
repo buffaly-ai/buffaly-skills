@@ -86,8 +86,12 @@ function Test-ExtensionRepository {
         }
     }
 
-    # --- Check for unindexed skill directories (warning only) ---
+    # --- Check for unindexed skill directories and skills/web-module overlap ---
     $skillsDir = Join-Path $RepoRoot "skills"
+    $webModulePackageIds = @()
+    if ($null -ne $packageIndex) {
+        $webModulePackageIds = @($packageIndex.Packages | Where-Object { $_.PackageType -eq "WebModule" } | ForEach-Object { [string]$_.PackageId })
+    }
     if (Test-Path $skillsDir -PathType Container) {
         $indexedSkillPaths = @()
         if ($null -ne $skillIndex) {
@@ -96,7 +100,11 @@ function Test-ExtensionRepository {
         Get-ChildItem $skillsDir -Directory | ForEach-Object {
             $relativePath = "skills/" + $_.Name
             if ($relativePath -notin $indexedSkillPaths) {
-                $allWarnings.Add("Directory '$relativePath' exists but has no entry in skills.index.json.")
+                if ($_.Name -in $webModulePackageIds) {
+                    $allErrors.Add("Orphaned skills/ directory '$relativePath' overlaps with WebModule package '$($_.Name)'. Remove the skills/ directory — the package is owned by packages.index.json.")
+                } else {
+                    $allWarnings.Add("Directory '$relativePath' exists but has no entry in skills.index.json.")
+                }
             }
         }
     }
