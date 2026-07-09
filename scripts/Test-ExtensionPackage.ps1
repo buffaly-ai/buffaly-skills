@@ -131,7 +131,9 @@ function Read-JsonFile([string]$path) {
     # --- Validate DLL dependency completeness via .deps.json ---
     # Missing Buffaly/application DLLs are errors; missing System/Microsoft framework DLLs are warnings.
     $depsJsonFiles = Get-ChildItem $packageRoot -Filter "*.deps.json" -Recurse -File
-    $frameworkPrefixes = @('System.', 'Microsoft.', 'Newtonsoft.', 'Serilog.', 'Npgsql.', 'Dapper.', 'Autofac.', 'MediatR.', 'Polly.', 'FluentValidation.')
+    $frameworkPrefixes = @('System.', 'Microsoft.', 'Newtonsoft.', 'Serilog.', 'Npgsql.', 'Dapper.', 'Autofac.', 'MediatR.', 'Polly.', 'FluentValidation.', 'runtime.')
+    # Core/provided assemblies are supplied by the Buffaly host runtime and do not need to be in package files.
+    $coreProvidedAssemblies = @('Buffaly.Agent.Host', 'Buffaly.Agent.Web.Common', 'BasicUtilities.Reference', 'Buffaly.Agent.Core', 'Buffaly.Agent.Common', 'Buffaly.Agent.Runtime.Abstractions', 'Buffaly.Agent.ProtoScript.Runtime', 'Buffaly.Agent.ProtoScriptAuthoring', 'Buffaly.DB.Core', 'Buffaly.DB.Hybrid', 'Buffaly.DB.SqlServer', 'Buffaly.DB.Postgres', 'Buffaly.Business', 'Buffaly.ProviderContracts', 'Buffaly.Sessions.DB', 'Buffaly.Sessions.DB.PostGres', 'Buffaly.Agent.SemanticDatabase', 'Buffaly.Agent.SemanticDatabase.DB', 'Buffaly.Agent.CSharpSkill', 'Buffaly.Agent.Tools.Mcp', 'Buffaly.Agent.Tools.Platform', 'Buffaly.Agent.Tools.Process', 'Buffaly.Agent.Tools.Secrets', 'Buffaly.Agent.Tools.SemanticDatabase', 'Buffaly.Agent.Tools.CodeSearch', 'Buffaly.Agent.Tools.Http')
     foreach ($depsFile in @($depsJsonFiles)) {
         $relativeDepsPath = $depsFile.FullName.Substring($packageRoot.Length).TrimStart([System.IO.Path]::DirectorySeparatorChar) -replace '\\', '/'
         try {
@@ -147,6 +149,12 @@ function Read-JsonFile([string]$path) {
                                 foreach ($prefix in $frameworkPrefixes) {
                                     if ($depName.StartsWith($prefix, [StringComparison]::OrdinalIgnoreCase)) { $isFramework = $true; break }
                                 }
+                                $isCoreProvided = $false
+                                foreach ($coreName in $coreProvidedAssemblies) {
+                                    if ($depName -eq $coreName) { $isCoreProvided = $true; break }
+                                }
+                                # Skip core/provided assemblies entirely - they are supplied by the host runtime
+                                if ($isCoreProvided) { continue }
                                 # Check if this dependency appears anywhere in the Files array
                                 $foundInFiles = $false
                                 foreach ($indexedPath in $indexedFileSet.Keys) {
