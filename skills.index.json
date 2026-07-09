@@ -63,40 +63,6 @@
       "RequiresPreStartInstall": false
     },
     {
-      "SkillName": "Browser",
-      "Title": "Browser",
-      "Description": "Buffaly skill package for Browser.",
-      "Version": "0.1.0",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [
-        "Browser",
-        "Browser"
-      ],
-      "Path": "skills/Browser",
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "0bb15433405eb821b2ef8f1b513d8c4dade178f2c439dba37aed3ce4909ca651"
-        },
-        {
-          "Path": "index.pts.md",
-          "Sha256": "7a422f89606d16f50d47701a72c95a4b8690300810e1e8c427ba44a29f0b200b"
-        },
-        {
-          "Path": "Prompts/RunBrowserModuleTask.prompt.md",
-          "Sha256": "2790d53a566dbc4427ab69e955dd48a9e34a7355aa541ba628f09af0736954a3"
-        },
-        {
-          "Path": "Prompts/RunBrowserTask.prompt.md",
-          "Sha256": "884789b52b849a9c5b40053bb48b0f513f6996d8650a0bb30f7a305e7f3ae390"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsDefaultPackage": true
-    },
-    {
       "SkillName": "BrowserSession",
       "Title": "Browser Session",
       "Description": "Buffaly skill package for Browser Session.",
@@ -266,7 +232,7 @@
         },
         {
           "Path": "Prompts/ImproveOntologyQualityAndOrganization.prompt.md",
-          "Sha256": "a52c0c3853bf8b2fa5ddd8832f1a599829cbea925fc7c3cabf5355ecab7d88a3"
+          "Sha256": "9fd1fb4eb9a9bf2b7969389c17ce99afa5ed2d8dd215b16043ee687437e11b9d"
         },
         {
           "Path": "Prompts/InstallExistingDllIntoProtoScript.prompt.md",
@@ -278,7 +244,7 @@
         },
         {
           "Path": "Prompts/ToExposeCSharpClassToProtoScriptSkill.prompt.md",
-          "Sha256": "386e1905f5c597b8ee5b3273cdef96ed2294d69e13edab6afe9aee6a991087e7"
+          "Sha256": "46ebbe12219b6d80f52181d118050b8d3aa8c48b4456b8e77453054288f72dd6"
         },
         {
           "Path": "Prompts/TroubleshootBuffalyAgentRuntime.prompt.md",
@@ -342,7 +308,7 @@
         },
         {
           "Path": "Prompts/BuildAndInstallLatestCodexEmbeddedInstaller.prompt.md",
-          "Sha256": "a67717aedf06e8cf2edbb12180ccef8c3a692e88732365990913a267e4c7cd5b"
+          "Sha256": "692aa031c2e8dbad939b426a986d0260f54e6dbdb54068856bb9b1e1d2de6785"
         },
         {
           "Path": "Prompts/CoordinateCodexIncrementalEditAndValidate.prompt.md",
@@ -355,36 +321,6 @@
         {
           "Path": "Prompts/FindCodexThreadIdByName.prompt.md",
           "Sha256": "45b16466ae0b3ab188bcdccc86db31c99d37b2550b1849bcfe9f8aee3d8bb88a"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsDefaultPackage": true
-    },
-    {
-      "SkillName": "ComputerUse",
-      "Title": "Computer Use",
-      "Description": "Buffaly skill package for Computer Use.",
-      "Version": "0.1.0",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [
-        "computer use",
-        "ComputerUse"
-      ],
-      "Path": "skills/ComputerUse",
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "b2c6d4f1a11d1d23621dcd4c894726b130cc129e0a31c78e9490a8217a5369fe"
-        },
-        {
-          "Path": "index.pts.md",
-          "Sha256": "40cc2a4fd24cc13622b3297a36d545cddb6f0d0595e4a1318f131e2e231074f7"
-        },
-        {
-          "Path": "Prompts/RunComputerUseTask.prompt.md",
-          "Sha256": "7e8f29903c6645f3b61e253e5f1f5211fa63d9d213098c46d41058e17be315fc"
         }
       ],
       "EntryPoint": "index.pts",
@@ -603,7 +539,7 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "c2bf523d22ce2e4820339b0ab0d91d7da2737e4a2999239add04bb0ff254ebcf"
+          "Sha256": "d895bb85eb39c28d57b39846b1db51396e72ba6879085858ea439ad857ee1bd0"
         },
         {
           "Path": "index.pts.md",
@@ -624,6 +560,10 @@
         {
           "Path": "Leads.pts.md",
           "Sha256": "e4461775ed66d7f6ba6eb035afa41a6e93cc576ffa7b4d860ebbbefa4e87a394"
+        },
+        {
+          "Path": "LeadDocuments.pts",
+          "Sha256": "3f0ea0e5f2b9761714ea410ac7787d9a17c0eb19b4924191c4ef020ef875cfe5"
         },
         {
           "Path": "LeadsAdmin.pts",
@@ -875,108 +815,6 @@
       "RequiresPreStartInstall": false
     },
     {
-      "SkillName": "GoogleWorkspace",
-      "Title": "Google Workspace",
-      "Description": "GoogleWorkspace Skill",
-      "Version": "0.1.1",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [
-        "google workspace",
-        "GoogleWorkspace"
-      ],
-      "Path": "skills/GoogleWorkspace",
-      "Files": [
-        {
-          "Path": "Auth.pts",
-          "Sha256": "fc87e985c227af103aacd832bac87f69ee4aa6dde309e999f69b6cc2d828a923"
-        },
-        {
-          "Path": "Auth.pts.md",
-          "Sha256": "c7af60071f00c5c1c4dd85b02c6936a58301d5e2cd93d3b6e5f88a1970cf598d"
-        },
-        {
-          "Path": "Calendar.pts",
-          "Sha256": "e95d399f1694b52ae6356101dc84d18645765058e845bf3d82f250ff56418623"
-        },
-        {
-          "Path": "Chat.pts",
-          "Sha256": "6e7376965280ccef86130f6d782e0b4f361586ed665a84d4680bc590297b13b6"
-        },
-        {
-          "Path": "Chat.pts.md",
-          "Sha256": "24ef69419565fc9ec50fe6013ca0c35e71a5e5f613a4b4cb5b01c906c057e2df"
-        },
-        {
-          "Path": "Common.pts",
-          "Sha256": "9d0af838afa40da9d6f94edcd6be01187008692c5a69b588cefb644f205ba792"
-        },
-        {
-          "Path": "Common.pts.md",
-          "Sha256": "63bd7a006de43d7d3fc12656a5e6c417b09abde27561dccabf8643818e5fd921"
-        },
-        {
-          "Path": "Docs.pts",
-          "Sha256": "8f308eb927d3fbf06e3c1eda61c684653152977b7a9991a33c0070012db9001b"
-        },
-        {
-          "Path": "Drive.pts",
-          "Sha256": "92b434cc914eaf5c41b4bbc68b5b744ef988be0f4f46442a179fb9ecc4bccd37"
-        },
-        {
-          "Path": "Gmail.pts",
-          "Sha256": "307a5b93f336531d2f931d86ba301432666d5db334d3dd4bdbbc07acb11a3d05"
-        },
-        {
-          "Path": "Gmail.pts.md",
-          "Sha256": "49535bfaa78e6007a0814144eee841b927eb0f3b5f22e40999ecad56221c4fb2"
-        },
-        {
-          "Path": "GoogleWorkspaceService.pts",
-          "Sha256": "506c06ae7e955aa5c49e9329d46295b8dd4e358a3eea690d62a4a280dad4cdaf"
-        },
-        {
-          "Path": "GoogleWorkspaceService.pts.md",
-          "Sha256": "2d3903703df58317f277c55379ec64b803d7159f729f749e0d89ac90ddd8e003"
-        },
-        {
-          "Path": "index.pts",
-          "Sha256": "0ecf336fb052e039b59734b4c50fd9a2d2fa9a0ce2405ffadfdaab6abdef7b64"
-        },
-        {
-          "Path": "Memory.pts",
-          "Sha256": "7159a7788d36558e4dfabca84bf8384d0cc2b2e471f6b66c819293c8d8849a76"
-        },
-        {
-          "Path": "PromptActions.pts",
-          "Sha256": "9348a78a4ef78d5bd393e45a3fdfc5a8356a82b3c6ba755d9e36127209d75cac"
-        },
-        {
-          "Path": "Prompts/AuthorizeOrReauthorizeGoogleWorkspaceAccount.prompt.md",
-          "Sha256": "48bc14ba0fda1f5ab2b4a5d5cd730a1d4a97740962ebe6591f5070e93795e334"
-        },
-        {
-          "Path": "Prompts/CreateFormattedGoogleDocFromMarkdown.prompt.md",
-          "Sha256": "220d5e4cb86bff277a14a336221304097aa26bfc9f72d3ae06479a07992ff2f1"
-        },
-        {
-          "Path": "Sheets.pts",
-          "Sha256": "ac3be69fec5900531b33b6eff9fb1298c08596f55e33fca3891b8f436e2a2ae1"
-        },
-        {
-          "Path": "Sheets.pts.md",
-          "Sha256": "5cf69c0e191670c40f04626f79b6fe15a79ec20f6fec8b99ae8726e9bff1de85"
-        },
-        {
-          "Path": "SKILL.md",
-          "Sha256": "a627b47a70d4358fdaa39193949c3bddd07a2b6b863d8aef63e2213996b592ff"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsDefaultPackage": true
-    },
-    {
       "SkillName": "Heartbeat",
       "Title": "Heartbeat",
       "Description": "Buffaly OpsAgent skill package for Heartbeat.",
@@ -1154,7 +992,7 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "3743477910846ed8f86b23d2527d88b3bc0abfff23925cc968c03335b54e0464"
+          "Sha256": "0b1990d5df1d28e5a6a4c098f1d7d9d1609d5691dc7896a3d9f180db5710fa66"
         },
         {
           "Path": "PromptActions.pts",
@@ -1416,84 +1254,6 @@
       "IsDefaultPackage": false
     },
     {
-      "SkillName": "Office365",
-      "Title": "Office365",
-      "Description": "Office365 ProtoScript skill for mail, calendar, OneDrive, Teams, and Office365 service actions.",
-      "Version": "0.1.2",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Path": "skills/Office365",
-      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/skills/Office365",
-      "Phrases": [
-        "office365",
-        "office 365",
-        "microsoft 365",
-        "send office365 mail",
-        "list office365 calendar"
-      ],
-      "Files": [
-        {
-          "Path": "Auth.pts",
-          "Sha256": "047cb309170bb891b321f28ab0ae1dee3ca3650837e75b7467052032b31e4798"
-        },
-        {
-          "Path": "Calendar.pts",
-          "Sha256": "0cc3d78cc202f3cd103d02abe28a21ad22492a64e0692dee572e9ebe43d45e1c"
-        },
-        {
-          "Path": "Calendar.pts.md",
-          "Sha256": "d123f4745a29c6a3380aa2afd4cedbd70ef4aceff7190b7eb586adfc199d2d1c"
-        },
-        {
-          "Path": "Common.pts",
-          "Sha256": "0e80a0709b4ae20a1e75a562f2e988eb4e00a407fac57bd21a476d14bfdb809d"
-        },
-        {
-          "Path": "index.pts",
-          "Sha256": "80cadd1ec63024693e603e8554f81f55de88e515e2f897abff6e6d63c97b9351"
-        },
-        {
-          "Path": "Mail.pts",
-          "Sha256": "965296a4148d59a88d84a74a7815172c11447d11858fb4b4ab36595bf28f3897"
-        },
-        {
-          "Path": "Mail.pts.md",
-          "Sha256": "4298cdd1b3beeffbd4c150476c8348123c1cad74135d203d58fa65993cf73aa7"
-        },
-        {
-          "Path": "Office365Service.pts",
-          "Sha256": "a27741260b55a207db927c3dc55df83f2360d6946be321d32c7ba40cbf01cbf8"
-        },
-        {
-          "Path": "Office365Service.pts.md",
-          "Sha256": "8525b225d96c478e955a84c3aa878c51f0abb88ac2a916c4f1243be9b5e84037"
-        },
-        {
-          "Path": "OneDrive.pts",
-          "Sha256": "bb2abf17c0e66d717e90bde0828edb61a8b3bf790b9e1721c02e17e2a49710ae"
-        },
-        {
-          "Path": "OneDrive.pts.md",
-          "Sha256": "70c70a87395ca6a5de3e7426667f97cd2519c6f2e4db1dfaceafc1bcf8375ce8"
-        },
-        {
-          "Path": "SKILL.md",
-          "Sha256": "846f186b00172683bc2bb5f848ff8f0e12fe72fc2e2edcfa754fd19c8d079be7"
-        },
-        {
-          "Path": "Teams.pts",
-          "Sha256": "69e68f06b172309df3c45f67631f1a7781940f3befedfbcc33559d5b212f3050"
-        },
-        {
-          "Path": "Teams.pts.md",
-          "Sha256": "617486437be6526599bfba6e1857c94bb99b1ddc65631fe9428fa614c8128273"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "IsDefaultPackage": true,
-      "RequiresRestart": false,
-      "RequiresPreStartInstall": false
-    },
-    {
       "SkillName": "Onboarding",
       "Title": "Onboarding",
       "Description": "Buffaly OpsAgent skill package for Onboarding.",
@@ -1563,32 +1323,6 @@
         {
           "Path": "Prompts/ToTeachBuffalySomethingUsefulSkill.prompt.md",
           "Sha256": "a5fd2d05447f6a0ef5272b4ea1854568b7e3fd1d0352dd2999a0a61541d4d5f2"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsDefaultPackage": true
-    },
-    {
-      "SkillName": "OpenAIImageGeneration",
-      "Title": "Open A I Image Generation",
-      "Description": "Buffaly skill package for Open A I Image Generation.",
-      "Version": "0.1.0",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [
-        "open a i image generation",
-        "OpenAIImageGeneration"
-      ],
-      "Path": "skills/OpenAIImageGeneration",
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "f2452af238710352b604cea939df037ab7d20dc2a9ed4ab714422c0fdb064616"
-        },
-        {
-          "Path": "index.pts.md",
-          "Sha256": "c4875c5de902a0d238cf342a04ae49ff4c81c03c574a6bce132c622ce40a0734"
         }
       ],
       "EntryPoint": "index.pts",
@@ -1897,7 +1631,7 @@
         },
         {
           "Path": "Prompts/ToSetupSqlServer2025ExpressSkill.prompt.md",
-          "Sha256": "a1ff48bd54e6ce66e1edc33aae181f9f65537cb0faddd06aafc3b3e65f615754"
+          "Sha256": "3eeddf983db597a0d33a6aab1e9226bf939a4bb401458d7187df60688600ea6c"
         }
       ],
       "EntryPoint": "index.pts",
@@ -2245,7 +1979,7 @@
         },
         {
           "Path": "Prompts/AuditWikiCoverage.prompt.md",
-          "Sha256": "bb19ce13227a72a74eb032e545172ffab5c8c791c10e13f392b0b08cf196c550"
+          "Sha256": "c47b4072e018775bddec5c0f850392f670090b950d411332894602fbb3783603"
         },
         {
           "Path": "Prompts/CreateWikiArticle.prompt.md",
@@ -2253,19 +1987,19 @@
         },
         {
           "Path": "Prompts/EditWikiArticle.prompt.md",
-          "Sha256": "f5794f2d7f2cf6ecc7c68d5dd3c53ec053295a2a90851facf6aa1ab9db8c2f30"
+          "Sha256": "f7c1de58985cfec72e67bd4c412ff4fe7a49823aab47ce7301e7a9d313bcaea5"
         },
         {
           "Path": "Prompts/InsertWikiArticle.prompt.md",
-          "Sha256": "cb240e04a4e879952aa0951cda396950adbef4611befeb8ab86e0b93dbf44576"
+          "Sha256": "c738e5b6794521f261752525a896cfcbf7a9ab7bbb9286a37f826a5f33c3789f"
         },
         {
           "Path": "Prompts/RefreshWikiArticle.prompt.md",
-          "Sha256": "67a59a00e43ad8b60fa9977401f4ec7925623df1bf205603427f9730ae06f695"
+          "Sha256": "e908eb671c73b4a33ee136716e375c771283aad178fab4d895906ddeebeddd6d"
         },
         {
           "Path": "Prompts/RepairWikiCrossLinks.prompt.md",
-          "Sha256": "32e6a1d73daaf90b065e8e875787d7ea4bc7be8fd8609e0e7ae3013d665acd05"
+          "Sha256": "a0308222ab92d3780011a598a400865f359f7831598b72a3b92878f87429a80e"
         }
       ],
       "EntryPoint": "index.pts",
