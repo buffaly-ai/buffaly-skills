@@ -5,7 +5,7 @@
       "SkillName": "AudioTranscription",
       "Title": "Audio Transcription",
       "Description": "Transcription-only audio artifact tools that reuse the existing Buffaly voice transcription endpoint.",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Path": "skills/AudioTranscription",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/skills/AudioTranscription",
@@ -18,7 +18,7 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "590e41788b6b1d14a78d5adb7f7460338f06450cb1c82966a6f56eccf9b6c1e0"
+          "Sha256": "b8d149c38ae45e3c3b88d0f26204e0f22e0e1d2a8e8b04923d8765093d48b398"
         },
         {
           "Path": "index.pts.md",
@@ -133,7 +133,7 @@
       "SkillName": "BuffalyMaintenance",
       "Title": "Buffaly Maintenance",
       "Description": "Buffaly OpsAgent skill package for BuffalyMaintenance.",
-      "Version": "0.1.2",
+      "Version": "0.1.3",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "BuffalyMaintenance"
@@ -142,7 +142,7 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "db40fe4421786a6f4a923ba0beac07717b1584b89b84369b83674e17b4401250"
+          "Sha256": "112ccc51ffa7e42bfc10611e9e00803892f7fc0b1adf8584f1bcef76e39502ac"
         },
         {
           "Path": "index.pts.md",
@@ -370,7 +370,7 @@
       "SkillName": "DllEchoSample",
       "Title": "DLL Echo Sample",
       "Description": "Validates installation of a DLL-backed Buffaly skill from the official Skill Directory.",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "test dll backed skill",
@@ -385,7 +385,7 @@
         },
         {
           "Path": "index.pts",
-          "Sha256": "57200a3aeba308102aef1c901cf0cfd05ab8ba2ad13ae82ffb3368088d28c0cf"
+          "Sha256": "d3a36b0b8b2f3d80ffefdee2d1facafc767fe5b8b7ff798e8e3668582eecc605"
         },
         {
           "Path": "lib/Buffaly.SkillSamples.dll",
@@ -723,7 +723,7 @@
       "SkillName": "GoogleAnalytics",
       "Title": "Google Analytics",
       "Description": "Google Analytics Skill",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "GoogleAnalytics"
@@ -732,7 +732,7 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "878fff01bae4031ec28f9d2d759b18e552919de7817769a897ee7a6d30d217d6"
+          "Sha256": "b4aa872872551f1ff0c05e16d2558bec15117b891d64ca57159d856f73207f6e"
         },
         {
           "Path": "index.pts.md",
@@ -785,7 +785,7 @@
       "SkillName": "GoogleTagManager",
       "Title": "Google Tag Manager",
       "Description": "Google Tag Manager API inspection tools for accounts, containers, workspaces, tags, triggers, and variables.",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Path": "skills/GoogleTagManager",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/skills/GoogleTagManager",
@@ -798,7 +798,7 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "19f204a0b64afd64e107ce87a2d5c9e207b01ae448f7439083f0ac858ad0d29e"
+          "Sha256": "48e05fd891b7f4ad4d90b9ae5b6db3a5b3ff92061f6c4422ed65bc16d5724726"
         },
         {
           "Path": "lib/Buffaly.Marketing.dll",

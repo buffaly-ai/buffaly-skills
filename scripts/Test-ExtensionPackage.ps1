@@ -108,6 +108,11 @@ function Read-JsonFile([string]$path) {
         }
     }
 
+    # --- Shared exclusion lists for both reference and dependency checks ---
+    $frameworkPrefixes = @('System.', 'Microsoft.', 'Newtonsoft.', 'Serilog.', 'Npgsql.', 'Dapper.', 'Autofac.', 'MediatR.', 'Polly.', 'FluentValidation.', 'runtime.')
+    # Core/provided assemblies are supplied by the Buffaly host runtime and do not need to be in package files.
+    $coreProvidedAssemblies = @('Buffaly.Agent.Host', 'Buffaly.Agent.Web.Common', 'BasicUtilities.Reference', 'Buffaly.Agent.Core', 'Buffaly.Agent.Common', 'Buffaly.Agent.Runtime.Abstractions', 'Buffaly.Agent.ProtoScript.Runtime', 'Buffaly.Agent.ProtoScriptAuthoring', 'Buffaly.DB.Core', 'Buffaly.DB.Hybrid', 'Buffaly.DB.SqlServer', 'Buffaly.DB.Postgres', 'Buffaly.Business', 'Buffaly.ProviderContracts', 'Buffaly.Sessions.DB', 'Buffaly.Sessions.DB.PostGres', 'Buffaly.Agent.SemanticDatabase', 'Buffaly.Agent.SemanticDatabase.DB', 'Buffaly.Agent.CSharpSkill', 'Buffaly.Agent.Tools.Mcp', 'Buffaly.Agent.Tools.Platform', 'Buffaly.Agent.Tools.Process', 'Buffaly.Agent.Tools.Secrets', 'Buffaly.Agent.Tools.SemanticDatabase', 'Buffaly.Agent.Tools.CodeSearch', 'Buffaly.Agent.Tools.Http', 'Buffaly.Data', 'RooTrax.Common', 'RooTrax.Common.DB', 'RooTrax.Creator.DB', 'RooTrax.SqlGenerator', 'RooTrax.VDB', 'RooTrax.VDB.DB', 'RooTrax.VDB.UI', 'FeedingFrenzy.WebPropertyEditorAgent.Tools')
+
     # --- Validate .pts references: reject path-based DLL references ---
     # Correct ProtoScript references use assembly-name form: reference AssemblyName Alias;
     # Path-based references like reference "lib/Foo.dll" Foo; are invalid even if the DLL exists.
@@ -123,7 +128,24 @@ function Read-JsonFile([string]$path) {
             $refAlias = $refMatch.Groups[2].Value.Trim().TrimEnd(';').Trim()
             # If the quoted value contains a path separator or ends in .dll, it is a path-based reference
             if ($refQuoted.Contains('/') -or $refQuoted.Contains('\') -or $refQuoted.EndsWith('.dll', [StringComparison]::OrdinalIgnoreCase)) {
-                $errors.Add("Path-based DLL reference 'reference `"$refQuoted`"' in '$($ptsFile.Name)' is invalid for '$packageId'. Use assembly-name form: 'reference $refAlias' (no path, no .dll extension).")
+                # Skip if the assembly is core/provided or a framework library
+                $isCoreOrFramework = $false
+                $assemblyName = $refAlias
+                if (-not [string]::IsNullOrWhiteSpace($assemblyName)) {
+                    foreach ($coreName in $coreProvidedAssemblies) {
+                        if ($assemblyName -eq $coreName) { $isCoreOrFramework = $true; break }
+                    }
+                    if (-not $isCoreOrFramework) {
+                        foreach ($prefix in $frameworkPrefixes) {
+                            if ($assemblyName.StartsWith($prefix, [StringComparison]::OrdinalIgnoreCase)) { $isCoreOrFramework = $true; break }
+                        }
+                    }
+                }
+                if ($isCoreOrFramework) {
+                    $warnings.Add("Path-based reference 'reference `"$refQuoted`"' in '$($ptsFile.Name)' for '$packageId' references a core/provided assembly. Consider using assembly-name form: 'reference $refAlias'.")
+                } else {
+                    $errors.Add("Path-based DLL reference 'reference `"$refQuoted`"' in '$($ptsFile.Name)' is invalid for '$packageId'. Use assembly-name form: 'reference $refAlias' (no path, no .dll extension).")
+                }
             }
         }
     }
