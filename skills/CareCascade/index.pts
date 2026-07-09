@@ -32,7 +32,11 @@ prototype CareCascadeIcd10JsonWsService : Service
 
 	function CallIcd10Route(string routePath, JsonObject args) : string
 	{
-		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
+		JsonObject normalizedArgs = args;
+		if (normalizedArgs == null)
+		{
+			normalizedArgs = new JsonObject();
+		}
 		return JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.ApiPrefix, this.ServiceRoute + "/" + routePath, this.TokenKey, normalizedArgs);
 	}
 	ServiceName = "CareCascadeIcd10JsonWsService";
@@ -180,7 +184,11 @@ prototype CareCascadeSnomedJsonWsService : Service
 
 	function CallSnomedRoute(string routePath, JsonObject args) : string
 	{
-		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
+		JsonObject normalizedArgs = args;
+		if (normalizedArgs == null)
+		{
+			normalizedArgs = new JsonObject();
+		}
 		return JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.ApiPrefix, this.ServiceRoute + "/" + routePath, this.TokenKey, normalizedArgs);
 	}
 	ServiceName = "CareCascadeSnomedJsonWsService";
@@ -241,7 +249,12 @@ prototype ToSearchCareCascadeSnomedConceptsBroad : CareCascadeSkillAction
 		JsonObject args = new JsonObject();
 		args["Method"] = "SearchConceptsBroad";
 		args["query"] = query;
-		args["maxResults"] = maxResults > 0 ? maxResults : 50;
+		int resolvedMaxResults = maxResults;
+		if (resolvedMaxResults <= 0)
+		{
+			resolvedMaxResults = 50;
+		}
+		args["maxResults"] = resolvedMaxResults;
 		return service.CallSnomedRoute("search-concepts-broad", args);
 	}
 	Description = @"service - CareCascadeSnomedJsonWsService binding, normally CareCascadeSnomedJsonWsService#Published. query - search text such as 'diabetes'. maxResults - maximum results to return (default 50, hard cap 100). Calls SearchConceptsBroad and returns ranked, deduplicated JSON array of SNOMED concepts.";
