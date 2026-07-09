@@ -106,7 +106,57 @@ function Read-JsonFile([string]$path) {
                 $warnings.Add("No SHA-256 hash for file: '$filePath' in '$packageId'.")
             }
         }
-    }    # --- Validate EntryPoint for skills ---
+    }
+
+    # --- Validate .pts DLL references are in the Files array ---
+    $indexedFileSet = @{}
+    foreach ($f in @($files)) { $indexedFileSet[([string]$f.Path)] = $true }
+    $ptsFilesOnDisk = Get-ChildItem $packageRoot -Filter "*.pts" -Recurse -File
+    foreach ($ptsFile in @($ptsFilesOnDisk)) {
+        $ptsContent = [System.IO.File]::ReadAllText($ptsFile.FullName)
+        $refMatches = [regex]::Matches($ptsContent, 'reference\s+"([^"]+\.dll)"\s*([^;\r\n]*)')
+        foreach ($refMatch in $refMatches) {
+            $refPath = $refMatch.Groups[1].Value
+            $refAssembly = $refMatch.Groups[2].Value.Trim().TrimEnd(';').Trim()
+            $normalizedRef = $refPath -replace '\\', '/'
+            if (-not $indexedFileSet.ContainsKey($normalizedRef)) {
+                $errors.Add("DLL reference '$normalizedRef' in '$($ptsFile.Name)' is not listed in the Files array for '$packageId'. The DLL will be missing when installed.")
+            }
+            $refDiskPath = Join-Path $packageRoot ($normalizedRef -replace '/', [System.IO.Path]::DirectorySeparatorChar)
+            if (-not (Test-Path $refDiskPath -PathType Leaf)) {
+                $errors.Add("DLL reference '$normalizedRef' in '$($ptsFile.Name)' does not exist on disk for '$packageId'.")
+            }
+        }
+    }
+
+    # --- Validate transitive DLL dependencies via .deps.json ---
+    $depsJsonFiles = Get-ChildItem $packageRoot -Filter "*.deps.json" -Recurse -File
+    foreach ($depsFile in @($depsJsonFiles)) {
+        $relativeDepsPath = $depsFile.FullName.Substring($packageRoot.Length).TrimStart([System.IO.Path]::DirectorySeparatorChar) -replace '\\', '/'
+        try {
+            $depsJson = Get-Content $depsFile.FullName -Raw | ConvertFrom-Json
+            if ($null -ne $depsJson.targets) {
+                foreach ($target in $depsJson.targets.PSObject.Properties) {
+                    foreach ($libEntry in $target.Value.PSObject.Properties) {
+                        $deps = $libEntry.Value.dependencies
+                        if ($null -ne $deps) {
+                            foreach ($depProp in $deps.PSObject.Properties) {
+                                $depName = $depProp.Name
+                                $depDllPath = "lib/$depName.dll"
+                                if (-not $indexedFileSet.ContainsKey($depDllPath)) {
+                                    $warnings.Add("Transitive dependency '$depName' (from $($libEntry.Name) via $relativeDepsPath) may not be in the Files array for '$packageId'. Expected '$depDllPath' or similar.")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch {
+            $warnings.Add("Could not parse .deps.json: '$relativeDepsPath' for '$packageId'. $($_.Exception.Message)")
+        }
+    }
+
+    # --- Validate EntryPoint for skills ---
     if ($entryType -eq "Skill" -and -not [string]::IsNullOrWhiteSpace($entryPoint)) {
         $entryPointFull = Join-Path $packageRoot ($entryPoint -replace '/', [System.IO.Path]::DirectorySeparatorChar)
         if (-not (Test-Path $entryPointFull -PathType Leaf)) {
