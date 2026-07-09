@@ -108,29 +108,30 @@ function Read-JsonFile([string]$path) {
         }
     }
 
-    # --- Validate .pts DLL references are in the Files array ---
+    # --- Validate .pts references: reject path-based DLL references ---
+    # Correct ProtoScript references use assembly-name form: reference AssemblyName Alias;
+    # Path-based references like reference "lib/Foo.dll" Foo; are invalid even if the DLL exists.
     $indexedFileSet = @{}
     foreach ($f in @($files)) { $indexedFileSet[([string]$f.Path)] = $true }
     $ptsFilesOnDisk = Get-ChildItem $packageRoot -Filter "*.pts" -Recurse -File
     foreach ($ptsFile in @($ptsFilesOnDisk)) {
         $ptsContent = [System.IO.File]::ReadAllText($ptsFile.FullName)
-        $refMatches = [regex]::Matches($ptsContent, 'reference\s+"([^"]+\.dll)"\s*([^;\r\n]*)')
+        # Match any reference statement that uses a quoted string containing a path or .dll
+        $refMatches = [regex]::Matches($ptsContent, 'reference\s+"([^"]+)"\s*([^;\r\n]*)')
         foreach ($refMatch in $refMatches) {
-            $refPath = $refMatch.Groups[1].Value
-            $refAssembly = $refMatch.Groups[2].Value.Trim().TrimEnd(';').Trim()
-            $normalizedRef = $refPath -replace '\\', '/'
-            if (-not $indexedFileSet.ContainsKey($normalizedRef)) {
-                $errors.Add("DLL reference '$normalizedRef' in '$($ptsFile.Name)' is not listed in the Files array for '$packageId'. The DLL will be missing when installed.")
-            }
-            $refDiskPath = Join-Path $packageRoot ($normalizedRef -replace '/', [System.IO.Path]::DirectorySeparatorChar)
-            if (-not (Test-Path $refDiskPath -PathType Leaf)) {
-                $errors.Add("DLL reference '$normalizedRef' in '$($ptsFile.Name)' does not exist on disk for '$packageId'.")
+            $refQuoted = $refMatch.Groups[1].Value
+            $refAlias = $refMatch.Groups[2].Value.Trim().TrimEnd(';').Trim()
+            # If the quoted value contains a path separator or ends in .dll, it is a path-based reference
+            if ($refQuoted.Contains('/') -or $refQuoted.Contains('\') -or $refQuoted.EndsWith('.dll', [StringComparison]::OrdinalIgnoreCase)) {
+                $errors.Add("Path-based DLL reference 'reference `"$refQuoted`"' in '$($ptsFile.Name)' is invalid for '$packageId'. Use assembly-name form: 'reference $refAlias' (no path, no .dll extension).")
             }
         }
     }
 
-    # --- Validate transitive DLL dependencies via .deps.json ---
+    # --- Validate DLL dependency completeness via .deps.json ---
+    # Missing Buffaly/application DLLs are errors; missing System/Microsoft framework DLLs are warnings.
     $depsJsonFiles = Get-ChildItem $packageRoot -Filter "*.deps.json" -Recurse -File
+    $frameworkPrefixes = @('System.', 'Microsoft.', 'Newtonsoft.', 'Serilog.', 'Npgsql.', 'Dapper.', 'Autofac.', 'MediatR.', 'Polly.', 'FluentValidation.')
     foreach ($depsFile in @($depsJsonFiles)) {
         $relativeDepsPath = $depsFile.FullName.Substring($packageRoot.Length).TrimStart([System.IO.Path]::DirectorySeparatorChar) -replace '\\', '/'
         try {
@@ -142,9 +143,21 @@ function Read-JsonFile([string]$path) {
                         if ($null -ne $deps) {
                             foreach ($depProp in $deps.PSObject.Properties) {
                                 $depName = $depProp.Name
-                                $depDllPath = "lib/$depName.dll"
-                                if (-not $indexedFileSet.ContainsKey($depDllPath)) {
-                                    $warnings.Add("Transitive dependency '$depName' (from $($libEntry.Name) via $relativeDepsPath) may not be in the Files array for '$packageId'. Expected '$depDllPath' or similar.")
+                                $isFramework = $false
+                                foreach ($prefix in $frameworkPrefixes) {
+                                    if ($depName.StartsWith($prefix, [StringComparison]::OrdinalIgnoreCase)) { $isFramework = $true; break }
+                                }
+                                # Check if this dependency appears anywhere in the Files array
+                                $foundInFiles = $false
+                                foreach ($indexedPath in $indexedFileSet.Keys) {
+                                    if ($indexedPath -match "$depName\.dll$") { $foundInFiles = $true; break }
+                                }
+                                if (-not $foundInFiles) {
+                                    if ($isFramework) {
+                                        $warnings.Add("Framework dependency '$depName' (from $($libEntry.Name) via $relativeDepsPath) is not in the Files array for '$packageId'.")
+                                    } else {
+                                        $errors.Add("Missing DLL dependency '$depName' (from $($libEntry.Name) via $relativeDepsPath) is not in the Files array for '$packageId'. Expected a file matching '$depName.dll'.")
+                                    }
                                 }
                             }
                         }
