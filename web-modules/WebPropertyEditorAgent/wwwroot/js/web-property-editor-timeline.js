@@ -8,7 +8,8 @@
 	document.head.appendChild(stylesheet);
 
 	function parseBindingPayload(context) {
-		var text = String(context.model && (context.model.contentText || context.model.rawContent) || "").trim().replace(/\\u0022/g, '"');
+		var body = context.shell && context.shell.slots && context.shell.slots.body;
+		var text = String(context.model && (context.model.contentText || context.model.rawContent) || (body && body.textContent) || "").trim().replace(/\\u0022/g, '"');
 		if (!text || text.charAt(0) !== "{") return null;
 		var payload;
 		try { payload = JSON.parse(text); } catch (_) { return null; }
