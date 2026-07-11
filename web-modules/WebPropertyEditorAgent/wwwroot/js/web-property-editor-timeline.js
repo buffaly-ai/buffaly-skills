@@ -8,7 +8,7 @@
 	document.head.appendChild(stylesheet);
 
 	function parseBindingPayload(context) {
-		var text = String(context.node && (context.node.contentText || context.node.rawContent) || "").trim();
+		var text = String(context.model && (context.model.contentText || context.model.rawContent) || "").trim();
 		if (!text || text.charAt(0) !== "{") return null;
 		var payload;
 		try { payload = JSON.parse(text); } catch (_) { return null; }
