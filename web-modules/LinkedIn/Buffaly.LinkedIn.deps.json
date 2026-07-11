@@ -11,6 +11,7 @@
           "BasicUtilities": "1.0.0.0",
           "Buffaly.Agent.Runtime.Abstractions": "1.0.0.0",
           "Buffaly.Agent.Web.Common": "1.0.0.0",
+          "Buffaly.ProviderContracts": "1.0.0.0",
           "WebAppUtilities": "1.0.0.0"
         },
         "runtime": {
@@ -36,6 +37,14 @@
       "Buffaly.Agent.Web.Common/1.0.0.0": {
         "runtime": {
           "Buffaly.Agent.Web.Common.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.ProviderContracts/1.0.0.0": {
+        "runtime": {
+          "Buffaly.ProviderContracts.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -68,6 +77,11 @@
       "sha512": ""
     },
     "Buffaly.Agent.Web.Common/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.ProviderContracts/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""

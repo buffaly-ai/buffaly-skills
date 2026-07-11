@@ -1,0 +1,18 @@
+prototype LinkedInSkillAction : OpsAction
+{
+	Description = @"Base action type for LinkedIn skill tools.";
+}
+
+[SemanticEntity("linkedin skill")]
+prototype LinkedInSkill : SkillEntity
+{
+	Description = "LinkedIn integration for OAuth, drafts, publishing, brand voice, content intelligence, and engagement.";
+	ActionRoot = LinkedInSkillAction;
+}
+
+include "DraftArtifact.pts";
+include "LinkedInActions.pts";
+
+reference Buffaly.LinkedIn Buffaly.LinkedIn;
+
+import Buffaly.LinkedIn Buffaly.LinkedIn.LinkedInSkillFacade LinkedInSkillFacade;
