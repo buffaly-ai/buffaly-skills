@@ -4,11 +4,11 @@
 
 	var stylesheet = document.createElement("link");
 	stylesheet.rel = "stylesheet";
-	stylesheet.href = "/web-modules/FeedingFrenzy.WebPropertyEditorAgent/js/web-property-editor-timeline.css?v=20260711.1";
+	stylesheet.href = "/web-modules/FeedingFrenzy.WebPropertyEditorAgent/js/web-property-editor-timeline.css?v=20260711.2";
 	document.head.appendChild(stylesheet);
 
 	function parseBindingPayload(context) {
-		var text = String(context.model && (context.model.contentText || context.model.rawContent) || "").trim();
+		var text = String(context.model && (context.model.contentText || context.model.rawContent) || "").trim().replace(/\\u0022/g, '"');
 		if (!text || text.charAt(0) !== "{") return null;
 		var payload;
 		try { payload = JSON.parse(text); } catch (_) { return null; }
