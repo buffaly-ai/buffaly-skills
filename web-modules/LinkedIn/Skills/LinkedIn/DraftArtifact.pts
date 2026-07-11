@@ -31,6 +31,37 @@ prototype ToSetLinkedInDraftMedia : LinkedInSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to generate an image for a linkedin draft")]
+[SemanticProgram.InfinitivePhrase("to create an image for a linkedin post")]
+prototype ToGenerateLinkedInDraftImage : LinkedInSkillAction
+{
+	Description = @"Generates an OpenAI image in the current LinkedIn draft session artifacts folder. Returns result JSON containing the generated local path and browser-loadable artifact URL; pass those values to ToSetLinkedInDraftMedia.";
+
+	function Execute(string prompt, string size, string model, string quality, string background, string outputFormat, string outputCompression) : string
+	{
+		string apiKey = OpenAIFeature.Feature.ApiKey;
+		if (StringUtil.IsEmpty(apiKey))
+		{
+			throw "OpenAI feature API key is required before generating a LinkedIn draft image.";
+		}
+
+		if (_opsAgent == null)
+		{
+			throw "_opsAgent runtime is not available.";
+		}
+
+		string sessionDirectory = _opsAgent.GetCurrentSessionDirectory();
+		if (StringUtil.IsEmpty(sessionDirectory))
+		{
+			throw "Current LinkedIn draft session directory is not available.";
+		}
+
+		string artifactRelativeDirectory = "artifacts/images/linkedin";
+		string outputDirectory = Path.Combine(sessionDirectory, artifactRelativeDirectory);
+		return OpenAIImageGenerationServiceRuntime.CreateImageFromParameters(apiKey, outputDirectory, artifactRelativeDirectory, prompt, size, model, quality, background, outputFormat, outputCompression);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to set linkedin draft variants")]
 prototype ToSetLinkedInDraftVariants : LinkedInSkillAction
 {

@@ -14,5 +14,10 @@ include "DraftArtifact.pts";
 include "LinkedInActions.pts";
 
 reference Buffaly.LinkedIn Buffaly.LinkedIn;
+reference Buffaly.OpenAI.ImageGeneration Buffaly.OpenAI.ImageGeneration;
+reference Buffaly.Agent.Host Buffaly.Agent.Host;
 
 import Buffaly.LinkedIn Buffaly.LinkedIn.LinkedInSkillFacade LinkedInSkillFacade;
+import Buffaly.OpenAI.ImageGeneration Buffaly.OpenAI.ImageGeneration.OpenAIImageGenerationServiceRuntime OpenAIImageGenerationServiceRuntime;
+import Buffaly.Agent.Host Buffaly.Agent.Host.OpenAIFeature OpenAIFeature;
+import BasicUtilities BasicUtilities.StringUtil StringUtil;

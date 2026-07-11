@@ -54,7 +54,7 @@ Required loading sequence:
 
 1. Search for `to get a linkedin draft artifact`, then load and call `ToGetLinkedInDraftArtifact`.
 2. Search for `to update linkedin draft text`, then load `ToUpdateLinkedInDraftText` before changing post text.
-3. When media is requested, search for `to generate an image` and `to set linkedin draft media`, then load the returned image-generation action and `ToSetLinkedInDraftMedia`.
+3. When media is requested, use the LinkedIn-scoped `ToGenerateLinkedInDraftImage` action and `ToSetLinkedInDraftMedia`.
 4. Treat failure to discover or load one of these actions as an explicit operation failure; never claim the artifact was updated without a successful mutation tool result.
 
 - **Read artifact** - call `ToGetLinkedInDraftArtifact` to load the current draft artifact state before making changes.
