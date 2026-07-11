@@ -6618,7 +6618,7 @@
       "PackageType": "WebModule",
       "Title": "LinkedIn",
       "Description": "Buffaly Web Module package for LinkedIn.",
-      "Version": "0.1.56",
+      "Version": "0.1.57",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/LinkedIn",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/LinkedIn",
@@ -6640,44 +6640,28 @@
           "Sha256": "af4bfc0fb89a5cc19b9dc0ce7f0d371a0979d203c2215afafc000861ffd3ddf1"
         },
         {
+          "Path": "Buffaly.Agent.Web.Common.pdb",
+          "Sha256": "3aa81045d10b59b8e94146059423dbec53e18a47bbc52ff25ef016892beb3eef"
+        },
+        {
           "Path": "Buffaly.LinkedIn.deps.json",
           "Sha256": "a4a25c9def1d99b880de463ebb2e2468dc82316c86359ada93ecc003bcfe1ce3"
         },
         {
           "Path": "Buffaly.LinkedIn.dll",
-          "Sha256": "02def52e9ddd30497477bfef18e80a33dad526fd5c04987d963ca6e0cc1aa889"
+          "Sha256": "1f7223726e598c29d1030ac3055efb1195bc3a4fca735396ac3a5863a7207545"
+        },
+        {
+          "Path": "Buffaly.LinkedIn.pdb",
+          "Sha256": "d3176a30f3192281d8e36a3a5af4477b8ae7f25304a1b1cbfa4872ea9b2887cb"
         },
         {
           "Path": "Buffaly.ProviderContracts.dll",
           "Sha256": "a45454d80055b8b0d96781256def7313f846380a5e8abcc729e3942bed23094b"
         },
         {
-          "Path": "ContextPrompts/LinkedInPostEditingContext.prompt.md",
-          "Sha256": "4ecda7449342ab751a8e3e61551e464b1a898b02db6c699644e48b1e1f76a9e2"
-        },
-        {
-          "Path": "Generated/JsonWs/Buffaly.LinkedIn.LinkedInService.ashx.js",
-          "Sha256": "603ed1606559bbc0349beb9c4d0be568ff507fae00740288c5b73927300eeaa4"
-        },
-        {
           "Path": "Imports.pts",
-          "Sha256": "5baf8e54c0eba250acd67f54d3d6fb9a592d9d4f249117e930db18dbc47c261d"
-        },
-        {
-          "Path": "Skills/LinkedIn/DraftArtifact.pts",
-          "Sha256": "9c9aee7318339b6ab4373e790b297c5d688514820d04f5c9ddb2784eefaedaa1"
-        },
-        {
-          "Path": "Skills/LinkedIn/index.pts",
-          "Sha256": "7b02baa637bb4303b3a1f874b738bf192d5f6882c4730614fb5594d59bd0bb65"
-        },
-        {
-          "Path": "Skills/LinkedIn/LinkedInActions.pts",
-          "Sha256": "1c28656b27597ef47020c2dc54ba983ec09ac0da5a828ea261120b5918b6dbfb"
-        },
-        {
-          "Path": "Skills/LinkedIn/skill-manifest.json",
-          "Sha256": "589692ca5dbc7284757256eccb538171652591812672ca860701da1fd369e88d"
+          "Sha256": "c9e50ddfa36253951e52a29ab9c01369ab5a3969b0453234c07a50c2e7e6972e"
         },
         {
           "Path": "web-module.json",
@@ -6688,8 +6672,36 @@
           "Sha256": "b04993ec40d66d8f11ffc85f1d1c49ea52be9801406e48765e1e130fb881f5b4"
         },
         {
+          "Path": "ContextPrompts/LinkedInPostEditingContext.prompt.md",
+          "Sha256": "cba18deecb596d49e5ed886a46d6036c1bc76fa2e667efe4af3cdce2c0479a61"
+        },
+        {
+          "Path": "Generated/JsonWs/Buffaly.LinkedIn.LinkedInService.ashx.js",
+          "Sha256": "603ed1606559bbc0349beb9c4d0be568ff507fae00740288c5b73927300eeaa4"
+        },
+        {
+          "Path": "Skills/LinkedIn/DraftArtifact.pts",
+          "Sha256": "bf023201b0f578ef1bb675e3f20732e1cf72c674e55664f3c9af4b9bba371c88"
+        },
+        {
+          "Path": "Skills/LinkedIn/index.pts",
+          "Sha256": "7dbc4c9c928ac3fccef17c064a3383226f28424f5892c93212afe208f1da20ed"
+        },
+        {
+          "Path": "Skills/LinkedIn/LinkedInActions.pts",
+          "Sha256": "4f51f140cd52c08ecb9dfd79321c4fcf465eea5c762e80d3bf049725ab3a8d85"
+        },
+        {
+          "Path": "Skills/LinkedIn/skill-manifest.json",
+          "Sha256": "589692ca5dbc7284757256eccb538171652591812672ca860701da1fd369e88d"
+        },
+        {
           "Path": "wwwroot/callback.html",
           "Sha256": "583ef19469a9b7751aa457e2642f81d53f986aa5f6130130267d38ab23ee1d0e"
+        },
+        {
+          "Path": "wwwroot/index.html",
+          "Sha256": "5c9c8860eb66dde03f74adf420f874b8688b3104bf5a7d45b39414da6559d463"
         },
         {
           "Path": "wwwroot/css/buffaly-page.css",
@@ -6698,10 +6710,6 @@
         {
           "Path": "wwwroot/css/linkedin.css",
           "Sha256": "7854cfb3e1e3b417a5ca3e9fd90222572f7b5ac5aca863a180809977b8433de1"
-        },
-        {
-          "Path": "wwwroot/index.html",
-          "Sha256": "5c9c8860eb66dde03f74adf420f874b8688b3104bf5a7d45b39414da6559d463"
         },
         {
           "Path": "wwwroot/js/linkedin.js",
