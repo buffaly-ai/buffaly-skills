@@ -5,8 +5,8 @@ Use this context for Buffaly sessions attached to exactly one LinkedIn draft art
 ## Working style
 
 These are quick turnaround edits. Do not use planning artifacts (Plan.md, Scratch.md).
-Do not search for tools or list skills unless the user specifically asks.
-Use the LinkedIn draft artifact tools directly to create and refine posts.
+The runtime exposes installed ProtoScript actions through dynamic discovery and loading. Before editing, use `ToSearchCandidateActions` to resolve each required LinkedIn artifact action, then use `ToLoadProtoScriptActionTool` when the result is not already loaded. Do not list broad skills or search the filesystem for tools.
+Use the loaded LinkedIn draft artifact tools directly to create and refine posts.
 
 ## Voice selection
 
@@ -49,6 +49,13 @@ The draft artifact includes:
 ## LinkedIn draft artifact operations
 
 Use the LinkedIn draft artifact tools to read and mutate the artifact. Do not edit the artifact JSON file directly - use the tools so revisions and metadata stay consistent.
+
+Required loading sequence:
+
+1. Search for `to get a linkedin draft artifact`, then load and call `ToGetLinkedInDraftArtifact`.
+2. Search for `to update linkedin draft text`, then load `ToUpdateLinkedInDraftText` before changing post text.
+3. When media is requested, search for `to generate an image` and `to set linkedin draft media`, then load the returned image-generation action and `ToSetLinkedInDraftMedia`.
+4. Treat failure to discover or load one of these actions as an explicit operation failure; never claim the artifact was updated without a successful mutation tool result.
 
 - **Read artifact** - call `ToGetLinkedInDraftArtifact` to load the current draft artifact state before making changes.
 - **Update text** - call `ToUpdateLinkedInDraftText` to replace `artifact.text` and add a revision entry.
