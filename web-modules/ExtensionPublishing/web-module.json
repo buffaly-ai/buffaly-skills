@@ -3,7 +3,7 @@
     "Enabled": true,
     "Name": "ExtensionPublishing",
     "DisplayName": "Extension Publishing",
-    "Description": "Maintainer UI for building, comparing, and publishing local Buffaly Skills and Web Modules to the central repository.",
+    "Description": "Maintainer UI for explicit, observable reconciliation and publishing of Buffaly Skill, WebModule, and ProviderModule packages.",
     "AssemblyPath": "ExtensionPublishing/Buffaly.ExtensionPublishing.WebModule.dll",
     "TypeName": "Buffaly.ExtensionPublishing.WebModule.ExtensionPublishingModule",
     "LoadOrder": 275,
@@ -12,7 +12,7 @@
         "Name": "extension-publishing",
         "DisplayName": "Extension Publishing",
         "Path": "/extension-publishing",
-        "Description": "Build, compare, preview, and publish local Buffaly extension packages."
+        "Description": "Dry-scan, reconcile, build, compare, and publish local or remote Buffaly extension packages with package-level progress."
       }
     ]
   }
