@@ -1,0 +1,14 @@
+{
+  "Modules": [
+    {
+      "Enabled": true,
+      "Name": "Anthropic",
+      "Provider": "anthropic",
+      "DisplayName": "Anthropic",
+      "AssemblyPath": "Buffaly.Provider.Anthropic/Buffaly.Provider.Anthropic.dll",
+      "CatalogSourceTypeName": "Buffaly.Provider.Anthropic.AnthropicProviderCatalogSource",
+      "CompletionExecutorTypeName": "Buffaly.Provider.Anthropic.AnthropicCompletionExecutor",
+      "LoadOrder": 600
+    }
+  ]
+}
