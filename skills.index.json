@@ -4,17 +4,14 @@
     {
       "SkillName": "AudioTranscription",
       "Title": "Audio Transcription",
-      "Description": "Transcription-only audio artifact tools that reuse the existing Buffaly voice transcription endpoint.",
-      "Version": "0.1.1",
+      "Description": "Buffaly skill package for Audio Transcription.",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
-      "Path": "skills/AudioTranscription",
-      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/skills/AudioTranscription",
       "Phrases": [
-        "audio transcription",
-        "transcribe audio",
-        "transcribe an audio artifact",
-        "convert audio to text"
+        "Audio Transcription",
+        "AudioTranscription"
       ],
+      "Path": "skills/AudioTranscription",
       "Files": [
         {
           "Path": "index.pts",
@@ -29,10 +26,6 @@
           "Sha256": "0504a3edc1463f06e233a36dc7000432eb6249274a01cd1a9a32672ca0682540"
         },
         {
-          "Path": "lib/Buffaly.Agent.AudioTranscription.pdb",
-          "Sha256": "dc50d9bc92eeeb2f90937e5bd51a08a8f8cb25ffdbb2cf73d4487a998e1e08b8"
-        },
-        {
           "Path": "SKILL.md",
           "Sha256": "87d5aa8ac149b84b0bf8224748a6ddc322f7ddc267d3ded1c397d475f8a4a192"
         },
@@ -43,6 +36,14 @@
         {
           "Path": "src/Buffaly.Agent.AudioTranscription/AudioArtifactTranscriptionTool.cs.md",
           "Sha256": "d1362c30392cbbab3cd6bb44424e4d9de1c978ad33615d5cf019cf5c23fdecd8"
+        },
+        {
+          "Path": "src/Buffaly.Agent.AudioTranscription/bin/Debug/net9.0/Buffaly.Agent.AudioTranscription.deps.json",
+          "Sha256": "b2486065b2ca15ecf9044972b2a37bf91f30f2a9a1cdd2e5074dd70ef1d219db"
+        },
+        {
+          "Path": "src/Buffaly.Agent.AudioTranscription/bin/Debug/net9.0/Buffaly.Agent.AudioTranscription.dll",
+          "Sha256": "0504a3edc1463f06e233a36dc7000432eb6249274a01cd1a9a32672ca0682540"
         },
         {
           "Path": "src/Buffaly.Agent.AudioTranscription/Buffaly.Agent.AudioTranscription.csproj",
@@ -58,9 +59,9 @@
         }
       ],
       "EntryPoint": "index.pts",
-      "IsDefaultPackage": false,
-      "RequiresRestart": false,
-      "RequiresPreStartInstall": false
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsDefaultPackage": false
     },
     {
       "SkillName": "BrowserSession",
@@ -132,10 +133,11 @@
     {
       "SkillName": "BuffalyMaintenance",
       "Title": "Buffaly Maintenance",
-      "Description": "Buffaly OpsAgent skill package for BuffalyMaintenance.",
-      "Version": "0.1.3",
+      "Description": "Buffaly skill package for Buffaly Maintenance.",
+      "Version": "0.1.4",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "Buffaly Maintenance",
         "BuffalyMaintenance"
       ],
       "Path": "skills/BuffalyMaintenance",
@@ -150,15 +152,11 @@
         },
         {
           "Path": "lib/Buffaly.Agent.Provisioning.dll",
-          "Sha256": "8a5fd4c723a829083f54f8d098b4bf14ced6a70740e97a4a86f8b679c5d6feb8"
+          "Sha256": "a9b486a3bfa6bf0ec2323b81aa84fa7578e868d93052eff9f37b203a73f4ab7e"
         },
         {
           "Path": "lib/Buffaly.Maintenance.Client.dll",
-          "Sha256": "b0a9ad6c950b59acf11e26935a9cd77418996d87d630b605ba07fce99696e0f1"
-        },
-        {
-          "Path": "lib/Buffaly.Maintenance.Client.pdb",
-          "Sha256": "31df3837d06b77583c6065587c6c57dca8b98da8b3f51cb6a839afe18afe8cc4"
+          "Sha256": "4af1fc560d98d5d84aa7eb6d2f43c3e18d8d7a0ffb8a233d06a1217f4e4ce9dc"
         }
       ],
       "EntryPoint": "index.pts",
@@ -784,17 +782,14 @@
     {
       "SkillName": "GoogleTagManager",
       "Title": "Google Tag Manager",
-      "Description": "Google Tag Manager API inspection tools for accounts, containers, workspaces, tags, triggers, and variables.",
-      "Version": "0.1.1",
+      "Description": "Buffaly skill package for Google Tag Manager.",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
-      "Path": "skills/GoogleTagManager",
-      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/skills/GoogleTagManager",
       "Phrases": [
-        "google tag manager",
-        "gtm",
-        "list google tag manager accounts",
-        "inspect gtm container"
+        "Google Tag Manager",
+        "GoogleTagManager"
       ],
+      "Path": "skills/GoogleTagManager",
       "Files": [
         {
           "Path": "index.pts",
@@ -803,16 +798,12 @@
         {
           "Path": "lib/Buffaly.Marketing.dll",
           "Sha256": "76202805325e4e869569fdd51c87fb51db5cd5ec92531a88812d4653dedea961"
-        },
-        {
-          "Path": "lib/Buffaly.Marketing.pdb",
-          "Sha256": "7784b1ff0e1738403adba18a2393e9322d6cfb1fe1fe3876c090016b490fe628"
         }
       ],
       "EntryPoint": "index.pts",
-      "IsDefaultPackage": false,
-      "RequiresRestart": false,
-      "RequiresPreStartInstall": false
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsDefaultPackage": false
     },
     {
       "SkillName": "Heartbeat",
@@ -898,31 +889,6 @@
       "IsDefaultPackage": true
     },
     {
-      "SkillName": "Level2Watcher",
-      "Title": "Level2 Watcher",
-      "Description": "Buffaly OpsAgent skill package for Level2Watcher.",
-      "Version": "0.1.0",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [
-        "Level2Watcher"
-      ],
-      "Path": "skills/Level2Watcher",
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "c7f513d0b4373f41a01b243aa3e71306352d882d7b6ef149432c5a5e21f23b87"
-        },
-        {
-          "Path": "index.pts.md",
-          "Sha256": "2069223198f565d01f46e2e1ed31cc6b40b1070417ccc268428fb25c07fd5a01"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsDefaultPackage": true
-    },
-    {
       "SkillName": "LLM",
       "Title": "L L M",
       "Description": "Buffaly OpsAgent skill package for LLM.",
@@ -972,6 +938,31 @@
         {
           "Path": "RuntimeProfiles.pts.md",
           "Sha256": "4b20b09f4eda3bbbb6f04e3d200b76ec1dea4d753c6167bf047e1ae98c6830ca"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsDefaultPackage": true
+    },
+    {
+      "SkillName": "Level2Watcher",
+      "Title": "Level2 Watcher",
+      "Description": "Buffaly OpsAgent skill package for Level2Watcher.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Level2Watcher"
+      ],
+      "Path": "skills/Level2Watcher",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "c7f513d0b4373f41a01b243aa3e71306352d882d7b6ef149432c5a5e21f23b87"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "2069223198f565d01f46e2e1ed31cc6b40b1070417ccc268428fb25c07fd5a01"
         }
       ],
       "EntryPoint": "index.pts",

@@ -1,19 +1,16 @@
 {
   "Module": {
     "Enabled": true,
-    "Name": "FeedingFrenzy.WebPropertyEditorAgent",
-    "DisplayName": "Feeding Frenzy WebProperty Editor Agent",
-    "Description": "Feeding Frenzy constrained WebProperty editor agent routes and tool surface.",
-    "AssemblyPath": "FeedingFrenzy.WebPropertyEditorAgent/FeedingFrenzy.WebPropertyEditorAgent.Tools.dll",
+    "Name": "WebPropertyEditorAgent",
+    "DisplayName": "Web Property Editor Agent",
+    "Description": "Constrained WebProperty editor agent routes and tool surface for FeedingFrenzy.",
+    "AssemblyPath": "WebPropertyEditorAgent/FeedingFrenzy.WebPropertyEditorAgent.Tools.dll",
     "TypeName": "FeedingFrenzy.WebPropertyEditorAgent.Tools.WebPropertyEditorAgentWebModule",
     "LoadOrder": 350,
-    "AgentScripts": [
-      "/web-modules/FeedingFrenzy.WebPropertyEditorAgent/js/web-property-editor-timeline.js?v=20260711.2"
-    ],
     "Pages": [],
     "ProjectArtifacts": [
       {
-        "ProjectName": "FeedingFrenzy.WebPropertyEditorAgent",
+        "ProjectName": "WebPropertyEditorAgent",
         "SourcePath": "Project/"
       }
     ]
