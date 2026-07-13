@@ -47,3 +47,5 @@
 ## Restore Session Model Selection Tool Through In-Process Wrapper (2026-06-21)
 - Restored `ToSetBuffalySessionModelSelection` as a ProtoScript-facing action that forwards `sessionKey`, `provider`, `modelName`, and optional `reasoningLevel` directly to `CoreOntologyTools.SetSessionModelSelection(...)`.
 - Design decision: ProtoScript remains a pure pass-through with no trimming/coercion and no JsonWs/self-HTTP call; C# owns provider-catalog validation, normalization, transport resolution, and session-service persistence.
+
+- 2026-07-11 - Clarified model-selection agent guidance: callers must use ToGetBuffalyProviderModelCatalog first and pass exact catalog ModelName values to ToSetBuffalySessionModelSelection; non-catalog names are rejected instead of normalized.

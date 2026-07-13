@@ -1,19 +1,19 @@
-{
-  "Module": {
-    "Enabled": true,
-    "Name": "SkillManagement",
-    "DisplayName": "Skill Management",
-    "Description": "Backend services for skill discovery, loading, and management.",
-    "AssemblyPath": "Buffaly.Agent.SkillManagement/Buffaly.Agent.SkillManagement.dll",
-    "TypeName": "Buffaly.Agent.SkillManagement.SkillManagementModule",
-    "LoadOrder": 250,
-    "Pages": [
-      {
-        "Name": "skill-management",
-        "DisplayName": "Skill Management",
-        "Path": "/skill-management",
-        "Description": "Browse installed skills and install official Skill Directory packages."
-      }
-    ]
-  }
+﻿{
+    "Module":  {
+                   "Enabled":  true,
+                   "Name":  "SkillManagement",
+                   "DisplayName":  "Skill Management",
+                   "Description":  "Backend services for skill discovery, loading, and management.",
+                   "AssemblyPath":  "Buffaly.Agent.SkillManagement/Buffaly.Agent.SkillManagement.dll",
+                   "TypeName":  "Buffaly.Agent.SkillManagement.SkillManagementModule",
+                   "LoadOrder":  250,
+                   "Pages":  [
+                                 {
+                                     "Name":  "skill-management",
+                                     "DisplayName":  "Skill Management",
+                                     "Path":  "/skill-management",
+                                     "Description":  "Browse installed skills and install official Skill Directory packages."
+                                 }
+                             ]
+               }
 }

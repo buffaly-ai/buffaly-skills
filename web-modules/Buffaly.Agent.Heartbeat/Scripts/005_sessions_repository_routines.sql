@@ -36,6 +36,7 @@ CREATE OR REPLACE FUNCTION update_session_data_sp(p_session_id integer,p_data te
 CREATE OR REPLACE FUNCTION update_session_name_sp(p_session_id integer,p_session_name text) RETURNS void LANGUAGE sql AS $$ UPDATE sessions SET session_name=p_session_name,last_updated=now() WHERE session_id=p_session_id; $$;
 CREATE OR REPLACE FUNCTION update_session_parent_session_id_sp(p_session_id integer,p_parent_session_id integer) RETURNS void LANGUAGE sql AS $$ UPDATE sessions SET parent_session_id=p_parent_session_id,last_updated=now() WHERE session_id=p_session_id; $$;
 CREATE OR REPLACE FUNCTION update_session_provider_selection_sp(p_session_id integer,p_provider text,p_model_name text,p_reasoning_level text,p_data text) RETURNS void LANGUAGE sql AS $$ UPDATE sessions SET provider=p_provider,model_name=p_model_name,reasoning_level=p_reasoning_level,data=p_data,last_updated=now() WHERE session_id=p_session_id; $$;
+CREATE OR REPLACE FUNCTION update_session_prompt_context_sp(p_session_id integer,p_prompt_context text) RETURNS void LANGUAGE sql AS $$ UPDATE sessions SET prompt_context=p_prompt_context,last_updated=now() WHERE session_id=p_session_id; $$;
 CREATE OR REPLACE FUNCTION sessions_reset_running_runtime_status_on_web_startup_sp() RETURNS void LANGUAGE sql AS $$ SELECT NULL::void; $$;
 
 

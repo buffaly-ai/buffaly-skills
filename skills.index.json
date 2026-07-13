@@ -891,10 +891,11 @@
     {
       "SkillName": "LLM",
       "Title": "L L M",
-      "Description": "Buffaly OpsAgent skill package for LLM.",
-      "Version": "0.1.0",
+      "Description": "Buffaly skill package for L L M.",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "L L M",
         "LLM"
       ],
       "Path": "skills/LLM",
@@ -933,11 +934,11 @@
         },
         {
           "Path": "RuntimeProfiles.pts",
-          "Sha256": "4c22f84a184792ccecc9b0458c4483ab45f327271394af1c774da33b8d2450de"
+          "Sha256": "8074a9089eb24b7aded3538b60ca7de68d5db2113a853c5a48749b627f307cb9"
         },
         {
           "Path": "RuntimeProfiles.pts.md",
-          "Sha256": "4b20b09f4eda3bbbb6f04e3d200b76ec1dea4d753c6167bf047e1ae98c6830ca"
+          "Sha256": "8577a81a6eab331f83e24e9bffe7774c64b372c65a6d18a59cd73e610ae39d47"
         }
       ],
       "EntryPoint": "index.pts",
@@ -1445,21 +1446,22 @@
     {
       "SkillName": "SessionManagement",
       "Title": "Session Management",
-      "Description": "Buffaly OpsAgent skill package for SessionManagement.",
-      "Version": "0.1.0",
+      "Description": "Buffaly skill package for Session Management.",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "Session Management",
         "SessionManagement"
       ],
       "Path": "skills/SessionManagement",
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "71f131290174b0bee06a66f57f9d121568debd4c0b19b42276ee3fd5a27ee347"
+          "Sha256": "65a52da496983ab882eca518ebb808824d2de8e245166846c8b123daa19bc3b3"
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "a514c57f433c7b4f1f464ebf9ee50766e0c22ae605769d73d5ab63bbe053e33b"
+          "Sha256": "8e6ca0ffdada53c8e574d0887ec9d422a601c7e5d81ce70e3e299d703ad28f8a"
         },
         {
           "Path": "PromptActions.pts",
