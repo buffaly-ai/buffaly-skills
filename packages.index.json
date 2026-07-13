@@ -12398,7 +12398,7 @@
       "PackageType": "WebModule",
       "Title": "OpenAI Image Generation",
       "Description": "Buffaly Web Module package for OpenAI Image Generation.",
-      "Version": "0.1.105",
+      "Version": "0.1.107",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/OpenAIImageGeneration",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/OpenAIImageGeneration",
@@ -12501,7 +12501,7 @@
         },
         {
           "Path": "Buffaly.OpenAI.ImageGeneration.WebHarness.deps.json",
-          "Sha256": "546608b32948b3fadaf42dab3131b7ed7f4cc980a6b31fedbcc243e1ac265695"
+          "Sha256": "508ca31afd188d8aa983bc8f2cc6bca4d5d386a8d961fdb9b9fee76930dc0aa9"
         },
         {
           "Path": "Buffaly.OpenAI.ImageGeneration.WebHarness.dll",
@@ -12513,7 +12513,7 @@
         },
         {
           "Path": "Buffaly.OpenAI.ImageGeneration.WebHarness.runtimeconfig.json",
-          "Sha256": "4044375fcab816ed4ec7938f8e825f2292205adc48892551d70347857eab0226"
+          "Sha256": "2e24103ca48316f807f92b49d38a715c08e433612c6a5754a0cf528e982e59fd"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -12533,7 +12533,7 @@
         },
         {
           "Path": "Generated/JsonWs/Buffaly.OpenAI.ImageGeneration.WebHarness.ImageGenerationHarnessJsonWsService.json",
-          "Sha256": "ef5a411ce80f36144c66d8b12fe181e552a01d5996e86b60568e15142eaa47c4"
+          "Sha256": "dc59550a3fe91a7a4969bbb6aaf61422dc4da7486048608fb13a9541986daee4"
         },
         {
           "Path": "it/Microsoft.Data.SqlClient.resources.dll",
@@ -12652,10 +12652,6 @@
           "Sha256": "6e340c938bc6250e851d670ff9d7ec8577c698aa8ce0e22cecdef667fef926d7"
         },
         {
-          "Path": "ru/Microsoft.Data.SqlClient.resources.dll",
-          "Sha256": "f7d51f47b1eba12021161ee39a7d08d24df1dcd52c131d1d94ee2c7e432f4cb4"
-        },
-        {
           "Path": "runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll",
           "Sha256": "4a95c42d14d8a83ca1007793648b6dae59cee957ea12470578f10c918f91d225"
         },
@@ -12682,6 +12678,10 @@
         {
           "Path": "runtimes/win/lib/net9.0/System.Security.Cryptography.Pkcs.dll",
           "Sha256": "6902fe2034ada133d5aa8df0d101279abb3093e346ebf34bbde62670f2a0e9bf"
+        },
+        {
+          "Path": "ru/Microsoft.Data.SqlClient.resources.dll",
+          "Sha256": "f7d51f47b1eba12021161ee39a7d08d24df1dcd52c131d1d94ee2c7e432f4cb4"
         },
         {
           "Path": "Skills/OpenAIImageGeneration/index.pts",
@@ -12725,11 +12725,11 @@
         },
         {
           "Path": "web-module.json",
-          "Sha256": "ab5104c022be4e700ef31f3b7e15072379df3f2539c8fafa8bebcb455804841f"
+          "Sha256": "089de755bd64a3d1e0fd67f2e808c0bd165e497e8cd701c3c0179ab0d3d63eae"
         },
         {
           "Path": "web.config",
-          "Sha256": "db81296136e8f37c51d378a6aa727a0fc06d2f2a0b772c2b607d7e24e81fd655"
+          "Sha256": "2269ddc1ba3b1acfa3b4bfdd7e09e7b115a065b7b5dcfd91897dc237c8069c30"
         },
         {
           "Path": "WebAppUtilities.dll",
@@ -12741,7 +12741,7 @@
         },
         {
           "Path": "wwwroot/index.html",
-          "Sha256": "1810a26c3307f9240132d455310df07a23634dad9f29d67b01d37e359fda107d"
+          "Sha256": "fe7131d78251fa4b87664ec81cd75ef8c3b0ca85af04498bd6695bc4f5bd00ff"
         },
         {
           "Path": "wwwroot/index.html.br",
@@ -12762,90 +12762,6 @@
         {
           "Path": "wwwroot/index.html.md.gz",
           "Sha256": "364ffd3327c1b89968d1b72e0a8750ccb04f7959d929dfd15911a5e4c28b5836"
-        },
-        {
-          "Path": "wwwroot/js/image-harness.js",
-          "Sha256": "15fc2bf606b96e699e9bc11ac1a4bcc2a15d103faae1fc104d18f55a12dd32e8"
-        },
-        {
-          "Path": "wwwroot/js/image-harness.js.br",
-          "Sha256": "fb2b2256b96747e49301e2eed30d2d9f4548f1b28ecf28ae058135ac20830ac2"
-        },
-        {
-          "Path": "wwwroot/js/image-harness.js.gz",
-          "Sha256": "c16e0fab680d52f36df3b63a8bb2aa625ea7818920c4d89da53b53d98f978aea"
-        },
-        {
-          "Path": "wwwroot/js/kcs/global.js",
-          "Sha256": "effb267b388f8356ca7627bb2e587ecd117e7e3526cf8ddca070cda38ae1cd11"
-        },
-        {
-          "Path": "wwwroot/js/kcs/global.js.br",
-          "Sha256": "f5dac6f7da04d55f699d17d22ca9ed8b98f215ca7c6bd467700686d98acba34f"
-        },
-        {
-          "Path": "wwwroot/js/kcs/global.js.gz",
-          "Sha256": "6f7ce1ea5ef8a523c4707d252da0926b6e674141e9737f1013bf8e7a08443f3f"
-        },
-        {
-          "Path": "wwwroot/js/kcs/JsonMethod.js",
-          "Sha256": "d7dee93db763fc2270386bfff375b86d35ac50fd44d120c3ec5b2314c84c02f2"
-        },
-        {
-          "Path": "wwwroot/js/kcs/JsonMethod.js.br",
-          "Sha256": "01289e5702bea9ae96e19de1fa574984a53b4a4cdce595c6e7284ba0a4c88056"
-        },
-        {
-          "Path": "wwwroot/js/kcs/JsonMethod.js.gz",
-          "Sha256": "d4341870d334909c6e93e00d52d26dc0f23d3ff3c4a03a5f1b70d90de90675c7"
-        },
-        {
-          "Path": "wwwroot/js/kcs/LocalStorage2.js",
-          "Sha256": "53c397fc33b0cbbc71dee8fdb1a76a5f7715c2dc975200f7ef5c490a0dea6018"
-        },
-        {
-          "Path": "wwwroot/js/kcs/LocalStorage2.js.br",
-          "Sha256": "0b27824d1d829451c97da447cdc08b0439b3fac647ffa71af68b40cc789a7ba6"
-        },
-        {
-          "Path": "wwwroot/js/kcs/LocalStorage2.js.gz",
-          "Sha256": "61b06ca4455c20edec6753710ac247a39621f6745aa4e84cf09cffad6639ab15"
-        },
-        {
-          "Path": "wwwroot/js/kcs/moremoo4.js",
-          "Sha256": "7e2ec9fdd07a44c90fbb9f8b511d39ac2fe52aa9967f85ecaf344b35787f57aa"
-        },
-        {
-          "Path": "wwwroot/js/kcs/moremoo4.js.br",
-          "Sha256": "d6b47bfff2e6c1d0bdc1592a28d62f4761ec45eb3af1546e021f7dc0eb58ffd5"
-        },
-        {
-          "Path": "wwwroot/js/kcs/moremoo4.js.gz",
-          "Sha256": "a2402620053026d7781b6b13629c6ff8a3783edf86503990d136fb023020584c"
-        },
-        {
-          "Path": "wwwroot/js/kcs/stl.js",
-          "Sha256": "d9b0c1c1303b41e223f56c8e1e770c45e47f55071c4ba0cbafe6eaff90a8810e"
-        },
-        {
-          "Path": "wwwroot/js/kcs/stl.js.br",
-          "Sha256": "dc3b334486cca27f0731b53a6c7ec7349b3bfa177830798b7c8dc1c7fff8f4f2"
-        },
-        {
-          "Path": "wwwroot/js/kcs/stl.js.gz",
-          "Sha256": "2e761f2c1953fb953bcd14c7edb28727d954d828489f900ec20adc9eb17e73dc"
-        },
-        {
-          "Path": "wwwroot/js/kcs/validators.js",
-          "Sha256": "a82be3d6154e452f968507fbd77b1ff10ad18dd28aa3fa9509b8a547cb23cf70"
-        },
-        {
-          "Path": "wwwroot/js/kcs/validators.js.br",
-          "Sha256": "71bb380ef2dfe7034b6af27fcc80907f04cf8d71c848de9659c14955600d402a"
-        },
-        {
-          "Path": "wwwroot/js/kcs/validators.js.gz",
-          "Sha256": "bff3862994ded55e91bc7a062d6365af1c70ac56a7a863aa2b08d95bf7854aac"
         },
         {
           "Path": "wwwroot/JsonWs/Buffaly.OpenAI.ImageGeneration.WebHarness.ImageGenerationHarnessJsonWsService.ashx.js",
@@ -12872,8 +12788,92 @@
           "Sha256": "fbde351e8e065613c156d352d49febbb905ebfd216c5c351b1f7abdd3ff6c9b1"
         },
         {
+          "Path": "wwwroot/js/image-harness.js",
+          "Sha256": "271b73cd2a60c0c5f5941e9d8709654913c8eb0533f552211b3d846258dc46b8"
+        },
+        {
+          "Path": "wwwroot/js/image-harness.js.br",
+          "Sha256": "fb2b2256b96747e49301e2eed30d2d9f4548f1b28ecf28ae058135ac20830ac2"
+        },
+        {
+          "Path": "wwwroot/js/image-harness.js.gz",
+          "Sha256": "c16e0fab680d52f36df3b63a8bb2aa625ea7818920c4d89da53b53d98f978aea"
+        },
+        {
+          "Path": "wwwroot/js/kcs/global.js",
+          "Sha256": "747743e4c5edd6fab4f76f6f28ca375b8fffd0f92e068aff5dc10fa528d39b93"
+        },
+        {
+          "Path": "wwwroot/js/kcs/global.js.br",
+          "Sha256": "f5dac6f7da04d55f699d17d22ca9ed8b98f215ca7c6bd467700686d98acba34f"
+        },
+        {
+          "Path": "wwwroot/js/kcs/global.js.gz",
+          "Sha256": "6f7ce1ea5ef8a523c4707d252da0926b6e674141e9737f1013bf8e7a08443f3f"
+        },
+        {
+          "Path": "wwwroot/js/kcs/JsonMethod.js",
+          "Sha256": "ffcdee403e6a0762f1c347b9388c12a2c89eeaff90d9a842768faf22617e375f"
+        },
+        {
+          "Path": "wwwroot/js/kcs/JsonMethod.js.br",
+          "Sha256": "01289e5702bea9ae96e19de1fa574984a53b4a4cdce595c6e7284ba0a4c88056"
+        },
+        {
+          "Path": "wwwroot/js/kcs/JsonMethod.js.gz",
+          "Sha256": "d4341870d334909c6e93e00d52d26dc0f23d3ff3c4a03a5f1b70d90de90675c7"
+        },
+        {
+          "Path": "wwwroot/js/kcs/LocalStorage2.js",
+          "Sha256": "9dd1311e3442057e5b930f2ff12da6bdfc959b0c64d65aaa27acc43a970b1a12"
+        },
+        {
+          "Path": "wwwroot/js/kcs/LocalStorage2.js.br",
+          "Sha256": "0b27824d1d829451c97da447cdc08b0439b3fac647ffa71af68b40cc789a7ba6"
+        },
+        {
+          "Path": "wwwroot/js/kcs/LocalStorage2.js.gz",
+          "Sha256": "61b06ca4455c20edec6753710ac247a39621f6745aa4e84cf09cffad6639ab15"
+        },
+        {
+          "Path": "wwwroot/js/kcs/moremoo4.js",
+          "Sha256": "3ae9ecadfcf10322d0f230a00ac0a78c1e599c6c5c3e17a7debaa5da08dab6db"
+        },
+        {
+          "Path": "wwwroot/js/kcs/moremoo4.js.br",
+          "Sha256": "d6b47bfff2e6c1d0bdc1592a28d62f4761ec45eb3af1546e021f7dc0eb58ffd5"
+        },
+        {
+          "Path": "wwwroot/js/kcs/moremoo4.js.gz",
+          "Sha256": "a2402620053026d7781b6b13629c6ff8a3783edf86503990d136fb023020584c"
+        },
+        {
+          "Path": "wwwroot/js/kcs/stl.js",
+          "Sha256": "36d0340e8487d4a3a0fcb2f1ef7002a84f0b5322a51cb4f26896d6428e6538c2"
+        },
+        {
+          "Path": "wwwroot/js/kcs/stl.js.br",
+          "Sha256": "dc3b334486cca27f0731b53a6c7ec7349b3bfa177830798b7c8dc1c7fff8f4f2"
+        },
+        {
+          "Path": "wwwroot/js/kcs/stl.js.gz",
+          "Sha256": "2e761f2c1953fb953bcd14c7edb28727d954d828489f900ec20adc9eb17e73dc"
+        },
+        {
+          "Path": "wwwroot/js/kcs/validators.js",
+          "Sha256": "f5ed65e3646b84b8d5a8ba27efea9af545d5210dd192a1761de04f163c39d5c6"
+        },
+        {
+          "Path": "wwwroot/js/kcs/validators.js.br",
+          "Sha256": "71bb380ef2dfe7034b6af27fcc80907f04cf8d71c848de9659c14955600d402a"
+        },
+        {
+          "Path": "wwwroot/js/kcs/validators.js.gz",
+          "Sha256": "bff3862994ded55e91bc7a062d6365af1c70ac56a7a863aa2b08d95bf7854aac"
+        },
+        {
           "Path": "wwwroot/styles/image-harness.css",
-          "Sha256": "f5ed71c801f5b3cc1b57c71601dd6d34b100981aa10776ac8a16a2843dec0257"
+          "Sha256": "cae020ada9c9ebc18fb35ca5ace12c80f06479c101b431a9a060afea75ca92e7"
         },
         {
           "Path": "wwwroot/styles/image-harness.css.br",
