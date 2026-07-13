@@ -12283,7 +12283,7 @@
       "PackageType": "WebModule",
       "Title": "Ollama Cloud Catalog",
       "Description": "Buffaly Web Module package for Ollama Cloud Catalog.",
-      "Version": "0.1.104",
+      "Version": "0.1.106",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/OllamaCloud",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/OllamaCloud",
@@ -12310,7 +12310,7 @@
         },
         {
           "Path": "Buffaly.Provider.Ollama.Web.deps.json",
-          "Sha256": "80f35e83a278963e0aa39dd423c43a4937e5f057ab3b841f08bcc14e3c294648"
+          "Sha256": "204304fecd7c7ec1a5c6bf51cb71ea7f5be07665484f8ba79d873f146e0f0dbf"
         },
         {
           "Path": "Buffaly.Provider.Ollama.Web.dll",
@@ -12322,7 +12322,7 @@
         },
         {
           "Path": "Buffaly.Provider.Ollama.Web.runtimeconfig.json",
-          "Sha256": "b7d043198267a1d888df71c12a71533d75f1953e5147c233a644d814ecc78c18"
+          "Sha256": "d7471f61fad19522635bbae0f50f7e07cff168b9ad904f195d9d98745a57653c"
         },
         {
           "Path": "kScript.dll",
@@ -12349,20 +12349,20 @@
           "Sha256": "8452b2050ce7c4a7369cf507b868f4b1c61d9db0b82b9d1a55433134802fab7a"
         },
         {
+          "Path": "web-module.json",
+          "Sha256": "2649d7b4ddef97d0b99c80a7d56472a0b3c7adede1a671069bdef69543ff83fd"
+        },
+        {
           "Path": "web.config",
-          "Sha256": "9ae37a53933f06289ebe61e1b80584d18522448d4dd065a1a6b1d88df3e1fb8d"
+          "Sha256": "cbb078bfb17f28965e5d36513d37eb738a30be14673660a645bd0dd811271e4e"
         },
         {
           "Path": "WebAppUtilities.dll",
           "Sha256": "b04993ec40d66d8f11ffc85f1d1c49ea52be9801406e48765e1e130fb881f5b4"
         },
         {
-          "Path": "web-module.json",
-          "Sha256": "39a1cab96eaaa75c6d4663c8508007bead4e5ed4a49f5df4bb5a4c3b7f16dc4b"
-        },
-        {
           "Path": "wwwroot/JsonWs/Buffaly.Provider.Ollama.Web.OllamaCloudService.ashx.js",
-          "Sha256": "0152128f68d0119bf7b7da9eb23338cc23a39f01e1e7dcd0b897f1536d9cd441"
+          "Sha256": "c3225263b103e978f4aa934bc3f9d15fac8b0d749c6dba891dc04961e1366594"
         },
         {
           "Path": "wwwroot/JsonWs/Buffaly.Provider.Ollama.Web.OllamaCloudService.ashx.js.br",
@@ -12374,7 +12374,7 @@
         },
         {
           "Path": "wwwroot/JsonWs/Buffaly.Provider.Ollama.Web.OllamaCloudService.json",
-          "Sha256": "b6729ad99fbbf20c873085a925862a86f6534b005ae15b1bbfeb52ce593e32d6"
+          "Sha256": "b368a0959ae078e0dd7c0e2c9c13ad7b56c1a7d2e42a87c0b9e25cc12ced4c76"
         },
         {
           "Path": "wwwroot/JsonWs/Buffaly.Provider.Ollama.Web.OllamaCloudService.json.br",
@@ -12385,13 +12385,13 @@
           "Sha256": "ce59c2c64608e665ee4449154604bef76c7142a45918377ba76c6c7cfaabcd40"
         }
       ],
+      "ProjectArtifacts": [],
       "Dependencies": [],
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
       "IsDefaultPackage": true,
       "RequiresRestart": true,
-      "RequiresPreStartInstall": true,
-      "ProjectArtifacts": []
+      "RequiresPreStartInstall": true
     },
     {
       "PackageId": "OpenAIImageGeneration",
