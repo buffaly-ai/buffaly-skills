@@ -18,15 +18,22 @@ prototype ClaudeCodeSkillAction : OpsAction
 	Description = @"Base action type for Anthropic Claude Code CLI tools.";
 }
 
+function ToClaudeResolveEnvPath(string powershellExpr) : string
+{
+	string script = powershellExpr;
+	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 5, _opsAgent, "", "Claude Path Resolve");
+	return result.Trim();
+}
+
 function ToClaudeDefaultExePath() : string
 {
-	// claude CLI installed via npm global - use the .cmd wrapper
-	return @"C:\Users\Administrator\AppData\Roaming\npm\claude.cmd";
+	// claude CLI - resolve dynamically via Get-Command or $env:APPDATA fallback
+	return ToClaudeResolveEnvPath("$exe=(Get-Command claude.cmd -ErrorAction SilentlyContinue).Source; if(-not $exe){ $exe=Join-Path $env:APPDATA 'npm\\claude.cmd' }; Write-Output $exe");
 }
 
 function ToClaudePromptsDir() : string
 {
-	return @"C:\Users\Administrator\claude-prompts";
+	return ToClaudeResolveEnvPath("Write-Output (Join-Path $env:USERPROFILE 'claude-prompts')");
 }
 
 function ToClaudeQuoted(string value) : string
@@ -110,22 +117,22 @@ function ToClaudeCheckAuthErrors(string result) : string
 
 function ToClaudePtConvIdFile() : string
 {
-	return @"C:\Users\Administrator\AppData\Local\Temp\claude_pt_conv_id.txt";
+	return ToClaudeResolveEnvPath("Write-Output (Join-Path $env:TEMP 'claude_pt_conv_id.txt')");
 }
 
 function ToClaudePtModelFile() : string
 {
-	return @"C:\Users\Administrator\AppData\Local\Temp\claude_pt_model.txt";
+	return ToClaudeResolveEnvPath("Write-Output (Join-Path $env:TEMP 'claude_pt_model.txt')");
 }
 
 function ToClaudePtWorkDirFile() : string
 {
-	return @"C:\Users\Administrator\AppData\Local\Temp\claude_pt_workdir.txt";
+	return ToClaudeResolveEnvPath("Write-Output (Join-Path $env:TEMP 'claude_pt_workdir.txt')");
 }
 
 function ToClaudePtTurnsFile() : string
 {
-	return @"C:\Users\Administrator\AppData\Local\Temp\claude_pt_turns.txt";
+	return ToClaudeResolveEnvPath("Write-Output (Join-Path $env:TEMP 'claude_pt_turns.txt')");
 }
 
 function ToClaudePtReadState(string filePath) : string
