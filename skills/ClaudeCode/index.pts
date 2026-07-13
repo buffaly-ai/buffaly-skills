@@ -41,13 +41,12 @@ function ToClaudeEscapePowerShellSingleQuoted(string value) : string
 	return value.Replace("'", "''");
 }
 
-function ToClaudeBuildRunScript(string exePath, string argumentLine, int timeoutSeconds) : string
+function ToClaudeBuildRunScript(string exePath, string argumentLine) : string
 {
 	// Uses ProcessStartInfo with Arguments property to avoid Start-Process space-splitting issues.
 	string script = "$ErrorActionPreference='Continue';";
 	script = script + "$exe='" + ToClaudeEscapePowerShellSingleQuoted(exePath) + "';";
 	script = script + "$argsLine='" + ToClaudeEscapePowerShellSingleQuoted(argumentLine) + "';";
-	script = script + "$timeoutMs=((" + JsonUtil.ToStringExt(timeoutSeconds).ToString() + ") * 1000);";
 	script = script + "if(-not (Test-Path -LiteralPath $exe)){ Write-Output ('Error: claude not found at ' + $exe); exit 2 };";
 	script = script + "$psi=New-Object System.Diagnostics.ProcessStartInfo;";
 	script = script + "$psi.FileName=$exe;";
@@ -57,19 +56,13 @@ function ToClaudeBuildRunScript(string exePath, string argumentLine, int timeout
 	script = script + "$psi.UseShellExecute=$false;";
 	script = script + "$psi.CreateNoWindow=$true;";
 	script = script + "$p=[System.Diagnostics.Process]::Start($psi);";
-	script = script + "if(-not $p.WaitForExit($timeoutMs)){";
-	script = script + "  try{ $p.Kill($true) }catch{ try{$p.Kill()}catch{} };";
-	script = script + "  $p.WaitForExit(5000) | Out-Null;";
-	script = script + "  Write-Output 'Error: claude timed out';";
-	script = script + "  Write-Output '--- stdout ---';";
-	script = script + "  Write-Output $p.StandardOutput.ReadToEnd();";
-	script = script + "  $err=$p.StandardError.ReadToEnd(); if($err){ Write-Output '--- stderr ---'; Write-Output $err };";
-	script = script + "  exit 124";
-	script = script + "};";
+	script = script + "$stdoutTask=$p.StandardOutput.ReadToEndAsync();";
+	script = script + "$stderrTask=$p.StandardError.ReadToEndAsync();";
+	script = script + "$p.WaitForExit();";
 	script = script + "Write-Output ('exitCode=' + $p.ExitCode);";
 	script = script + "Write-Output '--- stdout ---';";
-	script = script + "  Write-Output $p.StandardOutput.ReadToEnd();";
-	script = script + "  $err=$p.StandardError.ReadToEnd(); if($err){ Write-Output '--- stderr ---'; Write-Output $err } else { Write-Output '--- stderr ---' };";
+	script = script + "  Write-Output $stdoutTask.Result;";
+	script = script + "  $err=$stderrTask.Result; if($err){ Write-Output '--- stderr ---'; Write-Output $err } else { Write-Output '--- stderr ---' };";
 	script = script + "exit $p.ExitCode;";
 	return script;
 }
@@ -77,9 +70,9 @@ function ToClaudeBuildRunScript(string exePath, string argumentLine, int timeout
 function ToClaudeRun(string argumentLine, int timeoutSeconds) : string
 {
 	if (timeoutSeconds <= 0)
-		timeoutSeconds = 120;
+		timeoutSeconds = 3600;
 	string exe = ToClaudeDefaultExePath();
-	string script = ToClaudeBuildRunScript(exe, argumentLine, timeoutSeconds);
+	string script = ToClaudeBuildRunScript(exe, argumentLine);
 	return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, "", "Claude CLI");
 }
 
@@ -248,7 +241,7 @@ prototype ToBeginClaudeLogin : ClaudeCodeSkillAction
 		// Stream output while waiting
 		script = script + "while(-not $p.HasExited){ $line=$p.StandardOutput.ReadLine(); if($line){ Write-Output $line }; Start-Sleep -Milliseconds 200 };";
 		script = script + "Write-Output ('exitCode=' + $p.ExitCode);";
-		script = script + "$err=$p.StandardError.ReadToEnd(); if($err){ Write-Output '--- stderr ---'; Write-Output $err };";
+		script = script + "$err=$stderrTask.Result; if($err){ Write-Output '--- stderr ---'; Write-Output $err };";
 
 		string loginResult = ToClaudeRunVisible(script, timeoutSeconds, "claude auth login", "Claude authentication", "A browser window will open for OAuth sign-in. Complete the sign-in with your Claude Pro/Max account.");
 
@@ -287,7 +280,7 @@ system - optional system prompt.
 maxTokens - optional (not directly supported by claude CLI, ignored).
 temperature - optional (not directly supported by claude CLI, ignored).
 workingDirectory - optional cwd for the CLI process.
-timeoutSeconds - max wait seconds (default 300).
+timeoutSeconds - No timeout - Claude runs until it finishes.
 Runs official claude -p with --output-format text --permission-mode bypassPermissions. Returns clean text response.";
 
 	function Execute(string prompt, string model, string system, int maxTokens, string temperature, string workingDirectory, int timeoutSeconds) : string
@@ -295,7 +288,7 @@ Runs official claude -p with --output-format text --permission-mode bypassPermis
 		if (StringUtil.IsEmpty(prompt))
 			return "Error: prompt is required.";
 		if (timeoutSeconds <= 0)
-			timeoutSeconds = 300;
+			timeoutSeconds = 3600;
 		if (StringUtil.IsEmpty(model))
 			model = "sonnet";
 
@@ -322,7 +315,7 @@ Runs official claude -p with --output-format text --permission-mode bypassPermis
 		{
 			script = script + "if(Test-Path -LiteralPath '" + ToClaudeEscapePowerShellSingleQuoted(workingDirectory) + "'){ Set-Location -LiteralPath '" + ToClaudeEscapePowerShellSingleQuoted(workingDirectory) + "' };";
 		}
-		script = script + ToClaudeBuildRunScript(exe, args, timeoutSeconds);
+		script = script + ToClaudeBuildRunScript(exe, args);
 		string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, "", "Claude Prompt");
 
 		// Check for errors
@@ -348,7 +341,7 @@ prototype ToTalkToClaude : ClaudeCodeSkillAction
 	Description = @"prompt - the user's message to forward to claude (Claude).
 model - optional model override. Defaults to last used model or sonnet.
 system - optional system prompt override.
-timeoutSeconds - optional timeout. Auto-selected based on prompt content if not specified (120/300/600s).
+timeoutSeconds - No timeout - Claude runs until it finishes.
 This is the main pass-through action. It automatically manages model selection, timeout, and long-prompt file handling. The user just talks and Claude responds.";
 
 	function Execute(string prompt, string model, string system, int timeoutSeconds) : string
@@ -369,9 +362,9 @@ This is the main pass-through action. It automatically manages model selection, 
 				model = "sonnet";
 		}
 
-		// Auto-select timeout if not specified
+		// No timeout - Claude runs until it finishes
 		if (timeoutSeconds <= 0)
-			timeoutSeconds = ToClaudePtAutoTimeout(prompt);
+			timeoutSeconds = 3600;
 
 		// For long prompts, write to file
 		string actualPrompt = prompt;
@@ -396,7 +389,7 @@ This is the main pass-through action. It automatically manages model selection, 
 		{
 			script = script + "if(Test-Path -LiteralPath '" + ToClaudeEscapePowerShellSingleQuoted(currentWorkDir) + "'){ Set-Location -LiteralPath '" + ToClaudeEscapePowerShellSingleQuoted(currentWorkDir) + "' };";
 		}
-		script = script + ToClaudeBuildRunScript(exe, args, timeoutSeconds);
+		script = script + ToClaudeBuildRunScript(exe, args);
 		string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, "", "Claude Pass-Through");
 
 		// Check for errors
