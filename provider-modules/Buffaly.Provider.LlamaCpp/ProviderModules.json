@@ -1,0 +1,16 @@
+{
+  "Modules": [
+    {
+      "Enabled": true,
+      "Name": "LlamaCpp",
+      "Provider": "llamacpp",
+      "DisplayName": "llama.cpp",
+      "AssemblyPath": "Buffaly.Provider.LlamaCpp/Buffaly.Provider.LlamaCpp.dll",
+      "CatalogSourceTypeName": "Buffaly.Provider.LlamaCpp.LlamaCppProviderCatalogSource",
+      "CompletionExecutorTypeName": "Buffaly.Provider.LlamaCpp.LlamaCppCompletionExecutor",
+      "LoadOrder": 700,
+      "EmbeddingCatalogSourceTypeName": "Buffaly.Provider.LlamaCpp.LlamaCppEmbeddingCatalogSource",
+      "EmbeddingExecutorTypeName": "Buffaly.Provider.LlamaCpp.LlamaCppEmbeddingExecutor"
+    }
+  ]
+}
