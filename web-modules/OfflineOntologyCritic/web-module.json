@@ -1,19 +1,19 @@
-﻿{
-    "Module":  {
-                   "Enabled":  true,
-                   "Name":  "OfflineOntologyCritic",
-                   "DisplayName":  "Offline Ontology Critic",
-                   "Description":  "Separate experimental module for attaching resumable ontology critic child sessions to source sessions and producing markdown phase artifacts for approval.",
-                   "AssemblyPath":  "OfflineOntologyCritic/OfflineOntologyCritic.Web.dll",
-                   "TypeName":  "OfflineOntologyCritic.Web.OfflineOntologyCriticModule",
-                   "LoadOrder":  850,
-                   "Pages":  [
-                                 {
-                                     "Name":  "offline-ontology-critic",
-                                     "DisplayName":  "Offline Ontology Critic",
-                                     "Path":  "/web-modules/OfflineOntologyCritic/critic",
-                                     "Description":  "Attach, resume, compare, and review offline ontology critic runs."
-                                 }
-                             ]
-               }
+{
+  "Module": {
+    "Enabled": true,
+    "Name": "OfflineOntologyCritic",
+    "DisplayName": "Offline Ontology Critic",
+    "Description": "Separate experimental module for attaching resumable ontology critic child sessions to source sessions and producing markdown phase artifacts for approval.",
+    "AssemblyPath": "OfflineOntologyCritic/OfflineOntologyCritic.Web.dll",
+    "TypeName": "OfflineOntologyCritic.Web.OfflineOntologyCriticModule",
+    "LoadOrder": 850,
+    "Pages": [
+      {
+        "Name": "offline-ontology-critic",
+        "DisplayName": "Offline Ontology Critic",
+        "Path": "/web-modules/OfflineOntologyCritic/critic",
+        "Description": "Attach, resume, compare, and review offline ontology critic runs."
+      }
+    ]
+  }
 }

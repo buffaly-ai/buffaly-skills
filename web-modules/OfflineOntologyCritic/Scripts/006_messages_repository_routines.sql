@@ -65,8 +65,8 @@ CREATE OR REPLACE FUNCTION get_messages_sp() RETURNS TABLE ("MessageID" integer,
 CREATE OR REPLACE FUNCTION get_messages_by_session_id_sp(p_session_id integer) RETURNS TABLE ("MessageID" integer,"SessionID" integer,"SequenceNumber" integer,"Role" text,"Content" text,"ToolName" text,"ToolArguments" text,"CallID" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"IsCompacted" boolean,"CompactionEpoch" integer,"MessageKey" text,"TurnID" text,"CompactionEpochKey" text) LANGUAGE sql AS $$ SELECT * FROM get_message_rows() WHERE "SessionID"=p_session_id ORDER BY "SequenceNumber" ASC,"MessageID" ASC; $$;
 CREATE OR REPLACE FUNCTION get_messages_by_message_key_sp(p_message_key text) RETURNS TABLE ("MessageID" integer,"SessionID" integer,"SequenceNumber" integer,"Role" text,"Content" text,"ToolName" text,"ToolArguments" text,"CallID" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"IsCompacted" boolean,"CompactionEpoch" integer,"MessageKey" text,"TurnID" text,"CompactionEpochKey" text) LANGUAGE sql AS $$ SELECT * FROM get_message_rows() WHERE "MessageKey"=p_message_key ORDER BY "MessageID" ASC; $$;
 CREATE OR REPLACE FUNCTION get_message_by_message_key_sp(p_message_key text) RETURNS TABLE ("MessageID" integer,"SessionID" integer,"SequenceNumber" integer,"Role" text,"Content" text,"ToolName" text,"ToolArguments" text,"CallID" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"IsCompacted" boolean,"CompactionEpoch" integer,"MessageKey" text,"TurnID" text,"CompactionEpochKey" text) LANGUAGE sql AS $$ SELECT * FROM get_message_rows() WHERE "MessageKey"=p_message_key ORDER BY "MessageID" ASC LIMIT 1; $$;
-CREATE OR REPLACE FUNCTION get_messages_by_compaction_epoch_key_sp(p_compaction_epoch_key text) RETURNS TABLE ("MessageID" integer,"SessionID" integer,"SequenceNumber" integer,"Role" text,"Content" text,"ToolName" text,"ToolArguments" text,"CallID" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"IsCompacted" boolean,"CompactionEpoch" integer,"MessageKey" text,"TurnID" text,"CompactionEpochKey" text) LANGUAGE sql AS $$ SELECT * FROM get_message_rows() WHERE "CompactionEpochKey"=p_compaction_epoch_key ORDER BY "SequenceNumber" ASC,"MessageID" ASC; $$;
-CREATE OR REPLACE FUNCTION get_messages_by_compaction_epoch_key_session_id_sp(p_compaction_epoch_key text,p_session_id integer) RETURNS TABLE ("MessageID" integer,"SessionID" integer,"SequenceNumber" integer,"Role" text,"Content" text,"ToolName" text,"ToolArguments" text,"CallID" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"IsCompacted" boolean,"CompactionEpoch" integer,"MessageKey" text,"TurnID" text,"CompactionEpochKey" text) LANGUAGE sql AS $$ SELECT * FROM get_message_rows() WHERE "SessionID"=p_session_id AND ((p_compaction_epoch_key IS NULL AND "CompactionEpochKey" IS NULL) OR "CompactionEpochKey"=p_compaction_epoch_key) ORDER BY "SequenceNumber" ASC,"MessageID" ASC; $$;
+CREATE OR REPLACE FUNCTION get_messages_by_compaction_epoch_key_sp(p_compaction_epoch_key text) RETURNS TABLE ("MessageID" integer,"SessionID" integer,"SequenceNumber" integer,"Role" text,"Content" text,"ToolName" text,"ToolArguments" text,"CallID" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"IsCompacted" boolean,"CompactionEpoch" integer,"MessageKey" text,"TurnID" text,"CompactionEpochKey" text) LANGUAGE sql AS $$ SELECT * FROM get_message_rows() WHERE "CompactionEpochKey"=p_compaction_epoch_key ORDER BY "MessageID" ASC; $$;
+CREATE OR REPLACE FUNCTION get_messages_by_compaction_epoch_key_session_id_sp(p_compaction_epoch_key text,p_session_id integer) RETURNS TABLE ("MessageID" integer,"SessionID" integer,"SequenceNumber" integer,"Role" text,"Content" text,"ToolName" text,"ToolArguments" text,"CallID" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"IsCompacted" boolean,"CompactionEpoch" integer,"MessageKey" text,"TurnID" text,"CompactionEpochKey" text) LANGUAGE sql AS $$ SELECT * FROM get_message_rows() WHERE "SessionID"=p_session_id AND ((p_compaction_epoch_key IS NULL AND "CompactionEpochKey" IS NULL) OR "CompactionEpochKey"=p_compaction_epoch_key) ORDER BY "MessageID" ASC; $$;
 CREATE OR REPLACE FUNCTION get_messages_by_turn_id_sp(p_turn_id text) RETURNS TABLE ("MessageID" integer,"SessionID" integer,"SequenceNumber" integer,"Role" text,"Content" text,"ToolName" text,"ToolArguments" text,"CallID" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"IsCompacted" boolean,"CompactionEpoch" integer,"MessageKey" text,"TurnID" text,"CompactionEpochKey" text) LANGUAGE sql AS $$ SELECT * FROM get_message_rows() WHERE "TurnID"=p_turn_id ORDER BY "SequenceNumber" ASC,"MessageID" ASC; $$;
 
 CREATE OR REPLACE FUNCTION messages_get_by_message_search_sp(p_search text,p_max_rows integer) RETURNS TABLE ("MessageID" integer,"SessionID" integer,"SequenceNumber" integer,"Role" text,"Content" text,"ToolName" text,"ToolArguments" text,"CallID" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"IsCompacted" boolean,"CompactionEpoch" integer,"MessageKey" text,"TurnID" text,"CompactionEpochKey" text) LANGUAGE sql AS $$ SELECT * FROM get_message_rows() WHERE "Role"='user' AND "Content" ILIKE '%'||COALESCE(p_search,'')||'%' ORDER BY "MessageID" DESC LIMIT p_max_rows; $$;
@@ -144,6 +144,40 @@ CREATE OR REPLACE FUNCTION "UpdateMessagesCompactionEpochByMessageKeysJsonSp"(p_
 RETURNS TABLE ("MessageID" integer,"SessionID" integer,"SequenceNumber" integer,"Role" text,"Content" text,"ToolName" text,"ToolArguments" text,"CallID" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"IsCompacted" boolean,"CompactionEpoch" integer,"MessageKey" text,"TurnID" text,"CompactionEpochKey" text)
 LANGUAGE sql AS $$
 SELECT * FROM update_messages_compaction_epoch_by_message_keys_json_sp(p_session_id,p_message_keys_json,p_compaction_epoch,p_compaction_epoch_key);
+$$;
+
+CREATE OR REPLACE FUNCTION update_message_compaction_epoch_atomic_sp(p_session_id integer,p_message_key text,p_compaction_epoch integer,p_compaction_epoch_key text)
+RETURNS TABLE ("UpdatedRows" integer)
+LANGUAGE plpgsql AS $$
+DECLARE
+	v_message_id integer;
+BEGIN
+	SELECT message_id INTO v_message_id
+	FROM messages
+	WHERE session_id = p_session_id
+		AND message_key = p_message_key
+	ORDER BY message_id ASC
+	LIMIT 1;
+
+	IF v_message_id IS NULL THEN
+		RETURN QUERY SELECT 0;
+		RETURN;
+	END IF;
+
+	UPDATE messages
+	SET compaction_epoch = p_compaction_epoch,
+		compaction_epoch_key = p_compaction_epoch_key,
+		last_updated = now()
+	WHERE message_id = v_message_id;
+
+	RETURN QUERY SELECT 1;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION "UpdateMessageCompactionEpochAtomicSp"(p_session_id integer,p_message_key text,p_compaction_epoch integer,p_compaction_epoch_key text)
+RETURNS TABLE ("UpdatedRows" integer)
+LANGUAGE sql AS $$
+SELECT * FROM update_message_compaction_epoch_atomic_sp(p_session_id,p_message_key,p_compaction_epoch,p_compaction_epoch_key);
 $$;
 
 CREATE OR REPLACE FUNCTION update_message_date_created_sp(p_message_id integer,p_date_created timestamp)
