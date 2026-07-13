@@ -1,0 +1,12 @@
+[SemanticProgram.InfinitivePhrase("to use desktop interaction")]
+[SemanticProgram.InfinitivePhrase("to control a desktop application")]
+[SemanticProgram.InfinitivePhrase("to interact with a desktop window")]
+[SemanticProgram.InfinitivePhrase("to use desktop automation safely")]
+prototype UseDesktopInteractionSkill : PromptAction, DesktopSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/Desktop/Prompts/UseDesktopInteractionSkill.prompt.md";
+	Description = @"Prompt/routing skill for provider-neutral desktop and browser interaction. It teaches the active selected-model session how to combine BrowserSession and Desktop primitives without launching a nested model runner.";
+}

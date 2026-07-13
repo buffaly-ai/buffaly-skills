@@ -1,5 +1,8 @@
 reference Buffaly.DesktopAutomation Buffaly.DesktopAutomation;
 import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.DesktopAutomation DesktopAutomation;
+import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.DesktopWindowTarget DesktopWindowTarget;
+import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.CapturedImageArtifact CapturedImageArtifact;
+import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.DesktopWindowActionResult DesktopWindowActionResult;
 
 prototype DesktopSkillAction : OpsAction
 {
@@ -9,9 +12,11 @@ prototype DesktopSkillAction : OpsAction
 [SemanticEntity("desktop skill")]
 prototype DesktopSkill : SkillEntity
 {
-	Description = "Desktop automation actions for mouse, keyboard, wait, and screenshots.";
+	Description = "Provider-independent desktop perception and input actions invoked directly by the active agent's selected model. This skill does not select or call an AI model.";
 	ActionRoot = DesktopSkillAction;
 }
+
+include "PromptActions.pts";
 
 [SemanticProgram.InfinitivePhrase("to get desktop automation capabilities")]
 [SemanticProgram.InfinitivePhrase("to diagnose desktop automation backend")]
@@ -187,6 +192,192 @@ windowTitleContains - optional title substring. Returns left,top,width,height fo
 	function Execute(string processName, string windowTitleContains) : string
 	{
 		return DesktopAutomation.GetWindowCaptureBoundsText(processName, windowTitleContains);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to resolve desktop window")]
+[SemanticProgram.InfinitivePhrase("to bind desktop application window")]
+prototype ToResolveDesktopWindow : DesktopSkillAction
+{
+	Description = @"processName - process name such as notepad.
+windowTitleContains - optional title substring. Returns the process ID, exact title, native handle, and current bounds for the matched visible window.";
+
+	function Execute(string processName, string windowTitleContains) : DesktopWindowTarget
+	{
+		return DesktopAutomation.ResolveDesktopWindow(processName, windowTitleContains);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to focus desktop window")]
+prototype ToFocusDesktopWindow : DesktopSkillAction
+{
+	Description = @"processName - process name such as notepad.
+windowTitleContains - optional title substring.
+windowHandle - native window handle returned by ToResolveDesktopWindow.";
+
+	function Execute(string processName, string windowTitleContains, string windowHandle) : DesktopWindowActionResult
+	{
+		return DesktopAutomation.FocusDesktopWindowHandleText(processName, windowTitleContains, windowHandle);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to capture desktop window screenshot file")]
+prototype ToCaptureDesktopWindowScreenshotFile : DesktopSkillAction
+{
+	Description = @"processName - process name such as notepad.
+windowTitleContains - optional title substring.
+windowHandle - native window handle returned by ToResolveDesktopWindow.
+outputPath - absolute or relative .png artifact path.
+maxWidth - optional max image width, use 0 for native width.
+maxHeight - optional max image height, use 0 for native height.";
+
+	function Execute(string processName, string windowTitleContains, string windowHandle, string outputPath, int maxWidth, int maxHeight) : CapturedImageArtifact
+	{
+		return DesktopAutomation.CaptureDesktopWindowScreenshotFileHandleText(processName, windowTitleContains, windowHandle, outputPath, maxWidth, maxHeight);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to click desktop window")]
+prototype ToClickDesktopWindow : DesktopSkillAction
+{
+	Description = @"processName - process name such as notepad.
+windowTitleContains - optional title substring.
+windowHandle - native window handle returned by ToResolveDesktopWindow.
+x - native window-relative X coordinate.
+y - native window-relative Y coordinate.
+button - mouse button: left, right, or middle.";
+
+	function Execute(string processName, string windowTitleContains, string windowHandle, int x, int y, string button) : DesktopWindowActionResult
+	{
+		return DesktopAutomation.ClickDesktopWindowHandleText(processName, windowTitleContains, windowHandle, x, y, button);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to double click desktop window")]
+prototype ToDoubleClickDesktopWindow : DesktopSkillAction
+{
+	Description = @"processName - process name such as notepad.
+windowTitleContains - optional title substring.
+windowHandle - native window handle returned by ToResolveDesktopWindow.
+x - native window-relative X coordinate.
+y - native window-relative Y coordinate.
+button - mouse button: left, right, or middle.";
+
+	function Execute(string processName, string windowTitleContains, string windowHandle, int x, int y, string button) : DesktopWindowActionResult
+	{
+		return DesktopAutomation.DoubleClickDesktopWindowHandleText(processName, windowTitleContains, windowHandle, x, y, button);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to scroll desktop window")]
+prototype ToScrollDesktopWindow : DesktopSkillAction
+{
+	Description = @"processName - process name such as notepad.
+windowTitleContains - optional title substring.
+windowHandle - native window handle returned by ToResolveDesktopWindow.
+x - native window-relative X coordinate.
+y - native window-relative Y coordinate.
+scrollX - horizontal wheel ticks.
+scrollY - vertical wheel ticks.";
+
+	function Execute(string processName, string windowTitleContains, string windowHandle, int x, int y, int scrollX, int scrollY) : DesktopWindowActionResult
+	{
+		return DesktopAutomation.ScrollDesktopWindowHandleText(processName, windowTitleContains, windowHandle, x, y, scrollX, scrollY);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to click desktop window image coordinate")]
+[SemanticProgram.InfinitivePhrase("to click scaled desktop window screenshot point")]
+prototype ToClickDesktopWindowImage : DesktopSkillAction
+{
+	Description = @"processName - process name such as notepad.
+windowTitleContains - optional title substring.
+windowHandle - native window handle returned by ToResolveDesktopWindow and the capture artifact.
+x - image-relative X coordinate from the captured screenshot artifact.
+y - image-relative Y coordinate from the captured screenshot artifact.
+nativeWindowWidth - NativeWindowWidth from the captured screenshot artifact.
+nativeWindowHeight - NativeWindowHeight from the captured screenshot artifact.
+imageWidth - ImageWidth from the captured screenshot artifact.
+imageHeight - ImageHeight from the captured screenshot artifact.
+button - mouse button: left, right, or middle.
+Do not add screen offsets. The driver revalidates the process/title/handle, verifies current bounds still match the capture, foregrounds the window, and computes native screen coordinates internally.";
+
+	function Execute(string processName, string windowTitleContains, string windowHandle, int x, int y, int nativeWindowWidth, int nativeWindowHeight, int imageWidth, int imageHeight, string button) : DesktopWindowActionResult
+	{
+		return DesktopAutomation.ClickDesktopWindowImageHandleText(processName, windowTitleContains, windowHandle, x, y, nativeWindowWidth, nativeWindowHeight, imageWidth, imageHeight, button);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to double click desktop window image coordinate")]
+[SemanticProgram.InfinitivePhrase("to double click scaled desktop window screenshot point")]
+prototype ToDoubleClickDesktopWindowImage : DesktopSkillAction
+{
+	Description = @"processName - process name such as notepad.
+windowTitleContains - optional title substring.
+windowHandle - native window handle returned by ToResolveDesktopWindow and the capture artifact.
+x - image-relative X coordinate from the captured screenshot artifact.
+y - image-relative Y coordinate from the captured screenshot artifact.
+nativeWindowWidth - NativeWindowWidth from the captured screenshot artifact.
+nativeWindowHeight - NativeWindowHeight from the captured screenshot artifact.
+imageWidth - ImageWidth from the captured screenshot artifact.
+imageHeight - ImageHeight from the captured screenshot artifact.
+button - mouse button: left, right, or middle.
+Do not add screen offsets. The driver revalidates the process/title/handle, verifies current bounds still match the capture, foregrounds the window, and computes native screen coordinates internally.";
+
+	function Execute(string processName, string windowTitleContains, string windowHandle, int x, int y, int nativeWindowWidth, int nativeWindowHeight, int imageWidth, int imageHeight, string button) : DesktopWindowActionResult
+	{
+		return DesktopAutomation.DoubleClickDesktopWindowImageHandleText(processName, windowTitleContains, windowHandle, x, y, nativeWindowWidth, nativeWindowHeight, imageWidth, imageHeight, button);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to scroll desktop window image coordinate")]
+[SemanticProgram.InfinitivePhrase("to scroll scaled desktop window screenshot point")]
+prototype ToScrollDesktopWindowImage : DesktopSkillAction
+{
+	Description = @"processName - process name such as notepad.
+windowTitleContains - optional title substring.
+windowHandle - native window handle returned by ToResolveDesktopWindow and the capture artifact.
+x - image-relative X coordinate from the captured screenshot artifact.
+y - image-relative Y coordinate from the captured screenshot artifact.
+nativeWindowWidth - NativeWindowWidth from the captured screenshot artifact.
+nativeWindowHeight - NativeWindowHeight from the captured screenshot artifact.
+imageWidth - ImageWidth from the captured screenshot artifact.
+imageHeight - ImageHeight from the captured screenshot artifact.
+scrollX - horizontal wheel ticks.
+scrollY - vertical wheel ticks.
+Do not add screen offsets. The driver revalidates the process/title/handle, verifies current bounds still match the capture, foregrounds the window, and computes native screen coordinates internally.";
+
+	function Execute(string processName, string windowTitleContains, string windowHandle, int x, int y, int nativeWindowWidth, int nativeWindowHeight, int imageWidth, int imageHeight, int scrollX, int scrollY) : DesktopWindowActionResult
+	{
+		return DesktopAutomation.ScrollDesktopWindowImageHandleText(processName, windowTitleContains, windowHandle, x, y, nativeWindowWidth, nativeWindowHeight, imageWidth, imageHeight, scrollX, scrollY);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to type desktop window text")]
+prototype ToTypeDesktopWindowText : DesktopSkillAction
+{
+	Description = @"processName - process name such as notepad.
+windowTitleContains - optional title substring.
+windowHandle - native window handle returned by ToResolveDesktopWindow.
+text - text to type into the focused target window.";
+
+	function Execute(string processName, string windowTitleContains, string windowHandle, string text) : DesktopWindowActionResult
+	{
+		return DesktopAutomation.TypeDesktopWindowTextHandleText(processName, windowTitleContains, windowHandle, text);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to press desktop window keys")]
+prototype ToPressDesktopWindowKeys : DesktopSkillAction
+{
+	Description = @"processName - process name such as notepad.
+windowTitleContains - optional title substring.
+windowHandle - native window handle returned by ToResolveDesktopWindow.
+chord - key chord like ctrl+shift+s, win+r, or enter.";
+
+	function Execute(string processName, string windowTitleContains, string windowHandle, string chord) : DesktopWindowActionResult
+	{
+		return DesktopAutomation.PressDesktopWindowKeysHandleText(processName, windowTitleContains, windowHandle, chord);
 	}
 }
 

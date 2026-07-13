@@ -409,43 +409,47 @@
       "SkillName": "Desktop",
       "Title": "Desktop",
       "Description": "Buffaly skill package for Desktop.",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
-        "desktop",
+        "Desktop",
         "Desktop"
       ],
       "Path": "skills/Desktop",
       "Files": [
         {
           "Path": "Generated/JsonWs/Buffaly.DesktopAutomation.DesktopInteractiveSiteService.json",
-          "Sha256": "f43520387c492e2dfa0ce70bf6f7eb0694221acd8c189a87d6312327b7f682df"
+          "Sha256": "077990bd7569baa7bdb1c78def249e08b736a576c2951126b427d2c9571b6f58"
         },
         {
           "Path": "index.pts",
-          "Sha256": "a998b48af76a87d1afbeadd6273dc896d2f21d1e6ec004021e0668946a9479c2"
+          "Sha256": "28893c5d92fbe7a2f3de7e0d0c8836ddfdc3f2f6f3974234f24adb1a2a693e75"
         },
         {
           "Path": "interactive-sites/desktop-login/site.css",
-          "Sha256": "0b5614705aceab6521214bb37253f5b5e462df88c63584e51c0a45dc7659237c"
+          "Sha256": "10dcf461a0948acd1deba22dbca530c55819d4e1fbf6a5df276a8649f3573015"
         },
         {
           "Path": "interactive-sites/desktop-login/site.html",
-          "Sha256": "32c62064c5e2d97f2ead932c3cd792d9aab6432f8a4052457b4296abe3b505c8"
+          "Sha256": "b0b18a2e2804226c1c3f6d75eea3112a0310fb786925be1defe710824d03c355"
         },
         {
           "Path": "interactive-sites/desktop-login/site.js",
-          "Sha256": "34d00098f1d4fee95493c6649bc3beb4a99b463c1e1423ba0cc6678d5fb466e1"
+          "Sha256": "d09915149499e4b4bfbe0c02e52c4e940f061f1429feeb320b3409457d264f02"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "cb6dd7022d49a706fde3e466b9dc79ee83458676ef5058c418da8cab354f6078"
+        },
+        {
+          "Path": "Prompts/UseDesktopInteractionSkill.prompt.md",
+          "Sha256": "3a8204086c8233e1869f1f4debea40cf60e69f8e8e1b98fe745938fa2785c20a"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true,
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "IsDefaultPackage": true
     },
     {
       "SkillName": "DllEchoSample",
