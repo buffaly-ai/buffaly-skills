@@ -1,0 +1,16 @@
+{
+  "Modules": [
+    {
+      "Enabled": true,
+      "Name": "Ollama",
+      "Provider": "ollama",
+      "DisplayName": "Ollama",
+      "AssemblyPath": "Buffaly.Provider.Ollama/Buffaly.Provider.Ollama.dll",
+      "CatalogSourceTypeName": "Buffaly.Provider.Ollama.OllamaProviderCatalogSource",
+      "CompletionExecutorTypeName": "Buffaly.Provider.Ollama.OllamaCompletionExecutor",
+      "LoadOrder": 750,
+      "EmbeddingCatalogSourceTypeName": "Buffaly.Provider.Ollama.OllamaEmbeddingCatalogSource",
+      "EmbeddingExecutorTypeName": "Buffaly.Provider.Ollama.OllamaEmbeddingExecutor"
+    }
+  ]
+}
