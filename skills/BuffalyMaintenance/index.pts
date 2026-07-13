@@ -1,4 +1,4 @@
-reference Buffaly.Maintenance.Client;
+reference "lib/Buffaly.Maintenance.Client.dll" Buffaly.Maintenance.Client;
 import Buffaly.Maintenance.Client Buffaly.Maintenance.Client.BuffalyMaintenanceFacade BuffalyMaintenanceFacade;
 
 prototype BuffalyMaintenanceSkillAction : OpsAction

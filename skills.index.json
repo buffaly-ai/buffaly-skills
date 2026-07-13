@@ -174,7 +174,7 @@
       "SkillName": "BuffalyMaintenance",
       "Title": "Buffaly Maintenance",
       "Description": "Buffaly skill package for Buffaly Maintenance.",
-      "Version": "0.1.5",
+      "Version": "0.1.6",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Buffaly Maintenance",
@@ -192,21 +192,17 @@
         },
         {
           "Path": "lib/Buffaly.Agent.Provisioning.dll",
-          "Sha256": "912dc64e40f1a4eef12f57ee00ef6c3d94d4592191c5b0211543219245bd09a3"
+          "Sha256": "2df027ad3f9798929efa07d40e6d10f2a2c345b2d8b39cb254b8d49e9ab37a05"
         },
         {
           "Path": "lib/Buffaly.Maintenance.Client.dll",
-          "Sha256": "d7455dd31702731efd8400b308d07d23c03f61e43bc2458b2c4664ecd9c60f03"
+          "Sha256": "1432251afa952ad1fe9fd42e1503b6856d6689c109a42c54369fd7794cb1411d"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true,
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "IsDefaultPackage": true
     },
     {
       "SkillName": "BuffalySelfManagement",
