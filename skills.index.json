@@ -2019,10 +2019,11 @@
     {
       "SkillName": "UserSecrets",
       "Title": "User Secrets",
-      "Description": "Buffaly OpsAgent skill package for UserSecrets.",
-      "Version": "0.1.1",
+      "Description": "Buffaly skill package for User Secrets.",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "User Secrets",
         "UserSecrets"
       ],
       "Path": "skills/UserSecrets",
@@ -2045,17 +2046,13 @@
         },
         {
           "Path": "interactive-sites/user-secret-collector/site.js",
-          "Sha256": "30253de61876bb81b71cecd4cc5de3d1302f69511ff9114cccfa3d93b66f543c"
+          "Sha256": "1218a7110b5a75aa1ea50323a82c889fbbb7e11139b556e0b080781235785982"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true,
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "IsDefaultPackage": true
     },
     {
       "SkillName": "ValidatedPrompt",
