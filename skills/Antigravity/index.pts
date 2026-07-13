@@ -1,0 +1,598 @@
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.LiveToolInputCollectionRequestContract LiveToolInputCollectionRequestContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.LiveToolInputCollectionResultContract LiveToolInputCollectionResultContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.RuntimeUiEventOutputContract RuntimeUiEventOutputContract;
+import Buffaly.Agent.Tools.Process Buffaly.Agent.Tools.Process.ProcessToolDisplayOptions ProcessToolDisplayOptions;
+
+[SemanticEntity("antigravity skill")]
+[SemanticEntity("agy skill")]
+[SemanticEntity("google antigravity cli skill")]
+prototype AntigravitySkill : SkillEntity
+{
+	Description = "Minimal Antigravity CLI (agy) tools: auth status/login/logout and one-shot prompt execution. Uses the official CLI as a subprocess tool, not token harvesting.";
+	ActionRoot = AntigravitySkillAction;
+}
+
+prototype AntigravitySkillAction : OpsAction
+{
+	Description = @"Base action type for Antigravity CLI tools.";
+}
+
+function ToAntigravityDefaultExePath() : string
+{
+	return @"C:\Users\Administrator\AppData\Local\agy\bin\agy.exe";
+}
+
+function ToAntigravityHelperDir() : string
+{
+	return @"C:\inetpub\wwwroot\matt.buffaly.local\content\projects\OpsAgent\Skills\Antigravity\helpers";
+}
+
+function ToAntigravityStatusFile() : string
+{
+	return @"C:\Users\Administrator\AppData\Local\Temp\agy_login_status.json";
+}
+
+function ToAntigravityUrlFile() : string
+{
+	return @"C:\Users\Administrator\AppData\Local\Temp\agy_oauth_url.txt";
+}
+
+function ToAntigravityCodeFile() : string
+{
+	return @"C:\Users\Administrator\AppData\Local\Temp\agy_auth_code.txt";
+}
+
+function ToAntigravityPromptsDir() : string
+{
+	return @"C:\Users\Administrator\agy-prompts";
+}
+
+function ToAntigravityLiveFile() : string
+{
+	return @"C:\Users\Administrator\AppData\Local\Temp\agy_login_live2.txt";
+}
+
+function ToAntigravityQuoted(string value) : string
+{
+	return "\"" + value + "\"";
+}
+
+function ToAntigravityEscapePowerShellSingleQuoted(string value) : string
+{
+	if (StringUtil.IsEmpty(value))
+		return "";
+	return value.Replace("'", "''");
+}
+
+function ToAntigravityBuildRunScript(string exePath, string argumentLine, int timeoutSeconds) : string
+{
+	string script = "$ErrorActionPreference='Continue';";
+	script = script + "$exe='" + ToAntigravityEscapePowerShellSingleQuoted(exePath) + "';";
+	script = script + "$argsLine='" + ToAntigravityEscapePowerShellSingleQuoted(argumentLine) + "';";
+	script = script + "$timeoutMs=((" + JsonUtil.ToStringExt(timeoutSeconds).ToString() + ") * 1000);";
+	script = script + "if(-not (Test-Path -LiteralPath $exe)){ Write-Output ('Error: agy not found at ' + $exe); exit 2 };";
+	script = script + "$outFile=Join-Path $env:TEMP 'agy_run_out.txt'; $errFile=Join-Path $env:TEMP 'agy_run_err.txt';";
+	script = script + "Remove-Item $outFile,$errFile -ErrorAction SilentlyContinue;";
+	script = script + "$p=Start-Process -FilePath $exe -ArgumentList $argsLine -PassThru -WindowStyle Hidden -RedirectStandardOutput $outFile -RedirectStandardError $errFile;";
+	script = script + "if(-not $p.WaitForExit($timeoutMs)){";
+	script = script + "  try{ taskkill /F /T /PID $p.Id 2>$null }catch{ try{$p.Kill()}catch{} };";
+	script = script + "  $p.WaitForExit(5000) | Out-Null;";
+	script = script + "  Write-Output 'Error: agy timed out';";
+	script = script + "  if(Test-Path -LiteralPath $outFile){ Write-Output '--- stdout ---'; Get-Content -LiteralPath $outFile -Raw -ErrorAction SilentlyContinue } else { Write-Output '--- stdout ---'; Write-Output '(no output)' };";
+	script = script + "  if(Test-Path -LiteralPath $errFile){ $e=Get-Content -LiteralPath $errFile -Raw -ErrorAction SilentlyContinue; if($e){ Write-Output '--- stderr ---'; Write-Output $e } };";
+	script = script + "  exit 124";
+	script = script + "};";
+	script = script + "Write-Output ('exitCode=' + $p.ExitCode);";
+	script = script + "if(Test-Path -LiteralPath $outFile){ Write-Output '--- stdout ---'; Get-Content -LiteralPath $outFile -Raw -ErrorAction SilentlyContinue } else { Write-Output '--- stdout ---'; Write-Output '(no output file)' };";
+	script = script + "if(Test-Path -LiteralPath $errFile){ $e=Get-Content -LiteralPath $errFile -Raw -ErrorAction SilentlyContinue; if($e){ Write-Output '--- stderr ---'; Write-Output $e } } else { Write-Output '--- stderr ---' };";
+	script = script + "exit $p.ExitCode;";
+	return script;
+}
+
+function ToAntigravityRun(string argumentLine, int timeoutSeconds) : string
+{
+	if (timeoutSeconds <= 0)
+		timeoutSeconds = 120;
+	string exe = ToAntigravityDefaultExePath();
+	string script = ToAntigravityBuildRunScript(exe, argumentLine, timeoutSeconds);
+	return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, "", "Antigravity CLI");
+}
+
+function ToAntigravityRunVisible(string script, int timeoutSeconds, string commandLabel, string displayTitle, string displayMessage) : string
+{
+	if (timeoutSeconds <= 0)
+		timeoutSeconds = 180;
+
+	ProcessToolDisplayOptions displayOptions = new ProcessToolDisplayOptions
+	{
+		CommandLabel = commandLabel,
+		ForceOpenToolWindow = true,
+		DisplayMode = "focused-popup",
+		DisplayTitle = displayTitle,
+		DisplayMessage = displayMessage
+	};
+
+	return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, displayOptions);
+}
+
+function ToAntigravityRunPythonHelper(string helperFileName, string argumentLine, int timeoutSeconds) : string
+{
+	if (timeoutSeconds <= 0)
+		timeoutSeconds = 120;
+	string helper = ToAntigravityHelperDir() + "\\" + helperFileName;
+	string script = "$ErrorActionPreference='Continue'; $env:PYTHONIOENCODING='utf-8'; $env:TEMP='C:\\Users\\Administrator\\AppData\\Local\\Temp'; $env:TMP='C:\\Users\\Administrator\\AppData\\Local\\Temp';";
+	script = script + "$helper='" + ToAntigravityEscapePowerShellSingleQuoted(helper) + "';";
+	script = script + "if(-not (Test-Path -LiteralPath $helper)){ Write-Output ('Error: helper missing: ' + $helper); exit 2 };";
+	script = script + "$argsLine='" + ToAntigravityEscapePowerShellSingleQuoted(argumentLine) + "';";
+	script = script + "$timeoutMs=((" + JsonUtil.ToStringExt(timeoutSeconds).ToString() + ") * 1000);";
+	script = script + "$psi=New-Object System.Diagnostics.ProcessStartInfo;";
+	script = script + "$psi.FileName='python';";
+	script = script + "$psi.Arguments=('\"' + $helper + '\" ' + $argsLine);";
+	script = script + "$psi.RedirectStandardOutput=$true;";
+	script = script + "$psi.RedirectStandardError=$true;";
+	script = script + "$psi.UseShellExecute=$false;";
+	script = script + "$psi.CreateNoWindow=$true;";
+	script = script + "$psi.EnvironmentVariables['PYTHONIOENCODING']='utf-8';";
+	script = script + "$psi.EnvironmentVariables['TEMP']='C:\\Users\\Administrator\\AppData\\Local\\Temp';";
+	script = script + "$psi.EnvironmentVariables['TMP']='C:\\Users\\Administrator\\AppData\\Local\\Temp';";
+	script = script + "$p=[Diagnostics.Process]::Start($psi);";
+	script = script + "if(-not $p.WaitForExit($timeoutMs)){ try{$p.Kill($true)}catch{try{$p.Kill()}catch{}}; Write-Output 'Error: helper timed out'; Write-Output $p.StandardOutput.ReadToEnd(); Write-Output $p.StandardError.ReadToEnd(); exit 124 };";
+	script = script + "Write-Output $p.StandardOutput.ReadToEnd();";
+	script = script + "$err=$p.StandardError.ReadToEnd(); if($err){ Write-Output ('--- stderr ---'); Write-Output $err };";
+	script = script + "exit $p.ExitCode;";
+	return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, "", "Antigravity Helper");
+}
+
+[SemanticProgram.InfinitivePhrase("to get antigravity auth status")]
+[SemanticProgram.InfinitivePhrase("to check antigravity auth status")]
+[SemanticProgram.InfinitivePhrase("to check if agy is installed and authenticated")]
+prototype ToGetAntigravityAuthStatus : AntigravitySkillAction
+{
+	Description = @"Returns whether the Antigravity CLI (agy) is installed and whether the current machine session appears authenticated. Non-secret status only.";
+
+	function Execute() : string
+	{
+		string exe = ToAntigravityDefaultExePath();
+		string existsScript = "if(Test-Path -LiteralPath '" + ToAntigravityEscapePowerShellSingleQuoted(exe) + "'){ 'EXISTS' } else { 'MISSING' }";
+		string existsResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(existsScript, "", 15, _opsAgent, "", "Antigravity Exists");
+		if (existsResult.Contains("MISSING"))
+		{
+			return "Installed=false`nAuthenticated=false`nExePath=" + exe + "`nMessage=agy is not installed at the expected path.`nRecommendation=Install with: irm https://antigravity.google/cli/install.ps1 | iex";
+		}
+
+		string result = ToAntigravityRun("models", 45);
+		bool authenticated = false;
+		string message = "agy is installed.";
+		if (result.Contains("Please sign in") || result.Contains("Authentication required") || result.Contains("authentication failed") || result.Contains("authentication timed out"))
+		{
+			authenticated = false;
+			message = "agy is installed but not authenticated.";
+		}
+		else if (result.Contains("exitCode=0"))
+		{
+			authenticated = true;
+			message = "agy is installed and appears authenticated.";
+		}
+		else if (result.ToLower().Contains("gemini") || result.ToLower().Contains("model"))
+		{
+			authenticated = true;
+			message = "agy is installed and returned model information.";
+		}
+
+		string authText = "false";
+		if (authenticated)
+			authText = "true";
+
+		string recommendation = "Use ToBeginAntigravityLogin if not authenticated, then ToRunAntigravityPrompt.";
+		if (authenticated)
+			recommendation = "Ready for ToRunAntigravityPrompt.";
+
+		return "Installed=true`nAuthenticated=" + authText + "`nExePath=" + exe + "`nMessage=" + message + "`nRecommendation=" + recommendation + "`n`nRaw:`n" + result;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to begin antigravity login")]
+[SemanticProgram.InfinitivePhrase("to sign in to agy")]
+[SemanticProgram.InfinitivePhrase("to sign in to antigravity")]
+[SemanticProgram.InfinitivePhrase("to login to antigravity")]
+prototype ToBeginAntigravityLogin : AntigravitySkillAction
+{
+	Description = @"Starts official agy interactive login using a thin console wrapper that extracts and formats the Google OAuth URL cleanly, opens the browser, then feeds the authorization code back into agy. Uses the GitHub-style ForceOpenToolWindow + live tool input pattern. timeoutSeconds defaults to 600.";
+
+	function Execute(int timeoutSeconds) : string
+	{
+		if (timeoutSeconds <= 0)
+			timeoutSeconds = 600;
+
+		string exe = ToAntigravityDefaultExePath();
+		string codeFile = ToAntigravityCodeFile();
+		string urlFile = ToAntigravityUrlFile();
+		string statusFile = ToAntigravityStatusFile();
+
+		// Clear any stale authorization code from a previous attempt.
+		string clearScript = "$ErrorActionPreference='Continue'; $code='" + ToAntigravityEscapePowerShellSingleQuoted(codeFile) + "'; $url='" + ToAntigravityEscapePowerShellSingleQuoted(urlFile) + "'; $status='" + ToAntigravityEscapePowerShellSingleQuoted(statusFile) + "'; if(Test-Path -LiteralPath $code){ Remove-Item -LiteralPath $code -Force -ErrorAction SilentlyContinue }; if(Test-Path -LiteralPath $url){ Remove-Item -LiteralPath $url -Force -ErrorAction SilentlyContinue }; if(Test-Path -LiteralPath $status){ Remove-Item -LiteralPath $status -Force -ErrorAction SilentlyContinue }; 'cleared'";
+		SystemOperations.RunPowerShellStreamingToRuntimeUi(clearScript, "", 15, _opsAgent, "", "Antigravity Login Reset");
+
+		_opsAgent.EmitRuntimeUiOutput(new RuntimeUiEventOutputContract
+		{
+			EventType = "tool-channel-output",
+			Stream = "stdout",
+			Text = "Starting Antigravity login console wrapper. It extracts the Google OAuth URL cleanly, opens the browser, then waits for your authorization code.\n",
+			Command = "agy login"
+		});
+
+		// Start the thin console wrapper that parses agy TUI and formats the OAuth URL.
+		string helper = ToAntigravityHelperDir() + "\\agy_login_console.py";
+		string startScript = "$ErrorActionPreference='Continue'; $env:PYTHONIOENCODING='utf-8'; $env:TEMP='C:\\Users\\Administrator\\AppData\\Local\\Temp'; $env:TMP='C:\\Users\\Administrator\\AppData\\Local\\Temp';";
+		startScript = startScript + "$helper='" + ToAntigravityEscapePowerShellSingleQuoted(helper) + "';";
+		startScript = startScript + "$exe='" + ToAntigravityEscapePowerShellSingleQuoted(exe) + "';";
+		startScript = startScript + "$timeout=" + JsonUtil.ToStringExt(timeoutSeconds).ToString() + ";";
+		startScript = startScript + "if(-not (Test-Path -LiteralPath $helper)){ Write-Output ('Error: login console helper missing: ' + $helper); exit 2 };";
+		startScript = startScript + "$args=@($helper,'--exe',$exe,'--timeout',([string]$timeout),'--url-file','" + ToAntigravityEscapePowerShellSingleQuoted(urlFile) + "','--status-file','" + ToAntigravityEscapePowerShellSingleQuoted(statusFile) + "');";
+		startScript = startScript + "$outLog=Join-Path $env:TEMP 'agy_login_console_out.txt'; $errLog=Join-Path $env:TEMP 'agy_login_console_err.txt';";
+		startScript = startScript + "Remove-Item $outLog,$errLog -ErrorAction SilentlyContinue;";
+		startScript = startScript + "$p=Start-Process -FilePath python -ArgumentList $args -PassThru -WindowStyle Hidden -WorkingDirectory 'C:\\Users\\Administrator' -RedirectStandardOutput $outLog -RedirectStandardError $errLog;";
+		startScript = startScript + "Write-Output ('wrapper_pid=' + $p.Id);";
+		startScript = startScript + "$urlFilePS='" + ToAntigravityEscapePowerShellSingleQuoted(urlFile) + "'; $statusFilePS='" + ToAntigravityEscapePowerShellSingleQuoted(statusFile) + "'; $deadline=(Get-Date).AddSeconds(60); $sawUrl=$false;";
+		startScript = startScript + "while((Get-Date) -lt $deadline){ if(Test-Path -LiteralPath $urlFilePS){ $urlContent=Get-Content -LiteralPath $urlFilePS -Raw -ErrorAction SilentlyContinue; if($urlContent){ Write-Output 'GOOGLE OAUTH URL:'; Write-Output $urlContent; $sawUrl=$true; Start-Sleep -Seconds 2; break } }; if($p.HasExited){ break }; Start-Sleep -Milliseconds 500 };";
+		startScript = startScript + "if(-not $sawUrl){ Write-Output 'Waiting for OAuth URL...'; if(Test-Path -LiteralPath $urlFilePS){ Write-Output 'URL file:'; Get-Content -LiteralPath $urlFilePS -Raw -ErrorAction SilentlyContinue }; if(Test-Path -LiteralPath $outLog){ Write-Output '--- log ---'; Get-Content -LiteralPath $outLog -Raw -ErrorAction SilentlyContinue } };";
+		startScript = startScript + "if(Test-Path -LiteralPath $errLog){ $e=Get-Content -LiteralPath $errLog -Raw -ErrorAction SilentlyContinue; if($e){ Write-Output '--- stderr ---'; Write-Output $e } };";
+		startScript = startScript + "Write-Output ('wrapper_alive=' + (-not $p.HasExited));";
+
+		string started = ToAntigravityRunVisible(startScript, 90, "agy login", "Antigravity authentication", "The console wrapper will show a clean single-line Google OAuth URL and open the browser. Then paste the authorization code below.");
+
+		// Ask user for auth code via live tool input UI (same class of interactive control as GitHub login tooling).
+		LiveToolInputCollectionResultContract inputResult = _opsAgent.CollectLiveToolInput(new LiveToolInputCollectionRequestContract
+		{
+			InputKind = "line",
+			Prompt = "Paste the Google authorization code (starts with 4/). The console wrapper will feed it into agy.",
+			Required = true,
+			IsSensitive = true,
+			TimeoutSeconds = timeoutSeconds
+		});
+
+		if (StringUtil.IsEmpty(inputResult.Value))
+		{
+			return "Antigravity login aborted: no authorization code received (status=" + inputResult.Status + ").`n`nStartup output:`n" + started;
+		}
+
+		// Write code file for the waiting console wrapper, then wait for completion.
+		string code = inputResult.Value.Trim();
+		string finishScript = "$ErrorActionPreference='Continue'; $codePath='" + ToAntigravityEscapePowerShellSingleQuoted(codeFile) + "'; $outLog=Join-Path $env:TEMP 'agy_login_console_out.txt';";
+		finishScript = finishScript + "Set-Content -LiteralPath $codePath -Value '" + ToAntigravityEscapePowerShellSingleQuoted(code) + "' -Encoding utf8 -NoNewline;";
+		finishScript = finishScript + "Write-Output ('code_written_len=' + " + JsonUtil.ToStringExt(code.Length).ToString() + ");";
+		finishScript = finishScript + "Write-Output 'Waiting for login console wrapper to consume the code...';";
+		finishScript = finishScript + "$deadline=(Get-Date).AddSeconds(" + JsonUtil.ToStringExt(timeoutSeconds).ToString() + ");";
+		finishScript = finishScript + "$statusFilePS='" + ToAntigravityEscapePowerShellSingleQuoted(statusFile) + "'; while((Get-Date) -lt $deadline){ if(Test-Path -LiteralPath $statusFilePS){ $sv=Get-Content -LiteralPath $statusFilePS -Raw -ErrorAction SilentlyContinue; if($sv -and $sv -ne 'URL_READY' -and $sv -ne 'WAITING_FOR_CODE' -and $sv -ne 'SUBMITTING_CODE'){ Write-Output ('status=' + $sv); break } }; Start-Sleep -Seconds 2 };";
+		finishScript = finishScript + "if(Test-Path -LiteralPath $outLog){ Write-Output '--- wrapper output ---'; Get-Content -LiteralPath $outLog -Raw };";
+
+		string finished = ToAntigravityRunVisible(finishScript, timeoutSeconds, "agy login complete", "Antigravity authentication", "Submitting authorization code through the console wrapper.");
+
+		string status = ToAntigravityRun("models", 45);
+		return "Antigravity interactive login finished (console wrapper + live auth-code input).`n`n--- Startup ---`n" + started + "`n`n--- Completion ---`n" + finished + "`n`n--- Auth probe ---`n" + status;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to logout antigravity account")]
+[SemanticProgram.InfinitivePhrase("to sign out of agy")]
+[SemanticProgram.InfinitivePhrase("to sign out of antigravity")]
+[SemanticProgram.InfinitivePhrase("to logout antigravity account")]
+[SemanticProgram.InfinitivePhrase("to logout of antigravity")]
+prototype ToLogoutAntigravityAccount : AntigravitySkillAction
+{
+	Description = @"Logs out of Antigravity using the official interactive TUI command /logout via helper, with optional local cleanup. Uses a visible tool window when available.";
+
+	function Execute() : string
+	{
+		string exe = ToAntigravityDefaultExePath();
+		string args = "--exe " + ToAntigravityQuoted(exe) + " --timeout 45";
+		string helper = ToAntigravityHelperDir() + "\\agy_logout_conpty.py";
+		string script = "$ErrorActionPreference='Continue'; $env:PYTHONIOENCODING='utf-8';";
+		script = script + "$helper='" + ToAntigravityEscapePowerShellSingleQuoted(helper) + "';";
+		script = script + "$argsLine='" + ToAntigravityEscapePowerShellSingleQuoted(args) + "';";
+		script = script + "python $helper $argsLine; $exit=$LASTEXITCODE;";
+		script = script + "$root = Join-Path $env:USERPROFILE '.gemini\\antigravity-cli'; $removed=@(); if(Test-Path $root){ foreach($name in @('settings.json','jetski_state.pbtxt')){ $p=Join-Path $root $name; if(Test-Path $p){ try{ Remove-Item -LiteralPath $p -Force -ErrorAction Stop; $removed += $p } catch { Write-Output ('warn: ' + $_.Exception.Message) } } } };";
+		script = script + "Write-Output ('removed=' + ($removed -join '; ')); exit $exit";
+
+		ProcessToolDisplayOptions displayOptions = new ProcessToolDisplayOptions
+		{
+			CommandLabel = "agy logout",
+			ForceOpenToolWindow = true,
+			DisplayMode = "focused-popup",
+			DisplayTitle = "Antigravity logout",
+			DisplayMessage = "Running official /logout flow."
+		};
+		string logoutResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 60, _opsAgent, displayOptions);
+		string status = ToAntigravityRun("models", 45);
+		return "Logout finished.`n" + logoutResult + "`n`nAuth probe after logout:`n" + status;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to run an antigravity prompt")]
+[SemanticProgram.InfinitivePhrase("to ask agy a one-shot question")]
+[SemanticProgram.InfinitivePhrase("to ask antigravity a question")]
+[SemanticProgram.InfinitivePhrase("to run an agy prompt")]
+prototype ToRunAntigravityPrompt : AntigravitySkillAction
+{
+	Description = @"prompt - required one-shot prompt text.
+model - optional exact model name. Only Gemini models are supported. Defaults to Gemini 3.5 Flash (Medium). Valid options: Gemini 3.5 Flash (Medium/High/Low), Gemini 3.1 Pro (Low/High).
+workingDirectory - optional cwd for the CLI process.
+timeoutSeconds - max wait seconds (default 180).
+Runs official agy --print with auto-approved permissions and returns stdout/stderr/exit code. Only Gemini models are supported.
+continueConversation - optional, set to true to continue the most recent agy conversation.
+conversationId - optional, resume a specific agy conversation by UUID.";
+
+	function Execute(string prompt, string model, string workingDirectory, int timeoutSeconds, bool continueConversation, string conversationId) : string
+	{
+		if (StringUtil.IsEmpty(prompt))
+			return "Error: prompt is required.";
+		if (timeoutSeconds <= 0)
+			timeoutSeconds = 180;
+
+		string exe = ToAntigravityDefaultExePath();
+		if (StringUtil.IsEmpty(model))
+			model = "Gemini 3.5 Flash (Medium)";
+
+		// For long prompts, write to a file in agy trusted workspace and tell agy to read it.
+		string actualPrompt = prompt;
+		if (prompt.Length > 500)
+		{
+			string promptsDir = ToAntigravityPromptsDir();
+			string promptFile = promptsDir + "\\agy_prompt.txt";
+			string writeScript = "$ErrorActionPreference='Continue'; $dir='" + ToAntigravityEscapePowerShellSingleQuoted(promptsDir) + "'; if(-not (Test-Path -LiteralPath $dir)){ New-Item -Path $dir -ItemType Directory -Force | Out-Null }; Set-Content -LiteralPath '" + ToAntigravityEscapePowerShellSingleQuoted(promptFile) + "' -Value '" + ToAntigravityEscapePowerShellSingleQuoted(prompt) + "' -Encoding utf8;";
+			SystemOperations.RunPowerShellStreamingToRuntimeUi(writeScript, "", 15, _opsAgent, "", "Antigravity Prompt File");
+			actualPrompt = "Read the file at " + promptFile + " and follow the instructions in it. Do not modify any files.";
+		}
+
+		string args = "--print " + ToAntigravityQuoted(actualPrompt) + " --print-timeout " + JsonUtil.ToStringExt(timeoutSeconds).ToString() + "s --dangerously-skip-permissions --mode accept-edits";
+		args = "--model " + ToAntigravityQuoted(model) + " " + args;
+		if (continueConversation)
+			args = args + " -c";
+		if (!StringUtil.IsEmpty(conversationId))
+			args = args + " --conversation " + ToAntigravityQuoted(conversationId);
+
+		string script = "$ErrorActionPreference='Continue';";
+		if (!StringUtil.IsEmpty(workingDirectory))
+		{
+			script = script + "if(Test-Path -LiteralPath '" + ToAntigravityEscapePowerShellSingleQuoted(workingDirectory) + "'){ Set-Location -LiteralPath '" + ToAntigravityEscapePowerShellSingleQuoted(workingDirectory) + "' };";
+		}
+		script = script + ToAntigravityBuildRunScript(exe, args, timeoutSeconds);
+		string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, "", "Antigravity Prompt");
+
+		// Write conversation ID to a temp file for the caller to read.
+		// The most recently modified .db file in the conversations directory IS the conversation UUID.
+		string convIdFile = @"C:\Users\Administrator\AppData\Local\Temp\agy_conv_id.txt";
+		string convIdScript = "$ErrorActionPreference='Continue'; $convDir=Join-Path (Join-Path (Join-Path $env:USERPROFILE '.gemini') 'antigravity-cli') 'conversations'; $idFile='" + ToAntigravityEscapePowerShellSingleQuoted(convIdFile) + "'; if(Test-Path $convDir){ $latest=Get-ChildItem $convDir -Filter '*.db' | Sort-Object LastWriteTime -Descending | Select-Object -First 1; if($latest){ Set-Content -LiteralPath $idFile -Value $latest.BaseName -Encoding utf8 -NoNewline } } else { Set-Content -LiteralPath $idFile -Value 'unknown' -Encoding utf8 -NoNewline }";
+		SystemOperations.RunPowerShellStreamingToRuntimeUi(convIdScript, "", 10, _opsAgent, "", "Antigravity Conv ID");
+
+		return result + "`n`nConversationIdFile=" + convIdFile;
+	}
+}
+
+// ===== Pass-Through Actions =====
+
+function ToAntigravityPtConvIdFile() : string
+{
+	return @"C:\Users\Administrator\AppData\Local\Temp\agy_pt_conv_id.txt";
+}
+
+function ToAntigravityPtModelFile() : string
+{
+	return @"C:\Users\Administrator\AppData\Local\Temp\agy_pt_model.txt";
+}
+
+function ToAntigravityPtWorkDirFile() : string
+{
+	return @"C:\Users\Administrator\AppData\Local\Temp\agy_pt_workdir.txt";
+}
+
+function ToAntigravityPtTurnsFile() : string
+{
+	return @"C:\Users\Administrator\AppData\Local\Temp\agy_pt_turns.txt";
+}
+
+function ToAntigravityPtReadState(string filePath) : string
+{
+	string script = "if(Test-Path -LiteralPath '" + ToAntigravityEscapePowerShellSingleQuoted(filePath) + "'){ Get-Content -LiteralPath '" + ToAntigravityEscapePowerShellSingleQuoted(filePath) + "' -Raw -ErrorAction SilentlyContinue } else { '' }";
+	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 10, _opsAgent, "", "Antigravity PT State Read");
+	return result.Trim();
+}
+
+function ToAntigravityPtWriteState(string filePath, string value) : string
+{
+	string script = "Set-Content -LiteralPath '" + ToAntigravityEscapePowerShellSingleQuoted(filePath) + "' -Value '" + ToAntigravityEscapePowerShellSingleQuoted(value) + "' -Encoding utf8 -NoNewline";
+	SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 10, _opsAgent, "", "Antigravity PT State Write");
+	return "";
+}
+
+function ToAntigravityPtAutoTimeout(string prompt) : int
+{
+	string lower = prompt.ToLower();
+	if (lower.Contains("audit") || lower.Contains("browse") || lower.Contains("every page") || lower.Contains("thorough") || lower.Contains("comprehensive") || lower.Contains("entire site") || lower.Contains("all pages"))
+		return 600;
+	if (lower.Contains("analyze") || lower.Contains("review") || lower.Contains("compare") || lower.Contains("evaluate") || lower.Contains("deep") || lower.Contains("detailed") || lower.Contains("generate") || lower.Contains("create") || lower.Contains("build"))
+		return 300;
+	return 90;
+}
+
+[SemanticProgram.InfinitivePhrase("to talk to antigravity")]
+[SemanticProgram.InfinitivePhrase("to ask antigravity")]
+[SemanticProgram.InfinitivePhrase("to send a message to antigravity")]
+[SemanticProgram.InfinitivePhrase("to pass through to antigravity")]
+[SemanticProgram.InfinitivePhrase("to chat with antigravity")]
+prototype ToTalkToAntigravity : AntigravitySkillAction
+{
+	Description = @"prompt - the user's message to forward to Antigravity (agy).
+model - optional model override. Defaults to last used model or Gemini 3.1 Pro (High).
+timeoutSeconds - optional timeout. Auto-selected based on prompt content if not specified (90/300/600s).
+This is the main pass-through action. It automatically manages conversation continuity, model selection, timeout, and long-prompt file handling. The user just talks and agy responds.";
+
+	function Execute(string prompt, string model, int timeoutSeconds) : string
+	{
+		if (StringUtil.IsEmpty(prompt))
+			return "Error: prompt is required.";
+
+		// Read current state
+		string currentConvId = ToAntigravityPtReadState(ToAntigravityPtConvIdFile());
+		string currentModel = ToAntigravityPtReadState(ToAntigravityPtModelFile());
+		string currentWorkDir = ToAntigravityPtReadState(ToAntigravityPtWorkDirFile());
+
+		// Resolve model
+		if (StringUtil.IsEmpty(model))
+		{
+			if (!StringUtil.IsEmpty(currentModel))
+				model = currentModel;
+			else
+				model = "Gemini 3.1 Pro (High)";
+		}
+
+		// Auto-select timeout if not specified
+		if (timeoutSeconds <= 0)
+			timeoutSeconds = ToAntigravityPtAutoTimeout(prompt);
+
+		// Determine if we continue an existing conversation
+		bool continueConv = false;
+		if (!StringUtil.IsEmpty(currentConvId) && currentConvId != "none" && currentConvId != "unknown")
+			continueConv = true;
+
+		// For long prompts, write to file
+		string actualPrompt = prompt;
+		if (prompt.Length > 500)
+		{
+			string promptsDir = ToAntigravityPromptsDir();
+			string promptFile = promptsDir + "\\agy_pt_prompt.txt";
+			string writeScript = "$ErrorActionPreference='Continue'; $dir='" + ToAntigravityEscapePowerShellSingleQuoted(promptsDir) + "'; if(-not (Test-Path -LiteralPath $dir)){ New-Item -Path $dir -ItemType Directory -Force | Out-Null }; Set-Content -LiteralPath '" + ToAntigravityEscapePowerShellSingleQuoted(promptFile) + "' -Value '" + ToAntigravityEscapePowerShellSingleQuoted(prompt) + "' -Encoding utf8;";
+			SystemOperations.RunPowerShellStreamingToRuntimeUi(writeScript, "", 15, _opsAgent, "", "Antigravity PT Prompt File");
+			actualPrompt = "Read the file at " + promptFile + " and follow the instructions in it. Do not modify any files.";
+		}
+
+		// Build agy arguments
+		string exe = ToAntigravityDefaultExePath();
+		string args = "--model " + ToAntigravityQuoted(model) + " --print " + ToAntigravityQuoted(actualPrompt) + " --print-timeout " + JsonUtil.ToStringExt(timeoutSeconds).ToString() + "s --dangerously-skip-permissions --mode accept-edits";
+		if (continueConv)
+			args = args + " -c";
+
+		// Build and run script
+		string script = "$ErrorActionPreference='Continue';";
+		if (!StringUtil.IsEmpty(currentWorkDir) && currentWorkDir != "none")
+		{
+			script = script + "if(Test-Path -LiteralPath '" + ToAntigravityEscapePowerShellSingleQuoted(currentWorkDir) + "'){ Set-Location -LiteralPath '" + ToAntigravityEscapePowerShellSingleQuoted(currentWorkDir) + "' };";
+		}
+		script = script + ToAntigravityBuildRunScript(exe, args, timeoutSeconds);
+		string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, "", "Antigravity Pass-Through");
+
+		// Read and store new conversation ID
+		string agyConvIdFile = @"C:\Users\Administrator\AppData\Local\Temp\agy_conv_id.txt";
+		string newConvId = ToAntigravityPtReadState(agyConvIdFile);
+		if (!StringUtil.IsEmpty(newConvId) && newConvId != "unknown")
+		{
+			ToAntigravityPtWriteState(ToAntigravityPtConvIdFile(), newConvId);
+		}
+
+		// Store model
+		ToAntigravityPtWriteState(ToAntigravityPtModelFile(), model);
+
+		// Increment turn count
+		string turnScript = "$f='" + ToAntigravityEscapePowerShellSingleQuoted(ToAntigravityPtTurnsFile()) + "'; $cur=0; if(Test-Path -LiteralPath $f){ $v=(Get-Content -LiteralPath $f -Raw -ErrorAction SilentlyContinue); if($v){ $cur=[int]$v.Trim() } }; $cur=$cur+1; Set-Content -LiteralPath $f -Value $cur -Encoding utf8 -NoNewline; Write-Output $cur";
+		string turnResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(turnScript, "", 10, _opsAgent, "", "Antigravity PT Turn Count");
+		string turnCount = turnResult.Trim();
+
+		// Build state summary
+		string stateSummary = "`n`n--- Pass-Through State ---";
+		string displayConvId = newConvId;
+		if (StringUtil.IsEmpty(displayConvId) || displayConvId == "unknown")
+			displayConvId = currentConvId;
+		stateSummary = stateSummary + "`nConversationId=" + displayConvId;
+		stateSummary = stateSummary + "`nModel=" + model;
+		stateSummary = stateSummary + "`nTurn=" + turnCount;
+		stateSummary = stateSummary + "`nContinued=" + (continueConv ? "true" : "false");
+		stateSummary = stateSummary + "`nTimeout=" + JsonUtil.ToStringExt(timeoutSeconds).ToString() + "s";
+		if (!StringUtil.IsEmpty(currentWorkDir) && currentWorkDir != "none")
+			stateSummary = stateSummary + "`nWorkingDirectory=" + currentWorkDir;
+
+		return result + stateSummary;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to start a new antigravity conversation")]
+[SemanticProgram.InfinitivePhrase("to reset antigravity conversation")]
+[SemanticProgram.InfinitivePhrase("to start fresh with antigravity")]
+prototype ToStartNewAntigravityConversation : AntigravitySkillAction
+{
+	Description = @"Clears the current Antigravity conversation context so the next ToTalkToAntigravity call starts a fresh conversation. Optional model parameter to set the model for the new conversation.";
+
+	function Execute(string model) : string
+	{
+		ToAntigravityPtWriteState(ToAntigravityPtConvIdFile(), "none");
+		ToAntigravityPtWriteState(ToAntigravityPtTurnsFile(), "0");
+		if (!StringUtil.IsEmpty(model))
+		{
+			ToAntigravityPtWriteState(ToAntigravityPtModelFile(), model);
+			return "New Antigravity conversation started.`nModel=" + model + "`nTurn=0`nThe next ToTalkToAntigravity call will begin fresh.";
+		}
+		return "New Antigravity conversation started.`nTurn=0`nThe next ToTalkToAntigravity call will begin fresh.";
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get antigravity conversation state")]
+[SemanticProgram.InfinitivePhrase("to check antigravity conversation status")]
+prototype ToGetAntigravityConversationState : AntigravitySkillAction
+{
+	Description = @"Returns the current Antigravity pass-through state: conversation ID, model, working directory, and turn count.";
+
+	function Execute() : string
+	{
+		string convId = ToAntigravityPtReadState(ToAntigravityPtConvIdFile());
+		string model = ToAntigravityPtReadState(ToAntigravityPtModelFile());
+		string workDir = ToAntigravityPtReadState(ToAntigravityPtWorkDirFile());
+		string turns = ToAntigravityPtReadState(ToAntigravityPtTurnsFile());
+
+		string result = "Antigravity Pass-Through State`n";
+		result = result + "ConversationId=" + (StringUtil.IsEmpty(convId) ? "(none)" : convId) + "`n";
+		result = result + "Model=" + (StringUtil.IsEmpty(model) ? "Gemini 3.1 Pro (High) (default)" : model) + "`n";
+		result = result + "WorkingDirectory=" + (StringUtil.IsEmpty(workDir) || workDir == "none" ? "(default)" : workDir) + "`n";
+		result = result + "TurnCount=" + (StringUtil.IsEmpty(turns) ? "0" : turns);
+
+		return result;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set antigravity model")]
+[SemanticProgram.InfinitivePhrase("to switch antigravity model")]
+prototype ToSetAntigravityModel : AntigravitySkillAction
+{
+	Description = @"Sets the Gemini model for subsequent Antigravity pass-through calls. Does not start a new conversation. Valid options: Gemini 3.5 Flash (Medium/High/Low), Gemini 3.1 Pro (Low/High).";
+
+	function Execute(string model) : string
+	{
+		if (StringUtil.IsEmpty(model))
+			return "Error: model is required. Valid options: Gemini 3.5 Flash (Medium/High/Low), Gemini 3.1 Pro (Low/High).";
+
+		ToAntigravityPtWriteState(ToAntigravityPtModelFile(), model);
+		return "Antigravity model set to: " + model + "`nThis will apply to the next ToTalkToAntigravity call.";
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set antigravity working directory")]
+[SemanticProgram.InfinitivePhrase("to change antigravity working directory")]
+prototype ToSetAntigravityWorkingDirectory : AntigravitySkillAction
+{
+	Description = @"Sets the working directory for subsequent Antigravity pass-through calls. This affects where agy can read and write files. Pass 'none' or empty to reset to default.";
+
+	function Execute(string workingDirectory) : string
+	{
+		if (StringUtil.IsEmpty(workingDirectory) || workingDirectory == "none")
+		{
+			ToAntigravityPtWriteState(ToAntigravityPtWorkDirFile(), "none");
+			return "Antigravity working directory reset to default.";
+		}
+
+		string checkScript = "if(Test-Path -LiteralPath '" + ToAntigravityEscapePowerShellSingleQuoted(workingDirectory) + "'){ 'EXISTS' } else { 'MISSING' }";
+		string checkResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(checkScript, "", 10, _opsAgent, "", "Antigravity PT WorkDir Check");
+		if (checkResult.Contains("MISSING"))
+			return "Error: directory does not exist: " + workingDirectory;
+
+		ToAntigravityPtWriteState(ToAntigravityPtWorkDirFile(), workingDirectory);
+		return "Antigravity working directory set to: " + workingDirectory;
+	}
+}

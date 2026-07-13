@@ -2,6 +2,33 @@
   "SchemaVersion": 1,
   "Skills": [
     {
+      "SkillName": "Antigravity",
+      "Title": "Antigravity",
+      "Description": "Antigravity CLI skill",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [],
+      "Path": "skills/Antigravity",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "e20a0029903e5a9815854c3abbee840b736e59c35798ed87b4eb5f80d4d21c34"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "97612642b771dc53752703d7e4a609e52da3c958baedd7bc61decb8d85abec3e"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsDefaultPackage": false,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
+    },
+    {
       "SkillName": "AudioTranscription",
       "Title": "Audio Transcription",
       "Description": "Buffaly skill package for Audio Transcription.",
@@ -61,7 +88,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": false
+      "IsDefaultPackage": false,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "BrowserSession",
@@ -99,7 +130,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "BuffalyCapabilityInspection",
@@ -128,13 +163,17 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "BuffalyMaintenance",
       "Title": "Buffaly Maintenance",
       "Description": "Buffaly skill package for Buffaly Maintenance.",
-      "Version": "0.1.4",
+      "Version": "0.1.5",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Buffaly Maintenance",
@@ -144,7 +183,7 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "112ccc51ffa7e42bfc10611e9e00803892f7fc0b1adf8584f1bcef76e39502ac"
+          "Sha256": "db40fe4421786a6f4a923ba0beac07717b1584b89b84369b83674e17b4401250"
         },
         {
           "Path": "index.pts.md",
@@ -152,17 +191,21 @@
         },
         {
           "Path": "lib/Buffaly.Agent.Provisioning.dll",
-          "Sha256": "a9b486a3bfa6bf0ec2323b81aa84fa7578e868d93052eff9f37b203a73f4ab7e"
+          "Sha256": "912dc64e40f1a4eef12f57ee00ef6c3d94d4592191c5b0211543219245bd09a3"
         },
         {
           "Path": "lib/Buffaly.Maintenance.Client.dll",
-          "Sha256": "4af1fc560d98d5d84aa7eb6d2f43c3e18d8d7a0ffb8a233d06a1217f4e4ce9dc"
+          "Sha256": "d7455dd31702731efd8400b308d07d23c03f61e43bc2458b2c4664ecd9c60f03"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "BuffalySelfManagement",
@@ -256,7 +299,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "CareCascade",
@@ -283,7 +330,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": false
+      "IsDefaultPackage": false,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "Codex",
@@ -324,7 +375,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "Desktop",
@@ -362,7 +417,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "DllEchoSample",
@@ -397,7 +456,11 @@
       "Prerequisites": [
         "Buffaly Skill Directory enabled"
       ],
-      "IsDefaultPackage": false
+      "IsDefaultPackage": false,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "ErrorLogDiagnosis",
@@ -434,7 +497,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "FairPathJsonWs",
@@ -521,7 +588,11 @@
         "Configured FairPath.AuthorizationToken UserSecrets value for protected remote calls",
         "Network access to the configured FairPath service endpoint"
       ],
-      "IsDefaultPackage": false
+      "IsDefaultPackage": false,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "FeedingFrenzyJsonWs",
@@ -627,7 +698,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": false
+      "IsDefaultPackage": false,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "FFmpeg",
@@ -661,7 +736,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "FileSystem",
@@ -690,7 +769,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "GitHub",
@@ -715,7 +798,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "GoogleAnalytics",
@@ -752,7 +839,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": false
+      "IsDefaultPackage": false,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "GoogleMaps",
@@ -777,7 +868,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": false
+      "IsDefaultPackage": false,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "GoogleTagManager",
@@ -803,7 +898,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": false
+      "IsDefaultPackage": false,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "Heartbeat",
@@ -828,7 +927,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "HelpAgent",
@@ -886,15 +989,20 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "LLM",
       "Title": "L L M",
-      "Description": "Buffaly OpsAgent skill package for LLM.",
-      "Version": "0.1.0",
+      "Description": "Buffaly skill package for L L M.",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "L L M",
         "LLM"
       ],
       "Path": "skills/LLM",
@@ -933,17 +1041,21 @@
         },
         {
           "Path": "RuntimeProfiles.pts",
-          "Sha256": "4c22f84a184792ccecc9b0458c4483ab45f327271394af1c774da33b8d2450de"
+          "Sha256": "8074a9089eb24b7aded3538b60ca7de68d5db2113a853c5a48749b627f307cb9"
         },
         {
           "Path": "RuntimeProfiles.pts.md",
-          "Sha256": "4b20b09f4eda3bbbb6f04e3d200b76ec1dea4d753c6167bf047e1ae98c6830ca"
+          "Sha256": "8577a81a6eab331f83e24e9bffe7774c64b372c65a6d18a59cd73e610ae39d47"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "Level2Watcher",
@@ -968,7 +1080,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "LocalTask",
@@ -997,7 +1113,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "MetabaseJsonWs",
@@ -1091,7 +1211,11 @@
       "Prerequisites": [
         "Running RootTrax Metabase web host, for example http://localhost:5197"
       ],
-      "IsDefaultPackage": false
+      "IsDefaultPackage": false,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "MetabaseRuntime",
@@ -1242,7 +1366,11 @@
         "Local RooTrax Metabase runtime dependencies available",
         "Use only for explicit Metabase Runtime work"
       ],
-      "IsDefaultPackage": false
+      "IsDefaultPackage": false,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "Onboarding",
@@ -1319,7 +1447,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "Process",
@@ -1344,7 +1476,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "ProcessManagement",
@@ -1390,7 +1526,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "Services",
@@ -1415,7 +1555,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "SessionHistory",
@@ -1440,26 +1584,31 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "SessionManagement",
       "Title": "Session Management",
-      "Description": "Buffaly OpsAgent skill package for SessionManagement.",
-      "Version": "0.1.0",
+      "Description": "Buffaly skill package for Session Management.",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "Session Management",
         "SessionManagement"
       ],
       "Path": "skills/SessionManagement",
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "71f131290174b0bee06a66f57f9d121568debd4c0b19b42276ee3fd5a27ee347"
+          "Sha256": "65a52da496983ab882eca518ebb808824d2de8e245166846c8b123daa19bc3b3"
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "a514c57f433c7b4f1f464ebf9ee50766e0c22ae605769d73d5ab63bbe053e33b"
+          "Sha256": "8e6ca0ffdada53c8e574d0887ec9d422a601c7e5d81ce70e3e299d703ad28f8a"
         },
         {
           "Path": "PromptActions.pts",
@@ -1493,7 +1642,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "SessionSync",
@@ -1530,7 +1683,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "SkillDirectory",
@@ -1559,7 +1716,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "SkillPublishingSmokeTest",
@@ -1586,7 +1747,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": false
+      "IsDefaultPackage": false,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "SqlServer",
@@ -1628,7 +1793,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "TabularData",
@@ -1657,7 +1826,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "TailscaleExposure",
@@ -1690,7 +1863,11 @@
         "Tailscale account",
         "Tailscale installed on the Buffaly host"
       ],
-      "IsDefaultPackage": false
+      "IsDefaultPackage": false,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "TebraWeb",
@@ -1720,7 +1897,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": false
+      "IsDefaultPackage": false,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "TwitterXApi",
@@ -1766,7 +1947,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "Unity",
@@ -1800,7 +1985,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": false
+      "IsDefaultPackage": false,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "UserSecrets",
@@ -1837,7 +2026,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "ValidatedPrompt",
@@ -1890,7 +2083,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "VisualStudio",
@@ -1939,7 +2136,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": false
+      "IsDefaultPackage": false,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "Wiki",
@@ -1996,7 +2197,11 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true
+      "IsDefaultPackage": true,
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     }
   ]
 }
