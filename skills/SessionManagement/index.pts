@@ -53,7 +53,7 @@ prototype ToCreateBuffalySession : SessionManagementSkillAction
 [SemanticProgram.InfinitivePhrase("to attach a buffaly child session to a parent session")]
 prototype ToCreateBuffalyChildSession : SessionManagementSkillAction
 {
-	Description = @"parentSessionKey - existing parent session key. childSessionKey - child session key to ensure and attach under the parent. Prefer reusing an existing child session for the same task before creating another one; call ToGetChildSessions first unless there is a concrete reason to isolate work in a new child session. Returns the canonical minimal session status result.";
+	Description = @"parentSessionKey - existing parent session key. childSessionKey - child session key to ensure and attach under the parent. Prefer reusing an existing child session for the same task before creating another one; call ToGetChildSessions first unless there is a concrete reason to isolate work in a new child session. This action does not accept or set a model. To create a child with a specific model, create/attach the child first, call ToGetBuffalyProviderModelCatalog, then call ToSetBuffalySessionModelSelection with an exact catalog ModelName for the child session. Do not guess, alias, or normalize model names. Returns the canonical minimal session status result.";
 
 	function Execute(string parentSessionKey, string childSessionKey) : SessionStatusResult
 	{

@@ -172,6 +172,7 @@ BEGIN
     ('UpdateSessionNameSp', 'update_session_name_sp'),
     ('UpdateSessionParentSessionIDSp', 'update_session_parent_session_id_sp'),
     ('UpdateSessionProviderSelectionSp', 'update_session_provider_selection_sp'),
+    ('UpdateSessionPromptContextSp', 'update_session_prompt_context_sp'),
     ('UpdateSessionSp', 'update_session_sp'),
     ('UpdateSessionSubscriptionDataSp', 'update_session_subscription_data_sp'),
     ('UpdateSessionSubscriptionSp', 'update_session_subscription_sp')

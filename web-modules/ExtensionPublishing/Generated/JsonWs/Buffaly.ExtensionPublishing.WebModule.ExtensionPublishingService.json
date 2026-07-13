@@ -103,6 +103,12 @@
 			"Name":"PublishExtension",
 			"DataObject":{
 			}
-		}],
+		},
+		{"IsStatic":"true","IsReturnTypeArray":"false","KebabName":"reconcile-local-repository","Parameters":[{"Type":"ReconcileLocalRepositoryRequestContract","IsNullable":"false","Name":"request","IsArray":"false","IsEnum":"false"}],"ReturnType":"ReconcileLocalRepositoryResponseContract","UrlName":null,"Name":"ReconcileLocalRepository","DataObject":{}},
+		{"IsStatic":"true","IsReturnTypeArray":"false","KebabName":"start-repository-reconcile-job","Parameters":[{"Type":"StartRepositoryReconcileJobRequestContract","IsNullable":"false","Name":"request","IsArray":"false","IsEnum":"false"}],"ReturnType":"StartRepositoryReconcileJobResponseContract","UrlName":null,"Name":"StartRepositoryReconcileJob","DataObject":{}},
+		{"IsStatic":"true","IsReturnTypeArray":"false","KebabName":"get-repository-reconcile-job","Parameters":[{"Type":"RepositoryReconcileJobIdRequestContract","IsNullable":"false","Name":"request","IsArray":"false","IsEnum":"false"}],"ReturnType":"RepositoryReconcileJobStatusContract","UrlName":null,"Name":"GetRepositoryReconcileJob","DataObject":{}},
+		{"IsStatic":"true","IsReturnTypeArray":"false","KebabName":"list-repository-reconcile-jobs","Parameters":[{"Type":"GetPublishingCatalogRequestContract","IsNullable":"false","Name":"request","IsArray":"false","IsEnum":"false"}],"ReturnType":"RepositoryReconcileJobListResponseContract","UrlName":null,"Name":"ListRepositoryReconcileJobs","DataObject":{}},
+		{"IsStatic":"true","IsReturnTypeArray":"false","KebabName":"cancel-repository-reconcile-job","Parameters":[{"Type":"RepositoryReconcileJobIdRequestContract","IsNullable":"false","Name":"request","IsArray":"false","IsEnum":"false"}],"ReturnType":"CancelRepositoryReconcileJobResponseContract","UrlName":null,"Name":"CancelRepositoryReconcileJob","DataObject":{}},
+		{"IsStatic":"true","IsReturnTypeArray":"false","KebabName":"retry-repository-reconcile-job-failures","Parameters":[{"Type":"RepositoryReconcileJobIdRequestContract","IsNullable":"false","Name":"request","IsArray":"false","IsEnum":"false"}],"ReturnType":"StartRepositoryReconcileJobResponseContract","UrlName":null,"Name":"RetryRepositoryReconcileJobFailures","DataObject":{}}],
 	"Namespace":"Buffaly.ExtensionPublishing.WebModule"
 }
