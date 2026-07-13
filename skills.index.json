@@ -832,10 +832,11 @@
     {
       "SkillName": "GoogleAnalytics",
       "Title": "Google Analytics",
-      "Description": "Google Analytics Skill",
-      "Version": "0.1.1",
+      "Description": "Buffaly skill package for Google Analytics.",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "Google Analytics",
         "GoogleAnalytics"
       ],
       "Path": "skills/GoogleAnalytics",
@@ -853,10 +854,6 @@
           "Sha256": "76202805325e4e869569fdd51c87fb51db5cd5ec92531a88812d4653dedea961"
         },
         {
-          "Path": "lib/Buffaly.Marketing.pdb",
-          "Sha256": "7784b1ff0e1738403adba18a2393e9322d6cfb1fe1fe3876c090016b490fe628"
-        },
-        {
           "Path": "SKILL.md",
           "Sha256": "af922209c18def12037756083ef3e183a670e57488d355dde3bee407e0364393"
         }
@@ -864,11 +861,7 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": false,
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "IsDefaultPackage": false
     },
     {
       "SkillName": "GoogleMaps",
