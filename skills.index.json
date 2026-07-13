@@ -4,19 +4,36 @@
     {
       "SkillName": "Antigravity",
       "Title": "Antigravity",
-      "Description": "Antigravity CLI skill",
+      "Description": "Antigravity CLI (agy) tools: auth status, interactive login/logout, one-shot prompts, and transparent pass-through actions with automatic conversation continuity, model selection, and timeout management.",
       "Version": "0.1.0",
       "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [],
+      "Phrases": [
+        "Antigravity",
+        "agy",
+        "Antigravity CLI",
+        "Google Antigravity"
+      ],
       "Path": "skills/Antigravity",
       "Files": [
         {
-          "Path": "index.pts",
-          "Sha256": "e20a0029903e5a9815854c3abbee840b736e59c35798ed87b4eb5f80d4d21c34"
+          "Sha256": "e20a0029903e5a9815854c3abbee840b736e59c35798ed87b4eb5f80d4d21c34",
+          "Path": "index.pts"
         },
         {
-          "Path": "SKILL.md",
-          "Sha256": "97612642b771dc53752703d7e4a609e52da3c958baedd7bc61decb8d85abec3e"
+          "Sha256": "97612642b771dc53752703d7e4a609e52da3c958baedd7bc61decb8d85abec3e",
+          "Path": "SKILL.md"
+        },
+        {
+          "Sha256": "43f29eb82c7c194ecbd5019a4ad56a22fac3aec9339ddf71dd311f9d6177f25a",
+          "Path": "helpers/agy_login_conpty.py"
+        },
+        {
+          "Sha256": "aa8b25af65e173e85da478152990b8ddeaf40529f84fc9d63480d95462eb74d2",
+          "Path": "helpers/agy_login_console.py"
+        },
+        {
+          "Sha256": "463f2a6828c60641ab9c434bf0fabf8cf56bd51a28aa2c7f08baca6080e4a0b8",
+          "Path": "helpers/agy_logout_conpty.py"
         }
       ],
       "EntryPoint": "index.pts",
