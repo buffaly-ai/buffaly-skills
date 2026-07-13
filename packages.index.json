@@ -9139,7 +9139,7 @@
       "PackageType": "WebModule",
       "Title": "Google Workspace",
       "Description": "Buffaly Web Module package for Google Workspace.",
-      "Version": "0.1.106",
+      "Version": "0.1.110",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/GoogleWorkspace",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/GoogleWorkspace",
@@ -9150,11 +9150,11 @@
       "Files": [
         {
           "Path": "appsettings.json",
-          "Sha256": "13db902f678bb45a109bc177cb260268658fdcd3a692d70210c50f6478914bb8"
+          "Sha256": "39debd2b48af1fbe1df58e04d16d86325ac3a25f7c3e4bfe3ad3a0a69b37c95e"
         },
         {
           "Path": "appsettings.template.json",
-          "Sha256": "cd16d5a04859505387a63bbada641e60c103c2b7b6381910dcf7f1dccad5cd3f"
+          "Sha256": "c97a45342b49f062ba474dda7627d5ca89a6a6afdf41b705652ab49abb0cd8c6"
         },
         {
           "Path": "Azure.Core.dll",
@@ -9186,7 +9186,7 @@
         },
         {
           "Path": "Buffaly.GoogleWorkspace.WebModule.deps.json",
-          "Sha256": "a326041da32df5af8026fb2f019d093b2a34d4fd0a683539741c4387e2a03d71"
+          "Sha256": "0021ce22ffecccce73e5d60a6f45a75744cc738118528b93963d19fd83568d7f"
         },
         {
           "Path": "Buffaly.GoogleWorkspace.WebModule.dll",
@@ -9198,7 +9198,7 @@
         },
         {
           "Path": "Buffaly.GoogleWorkspace.WebModule.runtimeconfig.json",
-          "Sha256": "b7d043198267a1d888df71c12a71533d75f1953e5147c233a644d814ecc78c18"
+          "Sha256": "d7471f61fad19522635bbae0f50f7e07cff168b9ad904f195d9d98745a57653c"
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
@@ -9361,12 +9361,20 @@
           "Sha256": "0728b519683525fb96a115f09578e16d310bcfb37a7bcd70af35422d64a93054"
         },
         {
-          "Path": "ru/Microsoft.Data.SqlClient.resources.dll",
-          "Sha256": "f7d51f47b1eba12021161ee39a7d08d24df1dcd52c131d1d94ee2c7e432f4cb4"
-        },
-        {
           "Path": "runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll",
           "Sha256": "4a95c42d14d8a83ca1007793648b6dae59cee957ea12470578f10c918f91d225"
+        },
+        {
+          "Path": "runtimes/win-arm64/native/Microsoft.Data.SqlClient.SNI.dll",
+          "Sha256": "73b61c3381e32613f59bbe3af7f58871c8cd486e04a9c0e71409f6a1972d6f84"
+        },
+        {
+          "Path": "runtimes/win-x64/native/Microsoft.Data.SqlClient.SNI.dll",
+          "Sha256": "7e37c5bba3da06a955c122e3515b2980e2f1b8732ec0297f0a7e77e79b4de331"
+        },
+        {
+          "Path": "runtimes/win-x86/native/Microsoft.Data.SqlClient.SNI.dll",
+          "Sha256": "16efa76f220e23166a95873baaed43899191470c13848c944a679ff2bf5ac941"
         },
         {
           "Path": "runtimes/win/lib/net7.0/System.Management.dll",
@@ -9385,16 +9393,8 @@
           "Sha256": "6902fe2034ada133d5aa8df0d101279abb3093e346ebf34bbde62670f2a0e9bf"
         },
         {
-          "Path": "runtimes/win-arm64/native/Microsoft.Data.SqlClient.SNI.dll",
-          "Sha256": "73b61c3381e32613f59bbe3af7f58871c8cd486e04a9c0e71409f6a1972d6f84"
-        },
-        {
-          "Path": "runtimes/win-x64/native/Microsoft.Data.SqlClient.SNI.dll",
-          "Sha256": "7e37c5bba3da06a955c122e3515b2980e2f1b8732ec0297f0a7e77e79b4de331"
-        },
-        {
-          "Path": "runtimes/win-x86/native/Microsoft.Data.SqlClient.SNI.dll",
-          "Sha256": "16efa76f220e23166a95873baaed43899191470c13848c944a679ff2bf5ac941"
+          "Path": "ru/Microsoft.Data.SqlClient.resources.dll",
+          "Sha256": "f7d51f47b1eba12021161ee39a7d08d24df1dcd52c131d1d94ee2c7e432f4cb4"
         },
         {
           "Path": "System.ClientModel.dll",
@@ -9437,20 +9437,20 @@
           "Sha256": "fc8df599a964558fc9587aeaa6c956e1d375944283907193660fa3e96ee38980"
         },
         {
+          "Path": "web-module.json",
+          "Sha256": "a51c967e0cebe77f12c7823adf320a6b2c001640708f4f05251aaa4ba2a00a34"
+        },
+        {
           "Path": "web.config",
-          "Sha256": "fe0818b4ad7ed4f117cc35b29aa17bebdd24853232f05e178ebae2ae89702825"
+          "Sha256": "89828b4a64331835d03b34d449a03e32a67ed7ffe5cfee8db4e16dc5e61ef655"
         },
         {
           "Path": "WebAppUtilities.dll",
           "Sha256": "b04993ec40d66d8f11ffc85f1d1c49ea52be9801406e48765e1e130fb881f5b4"
         },
         {
-          "Path": "web-module.json",
-          "Sha256": "51c94b583caab071563b68815bf8f4b0edf26827a5e56588b67679fb36437c4f"
-        },
-        {
           "Path": "wwwroot/google-workspace-accounts.html",
-          "Sha256": "38135ff7b4752ce9defd04e271e6f60a7d6d4a21b94c58ab305ac59587ce7de4"
+          "Sha256": "9dacd67257b08bb80066bc6050efba5f047f3d9203e6e63899ec4d55e9c6c29f"
         },
         {
           "Path": "wwwroot/google-workspace-accounts.html.br",
@@ -9473,8 +9473,32 @@
           "Sha256": "3db979987911ac67ad22da62408ab7576227f7d59edd55781d46926c0551b48d"
         },
         {
+          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.ashx.js",
+          "Sha256": "da171ceaacac3c7fcdc41731b1cbce5784b60f832f0d6d92b37382d7ad8e782e"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.ashx.js.br",
+          "Sha256": "65cd4631ccd4cf8b099eeb90e319a7ecb0083a0472dc8e9729115f2e56bcb467"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.ashx.js.gz",
+          "Sha256": "171328341ef96e2d1788ce7767606550629f4f4a002aecb64841f25b14afe21a"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.json",
+          "Sha256": "72cf7a7beb116eb605b4ee6154abcfbd58e308132d1739e8200a2b116b7514a5"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.json.br",
+          "Sha256": "75f4def0893fe535c049b47687bd1234c6a191a2365aaa7194fab1b67d213271"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.json.gz",
+          "Sha256": "bc0182cfdee364b74a609c78572c24ef66601c512dfb95f7dd403fd79ea3ea45"
+        },
+        {
           "Path": "wwwroot/js/kcs/global.js",
-          "Sha256": "effb267b388f8356ca7627bb2e587ecd117e7e3526cf8ddca070cda38ae1cd11"
+          "Sha256": "747743e4c5edd6fab4f76f6f28ca375b8fffd0f92e068aff5dc10fa528d39b93"
         },
         {
           "Path": "wwwroot/js/kcs/global.js.br",
@@ -9486,7 +9510,7 @@
         },
         {
           "Path": "wwwroot/js/kcs/JsonMethod.js",
-          "Sha256": "d7dee93db763fc2270386bfff375b86d35ac50fd44d120c3ec5b2314c84c02f2"
+          "Sha256": "ffcdee403e6a0762f1c347b9388c12a2c89eeaff90d9a842768faf22617e375f"
         },
         {
           "Path": "wwwroot/js/kcs/JsonMethod.js.br",
@@ -9498,7 +9522,7 @@
         },
         {
           "Path": "wwwroot/js/kcs/LocalStorage2.js",
-          "Sha256": "53c397fc33b0cbbc71dee8fdb1a76a5f7715c2dc975200f7ef5c490a0dea6018"
+          "Sha256": "9dd1311e3442057e5b930f2ff12da6bdfc959b0c64d65aaa27acc43a970b1a12"
         },
         {
           "Path": "wwwroot/js/kcs/LocalStorage2.js.br",
@@ -9510,7 +9534,7 @@
         },
         {
           "Path": "wwwroot/js/kcs/moremoo4.js",
-          "Sha256": "7e2ec9fdd07a44c90fbb9f8b511d39ac2fe52aa9967f85ecaf344b35787f57aa"
+          "Sha256": "3ae9ecadfcf10322d0f230a00ac0a78c1e599c6c5c3e17a7debaa5da08dab6db"
         },
         {
           "Path": "wwwroot/js/kcs/moremoo4.js.br",
@@ -9522,7 +9546,7 @@
         },
         {
           "Path": "wwwroot/js/kcs/stl.js",
-          "Sha256": "d9b0c1c1303b41e223f56c8e1e770c45e47f55071c4ba0cbafe6eaff90a8810e"
+          "Sha256": "36d0340e8487d4a3a0fcb2f1ef7002a84f0b5322a51cb4f26896d6428e6538c2"
         },
         {
           "Path": "wwwroot/js/kcs/stl.js.br",
@@ -9534,7 +9558,7 @@
         },
         {
           "Path": "wwwroot/js/kcs/validators.js",
-          "Sha256": "a82be3d6154e452f968507fbd77b1ff10ad18dd28aa3fa9509b8a547cb23cf70"
+          "Sha256": "f5ed65e3646b84b8d5a8ba27efea9af545d5210dd192a1761de04f163c39d5c6"
         },
         {
           "Path": "wwwroot/js/kcs/validators.js.br",
@@ -9546,7 +9570,7 @@
         },
         {
           "Path": "wwwroot/js/services/google-workspace/google-workspace-accounts.js",
-          "Sha256": "7757e500661eaa2594eb247ad21760c55691e6f6d29e6609c6a2b1c7f8a3b282"
+          "Sha256": "347e67617b87a4574c3872d56201ebfae058bc476f236c2aadafcbf1b5dab5f6"
         },
         {
           "Path": "wwwroot/js/services/google-workspace/google-workspace-accounts.js.br",
@@ -9569,30 +9593,6 @@
           "Sha256": "d24753e643adeedbc0705ebd7d757fd467db28bd346a69bbd600e0402f01ef85"
         },
         {
-          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.ashx.js",
-          "Sha256": "186778b7434aea94604b929f0cc517a2f14af4d41382ddcd7710891f0445eb89"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.ashx.js.br",
-          "Sha256": "65cd4631ccd4cf8b099eeb90e319a7ecb0083a0472dc8e9729115f2e56bcb467"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.ashx.js.gz",
-          "Sha256": "171328341ef96e2d1788ce7767606550629f4f4a002aecb64841f25b14afe21a"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.json",
-          "Sha256": "a6891409f00b8310352e64aa803116719d13d04a7a26b770b49b574014002d7d"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.json.br",
-          "Sha256": "75f4def0893fe535c049b47687bd1234c6a191a2365aaa7194fab1b67d213271"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.json.gz",
-          "Sha256": "bc0182cfdee364b74a609c78572c24ef66601c512dfb95f7dd403fd79ea3ea45"
-        },
-        {
           "Path": "zh-Hans/Microsoft.Data.SqlClient.resources.dll",
           "Sha256": "d12450a0c88feaafbf3db907ba9e66e0735ecf43f9089a1b6b583675e561a571"
         },
@@ -9601,13 +9601,13 @@
           "Sha256": "6a045428a176c4a42518ef6918b93ba0ee4a126dd15b523cc123bb14cad55e21"
         }
       ],
+      "ProjectArtifacts": [],
       "Dependencies": [],
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
       "IsDefaultPackage": true,
       "RequiresRestart": true,
-      "RequiresPreStartInstall": true,
-      "ProjectArtifacts": []
+      "RequiresPreStartInstall": true
     },
     {
       "PackageId": "Buffaly.Agent.Heartbeat",
