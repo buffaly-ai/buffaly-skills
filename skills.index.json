@@ -2057,10 +2057,11 @@
     {
       "SkillName": "ValidatedPrompt",
       "Title": "Validated Prompt",
-      "Description": "Buffaly skill package for ValidatedPrompt.",
-      "Version": "0.1.0",
+      "Description": "Buffaly skill package for Validated Prompt.",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "Validated Prompt",
         "ValidatedPrompt"
       ],
       "Path": "skills/ValidatedPrompt",
@@ -2095,7 +2096,7 @@
         },
         {
           "Path": "WorkflowReport/workflow-report-viewer.html",
-          "Sha256": "af7468942662ca06c076848a24b78e645e4f2196aa6a65a83d53cccb09398aae"
+          "Sha256": "588e4f64c470f5e4eba57f4227bd6144e5d8ff25c3d24f6df41121f9c4e49dbd"
         },
         {
           "Path": "WorkflowReport/workflow-report-viewer.html.md",
@@ -2105,11 +2106,7 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsDefaultPackage": true,
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "IsDefaultPackage": true
     },
     {
       "SkillName": "VisualStudio",
