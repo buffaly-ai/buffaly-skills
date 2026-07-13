@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Codex Web CLI</title>
+	<link rel="icon" type="image/x-icon" href="images/favicon.ico">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+	<link rel="stylesheet" href="site.css?v=20260307-prompt-autogrow1">
+</head>
+<body>
+	<div class="layout">
+		<button id="mobileProjectsBtn" class="toolbar-mobile-projects-btn" type="button" title="Show projects" aria-label="Show projects" aria-expanded="false">
+			<i class="bi bi-layout-sidebar-inset-reverse" aria-hidden="true"></i>
+			<span>Projects</span>
+		</button>
+		<div id="securityWarningBanner" class="security-warning-banner hidden" role="alert"></div>
+		<div id="appServerErrorBanner" class="appserver-error-banner hidden" role="alert" aria-live="assertive">
+			<span id="appServerErrorText"></span>
+			<button id="appServerErrorDismissBtn" class="appserver-error-dismiss-btn" type="button">Dismiss</button>
+		</div>
+		<div id="connectionStatusBanner" class="connection-status-banner hidden" role="status" aria-live="polite">
+			<span id="connectionStatusText"></span>
+			<button id="connectionReconnectBtn" class="connection-reconnect-btn hidden" type="button">Reconnect now</button>
+		</div>
+		<main class="main codex-main">
+			<aside id="sessionSidebar" class="panel session-sidebar">
+				<div class="sidebar-shell-header">
+					<a class="sidebar-logo-btn" href="https://buffa.ly/?utm_source=codexembedded&utm_medium=app_logo&utm_campaign=sidebar" target="_blank" rel="noopener" title="Made by the Buffaly team - learn more" aria-label="Made by the Buffaly team - learn more">
+						<img class="sidebar-logo-image" src="images/bf_logo_fav_Large.png" alt="">
+					</a>
+				</div>
+				<nav class="sidebar-nav" aria-label="Main navigation">
+					<a class="sidebar-nav-link active" href="./" aria-current="page">
+						<i class="bi bi-chat-square-text" aria-hidden="true"></i>
+						<span>Codex</span>
+					</a>
+					<button id="sidebarExtrasToggleBtn" class="sidebar-nav-link sidebar-nav-button sidebar-nav-toggle" type="button" title="Expand navigation options" aria-label="Expand navigation options" aria-expanded="false">
+						<i class="bi bi-chevron-right sidebar-nav-toggle-icon" aria-hidden="true"></i>
+						<span>More</span>
+					</button>
+					<div id="sidebarExtrasGroup" class="sidebar-nav-group hidden">
+						<a class="sidebar-nav-link" href="settings">
+							<i class="bi bi-sliders" aria-hidden="true"></i>
+							<span>Settings</span>
+						</a>
+						<a class="sidebar-nav-link" href="logs">
+							<i class="bi bi-journal-text" aria-hidden="true"></i>
+							<span>Logs</span>
+						</a>
+						<a class="sidebar-nav-link" href="watcher">
+							<i class="bi bi-eye" aria-hidden="true"></i>
+							<span>Watcher</span>
+						</a>
+						<a class="sidebar-nav-link" href="recap">
+							<i class="bi bi-clock-history" aria-hidden="true"></i>
+							<span>Recap</span>
+						</a>
+						<a class="sidebar-nav-link" href="server">
+							<i class="bi bi-cpu" aria-hidden="true"></i>
+							<span>Server</span>
+						</a>
+						<button id="aboutBtn" class="sidebar-nav-link sidebar-nav-button" type="button" title="About this project" aria-label="About this project">
+							<i class="bi bi-info-circle" aria-hidden="true"></i>
+							<span>About</span>
+						</button>
+					</div>
+				</nav>
+				<div class="sidebar-divider" aria-hidden="true"></div>
+				<div class="sidebar-create-row">
+					<button id="newProjectSidebarBtn" class="new-project-btn" type="button">
+						<i class="bi bi-plus-lg" aria-hidden="true"></i>
+						<span>New Project</span>
+					</button>
+					<button id="projectSearchToggleBtn" class="icon-btn sidebar-search-toggle-btn" type="button" title="Search projects and sessions" aria-label="Search projects and sessions" aria-expanded="false">
+						<i class="bi bi-search" aria-hidden="true"></i>
+					</button>
+				</div>
+				<div id="sidebarSearchRow" class="sidebar-search-row hidden">
+					<input id="projectSearchInput" type="search" class="sidebar-search-input" placeholder="Search projects or sessions..." aria-label="Search projects or sessions">
+				</div>
+				<div class="sidebar-divider sidebar-project-divider" aria-hidden="true"></div>
+				<div id="projectList" class="project-list"></div>
+			</aside>
+			<section class="panel chat-panel">
+				<div class="panel-title panel-title-row conversation-title-row">
+					<div class="conversation-title-main">
+						<button id="sidebarToggleBtn" type="button" class="sidebar-collapse-btn conversation-sidebar-toggle-btn" title="Hide projects" aria-label="Hide projects">
+							<i class="bi bi-layout-sidebar-inset-reverse" aria-hidden="true"></i>
+							<span class="visually-hidden">Toggle projects</span>
+						</button>
+						<span id="conversationTitle" class="conversation-title-text">Conversation</span>
+					</div>
+					<div id="sessionMeta" class="conversation-meta">
+						<span id="conversationModelSummary" class="conversation-model-summary">default | default</span>
+						<button id="worktreeDiffIndicatorBtn" class="worktree-diff-indicator-btn hidden" type="button" title="Open working tree diff" aria-label="Open working tree diff">
+							<i class="bi bi-file-earmark-diff" aria-hidden="true"></i>
+							<span id="worktreeDiffIndicatorCount" class="worktree-diff-indicator-count">0</span>
+						</button>
+						<button id="conversationMetaMenuBtn" class="conversation-meta-menu-btn" type="button" title="Conversation settings" aria-label="Conversation settings" aria-haspopup="true" aria-expanded="false">
+							<i class="bi bi-sliders" aria-hidden="true"></i>
+							<span class="visually-hidden">Conversation settings</span>
+						</button>
+						<div id="conversationMetaMenu" class="conversation-meta-menu hidden">
+							<div id="sessionMetaThreadItem" class="conversation-meta-menu-row conversation-meta-thread-row conversation-meta-detail hidden">
+								<label for="sessionMetaThreadValue">Thread</label>
+								<div class="conversation-meta-thread-wrap">
+									<code id="sessionMetaThreadValue" class="conversation-meta-thread-value">(none)</code>
+									<button id="sessionMetaThreadCopyBtn" class="conversation-meta-thread-copy-btn" type="button" title="Copy thread id" aria-label="Copy thread id">Copy</button>
+								</div>
+							</div>
+							<div id="sessionMetaModelItem" class="conversation-meta-menu-row conversation-meta-model conversation-meta-detail">
+								<label for="conversationModelSelect">Model</label>
+								<select id="conversationModelSelect"></select>
+							</div>
+							<div id="sessionMetaAccountItem" class="conversation-meta-menu-row conversation-meta-account-row conversation-meta-detail hidden">
+								<label for="sessionMetaAccountValue">Account</label>
+								<code id="sessionMetaAccountValue" class="conversation-meta-thread-value">unavailable</code>
+							</div>
+							<div id="sessionMetaUsageItem" class="conversation-meta-menu-row conversation-meta-account-row conversation-meta-detail hidden">
+								<label for="sessionMetaUsageValue">Usage</label>
+								<code id="sessionMetaUsageValue" class="conversation-meta-thread-value">unavailable</code>
+							</div>
+							<div class="conversation-meta-menu-row conversation-meta-reasoning-row">
+								<label for="conversationReasoningSelect">Reasoning</label>
+								<select id="conversationReasoningSelect"></select>
+							</div>
+							<div class="conversation-meta-menu-row conversation-meta-approval-row">
+								<label for="conversationApprovalSelect">Approval</label>
+								<select id="conversationApprovalSelect">
+									<option value="">(inherit)</option>
+									<option value="untrusted">untrusted</option>
+									<option value="on-failure">on-failure</option>
+									<option value="on-request">on-request</option>
+									<option value="never">never</option>
+								</select>
+							</div>
+							<div class="conversation-meta-menu-row conversation-meta-sandbox-row">
+								<label for="conversationSandboxSelect">Sandbox</label>
+								<select id="conversationSandboxSelect">
+									<option value="">(inherit)</option>
+									<option value="read-only">read-only</option>
+									<option value="workspace-write">workspace-write</option>
+									<option value="danger-full-access">danger-full-access</option>
+								</select>
+							</div>
+							<div id="permissionLevelIndicator" class="conversation-meta-menu-permissions" title="Session permissions">Permissions: unavailable</div>
+							<button id="jumpToBtn" class="conversation-jump-btn conversation-jump-menu-btn" type="button" title="Click to expand all turn details" aria-label="Click to expand all turn details" aria-expanded="true">
+								<i class="bi bi-signpost-split" aria-hidden="true"></i>
+								<span>Collapsed</span>
+							</button>
+						</div>
+					</div>
+				</div>
+				<div id="timelineTruncationNotice" class="timeline-truncation-note hidden">
+					<strong>Note</strong>
+					<span>Showing latest log lines.</span>
+				</div>
+				<div id="pendingPromptStrip" class="pending-prompt-strip hidden" role="status" aria-live="polite">
+					<strong>Pending</strong>
+					<span id="pendingPromptText"></span>
+				</div>
+				<div id="gettingStartedPanel" class="getting-started-panel hidden" role="status" aria-live="polite">
+					<div class="getting-started-title">Getting Started</div>
+					<div class="getting-started-copy">Your existing Codex sessions were imported and are available in the Projects list on the left.</div>
+					<div class="getting-started-steps">
+						<div class="getting-started-step">
+							<span class="getting-started-step-number">1</span>
+							<span>Create a project with <strong>New Project</strong> and choose your working folder.</span>
+						</div>
+						<div class="getting-started-step">
+							<span class="getting-started-step-number">2</span>
+							<span>Create a session inside that project using the <strong>+</strong> button in the project header.</span>
+						</div>
+					</div>
+				</div>
+				<section id="worktreeDiffPanel" class="worktree-diff-panel hidden" aria-label="Working tree diff">
+					<div class="worktree-diff-header">
+						<div class="worktree-diff-title-wrap">
+							<span class="worktree-diff-title">Working Tree Diff</span>
+							<span id="worktreeDiffSummary" class="worktree-diff-summary">No active session</span>
+						</div>
+						<div class="worktree-diff-actions">
+							<button id="worktreeDiffToggleBtn" class="worktree-diff-refresh-btn" type="button">Close</button>
+							<button id="worktreeDiffRefreshBtn" class="worktree-diff-refresh-btn" type="button">Refresh</button>
+						</div>
+					</div>
+					<div id="worktreeDiffList" class="worktree-diff-list"></div>
+				</section>
+				<div id="chatMessages" class="watcher-timeline"></div>
+				<div id="turnActivityStrip" class="turn-activity hidden" role="status" aria-live="polite">
+					<div class="turn-activity-header">
+						<span id="turnActivityTimer" class="turn-activity-timer">Working 00:00</span>
+						<span id="turnActivityReasoning" class="turn-activity-reasoning">Waiting for reasoning update...</span>
+						<a id="turnActivityCancelLink" class="turn-activity-cancel-link" href="#">Cancel</a>
+					</div>
+				</div>
+				<div id="planPanel" class="plan-panel hidden" role="status" aria-live="polite">
+					<div class="plan-panel-header">
+						<span class="plan-panel-title">Plan</span>
+						<span id="planPanelSummary" class="plan-panel-summary">Generating plan...</span>
+						<span id="planPanelStatus" class="plan-panel-status">Idle</span>
+					</div>
+					<div id="planPanelBody" class="plan-panel-body">
+						<p>Plan output will appear here when available.</p>
+					</div>
+				</div>
+				<button id="scrollToBottomBtn" class="scroll-to-bottom-btn hidden" type="button" title="Jump to latest messages" aria-label="Jump to latest messages">
+					<i class="bi bi-arrow-down"></i>
+				</button>
+				<div id="approvalPanel" class="approval-panel hidden">
+					<div id="approvalSummary" class="approval-summary"></div>
+					<div id="approvalDetails" class="approval-details"></div>
+					<div class="approval-actions">
+						<button data-decision="accept" type="button">Accept</button>
+						<button data-decision="acceptForSession" type="button">Accept Session</button>
+						<button data-decision="decline" type="button">Decline</button>
+						<button data-decision="cancel" type="button">Cancel</button>
+					</div>
+				</div>
+				<div id="promptQueue" class="prompt-queue hidden"></div>
+				<div id="composerImages" class="composer-images hidden"></div>
+				<div id="promptTimelineSelectionIndicator" class="prompt-timeline-selection-indicator hidden" role="status" aria-live="polite"></div>
+				<div id="promptSelectionIndicator" class="prompt-selection-indicator hidden" role="status" aria-live="polite"></div>
+				<div id="promptBuildFixIndicator" class="prompt-build-fix-indicator hidden" role="status" aria-live="polite"></div>
+				<div id="diffNotesComposer" class="diff-notes-composer hidden" role="status" aria-live="polite"></div>
+				<form id="promptForm" class="prompt-form">
+					<textarea id="promptInput" autocomplete="off" rows="4" placeholder="Type a prompt..."></textarea>
+					<div class="prompt-actions">
+						<input id="imageUploadInput" type="file" accept="image/*" multiple class="hidden">
+						<button id="imageUploadBtn" class="prompt-upload-btn" type="button" title="Attach image" aria-label="Attach image">
+							<i class="bi bi-plus-lg" aria-hidden="true"></i>
+							<span class="visually-hidden">Attach image</span>
+						</button>
+						<button id="speechToTextBtn" class="prompt-speech-btn" type="button" data-scribe-target="promptInput" title="Record speech to text" aria-label="Record speech to text">
+							<i class="bi bi-mic-fill" aria-hidden="true"></i>
+							<span class="visually-hidden">Speech to text</span>
+						</button>
+						<button id="planTurnToggleBtn" class="prompt-plan-btn" type="button" title="Enable plan mode for next turn" aria-label="Enable plan mode for next turn" aria-pressed="false">
+							<i class="bi bi-diagram-3" aria-hidden="true"></i>
+							<span class="visually-hidden">Plan mode</span>
+						</button>
+						<button id="queuePromptBtn" class="prompt-queue-btn hidden" type="button" title="Queue this instruction" aria-label="Queue this instruction">
+							<i class="bi bi-list-task" aria-hidden="true"></i>
+							<span class="visually-hidden">Queue</span>
+						</button>
+						<button id="cancelTurnBtn" class="prompt-cancel-btn hidden" type="button" title="Stop running turn" aria-label="Stop running turn">
+							<i class="bi bi-stop-fill" aria-hidden="true"></i>
+							<span class="visually-hidden">Stop</span>
+						</button>
+						<button id="sendPromptBtn" class="prompt-send-btn" type="submit" aria-label="Send prompt">
+							<i class="bi bi-arrow-up" aria-hidden="true"></i>
+							<span class="visually-hidden">Send</span>
+						</button>
+					</div>
+				</form>
+			</section>
+		</main>
+		<button id="sidebarBackdrop" class="sidebar-backdrop hidden" type="button" aria-label="Close projects"></button>
+
+		<div id="modelCommandModal" class="command-modal hidden" role="dialog" aria-modal="true" aria-labelledby="modelCommandTitle">
+			<div class="command-modal-card">
+				<div id="modelCommandTitle" class="command-modal-title">Select Model</div>
+				<div class="command-modal-body">
+					<label for="modelCommandSelect">Model</label>
+					<select id="modelCommandSelect"></select>
+					<input id="modelCommandCustomInput" type="text" placeholder="Custom model" class="hidden">
+				</div>
+				<div class="command-modal-actions">
+					<button id="modelCommandApplyBtn" type="button">Apply</button>
+					<button id="modelCommandCancelBtn" type="button">Cancel</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="newProjectModal" class="command-modal hidden" role="dialog" aria-modal="true" aria-labelledby="newProjectModalTitle">
+			<div class="command-modal-card">
+				<div id="newProjectModalTitle" class="command-modal-title">Create Project</div>
+				<div class="command-modal-body">
+					<div class="new-project-modal-note">
+						A project points to a working directory. Codex sessions in this project will run there.
+					</div>
+					<label for="newProjectCwdInput">Project Directory</label>
+					<input id="newProjectCwdInput" type="text" placeholder="C:/dev/my-project">
+					<label for="newProjectFirstSessionInput">First Session Name (optional)</label>
+					<input id="newProjectFirstSessionInput" type="text" placeholder="Leave blank for default">
+				</div>
+				<div class="command-modal-actions">
+					<button id="newProjectCreateBtn" type="button">Create Project</button>
+					<button id="newProjectCancelBtn" type="button">Cancel</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="newSessionModal" class="command-modal hidden" role="dialog" aria-modal="true" aria-labelledby="newSessionModalTitle">
+			<div class="command-modal-card new-session-modal-card">
+				<div id="newSessionModalTitle" class="command-modal-title">Create Session</div>
+				<div class="command-modal-body">
+					<div class="new-session-modal-note">
+						Set session-level defaults. Advanced sandbox settings are not exposed here.
+					</div>
+					<label for="newSessionNameInput">Session Name (optional)</label>
+					<input id="newSessionNameInput" type="text" placeholder="Leave blank for default">
+					<label for="newSessionCwdInput">Working Directory</label>
+					<input id="newSessionCwdInput" type="text" placeholder="C:/dev/my-project">
+					<label for="newSessionModelSelect">Model</label>
+					<select id="newSessionModelSelect"></select>
+					<input id="newSessionModelCustomInput" type="text" placeholder="Custom model" class="hidden">
+					<div id="newSessionModelDefaultHint" class="new-session-field-help hidden"></div>
+					<label for="newSessionReasoningSelect">Reasoning</label>
+					<select id="newSessionReasoningSelect">
+						<option value="">(default)</option>
+						<option value="none">none</option>
+						<option value="minimal">minimal</option>
+						<option value="low">low</option>
+						<option value="medium">medium</option>
+						<option value="high">high</option>
+						<option value="xhigh">xhigh</option>
+					</select>
+					<div id="newSessionReasoningHelp" class="new-session-field-help"></div>
+					<label for="newSessionApprovalSelect">Approval Policy</label>
+					<select id="newSessionApprovalSelect">
+						<option value="">(inherit)</option>
+						<option value="untrusted">untrusted</option>
+						<option value="on-failure">on-failure (legacy)</option>
+						<option value="on-request">on-request</option>
+						<option value="never">never</option>
+					</select>
+					<div id="newSessionApprovalHelp" class="new-session-field-help"></div>
+					<label for="newSessionSandboxSelect">Sandbox</label>
+					<select id="newSessionSandboxSelect">
+						<option value="">(inherit)</option>
+						<option value="read-only">read-only</option>
+						<option value="workspace-write">workspace-write</option>
+						<option value="danger-full-access">danger-full-access</option>
+					</select>
+					<div id="newSessionPermissionRisk" class="new-session-permission-risk risk-neutral" role="status" aria-live="polite"></div>
+				</div>
+				<div class="command-modal-actions">
+					<button id="newSessionCreateBtn" type="button">Create Session</button>
+					<button id="newSessionCancelBtn" type="button">Cancel</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="aboutModal" class="command-modal hidden" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle">
+			<div class="command-modal-card about-modal-card">
+				<div id="aboutModalTitle" class="command-modal-title">About Buffaly Codex Embedded</div>
+				<div class="command-modal-body about-modal-body">
+					<div id="aboutProjectLine" class="about-line about-heading">Built by Matt Furnari of Intelligence Factory</div>
+					<div class="about-line">
+						I created this tool for my own usage with <strong>Buffaly</strong>.
+					</div>
+					<div class="about-line">
+						While Codex Embedded gives you a delightful way to use OpenAI's Codex today, Buffaly is what we use in production for regulated workflows (medicine, compliance, DevOps, etc.):
+					</div>
+					<ul class="about-list">
+						<li>Structured ontology memory (ProtoScript) instead of prompt soup</li>
+						<li>Typed, executable skills with real contracts</li>
+						<li>Full deterministic execution traces + offline critique loops</li>
+						<li>Designed so agents can actually be trusted in real work</li>
+					</ul>
+					<div class="about-line about-link-line">
+						&rarr;
+						<a href="https://buffa.ly/?utm_source=codexembedded&utm_medium=about_modal&utm_campaign=sidebar" target="_blank" rel="noopener">Learn more about Buffaly</a>
+					</div>
+					<div class="about-line about-link-line">
+						&rarr;
+						<a href="https://github.com/Intelligence-Factory-LLC/Buffaly.CodexEmbedded" target="_blank" rel="noopener">Give us a star on GitHub</a>
+					</div>
+					<div class="about-line about-muted">Made with the same care we put into medical-grade agents that power FairPath.ai.</div>
+					<div id="aboutVersionLine" class="about-line about-muted">Version: unknown</div>
+					<div id="aboutBuildLine" class="about-line about-muted">Build: v2026.03.10.03</div>
+				</div>
+				<div class="command-modal-actions">
+					<button id="aboutModalCloseBtn" type="button">Close</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="toolUserInputModal" class="command-modal hidden" role="dialog" aria-modal="true" aria-labelledby="toolUserInputTitle">
+			<div class="command-modal-card tool-user-input-modal-card">
+				<div id="toolUserInputTitle" class="command-modal-title">Input Needed</div>
+				<div class="command-modal-body tool-user-input-body">
+					<div id="toolUserInputSubtitle" class="tool-user-input-subtitle"></div>
+					<div id="toolUserInputQuestions" class="tool-user-input-questions"></div>
+				</div>
+				<div class="command-modal-actions">
+					<button id="toolUserInputSubmitBtn" type="button">Submit</button>
+					<button id="toolUserInputCancelBtn" type="button">Cancel</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="sessionRecoveryModal" class="command-modal hidden" role="dialog" aria-modal="true" aria-labelledby="sessionRecoveryTitle">
+			<div class="command-modal-card session-recovery-modal-card">
+				<div id="sessionRecoveryTitle" class="command-modal-title">Codex session appears stalled</div>
+				<div class="command-modal-body">
+					<div id="sessionRecoveryMessage" class="session-recovery-message"></div>
+					<div id="sessionRecoveryMeta" class="session-recovery-meta"></div>
+				</div>
+				<div class="command-modal-actions session-recovery-actions">
+					<button id="sessionRecoveryRecoverBtn" type="button">Recover Session</button>
+					<button id="sessionRecoveryDismissBtn" type="button">Not Now</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="diffNoteModal" class="command-modal hidden" role="dialog" aria-modal="true" aria-labelledby="diffNoteModalTitle">
+			<div class="command-modal-card diff-note-modal-card">
+				<div id="diffNoteModalTitle" class="command-modal-title">Diff Line Note</div>
+				<div class="command-modal-body">
+					<div id="diffNoteModalPath" class="diff-note-modal-path"></div>
+					<label for="diffNoteModalTextarea">Note</label>
+					<textarea id="diffNoteModalTextarea" rows="5" placeholder="Describe what should change on this line"></textarea>
+				</div>
+				<div class="command-modal-actions">
+					<button id="diffNoteModalSaveBtn" type="button">Save</button>
+					<button id="diffNoteModalRemoveBtn" type="button">Remove</button>
+					<button id="diffNoteModalCancelBtn" type="button">Cancel</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="hidden legacy-session-controls" aria-hidden="true">
+			<button id="newSessionBtn" type="button">New Session</button>
+			<button id="newProjectBtn" type="button">New Project</button>
+			<button id="stopSessionBtn" type="button">Stop Session</button>
+
+			<select id="logVerbositySelect">
+				<option value="errors">Errors</option>
+				<option value="normal" selected>Normal</option>
+				<option value="verbose">Verbose</option>
+			</select>
+			<select id="modelSelect"></select>
+			<input id="modelCustomInput" type="text" placeholder="Custom model">
+			<button id="reloadModelsBtn" type="button">Reload Models</button>
+			<input id="cwdInput" type="text" placeholder="default cwd">
+
+			<select id="existingSessionSelect"></select>
+			<button id="attachSessionBtn" type="button">Attach</button>
+			<select id="sessionSelect"></select>
+		</div>
+	</div>
+	<script src="theme.js?v=20260225-settings1"></script>
+	<script src="sessionTimeline.js?v=20260227-turnanchor2"></script>
+	<script src="scribe.js?v=20260313-transcribe-flow-fix1"></script>
+	<script src="app.shared.js?v=20260228-cleanup1"></script>
+	<script src="app.js?v=20260318-draft-fallback-fix1"></script>
+	<script src="app.diffs.js?v=20260314-diff-event-refresh1"></script>
+</body>
+</html>
