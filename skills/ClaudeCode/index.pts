@@ -28,7 +28,16 @@ function ToClaudeTempPath() : string
 {
 	string script = "Write-Output $env:TEMP";
 	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 5, _opsAgent, "", "Claude Temp Path");
-	return result.Trim();
+	return ToClaudeCleanOutput(result);
+}
+
+function ToClaudeCleanOutput(string result) : string
+{
+	// RunPowerShellStreamingToRuntimeUi appends "Exit code: N" to output. Strip it.
+	int exitCodeIdx = result.IndexOf("Exit code: ");
+	if (exitCodeIdx >= 0)
+		return result.Substring(0, exitCodeIdx).Trim();
+	return ToClaudeCleanOutput(result);
 }
 
 function ToClaudePromptsDir() : string
@@ -137,14 +146,14 @@ function ToClaudePtTurnsFile() : string
 
 function ToClaudePtReadState(string filePath) : string
 {
-	string script = "=Join-Path $env:TEMP '" + ToClaudeEscapePowerShellSingleQuoted(filePath) + "'; if(Test-Path -LiteralPath $f){ Get-Content -LiteralPath $f -Raw -ErrorAction SilentlyContinue } else { '' }";
+	string script = "$f=Join-Path $env:TEMP '" + ToClaudeEscapePowerShellSingleQuoted(filePath) + "'; if(Test-Path -LiteralPath $f){ Get-Content -LiteralPath $f -Raw -ErrorAction SilentlyContinue } else { '' }";
 	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 10, _opsAgent, "", "Claude PT State Read");
 	return result.Trim();
 }
 
 function ToClaudePtWriteState(string filePath, string value) : string
 {
-	string script = "=Join-Path $env:TEMP '" + ToClaudeEscapePowerShellSingleQuoted(filePath) + "'; Set-Content -LiteralPath $f -Value '" + ToClaudeEscapePowerShellSingleQuoted(value) + "' -Encoding utf8 -NoNewline";
+	string script = "$f=Join-Path $env:TEMP '" + ToClaudeEscapePowerShellSingleQuoted(filePath) + "'; Set-Content -LiteralPath $f -Value '" + ToClaudeEscapePowerShellSingleQuoted(value) + "' -Encoding utf8 -NoNewline";
 	SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 10, _opsAgent, "", "Claude PT State Write");
 	return "";
 }

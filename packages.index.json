@@ -8388,7 +8388,7 @@
       "PackageType": "WebModule",
       "Title": "Extension Publishing",
       "Description": "Buffaly Web Module package for Extension Publishing.",
-      "Version": "0.1.18",
+      "Version": "0.1.17",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/ExtensionPublishing",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/ExtensionPublishing",
@@ -8403,7 +8403,7 @@
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "24320a699174ed2fa884742786dbbb3d8c1b05b3d49e9c6b38942319ddae9511"
+          "Sha256": "3f987e063bd8ea78a6e8b5be556c9949980eccd126419db4df1766d20fcc7a85"
         },
         {
           "Path": "Buffaly.ExtensionPublishing.WebModule.deps.json",
@@ -8411,7 +8411,7 @@
         },
         {
           "Path": "Buffaly.ExtensionPublishing.WebModule.dll",
-          "Sha256": "37c47a1b11cd75021e155517a989a781565b7bc98998ca44e8beae0b2aeb6562"
+          "Sha256": "11226b8c975fa1a571c99bb7f60cb0034dce0b4231d8c3bf118843f0ba5c9485"
         },
         {
           "Path": "Generated/JsonWs/Buffaly.ExtensionPublishing.WebModule.ExtensionPublishingService.ashx.js",
@@ -9139,7 +9139,7 @@
       "PackageType": "WebModule",
       "Title": "Google Workspace",
       "Description": "Buffaly Web Module package for Google Workspace.",
-      "Version": "0.1.113",
+      "Version": "0.1.112",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/GoogleWorkspace",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/GoogleWorkspace",
@@ -9178,7 +9178,7 @@
         },
         {
           "Path": "Buffaly.GoogleWorkspace.dll",
-          "Sha256": "3886d2cad5e8c70b1752a21d0ada0dcf894c4e975fdcacea77579130be7f133d"
+          "Sha256": "18e6c151b028d6bf235a4dfca2ed29b866c9bb87b06c9cd1ef5425c9c7bbddfd"
         },
         {
           "Path": "Buffaly.GoogleWorkspace.WebModule.deps.json",
@@ -9186,11 +9186,11 @@
         },
         {
           "Path": "Buffaly.GoogleWorkspace.WebModule.dll",
-          "Sha256": "1cb94bb263230293526378a3bedf10b6698b779ef0f7e8b7ceb9744b0d07a5b4"
+          "Sha256": "cd9f9ebe9d17b28242c1a0b1e1d93693dc6183fdcb4c60e17c5fac616ba7d534"
         },
         {
           "Path": "Buffaly.GoogleWorkspace.WebModule.exe",
-          "Sha256": "65051d06ad3c7aa2bb0d7fb07581d14d244d8f571a00d58262a67869d288fc43"
+          "Sha256": "c51d527ebc97fe73223b59da7869d197c95adbe3f3a91564c5a68b3daff94bc1"
         },
         {
           "Path": "Buffaly.GoogleWorkspace.WebModule.runtimeconfig.json",
@@ -9434,11 +9434,11 @@
         },
         {
           "Path": "web-module.json",
-          "Sha256": "eb45499af34015b12268ff7a2d0ded173852278b23a7492781b456765c1cd78d"
+          "Sha256": "a51c967e0cebe77f12c7823adf320a6b2c001640708f4f05251aaa4ba2a00a34"
         },
         {
           "Path": "web.config",
-          "Sha256": "94f13157dc621c834e8690f6d74b02f1efd150b7c0d2785a860788d7a1780e5d"
+          "Sha256": "89828b4a64331835d03b34d449a03e32a67ed7ffe5cfee8db4e16dc5e61ef655"
         },
         {
           "Path": "WebAppUtilities.dll",
@@ -9595,98 +9595,9 @@
         {
           "Path": "zh-Hant/Microsoft.Data.SqlClient.resources.dll",
           "Sha256": "6a045428a176c4a42518ef6918b93ba0ee4a126dd15b523cc123bb14cad55e21"
-        },
-        {
-          "Path": "Skills/GoogleWorkspace/Auth.pts",
-          "Sha256": "fc87e985c227af103aacd832bac87f69ee4aa6dde309e999f69b6cc2d828a923"
-        },
-        {
-          "Path": "Skills/GoogleWorkspace/Auth.pts.md",
-          "Sha256": "c7af60071f00c5c1c4dd85b02c6936a58301d5e2cd93d3b6e5f88a1970cf598d"
-        },
-        {
-          "Path": "Skills/GoogleWorkspace/Calendar.pts",
-          "Sha256": "e95d399f1694b52ae6356101dc84d18645765058e845bf3d82f250ff56418623"
-        },
-        {
-          "Path": "Skills/GoogleWorkspace/Chat.pts",
-          "Sha256": "6e7376965280ccef86130f6d782e0b4f361586ed665a84d4680bc590297b13b6"
-        },
-        {
-          "Path": "Skills/GoogleWorkspace/Chat.pts.md",
-          "Sha256": "24ef69419565fc9ec50fe6013ca0c35e71a5e5f613a4b4cb5b01c906c057e2df"
-        },
-        {
-          "Path": "Skills/GoogleWorkspace/Common.pts",
-          "Sha256": "9d0af838afa40da9d6f94edcd6be01187008692c5a69b588cefb644f205ba792"
-        },
-        {
-          "Path": "Skills/GoogleWorkspace/Common.pts.md",
-          "Sha256": "63bd7a006de43d7d3fc12656a5e6c417b09abde27561dccabf8643818e5fd921"
-        },
-        {
-          "Path": "Skills/GoogleWorkspace/Docs.pts",
-          "Sha256": "8f308eb927d3fbf06e3c1eda61c684653152977b7a9991a33c0070012db9001b"
-        },
-        {
-          "Path": "Skills/GoogleWorkspace/Drive.pts",
-          "Sha256": "696bd248d7f357e2cc42bae435aee758f068ea3b43d1555756e5613ec5711942"
-        },
-        {
-          "Path": "Skills/GoogleWorkspace/Gmail.pts",
-          "Sha256": "307a5b93f336531d2f931d86ba301432666d5db334d3dd4bdbbc07acb11a3d05"
-        },
-        {
-          "Path": "Skills/GoogleWorkspace/Gmail.pts.md",
-          "Sha256": "49535bfaa78e6007a0814144eee841b927eb0f3b5f22e40999ecad56221c4fb2"
-        },
-        {
-          "Path": "Skills/GoogleWorkspace/GoogleWorkspaceService.pts",
-          "Sha256": "506c06ae7e955aa5c49e9329d46295b8dd4e358a3eea690d62a4a280dad4cdaf"
-        },
-        {
-          "Path": "Skills/GoogleWorkspace/GoogleWorkspaceService.pts.md",
-          "Sha256": "2d3903703df58317f277c55379ec64b803d7159f729f749e0d89ac90ddd8e003"
-        },
-        {
-          "Path": "Skills/GoogleWorkspace/index.pts",
-          "Sha256": "0ecf336fb052e039b59734b4c50fd9a2d2fa9a0ce2405ffadfdaab6abdef7b64"
-        },
-        {
-          "Path": "Skills/GoogleWorkspace/Memory.pts",
-          "Sha256": "7159a7788d36558e4dfabca84bf8384d0cc2b2e471f6b66c819293c8d8849a76"
-        },
-        {
-          "Path": "Skills/GoogleWorkspace/PromptActions.pts",
-          "Sha256": "9348a78a4ef78d5bd393e45a3fdfc5a8356a82b3c6ba755d9e36127209d75cac"
-        },
-        {
-          "Path": "Skills/GoogleWorkspace/Prompts/AuthorizeOrReauthorizeGoogleWorkspaceAccount.prompt.md",
-          "Sha256": "48bc14ba0fda1f5ab2b4a5d5cd730a1d4a97740962ebe6591f5070e93795e334"
-        },
-        {
-          "Path": "Skills/GoogleWorkspace/Prompts/CreateFormattedGoogleDocFromMarkdown.prompt.md",
-          "Sha256": "220d5e4cb86bff277a14a336221304097aa26bfc9f72d3ae06479a07992ff2f1"
-        },
-        {
-          "Path": "Skills/GoogleWorkspace/Sheets.pts",
-          "Sha256": "ac3be69fec5900531b33b6eff9fb1298c08596f55e33fca3891b8f436e2a2ae1"
-        },
-        {
-          "Path": "Skills/GoogleWorkspace/Sheets.pts.md",
-          "Sha256": "5cf69c0e191670c40f04626f79b6fe15a79ec20f6fec8b99ae8726e9bff1de85"
-        },
-        {
-          "Path": "Skills/GoogleWorkspace/SKILL.md",
-          "Sha256": "a627b47a70d4358fdaa39193949c3bddd07a2b6b863d8aef63e2213996b592ff"
         }
       ],
-      "ProjectArtifacts": [
-        {
-          "ProjectName": "Skills/GoogleWorkspace",
-          "SourcePath": "Skills/GoogleWorkspace/"
-        }
-      ],
+      "ProjectArtifacts": [],
       "Dependencies": [],
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
@@ -11245,7 +11156,7 @@
       "PackageType": "WebModule",
       "Title": "Offline Ontology Critic",
       "Description": "Buffaly Web Module package for Offline Ontology Critic.",
-      "Version": "0.1.47",
+      "Version": "0.1.46",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/OfflineOntologyCritic",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/OfflineOntologyCritic",
@@ -11276,71 +11187,71 @@
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "0c473c47ae12eb32e0965828888b2258f190a809c558fda055abc0ecf992a296"
+          "Sha256": "b357aafaae05e632afeafbba5b7beeb4df6d8c0c6458aa334cc681926e25e540"
         },
         {
           "Path": "Buffaly.Agent.Core.dll",
-          "Sha256": "45896b5c78bc00767ee16a65b25c10eded7541f97ed697de0a9add1ce243527e"
+          "Sha256": "2577beb5eb8110b586710b5b37e9b4336e5fdd02c1db3ac1c941aace92b8ce51"
         },
         {
           "Path": "Buffaly.Agent.CSharpSkill.dll",
-          "Sha256": "f12107d443fadc5c58a0180d9252b993d860558dff734106b4abd2083ff97f08"
+          "Sha256": "3b85090afc006177d06c14fd580b79336ac788effb16464a62686e8cb92535e1"
         },
         {
           "Path": "Buffaly.Agent.Host.dll",
-          "Sha256": "9f69cee2968e8f8c0dfba4d04a2574cb6f1116359d534dad5269d214df07f1e8"
+          "Sha256": "b26a4ccee5326d975ca98dfa86b2034900164801e06ec94e306fed8349e092c6"
         },
         {
           "Path": "Buffaly.Agent.ProtoScript.Runtime.dll",
-          "Sha256": "d50a1c4d9de56ceae3a6cd9c45fe331e8ad90ad8fcd35baee48f9198d2088e79"
+          "Sha256": "faf7e9c9f1aaf22340d19c54e8d86d3aad2cc79d444523ac9b9b596f45c0fc3e"
         },
         {
           "Path": "Buffaly.Agent.ProtoScriptAuthoring.dll",
-          "Sha256": "467e147b2c38f36488aabcca32ad125f4e5c89740d5abb2c8c52c3754137ec36"
+          "Sha256": "5bcb2ea0a8624ed4778d38d3e937bf256d5d6721000829c1f21691678ee6a96a"
         },
         {
           "Path": "Buffaly.Agent.Runtime.Abstractions.dll",
-          "Sha256": "38f7437367c24eaff5c7f97550934f4d2829f0f13220c89beabc2352d1d31c67"
+          "Sha256": "f4597ae9932a33a08d8ffce239339cd5e6bd08302dee2c265395ea0cb4bf88cd"
         },
         {
           "Path": "Buffaly.Agent.SemanticDatabase.DB.dll",
-          "Sha256": "959486d4f19c1b09e68cc2379041792850ae2048bd3170b31b4203fc25cc095d"
+          "Sha256": "65133c6ccc00d69543585de297f0f9e124dcd3c3ea3bb5651f7485c2667f1216"
         },
         {
           "Path": "Buffaly.Agent.SemanticDatabase.dll",
-          "Sha256": "b3882c813a9180f1be1486e6ef4a02c35326590bc050969ca5449b34e1f85e33"
+          "Sha256": "0fb94982fccce4209aeef6a64cb7775618756b040592e6287e643a2bb28e3b58"
         },
         {
           "Path": "Buffaly.Agent.Tools.CodeSearch.dll",
-          "Sha256": "e43a38c5993c425294815c55b19e529eaf9f605205eba170cc5f55e5feefb28b"
+          "Sha256": "f7aa28bbf2255a19b9da41955a8627cc53e4fa61d89d1127d271edc426d843df"
         },
         {
           "Path": "Buffaly.Agent.Tools.Http.dll",
-          "Sha256": "34c2178b77800b18a567167b1bc18d79eb39d6f6bd8d289417f006d458b9da4a"
+          "Sha256": "c6115d7d599753cc25b23e7586979d7f5f1ffbb0c925545e3774b80c8a0eacda"
         },
         {
           "Path": "Buffaly.Agent.Tools.Mcp.dll",
-          "Sha256": "118fcbec1e7f0c0c049fc3631bd472e5260d30e596c34f59cc3b3b19891c65aa"
+          "Sha256": "463ef6a5a93f79a8fd9a53a91f45fcea7bb4fe7f73c4e52a84381ae6b127536d"
         },
         {
           "Path": "Buffaly.Agent.Tools.Platform.dll",
-          "Sha256": "d2696aa13c3f16fe7fa0af61cc75e5aaf289bed3b1bc4c886007987b39a4cea0"
+          "Sha256": "866612260748e40e53df90dcbb303fdd895fbc5628e978cbd5cbc27268b311ef"
         },
         {
           "Path": "Buffaly.Agent.Tools.Process.dll",
-          "Sha256": "64bb38cab0c81707fd335d0e2133d1cd9a4b974e020f429ae987c8bd0ac6054b"
+          "Sha256": "8774941261c24164844bae5b59cb6a6d19b081e73fee71b4ab85dbcd48e20de5"
         },
         {
           "Path": "Buffaly.Agent.Tools.Secrets.dll",
-          "Sha256": "f23c9795cdd2997ca38334f5008959a03dfb81f3b6ee75b6d3da9a3a8e396307"
+          "Sha256": "a1b846f967d39bc63362dbb404563ed14f76636731550a8799f2169f7fb2617a"
         },
         {
           "Path": "Buffaly.Agent.Tools.SemanticDatabase.dll",
-          "Sha256": "4f4069bff5ff986b85c8501db9be597f11ccd3c669641b71dd0064f3ad23f0b7"
+          "Sha256": "bf96ba2ae217020b0042216d026887ba9bdbc3e36caa0f50e419ac8ca646a987"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "24320a699174ed2fa884742786dbbb3d8c1b05b3d49e9c6b38942319ddae9511"
+          "Sha256": "27612c3056f45104feebbbf2786ab1f1746d4b8c69b1307c59ba912d93e3426d"
         },
         {
           "Path": "Buffaly.AIProviderAPI.dll",
@@ -11348,7 +11259,7 @@
         },
         {
           "Path": "Buffaly.Business.dll",
-          "Sha256": "92e80614568a3d3d44c18dd276474420ae842b462f13e3cd3c4eb645cf2f3b63"
+          "Sha256": "200c6cb2ea33aaa70b837b3633ac2638c6647e79a04c001352866a6f9c21deec"
         },
         {
           "Path": "Buffaly.Data.dll",
@@ -11356,23 +11267,23 @@
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "66fa82c52d3bae30b993be8a7d5d25710bceaf8789b185bc874b47be5466fe01"
+          "Sha256": "dde03e0b3992e0ff3945262119fe94aaebec9a8e5c3dba1edd20de321554b6f2"
         },
         {
           "Path": "Buffaly.DB.Hybrid.dll",
-          "Sha256": "e8324f0ba8d8a4c7eae624c4c3dd5999ff8d876a430ab17dabb12b98578f2c7c"
+          "Sha256": "341266b89ae3da730307a5a9f6b7f96c7638958305d444206b45496dfeab339e"
         },
         {
           "Path": "Buffaly.DB.Postgres.dll",
-          "Sha256": "95932b8cc03ad7186c27b61df55a5964a646728ab1ed2e1c3d0b1df41360dcaa"
+          "Sha256": "27f47cca60af3da37350c636d87b29c2bd61389a7a8bd57d1a94e427d04ee432"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "b0dd490028afb16e8eac176d4f7b3792a495544dea84dba00a684372905ebbf5"
+          "Sha256": "72b0246cd78b2d8b8e6abf5691be58c6c8055b1968d6732da327cc4c1b9459dc"
         },
         {
           "Path": "Buffaly.ProviderContracts.dll",
-          "Sha256": "b2228337d9a9982bcf4daa814053c736fc68d297ebe12f2fb5ea2209f42ff1d9"
+          "Sha256": "337fb1238495ebef4ae1ccb53b66d9ed98401aac7aedcb88a2d2e82f84f87d8a"
         },
         {
           "Path": "Buffaly.SemanticDB.Data.dll",
@@ -11384,11 +11295,11 @@
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "c51721137d9ccf0305ca107a06946769109c9aff28e91296aa61b3a0fb8122a9"
+          "Sha256": "6807ba23bea7f52386d870fc913c4c21b35207f2ab3b7150639ba4c4e68a23a5"
         },
         {
           "Path": "Buffaly.Sessions.DB.PostGres.dll",
-          "Sha256": "f63d99f84de4e8daefb8a52c69a91066888ba08c12f38822c75df1b985d2c125"
+          "Sha256": "fb929f63dc9f4add4d963ecb35fee1ba978bd4d7c805b75ce25bad5f629495a6"
         },
         {
           "Path": "CSharp.dll",
@@ -11520,11 +11431,11 @@
         },
         {
           "Path": "OfflineOntologyCritic.Web.deps.json",
-          "Sha256": "59908142c79acf4258209c10ab4c1f5420ffd3223b154dcf6e84a724ce78506c"
+          "Sha256": "7e3d3fb12f7827c44d2e6f48205c2cfeef7aa15b7da02567691ff7fbb6e914c7"
         },
         {
           "Path": "OfflineOntologyCritic.Web.dll",
-          "Sha256": "55c6475559551ec11ac1cfb3fac1a09d81a92483f95c078323d87f3b09e42311"
+          "Sha256": "9c76b23086a8ff664aa099b407ea0583b36135ea1097899359fb6abb5e0579c5"
         },
         {
           "Path": "Ontology.dll",
@@ -11640,11 +11551,11 @@
         },
         {
           "Path": "Scripts/005_sessions_repository_routines.sql",
-          "Sha256": "053f20a09914a49de9cdde389d4b5a736134cb785dc7af79f98a6af1492cfba4"
+          "Sha256": "5e8ed3974ec4416a403449f1523d0a4a555a51e3db11c9885cec35a0f5a05a6c"
         },
         {
           "Path": "Scripts/006_messages_repository_routines.sql",
-          "Sha256": "de155a3629a20d6ed17b865f18adb0a1657129bede90c6166c729ed16a5bb752"
+          "Sha256": "6dc16f1271cbccf708f0683be6c5585d049b76a3cd2fbf639b5b5367a931ed51"
         },
         {
           "Path": "Scripts/007_processes_repository_routines.sql",
@@ -11672,7 +11583,7 @@
         },
         {
           "Path": "Scripts/009_exact_name_compatibility_routines.sql",
-          "Sha256": "ffc106e37fb57e611a524dbad28d939a6ce253f47910412f47bc14980154fcae"
+          "Sha256": "11395d7801fccd7ab78e747fb023cc2d2e03f67f32aa6152948fdfaf8d96deea"
         },
         {
           "Path": "Scripts/Cleanup_TestSessions_ArchiveSp.sql",
@@ -11860,7 +11771,7 @@
         },
         {
           "Path": "Scripts/GetSessionsByParentSessionIDSp_PagingSp.sql",
-          "Sha256": "af6dc24b0a1b4771a4d764299420f237e2d75eb7e56507df4cf53209631cda7b"
+          "Sha256": "62a0127f35eb498858c7b53735e8fa4b14b88be3e69e4d1d8625b5643d0b70db"
         },
         {
           "Path": "Scripts/GetSessionSp.sql",
@@ -11924,7 +11835,7 @@
         },
         {
           "Path": "Scripts/GetUsageDashboardProviderLimitRowsSp.sql",
-          "Sha256": "0b524db819fa330150f4a237f49101e3e4cf10a6067bef84b8a0f686e7be7209"
+          "Sha256": "449b76e634119d918a9cdf9fcb42e5476c4e991756892f52aeaaa2651bf4838c"
         },
         {
           "Path": "Scripts/GetUsageDashboardProviderModelRowsSp.sql",
@@ -12219,10 +12130,6 @@
           "Sha256": "49f0dd6c21c752fb711a11dd82ebe2a97fc8198f5e68826c1edcf910465769ec"
         },
         {
-          "Path": "Scripts/UpdateSessionPromptContextSp.sql",
-          "Sha256": "de935c0a707327e6b68ab4d6117ea6eb41a73a8a2e137a527a675d44dcb2aaea"
-        },
-        {
           "Path": "Scripts/UpdateSessionProviderSelectionSp.sql",
           "Sha256": "f83debdd8e7dc7d6f2e0f5cbf9b754f485c5c5ff08337d165f713bbbd281e36a"
         },
@@ -12240,7 +12147,7 @@
         },
         {
           "Path": "Skills/OfflineOntologyCritic/index.pts",
-          "Sha256": "a8661fe3b1a43d1850cb35c2eb0c50dafd650186e046559957f75ae699095169"
+          "Sha256": "7ff28afdda4bc7c5590b25b42ece08dcb8d218451ecb500ebe92cee8b3e8b31b"
         },
         {
           "Path": "Skills/OfflineOntologyCritic/PromptActions.pts",
@@ -12304,7 +12211,7 @@
         },
         {
           "Path": "web-module.json",
-          "Sha256": "c7aabb6ee5ea61825bcd7da0378be1e8a33222537fe0a9388d97146a4b7ab998"
+          "Sha256": "b6cbd8c395ffb44f0c4758b6bc1a4b92c1003c8fd924d46da508058c7de133bc"
         },
         {
           "Path": "web.config",
@@ -15242,7 +15149,7 @@
       "PackageType": "WebModule",
       "Title": "Skill Management",
       "Description": "Buffaly Web Module package for Skill Management.",
-      "Version": "0.1.122",
+      "Version": "0.1.123",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/Buffaly.Agent.SkillManagement",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/Buffaly.Agent.SkillManagement",
@@ -15265,39 +15172,39 @@
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "0c473c47ae12eb32e0965828888b2258f190a809c558fda055abc0ecf992a296"
+          "Sha256": "3d06bfda7bdc381ef33b41c07bac1e7da35947a27a663433daa7d7200cb9ec8b"
         },
         {
           "Path": "Buffaly.Agent.Core.dll",
-          "Sha256": "45896b5c78bc00767ee16a65b25c10eded7541f97ed697de0a9add1ce243527e"
+          "Sha256": "0552c3b4e27bd4e3626b0ba328943563f69850762b87a11560f8e19d311580bd"
         },
         {
           "Path": "Buffaly.Agent.CSharpSkill.dll",
-          "Sha256": "f12107d443fadc5c58a0180d9252b993d860558dff734106b4abd2083ff97f08"
+          "Sha256": "6cf3663ff6d3ced03d302106c5d8ef2f0c816d267a80c7ff5e4bbefee3a3b55e"
         },
         {
           "Path": "Buffaly.Agent.Host.dll",
-          "Sha256": "9f69cee2968e8f8c0dfba4d04a2574cb6f1116359d534dad5269d214df07f1e8"
+          "Sha256": "f16b04564d1569956aa6384623dc976ae883bbf5372d79dc2289cbacf3acf0b0"
         },
         {
           "Path": "Buffaly.Agent.ProtoScript.Runtime.dll",
-          "Sha256": "d50a1c4d9de56ceae3a6cd9c45fe331e8ad90ad8fcd35baee48f9198d2088e79"
+          "Sha256": "734661b686b957daf0701f8ed28fab9ccc66d422f9e4df2d4917bb27d7bc0d5a"
         },
         {
           "Path": "Buffaly.Agent.ProtoScriptAuthoring.dll",
-          "Sha256": "467e147b2c38f36488aabcca32ad125f4e5c89740d5abb2c8c52c3754137ec36"
+          "Sha256": "24d8715625b139418f2deee3d04d0aa91b8a578bf671a5bd71f487cb3d45c0e7"
         },
         {
           "Path": "Buffaly.Agent.Runtime.Abstractions.dll",
-          "Sha256": "38f7437367c24eaff5c7f97550934f4d2829f0f13220c89beabc2352d1d31c67"
+          "Sha256": "20785fb7ac6683c964bb4b14e38a7b1be14721138183ae5c53b6e2219ff7983e"
         },
         {
           "Path": "Buffaly.Agent.SemanticDatabase.DB.dll",
-          "Sha256": "959486d4f19c1b09e68cc2379041792850ae2048bd3170b31b4203fc25cc095d"
+          "Sha256": "23d7cc8d583b1d665e3eb0f526e0fa6f7825a857098becd12fec0b73789ac5ff"
         },
         {
           "Path": "Buffaly.Agent.SemanticDatabase.dll",
-          "Sha256": "b3882c813a9180f1be1486e6ef4a02c35326590bc050969ca5449b34e1f85e33"
+          "Sha256": "6b61d0f43baaccf152f76ee4fcc9e7750e8b8184e7649ca77926ed95b3519b63"
         },
         {
           "Path": "Buffaly.Agent.SkillManagement.deps.json",
@@ -15305,39 +15212,39 @@
         },
         {
           "Path": "Buffaly.Agent.SkillManagement.dll",
-          "Sha256": "81d10461b4ed58f5740bf92d0454c1fb203d97f393e4311f872b84df21897b42"
+          "Sha256": "7750b521d0660c42b7149f1cc25eb428e9205374126a2eb711c6d5d08d1ec152"
         },
         {
           "Path": "Buffaly.Agent.Tools.CodeSearch.dll",
-          "Sha256": "e43a38c5993c425294815c55b19e529eaf9f605205eba170cc5f55e5feefb28b"
+          "Sha256": "f2c981db1433088af9c5faa53cc97a63de11abcb32cb19c62959de1696e5e263"
         },
         {
           "Path": "Buffaly.Agent.Tools.Http.dll",
-          "Sha256": "34c2178b77800b18a567167b1bc18d79eb39d6f6bd8d289417f006d458b9da4a"
+          "Sha256": "0a66aecce99a4efd6bf12545b54a5e0675ee104862f190efe28b7addf8be61a0"
         },
         {
           "Path": "Buffaly.Agent.Tools.Mcp.dll",
-          "Sha256": "118fcbec1e7f0c0c049fc3631bd472e5260d30e596c34f59cc3b3b19891c65aa"
+          "Sha256": "0c8b8a470af5ec779bfe3bdcda84679242deab8238717c4d6b1ce69665f960ea"
         },
         {
           "Path": "Buffaly.Agent.Tools.Platform.dll",
-          "Sha256": "d2696aa13c3f16fe7fa0af61cc75e5aaf289bed3b1bc4c886007987b39a4cea0"
+          "Sha256": "95fd74167930175221ddfcb7ac56ea68321f567f5887b9cddb23b524320258e7"
         },
         {
           "Path": "Buffaly.Agent.Tools.Process.dll",
-          "Sha256": "64bb38cab0c81707fd335d0e2133d1cd9a4b974e020f429ae987c8bd0ac6054b"
+          "Sha256": "631ce0ebcdf7a3bede06487d302fc8a2c9200c7dc4b949585ac69a9d1ef227bc"
         },
         {
           "Path": "Buffaly.Agent.Tools.Secrets.dll",
-          "Sha256": "f23c9795cdd2997ca38334f5008959a03dfb81f3b6ee75b6d3da9a3a8e396307"
+          "Sha256": "5950d52e64ce09364afdd40ca757cb1bd4c0cabea77ec3ab50037de8e10c26d4"
         },
         {
           "Path": "Buffaly.Agent.Tools.SemanticDatabase.dll",
-          "Sha256": "4f4069bff5ff986b85c8501db9be597f11ccd3c669641b71dd0064f3ad23f0b7"
+          "Sha256": "bfeba5d312adba294de61ad446352e768dc6ed064ca22cdf10bc75c974841f1f"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "24320a699174ed2fa884742786dbbb3d8c1b05b3d49e9c6b38942319ddae9511"
+          "Sha256": "e0bb0f34cf4cf4691871b54bb2b626eb80e5aeed7fd12cf131e3757ed47b34da"
         },
         {
           "Path": "Buffaly.AIProviderAPI.dll",
@@ -15345,7 +15252,7 @@
         },
         {
           "Path": "Buffaly.Business.dll",
-          "Sha256": "92e80614568a3d3d44c18dd276474420ae842b462f13e3cd3c4eb645cf2f3b63"
+          "Sha256": "c3c23299aabb36bc699371a611bd6e9f24b622186bb464a4bcf3fd421c34ae48"
         },
         {
           "Path": "Buffaly.Data.dll",
@@ -15353,19 +15260,19 @@
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "66fa82c52d3bae30b993be8a7d5d25710bceaf8789b185bc874b47be5466fe01"
+          "Sha256": "6b6a91c2f616f6abed3fa4586f5d3bb1ebdc7a34cb48bc73fade30f39d23be54"
         },
         {
           "Path": "Buffaly.DB.Hybrid.dll",
-          "Sha256": "e8324f0ba8d8a4c7eae624c4c3dd5999ff8d876a430ab17dabb12b98578f2c7c"
+          "Sha256": "b50c5f7ef3d0d47987acfb02ba44e6da8845fcd9389b9f0a25e9f65f4261f2f0"
         },
         {
           "Path": "Buffaly.DB.Postgres.dll",
-          "Sha256": "95932b8cc03ad7186c27b61df55a5964a646728ab1ed2e1c3d0b1df41360dcaa"
+          "Sha256": "019f9415c3538967093ffc7e5ee08ab67f0557c62209f806ccc6f71cf59cccb4"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "b0dd490028afb16e8eac176d4f7b3792a495544dea84dba00a684372905ebbf5"
+          "Sha256": "4089e39008dff98428b43f3c65ac396fda4143dee3d3d9b9fc95d0004b8b9960"
         },
         {
           "Path": "Buffaly.ProviderContracts.dll",
@@ -15381,11 +15288,15 @@
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "c51721137d9ccf0305ca107a06946769109c9aff28e91296aa61b3a0fb8122a9"
+          "Sha256": "f1d542886986c6e6a1e4998600d4ecc4621aa0b60fbabbecb3d07279cf76b8ff"
         },
         {
           "Path": "Buffaly.Sessions.DB.PostGres.dll",
-          "Sha256": "f63d99f84de4e8daefb8a52c69a91066888ba08c12f38822c75df1b985d2c125"
+          "Sha256": "a51caab933b69f1ff7379517a974a2ae559a374bcb779531d89cb377e9e071d1"
+        },
+        {
+          "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
+          "Sha256": "6e9b997f45393346cf2f96da99f7fa868f2286964a49ce66a59988defdaf84b6"
         },
         {
           "Path": "CSharp.dll",
@@ -15398,10 +15309,6 @@
         {
           "Path": "CSharp.Parsers.dll",
           "Sha256": "c1af00f16df0adf43729d532d0f4955d28964591cb588660dc9ad1768f9b860a"
-        },
-        {
-          "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
-          "Sha256": "6e9b997f45393346cf2f96da99f7fa868f2286964a49ce66a59988defdaf84b6"
         },
         {
           "Path": "de/Microsoft.Data.SqlClient.resources.dll",
@@ -15600,6 +15507,10 @@
           "Sha256": "8ca4b8a8927500689a6c95c56c1b2890aed671afabbf232803673b174696ff8c"
         },
         {
+          "Path": "ru/Microsoft.Data.SqlClient.resources.dll",
+          "Sha256": "f7d51f47b1eba12021161ee39a7d08d24df1dcd52c131d1d94ee2c7e432f4cb4"
+        },
+        {
           "Path": "runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll",
           "Sha256": "4a95c42d14d8a83ca1007793648b6dae59cee957ea12470578f10c918f91d225"
         },
@@ -15626,10 +15537,6 @@
         {
           "Path": "runtimes/win/lib/net9.0/System.Security.Cryptography.Pkcs.dll",
           "Sha256": "6902fe2034ada133d5aa8df0d101279abb3093e346ebf34bbde62670f2a0e9bf"
-        },
-        {
-          "Path": "ru/Microsoft.Data.SqlClient.resources.dll",
-          "Sha256": "f7d51f47b1eba12021161ee39a7d08d24df1dcd52c131d1d94ee2c7e432f4cb4"
         },
         {
           "Path": "Scripts/000_schema_migrations.sql",
@@ -15756,16 +15663,16 @@
           "Sha256": "4ae61d9ad0a98f268732a5ad688651abc4e33789d54849996b1b6c320e4cdadd"
         },
         {
-          "Path": "Scripts/GetFeaturesSp.sql",
-          "Sha256": "bee376b6a5f994aab837fba73ae34cd1ad1808f0233e05232a01f19859548b98"
-        },
-        {
           "Path": "Scripts/GetFeaturesSp_CountSp.sql",
           "Sha256": "317887aa0e1ec4ab5a9e03f2b90f30963a996bb7235936aaf1f7b7be2a3b4042"
         },
         {
           "Path": "Scripts/GetFeaturesSp_PagingSp.sql",
           "Sha256": "0af115b0e4c838def4b5df8aa5cc0b2d81dde72afde4be863ddd49fab670a508"
+        },
+        {
+          "Path": "Scripts/GetFeaturesSp.sql",
+          "Sha256": "bee376b6a5f994aab837fba73ae34cd1ad1808f0233e05232a01f19859548b98"
         },
         {
           "Path": "Scripts/GetMessageByMessageIDSp.sql",
@@ -15792,16 +15699,16 @@
           "Sha256": "7cbeda3ba6bfd25085e3288a1dc04198336c68c25ac5f05559390ec0c25fdd71"
         },
         {
-          "Path": "Scripts/GetMessagesBySessionIDSp.sql",
-          "Sha256": "d5d950443ec3cc294fc609f3d9325537671da684c691f23c2b80304a3f56989b"
-        },
-        {
           "Path": "Scripts/GetMessagesBySessionIDSp_CountSp.sql",
           "Sha256": "16c94670b2bb1ac0cf03120d3b1e8b8e4797004ec01431cfa574aeb6a0604973"
         },
         {
           "Path": "Scripts/GetMessagesBySessionIDSp_PagingSp.sql",
           "Sha256": "2439a3261984ae6ab20bc7e0c02e2c229c0892ca05d8c495ecd68c84b79ad1bb"
+        },
+        {
+          "Path": "Scripts/GetMessagesBySessionIDSp.sql",
+          "Sha256": "d5d950443ec3cc294fc609f3d9325537671da684c691f23c2b80304a3f56989b"
         },
         {
           "Path": "Scripts/GetMessagesByTurnIDSp.sql",
@@ -15816,16 +15723,16 @@
           "Sha256": "1a9e61c329871818096ca308ad7ca2d1c6e37a63ac671298967ca16e9f366272"
         },
         {
-          "Path": "Scripts/GetMessagesSp.sql",
-          "Sha256": "3839fbccdcbc9977aa347fa4cb4f877c1fc3184bdbdd06c948cd3076e04d5e5b"
-        },
-        {
           "Path": "Scripts/GetMessagesSp_CountSp.sql",
           "Sha256": "9dd04ec0ecaa65f43b9195703fa5204adca4fd70157c007569c8ee26b79bb619"
         },
         {
           "Path": "Scripts/GetMessagesSp_PagingSp.sql",
           "Sha256": "0090955303241dfa8346eb9b5f42ba92a85262253121d61f8cc003ea169b2c10"
+        },
+        {
+          "Path": "Scripts/GetMessagesSp.sql",
+          "Sha256": "3839fbccdcbc9977aa347fa4cb4f877c1fc3184bdbdd06c948cd3076e04d5e5b"
         },
         {
           "Path": "Scripts/GetPageLayoutByUrlSp.sql",
@@ -15836,10 +15743,6 @@
           "Sha256": "4c55a418805d496d5da8437a7c3c31801d0343b1f1e0d6d32cf0e1725fbbaa7b"
         },
         {
-          "Path": "Scripts/GetPageLayoutsSp.sql",
-          "Sha256": "2a30da05a0507142b139ef31f206a8a7aa1b74b68bbd4bc6dd78104166c3636c"
-        },
-        {
           "Path": "Scripts/GetPageLayoutsSp_CountSp.sql",
           "Sha256": "38b8024a4abf2174c717d101596f9b77f65df34ac8af720d481f1e4ca36aa413"
         },
@@ -15848,8 +15751,8 @@
           "Sha256": "5534ba4c3af822ea450677d48835263ce5e15e034dc90bcc649adcf7bfb65397"
         },
         {
-          "Path": "Scripts/GetProcessesSp.sql",
-          "Sha256": "321815da4bf51faa35ed27b1727866512e7ddc826d2f50dc88697ee38c8919d6"
+          "Path": "Scripts/GetPageLayoutsSp.sql",
+          "Sha256": "2a30da05a0507142b139ef31f206a8a7aa1b74b68bbd4bc6dd78104166c3636c"
         },
         {
           "Path": "Scripts/GetProcessesSp_CountSp.sql",
@@ -15860,16 +15763,16 @@
           "Sha256": "da39bdea1fe2b4f3a7df6acdc1daeb624bf3c517370fa68bc055822dc2528f7e"
         },
         {
+          "Path": "Scripts/GetProcessesSp.sql",
+          "Sha256": "321815da4bf51faa35ed27b1727866512e7ddc826d2f50dc88697ee38c8919d6"
+        },
+        {
           "Path": "Scripts/GetProcessSp.sql",
           "Sha256": "00d962493a4788d836df745c1cae9b662d23f6058f3eec486cda7ebffcffcb2d"
         },
         {
           "Path": "Scripts/GetSessionBySessionKeySp.sql",
           "Sha256": "c1dbb87f8e6cde9039a7442fcc8ab08ce47dbb35959e9591d7e164572c0d34bb"
-        },
-        {
-          "Path": "Scripts/GetSessionsByParentSessionIDSp.sql",
-          "Sha256": "891566148edfcc2f92744b9fcff051e5cb782e478ef7c0b7a73d977521a392f5"
         },
         {
           "Path": "Scripts/GetSessionsByParentSessionIDSp_CountSp.sql",
@@ -15880,12 +15783,12 @@
           "Sha256": "af6dc24b0a1b4771a4d764299420f237e2d75eb7e56507df4cf53209631cda7b"
         },
         {
-          "Path": "Scripts/GetSessionSp.sql",
-          "Sha256": "65771438e5a11819101e0a581717bde4c98291c6ebb646ef62c2706d4635f460"
+          "Path": "Scripts/GetSessionsByParentSessionIDSp.sql",
+          "Sha256": "891566148edfcc2f92744b9fcff051e5cb782e478ef7c0b7a73d977521a392f5"
         },
         {
-          "Path": "Scripts/GetSessionsSp.sql",
-          "Sha256": "d2f065df3bb7bb63f99839d5c50f592eb14485bf7b672ff6714a24212620f800"
+          "Path": "Scripts/GetSessionSp.sql",
+          "Sha256": "65771438e5a11819101e0a581717bde4c98291c6ebb646ef62c2706d4635f460"
         },
         {
           "Path": "Scripts/GetSessionsSp_CountSp.sql",
@@ -15896,12 +15799,12 @@
           "Sha256": "7435ed0713afc02e5c8e99a35016ef6747028c6615d456706201037954bd5fc8"
         },
         {
-          "Path": "Scripts/GetSessionSubscriptionBySubscriptionIdentitySp.sql",
-          "Sha256": "bfe4ec9844cebce8d8a024a9c7836cf5c041a39d58ab93e5c46381b68c9166a1"
+          "Path": "Scripts/GetSessionsSp.sql",
+          "Sha256": "d2f065df3bb7bb63f99839d5c50f592eb14485bf7b672ff6714a24212620f800"
         },
         {
-          "Path": "Scripts/GetSessionSubscriptionsBySessionIDSp.sql",
-          "Sha256": "c82c81ba214ef82bf1532aaab0af94fd6d06dded9f1f234e795bc69fbb52fef3"
+          "Path": "Scripts/GetSessionSubscriptionBySubscriptionIdentitySp.sql",
+          "Sha256": "bfe4ec9844cebce8d8a024a9c7836cf5c041a39d58ab93e5c46381b68c9166a1"
         },
         {
           "Path": "Scripts/GetSessionSubscriptionsBySessionIDSp_CountSp.sql",
@@ -15912,6 +15815,10 @@
           "Sha256": "c843a461ebbdcce79e56767fdebc5635bfb9211aa5c280f4cb9cc52af842995c"
         },
         {
+          "Path": "Scripts/GetSessionSubscriptionsBySessionIDSp.sql",
+          "Sha256": "c82c81ba214ef82bf1532aaab0af94fd6d06dded9f1f234e795bc69fbb52fef3"
+        },
+        {
           "Path": "Scripts/GetSessionSubscriptionsBySubscriberSessionKeySp.sql",
           "Sha256": "26c0c1eb98842dd150637a425b0ac10563eff6998628aaeaa1678f0bbd13d7e3"
         },
@@ -15920,16 +15827,16 @@
           "Sha256": "d3af3c0a7ccd1589fbbd990c60cd12f01ecdbc9743671d3b21a2c89620f25b42"
         },
         {
-          "Path": "Scripts/GetSessionSubscriptionsSp.sql",
-          "Sha256": "a261b6dca932ec7f06c2e2f6636cc120133e6d941d170c4a736a0034c29774c1"
-        },
-        {
           "Path": "Scripts/GetSessionSubscriptionsSp_CountSp.sql",
           "Sha256": "3496f040aae3a351724834fd298dfdb3fb1ac9a764e107df51cc64b74be9ce94"
         },
         {
           "Path": "Scripts/GetSessionSubscriptionsSp_PagingSp.sql",
           "Sha256": "f540161147c817cfff53d5d0c7348104ff04adaab30d05050bae7b200e451b4e"
+        },
+        {
+          "Path": "Scripts/GetSessionSubscriptionsSp.sql",
+          "Sha256": "a261b6dca932ec7f06c2e2f6636cc120133e6d941d170c4a736a0034c29774c1"
         },
         {
           "Path": "Scripts/GetUsageDashboardDetailRowsSp.sql",
@@ -16048,12 +15955,12 @@
           "Sha256": "8c121b7645c024b823e27a2e344b33d27beb5caad9a86d4c84b18fa4dcb1bad6"
         },
         {
-          "Path": "Scripts/Messages.sql",
-          "Sha256": "8a7f1113193746c705ff88df399edde8deca4c1f9780ee87d39aceec497775ad"
-        },
-        {
           "Path": "Scripts/Messages_GetByMessageIDs_Sp.sql",
           "Sha256": "527a16e2b1033443febeec8a67917694b957b2ea1a2ba6d9102aaf11c1139d96"
+        },
+        {
+          "Path": "Scripts/Messages_GetBySessionID_Sp.sql",
+          "Sha256": "30bf57a72e83a79e5c2012cf3c433e8ac3804c121fd32db7e701e835421f44cc"
         },
         {
           "Path": "Scripts/Messages_GetBySessionIDDateRangeSp.sql",
@@ -16062,10 +15969,6 @@
         {
           "Path": "Scripts/Messages_GetBySessionIDTurnKey_Sp.sql",
           "Sha256": "3489684ba36e2d118b479e217fa5374510ec7557dd1a91059866ad8400774472"
-        },
-        {
-          "Path": "Scripts/Messages_GetBySessionID_Sp.sql",
-          "Sha256": "30bf57a72e83a79e5c2012cf3c433e8ac3804c121fd32db7e701e835421f44cc"
         },
         {
           "Path": "Scripts/Messages_GetCountBySessionID_Sp.sql",
@@ -16078,6 +15981,10 @@
         {
           "Path": "Scripts/Messages_GetTurnDeltasSinceBySessionIDAndMessageKey_Sp.sql",
           "Sha256": "22ec70a67491ff30b51ea57b767eafc9f6f8664cf20b2736ce12de4eb13ab811"
+        },
+        {
+          "Path": "Scripts/Messages.sql",
+          "Sha256": "8a7f1113193746c705ff88df399edde8deca4c1f9780ee87d39aceec497775ad"
         },
         {
           "Path": "Scripts/PageLayouts.sql",
@@ -16116,18 +16023,6 @@
           "Sha256": "9807a7002b14b1987bce88c92ac8f2549e959035fd042ff55d8d4d3a7c79962b"
         },
         {
-          "Path": "Scripts/Sessions.sql",
-          "Sha256": "714ce0de445540875c1bbf7c721ed7e11fb92e287034c788272fbfc4f21f2777"
-        },
-        {
-          "Path": "Scripts/SessionSubscriptions.sql",
-          "Sha256": "ba60bde920aee9feedc83edb69f23995e8f87a54d7416d1440e3aa9d4b08ae1f"
-        },
-        {
-          "Path": "Scripts/Sessions_GetAll_Sp.sql",
-          "Sha256": "c2a059f13840a8174ec6dd5d621d845c35284506a536246b4b0305c9da26d587"
-        },
-        {
           "Path": "Scripts/Sessions_GetAll_Sp_CountSp.sql",
           "Sha256": "2fd544003613afb165c12a4eef4e0364c423eab633d65dd640a30fb098d8daf1"
         },
@@ -16136,8 +16031,8 @@
           "Sha256": "8020a500fd3c0d0cd84f245cf162cd0f635d570eed0761dd91788a93a0da662a"
         },
         {
-          "Path": "Scripts/Sessions_GetArchivedSp_Sp.sql",
-          "Sha256": "028235781ec09b5cc735c777089b052629a4f2c28e3eaff101fb851bc5dff2c3"
+          "Path": "Scripts/Sessions_GetAll_Sp.sql",
+          "Sha256": "c2a059f13840a8174ec6dd5d621d845c35284506a536246b4b0305c9da26d587"
         },
         {
           "Path": "Scripts/Sessions_GetArchivedSp_Sp_CountSp.sql",
@@ -16148,8 +16043,20 @@
           "Sha256": "6c4b83ecacfff3c946f6e0ff52eeb0526c34e43beeb8c9bb10335820096d02a0"
         },
         {
+          "Path": "Scripts/Sessions_GetArchivedSp_Sp.sql",
+          "Sha256": "028235781ec09b5cc735c777089b052629a4f2c28e3eaff101fb851bc5dff2c3"
+        },
+        {
           "Path": "Scripts/Sessions_ResetRunningRuntimeStatusOnWebStartupSp.sql",
           "Sha256": "72d6cf22e7bdee8413da4de9a3784f00477f1f05a317a5825549b8460e5ab744"
+        },
+        {
+          "Path": "Scripts/Sessions.sql",
+          "Sha256": "714ce0de445540875c1bbf7c721ed7e11fb92e287034c788272fbfc4f21f2777"
+        },
+        {
+          "Path": "Scripts/SessionSubscriptions.sql",
+          "Sha256": "ba60bde920aee9feedc83edb69f23995e8f87a54d7416d1440e3aa9d4b08ae1f"
         },
         {
           "Path": "Scripts/StoredProcedureHasParameterSp.sql",
@@ -16160,12 +16067,12 @@
           "Sha256": "235c21b749d3e3973cfd4003803afc19d32c55aef5ed3622ce16866893521d33"
         },
         {
-          "Path": "Scripts/Turns_GetBySessionIDTurnKeys_Sp.sql",
-          "Sha256": "65ff5fda3ca2fe455495d318629a227ca4096683175f1c5ab81a28870f183c13"
-        },
-        {
           "Path": "Scripts/Turns_GetBySessionID_Sp.sql",
           "Sha256": "9238400dd8c01fcd69e669d0f527a97c604fdcf607727c130081193e1b5966b7"
+        },
+        {
+          "Path": "Scripts/Turns_GetBySessionIDTurnKeys_Sp.sql",
+          "Sha256": "65ff5fda3ca2fe455495d318629a227ca4096683175f1c5ab81a28870f183c13"
         },
         {
           "Path": "Scripts/Turns_GetCountBySessionID_Sp.sql",
@@ -16289,7 +16196,7 @@
         },
         {
           "Path": "web-module.json",
-          "Sha256": "c6518f287a192efdba1dad3d9824ebfb3702e5df31bed22b8a30993ee1e1ccbc"
+          "Sha256": "0cafda29cf08c34ef9274b5345640113de38762990ee7417115aa725b3f035e0"
         },
         {
           "Path": "WebAppUtilities.dll",
