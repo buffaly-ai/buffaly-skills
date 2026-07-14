@@ -42,12 +42,12 @@ prototype MetabaseJsonWsService : Service
 
 		string root = this.BaseUrl;
 		if (StringUtil.EndsWith(root, "/"))
-			root = root.Substring(0, root.Length - 1);
+			root = StringUtil.LeftOfLast(root, "/");
 
 		string path = this.JsonWsPath;
 		if (StringUtil.IsEmpty(path)) path = "JsonWS";
 		if (StringUtil.EndsWith(path, "/"))
-			path = path.Substring(0, path.Length - 1);
+			path = StringUtil.LeftOfLast(path, "/");
 
 		return root + "/" + path + "/" + serviceFileName;
 	}

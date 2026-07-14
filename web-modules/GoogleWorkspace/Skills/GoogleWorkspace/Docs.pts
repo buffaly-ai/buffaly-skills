@@ -1,0 +1,162 @@
+[SemanticProgram.InfinitivePhrase("to get a google docs document")]
+prototype ToGetGoogleWorkspaceDocument : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to docs.read when empty. documentId required. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string documentId) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "docs.read";
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.GetDocumentAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			documentId,
+			false,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create a google docs document")]
+prototype ToCreateGoogleWorkspaceDocument : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to docs.write when empty. title - document title. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string title) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "docs.write";
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.CreateDocumentAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			title,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to replace text in a google docs document")]
+prototype ToReplaceTextInGoogleWorkspaceDocument : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to docs.write when empty. documentId/searchText/replaceText required. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string documentId, string searchText, string replaceText) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "docs.write";
+
+		string replacementsJson = "{\"" + searchText + "\":\"" + replaceText + "\"}";
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.ReplaceTextAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			documentId,
+			replacementsJson,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to run batch updates on a google docs document")]
+prototype ToBatchUpdateGoogleWorkspaceDocument : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to docs.write when empty. documentId and requestsJson required. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string documentId, string requestsJson) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "docs.write";
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.BatchUpdateAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			documentId,
+			requestsJson,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to extract plain text from a google docs document")]
+prototype ToExtractPlainTextFromGoogleWorkspaceDocument : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to docs.read when empty. documentId required. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string documentId) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "docs.read";
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.ExtractPlainTextAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			documentId,
+			false,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create a public google docs document")]
+prototype ToCreatePublicGoogleWorkspaceDocument : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to docs.write when empty. title and optional bodyTextHtml are creation inputs. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string title, string bodyTextHtml) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "docs.write";
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.CreatePublicDocumentAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			title,
+			bodyTextHtml,
+			true,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get google docs tab tree")]
+prototype ToGetGoogleWorkspaceDocumentTabs : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to docs.read when empty. documentId required. Returns tab tree JSON.";
+
+	function Execute(string accountKey, string scopePreset, string documentId) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "docs.read";
+
+		return GoogleWorkspaceServiceHost.GetDocumentTabsAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			documentId,
+			true,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get plain text from one google docs tab")]
+prototype ToGetGoogleWorkspaceDocumentTabText : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to docs.read when empty. documentId and tabPath required. Returns tab-scoped plain text JSON.";
+
+	function Execute(string accountKey, string scopePreset, string documentId, string tabPath) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "docs.read";
+
+		return GoogleWorkspaceServiceHost.GetDocumentTabTextAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			documentId,
+			tabPath,
+			true,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+

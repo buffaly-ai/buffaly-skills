@@ -1,0 +1,246 @@
+[SemanticProgram.InfinitivePhrase("to read a google sheets range")]
+prototype ToReadGoogleWorkspaceSheetRange : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to spreadsheets.readonly when empty. spreadsheetId and rangeA1 required. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string spreadsheetId, string rangeA1) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "spreadsheets.readonly";
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.ReadRangeAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			spreadsheetId,
+			rangeA1,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to write a google sheets range")]
+prototype ToWriteGoogleWorkspaceSheetRange : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to spreadsheets when empty. spreadsheetId/rangeA1/valuesJson required. majorDimension/valueInputOption optional. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string spreadsheetId, string rangeA1, string valuesJson, string majorDimension, string valueInputOption) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "spreadsheets";
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.WriteRangeAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			spreadsheetId,
+			rangeA1,
+			valuesJson,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to append rows to google sheets")]
+prototype ToAppendGoogleWorkspaceSheetRows : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to spreadsheets when empty. spreadsheetId/rangeA1/rowsJson required. valueInputOption/insertDataOption optional. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string spreadsheetId, string rangeA1, string rowsJson, string valueInputOption, string insertDataOption) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "spreadsheets";
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.AppendRowsAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			spreadsheetId,
+			rangeA1,
+			rowsJson,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get a google spreadsheet")]
+prototype ToGetGoogleWorkspaceSpreadsheet : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to spreadsheets.readonly when empty. spreadsheetId required. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string spreadsheetId) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "spreadsheets.readonly";
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.GetSpreadsheetAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			spreadsheetId,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create a google sheets tab")]
+prototype ToCreateGoogleWorkspaceSheetTab : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to spreadsheets when empty. spreadsheetId/title required. rowCount/columnCount optional sizing hints. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string spreadsheetId, string title, int rowCount, int columnCount) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "spreadsheets";
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.CreateTabAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			spreadsheetId,
+			title,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to update a google sheets cell")]
+prototype ToUpdateGoogleWorkspaceSheetCell : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to spreadsheets when empty. spreadsheetId/sheetName/rowIndex/columnIndex/value required. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string spreadsheetId, string sheetName, int rowIndex, int columnIndex, string value) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "spreadsheets";
+
+		string cellAddress = sheetName + "!R" + rowIndex + "C" + columnIndex;
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.UpdateCellAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			spreadsheetId,
+			cellAddress,
+			value,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to insert a row into google sheets")]
+prototype ToInsertGoogleWorkspaceSheetRow : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key. scopePreset - defaults to spreadsheets when empty. spreadsheetId/sheetName/rowIndex/rowValuesJson required. Returns JSON.";
+
+	function Execute(string accountKey, string scopePreset, string spreadsheetId, string sheetName, int rowIndex, string rowValuesJson) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "spreadsheets";
+
+		string range = sheetName + "!" + rowIndex + ":" + rowIndex;
+
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.InsertRowAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			spreadsheetId,
+			range,
+			rowValuesJson,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to write google sheet rows from in-memory rows json")]
+prototype ToWriteGoogleSheetRowsFromRowsJson : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key.
+scopePreset - defaults to spreadsheets when empty.
+spreadsheetId - destination spreadsheet id.
+rangeA1 - destination range (for example Sheet1!A1).
+rowsJson - JSON array of arrays where first row may include headers.
+Writes rows directly to Google Sheets without file intermediates.";
+
+	function Execute(string accountKey, string scopePreset, string spreadsheetId, string rangeA1, string rowsJson) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "spreadsheets";
+
+		return GoogleWorkspaceServiceHost.WriteRangeAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			spreadsheetId,
+			rangeA1,
+			rowsJson,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to write a google sheet from a tabular handle key")]
+prototype ToWriteGoogleSheetFromTabularHandleKey : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key.
+scopePreset - defaults to spreadsheets when empty.
+spreadsheetId - destination spreadsheet id.
+rangeA1 - destination range (for example Sheet1!A1).
+handleKey - opaque in-memory tabular handle key returned by SQL boxed query action.
+Writes directly from boxed in-memory tabular payload without plaintext file intermediates.";
+
+	function Execute(string accountKey, string scopePreset, string spreadsheetId, string rangeA1, string handleKey) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "spreadsheets";
+
+		GoogleWorkspaceService.Initialize();
+
+		string rowsJson = SqlServerOperations.SerializeTabularHandleRowsAsJson(handleKey);
+
+		return GoogleWorkspaceServiceHost.WriteRangeAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			spreadsheetId,
+			rangeA1,
+			rowsJson,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create a google spreadsheet")]
+[SemanticProgram.InfinitivePhrase("to create a google workspace spreadsheet")]
+[SemanticProgram.InfinitivePhrase("to create a new google sheet document")]
+prototype ToCreateGoogleWorkspaceSpreadsheet : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey - authorized account key.
+scopePreset - defaults to spreadsheets when empty.
+title - spreadsheet title (defaults to Buffaly Export when empty).
+Creates a new spreadsheet and returns JSON with spreadsheetId and spreadsheetUrl.";
+
+	function Execute(string accountKey, string scopePreset, string title) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "spreadsheets";
+
+		if (StringUtil.IsEmpty(title))
+			title = "Buffaly Export";
+
+		GoogleWorkspaceService.Initialize();
+
+		return GoogleWorkspaceServiceHost.CreateSpreadsheetAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			title,
+			false,
+			new CancellationToken(false));
+	}
+}
+
+
+
+[SemanticProgram.InfinitivePhrase("to create a google spreadsheet from a native datatable")]
+[SemanticProgram.InfinitivePhrase("to save a native datatable as a google spreadsheet")]
+prototype ToCreateGoogleSpreadsheetFromDataTable : GoogleWorkspaceSkillAction
+{
+	Description = @"table - native DataTable reference. Creates a new Google spreadsheet from the whole DataTable using the default connected Google Workspace account. Writes headers and all rows to Sheet1 starting at A1. Returns JSON with spreadsheet id, URL, and write counts.";
+
+	function Execute(DataTable table) : string
+	{
+		GoogleWorkspaceService.Initialize();
+		return GoogleWorkspaceServiceHost.CreateSpreadsheetFromDataTableAsync(
+			table,
+			false,
+			new CancellationToken(false));
+	}
+}
