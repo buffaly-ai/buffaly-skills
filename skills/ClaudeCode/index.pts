@@ -18,22 +18,22 @@ prototype ClaudeCodeSkillAction : OpsAction
 	Description = @"Base action type for Anthropic Claude Code CLI tools.";
 }
 
-function ToClaudeResolveEnvPath(string powershellExpr) : string
-{
-	string script = powershellExpr;
-	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 5, _opsAgent, "", "Claude Path Resolve");
-	return result.Trim();
-}
-
 function ToClaudeDefaultExePath() : string
 {
-	// claude CLI - resolve dynamically via Get-Command or $env:APPDATA fallback
-	return ToClaudeResolveEnvPath("$exe=(Get-Command claude.cmd -ErrorAction SilentlyContinue).Source; if(-not $exe){ $exe=Join-Path $env:APPDATA 'npm\\claude.cmd' }; Write-Output $exe");
+	// claude CLI - resolved in PowerShell scripts via Get-Command
+	return "";
+}
+
+function ToClaudeTempPath() : string
+{
+	string script = "Write-Output $env:TEMP";
+	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 5, _opsAgent, "", "Claude Temp Path");
+	return result.Trim();
 }
 
 function ToClaudePromptsDir() : string
 {
-	return ToClaudeResolveEnvPath("Write-Output (Join-Path $env:USERPROFILE 'claude-prompts')");
+	return "";
 }
 
 function ToClaudeQuoted(string value) : string
@@ -52,7 +52,7 @@ function ToClaudeBuildRunScript(string exePath, string argumentLine) : string
 {
 	// Uses ProcessStartInfo with Arguments property to avoid Start-Process space-splitting issues.
 	string script = "$ErrorActionPreference='Continue';";
-	script = script + "$exe='" + ToClaudeEscapePowerShellSingleQuoted(exePath) + "';";
+	script = script + "$exe=(Get-Command claude.cmd -ErrorAction SilentlyContinue).Source; if(-not $exe){ $exe=Join-Path $env:APPDATA 'npm\\claude.cmd' };";
 	script = script + "$argsLine='" + ToClaudeEscapePowerShellSingleQuoted(argumentLine) + "';";
 	script = script + "if(-not (Test-Path -LiteralPath $exe)){ Write-Output ('Error: claude not found at ' + $exe); exit 2 };";
 	script = script + "$psi=New-Object System.Diagnostics.ProcessStartInfo;";
@@ -117,34 +117,34 @@ function ToClaudeCheckAuthErrors(string result) : string
 
 function ToClaudePtConvIdFile() : string
 {
-	return ToClaudeResolveEnvPath("Write-Output (Join-Path $env:TEMP 'claude_pt_conv_id.txt')");
+	return "claude_pt_conv_id.txt";
 }
 
 function ToClaudePtModelFile() : string
 {
-	return ToClaudeResolveEnvPath("Write-Output (Join-Path $env:TEMP 'claude_pt_model.txt')");
+	return "claude_pt_model.txt";
 }
 
 function ToClaudePtWorkDirFile() : string
 {
-	return ToClaudeResolveEnvPath("Write-Output (Join-Path $env:TEMP 'claude_pt_workdir.txt')");
+	return "claude_pt_workdir.txt";
 }
 
 function ToClaudePtTurnsFile() : string
 {
-	return ToClaudeResolveEnvPath("Write-Output (Join-Path $env:TEMP 'claude_pt_turns.txt')");
+	return "claude_pt_turns.txt";
 }
 
 function ToClaudePtReadState(string filePath) : string
 {
-	string script = "if(Test-Path -LiteralPath '" + ToClaudeEscapePowerShellSingleQuoted(filePath) + "'){ Get-Content -LiteralPath '" + ToClaudeEscapePowerShellSingleQuoted(filePath) + "' -Raw -ErrorAction SilentlyContinue } else { '' }";
+	string script = "=Join-Path $env:TEMP '" + ToClaudeEscapePowerShellSingleQuoted(filePath) + "'; if(Test-Path -LiteralPath $f){ Get-Content -LiteralPath $f -Raw -ErrorAction SilentlyContinue } else { '' }";
 	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 10, _opsAgent, "", "Claude PT State Read");
 	return result.Trim();
 }
 
 function ToClaudePtWriteState(string filePath, string value) : string
 {
-	string script = "Set-Content -LiteralPath '" + ToClaudeEscapePowerShellSingleQuoted(filePath) + "' -Value '" + ToClaudeEscapePowerShellSingleQuoted(value) + "' -Encoding utf8 -NoNewline";
+	string script = "=Join-Path $env:TEMP '" + ToClaudeEscapePowerShellSingleQuoted(filePath) + "'; Set-Content -LiteralPath $f -Value '" + ToClaudeEscapePowerShellSingleQuoted(value) + "' -Encoding utf8 -NoNewline";
 	SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 10, _opsAgent, "", "Claude PT State Write");
 	return "";
 }
@@ -163,15 +163,15 @@ function ToClaudePtAutoTimeout(string prompt) : int
 
 [SemanticProgram.InfinitivePhrase("to check claude auth status")]
 [SemanticProgram.InfinitivePhrase("to get claude auth status")]
-[SemanticProgram.InfinitivePhrase("to check if claude is installed and authenticated")]
+		string existsScript = "$exe=(Get-Command claude.cmd -ErrorAction SilentlyContinue).Source; if(-not $exe){ $exe=Join-Path $env:APPDATA 'npm\\claude.cmd' }; if($exe -and (Test-Path -LiteralPath $exe)){ 'EXISTS' } else { 'MISSING' }";
 prototype ToGetClaudeAuthStatus : ClaudeCodeSkillAction
 {
 	Description = @"Returns whether the Claude Code CLI is installed and whether the current session appears authenticated. Non-secret status only.";
 
 	function Execute() : string
 	{
-		string exe = ToClaudeDefaultExePath();
-		string existsScript = "if(Test-Path -LiteralPath '" + ToClaudeEscapePowerShellSingleQuoted(exe) + "'){ 'EXISTS' } else { 'MISSING' }";
+		string existsScript = "$exe=(Get-Command claude.cmd -ErrorAction SilentlyContinue).Source; if(-not $exe){ $exe=Join-Path $env:APPDATA 'npm\\claude.cmd' }; if($exe -and (Test-Path -LiteralPath $exe)){ 'EXISTS' } else { 'MISSING' }";
+		string exe = "";
 		string existsResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(existsScript, "", 15, _opsAgent, "", "Claude Exists");
 		if (existsResult.Contains("MISSING"))
 		{
@@ -305,7 +305,7 @@ Runs official claude -p with --output-format text --permission-mode bypassPermis
 		string actualPrompt = prompt;
 		if (prompt.Length > 500)
 		{
-			string promptsDir = ToClaudePromptsDir();
+			string promptsDir = ToClaudeTempPath();
 			string promptFile = promptsDir + "\\claude_prompt.txt";
 			string writeScript = "$ErrorActionPreference='Continue'; $dir='" + ToClaudeEscapePowerShellSingleQuoted(promptsDir) + "'; if(-not (Test-Path -LiteralPath $dir)){ New-Item -Path $dir -ItemType Directory -Force | Out-Null }; Set-Content -LiteralPath '" + ToClaudeEscapePowerShellSingleQuoted(promptFile) + "' -Value '" + ToClaudeEscapePowerShellSingleQuoted(prompt) + "' -Encoding utf8;";
 			SystemOperations.RunPowerShellStreamingToRuntimeUi(writeScript, "", 15, _opsAgent, "", "Claude Prompt File");
@@ -377,7 +377,7 @@ This is the main pass-through action. It automatically manages model selection, 
 		string actualPrompt = prompt;
 		if (prompt.Length > 500)
 		{
-			string promptsDir = ToClaudePromptsDir();
+			string promptsDir = ToClaudeTempPath();
 			string promptFile = promptsDir + "\\claude_pt_prompt.txt";
 			string writeScript = "$ErrorActionPreference='Continue'; $dir='" + ToClaudeEscapePowerShellSingleQuoted(promptsDir) + "'; if(-not (Test-Path -LiteralPath $dir)){ New-Item -Path $dir -ItemType Directory -Force | Out-Null }; Set-Content -LiteralPath '" + ToClaudeEscapePowerShellSingleQuoted(promptFile) + "' -Value '" + ToClaudeEscapePowerShellSingleQuoted(prompt) + "' -Encoding utf8;";
 			SystemOperations.RunPowerShellStreamingToRuntimeUi(writeScript, "", 15, _opsAgent, "", "Claude PT Prompt File");
@@ -410,7 +410,7 @@ This is the main pass-through action. It automatically manages model selection, 
 		ToClaudePtWriteState(ToClaudePtModelFile(), model);
 
 		// Increment turn count
-		string turnScript = "$f='" + ToClaudeEscapePowerShellSingleQuoted(ToClaudePtTurnsFile()) + "'; $cur=0; if(Test-Path -LiteralPath $f){ $v=(Get-Content -LiteralPath $f -Raw -ErrorAction SilentlyContinue); if($v){ $cur=[int]$v.Trim() } }; $cur=$cur+1; Set-Content -LiteralPath $f -Value $cur -Encoding utf8 -NoNewline; Write-Output $cur";
+		string turnScript = "$f=Join-Path $env:TEMP '" + ToClaudeEscapePowerShellSingleQuoted(ToClaudePtTurnsFile()) + "'; $cur=0; if(Test-Path -LiteralPath $f){ $v=(Get-Content -LiteralPath $f -Raw -ErrorAction SilentlyContinue); if($v){ $cur=[int]$v.Trim() } }; $cur=$cur+1; Set-Content -LiteralPath $f -Value $cur -Encoding utf8 -NoNewline; Write-Output $cur";
 		string turnResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(turnScript, "", 10, _opsAgent, "", "Claude PT Turn Count");
 		string turnCount = turnResult.Trim();
 
