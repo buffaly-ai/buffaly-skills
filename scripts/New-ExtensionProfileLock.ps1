@@ -37,9 +37,10 @@ function Assert-ExactProperties($Value, [string[]]$Allowed, [string]$Context, [C
 }
 
 function Get-ContentHash($Entry) {
-    $lines = @($Entry.Files | Sort-Object { [string]$_.Path } | ForEach-Object {
+    $lines = @($Entry.Files | ForEach-Object {
         ([string]$_.Path) + ":" + ([string]$_.Sha256).ToLowerInvariant()
     })
+    [Array]::Sort($lines, [StringComparer]::Ordinal)
     return Get-Sha256Text (($lines -join "`n") + "`n")
 }
 
