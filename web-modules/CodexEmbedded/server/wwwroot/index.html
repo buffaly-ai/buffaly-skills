@@ -7,7 +7,7 @@
 	<link rel="icon" type="image/x-icon" href="images/favicon.ico">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-	<link rel="stylesheet" href="site.css?v=20260307-prompt-autogrow1">
+	<link id="appStylesheet" rel="stylesheet" href="site.css">
 </head>
 <body>
 	<div class="layout">
@@ -53,10 +53,6 @@
 							<i class="bi bi-eye" aria-hidden="true"></i>
 							<span>Watcher</span>
 						</a>
-						<a class="sidebar-nav-link" href="recap">
-							<i class="bi bi-clock-history" aria-hidden="true"></i>
-							<span>Recap</span>
-						</a>
 						<a class="sidebar-nav-link" href="server">
 							<i class="bi bi-cpu" aria-hidden="true"></i>
 							<span>Server</span>
@@ -94,7 +90,7 @@
 					</div>
 					<div id="sessionMeta" class="conversation-meta">
 						<span id="conversationModelSummary" class="conversation-model-summary">default | default</span>
-						<button id="worktreeDiffIndicatorBtn" class="worktree-diff-indicator-btn hidden" type="button" title="Open working tree diff" aria-label="Open working tree diff">
+						<button id="worktreeDiffIndicatorBtn" class="worktree-diff-indicator-btn hidden" type="button" title="Open repository diff" aria-label="Open repository diff">
 							<i class="bi bi-file-earmark-diff" aria-hidden="true"></i>
 							<span id="worktreeDiffIndicatorCount" class="worktree-diff-indicator-count">0</span>
 						</button>
@@ -120,7 +116,7 @@
 							</div>
 							<div id="sessionMetaUsageItem" class="conversation-meta-menu-row conversation-meta-account-row conversation-meta-detail hidden">
 								<label for="sessionMetaUsageValue">Usage</label>
-								<code id="sessionMetaUsageValue" class="conversation-meta-thread-value">unavailable</code>
+								<div id="sessionMetaUsageValue" class="conversation-meta-thread-value conversation-meta-usage-value">unavailable</div>
 							</div>
 							<div class="conversation-meta-menu-row conversation-meta-reasoning-row">
 								<label for="conversationReasoningSelect">Reasoning</label>
@@ -153,6 +149,9 @@
 						</div>
 					</div>
 				</div>
+				<div class="workspace-tabs" role="tablist" aria-label="Workspace views">
+					<button id="workspaceTabTasksBtn" class="workspace-tab active" type="button" role="tab" aria-selected="true">Tasks</button>
+				</div>
 				<div id="timelineTruncationNotice" class="timeline-truncation-note hidden">
 					<strong>Note</strong>
 					<span>Showing latest log lines.</span>
@@ -175,17 +174,36 @@
 						</div>
 					</div>
 				</div>
-				<section id="worktreeDiffPanel" class="worktree-diff-panel hidden" aria-label="Working tree diff">
+				<section id="worktreeDiffPanel" class="worktree-diff-panel hidden" aria-label="Repository diff">
 					<div class="worktree-diff-header">
 						<div class="worktree-diff-title-wrap">
-							<span class="worktree-diff-title">Working Tree Diff</span>
+							<span class="worktree-diff-title">Repository Diff</span>
 							<span id="worktreeDiffSummary" class="worktree-diff-summary">No active session</span>
 						</div>
-						<div class="worktree-diff-actions">
-							<button id="worktreeDiffToggleBtn" class="worktree-diff-refresh-btn" type="button">Close</button>
-							<button id="worktreeDiffRefreshBtn" class="worktree-diff-refresh-btn" type="button">Refresh</button>
+						<div class="worktree-diff-toolbar">
+							<div class="worktree-diff-mode-group" role="group" aria-label="Diff source">
+								<button id="worktreeDiffModeWorktreeBtn" class="worktree-diff-mode-btn active" type="button" aria-pressed="true">Working Tree</button>
+								<button id="worktreeDiffModeCommitBtn" class="worktree-diff-mode-btn" type="button" aria-pressed="false">Recent Commit</button>
+							</div>
+							<select id="worktreeDiffCommitSelect" class="worktree-diff-commit-select hidden" aria-label="Select recent commit"></select>
+							<select id="worktreeDiffContextSelect" class="worktree-diff-context-select" aria-label="Diff context lines">
+								<option value="3">Context +3</option>
+								<option value="10">Context +10</option>
+								<option value="30">Context +30</option>
+								<option value="full">Full Context</option>
+							</select>
+							<div class="worktree-diff-actions">
+								<button id="worktreeDiffSendNotesBtn" class="worktree-diff-refresh-btn" type="button">Send Notes</button>
+								<button id="worktreeDiffQueueReviewBtn" class="worktree-diff-refresh-btn" type="button">Start Review</button>
+								<button id="worktreeDiffApproveBtn" class="worktree-diff-refresh-btn" type="button">Approve</button>
+								<button id="worktreeDiffRunReviewBtn" class="worktree-diff-refresh-btn hidden" type="button" aria-hidden="true">Review Now</button>
+								<button id="worktreeDiffToggleBtn" class="worktree-diff-refresh-btn" type="button">Close</button>
+								<button id="worktreeDiffRefreshBtn" class="worktree-diff-refresh-btn" type="button">Refresh</button>
+							</div>
 						</div>
 					</div>
+					<div id="worktreeDiffCommitReviewSummary" class="diff-commit-review-summary hidden" role="status" aria-live="polite"></div>
+					<div id="diffReviewFindings" class="diff-review-findings hidden" role="status" aria-live="polite"></div>
 					<div id="worktreeDiffList" class="worktree-diff-list"></div>
 				</section>
 				<div id="chatMessages" class="watcher-timeline"></div>
@@ -348,9 +366,9 @@
 			<div class="command-modal-card about-modal-card">
 				<div id="aboutModalTitle" class="command-modal-title">About Buffaly Codex Embedded</div>
 				<div class="command-modal-body about-modal-body">
-					<div id="aboutProjectLine" class="about-line about-heading">Built by Matt Furnari of Intelligence Factory</div>
+					<div id="aboutProjectLine" class="about-line about-heading">Built by the Buffaly team</div>
 					<div class="about-line">
-						I created this tool for my own usage with <strong>Buffaly</strong>.
+						This tool provides an embedded Codex experience within <strong>Buffaly</strong>.
 					</div>
 					<div class="about-line">
 						While Codex Embedded gives you a delightful way to use OpenAI's Codex today, Buffaly is what we use in production for regulated workflows (medicine, compliance, DevOps, etc.):
@@ -422,7 +440,6 @@
 				</div>
 			</div>
 		</div>
-
 		<div class="hidden legacy-session-controls" aria-hidden="true">
 			<button id="newSessionBtn" type="button">New Session</button>
 			<button id="newProjectBtn" type="button">New Project</button>
@@ -443,11 +460,78 @@
 			<select id="sessionSelect"></select>
 		</div>
 	</div>
-	<script src="theme.js?v=20260225-settings1"></script>
-	<script src="sessionTimeline.js?v=20260227-turnanchor2"></script>
-	<script src="scribe.js?v=20260313-transcribe-flow-fix1"></script>
-	<script src="app.shared.js?v=20260228-cleanup1"></script>
-	<script src="app.js?v=20260318-draft-fallback-fix1"></script>
-	<script src="app.diffs.js?v=20260314-diff-event-refresh1"></script>
+	<script>
+		(function () {
+			const stylesheet = document.getElementById("appStylesheet");
+			const assets = [
+				"theme.js",
+				"sessionTimeline.js",
+				"scribe.js",
+				"app.shared.js",
+				"app.js",
+				"app.reviews.js",
+				"app.diffs.js"
+			];
+
+			function appendVersion(url, version) {
+				const join = url.indexOf("?") >= 0 ? "&" : "?";
+				return `${url}${join}v=${encodeURIComponent(version)}`;
+			}
+
+			function resolveVersion(payload) {
+				if (!payload || typeof payload !== "object") {
+					return "";
+				}
+
+				const buildNumber = typeof payload.buildNumber === "string" ? payload.buildNumber.trim() : "";
+				if (buildNumber) {
+					return buildNumber;
+				}
+
+				const buildTimestampUtc = typeof payload.buildTimestampUtc === "string" ? payload.buildTimestampUtc.trim() : "";
+				if (buildTimestampUtc) {
+					return buildTimestampUtc;
+				}
+
+				const informationalVersion = typeof payload.informationalVersion === "string" ? payload.informationalVersion.trim() : "";
+				return informationalVersion;
+			}
+
+			function loadScripts(version) {
+				let index = 0;
+				function next() {
+					if (index >= assets.length) {
+						return;
+					}
+
+					const src = assets[index];
+					index += 1;
+					const script = document.createElement("script");
+					script.src = appendVersion(src, version);
+					script.defer = false;
+					script.onload = next;
+					script.onerror = next;
+					document.body.appendChild(script);
+				}
+
+				next();
+			}
+
+			const fallbackVersion = `local-${Date.now()}`;
+			fetch(appendVersion("build-info.json", fallbackVersion), { cache: "no-store" })
+				.then((response) => response.ok ? response.json() : null)
+				.catch(() => null)
+				.then((payload) => {
+					const version = resolveVersion(payload) || fallbackVersion;
+					window.__codexAssetVersion = version;
+					document.documentElement.setAttribute("data-asset-version", version);
+					if (stylesheet) {
+						stylesheet.href = appendVersion("site.css", version);
+					}
+					loadScripts(version);
+				});
+		})();
+	</script>
+	<script src="buffaly-host-navigation.js?v=20260530.1"></script>
 </body>
 </html>
