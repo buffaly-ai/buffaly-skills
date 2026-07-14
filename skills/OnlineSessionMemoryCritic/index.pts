@@ -1,0 +1,62 @@
+import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.OnlineSessionMemoryCriticTools OnlineSessionMemoryCriticTools;
+import BasicUtilities BasicUtilities.JsonUtil JsonUtil;
+
+prototype OnlineSessionMemoryCriticSkillAction : OpsAction
+{
+	Description = @"Base action type for online session memory critic tools.";
+}
+
+[SemanticEntity("online session memory critic skill")]
+prototype OnlineSessionMemoryCriticSkill : SkillEntity, CoreEntity, Level2ObserverEntityRoot
+{
+	Description = "Online session memory critic actions for attaching the critic and dispatching turn-completed events.";
+	ActionRoot = OnlineSessionMemoryCriticSkillAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to attach the online memory critic to the current session")]
+[SemanticProgram.InfinitivePhrase("to install the online session memory critic watcher")]
+prototype ToAttachOnlineSessionMemoryCriticForCurrentSession : OnlineSessionMemoryCriticSkillAction, Level2ObserverActionRoot
+{
+	Description = @"Attaches the online memory critic to the current session. The critic will automatically review each completed turn and write high-confidence session-local memory. Returns JSON install result with WatcherSessionKey.";
+
+	function Execute() : string
+	{
+		return OnlineSessionMemoryCriticTools.AttachForCurrentSession(_opsAgent);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to dispatch one online memory critic callback event")]
+[SemanticProgram.InfinitivePhrase("to handle one online memory critic session event callback")]
+prototype ToDispatchOnlineSessionMemoryCriticEvent : OnlineSessionMemoryCriticSkillAction, Level2ObserverActionRoot
+{
+	Description = @"callbackJson - canonical SessionEventCallback JSON payload. Returns critic instruction text for the watcher to process.";
+
+	function Execute(string callbackJson) : string
+	{
+		if (StringUtil.IsEmpty(callbackJson) || StringUtil.IsEmpty(callbackJson.Trim()))
+		{
+			return "Error: callbackJson is required.";
+		}
+		return OnlineSessionMemoryCriticTools.RenderCriticInstructionFromCallback(callbackJson);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to write session local memory to the source session")]
+[SemanticProgram.InfinitivePhrase("to write a prototype definition into the source session")]
+prototype ToWriteSessionLocalMemoryToSourceSession : OnlineSessionMemoryCriticSkillAction, Level2ObserverActionRoot
+{
+	Description = @"sourceSessionKey - the source session to write memory into. prototypeDefinition - raw ProtoScript prototype definition to interpret in the source session. Returns the interpretation result from the source session.";
+
+	function Execute(string sourceSessionKey, string prototypeDefinition) : string
+	{
+		if (StringUtil.IsEmpty(sourceSessionKey) || StringUtil.IsEmpty(sourceSessionKey.Trim()))
+		{
+			return "Error: sourceSessionKey is required.";
+		}
+		if (StringUtil.IsEmpty(prototypeDefinition) || StringUtil.IsEmpty(prototypeDefinition.Trim()))
+		{
+			return "Error: prototypeDefinition is required.";
+		}
+		return OnlineSessionMemoryCriticTools.WriteSessionLocalMemoryToSourceSession(sourceSessionKey.Trim(), prototypeDefinition.Trim());
+	}
+}

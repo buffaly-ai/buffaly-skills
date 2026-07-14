@@ -9,6 +9,7 @@ $ErrorActionPreference = "Stop"
 
 # Dot-source the single-package validation script to get Test-ExtensionPackageInternal
 . (Join-Path $PSScriptRoot "Test-ExtensionPackage.ps1")
+. (Join-Path $PSScriptRoot "New-ExtensionProfileLock.ps1")
 
 function Read-JsonFile([string]$path) {
     if (-not (Test-Path $path)) { return $null }
@@ -124,6 +125,16 @@ function Test-ExtensionRepository {
         }
     }
 
+    # --- Validate the authoritative installer profile for every supported target ---
+    $profilePath = Join-Path $RepoRoot "profiles\core-installer.profile.json"
+    foreach ($targetPlatform in @("windows", "linux", "mac")) {
+        $profileResult = New-ExtensionProfileLock -RepoRoot $RepoRoot -ProfilePath $profilePath -TargetPlatform $targetPlatform -RepositoryCommit "" -ValidateOnly $true
+        if (-not $profileResult.Passed) {
+            foreach ($profileError in @($profileResult.Errors)) {
+                $allErrors.Add("[core-installer/$targetPlatform] $profileError")
+            }
+        }
+    }
     $passed = ($results | Where-Object { $_.Passed }).Count
     $failed = ($results | Where-Object { -not $_.Passed }).Count
 
@@ -193,6 +204,6 @@ if ($MyInvocation.InvocationName -ne '.') {
         }
     }
 
-    if ($result.Failed -gt 0) { exit 1 }
+    if ($result.Failed -gt 0 -or $result.Errors.Count -gt 0) { exit 1 }
     exit 0
 }
