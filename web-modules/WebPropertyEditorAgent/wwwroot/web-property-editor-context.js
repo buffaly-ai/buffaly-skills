@@ -38,11 +38,13 @@
 		var value;
 		try { value = JSON.parse(node.contentText || ""); } catch (error) { return null; }
 		if (!value || typeof value !== "object" || Array.isArray(value)) { return null; }
-		if (value.AgentMode !== "WebPropertyEditor" || value.BoundWebsite !== true || value.BindingStatus !== "Initialized") { return null; }
-		if (typeof value.PreviewEnabled !== "boolean" || typeof value.PublishEnabled !== "boolean") { return null; }
+		if (value.AgentMode !== "WebPropertyEditor" || value.BoundWebsite !== "true" || value.BindingStatus !== "Initialized") { return null; }
+		if (!isBooleanText(value.PreviewEnabled) || !isBooleanText(value.PublishEnabled)) { return null; }
 		if (Object.keys(value).sort().join("|") !== "AgentMode|BindingStatus|BoundWebsite|PreviewEnabled|PublishEnabled") { return null; }
 		return value;
 	}
+
+	function isBooleanText(value) { return value === "true" || value === "false"; }
 
 	function isEditorInitializationNode(context) { return Boolean(readPayload(context.node || {})); }
 
@@ -61,8 +63,8 @@
 		description.textContent = "Securely bound to this WebProperty.";
 		var statuses = document.createElement("span");
 		statuses.className = "ff-web-property-editor-context__statuses";
-		appendStatus(statuses, "Preview", payload.PreviewEnabled);
-		appendStatus(statuses, "Publishing", payload.PublishEnabled);
+		appendStatus(statuses, "Preview", payload.PreviewEnabled === "true");
+		appendStatus(statuses, "Publishing", payload.PublishEnabled === "true");
 		card.append(heading, description, statuses);
 		body.replaceChildren(card);
 		body.dataset.slotState = "populated";
