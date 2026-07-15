@@ -14,6 +14,18 @@ prototype WebPropertyEditorService : Service
 		return WebPropertyEditorFacade.GetStatus(_sessionObject);
 	}
 
+	function ToGetBoundWebsiteAnalytics(String timeframe) : String { return WebPropertyEditorFacade.GetAnalytics(_sessionObject, timeframe); }
+	function ToGetBoundWebsiteAnalyticsDailyStats(String timeframe, Int offset, Int limit) : String { return WebPropertyEditorFacade.GetAnalyticsDailyStats(_sessionObject, timeframe, offset, limit); }
+	function ToGetBoundWebsiteAnalyticsLandingPages(String timeframe, Int offset, Int limit) : String { return WebPropertyEditorFacade.GetAnalyticsLandingPages(_sessionObject, timeframe, offset, limit); }
+	function ToGetBoundWebsiteAnalyticsSources(String timeframe, Int offset, Int limit) : String { return WebPropertyEditorFacade.GetAnalyticsSources(_sessionObject, timeframe, offset, limit); }
+	function ToGetBoundWebsiteAnalyticsDevices(String timeframe, Int offset, Int limit) : String { return WebPropertyEditorFacade.GetAnalyticsDevices(_sessionObject, timeframe, offset, limit); }
+	function ToGetBoundWebsiteTrafficSummary(String timeframe) : String { return WebPropertyEditorFacade.GetTrafficSummary(_sessionObject, timeframe); }
+	function ToGetBoundWebsiteTrafficOverview(String timeframe) : String { return WebPropertyEditorFacade.GetTrafficOverview(_sessionObject, timeframe); }
+	function ToGetBoundWebsiteTrafficDates(String timeframe) : String { return WebPropertyEditorFacade.GetTrafficDates(_sessionObject, timeframe); }
+	function ToGetBoundWebsiteTrafficAgents(String timeframe, String agentType, String sort, Int offset, Int limit) : String { return WebPropertyEditorFacade.GetTrafficAgents(_sessionObject, timeframe, agentType, sort, offset, limit); }
+	function ToGetBoundWebsiteTrafficSessions(String timeframe, String date, String filter, String agentKey, String sort, Int offset, Int limit) : String { return WebPropertyEditorFacade.GetTrafficSessions(_sessionObject, timeframe, date, filter, agentKey, sort, offset, limit); }
+	function ToGetBoundWebsiteTrafficSessionDetail(String timeframe, String sessionKey) : String { return WebPropertyEditorFacade.GetTrafficSessionDetail(_sessionObject, timeframe, sessionKey); }
+
 	function ToSyncBoundWebsiteRepository() : String
 	{
 		return WebPropertyEditorFacade.SyncRepository(_sessionObject);
@@ -144,6 +156,29 @@ prototype WebPropertyEditorAgentAction
 {
 	String Description = new String();
 }
+
+[SemanticProgram.InfinitivePhrase("to get all analytics for the bound website")]
+prototype ToGetBoundWebsiteAnalytics : WebPropertyEditorAgentAction { Description = @"timeframe - 24h, 7d, or 30d. Returns the complete bound analytics snapshot."; function Execute(string timeframe) : string { return WebPropertyEditorFacade.GetAnalytics(_sessionObject, timeframe); } }
+[SemanticProgram.InfinitivePhrase("to get daily analytics for the bound website")]
+prototype ToGetBoundWebsiteAnalyticsDailyStats : WebPropertyEditorAgentAction { Description = @"Returns typed daily analytics rows for the sealed bound WebProperty."; function Execute(string timeframe, string offset, string limit) : string { return WebPropertyEditorFacade.GetAnalyticsDailyStats(_sessionObject, timeframe, offset, limit); } }
+[SemanticProgram.InfinitivePhrase("to get landing page analytics for the bound website")]
+prototype ToGetBoundWebsiteAnalyticsLandingPages : WebPropertyEditorAgentAction { Description = @"Returns landing-page analytics for the sealed bound WebProperty."; function Execute(string timeframe, string offset, string limit) : string { return WebPropertyEditorFacade.GetAnalyticsLandingPages(_sessionObject, timeframe, offset, limit); } }
+[SemanticProgram.InfinitivePhrase("to get traffic source analytics for the bound website")]
+prototype ToGetBoundWebsiteAnalyticsSources : WebPropertyEditorAgentAction { Description = @"Returns source analytics for the sealed bound WebProperty."; function Execute(string timeframe, string offset, string limit) : string { return WebPropertyEditorFacade.GetAnalyticsSources(_sessionObject, timeframe, offset, limit); } }
+[SemanticProgram.InfinitivePhrase("to get device analytics for the bound website")]
+prototype ToGetBoundWebsiteAnalyticsDevices : WebPropertyEditorAgentAction { Description = @"Returns device analytics for the sealed bound WebProperty."; function Execute(string timeframe, string offset, string limit) : string { return WebPropertyEditorFacade.GetAnalyticsDevices(_sessionObject, timeframe, offset, limit); } }
+[SemanticProgram.InfinitivePhrase("to get traffic summary for the bound website")]
+prototype ToGetBoundWebsiteTrafficSummary : WebPropertyEditorAgentAction { Description = @"Returns server-log traffic summary for the sealed bound WebProperty."; function Execute(string timeframe) : string { return WebPropertyEditorFacade.GetTrafficSummary(_sessionObject, timeframe); } }
+[SemanticProgram.InfinitivePhrase("to get complete traffic overview for the bound website")]
+prototype ToGetBoundWebsiteTrafficOverview : WebPropertyEditorAgentAction { Description = @"Returns complete server-log overview for the sealed bound WebProperty."; function Execute(string timeframe) : string { return WebPropertyEditorFacade.GetTrafficOverview(_sessionObject, timeframe); } }
+[SemanticProgram.InfinitivePhrase("to get traffic dates for the bound website")]
+prototype ToGetBoundWebsiteTrafficDates : WebPropertyEditorAgentAction { Description = @"Returns daily server-log totals for the sealed bound WebProperty."; function Execute(string timeframe) : string { return WebPropertyEditorFacade.GetTrafficDates(_sessionObject, timeframe); } }
+[SemanticProgram.InfinitivePhrase("to group bound website traffic by agent")]
+prototype ToGetBoundWebsiteTrafficAgents : WebPropertyEditorAgentAction { Description = @"Groups visits by normalized human, AI, search, bot, or malicious agent identity."; function Execute(string timeframe, string agentType, string sort, string offset, string limit) : string { return WebPropertyEditorFacade.GetTrafficAgents(_sessionObject, timeframe, agentType, sort, offset, limit); } }
+[SemanticProgram.InfinitivePhrase("to list visits to the bound website")]
+prototype ToGetBoundWebsiteTrafficSessions : WebPropertyEditorAgentAction { Description = @"Returns paged visits, optionally filtered by date, class, and exact AgentKey."; function Execute(string timeframe, string date, string filter, string agentKey, string sort, string offset, string limit) : string { return WebPropertyEditorFacade.GetTrafficSessions(_sessionObject, timeframe, date, filter, agentKey, sort, offset, limit); } }
+[SemanticProgram.InfinitivePhrase("to inspect a bound website visit")]
+prototype ToGetBoundWebsiteTrafficSessionDetail : WebPropertyEditorAgentAction { Description = @"Returns one visit and its complete ordered page URL/timestamp sequence."; function Execute(string timeframe, string sessionKey) : string { return WebPropertyEditorFacade.GetTrafficSessionDetail(_sessionObject, timeframe, sessionKey); } }
 
 [SemanticProgram.InfinitivePhrase("to initialize the bound website editor")]
 prototype ToInitializeBoundWebsiteEditor : WebPropertyEditorAgentAction
