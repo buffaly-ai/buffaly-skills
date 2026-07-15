@@ -74,14 +74,10 @@
           "Values": [
             "format c:",
             "format /q",
-            "disk",
-            "part",
-            "clean",
-            " all",
-            "mk",
-            "fs",
-            "fd",
-            "isk"
+            "diskpart",
+            "clean all",
+            "mkfs",
+            "fdisk"
           ]
         }
       ]
@@ -226,7 +222,11 @@
           "MatchMode": 1,
           "Comparison": 1,
           "Values": [
-            "taskkill stop-process kill-process pkill kill"
+            "taskkill",
+            "stop-process",
+            "kill-process",
+            "pkill",
+            "kill"
           ]
         },
         {
