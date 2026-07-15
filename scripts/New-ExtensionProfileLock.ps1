@@ -44,6 +44,37 @@ function Get-ContentHash($Entry) {
     return Get-Sha256Text (($lines -join "`n") + "`n")
 }
 
+function Assert-ExactMembership($Profile, [string]$PackageType, [string[]]$ExpectedIds, [Collections.Generic.List[string]]$Errors) {
+    $actualIds = @($Profile.Packages | Where-Object { [string]$_.PackageType -eq $PackageType } | ForEach-Object { [string]$_.PackageId })
+    if ($actualIds.Count -ne $ExpectedIds.Count) { $Errors.Add("$([string]$Profile.ProfileId) must contain exactly $($ExpectedIds.Count) $PackageType entries; found $($actualIds.Count).") }
+    foreach ($id in $ExpectedIds) { if ($id -cnotin $actualIds) { $Errors.Add("$([string]$Profile.ProfileId) is missing required $PackageType '$id'.") } }
+    foreach ($id in $actualIds) { if ($id -cnotin $ExpectedIds) { $Errors.Add("$([string]$Profile.ProfileId) contains unexpected $PackageType '$id'.") } }
+}
+
+function Assert-ExcludedMembership($Profile, [string]$PackageType, [string[]]$ExcludedIds, [Collections.Generic.List[string]]$Errors) {
+    $actualIds = @($Profile.Packages | Where-Object { [string]$_.PackageType -eq $PackageType } | ForEach-Object { [string]$_.PackageId })
+    foreach ($id in $ExcludedIds) { if ($id -cin $actualIds) { $Errors.Add("$([string]$Profile.ProfileId) must exclude $PackageType '$id'.") } }
+}
+
+function Assert-ExactPlatforms($Item, [string[]]$ExpectedPlatforms, [Collections.Generic.List[string]]$Errors) {
+    $actual = @($Item.Platforms | ForEach-Object { [string]$_ })
+    if ($actual.Count -ne $ExpectedPlatforms.Count -or @($actual | Where-Object { $_ -cnotin $ExpectedPlatforms }).Count -gt 0) {
+        $Errors.Add("$([string]$Item.PackageId) must target exactly: $($ExpectedPlatforms -join ', ').")
+    }
+}
+
+function Sort-PackagesOrdinal([object[]]$Packages) {
+    $list = [Collections.Generic.List[object]]::new()
+    foreach ($package in $Packages) { $list.Add($package) }
+    $list.Sort([Collections.Generic.Comparer[object]]::Create([Comparison[object]]{
+        param($left, $right)
+        $typeComparison = [StringComparer]::Ordinal.Compare([string]$left.PackageType, [string]$right.PackageType)
+        if ($typeComparison -ne 0) { return $typeComparison }
+        return [StringComparer]::Ordinal.Compare([string]$left.PackageId, [string]$right.PackageId)
+    }))
+    return @($list)
+}
+
 function New-ExtensionProfileLock {
     param(
         [string]$RepoRoot,
@@ -71,7 +102,7 @@ function New-ExtensionProfileLock {
 
     Assert-ExactProperties $profile @("SchemaVersion","ProfileId","ProfileVersion","Description","Packages") "Profile" $errors
     if ($profile.SchemaVersion -ne 1) { $errors.Add("Profile SchemaVersion must be 1.") }
-    if ([string]$profile.ProfileId -ne "core-installer") { $errors.Add("ProfileId must be 'core-installer'.") }
+    if ([string]$profile.ProfileId -notmatch '^[a-z0-9]+(?:-[a-z0-9]+)*$') { $errors.Add("ProfileId must contain lowercase alphanumeric segments separated by single hyphens.") }
     if ([string]$profile.ProfileVersion -notmatch '^\d+\.\d+\.\d+$') { $errors.Add("ProfileVersion must be semantic major.minor.patch.") }
     if ([string]::IsNullOrWhiteSpace([string]$profile.Description)) { $errors.Add("Profile Description is required.") }
 
@@ -130,16 +161,24 @@ function New-ExtensionProfileLock {
     }
 
     if ([string]$profile.ProfileId -eq "core-installer") {
-        $counts = @{}
-        foreach ($type in $allowedTypes) { $counts[$type] = @($profile.Packages | Where-Object { [string]$_.PackageType -eq $type }).Count }
-        if ($counts.Skill -ne 33) { $errors.Add("core-installer must contain exactly 33 Skills; found $($counts.Skill).") }
-        if ($counts.WebModule -ne 9) { $errors.Add("core-installer must contain exactly 9 Web Modules; found $($counts.WebModule).") }
-        if ($counts.ProviderModule -ne 6) { $errors.Add("core-installer must contain exactly 6 Provider Modules; found $($counts.ProviderModule).") }
+        Assert-ExactMembership $profile "Skill" @("BrowserSession","AudioTranscription","BuffalyCapabilityInspection","BuffalyMaintenance","BuffalySelfManagement","Codex","Desktop","ErrorLogDiagnosis","FFmpeg","SessionManagement","FileSystem","LLM","Level2Watcher","GitHub","Heartbeat","HelpAgent","LocalTask","Onboarding","OnlineSessionMemoryCritic","Process","ProcessManagement","Services","SessionHistory","SessionSync","SkillDirectory","SqlServer","TabularData","TailscaleExposure","Unity","UserSecrets","ValidatedPrompt","VisualStudio","Wiki") $errors
+        Assert-ExactMembership $profile "WebModule" @("Browser","Buffaly.Agent.Heartbeat","Buffaly.Agent.SkillManagement","Buffaly.Agent.Wiki","ComputerUse","CodeReviews","CodexEmbedded","OfflineOntologyCritic","Sessions") $errors
+        Assert-ExactMembership $profile "ProviderModule" @("Buffaly.Provider.Anthropic","Buffaly.Provider.Gemini","Buffaly.Provider.LlamaCpp","Buffaly.Provider.Ollama","Buffaly.Provider.OpenAi","Buffaly.Provider.Xai") $errors
         foreach ($windowsOnlyId in @("Desktop","VisualStudio")) {
             $entry = @($profile.Packages | Where-Object { $_.PackageType -eq "Skill" -and $_.PackageId -eq $windowsOnlyId })
-            if ($entry.Count -ne 1 -or (@($entry[0].Platforms).Count -ne 1) -or [string]$entry[0].Platforms[0] -ne "windows") {
-                $errors.Add("$windowsOnlyId must be a Windows-only Skill.")
-            }
+            if ($entry.Count -eq 1) { Assert-ExactPlatforms $entry[0] @("windows") $errors }
+        }
+    }
+
+    if ([string]$profile.ProfileId -eq "recommended-installer") {
+        Assert-ExactMembership $profile "Skill" @("BrowserSession","AudioTranscription","BuffalyCapabilityInspection","BuffalyMaintenance","BuffalySelfManagement","Codex","Desktop","ErrorLogDiagnosis","FFmpeg","SessionManagement","FileSystem","LLM","Level2Watcher","GitHub","Heartbeat","HelpAgent","LocalTask","Onboarding","Process","ProcessManagement","Services","SessionHistory","SessionSync","SkillDirectory","SqlServer","TabularData","TailscaleExposure","TwitterXApi","UserSecrets","ValidatedPrompt","Wiki") $errors
+        Assert-ExactMembership $profile "WebModule" @("Browser","Buffaly.Agent.Heartbeat","Buffaly.Agent.SkillManagement","Buffaly.Agent.Wiki","ComputerUse","CodeReviews","CodexEmbedded","OfflineOntologyCritic","Sessions","GoogleWorkspace","Office365","OllamaCloud","OpenAIImageGeneration","LinkedIn") $errors
+        Assert-ExactMembership $profile "ProviderModule" @("Buffaly.Provider.Anthropic","Buffaly.Provider.Gemini","Buffaly.Provider.LlamaCpp","Buffaly.Provider.Ollama","Buffaly.Provider.OpenAi","Buffaly.Provider.Xai") $errors
+        Assert-ExcludedMembership $profile "Skill" @("VisualStudio","Unity","OnlineSessionMemoryCritic") $errors
+        Assert-ExcludedMembership $profile "WebModule" @("ExtensionPublishing","FeedingFrenzy.WebPropertyEditorAgent") $errors
+        foreach ($item in @($profile.Packages)) {
+            if ([string]$item.PackageType -eq "Skill" -and [string]$item.PackageId -eq "Desktop") { Assert-ExactPlatforms $item @("windows") $errors }
+            else { Assert-ExactPlatforms $item @("windows","linux","mac") $errors }
         }
     }
 
@@ -149,7 +188,7 @@ function New-ExtensionProfileLock {
     if ($errors.Count -gt 0) { return [pscustomobject]@{ Passed=$false; Errors=$errors; Lock=$null } }
 
     $profileCanonical = ConvertTo-CanonicalJson $profile
-    $orderedPackages = @($resolved | Sort-Object PackageType,PackageId)
+    $orderedPackages = Sort-PackagesOrdinal @($resolved)
     $lockEvidence = [ordered]@{
         SchemaVersion = 1
         ProfileId = [string]$profile.ProfileId
@@ -176,7 +215,7 @@ if ($MyInvocation.InvocationName -ne '.') {
     }
     if (-not $ValidateOnly) {
         if ([string]::IsNullOrWhiteSpace($OutputPath)) {
-            $OutputPath = Join-Path (Split-Path $ProfilePath -Parent) "core-installer.profile.lock.json"
+            $OutputPath = Join-Path (Split-Path $ProfilePath -Parent) (([string]$result.Lock.ProfileId) + ".profile.lock.json")
         }
         $parent = Split-Path $OutputPath -Parent
         if ($parent) { New-Item -ItemType Directory -Path $parent -Force | Out-Null }
