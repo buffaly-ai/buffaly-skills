@@ -21,7 +21,7 @@
 			var identityDecorator = api.decorators.register({
 				id: extensionId + ".identity",
 				priority: 100,
-				appliesTo: function (context) { return context.model && context.model.family === "assistant"; },
+				appliesTo: function (context) { return context.model && context.model.family === "message.assistant"; },
 				decorate: function (context) {
 					if (context.shell && context.shell.slots && context.shell.slots.title) {
 						context.shell.slots.title.textContent = "Web Property Editor";
