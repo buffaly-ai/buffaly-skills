@@ -1,0 +1,7 @@
+.ff-web-property-editor-context { display:flex; align-items:center; gap:.5rem .75rem; flex-wrap:wrap; padding:.65rem .75rem; border:1px solid #dbe7f5; border-radius:.55rem; background:#f7fbff; color:#30445d; }
+.ff-web-property-editor-context__title { color:#17324f; }
+.ff-web-property-editor-context__description { flex:1 1 12rem; color:#5c6f82; }
+.ff-web-property-editor-context__statuses { display:inline-flex; gap:.4rem; flex-wrap:wrap; }
+.ff-web-property-editor-context__status { display:inline-flex; align-items:center; padding:.18rem .48rem; border-radius:999px; font-size:.72rem; font-weight:600; }
+.ff-web-property-editor-context__status.is-ready { background:#e8f7ef; color:#19734a; }
+.ff-web-property-editor-context__status.is-unavailable { background:#f3f5f7; color:#697684; }
