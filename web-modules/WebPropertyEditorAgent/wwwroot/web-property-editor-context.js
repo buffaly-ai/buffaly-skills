@@ -13,6 +13,21 @@
 		activate: function (api) {
 			if (!api.options || api.options.agentName !== "web-property-editor-agent") { return; }
 			var stylesheet = installStylesheet();
+			var actionPolicy = api.actionPolicies.register({
+				id: extensionId + ".actions",
+				priority: 100,
+				allows: function (context) { return context.actionId !== "message.saveArtifact"; }
+			});
+			var identityDecorator = api.decorators.register({
+				id: extensionId + ".identity",
+				priority: 100,
+				appliesTo: function (context) { return context.model && context.model.family === "assistant"; },
+				decorate: function (context) {
+					if (context.shell && context.shell.slots && context.shell.slots.title) {
+						context.shell.slots.title.textContent = "Web Property Editor";
+					}
+				}
+			});
 			var registration = api.contentRenderers.register({
 				id: extensionId + ".content",
 				key: "message.user",
@@ -20,7 +35,7 @@
 				appliesTo: isEditorInitializationNode,
 				render: renderEditorInitialization
 			});
-			return { dispose: function () { registration.dispose(); if (stylesheet && stylesheet.parentNode) { stylesheet.parentNode.removeChild(stylesheet); } } };
+			return { dispose: function () { registration.dispose(); identityDecorator.dispose(); actionPolicy.dispose(); if (stylesheet && stylesheet.parentNode) { stylesheet.parentNode.removeChild(stylesheet); } } };
 		}
 	});
 
