@@ -74,7 +74,7 @@ After updating the database feature row:
 
 ## Successful Evidence Pattern
 
-A successful `ToGetXMe` validation looks like a JSON response containing the user's X account. For example, the known staging validation returned user id `73906450`, username `matthewfurnari`, and name `Matt Furnari`.
+A successful `ToGetXMe` validation looks like a JSON response containing the user's X account. For example, a validation can return user id `123456789`, username `exampleuser`, and name `Example User`.
 
 ## Common Mistakes
 
