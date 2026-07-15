@@ -1436,6 +1436,31 @@
       "InstalledVersion": ""
     },
     {
+      "SkillName": "OnlineSessionMemoryCritic",
+      "Title": "Online Session Memory Critic",
+      "Description": "Online session memory critic actions for attaching the critic and dispatching turn-completed events.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Online Session Memory Critic",
+        "OnlineSessionMemoryCritic"
+      ],
+      "Path": "skills/OnlineSessionMemoryCritic",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "7d35158493a30ea403cb0ee35a84cfa59728149d3d2ffb14981b7fd63ef778f8"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
+    },
+    {
       "SkillName": "Process",
       "Title": "Process",
       "Description": "Buffaly OpsAgent skill package for Process.",
@@ -2159,31 +2184,6 @@
         {
           "Path": "Prompts/RepairWikiCrossLinks.prompt.md",
           "Sha256": "32e6a1d73daaf90b065e8e875787d7ea4bc7be8fd8609e0e7ae3013d665acd05"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
-    },
-    {
-      "SkillName": "OnlineSessionMemoryCritic",
-      "Title": "Online Session Memory Critic",
-      "Description": "Online session memory critic actions for attaching the critic and dispatching turn-completed events.",
-      "Version": "0.1.0",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [
-        "Online Session Memory Critic",
-        "OnlineSessionMemoryCritic"
-      ],
-      "Path": "skills/OnlineSessionMemoryCritic",
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "6c27c9e1fc3d77af7d296bbeadae046fca57b23b319b46b2c998dec05009f3b2"
         }
       ],
       "EntryPoint": "index.pts",

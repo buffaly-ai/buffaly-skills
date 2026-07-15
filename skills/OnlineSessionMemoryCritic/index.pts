@@ -25,6 +25,17 @@ prototype ToAttachOnlineSessionMemoryCriticForCurrentSession : OnlineSessionMemo
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to attach a configured online session memory critic")]
+prototype ToAttachConfiguredOnlineSessionMemoryCritic : OnlineSessionMemoryCriticSkillAction, Level2ObserverActionRoot
+{
+	Description = @"provider, modelName, and reasoningLevel are exact provider-catalog values. retroactive selects existing session plus future turns. anchorTurnKey identifies the thumbs-up turn.";
+
+	function Execute(string provider, string modelName, string reasoningLevel, bool retroactive, string anchorTurnKey) : string
+	{
+		return OnlineSessionMemoryCriticTools.AttachConfiguredForCurrentSession(_opsAgent, provider, modelName, reasoningLevel, retroactive, anchorTurnKey);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to dispatch one online memory critic callback event")]
 [SemanticProgram.InfinitivePhrase("to handle one online memory critic session event callback")]
 prototype ToDispatchOnlineSessionMemoryCriticEvent : OnlineSessionMemoryCriticSkillAction, Level2ObserverActionRoot
@@ -57,6 +68,17 @@ prototype ToWriteSessionLocalMemoryToSourceSession : OnlineSessionMemoryCriticSk
 		{
 			return "Error: prototypeDefinition is required.";
 		}
-		return OnlineSessionMemoryCriticTools.WriteSessionLocalMemoryToSourceSession(sourceSessionKey.Trim(), prototypeDefinition.Trim());
+		return OnlineSessionMemoryCriticTools.WriteSessionLocalMemoryToSourceSession(_opsAgent, sourceSessionKey.Trim(), prototypeDefinition.Trim());
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to write attributed session local memory to the source session")]
+prototype ToWriteAttributedSessionLocalMemoryToSourceSession : OnlineSessionMemoryCriticSkillAction, Level2ObserverActionRoot
+{
+	Description = @"Writes one validated source-session memory with evidence and model/run provenance. scanRunId is empty for live callbacks.";
+
+	function Execute(string sourceSessionKey, string prototypeDefinition, string sourceTurnKey, string evidence, string rationale, string confidence, string scanRunId, string anchorTurnKey) : string
+	{
+		return OnlineSessionMemoryCriticTools.WriteSessionLocalMemoryToSourceSessionWithProvenance(_opsAgent, sourceSessionKey, prototypeDefinition, sourceTurnKey, evidence, rationale, confidence, scanRunId, anchorTurnKey);
 	}
 }
