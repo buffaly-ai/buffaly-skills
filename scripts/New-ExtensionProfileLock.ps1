@@ -171,10 +171,10 @@ function New-ExtensionProfileLock {
     }
 
     if ([string]$profile.ProfileId -eq "recommended-installer") {
-        Assert-ExactMembership $profile "Skill" @("BrowserSession","AudioTranscription","BuffalyCapabilityInspection","BuffalyMaintenance","BuffalySelfManagement","Codex","Desktop","ErrorLogDiagnosis","FFmpeg","SessionManagement","FileSystem","LLM","Level2Watcher","GitHub","Heartbeat","HelpAgent","LocalTask","Onboarding","Process","ProcessManagement","Services","SessionHistory","SessionSync","SkillDirectory","SqlServer","TabularData","TailscaleExposure","TwitterXApi","UserSecrets","ValidatedPrompt","Wiki") $errors
+		Assert-ExactMembership $profile "Skill" @("BrowserSession","AudioTranscription","BuffalyCapabilityInspection","BuffalyMaintenance","BuffalySelfManagement","Codex","Desktop","ErrorLogDiagnosis","FFmpeg","SessionManagement","FileSystem","LLM","Level2Watcher","GitHub","Heartbeat","HelpAgent","LocalTask","Onboarding","OnlineSessionMemoryCritic","Process","ProcessManagement","Services","SessionHistory","SessionSync","SkillDirectory","SqlServer","TabularData","TailscaleExposure","TwitterXApi","UserSecrets","ValidatedPrompt","Wiki") $errors
         Assert-ExactMembership $profile "WebModule" @("Browser","Buffaly.Agent.Heartbeat","Buffaly.Agent.SkillManagement","Buffaly.Agent.Wiki","ComputerUse","CodeReviews","CodexEmbedded","OfflineOntologyCritic","Sessions","GoogleWorkspace","Office365","OllamaCloud","OpenAIImageGeneration","LinkedIn") $errors
         Assert-ExactMembership $profile "ProviderModule" @("Buffaly.Provider.Anthropic","Buffaly.Provider.Gemini","Buffaly.Provider.LlamaCpp","Buffaly.Provider.Ollama","Buffaly.Provider.OpenAi","Buffaly.Provider.Xai") $errors
-        Assert-ExcludedMembership $profile "Skill" @("VisualStudio","Unity","OnlineSessionMemoryCritic") $errors
+		Assert-ExcludedMembership $profile "Skill" @("VisualStudio","Unity") $errors
         Assert-ExcludedMembership $profile "WebModule" @("ExtensionPublishing","FeedingFrenzy.WebPropertyEditorAgent") $errors
         foreach ($item in @($profile.Packages)) {
             if ([string]$item.PackageType -eq "Skill" -and [string]$item.PackageId -eq "Desktop") { Assert-ExactPlatforms $item @("windows") $errors }

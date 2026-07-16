@@ -7,7 +7,7 @@ prototype OnlineSessionMemoryCriticSkillAction : OpsAction
 }
 
 [SemanticEntity("online session memory critic skill")]
-prototype OnlineSessionMemoryCriticSkill : SkillEntity, CoreEntity, Level2ObserverEntityRoot
+prototype OnlineSessionMemoryCriticSkill : SkillEntity, CoreEntity
 {
 	Description = "Online session memory critic actions for attaching the critic and dispatching turn-completed events.";
 	ActionRoot = OnlineSessionMemoryCriticSkillAction;
@@ -15,7 +15,7 @@ prototype OnlineSessionMemoryCriticSkill : SkillEntity, CoreEntity, Level2Observ
 
 [SemanticProgram.InfinitivePhrase("to attach the online memory critic to the current session")]
 [SemanticProgram.InfinitivePhrase("to install the online session memory critic watcher")]
-prototype ToAttachOnlineSessionMemoryCriticForCurrentSession : OnlineSessionMemoryCriticSkillAction, Level2ObserverActionRoot
+prototype ToAttachOnlineSessionMemoryCriticForCurrentSession : OnlineSessionMemoryCriticSkillAction
 {
 	Description = @"Attaches the online memory critic to the current session. The critic will automatically review each completed turn and write high-confidence session-local memory. Returns JSON install result with WatcherSessionKey.";
 
@@ -26,7 +26,7 @@ prototype ToAttachOnlineSessionMemoryCriticForCurrentSession : OnlineSessionMemo
 }
 
 [SemanticProgram.InfinitivePhrase("to attach a configured online session memory critic")]
-prototype ToAttachConfiguredOnlineSessionMemoryCritic : OnlineSessionMemoryCriticSkillAction, Level2ObserverActionRoot
+prototype ToAttachConfiguredOnlineSessionMemoryCritic : OnlineSessionMemoryCriticSkillAction
 {
 	Description = @"provider, modelName, and reasoningLevel are exact provider-catalog values. retroactive selects existing session plus future turns. anchorTurnKey identifies the thumbs-up turn.";
 
@@ -38,7 +38,7 @@ prototype ToAttachConfiguredOnlineSessionMemoryCritic : OnlineSessionMemoryCriti
 
 [SemanticProgram.InfinitivePhrase("to dispatch one online memory critic callback event")]
 [SemanticProgram.InfinitivePhrase("to handle one online memory critic session event callback")]
-prototype ToDispatchOnlineSessionMemoryCriticEvent : OnlineSessionMemoryCriticSkillAction, Level2ObserverActionRoot
+prototype ToDispatchOnlineSessionMemoryCriticEvent : OnlineSessionMemoryCriticSkillAction
 {
 	Description = @"callbackJson - canonical SessionEventCallback JSON payload. Returns critic instruction text for the watcher to process.";
 
@@ -54,7 +54,7 @@ prototype ToDispatchOnlineSessionMemoryCriticEvent : OnlineSessionMemoryCriticSk
 
 [SemanticProgram.InfinitivePhrase("to write session local memory to the source session")]
 [SemanticProgram.InfinitivePhrase("to write a prototype definition into the source session")]
-prototype ToWriteSessionLocalMemoryToSourceSession : OnlineSessionMemoryCriticSkillAction, Level2ObserverActionRoot
+prototype ToWriteSessionLocalMemoryToSourceSession : OnlineSessionMemoryCriticSkillAction
 {
 	Description = @"sourceSessionKey - the source session to write memory into. prototypeDefinition - raw ProtoScript prototype definition to interpret in the source session. Returns the interpretation result from the source session.";
 
@@ -73,7 +73,7 @@ prototype ToWriteSessionLocalMemoryToSourceSession : OnlineSessionMemoryCriticSk
 }
 
 [SemanticProgram.InfinitivePhrase("to write attributed session local memory to the source session")]
-prototype ToWriteAttributedSessionLocalMemoryToSourceSession : OnlineSessionMemoryCriticSkillAction, Level2ObserverActionRoot
+prototype ToWriteAttributedSessionLocalMemoryToSourceSession : OnlineSessionMemoryCriticSkillAction
 {
 	Description = @"Writes one validated source-session memory with evidence and model/run provenance. scanRunId is empty for live callbacks.";
 
