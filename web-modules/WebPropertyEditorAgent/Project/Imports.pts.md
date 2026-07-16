@@ -1,3 +1,6 @@
+## Resolve Core Assemblies From Installed Runtime (2026-07-16)
+- Changed the Buffaly host, runtime abstractions, ProtoScript runtime, and ProtoScript authoring references from project-local `lib` paths to installed-runtime assembly references.
+- Design decision: extension projects must use the host's core assembly identities rather than package shadow copies so injected runtime objects satisfy their declared types.
 
 ## Minimize WebProperty Editor Imports (2026-07-04)
 - Replaced inherited broad FeedingFrenzyAgent imports with minimal references required by the WebProperty editor service.
