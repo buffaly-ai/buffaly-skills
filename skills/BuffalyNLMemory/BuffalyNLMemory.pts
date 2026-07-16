@@ -1,0 +1,114 @@
+reference Buffaly.NLMemory Buffaly.NLMemory;
+import Buffaly.NLMemory Buffaly.NLMemory.BuffalyNlMemoryRuntimeTools BuffalyNlMemoryRuntimeTools;
+
+[SemanticEntity("Buffaly NL memory skill")]
+prototype BuffalyNLMemorySkill : SkillEntity
+{
+	Description = @"Temporary runtime memory tools and prompt guidance for the normal Buffaly agent.";
+}
+
+prototype BuffalyNLMemorySkillAction : ProtoScriptAction
+{
+}
+
+prototype BuffalyNLMemoryRuntimeMemoryService : Service
+{
+	ServiceName = "Buffaly NLMemory runtime memory restore";
+	Scope = "Session";
+	Description = @"Restores session-local NLMemory prototype artifacts into the active ProtoScript runtime during runtime initialization.";
+
+	function Initialize() : void
+	{
+		BuffalyNlMemoryRuntimeTools.RestoreRuntimeMemoriesFromSessionArtifacts(_runtime, _opsAgent);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to validate a runtime prototype definition")]
+prototype ToValidateRuntimePrototypeDefinition : ProtoScriptAction, BuffalyNLMemorySkillAction
+{
+	Description = @"prototypeDefinition - raw ProtoScript containing exactly one prototype definition. Validates it for temporary runtime-memory interpretation.";
+
+	function Execute(string prototypeDefinition) : string
+	{
+		return BuffalyNlMemoryRuntimeTools.ValidateRuntimePrototypeDefinition(_runtime, prototypeDefinition);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to interpret a runtime prototype definition")]
+prototype ToInterpretRuntimePrototypeDefinition : ProtoScriptAction, BuffalyNLMemorySkillAction
+{
+	Description = @"prototypeDefinition - raw ProtoScript containing exactly one validated prototype definition. Interprets it into the active normal Buffaly-agent runtime.";
+
+	function Execute(string prototypeDefinition) : string
+	{
+		return BuffalyNlMemoryRuntimeTools.InterpretAndPersistRuntimePrototypeDefinition(_runtime, _opsAgent, prototypeDefinition);
+	}
+}
+
+prototype ToInterpretRuntimePrototypeDefinitionWithProvenance : BuffalyNLMemorySkillAction
+{
+	Description = @"Internal source-session write action for a validated memory plus critic provenance.";
+
+	function Execute(string prototypeDefinition, string collectionMode, string sourceTurnKey, string evidence, string rationale, string confidence, string provider, string modelName, string reasoningLevel, string scanRunId, string anchorTurnKey) : string
+	{
+		return BuffalyNlMemoryRuntimeTools.InterpretRuntimePrototypeDefinitionWithProvenance(_runtime, _opsAgent, prototypeDefinition, collectionMode, sourceTurnKey, evidence, rationale, confidence, provider, modelName, reasoningLevel, scanRunId, anchorTurnKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get runtime prototype details")]
+prototype ToGetRuntimePrototypeDetails : ProtoScriptAction, BuffalyNLMemorySkillAction
+{
+	Description = @"prototypeName - prototype to inspect in the active runtime. Prefer existing ToGetPrototypeDetails when it can see the runtime prototype.";
+
+	function Execute(string prototypeName) : string
+	{
+		return BuffalyNlMemoryRuntimeTools.GetRuntimePrototypeDetails(_runtime, prototypeName);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to dump runtime memories")]
+prototype ToDumpRuntimeMemories : ProtoScriptAction, BuffalyNLMemorySkillAction
+{
+	Description = @"Returns every prototype remembered through ToInterpretRuntimePrototypeDefinition in the active runtime memory store.";
+
+	function Execute() : string
+	{
+		return BuffalyNlMemoryRuntimeTools.DumpRuntimeMemories(_runtime);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to restore runtime memories from session artifacts")]
+prototype ToRestoreRuntimeMemoriesFromSessionArtifacts : ProtoScriptAction, BuffalyNLMemorySkillAction
+{
+	Description = @"Restores every .pts prototype artifact from artifacts/nl-memory into the active runtime memory store for the current session.";
+
+	function Execute() : string
+	{
+		return BuffalyNlMemoryRuntimeTools.RestoreRuntimeMemoriesFromSessionArtifacts(_runtime, _opsAgent);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to search runtime memories")]
+prototype ToSearchRuntimeMemories : ProtoScriptAction, BuffalyNLMemorySkillAction
+{
+	Description = @"filterPrototypeName - prototype used as a categorization filter. Searches remembered runtime-memory prototypes with TemporaryPrototypeCategorization.IsCategorized.";
+
+	function Execute(string filterPrototypeName) : string
+	{
+		return BuffalyNlMemoryRuntimeTools.SearchRuntimeMemories(_runtime, filterPrototypeName);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to remember something temporarily")]
+[SemanticProgram.InfinitivePhrase("to remember something for this session")]
+prototype ToRememberSomethingTemporarilySkill : PromptAction, BuffalyNLMemorySkillAction, CoreAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/BuffalyNLMemory/Prompts/ToRememberSomethingTemporarilySkill.prompt.md";
+	Description = @"Remember an entity, fact, object relationship, or otherwise useful information for this session so it can be searched later. This creates temporary session ontology, not freeform text: memory should be centered on an object or an object relationship using existing Buffaly ontology roots when possible. Use this liberally and proactively whenever session-local memory could help the current work. If the user asks to remember something permanently or across sessions, use the permanent ontology-memory workflow instead: ToRememberOntologyObjectSkill.";
+}
+
+
+

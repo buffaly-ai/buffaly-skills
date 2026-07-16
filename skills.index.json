@@ -143,6 +143,53 @@
       "InstalledVersion": ""
     },
     {
+      "SkillName": "BuffalyNLMemory",
+      "Title": "Buffaly NL Memory",
+      "Description": "Validated session-local NL memory storage, provenance inventory, scoped semantic lookup, and temporary memory authoring actions.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Buffaly NL Memory",
+        "BuffalyNLMemory",
+        "session local memory",
+        "temporary memory"
+      ],
+      "Path": "skills/BuffalyNLMemory",
+      "Files": [
+        {
+          "Path": "BuffalyNLMemory.pts",
+          "Sha256": "359c996eadbc68401bd9acaecc525084b540d4fe2b80bf03041de5c06c6c4b1e"
+        },
+        {
+          "Path": "BuffalyNLMemory.pts.md",
+          "Sha256": "ee0693f8417c017e2d4d96ad399f757a65ba09a325e753333f56c659fc06334d"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "27b21a9ece6bc34d4fe840d2f4de20ffa69960c884f574189f123438c269e08d"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "4be2b5a9c34c9f7d83229fdbbf6a013e46b76e5d6e03f58fc58117d64f044321"
+        },
+        {
+          "Path": "lib/Buffaly.NLMemory.dll",
+          "Sha256": "4f91b7024d3f08c608e042e915e6ad83ca438e53c8903a285f6a3c9a5f35ac31"
+        },
+        {
+          "Path": "Prompts/ToRememberSomethingTemporarilySkill.prompt.md",
+          "Sha256": "cae54b76e4696211349bef91b156ee0ca6fdaf6bd32284ac958fe9a18f1de029"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
+    },
+    {
       "SkillName": "BuffalyMaintenance",
       "Title": "Buffaly Maintenance",
       "Description": "Buffaly skill package for Buffaly Maintenance.",
