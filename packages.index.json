@@ -8436,6 +8436,60 @@
       "RequiresPreStartInstall": true
     },
     {
+      "PackageId": "FacebookAds",
+      "PackageType": "WebModule",
+      "Title": "Facebook Ads",
+      "Description": "Read-only Facebook Ads reporting web module.",
+      "Version": "0.1.0",
+      "PackageKind": "BuffalyWebModule",
+      "SourcePath": "web-modules/FacebookAds",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/FacebookAds",
+      "Phrases": [
+        "Facebook Ads",
+        "FacebookAds"
+      ],
+      "Files": [
+        {
+          "Path": "Buffaly.Facebook.dll",
+          "Sha256": "b7dec060957bc5bb48b29fbf10f0778f5b721ebfe2652e437b505949fab4584e"
+        },
+        {
+          "Path": "Buffaly.FacebookAds.deps.json",
+          "Sha256": "2278fe638efb8632b17f71a8eb4929ebbc64fdd491f32b002db62de0efa93825"
+        },
+        {
+          "Path": "Buffaly.FacebookAds.dll",
+          "Sha256": "b3c6735a63db026c979d4a6405ffad71a6fb8b8535fc3b4f0cc8a7a64b03e111"
+        },
+        {
+          "Path": "web-module.json",
+          "Sha256": "6b0dc48151dec32f981b0fdd21a34f9c80d1881030bb42d90aac5ec9b5641575"
+        },
+        {
+          "Path": "wwwroot/css/buffaly-page.css",
+          "Sha256": "e30611c717c05ade6927504d89f1af31d0495f0334cbb03ee282807cc3d9fc43"
+        },
+        {
+          "Path": "wwwroot/css/facebook-ads.css",
+          "Sha256": "63d79d18cba10ad5cb73a1818c9dc028f21b292df2651718cd8950595cb4c96d"
+        },
+        {
+          "Path": "wwwroot/index.html",
+          "Sha256": "93f387839d0bdf3f959bf3b339fad683831a795d549ad468d10e28c4a3488961"
+        },
+        {
+          "Path": "wwwroot/js/facebook-ads.js",
+          "Sha256": "7fa2ae28c69520b0d08bc7735d05621a198467d791183c7512a83dcf2ffa15b7"
+        }
+      ],
+      "ProjectArtifacts": [],
+      "Dependencies": [],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "RequiresRestart": true,
+      "RequiresPreStartInstall": true
+    },
+    {
       "Dependencies": [],
       "RelatedWikiSlugs": [],
       "Prerequisites": [],

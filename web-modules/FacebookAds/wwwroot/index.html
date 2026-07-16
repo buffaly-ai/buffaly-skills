@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>Facebook Ads - Buffaly</title><link rel="icon" href="data:,"><link rel="stylesheet" href="css/buffaly-page.css"><link rel="stylesheet" href="css/facebook-ads.css">
+</head>
+<body>
+	<header class="app-strip"><a href="/">Buffaly</a><span>Facebook Ads</span></header>
+	<main class="shell">
+		<section class="topbar"><div><p class="kicker">Read-only reporting workspace</p><h1>Facebook Ads performance</h1><p class="subtitle">Review delivery and results without changing campaigns.</p></div><div class="top-actions"><span id="connectionPill" class="pill">Checking connection…</span><button id="refreshButton" type="button">Refresh</button></div></section>
+		<div id="errorState" class="state error hidden" role="alert"></div><div id="loadingState" class="state hidden" aria-live="polite">Loading Meta Ads data…</div>
+		<section class="filters"><label>Ad account<select id="accountSelect"><option value="">Select an account</option></select></label><label>Date range<select id="datePreset"><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="last_7d">Last 7 days</option><option value="last_14d">Last 14 days</option><option value="last_30d" selected>Last 30 days</option><option value="this_month">This month</option></select></label><span id="refreshedAt">Not refreshed</span></section>
+		<nav class="tabs" aria-label="Report sections"><button class="tab active" data-tab="overview">Overview</button><button class="tab" data-tab="campaigns">Campaigns</button><button class="tab" data-tab="detail">Campaign detail</button></nav>
+		<section id="overviewPanel" class="tab-panel"><div id="metrics" class="metrics"></div></section>
+		<section id="campaignsPanel" class="tab-panel hidden"><div class="table-wrap"><table><thead><tr><th>Campaign</th><th>Configured</th><th>Delivery</th><th>Objective</th><th>Spend</th><th>Impressions</th><th>Clicks</th><th>CTR</th></tr></thead><tbody id="campaignRows"></tbody></table></div><div id="emptyState" class="state hidden">No campaigns were found for this account.</div></section>
+		<section id="detailPanel" class="tab-panel hidden"><div id="detailEmpty" class="state">Select a campaign to inspect its ad sets and ads.</div><div id="detailContent" class="hidden"><h2 id="detailTitle"></h2><h3>Ad sets</h3><div id="adSets"></div><h3>Ads</h3><div id="ads"></div></div></section>
+	</main><script src="js/facebook-ads.js"></script>
+</body></html>
