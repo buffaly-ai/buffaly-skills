@@ -1,0 +1,13 @@
+[SemanticProgram.InfinitivePhrase("to use the computer")]
+[SemanticProgram.InfinitivePhrase("to use computer use")]
+[SemanticProgram.InfinitivePhrase("to run a computer use task")]
+[SemanticProgram.InfinitivePhrase("to run computer use")]
+[SemanticProgram.InfinitivePhrase("to control the desktop with computer use")]
+prototype UseComputerUseGuidanceSkill : PromptAction, ComputerUseSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/ComputerUse/Prompts/UseComputerUseGuidanceSkill.prompt.md";
+	Description = @"Guidance-only compatibility route for ComputerUse requests. Do not start the retired OpenAI ComputerUse task loop; use the active agent session with Desktop direct interaction tools.";
+}

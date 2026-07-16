@@ -1,0 +1,13 @@
+prototype ComputerUseSkillAction : OpsAction
+{
+	Description = @"Guidance-only compatibility action type for retired ComputerUse task-loop routing. Use Desktop direct interaction tools instead.";
+}
+
+[SemanticEntity("computer use guidance skill")]
+prototype ComputerUseSkill : SkillEntity
+{
+	Description = "Guidance for using direct Desktop tools instead of the retired OpenAI ComputerUse task loop.";
+	ActionRoot = ComputerUseSkillAction;
+}
+
+include "PromptActions.pts";

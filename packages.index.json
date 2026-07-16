@@ -8064,7 +8064,7 @@
       "PackageType": "WebModule",
       "Title": "Computer Use",
       "Description": "Buffaly Web Module package for Computer Use.",
-      "Version": "0.1.110",
+      "Version": "0.1.111",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/ComputerUse",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/ComputerUse",
@@ -8218,6 +8218,22 @@
           "Sha256": "8452b2050ce7c4a7369cf507b868f4b1c61d9db0b82b9d1a55433134802fab7a"
         },
         {
+          "Path": "Skills/ComputerUse/index.pts",
+          "Sha256": "258db6c837208d592ee4531954a524dfa70a84608bd667294e858c0c0ae51fe1"
+        },
+        {
+          "Path": "Skills/ComputerUse/index.pts.md",
+          "Sha256": "6fdd635557049fcb84b7a6b069232836c446b129691c4e2817f0820c06339d99"
+        },
+        {
+          "Path": "Skills/ComputerUse/PromptActions.pts",
+          "Sha256": "f4dcc23baa07a8b446f90ffa75777d73d3d2a8d2b1e9af5365c9429c95dc20d6"
+        },
+        {
+          "Path": "Skills/ComputerUse/Prompts/UseComputerUseGuidanceSkill.prompt.md",
+          "Sha256": "bf8fb55607046e4c1fdf5f2789a59bf9400fc0798cd12935fe352badd267f761"
+        },
+        {
           "Path": "web-module.json",
           "Sha256": "dc0ddb2ec94a94dac367d8179c232f83aaa17c4b0a5609dc839a5bd411e76fdd"
         },
@@ -8244,30 +8260,6 @@
         {
           "Path": "wwwroot/index.html.gz",
           "Sha256": "730f0f20171902a06c607a956c23d17db0e885aa81dea59aa70d771dbb3f9199"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.OpenAI.ComputerUse.WebHarness.ComputerUseWorkbenchJsonWsService.ashx.js",
-          "Sha256": "9b4a67ceeb92d3bec296166eeb136fb11bc919a062be283ffd9501d432bff018"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.OpenAI.ComputerUse.WebHarness.ComputerUseWorkbenchJsonWsService.ashx.js.br",
-          "Sha256": "1230bae95134c23abcce85d64185534f51505241967758a19a31ae47fced8f8e"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.OpenAI.ComputerUse.WebHarness.ComputerUseWorkbenchJsonWsService.ashx.js.gz",
-          "Sha256": "486441585411a5628f4d968588fee9daf00ca38595b8288160555644ef3e0039"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.OpenAI.ComputerUse.WebHarness.ComputerUseWorkbenchJsonWsService.json",
-          "Sha256": "c071f8f90125361e08eab0da9d463465b890ef31173eb512d51b4a7a2bbbe6ff"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.OpenAI.ComputerUse.WebHarness.ComputerUseWorkbenchJsonWsService.json.br",
-          "Sha256": "f735acae61aa603b09455e1b6e95aeb463a3865cb954d82e8807f9cf1ed55bfa"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.OpenAI.ComputerUse.WebHarness.ComputerUseWorkbenchJsonWsService.json.gz",
-          "Sha256": "0ce7ccd0fab8aefee6eef232500df484f042962046efc36613938f827916076f"
         },
         {
           "Path": "wwwroot/js/computer-use-workbench.js",
@@ -8352,6 +8344,30 @@
         {
           "Path": "wwwroot/js/kcs/validators.js.gz",
           "Sha256": "bff3862994ded55e91bc7a062d6365af1c70ac56a7a863aa2b08d95bf7854aac"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.OpenAI.ComputerUse.WebHarness.ComputerUseWorkbenchJsonWsService.ashx.js",
+          "Sha256": "9b4a67ceeb92d3bec296166eeb136fb11bc919a062be283ffd9501d432bff018"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.OpenAI.ComputerUse.WebHarness.ComputerUseWorkbenchJsonWsService.ashx.js.br",
+          "Sha256": "1230bae95134c23abcce85d64185534f51505241967758a19a31ae47fced8f8e"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.OpenAI.ComputerUse.WebHarness.ComputerUseWorkbenchJsonWsService.ashx.js.gz",
+          "Sha256": "486441585411a5628f4d968588fee9daf00ca38595b8288160555644ef3e0039"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.OpenAI.ComputerUse.WebHarness.ComputerUseWorkbenchJsonWsService.json",
+          "Sha256": "c071f8f90125361e08eab0da9d463465b890ef31173eb512d51b4a7a2bbbe6ff"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.OpenAI.ComputerUse.WebHarness.ComputerUseWorkbenchJsonWsService.json.br",
+          "Sha256": "f735acae61aa603b09455e1b6e95aeb463a3865cb954d82e8807f9cf1ed55bfa"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.OpenAI.ComputerUse.WebHarness.ComputerUseWorkbenchJsonWsService.json.gz",
+          "Sha256": "0ce7ccd0fab8aefee6eef232500df484f042962046efc36613938f827916076f"
         },
         {
           "Path": "wwwroot/styles/computer-use-workbench.css",
