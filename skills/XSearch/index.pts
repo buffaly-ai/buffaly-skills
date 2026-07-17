@@ -1,0 +1,96 @@
+// XSearch Skill - hosted x_search tool via xAI Responses API.
+// Requires XAI.HostedTools = "x_search" in the xAI provider feature settings.
+// The x_search tool runs server-side in Grok's agentic sampler loop.
+// The model autonomously invokes x_keyword_search and x_semantic_search
+// underneath x_search, processes results, and returns synthesized text.
+
+prototype XSearchSkillAction : OpsAction
+{
+	Description = @"Base action type for X search actions via the xAI Responses API x_search hosted tool.";
+}
+
+[SemanticEntity("X search skill")]
+[SemanticEntity("X search xAI hosted tool skill")]
+prototype XSearchSkill : SkillEntity
+{
+	EntityName = "X search skill, X search xAI hosted tool skill";
+	Description = @"Search X (Twitter) via the xAI Responses API x_search hosted tool. The x_search tool runs server-side in Grok's agentic sampler loop. Requires XAI.HostedTools = ""x_search"" in the xAI provider feature settings. No client-side X API key or tool execution is needed.";
+	ActionRoot = XSearchSkillAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to search X")]
+[SemanticProgram.InfinitivePhrase("to search twitter")]
+[SemanticProgram.InfinitivePhrase("to search posts on X")]
+[SemanticProgram.InfinitivePhrase("to search X for posts about a topic")]
+[SemanticProgram.InfinitivePhrase("to find what people are saying on X")]
+[SemanticProgram.InfinitivePhrase("to look up X conversation about a topic")]
+prototype ToSearchX : XSearchSkillAction
+{
+	Description = @"Search X (Twitter) via the xAI Responses API x_search hosted tool.
+query - required search query or topic to look up on X.
+systemPrompt - optional analyst instructions for result formatting and tone.
+model - optional model override (defaults to grok-4.3 via provider catalog).
+reasoningLevel - optional reasoning effort: low, medium, or high (defaults to provider default).
+Returns JSON with Status, Provider, Model, Text (synthesized search results with citations), and UsageMetrics.
+The x_search tool is declared in the request tools array by the xAI provider when
+XAI.HostedTools is configured. The model invokes it server-side - no client-side
+tool execution is needed. Results include real X post links as citations.";
+
+	function Execute(string query, string systemPrompt = "", string model = "", string reasoningLevel = "low") : string
+	{
+		if (StringUtil.IsEmpty(query))
+		{
+			return "{\"Status\":\"failed\",\"Error\":\"query is required.\"}";
+		}
+
+		if (_opsAgent == null)
+		{
+			return "{\"Status\":\"failed\",\"Error\":\"Active Buffaly runtime host is unavailable.\"}";
+		}
+
+		string prompt = "Search X for posts about: " + query + ". Return the most relevant and recent posts with @handles and post links as citations. Summarize the conversation and key opinions.";
+
+		string effectiveSystemPrompt = systemPrompt;
+		if (StringUtil.IsEmpty(effectiveSystemPrompt))
+		{
+			effectiveSystemPrompt = "You are a neutral analyst. Search X and report what the conversation is saying. Include real post links as citations. Be concise and factual.";
+		}
+
+		return _opsAgent.AskModelViaRuntime(prompt, effectiveSystemPrompt, "xai", model, reasoningLevel, "[]");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to brief what happened on X")]
+[SemanticProgram.InfinitivePhrase("to brief what just happened on X")]
+[SemanticProgram.InfinitivePhrase("to summarize X reaction to a topic")]
+[SemanticProgram.InfinitivePhrase("to map public opinion on X")]
+[SemanticProgram.InfinitivePhrase("to get X twitter sentiment briefing")]
+prototype ToBriefWhatHappenedOnX : XSearchSkillAction
+{
+	Description = @"Produce a neutral briefing of what happened and what public X is saying about a named topic.
+topic - required named topic (person, product, launch, event, controversy).
+model - optional model override (defaults to grok-4.3 via provider catalog).
+reasoningLevel - optional reasoning effort: low, medium, or high (defaults to medium for deeper analysis).
+Returns JSON with Status, Provider, Model, Text (structured briefing), and UsageMetrics.
+The briefing includes: what happened, where the conversation is, opinion map with camps,
+live debates, and notable posts with citations. Uses the x_search hosted tool server-side.";
+
+	function Execute(string topic, string model = "", string reasoningLevel = "medium") : string
+	{
+		if (StringUtil.IsEmpty(topic))
+		{
+			return "{\"Status\":\"failed\",\"Error\":\"topic is required.\"}";
+		}
+
+		if (_opsAgent == null)
+		{
+			return "{\"Status\":\"failed\",\"Error\":\"Active Buffaly runtime host is unavailable.\"}";
+		}
+
+		string systemPrompt = "You are a neutral analyst. Search X and produce a structured briefing about the topic. Include: 1) What happened (2-5 sentences with first-party sources). 2) Where the conversation is (dominant frame, secondary frames, who is loud). 3) Public opinion map (camps with rough share percentages and representative voices). 4) Live debates (key disagreements with both sides). 5) Notable posts with @handles and post links as receipts. 6) Gaps and caveats. Use real post links as citations. Be neutral and factual.";
+
+		string prompt = "What just happened on X regarding: " + topic + "? Search X and produce a neutral briefing with citations.";
+
+		return _opsAgent.AskModelViaRuntime(prompt, systemPrompt, "xai", model, reasoningLevel, "[]");
+	}
+}
