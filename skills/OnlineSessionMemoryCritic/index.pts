@@ -89,3 +89,36 @@ prototype ToListObservedSourceSessionLocalMemories : OnlineSessionMemoryCriticAc
 		return BuffalyAgentService.RunProtoScriptMethod(sourceSessionKey, "buffaly-agent", "ToDumpRuntimeMemories", "Execute", "{}");
 	}
 }
+
+[SemanticProgram.InfinitivePhrase("to search source ontology entities for online memory critic")]
+prototype ToOnlineMemoryCriticSearchSourceEntities : OnlineSessionMemoryCriticActionRoot
+{
+	Description = @"Searches the source session's full ontology and session-local semantic bindings.";
+
+	function Execute(string sourceSessionKey, string semanticQuery, int maxResults = 10, bool includeParentType = true) : string
+	{
+		return OnlineSessionMemoryCriticTools.SearchSourceEntities(sourceSessionKey, semanticQuery, maxResults, includeParentType);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to inspect a source prototype for online memory critic")]
+prototype ToOnlineMemoryCriticGetSourcePrototypeDetails : OnlineSessionMemoryCriticActionRoot
+{
+	Description = @"Inspects one exact prototype in the source session runtime.";
+
+	function Execute(string sourceSessionKey, string prototype) : string
+	{
+		return OnlineSessionMemoryCriticTools.GetSourcePrototypeDetails(sourceSessionKey, prototype);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to inspect source prototype property schema for online memory critic")]
+prototype ToOnlineMemoryCriticGetSourcePrototypePropertySchema : OnlineSessionMemoryCriticActionRoot
+{
+	Description = @"Returns all resolved property declarations and types for one source-session prototype, including inherited and unassigned properties.";
+
+	function Execute(string sourceSessionKey, string prototype) : string
+	{
+		return OnlineSessionMemoryCriticTools.GetSourcePrototypePropertySchema(sourceSessionKey, prototype);
+	}
+}
