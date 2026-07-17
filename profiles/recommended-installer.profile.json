@@ -1,0 +1,483 @@
+{
+  "SchemaVersion": 1,
+  "ProfileId": "recommended-installer",
+  "ProfileVersion": "1.0.0",
+  "Description": "Recommended extension baseline embedded in new Buffaly installers.",
+  "Packages": [
+    {
+      "PackageType": "Skill",
+      "PackageId": "BrowserSession",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "AudioTranscription",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "BuffalyCapabilityInspection",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "BuffalyMaintenance",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "BuffalySelfManagement",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "Codex",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "Desktop",
+      "Platforms": [
+        "windows"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "ErrorLogDiagnosis",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "FFmpeg",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "SessionManagement",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "FileSystem",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "LLM",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "Level2Watcher",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "GitHub",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "Heartbeat",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "HelpAgent",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "LocalTask",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+	{
+		"PackageType": "Skill",
+		"PackageId": "Onboarding",
+		"Platforms": [
+			"windows",
+			"linux",
+			"mac"
+		]
+	},
+	{
+		"PackageType": "Skill",
+		"PackageId": "OnlineSessionMemoryCritic",
+		"Platforms": [
+			"windows",
+			"linux",
+			"mac"
+		]
+	},
+	{
+		"PackageType": "Skill",
+		"PackageId": "BuffalyNLMemory",
+		"Platforms": [
+			"windows",
+			"linux",
+			"mac"
+		]
+	},
+	{
+		"PackageType": "Skill",
+      "PackageId": "Process",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "ProcessManagement",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "Services",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "SessionHistory",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "SessionSync",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "SkillDirectory",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "SqlServer",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "TabularData",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "TailscaleExposure",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "UserSecrets",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "ValidatedPrompt",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "Wiki",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "Skill",
+      "PackageId": "TwitterXApi",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "WebModule",
+      "PackageId": "Browser",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "WebModule",
+      "PackageId": "Buffaly.Agent.Heartbeat",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "WebModule",
+      "PackageId": "Buffaly.Agent.SkillManagement",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "WebModule",
+      "PackageId": "Buffaly.Agent.Wiki",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "WebModule",
+      "PackageId": "ComputerUse",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "WebModule",
+      "PackageId": "CodeReviews",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "WebModule",
+      "PackageId": "CodexEmbedded",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "WebModule",
+      "PackageId": "OfflineOntologyCritic",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "WebModule",
+      "PackageId": "Sessions",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "WebModule",
+      "PackageId": "GoogleWorkspace",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "WebModule",
+      "PackageId": "Office365",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "WebModule",
+      "PackageId": "OllamaCloud",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "WebModule",
+      "PackageId": "OpenAIImageGeneration",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "WebModule",
+      "PackageId": "LinkedIn",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "ProviderModule",
+      "PackageId": "Buffaly.Provider.Anthropic",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "ProviderModule",
+      "PackageId": "Buffaly.Provider.Gemini",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "ProviderModule",
+      "PackageId": "Buffaly.Provider.LlamaCpp",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "ProviderModule",
+      "PackageId": "Buffaly.Provider.Ollama",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "ProviderModule",
+      "PackageId": "Buffaly.Provider.OpenAi",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "ProviderModule",
+      "PackageId": "Buffaly.Provider.Xai",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,280 @@
+{
+  "SchemaVersion": 1,
+  "Enabled": true,
+  "ApprovalTimeoutSeconds": 120,
+  "ApprovalText": "APPROVE",
+  "Rules": [
+    {
+      "RuleId": "safe-hard-deny-smoke-test",
+      "Enabled": true,
+      "Disposition": 2,
+      "RiskCategory": "SmokeTest",
+      "Reason": "Safe hard-deny smoke-test marker was blocked.",
+      "Conditions": [
+        {
+          "Target": 0,
+          "MatchMode": 0,
+          "Comparison": 1,
+          "Values": [
+            "command",
+            "power",
+            "shell",
+            "cmd",
+            "shell",
+            "terminal",
+            "process",
+            "script",
+            "execute"
+          ]
+        },
+        {
+          "Target": 2,
+          "MatchMode": 0,
+          "Comparison": 1,
+          "Values": [
+            "buffaly-policy-hard-deny-smoke-test"
+          ]
+        }
+      ]
+    },
+    {
+      "RuleId": "disk-format",
+      "Enabled": true,
+      "Disposition": 2,
+      "RiskCategory": "DiskDestruction",
+      "Reason": "Disk-format or partition-destructive command pattern is blocked.",
+      "Conditions": [
+        {
+          "Target": 0,
+          "MatchMode": 0,
+          "Comparison": 1,
+          "Values": [
+            "command",
+            "power",
+            "shell",
+            "cmd",
+            "shell",
+            "terminal",
+            "process",
+            "script",
+            "execute",
+            "delete",
+            "remove",
+            "write",
+            "edit",
+            "replace",
+            "move",
+            "rename"
+          ]
+        },
+        {
+          "Target": 2,
+          "MatchMode": 0,
+          "Comparison": 1,
+          "Values": [
+            "format c:",
+            "format /q",
+            "diskpart",
+            "clean all",
+            "mkfs",
+            "fdisk"
+          ]
+        }
+      ]
+    },
+    {
+      "RuleId": "root-delete",
+      "Enabled": true,
+      "Disposition": 2,
+      "RiskCategory": "RootFilesystemDeletion",
+      "Reason": "Root-level destructive file deletion pattern is blocked.",
+      "Conditions": [
+        {
+          "Target": 0,
+          "MatchMode": 0,
+          "Comparison": 1,
+          "Values": [
+            "command",
+            "power",
+            "shell",
+            "cmd",
+            "shell",
+            "terminal",
+            "process",
+            "script",
+            "execute",
+            "delete",
+            "remove",
+            "write",
+            "edit",
+            "replace",
+            "move",
+            "rename"
+          ]
+        },
+        {
+          "Target": 2,
+          "MatchMode": 0,
+          "Comparison": 1,
+          "Values": [
+            "rm -rf /",
+            "rd /s /q c:\\",
+            "del /f /s /q c:\\",
+            "remove-item -recurse -force c:\\"
+          ]
+        }
+      ]
+    },
+    {
+      "RuleId": "safe-approval-smoke-test",
+      "Enabled": true,
+      "Disposition": 1,
+      "RiskCategory": "SmokeTest",
+      "Reason": "Safe approval smoke-test marker requires user approval.",
+      "Conditions": [
+        {
+          "Target": 0,
+          "MatchMode": 0,
+          "Comparison": 1,
+          "Values": [
+            "command",
+            "power",
+            "shell",
+            "cmd",
+            "shell",
+            "terminal",
+            "process",
+            "script",
+            "execute"
+          ]
+        },
+        {
+          "Target": 2,
+          "MatchMode": 0,
+          "Comparison": 1,
+          "Values": [
+            "buffaly-policy-approval-smoke-test"
+          ]
+        }
+      ]
+    },
+    {
+      "RuleId": "host-power-state",
+      "Enabled": true,
+      "Disposition": 1,
+      "RiskCategory": "HostPowerState",
+      "Reason": "This command appears to change the host power state.",
+      "Conditions": [
+        {
+          "Target": 0,
+          "MatchMode": 0,
+          "Comparison": 1,
+          "Values": [
+            "command",
+            "power",
+            "shell",
+            "cmd",
+            "shell",
+            "terminal",
+            "process",
+            "script",
+            "execute"
+          ]
+        },
+        {
+          "Target": 2,
+          "MatchMode": 1,
+          "Comparison": 1,
+          "Values": [
+            "shutdown",
+            "restart-computer",
+            "reboot",
+            "stop-computer"
+          ]
+        }
+      ]
+    },
+    {
+      "RuleId": "protected-process-kill",
+      "Enabled": true,
+      "Disposition": 1,
+      "RiskCategory": "ProtectedProcessTermination",
+      "Reason": "This command appears to stop a protected Buffaly host process.",
+      "Conditions": [
+        {
+          "Target": 0,
+          "MatchMode": 0,
+          "Comparison": 1,
+          "Values": [
+            "command",
+            "power",
+            "shell",
+            "cmd",
+            "shell",
+            "terminal",
+            "process",
+            "script",
+            "execute"
+          ]
+        },
+        {
+          "Target": 2,
+          "MatchMode": 1,
+          "Comparison": 1,
+          "Values": [
+            "taskkill",
+            "stop-process",
+            "kill-process",
+            "pkill",
+            "kill"
+          ]
+        },
+        {
+          "Target": 2,
+          "MatchMode": 1,
+          "Comparison": 1,
+          "Values": [
+            "buffaly.agent.web.exe",
+            "buffaly.agent.worker.exe",
+            "buffaly.codexembedded.web.exe",
+            "buffaly.web.exe",
+            "dotnet"
+          ]
+        }
+      ]
+    },
+    {
+      "RuleId": "custom-approval-strings",
+      "Enabled": true,
+      "Disposition": 1,
+      "RiskCategory": "CustomApproval",
+      "Reason": "Custom configured command/string requires user approval.",
+      "Conditions": [
+        {
+          "Target": 0,
+          "MatchMode": 0,
+          "Comparison": 1,
+          "Values": [
+            "command",
+            "power",
+            "shell",
+            "cmd",
+            "shell",
+            "terminal",
+            "process",
+            "script",
+            "execute"
+          ]
+        },
+        {
+          "Target": 2,
+          "MatchMode": 0,
+          "Comparison": 1,
+          "Values": [
+            "buffaly-policy-custom-placeholder"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -17,6 +17,12 @@ var ExtensionPublishingServiceService = (function(){
   Service.prototype.BuildExtensionObjectAsync = function(o){ return post("build-extension", o); };
   Service.prototype.PreviewPublishExtensionObjectAsync = function(o){ return post("preview-publish-extension", o); };
   Service.prototype.PublishExtensionObjectAsync = function(o){ return post("publish-extension", o); };
+  Service.prototype.ReconcileLocalRepositoryObjectAsync = function(o){ return post("reconcile-local-repository", o); };
+  Service.prototype.StartRepositoryReconcileJobObjectAsync = function(o){ return post("start-repository-reconcile-job", o); };
+  Service.prototype.GetRepositoryReconcileJobObjectAsync = function(o){ return post("get-repository-reconcile-job", o); };
+  Service.prototype.ListRepositoryReconcileJobsObjectAsync = function(o){ return post("list-repository-reconcile-jobs", o); };
+  Service.prototype.CancelRepositoryReconcileJobObjectAsync = function(o){ return post("cancel-repository-reconcile-job", o); };
+  Service.prototype.RetryRepositoryReconcileJobFailuresObjectAsync = function(o){ return post("retry-repository-reconcile-job-failures", o); };
   return Service;
 })();
 var ExtensionPublishingService = new ExtensionPublishingServiceService();

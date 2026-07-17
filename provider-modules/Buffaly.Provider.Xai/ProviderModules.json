@@ -1,0 +1,17 @@
+{
+  "Modules": [
+    {
+      "Enabled": true,
+      "Name": "xAI",
+      "Provider": "xai",
+      "DisplayName": "xAI",
+      "AssemblyPath": "Buffaly.Provider.Xai/Buffaly.Provider.Xai.dll",
+      "CatalogSourceTypeName": "Buffaly.Provider.Xai.XaiProviderCatalogSource",
+      "CompletionExecutorTypeName": "Buffaly.Provider.Xai.XaiCompletionExecutor",
+      "LoadOrder": 640,
+      "TextToSpeechCatalogSourceTypeName": "Buffaly.Provider.Xai.XaiTextToSpeechCatalogSource",
+      "TextToSpeechExecutorTypeName": "Buffaly.Provider.Xai.XaiTextToSpeechExecutor",
+      "AuthHandlerTypeName": "Buffaly.Provider.Xai.XaiProviderAuthHandler"
+    }
+  ]
+}

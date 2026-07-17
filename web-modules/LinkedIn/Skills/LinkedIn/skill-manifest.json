@@ -1,0 +1,43 @@
+{
+  "skill": "Buffaly.LinkedIn",
+  "displayName": "LinkedIn",
+  "description": "Manage LinkedIn presence: drafts, publishing, brand voice, content intelligence, and engagement.",
+  "safeTools": [
+    { "name": "CreateDraft", "infinitivePhrase": "to create a linkedin draft", "description": "Create a new LinkedIn post draft with text, visibility, and media settings." },
+    { "name": "ListDrafts", "infinitivePhrase": "to list linkedin drafts", "description": "List all LinkedIn drafts, optionally filtered by status." },
+    { "name": "GetDraft", "infinitivePhrase": "to get a linkedin draft", "description": "Get a single LinkedIn draft by ID." },
+    { "name": "ApproveDraft", "infinitivePhrase": "to approve a linkedin draft", "description": "Approve a LinkedIn draft for publishing." },
+    { "name": "ScheduleDraft", "infinitivePhrase": "to schedule a linkedin draft", "description": "Schedule a draft for future publish." },
+    { "name": "UnscheduleDraft", "infinitivePhrase": "to unschedule a linkedin draft", "description": "Clear the scheduled time for a draft." },
+    { "name": "GetAccountStatus", "infinitivePhrase": "to inspect linkedin account status", "description": "Check LinkedIn connection status, profile, and permissions." },
+    { "name": "GetVoice", "infinitivePhrase": "to get linkedin voice profile", "description": "Get the brand voice profile for LinkedIn content." },
+    { "name": "SetVoice", "infinitivePhrase": "to set linkedin voice profile", "description": "Update the brand voice profile fields." },
+    { "name": "PermissionProbe", "infinitivePhrase": "to probe linkedin permissions", "description": "Check which LinkedIn operations are available based on granted scopes." },
+   { "name": "ListPublishedPosts", "infinitivePhrase": "to list linkedin published posts", "description": "List published post history." }
+ ],
+  "draftArtifactTools": [
+    { "name": "GetDraftArtifact", "infinitivePhrase": "to get a linkedin draft artifact", "description": "Load the current LinkedIn draft artifact state including text, media, variants, and revision history." },
+    { "name": "UpdateDraftText", "infinitivePhrase": "to update linkedin draft text", "description": "Replace the LinkedIn draft post text and add a revision entry." },
+    { "name": "SetDraftMedia", "infinitivePhrase": "to set linkedin draft media", "description": "Attach a generated image to the draft artifact media. Stores image prompt, path, URL, and alt text." },
+    { "name": "SetDraftVariants", "infinitivePhrase": "to set linkedin draft variants", "description": "Store multiple candidate post variants on the draft artifact. Accepts a JSON array of variant objects." },
+    { "name": "ApplyDraftVariant", "infinitivePhrase": "to apply a linkedin draft variant", "description": "Apply a selected variant to the draft post text and add a revision." }
+  ],
+ "imageTools": [
+    { "name": "GenerateImage", "infinitivePhrase": "to generate a linkedin image", "description": "Generate an image for a LinkedIn post using AI image generation." }
+  ],
+  "highRiskTools": [
+    { "name": "PublishDraft", "infinitivePhrase": "to publish a linkedin draft", "description": "Publish an approved draft to LinkedIn. Requires confirmation.", "requiresConfirmation": true },
+    { "name": "PublishDue", "infinitivePhrase": "to publish due linkedin drafts", "description": "Publish all approved, due drafts. Requires confirmation.", "requiresConfirmation": true },
+    { "name": "CreatePost", "infinitivePhrase": "to create a linkedin post", "description": "Direct publish a text post (bypasses draft workflow). Requires confirmation.", "requiresConfirmation": true },
+    { "name": "ShareLink", "infinitivePhrase": "to share a link on linkedin", "description": "Direct share a link post. Requires confirmation.", "requiresConfirmation": true },
+    { "name": "ShareImage", "infinitivePhrase": "to share an image on linkedin", "description": "Direct share an image post. Requires confirmation.", "requiresConfirmation": true },
+    { "name": "DeletePost", "infinitivePhrase": "to delete a linkedin post", "description": "Delete a published LinkedIn post. Destructive.", "requiresConfirmation": true, "destructive": true },
+    { "name": "DeleteDraft", "infinitivePhrase": "to delete a linkedin draft", "description": "Delete a LinkedIn draft. Requires confirmation.", "requiresConfirmation": true },
+    { "name": "ReplyComment", "infinitivePhrase": "to reply to a linkedin comment", "description": "Reply to a comment on a LinkedIn post. Requires confirmation.", "requiresConfirmation": true },
+    { "name": "GenerateContent", "infinitivePhrase": "to generate linkedin content", "description": "Generate a LinkedIn post from a brief using LLM. Creates a local draft." },
+    { "name": "PolishContent", "infinitivePhrase": "to polish linkedin content", "description": "Polish existing text using LLM. Creates a local draft." },
+    { "name": "OptimizeContent", "infinitivePhrase": "to optimize linkedin content", "description": "Optimize text for engagement using LLM. Creates a local draft." },
+    { "name": "GenerateVariants", "infinitivePhrase": "to generate linkedin content variants", "description": "Generate A/B test variants using LLM. Creates local drafts." },
+    { "name": "RepurposeUrl", "infinitivePhrase": "to repurpose a url for linkedin", "description": "Fetch a URL and rewrite as a LinkedIn post. SSRF-protected." }
+  ]
+}

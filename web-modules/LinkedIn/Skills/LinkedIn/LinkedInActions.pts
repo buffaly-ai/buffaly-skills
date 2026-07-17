@@ -1,0 +1,280 @@
+// -- Safe tools (local reads/writes, no external writes) ----------------
+
+[SemanticProgram.InfinitivePhrase("to inspect linkedin account status")]
+prototype ToGetLinkedInAccountStatus : LinkedInSkillAction
+{
+	Description = @"Check LinkedIn connection status, profile, and permissions. Returns JSON.";
+
+	function Execute() : string
+	{
+		return LinkedInSkillFacade.GetAccountStatus();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get linkedin llm info")]
+prototype ToGetLinkedInLlmInfo : LinkedInSkillAction
+{
+	Description = @"Get LLM provider information. Returns JSON with provider name and configuration status.";
+
+	function Execute() : string
+	{
+		return LinkedInSkillFacade.GetLlmInfo();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list linkedin drafts")]
+prototype ToListLinkedInDrafts : LinkedInSkillAction
+{
+	Description = @"status - optional filter (draft, approved, scheduled, published). Returns JSON array of drafts.";
+
+	function Execute(string status) : string
+	{
+		return LinkedInSkillFacade.ListDrafts(status);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get a linkedin draft")]
+prototype ToGetLinkedInDraft : LinkedInSkillAction
+{
+	Description = @"draftId - the LinkedIn draft ID. Returns JSON draft object.";
+
+	function Execute(string draftId) : string
+	{
+		return LinkedInSkillFacade.GetDraft(draftId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create a linkedin draft")]
+prototype ToCreateLinkedInDraft : LinkedInSkillAction
+{
+	Description = @"text - post text. visibility - PUBLIC or CONNECTIONS. mediaType - text, image, or link. linkUrl, imagePath, title, description optional. Returns JSON draft.";
+
+	function Execute(string text, string visibility, string mediaType, string linkUrl, string imagePath, string title, string description) : string
+	{
+		return LinkedInSkillFacade.CreateDraft(text, visibility, mediaType, linkUrl, imagePath, title, description);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to approve a linkedin draft")]
+prototype ToApproveLinkedInDraft : LinkedInSkillAction
+{
+	Description = @"draftId - the LinkedIn draft ID. note - optional approval note. Returns JSON.";
+
+	function Execute(string draftId, string note) : string
+	{
+		return LinkedInSkillFacade.ApproveDraft(draftId, note);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to schedule a linkedin draft")]
+prototype ToScheduleLinkedInDraft : LinkedInSkillAction
+{
+	Description = @"draftId - the LinkedIn draft ID. when - ISO 8601 datetime. Returns JSON.";
+
+	function Execute(string draftId, string when) : string
+	{
+		return LinkedInSkillFacade.ScheduleDraft(draftId, when);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to unschedule a linkedin draft")]
+prototype ToUnscheduleLinkedInDraft : LinkedInSkillAction
+{
+	Description = @"draftId - the LinkedIn draft ID. Returns JSON.";
+
+	function Execute(string draftId) : string
+	{
+		return LinkedInSkillFacade.UnscheduleDraft(draftId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get linkedin voice profile")]
+prototype ToGetLinkedInVoice : LinkedInSkillAction
+{
+	Description = @"Get the brand voice profile for LinkedIn content. Returns JSON.";
+
+	function Execute() : string
+	{
+		return LinkedInSkillFacade.GetVoice();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set linkedin voice profile")]
+prototype ToSetLinkedInVoice : LinkedInSkillAction
+{
+	Description = @"tone - voice tone description. audience - target audience description. Returns JSON.";
+
+	function Execute(string tone, string audience) : string
+	{
+		return LinkedInSkillFacade.SetVoice(tone, audience);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to probe linkedin permissions")]
+prototype ToProbeLinkedInPermissions : LinkedInSkillAction
+{
+	Description = @"Check which LinkedIn operations are available based on granted scopes. Returns JSON.";
+
+	function Execute() : string
+	{
+		return LinkedInSkillFacade.PermissionProbe();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list linkedin published posts")]
+prototype ToListLinkedInPublishedPosts : LinkedInSkillAction
+{
+	Description = @"List published post history. Returns JSON array.";
+
+	function Execute() : string
+	{
+		return LinkedInSkillFacade.ListPublishedPosts();
+	}
+}
+
+// -- High-risk tools (external writes, require confirmation) ------------
+
+[SemanticProgram.InfinitivePhrase("to publish a linkedin draft")]
+prototype ToPublishLinkedInDraft : LinkedInSkillAction
+{
+	Description = @"draftId - the LinkedIn draft ID. Publishes an approved draft to LinkedIn. Requires confirmation.";
+
+	function Execute(string draftId) : string
+	{
+		return LinkedInSkillFacade.PublishDraft(draftId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to publish due linkedin drafts")]
+prototype ToPublishLinkedInDueDrafts : LinkedInSkillAction
+{
+	Description = @"Publish all approved, due drafts. Requires confirmation.";
+
+	function Execute() : string
+	{
+		return LinkedInSkillFacade.PublishDue();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create a linkedin post")]
+prototype ToCreateLinkedInPost : LinkedInSkillAction
+{
+	Description = @"text - post text. visibility - PUBLIC or CONNECTIONS. Direct publish (bypasses draft workflow). Requires confirmation.";
+
+	function Execute(string text, string visibility) : string
+	{
+		return LinkedInSkillFacade.CreatePost(text, visibility);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to share a link on linkedin")]
+prototype ToShareLinkedInLink : LinkedInSkillAction
+{
+	Description = @"text, url, title, description, visibility. Direct share a link post. Requires confirmation.";
+
+	function Execute(string text, string url, string title, string description, string visibility) : string
+	{
+		return LinkedInSkillFacade.ShareLink(text, url, title, description, visibility);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to share an image on linkedin")]
+prototype ToShareLinkedInImage : LinkedInSkillAction
+{
+	Description = @"text, imagePath, title, altText, visibility. Direct share an image post. Requires confirmation.";
+
+	function Execute(string text, string imagePath, string title, string altText, string visibility) : string
+	{
+		return LinkedInSkillFacade.ShareImage(text, imagePath, title, altText, visibility);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to delete a linkedin post")]
+prototype ToDeleteLinkedInPost : LinkedInSkillAction
+{
+	Description = @"postUrn - the LinkedIn post URN. Destructive. Requires confirmation.";
+
+	function Execute(string postUrn) : string
+	{
+		return LinkedInSkillFacade.DeletePost(postUrn);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to delete a linkedin draft")]
+prototype ToDeleteLinkedInDraft : LinkedInSkillAction
+{
+	Description = @"draftId - the LinkedIn draft ID. Requires confirmation.";
+
+	function Execute(string draftId) : string
+	{
+		return LinkedInSkillFacade.DeleteDraft(draftId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to reply to a linkedin comment")]
+prototype ToReplyLinkedInComment : LinkedInSkillAction
+{
+	Description = @"postUrn - the LinkedIn post URN. commentText - the reply text. Requires confirmation.";
+
+	function Execute(string postUrn, string commentText) : string
+	{
+		return LinkedInSkillFacade.ReplyComment(postUrn, commentText);
+	}
+}
+
+// -- Content intelligence (LLM-backed, creates local drafts) -----------
+
+[SemanticProgram.InfinitivePhrase("to generate linkedin content")]
+prototype ToGenerateLinkedInContent : LinkedInSkillAction
+{
+	Description = @"brief - content brief description. Generate a LinkedIn post using LLM. Returns JSON draft.";
+
+	function Execute(string brief) : string
+	{
+		return LinkedInSkillFacade.GenerateContent(brief);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to polish linkedin content")]
+prototype ToPolishLinkedInContent : LinkedInSkillAction
+{
+	Description = @"text - the text to polish. Returns JSON draft.";
+
+	function Execute(string text) : string
+	{
+		return LinkedInSkillFacade.PolishContent(text);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to optimize linkedin content")]
+prototype ToOptimizeLinkedInContent : LinkedInSkillAction
+{
+	Description = @"text - the text to optimize. Returns JSON draft.";
+
+	function Execute(string text) : string
+	{
+		return LinkedInSkillFacade.OptimizeContent(text);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to generate linkedin content variants")]
+prototype ToGenerateLinkedInVariants : LinkedInSkillAction
+{
+	Description = @"text - the source text. n - number of variants. Returns JSON array of drafts.";
+
+	function Execute(string text, int n) : string
+	{
+		return LinkedInSkillFacade.GenerateVariants(text, n);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to repurpose a url for linkedin")]
+prototype ToRepurposeUrlForLinkedIn : LinkedInSkillAction
+{
+	Description = @"url - the URL to repurpose. angle - optional angle/perspective. Returns JSON draft.";
+
+	function Execute(string url, string angle) : string
+	{
+		return LinkedInSkillFacade.RepurposeUrl(url, angle);
+	}
+}

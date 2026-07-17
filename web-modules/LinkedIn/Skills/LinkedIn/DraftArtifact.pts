@@ -1,0 +1,85 @@
+[SemanticProgram.InfinitivePhrase("to get a linkedin draft artifact")]
+prototype ToGetLinkedInDraftArtifact : LinkedInSkillAction
+{
+	Description = @"draftId - the LinkedIn draft ID. Returns the current draft artifact state including text, media, variants, and revision history.";
+
+	function Execute(string draftId) : string
+	{
+		return LinkedInSkillFacade.GetDraftArtifact(draftId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to update linkedin draft text")]
+prototype ToUpdateLinkedInDraftText : LinkedInSkillAction
+{
+	Description = @"draftId - the LinkedIn draft ID. text - the new post text. summary - optional revision summary. Returns the updated artifact.";
+
+	function Execute(string draftId, string text, string summary) : string
+	{
+		return LinkedInSkillFacade.UpdateDraftText(draftId, text, summary);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set linkedin draft media")]
+prototype ToSetLinkedInDraftMedia : LinkedInSkillAction
+{
+	Description = @"draftId - the LinkedIn draft ID. imagePrompt - prompt used to generate the image. imagePath - local file path. imageUrl - public URL. altText - accessibility text. Returns the updated artifact.";
+
+	function Execute(string draftId, string imagePrompt, string imagePath, string imageUrl, string altText) : string
+	{
+		return LinkedInSkillFacade.SetDraftMedia(draftId, imagePrompt, imagePath, imageUrl, altText);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to generate an image for a linkedin draft")]
+[SemanticProgram.InfinitivePhrase("to create an image for a linkedin post")]
+prototype ToGenerateLinkedInDraftImage : LinkedInSkillAction
+{
+	Description = @"Generates an OpenAI image in the current LinkedIn draft session artifacts folder. Returns result JSON containing the generated local path and browser-loadable artifact URL; pass those values to ToSetLinkedInDraftMedia.";
+
+	function Execute(string prompt, string size, string model, string quality, string background, string outputFormat, string outputCompression) : string
+	{
+		string apiKey = OpenAIFeature.Feature.ApiKey;
+		if (StringUtil.IsEmpty(apiKey))
+		{
+			throw "OpenAI feature API key is required before generating a LinkedIn draft image.";
+		}
+
+		if (_opsAgent == null)
+		{
+			throw "_opsAgent runtime is not available.";
+		}
+
+		string sessionDirectory = _opsAgent.GetCurrentSessionDirectory();
+		if (StringUtil.IsEmpty(sessionDirectory))
+		{
+			throw "Current LinkedIn draft session directory is not available.";
+		}
+
+		string artifactRelativeDirectory = "artifacts/images/linkedin";
+		string outputDirectory = Path.Combine(sessionDirectory, artifactRelativeDirectory);
+		return OpenAIImageGenerationServiceRuntime.CreateImageFromParameters(apiKey, outputDirectory, artifactRelativeDirectory, prompt, size, model, quality, background, outputFormat, outputCompression);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set linkedin draft variants")]
+prototype ToSetLinkedInDraftVariants : LinkedInSkillAction
+{
+	Description = @"draftId - the LinkedIn draft ID. variantsJson - JSON array of variant objects with label and text fields. Returns the updated artifact.";
+
+	function Execute(string draftId, string variantsJson) : string
+	{
+		return LinkedInSkillFacade.SetDraftVariants(draftId, variantsJson);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to apply a linkedin draft variant")]
+prototype ToApplyLinkedInDraftVariant : LinkedInSkillAction
+{
+	Description = @"draftId - the LinkedIn draft ID. variantId - the ID of the variant to apply. Returns the updated artifact with the variant text applied.";
+
+	function Execute(string draftId, string variantId) : string
+	{
+		return LinkedInSkillFacade.ApplyDraftVariant(draftId, variantId);
+	}
+}

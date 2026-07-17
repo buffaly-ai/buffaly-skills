@@ -1,14 +1,7 @@
-# index.pts.md Change History
+# ComputerUse guidance skill package notes
 
-## Add run-control actions (2026-06-01)
-- Kept `ToRunComputerUseTask` as a non-blocking start action and clarified its description.
-- Added `ToGetComputerUseRunStatus` so agents can check progress through `ComputerUseWorkbenchServiceHost.GetRun(...)` without PowerShell/file polling.
-- Added `ToStopComputerUseRun` so agents can interrupt a run through `ComputerUseWorkbenchServiceHost.StopRun(...)`.
-- Added `ToRunComputerUseTaskAndWait` so agents can start and wait through the typed runtime with timeout, poll interval, and optional stop-on-timeout controls.
-
-## Initialize from OpenAIFeature (2026-05-30)
-- ComputerUseWebModuleService.Initialize now reads LLMs.GetResponsesApiKeyOrEmpty and calls the ComputerUse JsonWs initialize route before tool calls use the module.
-
-## Use typed maxSteps parameter (2026-05-31)
-- Changed `ToRunComputerUseTask.Execute(...)` to accept `int maxSteps` and pass it directly to `StartComputerUseRunRequest.MaxSteps` instead of parsing a string in ProtoScript.
-- Design Decision: keep ProtoScript as a thin wrapper over the C# contract; integer parsing belongs at the environment/C# binding boundary, not inside the `.pts` wrapper.
+## Restore guidance-only compatibility surface (2026-07-16)
+- Reintroduced the `ComputerUse` package skill as a guidance-only prompt route.
+- The old OpenAI ComputerUse task-level loop remains retired and must not be restored.
+- The replacement directs agents to `UseDesktopInteractionSkill` and direct Desktop primitives using the active session provider/model.
+- No `OpenAIFeature`, `ComputerUseWorkbenchServiceHost`, run/status/stop actions, nested model parameter, provider parameter, or API-key parameter should be added here.

@@ -1,0 +1,356 @@
+prototype WebPropertyEditorService : Service
+{
+	ServiceName = "WebPropertyEditorService";
+	Scope = "per-session";
+	Description = @"Session-bound website editing service. The binding is resolved from the current Buffaly session and is not model-selectable.";
+
+	function Initialize() : String
+	{
+		return WebPropertyEditorFacade.Initialize(_sessionObject);
+	}
+
+	function ToGetBoundWebsiteStatus() : String
+	{
+		return WebPropertyEditorFacade.GetStatus(_sessionObject);
+	}
+
+	function ToGetBoundWebsiteAnalytics(String timeframe) : String { return WebPropertyEditorFacade.GetAnalytics(_sessionObject, timeframe); }
+	function ToGetBoundWebsiteAnalyticsDailyStats(String timeframe, Int offset, Int limit) : String { return WebPropertyEditorFacade.GetAnalyticsDailyStats(_sessionObject, timeframe, offset, limit); }
+	function ToGetBoundWebsiteAnalyticsLandingPages(String timeframe, Int offset, Int limit) : String { return WebPropertyEditorFacade.GetAnalyticsLandingPages(_sessionObject, timeframe, offset, limit); }
+	function ToGetBoundWebsiteAnalyticsSources(String timeframe, Int offset, Int limit) : String { return WebPropertyEditorFacade.GetAnalyticsSources(_sessionObject, timeframe, offset, limit); }
+	function ToGetBoundWebsiteAnalyticsDevices(String timeframe, Int offset, Int limit) : String { return WebPropertyEditorFacade.GetAnalyticsDevices(_sessionObject, timeframe, offset, limit); }
+	function ToGetBoundWebsiteTrafficSummary(String timeframe) : String { return WebPropertyEditorFacade.GetTrafficSummary(_sessionObject, timeframe); }
+	function ToGetBoundWebsiteTrafficOverview(String timeframe) : String { return WebPropertyEditorFacade.GetTrafficOverview(_sessionObject, timeframe); }
+	function ToGetBoundWebsiteTrafficDates(String timeframe) : String { return WebPropertyEditorFacade.GetTrafficDates(_sessionObject, timeframe); }
+	function ToGetBoundWebsiteTrafficAgents(String timeframe, String agentType, String sort, Int offset, Int limit) : String { return WebPropertyEditorFacade.GetTrafficAgents(_sessionObject, timeframe, agentType, sort, offset, limit); }
+	function ToGetBoundWebsiteTrafficSessions(String timeframe, String date, String filter, String agentKey, String sort, Int offset, Int limit) : String { return WebPropertyEditorFacade.GetTrafficSessions(_sessionObject, timeframe, date, filter, agentKey, sort, offset, limit); }
+	function ToGetBoundWebsiteTrafficSessionDetail(String timeframe, String sessionKey) : String { return WebPropertyEditorFacade.GetTrafficSessionDetail(_sessionObject, timeframe, sessionKey); }
+
+	function ToSyncBoundWebsiteRepository() : String
+	{
+		return WebPropertyEditorFacade.SyncRepository(_sessionObject);
+	}
+
+	function ToListBoundWebsiteFiles(String relativeDirectory, String glob, Int maxResults) : String
+	{
+		return WebPropertyEditorFacade.ListFiles(_sessionObject, relativeDirectory, glob, maxResults);
+	}
+
+	function ToGetBoundWebsiteTree(String relativeDirectory, Int maxDepth, Int maxResults) : String
+	{
+		return WebPropertyEditorFacade.GetTree(_sessionObject, relativeDirectory, maxDepth, maxResults);
+	}
+
+	function ToReadBoundWebsiteFile(String relativePath) : String
+	{
+		return WebPropertyEditorFacade.ReadFile(_sessionObject, relativePath);
+	}
+
+	function ToSearchBoundWebsiteFiles(String query, String glob, Int maxResults) : String
+	{
+		return WebPropertyEditorFacade.SearchFiles(_sessionObject, query, glob, maxResults);
+	}
+
+	function ToApplyBoundWebsiteSmartPatch(String relativePath, String patchText) : String
+	{
+		return WebPropertyEditorFacade.ApplySmartPatch(_sessionObject, relativePath, patchText);
+	}
+
+	function ToCreateBoundWebsiteFile(String relativePath, String content) : String
+	{
+		return WebPropertyEditorFacade.CreateFile(_sessionObject, relativePath, content);
+	}
+
+	function ToDeleteBoundWebsiteFile(String relativePath) : String
+	{
+		return WebPropertyEditorFacade.DeleteFile(_sessionObject, relativePath);
+	}
+
+	function ToRenameBoundWebsiteFile(String oldRelativePath, String newRelativePath) : String
+	{
+		return WebPropertyEditorFacade.RenameFile(_sessionObject, oldRelativePath, newRelativePath);
+	}
+
+	function ToGetBoundWebsiteDiff(Int maxChars) : String
+	{
+		return WebPropertyEditorFacade.GetDiff(_sessionObject, maxChars);
+	}
+
+	function ToGetBoundWebsiteGitStatus() : String
+	{
+		return WebPropertyEditorFacade.GetGitStatus(_sessionObject);
+	}
+
+	function ToRestoreBoundWebsiteDependencies() : String
+	{
+		return WebPropertyEditorFacade.RestoreDependencies(_sessionObject);
+	}
+
+	function ToBuildBoundWebsite() : String
+	{
+		return WebPropertyEditorFacade.BuildWebsite(_sessionObject);
+	}
+
+	function ToCommitAndPushBoundWebsiteChanges(String commitMessage) : String
+	{
+		return WebPropertyEditorFacade.CommitAndPush(_sessionObject, commitMessage);
+	}
+
+	function ToStartBoundWebsitePreview() : String
+	{
+		return WebPropertyEditorFacade.StartPreview(_sessionObject);
+	}
+
+	function ToGetBoundWebsitePreviewStatus(String operationToken) : String
+	{
+		return WebPropertyEditorFacade.GetPreviewStatus(_sessionObject, operationToken);
+	}
+
+	function ToWaitForBoundWebsitePreview(Int timeoutSeconds) : String
+	{
+		return WebPropertyEditorFacade.WaitForPreview(_sessionObject, timeoutSeconds);
+	}
+
+	function ToCheckBoundWebsitePreviewUrl(String relativePath) : String
+	{
+		return WebPropertyEditorFacade.CheckPreviewUrl(_sessionObject, relativePath);
+	}
+
+	function ToStartBoundWebsiteProductionPublish() : String
+	{
+		return WebPropertyEditorFacade.StartProductionPublish(_sessionObject);
+	}
+
+	function ToGetBoundWebsiteProductionPublishStatus(String operationToken) : String
+	{
+		return WebPropertyEditorFacade.GetProductionPublishStatus(_sessionObject, operationToken);
+	}
+
+	function ToWaitForBoundWebsiteProductionPublish(Int timeoutSeconds) : String
+	{
+		return WebPropertyEditorFacade.WaitForProductionPublish(_sessionObject, timeoutSeconds);
+	}
+
+	function ToCheckBoundWebsiteProductionUrl(String relativePath) : String
+	{
+		return WebPropertyEditorFacade.CheckProductionUrl(_sessionObject, relativePath);
+	}
+
+	function ToCaptureBoundWebsitePreviewScreenshot(String relativePath, String viewportName) : String
+	{
+		return WebPropertyEditorFacade.CapturePreviewScreenshot(_sessionObject, relativePath, viewportName);
+	}
+
+	function ToRevertBoundWebsiteChanges() : String
+	{
+		return WebPropertyEditorFacade.RevertChanges(_sessionObject);
+	}
+}
+
+partial prototype WebPropertyEditorService#Current : WebPropertyEditorService
+{
+	AutoInitialize = false;
+}
+
+prototype WebPropertyEditorAgentAction
+{
+	String Description = new String();
+}
+
+[SemanticProgram.InfinitivePhrase("to get all analytics for the bound website")]
+prototype ToGetBoundWebsiteAnalytics : WebPropertyEditorAgentAction { Description = @"timeframe - 24h, 7d, or 30d. Returns the complete bound analytics snapshot."; function Execute(string timeframe) : string { return WebPropertyEditorFacade.GetAnalytics(_sessionObject, timeframe); } }
+[SemanticProgram.InfinitivePhrase("to get daily analytics for the bound website")]
+prototype ToGetBoundWebsiteAnalyticsDailyStats : WebPropertyEditorAgentAction { Description = @"Returns typed daily analytics rows for the sealed bound WebProperty."; function Execute(string timeframe, string offset, string limit) : string { return WebPropertyEditorFacade.GetAnalyticsDailyStats(_sessionObject, timeframe, offset, limit); } }
+[SemanticProgram.InfinitivePhrase("to get landing page analytics for the bound website")]
+prototype ToGetBoundWebsiteAnalyticsLandingPages : WebPropertyEditorAgentAction { Description = @"Returns landing-page analytics for the sealed bound WebProperty."; function Execute(string timeframe, string offset, string limit) : string { return WebPropertyEditorFacade.GetAnalyticsLandingPages(_sessionObject, timeframe, offset, limit); } }
+[SemanticProgram.InfinitivePhrase("to get traffic source analytics for the bound website")]
+prototype ToGetBoundWebsiteAnalyticsSources : WebPropertyEditorAgentAction { Description = @"Returns source analytics for the sealed bound WebProperty."; function Execute(string timeframe, string offset, string limit) : string { return WebPropertyEditorFacade.GetAnalyticsSources(_sessionObject, timeframe, offset, limit); } }
+[SemanticProgram.InfinitivePhrase("to get device analytics for the bound website")]
+prototype ToGetBoundWebsiteAnalyticsDevices : WebPropertyEditorAgentAction { Description = @"Returns device analytics for the sealed bound WebProperty."; function Execute(string timeframe, string offset, string limit) : string { return WebPropertyEditorFacade.GetAnalyticsDevices(_sessionObject, timeframe, offset, limit); } }
+[SemanticProgram.InfinitivePhrase("to get traffic summary for the bound website")]
+prototype ToGetBoundWebsiteTrafficSummary : WebPropertyEditorAgentAction { Description = @"Returns server-log traffic summary for the sealed bound WebProperty."; function Execute(string timeframe) : string { return WebPropertyEditorFacade.GetTrafficSummary(_sessionObject, timeframe); } }
+[SemanticProgram.InfinitivePhrase("to get complete traffic overview for the bound website")]
+prototype ToGetBoundWebsiteTrafficOverview : WebPropertyEditorAgentAction { Description = @"Returns complete server-log overview for the sealed bound WebProperty."; function Execute(string timeframe) : string { return WebPropertyEditorFacade.GetTrafficOverview(_sessionObject, timeframe); } }
+[SemanticProgram.InfinitivePhrase("to get traffic dates for the bound website")]
+prototype ToGetBoundWebsiteTrafficDates : WebPropertyEditorAgentAction { Description = @"Returns daily server-log totals for the sealed bound WebProperty."; function Execute(string timeframe) : string { return WebPropertyEditorFacade.GetTrafficDates(_sessionObject, timeframe); } }
+[SemanticProgram.InfinitivePhrase("to group bound website traffic by agent")]
+prototype ToGetBoundWebsiteTrafficAgents : WebPropertyEditorAgentAction { Description = @"Groups visits by normalized human, AI, search, bot, or malicious agent identity."; function Execute(string timeframe, string agentType, string sort, string offset, string limit) : string { return WebPropertyEditorFacade.GetTrafficAgents(_sessionObject, timeframe, agentType, sort, offset, limit); } }
+[SemanticProgram.InfinitivePhrase("to list visits to the bound website")]
+prototype ToGetBoundWebsiteTrafficSessions : WebPropertyEditorAgentAction { Description = @"Returns paged visits, optionally filtered by date, class, and exact AgentKey."; function Execute(string timeframe, string date, string filter, string agentKey, string sort, string offset, string limit) : string { return WebPropertyEditorFacade.GetTrafficSessions(_sessionObject, timeframe, date, filter, agentKey, sort, offset, limit); } }
+[SemanticProgram.InfinitivePhrase("to inspect a bound website visit")]
+prototype ToGetBoundWebsiteTrafficSessionDetail : WebPropertyEditorAgentAction { Description = @"Returns one visit and its complete ordered page URL/timestamp sequence."; function Execute(string timeframe, string sessionKey) : string { return WebPropertyEditorFacade.GetTrafficSessionDetail(_sessionObject, timeframe, sessionKey); } }
+
+[SemanticProgram.InfinitivePhrase("to initialize the bound website editor")]
+prototype ToInitializeBoundWebsiteEditor : WebPropertyEditorAgentAction
+{
+	Description = @"Initialize the bound website editor session without exposing the sealed WebProperty binding.";
+	function Execute() : string { return WebPropertyEditorFacade.Initialize(_sessionObject); }
+}
+
+[SemanticProgram.InfinitivePhrase("to sync the bound website repository")]
+prototype ToSyncBoundWebsiteRepository : WebPropertyEditorAgentAction
+{
+	Description = @"Synchronize the sealed bound website repository into the session workspace.";
+	function Execute() : string { return WebPropertyEditorFacade.SyncRepository(_sessionObject); }
+}
+
+[SemanticProgram.InfinitivePhrase("to get the bound website tree")]
+prototype ToGetBoundWebsiteTree : WebPropertyEditorAgentAction
+{
+	Description = @"relativeDirectory - relative directory under the bound website. maxDepth - bounded tree depth. maxResults - bounded result count.";
+	function Execute(string relativeDirectory, string maxDepth, string maxResults) : string { return WebPropertyEditorFacade.GetTree(_sessionObject, relativeDirectory, maxDepth, maxResults); }
+}
+
+[SemanticProgram.InfinitivePhrase("to list bound website files")]
+prototype ToListBoundWebsiteFiles : WebPropertyEditorAgentAction
+{
+	Description = @"relativeDirectory - relative directory under the bound website. glob - file glob. maxResults - bounded result count.";
+	function Execute(string relativeDirectory, string glob, string maxResults) : string { return WebPropertyEditorFacade.ListFiles(_sessionObject, relativeDirectory, glob, maxResults); }
+}
+
+[SemanticProgram.InfinitivePhrase("to read a bound website file")]
+prototype ToReadBoundWebsiteFile : WebPropertyEditorAgentAction
+{
+	Description = @"relativePath - relative file path under the bound website.";
+	function Execute(string relativePath) : string { return WebPropertyEditorFacade.ReadFile(_sessionObject, relativePath); }
+}
+
+[SemanticProgram.InfinitivePhrase("to search bound website files")]
+prototype ToSearchBoundWebsiteFiles : WebPropertyEditorAgentAction
+{
+	Description = @"query - literal text to find. glob - file glob. maxResults - bounded result count.";
+	function Execute(string query, string glob, string maxResults) : string { return WebPropertyEditorFacade.SearchFiles(_sessionObject, query, glob, maxResults); }
+}
+
+[SemanticProgram.InfinitivePhrase("to create a bound website file")]
+prototype ToCreateBoundWebsiteFile : WebPropertyEditorAgentAction
+{
+	Description = @"relativePath - relative file path under the bound website. content - text content to write.";
+	function Execute(string relativePath, string content) : string { return WebPropertyEditorFacade.CreateFile(_sessionObject, relativePath, content); }
+}
+
+[SemanticProgram.InfinitivePhrase("to delete a bound website file")]
+prototype ToDeleteBoundWebsiteFile : WebPropertyEditorAgentAction
+{
+	Description = @"relativePath - relative file path under the bound website.";
+	function Execute(string relativePath) : string { return WebPropertyEditorFacade.DeleteFile(_sessionObject, relativePath); }
+}
+
+[SemanticProgram.InfinitivePhrase("to rename a bound website file")]
+prototype ToRenameBoundWebsiteFile : WebPropertyEditorAgentAction
+{
+	Description = @"oldRelativePath - existing relative file path. newRelativePath - new relative file path.";
+	function Execute(string oldRelativePath, string newRelativePath) : string { return WebPropertyEditorFacade.RenameFile(_sessionObject, oldRelativePath, newRelativePath); }
+}
+
+[SemanticProgram.InfinitivePhrase("to apply a smart patch to a bound website file")]
+prototype ToApplyBoundWebsiteSmartPatch : WebPropertyEditorAgentAction
+{
+	Description = @"relativePath - relative file path under the bound website. patchText - SmartPatch update document.";
+	function Execute(string relativePath, string patchText) : string { return WebPropertyEditorFacade.ApplySmartPatch(_sessionObject, relativePath, patchText); }
+}
+
+[SemanticProgram.InfinitivePhrase("to get bound website git status")]
+prototype ToGetBoundWebsiteGitStatus : WebPropertyEditorAgentAction
+{
+	Description = @"Return sanitized git status for the bound website workspace.";
+	function Execute() : string { return WebPropertyEditorFacade.GetGitStatus(_sessionObject); }
+}
+
+[SemanticProgram.InfinitivePhrase("to get bound website diff")]
+prototype ToGetBoundWebsiteDiff : WebPropertyEditorAgentAction
+{
+	Description = @"maxChars - bounded maximum diff characters.";
+	function Execute(string maxChars) : string { return WebPropertyEditorFacade.GetDiff(_sessionObject, maxChars); }
+}
+
+[SemanticProgram.InfinitivePhrase("to restore bound website dependencies")]
+prototype ToRestoreBoundWebsiteDependencies : WebPropertyEditorAgentAction
+{
+	Description = @"Run the sealed dependency restore command for the bound website.";
+	function Execute() : string { return WebPropertyEditorFacade.RestoreDependencies(_sessionObject); }
+}
+
+[SemanticProgram.InfinitivePhrase("to build the bound website")]
+prototype ToBuildBoundWebsite : WebPropertyEditorAgentAction
+{
+	Description = @"Run the sealed build command for the bound website.";
+	function Execute() : string { return WebPropertyEditorFacade.BuildWebsite(_sessionObject); }
+}
+
+[SemanticProgram.InfinitivePhrase("to commit and push bound website changes")]
+prototype ToCommitAndPushBoundWebsiteChanges : WebPropertyEditorAgentAction
+{
+	Description = @"commitMessage - commit message for the sealed branch.";
+	function Execute(string commitMessage) : string { return WebPropertyEditorFacade.CommitAndPush(_sessionObject, commitMessage); }
+}
+
+[SemanticProgram.InfinitivePhrase("to start bound website preview")]
+prototype ToStartBoundWebsitePreview : WebPropertyEditorAgentAction
+{
+	Description = @"Start the sealed preview build for the bound website.";
+	function Execute() : string { return WebPropertyEditorFacade.StartPreview(_sessionObject); }
+}
+
+[SemanticProgram.InfinitivePhrase("to get bound website preview status")]
+prototype ToGetBoundWebsitePreviewStatus : WebPropertyEditorAgentAction
+{
+	Description = @"operationToken - opaque preview operation token returned by preview start.";
+	function Execute(string operationToken) : string { return WebPropertyEditorFacade.GetPreviewStatus(_sessionObject, operationToken); }
+}
+
+[SemanticProgram.InfinitivePhrase("to wait for bound website preview")]
+prototype ToWaitForBoundWebsitePreview : WebPropertyEditorAgentAction
+{
+	Description = @"timeoutSeconds - bounded timeout in seconds.";
+	function Execute(string timeoutSeconds) : string { return WebPropertyEditorFacade.WaitForPreview(_sessionObject, timeoutSeconds); }
+}
+
+[SemanticProgram.InfinitivePhrase("to check bound website preview url")]
+prototype ToCheckBoundWebsitePreviewUrl : WebPropertyEditorAgentAction
+{
+	Description = @"relativePath - relative preview path under the sealed preview origin.";
+	function Execute(string relativePath) : string { return WebPropertyEditorFacade.CheckPreviewUrl(_sessionObject, relativePath); }
+}
+
+[SemanticProgram.InfinitivePhrase("to start bound website production publish")]
+prototype ToStartBoundWebsiteProductionPublish : WebPropertyEditorAgentAction
+{
+	Description = @"Start the sealed production publish build for the bound website.";
+	function Execute() : string { return WebPropertyEditorFacade.StartProductionPublish(_sessionObject); }
+}
+
+[SemanticProgram.InfinitivePhrase("to get bound website production publish status")]
+prototype ToGetBoundWebsiteProductionPublishStatus : WebPropertyEditorAgentAction
+{
+	Description = @"operationToken - opaque production publish operation token returned by production publish start.";
+	function Execute(string operationToken) : string { return WebPropertyEditorFacade.GetProductionPublishStatus(_sessionObject, operationToken); }
+}
+
+[SemanticProgram.InfinitivePhrase("to wait for bound website production publish")]
+prototype ToWaitForBoundWebsiteProductionPublish : WebPropertyEditorAgentAction
+{
+	Description = @"timeoutSeconds - bounded timeout in seconds.";
+	function Execute(string timeoutSeconds) : string { return WebPropertyEditorFacade.WaitForProductionPublish(_sessionObject, timeoutSeconds); }
+}
+
+[SemanticProgram.InfinitivePhrase("to check bound website production url")]
+prototype ToCheckBoundWebsiteProductionUrl : WebPropertyEditorAgentAction
+{
+	Description = @"relativePath - relative production path under the sealed production origin.";
+	function Execute(string relativePath) : string { return WebPropertyEditorFacade.CheckProductionUrl(_sessionObject, relativePath); }
+}
+
+[SemanticProgram.InfinitivePhrase("to capture bound website preview screenshot")]
+prototype ToCaptureBoundWebsitePreviewScreenshot : WebPropertyEditorAgentAction
+{
+	Description = @"relativePath - relative preview path. viewportName - sanitized viewport label.";
+	function Execute(string relativePath, string viewportName) : string { return WebPropertyEditorFacade.CapturePreviewScreenshot(_sessionObject, relativePath, viewportName); }
+}
+
+[SemanticProgram.InfinitivePhrase("to revert bound website changes")]
+prototype ToRevertBoundWebsiteChanges : WebPropertyEditorAgentAction
+{
+	Description = @"Revert uncommitted bound website workspace changes to the sealed branch head.";
+	function Execute() : string { return WebPropertyEditorFacade.RevertChanges(_sessionObject); }
+}

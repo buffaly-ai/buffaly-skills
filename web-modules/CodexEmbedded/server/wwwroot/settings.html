@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Codex Settings</title>
+	<link rel="icon" type="image/x-icon" href="images/favicon.ico">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+	<link rel="stylesheet" href="site.css?v=20260226-mobiletitle1">
+</head>
+<body>
+	<div class="layout">
+		<button id="mobileProjectsBtn" class="toolbar-mobile-projects-btn" type="button" title="Show projects" aria-label="Show projects" aria-expanded="false">
+			<i class="bi bi-layout-sidebar-inset-reverse" aria-hidden="true"></i>
+			<span>Projects</span>
+		</button>
+		<main class="main codex-main">
+			<aside id="sessionSidebar" class="panel session-sidebar">
+				<div class="sidebar-shell-header">
+					<a class="sidebar-logo-btn" href="https://buffa.ly/?utm_source=codexembedded&utm_medium=settings_logo&utm_campaign=sidebar" target="_blank" rel="noopener" title="Made by the Buffaly team - learn more" aria-label="Made by the Buffaly team - learn more">
+						<img class="sidebar-logo-image" src="images/bf_logo_fav_Large.png" alt="">
+					</a>
+					<button id="sidebarToggleBtn" type="button" class="sidebar-collapse-btn sidebar-shell-toggle-btn" title="Hide projects" aria-label="Hide projects">
+						<i class="bi bi-layout-sidebar-inset-reverse" aria-hidden="true"></i>
+					</button>
+				</div>
+				<nav class="sidebar-nav" aria-label="Main navigation">
+					<a class="sidebar-nav-link" href="./">
+						<i class="bi bi-chat-square-text" aria-hidden="true"></i>
+						<span>Codex</span>
+					</a>
+					<a class="sidebar-nav-link" href="logs">
+						<i class="bi bi-journal-text" aria-hidden="true"></i>
+						<span>Logs</span>
+					</a>
+					<a class="sidebar-nav-link" href="watcher">
+						<i class="bi bi-eye" aria-hidden="true"></i>
+						<span>Watcher</span>
+					</a>
+					<a class="sidebar-nav-link" href="recap">
+						<i class="bi bi-clock-history" aria-hidden="true"></i>
+						<span>Recap</span>
+					</a>
+					<a class="sidebar-nav-link" href="server">
+						<i class="bi bi-cpu" aria-hidden="true"></i>
+						<span>Server</span>
+					</a>
+					<a class="sidebar-nav-link active" href="settings" aria-current="page">
+						<i class="bi bi-sliders" aria-hidden="true"></i>
+						<span>Settings</span>
+					</a>
+				</nav>
+				<div class="sidebar-divider" aria-hidden="true"></div>
+				<div class="settings-sidebar-note">User preferences</div>
+			</aside>
+			<section class="panel chat-panel settings-panel">
+				<div class="panel-title">Settings</div>
+				<div class="settings-body">
+					<section class="settings-section">
+						<h2 class="settings-section-title">Appearance</h2>
+						<p class="settings-section-copy">Use dark mode for the interface.</p>
+						<label class="settings-toggle-row" for="themeModeToggle">
+							<span class="settings-toggle-label">Dark mode</span>
+							<input id="themeModeToggle" class="settings-toggle-input" type="checkbox" role="switch" aria-label="Enable dark mode">
+						</label>
+						<div id="themeModeValue" class="settings-mode-value">Light mode enabled</div>
+						<label class="settings-toggle-row" for="assistantMarkdownToggle">
+							<span class="settings-toggle-label">Render assistant Markdown</span>
+							<input id="assistantMarkdownToggle" class="settings-toggle-input" type="checkbox" role="switch" aria-label="Render assistant messages as Markdown">
+						</label>
+						<div id="assistantMarkdownValue" class="settings-mode-value">Assistant Markdown rendering enabled</div>
+					</section>
+					<section class="settings-section">
+						<h2 class="settings-section-title">Build</h2>
+						<div id="buildInfoLine" class="settings-mode-value">Build: loading...</div>
+					</section>
+					<section class="settings-section">
+						<h2 class="settings-section-title">Codex Account</h2>
+						<p class="settings-section-copy">Shows the Codex account identity currently loaded from your CODEX_HOME auth file.</p>
+						<div class="settings-actions">
+							<button id="codexAuthRefreshBtn" class="settings-action-btn" type="button">Refresh status</button>
+						</div>
+						<div id="codexAuthStatus" class="settings-mode-value">Checking Codex auth status...</div>
+						<div id="codexAuthDetails" class="settings-mode-value"></div>
+						<div id="codexUsageStatus" class="settings-mode-value">Checking usage status...</div>
+						<div id="codexUsageBars" class="settings-usage-grid hidden" aria-live="polite"></div>
+						<div id="codexUsageDetails" class="settings-mode-value"></div>
+					</section>
+					<section class="settings-section">
+						<h2 class="settings-section-title">Voice and OpenAI</h2>
+						<p class="settings-section-copy">Set your OpenAI API key for speech-to-text. Your key is stored encrypted on your server where this application is installed, and it is not sent to anyone except OpenAI for transcription requests.</p>
+						<label class="settings-field-label" for="openAiKeyInput">OpenAI API key</label>
+						<input id="openAiKeyInput" class="settings-input" type="password" autocomplete="off" spellcheck="false" placeholder="sk-...">
+						<div class="settings-actions">
+							<button id="openAiKeySaveBtn" class="settings-action-btn primary" type="button">Save key</button>
+							<button id="openAiKeyClearBtn" class="settings-action-btn" type="button">Clear key</button>
+						</div>
+						<div id="openAiKeyStatus" class="settings-mode-value">Checking key status...</div>
+					</section>
+				</div>
+			</section>
+		</main>
+		<button id="sidebarBackdrop" class="sidebar-backdrop hidden" type="button" aria-label="Close projects"></button>
+	</div>
+	<script src="theme.js?v=20260225-settings1"></script>
+	<script src="settings.js?v=20260318-usage-details-grid1"></script>
+</body>
+</html>

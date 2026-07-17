@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>Facebook Ads · Buffaly</title>
+	<link rel="icon" href="data:,">
+	<link rel="stylesheet" href="css/facebook-ads-workspace.css">
+</head>
+<body>
+	<header class="app-strip"><a href="/">Buffaly</a><span class="app-divider"></span><span>Facebook Ads</span><span class="read-only-chip">Read-only workspace</span></header>
+	<main class="shell">
+		<section class="hero card">
+			<div><p class="eyebrow">Marketing intelligence</p><h1>Facebook Ads workspace</h1><p class="subtitle">Live account performance and local creative receipts, clearly separated.</p></div>
+			<div class="hero-actions"><span id="connectionPill" class="connection-pill">Checking connection…</span><button id="refreshButton" type="button">Refresh live data</button></div>
+		</section>
+		<div id="errorState" class="notice error hidden" role="alert"></div>
+		<div id="loadingState" class="notice hidden" aria-live="polite">Loading Meta Ads data…</div>
+		<section class="workspace-controls card">
+			<label><span>Ad account</span><select id="accountSelect"><option value="">Select an account</option></select></label>
+			<label><span>Reporting window</span><select id="datePreset"><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="last_7d">Last 7 days</option><option value="last_14d">Last 14 days</option><option value="last_30d" selected>Last 30 days</option><option value="this_month">This month</option></select></label>
+			<div class="refresh-meta"><span>Last live refresh</span><strong id="refreshedAt">Not refreshed</strong></div>
+		</section>
+		<section id="accountEligibility" class="account-eligibility hidden" role="status">
+			<div class="eligibility-icon" aria-hidden="true">!</div>
+			<div><span class="section-label">Account eligibility</span><strong id="accountEligibilityTitle"></strong><p id="accountEligibilityDetail"></p></div>
+			<a id="accountManagerLink" class="ghost-link" target="_blank" rel="noopener noreferrer">Open account in Meta Ads Manager ↗</a>
+		</section>
+		<nav class="tabs" aria-label="Workspace sections">
+			<button class="tab active" data-tab="overview">Overview</button>
+			<button class="tab" data-tab="campaigns">Campaigns</button>
+			<button class="tab" data-tab="detail">Campaign detail</button>
+			<button class="tab hidden" id="adDetailTab" data-tab="adDetail">Ad details</button>
+			<button class="tab draft-tab" data-tab="drafts">Draft Library <span>3 local</span></button>
+		</nav>
+		<section id="overviewPanel" class="tab-panel">
+			<div class="panel-heading"><div><p class="eyebrow">Live Meta reporting</p><h2>Performance overview</h2><p>Account-level totals for the selected reporting window.</p></div><span class="live-data-chip">Live account data</span></div>
+			<div id="metrics" class="metrics"></div>
+		</section>
+		<section id="campaignsPanel" class="tab-panel hidden">
+			<div class="panel-heading"><div><p class="eyebrow">Live inventory</p><h2>Campaigns</h2><p>Configured state and effective delivery state are shown independently.</p></div></div>
+			<div class="table-wrap"><table><thead><tr><th>Campaign</th><th>Object state</th><th>Delivery state</th><th>Objective</th><th>Spend</th><th>Impressions</th><th>Clicks</th><th>CTR</th><th>Actions</th></tr></thead><tbody id="campaignRows"></tbody></table></div>
+			<div id="emptyState" class="empty-state hidden">No campaigns were found for this account.</div>
+		</section>
+		<section id="detailPanel" class="tab-panel hidden">
+			<div id="detailEmpty" class="empty-state">Select a campaign to inspect its ad sets and ads.</div>
+			<div id="detailContent" class="hidden"><div class="panel-heading"><div><p class="eyebrow">Campaign detail</p><h2 id="detailTitle"></h2></div><a id="campaignManagerLink" class="ghost-link" target="_blank" rel="noopener noreferrer">Open in Meta Ads Manager ↗</a></div><h3>Ad sets</h3><div id="adSets" class="delivery-list"></div><h3>Ads</h3><div id="ads" class="delivery-list"></div></div>
+		</section>
+		<section id="adDetailPanel" class="tab-panel hidden">
+			<button id="backToCampaignButton" class="back-button" type="button">← Back to campaign</button>
+			<div id="adDetailEmpty" class="empty-state">Select an ad to view its creative, performance, and delivery diagnostics.</div>
+			<div id="adDetailContent" class="hidden">
+				<div class="panel-heading"><div><p class="eyebrow">Live ad detail</p><h2 id="adDetailTitle"></h2><div id="adStatus" class="status-pair"></div></div><div class="heading-actions"><a id="adManagerLink" class="ghost-link" target="_blank" rel="noopener noreferrer">Open in Meta Ads Manager ↗</a><button id="copyDeepLinkButton" class="secondary" type="button">Copy deep link</button></div></div>
+				<div id="adDetailMetrics" class="metrics compact"></div>
+				<div class="ad-detail-layout"><article class="creative-card"><div class="creative-image-wrap"><img id="creativeImage" class="hidden" alt="Ad creative"></div><div class="creative-copy"><span class="section-label">Creative returned by Meta</span><h3 id="creativeTitle"></h3><p id="creativeBody"></p><a id="creativeDestination" class="ghost-link hidden" target="_blank" rel="noopener noreferrer">Open destination ↗</a></div></article><aside class="facts card-inset"><h3>Identifiers</h3><dl id="adIdentifiers"></dl><h3>URL tags</h3><p id="creativeUrlTags">None</p></aside></div>
+				<section class="meta-preview card-inset"><div class="preview-heading"><div><span class="section-label">Read-only Meta render</span><h3>Generated ad preview</h3></div><label><span>Placement</span><select id="previewFormat"><option value="DESKTOP_FEED_STANDARD">Desktop feed</option><option value="MOBILE_FEED_STANDARD">Mobile feed</option><option value="INSTAGRAM_STANDARD">Instagram feed</option><option value="INSTAGRAM_STORY">Instagram story</option><option value="INSTAGRAM_REELS">Instagram reels</option></select></label></div><div id="previewState" class="empty-state">Loading preview…</div><iframe id="adPreviewFrame" class="hidden" sandbox="" title="Meta ad preview"></iframe></section>
+				<section><h3>Delivery and review diagnostics</h3><div id="adDiagnostics"></div></section>
+			</div>
+		</section>
+		<section id="draftsPanel" class="tab-panel hidden">
+			<div class="panel-heading"><div><p class="eyebrow">Local draft receipts</p><h2>Draft Library</h2><p>Creative planning artifacts preserved locally and never included in live Meta totals.</p></div><span class="local-data-chip">Local-only data</span></div>
+			<div id="draftLibraryState" class="empty-state">Loading local draft receipts…</div>
+			<div id="draftLibraryContent" class="draft-workspace hidden">
+				<aside><div id="draftRail" class="draft-rail" aria-label="Local drafts"></div></aside>
+				<div class="draft-focus">
+					<div id="draftReceiptHeading" class="draft-receipt-heading"></div>
+					<div class="draft-detail-grid">
+						<article class="facebook-preview" aria-label="Facebook feed-style local draft preview">
+							<div class="fb-page-row"><div class="fb-avatar">F</div><div><strong>FairPath</strong><span>Sponsored · Draft preview</span></div><span class="fb-more">•••</span></div>
+							<p id="draftPrimaryText" class="fb-primary"></p>
+							<img id="draftImage" alt="Local draft receipt creative">
+							<div class="fb-link-card"><div><span>FAIRPATH.AI</span><strong id="draftHeadline"></strong><p id="draftDescription"></p></div><button type="button" disabled>Learn more</button></div>
+							<div class="fb-engagement"><span>Like</span><span>Comment</span><span>Share</span></div>
+						</article>
+						<aside class="draft-metadata card-inset"><h3>Receipt details</h3><dl id="draftMetadata"></dl><h3>Destination</h3><p id="draftDestination"></p></aside>
+					</div>
+					<section class="provenance-panel"><div><span class="section-label">Blocker &amp; safety provenance</span><h3 id="draftSafetyTitle"></h3><p id="draftSafetyNote"></p></div><dl id="draftSafetyFacts"></dl></section>
+				</div>
+			</div>
+		</section>
+	</main>
+	<script src="js/facebook-ads.js"></script>
+</body>
+</html>

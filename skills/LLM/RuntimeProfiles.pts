@@ -37,7 +37,7 @@ prototype ToGetBuffalyRuntimeModelAndReasoning : ToGetBuffalyRuntimeProviderSele
 [SemanticProgram.InfinitivePhrase("to change a buffaly session provider model")]
 prototype ToSetBuffalySessionModelSelection : RuntimeProfileControlAction
 {
-	Description = "Sets the provider, model name, and optional reasoning level for an existing session through backend provider-catalog validation.";
+	Description = "Sets the provider, exact catalog ModelName, and optional reasoning level for an existing session through backend provider-catalog validation. Before choosing or changing a model, call ToGetBuffalyProviderModelCatalog and pass only an exact ModelName returned for the selected provider/transport; do not invent, alias, normalize, or guess model names. Non-catalog model names are rejected.";
 	function Execute(string sessionKey, string provider, string modelName, string reasoningLevel = "") : string
 	{
 		if (_opsAgent == null)
@@ -50,11 +50,12 @@ prototype ToSetBuffalySessionModelSelection : RuntimeProfileControlAction
 }
 
 [SemanticProgram.InfinitivePhrase("to list available buffaly providers models and reasoning levels")]
+[SemanticProgram.InfinitivePhrase("to list available models for a provider")]
 [SemanticProgram.InfinitivePhrase("to get buffaly provider model catalog")]
 [SemanticProgram.InfinitivePhrase("to show available runtime provider model options")]
 prototype ToGetBuffalyProviderModelCatalog : RuntimeProfileControlAction
 {
-	Description = "Returns the authoritative provider catalog: available providers, transports, models, default selection, and reasoning level options. Optionally accepts a sessionKey so defaults can reflect that session.";
+	Description = "Returns the authoritative provider catalog: available providers, transports, exact model names, default selection, and reasoning level options. Use this before ToSetBuffalySessionModelSelection; modelName must be an exact ModelName from this catalog for the selected provider/transport.";
 
 	function Execute(string sessionKey = "") : string
 	{

@@ -67,6 +67,14 @@
           }
         }
       },
+      "Microsoft.Data.SqlClient/6.0.0.0": {
+        "runtime": {
+          "Microsoft.Data.SqlClient.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.11.25226.3"
+          }
+        }
+      },
       "Buffaly.Agent.Core/1.0.0.0": {
         "runtime": {
           "Buffaly.Agent.Core.dll": {
@@ -115,6 +123,22 @@
           }
         }
       },
+      "Buffaly.DB.Core/1.0.0.0": {
+        "runtime": {
+          "Buffaly.DB.Core.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.DB.Hybrid/1.0.0.0": {
+        "runtime": {
+          "Buffaly.DB.Hybrid.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "RooTrax.Common.DB/1.0.0.0": {
         "runtime": {
           "RooTrax.Common.DB.dll": {
@@ -126,6 +150,30 @@
       "Buffaly.Agent.Tools.Platform/1.0.0.0": {
         "runtime": {
           "Buffaly.Agent.Tools.Platform.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Agent.Tools.Process/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agent.Tools.Process.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.DB.SqlServer/1.0.0.0": {
+        "runtime": {
+          "Buffaly.DB.SqlServer.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.DB.Postgres/1.0.0.0": {
+        "runtime": {
+          "Buffaly.DB.Postgres.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -155,9 +203,33 @@
           }
         }
       },
+      "Microsoft.Identity.Client/4.73.1.0": {
+        "runtime": {
+          "Microsoft.Identity.Client.dll": {
+            "assemblyVersion": "4.73.1.0",
+            "fileVersion": "4.73.1.0"
+          }
+        }
+      },
       "RooTrax.Cache/1.0.0.0": {
         "runtime": {
           "RooTrax.Cache.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Agent.SemanticDatabase/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agent.SemanticDatabase.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Agent.SemanticDatabase.DB/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agent.SemanticDatabase.DB.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -225,6 +297,11 @@
       "serviceable": false,
       "sha512": ""
     },
+    "Microsoft.Data.SqlClient/6.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
     "Buffaly.Agent.Core/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
@@ -255,12 +332,37 @@
       "serviceable": false,
       "sha512": ""
     },
+    "Buffaly.DB.Core/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.DB.Hybrid/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
     "RooTrax.Common.DB/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
     },
     "Buffaly.Agent.Tools.Platform/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Agent.Tools.Process/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.DB.SqlServer/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.DB.Postgres/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
@@ -280,7 +382,22 @@
       "serviceable": false,
       "sha512": ""
     },
+    "Microsoft.Identity.Client/4.73.1.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
     "RooTrax.Cache/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Agent.SemanticDatabase/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Agent.SemanticDatabase.DB/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""

@@ -24,6 +24,9 @@
 .buffaly-button { display: inline-flex; align-items: center; gap: 6px; border: none; border-radius: 16px; padding: 6px 16px; font-size: .875rem; font-weight: 600; font-family: inherit; background: #0a66c2; color: #fff; cursor: pointer; transition: background .15s; }
 .buffaly-button:hover { background: #004182; }
 .buffaly-button.secondary { background: #fff; color: #0a66c2; border: 1px solid #0a66c2; }
+.buffaly-button:disabled, .buffaly-button.disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+.buffaly-button.success { background: #057642; color: #fff; border-color: #057642; }
+.upload-row { margin-top: 8px; }
 .buffaly-button.secondary:hover { background: #f3f2ef; }
 .buffaly-button.danger { background: #cc0000; color: #fff; }
 .buffaly-button.danger:hover { background: #a30000; }

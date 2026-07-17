@@ -1,0 +1,21 @@
+{
+  "Module": {
+    "Enabled": true,
+    "Name": "FeedingFrenzy.WebPropertyEditorAgent",
+    "DisplayName": "Feeding Frenzy WebProperty Editor Agent",
+    "Description": "Feeding Frenzy constrained WebProperty editor agent routes and tool surface.",
+    "AssemblyPath": "FeedingFrenzy.WebPropertyEditorAgent/FeedingFrenzy.WebPropertyEditorAgent.Tools.dll",
+    "TypeName": "FeedingFrenzy.WebPropertyEditorAgent.Tools.WebPropertyEditorAgentWebModule",
+    "LoadOrder": 350,
+    "Pages": [],
+    "AgentScripts": [
+      "/web-modules/FeedingFrenzy.WebPropertyEditorAgent/web-property-editor-context.js?v=20260715.1"
+    ],
+    "ProjectArtifacts": [
+      {
+        "ProjectName": "FeedingFrenzy.WebPropertyEditorAgent",
+        "SourcePath": "Project/"
+      }
+    ]
+  }
+}

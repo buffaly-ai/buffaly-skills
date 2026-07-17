@@ -1,0 +1,30 @@
+name: Validate extension package versions
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  validate-extension-package-versions:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine base ref
+        id: base
+        shell: pwsh
+        run: |
+          if ("${{ github.event_name }}" -eq "pull_request") {
+            "base=${{ github.event.pull_request.base.sha }}" >> $env:GITHUB_OUTPUT
+          } elseif ("${{ github.event.before }}" -and "${{ github.event.before }}" -ne "0000000000000000000000000000000000000000") {
+            "base=${{ github.event.before }}" >> $env:GITHUB_OUTPUT
+          } else {
+            "base=HEAD~1" >> $env:GITHUB_OUTPUT
+          }
+
+      - name: Validate package hashes and version bumps
+        shell: pwsh
+        run: ./scripts/Test-ExtensionPackageVersionBumps.ps1 -BaseRef '${{ steps.base.outputs.base }}'

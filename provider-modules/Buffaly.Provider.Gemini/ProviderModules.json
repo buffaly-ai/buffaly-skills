@@ -1,0 +1,16 @@
+{
+  "Modules": [
+    {
+      "Enabled": true,
+      "Name": "Gemini",
+      "Provider": "gemini",
+      "DisplayName": "Gemini",
+      "AssemblyPath": "Buffaly.Provider.Gemini/Buffaly.Provider.Gemini.dll",
+      "CatalogSourceTypeName": "Buffaly.Provider.Gemini.GeminiProviderCatalogSource",
+      "CompletionExecutorTypeName": "Buffaly.Provider.Gemini.GeminiCompletionExecutor",
+      "LoadOrder": 620,
+      "TextToSpeechCatalogSourceTypeName": "Buffaly.Provider.Gemini.GeminiTextToSpeechCatalogSource",
+      "TextToSpeechExecutorTypeName": "Buffaly.Provider.Gemini.GeminiTextToSpeechExecutor"
+    }
+  ]
+}

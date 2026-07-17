@@ -1,0 +1,16 @@
+{
+  "Modules": [
+    {
+      "Enabled": true,
+      "Name": "OpenAI",
+      "Provider": "openai",
+      "DisplayName": "OpenAI",
+      "AssemblyPath": "Buffaly.Provider.OpenAi/Buffaly.Provider.OpenAi.dll",
+      "TextToSpeechCatalogSourceTypeName": "Buffaly.Provider.OpenAi.OpenAiTextToSpeechCatalogSource",
+      "TextToSpeechExecutorTypeName": "Buffaly.Provider.OpenAi.OpenAiTextToSpeechExecutor",
+      "EmbeddingCatalogSourceTypeName": "Buffaly.Provider.OpenAi.OpenAiEmbeddingCatalogSource",
+      "EmbeddingExecutorTypeName": "Buffaly.Provider.OpenAi.OpenAiEmbeddingExecutor",
+      "LoadOrder": 350
+    }
+  ]
+}

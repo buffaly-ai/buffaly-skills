@@ -1,0 +1,91 @@
+import Buffaly.Agent.Host Buffaly.Agent.Host.BuffalyArtifacts BuffalyArtifacts;
+import Buffaly.Agent.Host Buffaly.Agent.Host.BuffalyAgentService BuffalyAgentService;
+import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.OnlineSessionMemoryCriticTools OnlineSessionMemoryCriticTools;
+import BasicUtilities BasicUtilities.JsonUtil JsonUtil;
+
+prototype OnlineSessionMemoryCriticActionRoot : OpsAction
+{
+	Description = @"Actions available to the hidden online session memory critic.";
+}
+
+prototype OnlineSessionMemoryCriticEntityRoot : SemanticEntityBase
+{
+}
+
+prototype OnlineSessionMemoryCriticSkillAction : OpsAction
+{
+	Description = @"Online session memory critic setup actions available to the source session.";
+}
+
+[SemanticEntity("online session memory critic skill")]
+prototype OnlineSessionMemoryCriticSkill : SkillEntity, CoreEntity
+{
+	Description = @"Manually reviews one selected source turn and writes high-confidence session-local ontology back into the source session.";
+	ActionRoot = OnlineSessionMemoryCriticSkillAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to review one turn with the online session memory critic")]
+prototype ToAttachConfiguredOnlineSessionMemoryCritic : OnlineSessionMemoryCriticSkillAction
+{
+	Description = @"Queues exactly one selected completed source turn for review. Ensures or reuses the deterministic critic child without subscribing to session events.";
+
+	function Execute(string turnKey, string provider, string modelName, string reasoningLevel) : string
+	{
+		return OnlineSessionMemoryCriticTools.RunConfiguredTurnForCurrentSession(_opsAgent, turnKey, provider, modelName, reasoningLevel);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to write session local memory to the source session")]
+prototype ToWriteSessionLocalMemoryToSourceSession : OnlineSessionMemoryCriticActionRoot
+{
+	Description = @"sourceSessionKey - source session that should receive memory. prototypeDefinition - raw ProtoScript containing exactly one prototype definition. Delegates validation and persistence to the source session's existing NLMemory action.";
+
+	function Execute(string sourceSessionKey, string prototypeDefinition) : string
+	{
+		return OnlineSessionMemoryCriticTools.WriteSessionLocalMemoryToSourceSession(_opsAgent, sourceSessionKey, prototypeDefinition);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read the observed source session plan")]
+prototype ToReadObservedSourcePlan : OnlineSessionMemoryCriticActionRoot
+{
+	Description = @"sourceSessionKey - observed source session. Returns its Plan.md text.";
+
+	function Execute(string sourceSessionKey) : string
+	{
+		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionArtifactText(sourceSessionKey, "Plan.md")).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read the observed source session scratch")]
+prototype ToReadObservedSourceScratch : OnlineSessionMemoryCriticActionRoot
+{
+	Description = @"sourceSessionKey - observed source session. Returns its Scratch.md text.";
+
+	function Execute(string sourceSessionKey) : string
+	{
+		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionArtifactText(sourceSessionKey, "Scratch.md")).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list observed source session tasks")]
+prototype ToListObservedSourceTasks : OnlineSessionMemoryCriticActionRoot
+{
+	Description = @"sourceSessionKey - observed source session. Returns its root-level task artifact names.";
+
+	function Execute(string sourceSessionKey) : string
+	{
+		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionTaskArtifactNames(sourceSessionKey)).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list observed source session local memories")]
+prototype ToListObservedSourceSessionLocalMemories : OnlineSessionMemoryCriticActionRoot
+{
+	Description = @"sourceSessionKey - observed source session. Returns its current NLMemory runtime-memory dump.";
+
+	function Execute(string sourceSessionKey) : string
+	{
+		return BuffalyAgentService.RunProtoScriptMethod(sourceSessionKey, "buffaly-agent", "ToDumpRuntimeMemories", "Execute", "{}");
+	}
+}

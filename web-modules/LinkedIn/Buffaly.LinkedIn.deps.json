@@ -8,15 +8,33 @@
     ".NETCoreApp,Version=v9.0": {
       "Buffaly.LinkedIn/1.0.0": {
         "dependencies": {
-          "Buffaly.Agent.Web.Common": "1.0.0.0"
+          "BasicUtilities": "1.0.0.0",
+          "Buffaly.ProviderContracts": "1.0.0.0",
+          "WebAppUtilities": "1.0.0.0"
         },
         "runtime": {
           "Buffaly.LinkedIn.dll": {}
         }
       },
-      "Buffaly.Agent.Web.Common/1.0.0.0": {
+      "BasicUtilities/1.0.0.0": {
         "runtime": {
-          "Buffaly.Agent.Web.Common.dll": {
+          "BasicUtilities.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.ProviderContracts/1.0.0.0": {
+        "runtime": {
+          "Buffaly.ProviderContracts.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "WebAppUtilities/1.0.0.0": {
+        "runtime": {
+          "WebAppUtilities.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -30,7 +48,17 @@
       "serviceable": false,
       "sha512": ""
     },
-    "Buffaly.Agent.Web.Common/1.0.0.0": {
+    "BasicUtilities/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.ProviderContracts/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "WebAppUtilities/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
