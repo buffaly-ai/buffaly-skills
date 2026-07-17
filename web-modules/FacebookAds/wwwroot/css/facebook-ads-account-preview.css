@@ -1,0 +1,13 @@
+.account-eligibility,.detail-heading,.preview-heading{display:flex;justify-content:space-between;align-items:center;gap:20px}
+.account-eligibility{margin:0 0 20px;padding:18px 22px;border:2px solid #98a2b3;border-radius:14px;background:#f9fafb}
+.account-eligibility.active{border-color:#12b76a;background:#ecfdf3}
+.account-eligibility.ineligible{border-color:#f04438;background:#fef3f2}
+.account-eligibility p{margin:5px 0 0}
+.account-eligibility a,.detail-heading a,.heading-actions a{font-weight:700;color:#175cd3}
+.heading-actions{display:flex;align-items:center;gap:16px}
+.meta-preview{margin:24px 0;border:1px solid #dbe3ed;border-radius:14px;padding:18px}
+.preview-heading h3{margin:0}
+.preview-heading label{display:flex;align-items:center;gap:8px;font-weight:700}
+.preview-heading select{padding:8px;border:1px solid #cfd8e5;border-radius:8px}
+.meta-preview iframe{display:block;width:100%;min-height:620px;margin-top:16px;border:1px solid #dbe3ed;border-radius:8px;background:#fff}
+@media(max-width:800px){.detail-heading,.preview-heading,.account-eligibility{align-items:stretch;flex-direction:column}.heading-actions{align-items:flex-start;flex-direction:column}}
