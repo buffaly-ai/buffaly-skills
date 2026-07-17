@@ -27,11 +27,22 @@ prototype OnlineSessionMemoryCriticSkill : SkillEntity, CoreEntity
 [SemanticProgram.InfinitivePhrase("to review one turn with the online session memory critic")]
 prototype ToAttachConfiguredOnlineSessionMemoryCritic : OnlineSessionMemoryCriticSkillAction
 {
-	Description = @"Queues exactly one selected completed source turn for review. Ensures or reuses the deterministic critic child without subscribing to session events.";
+	Description = @"Queues exactly one selected completed source turn for review. Ensures or reuses the deterministic critic child and registers it for future turn.completed events.";
 
 	function Execute(string turnKey, string provider, string modelName, string reasoningLevel) : string
 	{
 		return OnlineSessionMemoryCriticTools.RunConfiguredTurnForCurrentSession(_opsAgent, turnKey, provider, modelName, reasoningLevel);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to dispatch an online memory critic session event")]
+prototype ToDispatchOnlineSessionMemoryCriticEvent : OnlineSessionMemoryCriticActionRoot
+{
+	Description = @"Renders one delivered turn.completed callback through the existing exact-turn online memory critic instruction.";
+
+	function Execute(string callbackJson) : string
+	{
+		return OnlineSessionMemoryCriticTools.RenderCriticInstructionFromCallback(callbackJson);
 	}
 }
 
