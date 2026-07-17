@@ -2272,6 +2272,35 @@
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
       "IsDefaultPackage": true
+    },
+    {
+      "SkillName": "XSearch",
+      "Files": [
+        {
+          "Path": "SKILL.md",
+          "Sha256": "c59701cb06070695f2efe35d90d16d99faaed734b55a57e80b965804c6e32747"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "c2d5c2bd2b90b48843ee045bd9a690d26803e8261afbafd35979fbf748499442"
+        }
+      ],
+      "Version": "0.1.0",
+      "Title": "X Search",
+      "Phrases": [
+        "search X",
+        "search twitter",
+        "search posts on X",
+        "what happened on X",
+        "X search",
+        "twitter search",
+        "brief what happened on X",
+        "map public opinion on X"
+      ],
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/skills/XSearch",
+      "Path": "skills/XSearch",
+      "Description": "Search X (Twitter) via the xAI Responses API x_search hosted tool. The x_search tool runs server-side in Grok's agentic sampler loop. Requires XAI.HostedTools = x_search in the xAI provider feature settings."
     }
   ]
 }
