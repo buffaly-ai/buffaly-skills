@@ -1,0 +1,23 @@
+{
+  "skill": "Buffaly.GoDaddy",
+  "displayName": "GoDaddy",
+  "description": "Manage GoDaddy domains and DNS records: list domains, view/edit DNS, and check account status.",
+  "safeTools": [
+    { "name": "GetAccountStatus", "infinitivePhrase": "to inspect godaddy account status", "description": "Check GoDaddy API connection status and domain count." },
+    { "name": "ListDomains", "infinitivePhrase": "to list godaddy domains", "description": "List all domains in the GoDaddy account." },
+    { "name": "GetDomain", "infinitivePhrase": "to get a godaddy domain", "description": "Get details for a specific domain." },
+    { "name": "ListDnsRecords", "infinitivePhrase": "to list godaddy dns records", "description": "List all DNS records for a domain." },
+    { "name": "GetDnsRecords", "infinitivePhrase": "to get godaddy dns records", "description": "Get specific DNS records by type and name." },
+    { "name": "ListNameServers", "infinitivePhrase": "to list godaddy name servers", "description": "List name servers for a domain." },
+  { "name": "CheckTransferStatus", "infinitivePhrase": "to check a godaddy domain transfer status", "description": "Check the status of a domain transfer in progress." }
+   ,
+   { "name": "GetTransferAgreements", "infinitivePhrase": "to get godaddy transfer agreements", "description": "Fetch the legal agreements required by GoDaddy for a domain transfer-in." }
+ ],
+  "highRiskTools": [
+    { "name": "AddDnsRecord", "infinitivePhrase": "to add a godaddy dns record", "description": "Add a DNS record to a domain. Requires confirmation.", "requiresConfirmation": true },
+    { "name": "SetDnsRecord", "infinitivePhrase": "to set a godaddy dns record", "description": "Replace DNS records of a given type/name. Requires confirmation.", "requiresConfirmation": true },
+    { "name": "DeleteDnsRecord", "infinitivePhrase": "to delete a godaddy dns record", "description": "Delete a DNS record. Destructive.", "requiresConfirmation": true, "destructive": true },
+    { "name": "SetNameServers", "infinitivePhrase": "to set godaddy name servers", "description": "Replace all name servers for a domain. Requires confirmation.", "requiresConfirmation": true },
+    { "name": "InitiateTransfer", "infinitivePhrase": "to initiate a godaddy domain transfer", "description": "Initiate a domain transfer in with an EPP auth code. Requires confirmation and valid agreement keys.", "requiresConfirmation": true }
+  ]
+}

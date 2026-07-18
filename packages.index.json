@@ -9167,6 +9167,93 @@
       "RequiresPreStartInstall": true
     },
     {
+      "PackageId": "GoDaddy",
+      "PackageType": "WebModule",
+      "Title": "GoDaddy",
+      "Description": "Buffaly Web Module package for GoDaddy.",
+      "Version": "0.1.0",
+      "PackageKind": "BuffalyWebModule",
+      "SourcePath": "web-modules/GoDaddy",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/GoDaddy",
+      "Phrases": [
+        "GoDaddy",
+        "GoDaddy"
+      ],
+      "Files": [
+        {
+          "Path": "BasicUtilities.dll",
+          "Sha256": "4938647f139a04550321bbf8b9a31315583c6b57eebac906ffd0c1fc48c57c17"
+        },
+        {
+          "Path": "Buffaly.Agent.Tools.Secrets.dll",
+          "Sha256": "7cd822a0eb024d1ab4e2b7d8b50577c7095f91d4feb9ee3b9a1fe579cd7a0204"
+        },
+        {
+          "Path": "Buffaly.GoDaddy.Web.deps.json",
+          "Sha256": "f7591d2f0fb1383218dfadfdef77f9c534417bd389d64700260e8e6114fcaf09"
+        },
+        {
+          "Path": "Buffaly.GoDaddy.Web.dll",
+          "Sha256": "88d6559a3fe86a7a78ce3cd6f736fdd98b0433204c63aaca92d63c59402b70d0"
+        },
+        {
+          "Path": "Buffaly.ProviderContracts.dll",
+          "Sha256": "60a3faa5ccc81a25e56e253e2867391e471d6f1041a36f42c31d65bf56dfe7ff"
+        },
+        {
+          "Path": "Imports.pts",
+          "Sha256": "8ed8b73a3660037f8538e00a7b5f8e36ef2b773246c1bb914f70de07608fd05f"
+        },
+        {
+          "Path": "Skills/GoDaddy/GoDaddyActions.pts",
+          "Sha256": "63bcd5f01cc6bfb430d56327f02abd8539bf64894f18a9f1ff8a305ca1f02716"
+        },
+        {
+          "Path": "Skills/GoDaddy/index.pts",
+          "Sha256": "cd6062a4e6b319b2e99001bac4d8022e95a28be95277ada69623791ef9e193b7"
+        },
+        {
+          "Path": "Skills/GoDaddy/skill-manifest.json",
+          "Sha256": "6f949d41cde17af191b1c02c85fd26df103bc883cd0da58f9cb9b39c7866ad8d"
+        },
+        {
+          "Path": "web-module.json",
+          "Sha256": "84c31e3262d5c070cc326480a1e17ac6f429faaa88320613369cc3c7d1ef1a47"
+        },
+        {
+          "Path": "WebAppUtilities.dll",
+          "Sha256": "b04993ec40d66d8f11ffc85f1d1c49ea52be9801406e48765e1e130fb881f5b4"
+        },
+        {
+          "Path": "wwwroot/css/buffaly-page.css",
+          "Sha256": "e30611c717c05ade6927504d89f1af31d0495f0334cbb03ee282807cc3d9fc43"
+        },
+        {
+          "Path": "wwwroot/css/godaddy.css",
+          "Sha256": "45111f8131511670d02fb190774b33d9d1c86866844142e18c28aed5f47d5f9b"
+        },
+        {
+          "Path": "wwwroot/index.html",
+          "Sha256": "cce210d031ee8f82d1687b7d3c8eead8e044816e1a6eff9388bb4347baa68380"
+        },
+        {
+          "Path": "wwwroot/js/godaddy.js",
+          "Sha256": "fd568732134f789d2ea68631c574edfa15e5f00a8acd8c3a17e3eed8a2a82a65"
+        }
+      ],
+      "ProjectArtifacts": [
+        {
+          "ProjectName": "Skills/GoDaddy",
+          "SourcePath": "Skills/GoDaddy/"
+        }
+      ],
+      "Dependencies": [],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "RequiresRestart": true,
+      "RequiresPreStartInstall": true
+    },
+    {
       "PackageId": "GoogleWorkspace",
       "PackageType": "WebModule",
       "Title": "Google Workspace",

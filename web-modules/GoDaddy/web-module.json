@@ -1,0 +1,25 @@
+{
+  "Module": {
+    "Enabled": true,
+    "Name": "GoDaddy",
+    "DisplayName": "GoDaddy",
+    "Description": "Buffaly GoDaddy integration for domain management, DNS records, and account status via the GoDaddy REST API.",
+    "AssemblyPath": "GoDaddy/Buffaly.GoDaddy.Web.dll",
+    "TypeName": "Buffaly.GoDaddy.Web.GoDaddyWebModule",
+    "LoadOrder": 1220,
+    "ProjectArtifacts": [
+      {
+        "ProjectName": "Skills/GoDaddy",
+        "SourcePath": "Skills/GoDaddy/"
+      }
+    ],
+    "Pages": [
+      {
+        "Name": "godaddy",
+        "DisplayName": "GoDaddy",
+        "Path": "/web-modules/GoDaddy/index.html",
+        "Description": "Open the GoDaddy domain management workspace."
+      }
+    ]
+  }
+}

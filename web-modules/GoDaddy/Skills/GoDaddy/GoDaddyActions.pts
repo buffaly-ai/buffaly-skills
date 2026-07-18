@@ -1,0 +1,139 @@
+// -- Safe tools (reads, local writes) --
+
+[SemanticProgram.InfinitivePhrase("to inspect godaddy account status")]
+prototype ToGetGoDaddyAccountStatus : GoDaddySkillAction
+{
+	Description = @"Check GoDaddy API connection status, key validity, and domain count. Returns JSON.";
+	function Execute() : string
+	{
+		return GoDaddySkillFacade.GetAccountStatus();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list godaddy domains")]
+prototype ToListGoDaddyDomains : GoDaddySkillAction
+{
+	Description = @"List all domains in the GoDaddy account. Returns JSON array of domains.";
+	function Execute() : string
+	{
+		return GoDaddySkillFacade.ListDomains();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get a godaddy domain")]
+prototype ToGetGoDaddyDomain : GoDaddySkillAction
+{
+	Description = @"domain - the domain name. Returns JSON domain object with status, expiry, nameservers.";
+	function Execute(string domain) : string
+	{
+		return GoDaddySkillFacade.GetDomain(domain);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list godaddy dns records")]
+prototype ToListGoDaddyDnsRecords : GoDaddySkillAction
+{
+	Description = @"domain - the domain name. Returns JSON array of all DNS records.";
+	function Execute(string domain) : string
+	{
+		return GoDaddySkillFacade.ListDnsRecords(domain);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get godaddy dns records")]
+prototype ToGetGoDaddyDnsRecords : GoDaddySkillAction
+{
+	Description = @"domain - the domain name. type - record type (A, CNAME, MX, TXT, etc.). name - record name. Returns JSON array.";
+	function Execute(string domain, string type, string name) : string
+	{
+		return GoDaddySkillFacade.GetDnsRecords(domain, type, name);
+	}
+}
+
+// -- High-risk tools (external writes, require confirmation) --
+
+[SemanticProgram.InfinitivePhrase("to add a godaddy dns record")]
+prototype ToAddGoDaddyDnsRecord : GoDaddySkillAction
+{
+	Description = @"domain - the domain name. type - record type. name - record name. data - record value. ttl - time to live in seconds. Adds a DNS record. Requires confirmation.";
+	function Execute(string domain, string type, string name, string data, int ttl) : string
+	{
+		return GoDaddySkillFacade.AddDnsRecord(domain, type, name, data, ttl);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set a godaddy dns record")]
+prototype ToSetGoDaddyDnsRecord : GoDaddySkillAction
+{
+	Description = @"domain - the domain name. type - record type. name - record name. data - record value. ttl - time to live in seconds. Replaces all records of the given type/name. Requires confirmation.";
+	function Execute(string domain, string type, string name, string data, int ttl) : string
+	{
+		return GoDaddySkillFacade.SetDnsRecord(domain, type, name, data, ttl);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to delete a godaddy dns record")]
+prototype ToDeleteGoDaddyDnsRecord : GoDaddySkillAction
+{
+	Description = @"domain - the domain name. type - record type. name - record name. Destructive. Requires confirmation.";
+	function Execute(string domain, string type, string name) : string
+	{
+		return GoDaddySkillFacade.DeleteDnsRecord(domain, type, name);
+	}
+}
+
+// -- Name server tools --
+
+[SemanticProgram.InfinitivePhrase("to list godaddy name servers")]
+prototype ToListGoDaddyNameServers : GoDaddySkillAction
+{
+	Description = @"domain - the domain name. Returns JSON array of name server hostnames.";
+	function Execute(string domain) : string
+	{
+		return GoDaddySkillFacade.ListNameServers(domain);
+	}
+}
+
+// -- High-risk: name server changes --
+
+[SemanticProgram.InfinitivePhrase("to set godaddy name servers")]
+prototype ToSetGoDaddyNameServers : GoDaddySkillAction
+{
+	Description = @"domain - the domain name. nameServersJson - JSON array of name server hostnames. Replaces all name servers. Requires confirmation.";
+	function Execute(string domain, string nameServersJson) : string
+	{
+		return GoDaddySkillFacade.SetNameServers(domain, nameServersJson);
+	}
+}
+
+// -- Domain transfer tools --
+
+[SemanticProgram.InfinitivePhrase("to get godaddy transfer agreements")]
+prototype ToGetGoDaddyTransferAgreements : GoDaddySkillAction
+{
+	Description = @"domain - the domain name to transfer in. Returns JSON array of legal agreements required by GoDaddy, including agreement keys and text. The user must read and accept these before initiating a transfer.";
+	function Execute(string domain) : string
+	{
+		return GoDaddySkillFacade.GetTransferAgreements(domain);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to initiate a godaddy domain transfer")]
+prototype ToInitiateGoDaddyTransfer : GoDaddySkillAction
+{
+	Description = @"domain - the domain name to transfer in. authCode - the EPP authorization code from the current registrar. agreedAt - ISO timestamp of user consent. agreedBy - user name or identity who agreed to the legal terms. agreementKeys - JSON array of legal agreement keys from ToGetGoDaddyTransferAgreements. period - optional registration period in years (1-10, default 1). Initiates a transfer-in. Requires confirmation and valid agreement keys.";
+	function Execute(string domain, string authCode, string agreedAt, string agreedBy, string agreementKeys, int period) : string
+	{
+		return GoDaddySkillFacade.InitiateTransfer(domain, authCode, agreedAt, agreedBy, agreementKeys, period);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to check a godaddy domain transfer status")]
+prototype ToCheckGoDaddyTransferStatus : GoDaddySkillAction
+{
+	Description = @"domain - the domain name. Returns JSON with transfer status, transfer ID, and timestamps.";
+	function Execute(string domain) : string
+	{
+		return GoDaddySkillFacade.CheckTransferStatus(domain);
+	}
+}

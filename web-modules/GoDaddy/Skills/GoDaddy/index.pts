@@ -1,0 +1,17 @@
+prototype GoDaddySkillAction : OpsAction
+{
+	Description = @"Base action type for GoDaddy skill tools.";
+}
+
+[SemanticEntity("godaddy skill")]
+prototype GoDaddySkill : SkillEntity
+{
+	Description = "GoDaddy integration for domain management, DNS records, and account status.";
+	ActionRoot = GoDaddySkillAction;
+}
+
+include "GoDaddyActions.pts";
+
+reference Buffaly.GoDaddy.Web Buffaly.GoDaddy.Web;
+
+import Buffaly.GoDaddy.Web Buffaly.GoDaddy.Web.GoDaddySkillFacade GoDaddySkillFacade;
