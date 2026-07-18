@@ -1,0 +1,41 @@
+import Buffaly.Agent.Host Buffaly.Agent.Host.TurnSummaryContract TurnSummaryContract;
+import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.SessionTools SessionTools;
+
+prototype VoiceAgentDispatchSkillAction : OpsAction { Description = @"Base action type for the lightweight Voice Agent dispatcher bridge."; }
+prototype VoiceAgentAction : VoiceAgentDispatchSkillAction { Description = @"Narrow action root exposed to the realtime Voice Agent."; }
+
+[SemanticProgram.InfinitivePhrase("to send instructions to the voice agent dispatcher")]
+prototype ToSendMessageToVoiceAgentDispatcher : VoiceAgentAction
+{
+	Description = @"instruction - self-contained work or follow-up to queue to the dispatcher bound in current Voice Agent user state. Queues without waiting and returns an explicit delivery signal so the model does not resend the same instruction.";
+	function Execute(string instruction) : string
+	{
+		string dispatcherSessionKey = UserState.GetStringOrNull("VoiceAgent.DispatcherSessionKey");
+		SessionTools.SendToSessionTool(dispatcherSessionKey, instruction);
+		return "Instruction queued to the Voice Agent Dispatcher. Do not send this instruction again; acknowledge the user once and end the current turn.";
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get the latest voice agent dispatcher turn")]
+prototype ToGetLatestVoiceAgentDispatcherTurn : VoiceAgentAction
+{
+	Description = @"Returns the most recent turn summary from the bound dispatcher. Use once for missing detail, never for polling.";
+	function Execute() : TurnSummaryContract
+	{
+		string dispatcherSessionKey = UserState.GetStringOrNull("VoiceAgent.DispatcherSessionKey");
+		return SessionTools.GetMostRecentSessionTurnTool(dispatcherSessionKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to send a message back to the voice agent")]
+prototype ToSendMessageToVoiceAgent : VoiceAgentDispatcher
+{
+	Description = @"instruction - complete useful answer material to queue to the bound Voice Agent. Adds the exact dispatcher timeline label and returns an explicit delivery signal that prevents duplicate sends without terminating the dispatcher turn.";
+	function Execute(string instruction) : string
+	{
+		string voiceAgentSessionKey = UserState.GetStringOrNull("VoiceAgent.SourceSessionKey");
+		string labeledInstruction = "[label: Voice Agent Dispatcher]\n\n" + instruction.Trim();
+		SessionTools.SendToSessionTool(voiceAgentSessionKey, labeledInstruction);
+		return "Message queued to the Voice Agent. Do not send these details again; complete normal dispatcher bookkeeping and end the turn normally.";
+	}
+}

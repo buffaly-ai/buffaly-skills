@@ -2182,6 +2182,32 @@
       "InstalledVersion": ""
     },
     {
+      "SkillName": "VoiceAgentDispatch",
+      "Title": "Voice Agent Dispatch",
+      "Description": "Buffaly skill package for Voice Agent Dispatch.",
+      "Version": "0.1.2",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Voice Agent Dispatch",
+        "VoiceAgentDispatch"
+      ],
+      "Path": "skills/VoiceAgentDispatch",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "9fe15ccd0a83cbcda8eb62968ee8644ded8c2bb319b5c5a9d6a67ae07888fa02"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "037eff0402a62d84b15292487411d59be0e33cca81ad60540b1547d99e0a5cb5"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsDefaultPackage": true
+    },
+    {
       "SkillName": "Wiki",
       "Title": "Wiki",
       "Description": "Buffaly OpsAgent skill package for Wiki.",
