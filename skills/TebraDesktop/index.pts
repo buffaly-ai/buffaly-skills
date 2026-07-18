@@ -1,0 +1,89 @@
+reference "lib/Tebra.UIAutomation.Core.dll" Tebra.UIAutomation.Core;
+reference "lib/FlaUI.Core.dll" FlaUI.Core;
+reference "lib/FlaUI.UIA3.dll" FlaUI.UIA3;
+reference "lib/Interop.UIAutomationClient.dll" Interop.UIAutomationClient;
+reference "lib/System.Configuration.ConfigurationManager.dll" System.Configuration.ConfigurationManager;
+reference "lib/System.Diagnostics.EventLog.dll" System.Diagnostics.EventLog;
+reference "lib/System.Diagnostics.PerformanceCounter.dll" System.Diagnostics.PerformanceCounter;
+reference "lib/System.Drawing.Common.dll" System.Drawing.Common;
+reference "lib/System.Management.dll" System.Management;
+import Tebra.UIAutomation.Core Tebra.UIAutomation.Core.TebraAutomationTools TebraAutomationTools;
+import Buffaly.Agent.Tools.Secrets Buffaly.Agent.Tools.Secrets.UserSecrets UserSecrets;
+
+prototype TebraDesktopSkillAction : OpsAction
+{
+	Description = @"Base action type for Tebra Desktop PM automation tools.";
+}
+
+[SemanticEntity("Tebra desktop skill, Tebra PM automation skill, Tebra EMR automation skill")]
+prototype TebraDesktopSkill : SkillEntity
+{
+	Description = "Tebra Desktop Practice Management automation actions backed by the Buffaly EMRs Tebra UIA library.";
+	ActionRoot = TebraDesktopSkillAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to get Tebra desktop status")]
+[SemanticProgram.InfinitivePhrase("to diagnose Tebra automation state")]
+prototype ToGetTebraDesktopStatus : TebraDesktopSkillAction
+{
+	Description = @"Returns process/window/lock/sign-in/readiness diagnostics for Tebra Desktop without modifying the application.";
+
+	function Execute() : string
+	{
+		return TebraAutomationTools.GetStatus();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to prepare Tebra for automation")]
+[SemanticProgram.InfinitivePhrase("to log into Tebra using the saved password")]
+prototype ToPrepareTebraForAutomation : TebraDesktopSkillAction
+{
+	Description = @"Launches or attaches to Tebra, unlocks if locked, logs in if needed, and returns readiness diagnostics.
+timeoutSeconds - maximum readiness wait. Use 90 for normal live validation.";
+
+	function Execute(int timeoutSeconds) : string
+	{
+		return TebraAutomationTools.Prepare(UserSecrets.GetSecret("TebraPassword"), timeoutSeconds);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to navigate to Tebra Patients")]
+[SemanticProgram.InfinitivePhrase("to click the Patients link in Tebra")]
+prototype ToNavigateToTebraPatients : TebraDesktopSkillAction
+{
+	Description = @"Uses the saved TebraPassword secret to prepare Tebra, then finds and clicks the Patients navigation item.
+timeoutSeconds - maximum readiness wait. Use 90 for normal live validation.";
+
+	function Execute(int timeoutSeconds) : string
+	{
+		return TebraAutomationTools.NavigateToPatients(UserSecrets.GetSecret("TebraPassword"), timeoutSeconds);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to dump Tebra UIA text")]
+[SemanticProgram.InfinitivePhrase("to inspect visible Tebra UI automation text")]
+prototype ToDumpTebraUiaText : TebraDesktopSkillAction
+{
+	Description = @"Returns a bounded UIA text snapshot from the current Tebra main window.
+maxItems - maximum elements to include.";
+
+	function Execute(int maxItems) : string
+	{
+		return TebraAutomationTools.DumpUiaText(maxItems);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to search Tebra test patient and find notes")]
+[SemanticProgram.InfinitivePhrase("to validate Tebra patient notes visibility")]
+prototype ToSearchTebraPatientAndFindNotes : TebraDesktopSkillAction
+{
+	Description = @"Uses the saved TebraPassword secret, prepares Tebra, navigates to Patients, searches for a patient, and returns UIA text evidence for patient/note matches.
+patientSearchTerm - patient name or identifier to search.
+noteSearchTerm - distinctive text expected in the notes; pass empty string if unknown.
+timeoutSeconds - maximum readiness wait.";
+
+	function Execute(string patientSearchTerm, string noteSearchTerm, int timeoutSeconds) : string
+	{
+		return TebraAutomationTools.SearchPatientAndFindNotes(UserSecrets.GetSecret("TebraPassword"), patientSearchTerm, noteSearchTerm, timeoutSeconds);
+	}
+}

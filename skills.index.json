@@ -2375,6 +2375,71 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": []
+    },
+    {
+      "SkillName": "TebraDesktop",
+      "Title": "TebraDesktop",
+      "Description": "Buffaly skill package for TebraDesktop.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "TebraDesktop",
+        "TebraDesktop"
+      ],
+      "Path": "skills/TebraDesktop",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "4b82a069b0c7322d03ce20713dbf7e11d23e2eeacc6c35b3736771859142002d"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "1cd51563af641e45d363af2057cd418397aba2edef76b99faf4299f07438d70a"
+        },
+        {
+          "Path": "lib/FlaUI.Core.dll",
+          "Sha256": "1696c344d2ff54598fb5ae869e9cbcf363c0be3ebff744cc50ba834056b43b6f"
+        },
+        {
+          "Path": "lib/FlaUI.UIA3.dll",
+          "Sha256": "d00fa5203c56b9d1c7b0bc624cffa84d599d6b8dfa6f27c0324e3059f343754c"
+        },
+        {
+          "Path": "lib/Interop.UIAutomationClient.dll",
+          "Sha256": "dcea43a1f5a2114b7bcc9e41cc1377064307611d0caa50f1ec203b887f4c20bb"
+        },
+        {
+          "Path": "lib/System.Configuration.ConfigurationManager.dll",
+          "Sha256": "f7ea3a9618aca48fb57fd06e9102b327ab66468ceb78c96d56f7d2eee2945983"
+        },
+        {
+          "Path": "lib/System.Diagnostics.EventLog.dll",
+          "Sha256": "3f8064e2499f13a8948ad2da0c6040d12683a9a90aaab786dbd6b653f17ac9cc"
+        },
+        {
+          "Path": "lib/System.Diagnostics.PerformanceCounter.dll",
+          "Sha256": "27571769f43067be4a0473916b6682c3f19443e83b4f884b69104ab6152fc58a"
+        },
+        {
+          "Path": "lib/System.Drawing.Common.dll",
+          "Sha256": "9da16df4486b8cffcd96d784521217b7823b9768ccdcb493fb099c8c79a21426"
+        },
+        {
+          "Path": "lib/System.Management.dll",
+          "Sha256": "c5f69a258fc609d42e6d50903e9b4449027f4d332faa8daec04bdc3cb9286d4b"
+        },
+        {
+          "Path": "lib/Tebra.UIAutomation.Core.dll",
+          "Sha256": "f6be725868d735d5accbe4332244e75a9707194d12bdce7957b92c5fa8edf561"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "b9004acf9e1793bcefa179867baff7fe7391188374eccd49edcd60b033c09775"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
     }
   ]
 }
