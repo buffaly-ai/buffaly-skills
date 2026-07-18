@@ -1,0 +1,13 @@
+prototype RedditAdsWebSkillAction : OpsAction
+{
+	Description = @"Base action type for Reddit Ads web module tools.";
+}
+
+[SemanticEntity("reddit ads web skill")]
+prototype RedditAdsWebSkill : SkillEntity
+{
+	Description = "Reddit Ads web module for OAuth, ad account management, and reporting.";
+	ActionRoot = RedditAdsWebSkillAction;
+}
+
+include "RedditAdsWebActions.pts";

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Reddit Ads - Buffaly</title>
+	<link rel="icon" href="data:,">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/buffaly-page.css">
+	<link rel="stylesheet" href="css/redditads.css?v=1">
+</head>
+<body class="buffaly-page">
+	<div class="buffaly-app-strip" role="banner"><a class="buffaly-app-strip-brand" href="/"><span>Buffaly</span></a><div class="buffaly-app-strip-page">Reddit Ads</div></div>
+	<main class="redditads-shell">
+		<section class="workspace-topbar">
+			<div><div class="buffaly-kicker">Reddit Ads workspace</div><h1 class="buffaly-title">Manage Reddit Ads OAuth and ad account access.</h1><p class="buffaly-subtitle">Configure your Reddit Ads developer app, authorize access, and view ad account inventory.</p></div>
+			<div class="workspace-status-row">
+				<span id="statusChip" class="buffaly-status-pill status-warning">Checking connection...</span>
+				<button id="openSettingsBtn" class="buffaly-button secondary" type="button">Settings</button>
+				<button id="authorizeBtn" class="buffaly-button" type="button" style="display:none">Authorize</button>
+				<button id="completeCallbackBtn" class="buffaly-button secondary" type="button" style="display:none">Paste Callback URL</button>
+				<button id="disconnectBtn" class="buffaly-button danger" type="button" style="display:none">Disconnect</button>
+			</div>
+		</section>
+		<div id="toastRegion" class="toast-region" aria-live="polite"></div>
+		<div id="modalRoot" class="modal-root" aria-live="polite">
+			<div id="configModal" class="config-modal-overlay" aria-hidden="true">
+				<div class="config-modal">
+					<div class="config-modal-header">
+						<h2>Configure App Credentials</h2>
+						<button id="closeConfigModalBtn" class="buffaly-button secondary" type="button">Close</button>
+					</div>
+					<div class="config-modal-body">
+						<label for="configAppId">App ID</label>
+						<input id="configAppId" type="text" placeholder="Reddit App ID (Client ID)" autocomplete="off" />
+						<label for="configAppSecret">App Secret</label>
+						<input id="configAppSecret" type="password" placeholder="Reddit App Secret (Client Secret)" autocomplete="off" />
+						<label for="configRedirectUri">Redirect URI</label>
+						<input id="configRedirectUri" type="text" placeholder="http://localhost" autocomplete="off" />
+						<label for="configScopes">Scopes</label>
+						<input id="configScopes" type="text" placeholder="adsread adsedit adsconversions" autocomplete="off" />
+					</div>
+					<div class="config-modal-footer">
+						<button id="saveConfigBtn" class="buffaly-button" type="button">Save</button>
+						<button id="cancelConfigBtn" class="buffaly-button secondary" type="button">Cancel</button>
+					</div>
+				</div>
+			</div>
+			<div id="callbackModal" class="config-modal-overlay" aria-hidden="true">
+				<div class="config-modal">
+					<div class="config-modal-header">
+						<h2>Paste Callback URL</h2>
+						<button id="closeCallbackModalBtn" class="buffaly-button secondary" type="button">Close</button>
+					</div>
+					<div class="config-modal-body">
+						<p class="buffaly-muted">After authorizing on Reddit, paste the full callback URL here:</p>
+						<textarea id="callbackUrlInput" rows="4" placeholder="http://localhost?code=...&state=..." autocomplete="off" style="width:100%;font-family:monospace;font-size:.8125rem;padding:8px 12px;border:1px solid #d0ccc4;border-radius:4px;resize:vertical"></textarea>
+					</div>
+					<div class="config-modal-footer">
+						<button id="submitCallbackBtn" class="buffaly-button" type="button">Complete Authorization</button>
+						<button id="cancelCallbackBtn" class="buffaly-button secondary" type="button">Cancel</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<section id="adAccountView" class="buffaly-panel" style="display:none">
+			<div class="list-view-header">
+				<div><h2 class="buffaly-panel-title">Ad Accounts</h2><p class="buffaly-muted">Reddit ad accounts visible to your token.</p></div>
+				<button id="refreshAdAccountsBtn" class="buffaly-button secondary" type="button">Refresh</button>
+			</div>
+			<p id="adAccountsStatus" class="buffaly-muted">Loading ad accounts...</p>
+			<div id="adAccountsList" class="selectable-list"></div>
+		</section>
+		<section id="campaignView" class="buffaly-panel" style="display:none">
+			<div class="list-view-header">
+				<div><h2 class="buffaly-panel-title">Campaigns</h2><p id="campaignSubtitle" class="buffaly-muted">Campaigns for this ad account.</p></div>
+				<div>
+					<button id="generateReportBtn" class="buffaly-button secondary" type="button">Generate Report</button>
+					<button id="backToAccountsBtn" class="buffaly-button secondary" type="button">Back</button>
+				</div>
+			</div>
+			<p id="campaignsStatus" class="buffaly-muted">Loading campaigns...</p>
+			<div id="campaignsList" class="selectable-list"></div>
+		</section>
+		<section id="reportView" class="buffaly-panel" style="display:none">
+			<div class="list-view-header">
+				<div><h2 class="buffaly-panel-title">Report</h2><p id="reportSubtitle" class="buffaly-muted">Performance report.</p></div>
+				<button id="backToCampaignsBtn" class="buffaly-button secondary" type="button">Back</button>
+			</div>
+			<div id="reportContent" class="buffaly-panel-body"></div>
+		</section>
+	</main>
+	<script src="js/redditads.js?v=2"></script>
+</body>
+</html>

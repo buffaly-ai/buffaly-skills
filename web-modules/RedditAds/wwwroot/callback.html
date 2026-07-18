@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reddit Ads OAuth Callback</title>
+<style>
+body{font-family:system-ui,-apple-system,sans-serif;background:#f7f5f0;color:#2b2b2b;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
+.card{background:#fff;border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,.08);padding:32px;max-width:480px;width:90%;text-align:center}
+.card h1{font-size:1.25rem;margin:0 0 12px}
+.card p{font-size:.875rem;color:#666;margin:8px 0}
+.card .status{font-size:1rem;font-weight:600;margin:16px 0;padding:12px;border-radius:8px}
+.card .status.ok{background:#e6f4ea;color:#1e7e34}
+.card .status.err{background:#fce8e8;color:#c5221f}
+.card .status.wait{background:#fef7e0;color:#b07000}
+.card a{display:inline-block;margin-top:16px;padding:10px 24px;background:#ff4500;color:#fff;text-decoration:none;border-radius:6px;font-weight:600}
+.card a:hover{background:#cc3700}
+.spinner{display:inline-block;width:24px;height:24px;border:3px solid #e0dcd6;border-top-color:#ff4500;border-radius:50%;animation:spin 1s linear infinite;margin:8px 0}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>Reddit Ads Authorization</h1>
+<div id="statusArea" class="status wait"><span class="spinner"></span><br>Completing authorization...</div>
+<p id="detailArea"></p>
+<a id="backLink" href="index.html" style="display:none">Back to Reddit Ads Workspace</a>
+</div>
+<script>
+(function(){
+var params=new URLSearchParams(window.location.search);
+var code=params.get('code');
+var state=params.get('state');
+var error=params.get('error');
+var statusArea=document.getElementById('statusArea');
+var detailArea=document.getElementById('detailArea');
+var backLink=document.getElementById('backLink');
+
+if(error){
+statusArea.className='status err';
+statusArea.innerHTML='Authorization denied';
+detailArea.textContent=error;
+backLink.style.display='inline-block';
+return;
+}
+
+if(!code){
+statusArea.className='status err';
+statusArea.innerHTML='No authorization code found';
+detailArea.textContent='Make sure you reached this page from the Reddit authorization flow.';
+backLink.style.display='inline-block';
+return;
+}
+
+fetch('/api/buffaly.redditads/reddit-ads-service/complete-authorization',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({code:code,state:state||''})
+}).then(function(r){return r.text().then(function(t){
+var data=null;try{data=JSON.parse(t)}catch(x){}
+if(!r.ok||(data&&data.error)){
+statusArea.className='status err';
+statusArea.innerHTML='Authorization failed';
+detailArea.textContent=(data&&data.error)?data.error:('HTTP '+r.status);
+}else{
+statusArea.className='status ok';
+statusArea.innerHTML='Reddit Ads connected successfully!';
+detailArea.textContent='You can now manage your Reddit ad accounts from the workspace.';
+}
+backLink.style.display='inline-block';
+})}).catch(function(x){
+statusArea.className='status err';
+statusArea.innerHTML='Network error';
+detailArea.textContent=x.message||'Could not reach the server.';
+backLink.style.display='inline-block';
+});
+})();
+</script>
+</body>
+</html>

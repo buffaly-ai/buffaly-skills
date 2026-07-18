@@ -1,0 +1,25 @@
+{
+    "Module":  {
+                   "Enabled":  true,
+                   "Name":  "RedditAds",
+                   "DisplayName":  "Reddit Ads",
+                   "Description":  "Buffaly Reddit Ads integration for OAuth, ad account management, campaign creation, and reporting.",
+                   "AssemblyPath": "RedditAds/Buffaly.RedditAds.Web.dll",
+                   "TypeName":  "Buffaly.RedditAds.Web.RedditAdsWebModule",
+                   "LoadOrder":  1300,
+                   "ProjectArtifacts":  [
+                                             {
+                                                 "ProjectName":  "Skills/RedditAdsWeb",
+                                                 "SourcePath":  "Skills/RedditAdsWeb/"
+                                             }
+                                         ],
+                   "Pages":  [
+                                 {
+                                     "Name":  "redditads",
+                                     "DisplayName":  "Reddit Ads",
+                                     "Path":  "/web-modules/RedditAds/index.html",
+                                     "Description":  "Open the Reddit Ads integration UI."
+                                 }
+                             ]
+               }
+}

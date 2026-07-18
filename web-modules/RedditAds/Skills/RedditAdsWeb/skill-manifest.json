@@ -1,0 +1,11 @@
+{
+  "skill": "Buffaly.RedditAds.Web",
+  "displayName": "Reddit Ads Web",
+  "description": "Manage Reddit Ads OAuth, ad account access, and reporting through the web module.",
+  "safeTools": [
+    { "name": "GetAccountStatus", "infinitivePhrase": "to inspect reddit ads account status", "description": "Check Reddit Ads connection status and OAuth token." },
+    { "name": "ListAdAccounts", "infinitivePhrase": "to list reddit ads web ad accounts", "description": "List ad accounts visible to the stored OAuth token." },
+    { "name": "ListCampaigns", "infinitivePhrase": "to list reddit ads web campaigns", "description": "List campaigns for a specific ad account." },
+    { "name": "GenerateReport", "infinitivePhrase": "to generate reddit ads web report", "description": "Generate a performance report for an ad account." }
+  ]
+}

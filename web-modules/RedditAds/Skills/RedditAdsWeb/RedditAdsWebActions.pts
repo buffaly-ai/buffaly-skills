@@ -1,0 +1,45 @@
+// -- Safe tools (local reads/writes, no external writes) ----------------
+
+[SemanticProgram.InfinitivePhrase("to inspect reddit ads account status")]
+prototype ToGetRedditAdsAccountStatus : RedditAdsWebSkillAction
+{
+	Description = @"Check Reddit Ads connection status, OAuth token, and granted scopes. Returns JSON.";
+
+	function Execute() : string
+	{
+		return RedditAdsWebService.GetAccountStatus();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list reddit ads web ad accounts")]
+prototype ToListRedditAdsWebAdAccounts : RedditAdsWebSkillAction
+{
+	Description = @"List ad accounts visible to the stored OAuth token. Returns JSON.";
+
+	function Execute() : string
+	{
+		return RedditAdsWebService.ListAdAccounts();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list reddit ads web campaigns")]
+prototype ToListRedditAdsWebCampaigns : RedditAdsWebSkillAction
+{
+	Description = @"adAccountId - Reddit ad account id. List campaigns for the specified ad account using the stored OAuth token. Returns JSON.";
+
+	function Execute(string adAccountId) : string
+	{
+		return RedditAdsWebService.ListCampaigns(adAccountId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to generate reddit ads web report")]
+prototype ToGenerateRedditAdsWebReport : RedditAdsWebSkillAction
+{
+	Description = @"adAccountId - Reddit ad account id. reportType - report type (campaign, ad_group, ad). dateRangePreset - date preset (last_7d, last_30d). Returns JSON.";
+
+	function Execute(string adAccountId, string reportType, string dateRangePreset) : string
+	{
+		return RedditAdsWebService.GenerateReport(adAccountId, reportType, dateRangePreset);
+	}
+}
