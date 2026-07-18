@@ -145,8 +145,8 @@
     {
       "SkillName": "BuffalyNLMemory",
       "Title": "Buffaly NL Memory",
-      "Description": "Validated session-local NL memory storage, provenance inventory, scoped semantic lookup, and temporary memory authoring actions.",
-      "Version": "0.1.1",
+      "Description": "Transactional session-local memory authoring with canonical ProtoScript round-trip merge, clean restore, semantic reachability, and temporary memory actions.",
+      "Version": "0.2.0",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Buffaly NL Memory",
@@ -162,7 +162,7 @@
         },
         {
           "Path": "BuffalyNLMemory.pts.md",
-          "Sha256": "0e494d6ca13fcd12fd44f819077a062dd43c8806028ad8f6ee7ac21955b8e319"
+          "Sha256": "0634c54fa6efd63857c57e2e177cc0027c3032c71fe9029bf0138b2bec86c0de"
         },
         {
           "Path": "index.pts",
@@ -174,7 +174,7 @@
         },
         {
           "Path": "lib/Buffaly.NLMemory.dll",
-          "Sha256": "7dcd6675dab95d480eb670a30ed415597a762f04f9e1c18968ad44f60da2cea7"
+          "Sha256": "4560981b19098407bf7a41c5b865ab3ddd06d29ea331ac4a43f08c6cf0d1060b"
         },
         {
           "Path": "Prompts/ToRememberSomethingTemporarilySkill.prompt.md",
