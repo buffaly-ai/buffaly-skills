@@ -356,15 +356,22 @@
     {
       "SkillName": "ClaudeCode",
       "Title": "Claude Code",
-      "Description": "Claude Code CLI skill",
-      "Version": "0.1.0",
+      "Description": "Buffaly skill package for Claude Code.",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [],
+      "Phrases": [
+        "Claude Code",
+        "ClaudeCode"
+      ],
       "Path": "skills/ClaudeCode",
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "22c38b3508b5818a4a5cf1fab4da24b81b4d09d52f3f7a422243712a2e4f0f49"
+          "Sha256": "d1c75fca68f6e6fdbd3e773ee80525b20e438ca5a68614ae6cfef93c9889cb14"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "dbe387cb7d3e9eb6bf293246d87ab9250788b9e659337d42bc73fbecc5d9c6af"
         },
         {
           "Path": "SKILL.md",
@@ -373,11 +380,7 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "Codex",

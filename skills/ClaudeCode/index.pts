@@ -7,6 +7,9 @@ import Buffaly.Agent.Tools.Process Buffaly.Agent.Tools.Process.ProcessToolDispla
 [SemanticEntity("claude cli skill")]
 [SemanticEntity("anthropic claude skill")]
 [SemanticEntity("claude skill")]
+[SemanticEntity("anthropic ant skill")]
+[SemanticEntity("ant skill")]
+[SemanticEntity("anthropic cli skill")]
 prototype ClaudeCodeSkill : SkillEntity
 {
 	Description = "Anthropic Claude Code CLI tools: auth status/login/logout, one-shot prompt execution, and pass-through conversation management. Uses the official claude CLI as a subprocess tool with subscription-backed auth (Pro/Max plan).";
@@ -20,7 +23,7 @@ prototype ClaudeCodeSkillAction : OpsAction
 
 function ToClaudeDefaultExePath() : string
 {
-	// claude CLI - resolved in PowerShell scripts via Get-Command
+	// Execution scripts resolve claude.cmd from PATH, then fall back to the current user's npm folder.
 	return "";
 }
 
@@ -37,7 +40,7 @@ function ToClaudeCleanOutput(string result) : string
 	int exitCodeIdx = result.IndexOf("Exit code: ");
 	if (exitCodeIdx >= 0)
 		return result.Substring(0, exitCodeIdx).Trim();
-	return ToClaudeCleanOutput(result);
+	return result.Trim();
 }
 
 function ToClaudePromptsDir() : string
@@ -172,16 +175,18 @@ function ToClaudePtAutoTimeout(string prompt) : int
 
 [SemanticProgram.InfinitivePhrase("to check claude auth status")]
 [SemanticProgram.InfinitivePhrase("to get claude auth status")]
-		string existsScript = "$exe=(Get-Command claude.cmd -ErrorAction SilentlyContinue).Source; if(-not $exe){ $exe=Join-Path $env:APPDATA 'npm\\claude.cmd' }; if($exe -and (Test-Path -LiteralPath $exe)){ 'EXISTS' } else { 'MISSING' }";
+[SemanticProgram.InfinitivePhrase("to get ant auth status")]
+[SemanticProgram.InfinitivePhrase("to check ant auth status")]
+[SemanticProgram.InfinitivePhrase("to check if ant is installed and authenticated")]
 prototype ToGetClaudeAuthStatus : ClaudeCodeSkillAction
 {
 	Description = @"Returns whether the Claude Code CLI is installed and whether the current session appears authenticated. Non-secret status only.";
 
 	function Execute() : string
 	{
-		string existsScript = "$exe=(Get-Command claude.cmd -ErrorAction SilentlyContinue).Source; if(-not $exe){ $exe=Join-Path $env:APPDATA 'npm\\claude.cmd' }; if($exe -and (Test-Path -LiteralPath $exe)){ 'EXISTS' } else { 'MISSING' }";
-		string exe = "";
+		string existsScript = "$exe=(Get-Command claude.cmd -ErrorAction SilentlyContinue).Source; if(-not $exe){ $exe=Join-Path $env:APPDATA 'npm\\claude.cmd' }; if($exe -and (Test-Path -LiteralPath $exe)){ $exe } else { 'MISSING' }";
 		string existsResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(existsScript, "", 15, _opsAgent, "", "Claude Exists");
+		string exe = ToClaudeCleanOutput(existsResult);
 		if (existsResult.Contains("MISSING"))
 		{
 			return "Installed=false`nAuthenticated=false`nExePath=" + exe + "`nMessage=claude CLI is not installed.`nRecommendation=Install with: npm install -g @anthropic-ai/claude-code";
@@ -222,6 +227,10 @@ prototype ToGetClaudeAuthStatus : ClaudeCodeSkillAction
 [SemanticProgram.InfinitivePhrase("to sign in to claude")]
 [SemanticProgram.InfinitivePhrase("to begin claude login")]
 [SemanticProgram.InfinitivePhrase("to log in to claude")]
+[SemanticProgram.InfinitivePhrase("to begin ant login")]
+[SemanticProgram.InfinitivePhrase("to sign in to ant")]
+[SemanticProgram.InfinitivePhrase("to login to ant")]
+[SemanticProgram.InfinitivePhrase("to log in to ant")]
 prototype ToBeginClaudeLogin : ClaudeCodeSkillAction
 {
 	Description = @"Starts official claude auth login using the --claudeai flag for subscription-backed auth (Pro/Max plan). Opens browser for OAuth. Uses the ForceOpenToolWindow pattern. timeoutSeconds defaults to 360.";
@@ -230,8 +239,6 @@ prototype ToBeginClaudeLogin : ClaudeCodeSkillAction
 	{
 		if (timeoutSeconds <= 0)
 			timeoutSeconds = 360;
-
-		string exe = ToClaudeDefaultExePath();
 
 		_opsAgent.EmitRuntimeUiOutput(new RuntimeUiEventOutputContract
 		{
@@ -243,7 +250,7 @@ prototype ToBeginClaudeLogin : ClaudeCodeSkillAction
 
 		// claude auth login --claudeai opens browser for subscription login
 		string script = "$ErrorActionPreference='Continue';";
-		script = script + "$exe='" + ToClaudeEscapePowerShellSingleQuoted(exe) + "';";
+		script = script + "$exe=(Get-Command claude.cmd -ErrorAction SilentlyContinue).Source; if(-not $exe){ $exe=Join-Path $env:APPDATA 'npm\\claude.cmd' };";
 		script = script + "if(-not (Test-Path -LiteralPath $exe)){ Write-Output ('Error: claude not found at ' + $exe); exit 2 };";
 		script = script + "$psi=New-Object System.Diagnostics.ProcessStartInfo;";
 		script = script + "$psi.FileName=$exe;";
@@ -253,6 +260,7 @@ prototype ToBeginClaudeLogin : ClaudeCodeSkillAction
 		script = script + "$psi.UseShellExecute=$false;";
 		script = script + "$psi.CreateNoWindow=$true;";
 		script = script + "$p=[System.Diagnostics.Process]::Start($psi);";
+		script = script + "$stderrTask=$p.StandardError.ReadToEndAsync();";
 		script = script + "Write-Output ('pid=' + $p.Id);";
 		// Stream output while waiting
 		script = script + "while(-not $p.HasExited){ $line=$p.StandardOutput.ReadLine(); if($line){ Write-Output $line }; Start-Sleep -Milliseconds 200 };";
@@ -270,6 +278,9 @@ prototype ToBeginClaudeLogin : ClaudeCodeSkillAction
 [SemanticProgram.InfinitivePhrase("to logout of claude")]
 [SemanticProgram.InfinitivePhrase("to sign out of claude")]
 [SemanticProgram.InfinitivePhrase("to logout claude account")]
+[SemanticProgram.InfinitivePhrase("to logout ant account")]
+[SemanticProgram.InfinitivePhrase("to sign out of ant")]
+[SemanticProgram.InfinitivePhrase("to logout of ant")]
 prototype ToLogoutClaudeAccount : ClaudeCodeSkillAction
 {
 	Description = @"Logs out of the Claude Code CLI by removing stored credentials. Uses the official claude auth logout command.";
@@ -288,6 +299,9 @@ prototype ToLogoutClaudeAccount : ClaudeCodeSkillAction
 [SemanticProgram.InfinitivePhrase("to run a claude prompt")]
 [SemanticProgram.InfinitivePhrase("to execute a claude prompt")]
 [SemanticProgram.InfinitivePhrase("to send a prompt to claude")]
+[SemanticProgram.InfinitivePhrase("to run an ant prompt")]
+[SemanticProgram.InfinitivePhrase("to execute an ant prompt")]
+[SemanticProgram.InfinitivePhrase("to send a prompt to ant")]
 prototype ToRunClaudePrompt : ClaudeCodeSkillAction
 {
 	Description = @"prompt - required one-shot prompt text.
@@ -352,6 +366,11 @@ Runs official claude -p with --output-format text --permission-mode bypassPermis
 [SemanticProgram.InfinitivePhrase("to ask claude")]
 [SemanticProgram.InfinitivePhrase("to send a message to claude")]
 [SemanticProgram.InfinitivePhrase("to pass through to claude")]
+[SemanticProgram.InfinitivePhrase("to talk to ant")]
+[SemanticProgram.InfinitivePhrase("to chat with ant")]
+[SemanticProgram.InfinitivePhrase("to ask ant")]
+[SemanticProgram.InfinitivePhrase("to send a message to ant")]
+[SemanticProgram.InfinitivePhrase("to pass through to ant")]
 prototype ToTalkToClaude : ClaudeCodeSkillAction
 {
 	Description = @"prompt - the user's message to forward to claude (Claude).
@@ -437,6 +456,9 @@ This is the main pass-through action. It automatically manages model selection, 
 [SemanticProgram.InfinitivePhrase("to start a new claude conversation")]
 [SemanticProgram.InfinitivePhrase("to reset claude conversation")]
 [SemanticProgram.InfinitivePhrase("to start fresh with claude")]
+[SemanticProgram.InfinitivePhrase("to start a new ant conversation")]
+[SemanticProgram.InfinitivePhrase("to reset ant conversation")]
+[SemanticProgram.InfinitivePhrase("to start fresh with ant")]
 prototype ToStartNewClaudeConversation : ClaudeCodeSkillAction
 {
 	Description = @"Clears the current claude pass-through conversation context so the next ToTalkToClaude call starts fresh. Optional model parameter to set the model for the new conversation.";
@@ -456,6 +478,8 @@ prototype ToStartNewClaudeConversation : ClaudeCodeSkillAction
 
 [SemanticProgram.InfinitivePhrase("to get claude conversation state")]
 [SemanticProgram.InfinitivePhrase("to check claude conversation status")]
+[SemanticProgram.InfinitivePhrase("to get ant conversation state")]
+[SemanticProgram.InfinitivePhrase("to check ant conversation status")]
 prototype ToGetClaudeConversationState : ClaudeCodeSkillAction
 {
 	Description = @"Returns the current claude pass-through state: model, working directory, and turn count.";
@@ -477,6 +501,8 @@ prototype ToGetClaudeConversationState : ClaudeCodeSkillAction
 
 [SemanticProgram.InfinitivePhrase("to set claude model")]
 [SemanticProgram.InfinitivePhrase("to switch claude model")]
+[SemanticProgram.InfinitivePhrase("to set ant model")]
+[SemanticProgram.InfinitivePhrase("to switch ant model")]
 prototype ToSetClaudeModel : ClaudeCodeSkillAction
 {
 	Description = @"Sets the Claude model for subsequent pass-through calls. Does not start a new conversation. Valid options: sonnet, opus, haiku, fable, or full model names like claude-sonnet-4-5.";
@@ -493,6 +519,8 @@ prototype ToSetClaudeModel : ClaudeCodeSkillAction
 
 [SemanticProgram.InfinitivePhrase("to set claude working directory")]
 [SemanticProgram.InfinitivePhrase("to change claude working directory")]
+[SemanticProgram.InfinitivePhrase("to set ant working directory")]
+[SemanticProgram.InfinitivePhrase("to change ant working directory")]
 prototype ToSetClaudeWorkingDirectory : ClaudeCodeSkillAction
 {
 	Description = @"Sets the working directory for subsequent claude pass-through calls. This affects where the claude CLI process runs. Pass 'none' or empty to reset to default.";
