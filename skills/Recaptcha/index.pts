@@ -1,0 +1,168 @@
+// Recaptcha Skill - Google reCAPTCHA Enterprise key and domain management via gcloud CLI
+
+// ===== Skill Entity =====
+[SemanticEntity("recaptcha skill")]
+[SemanticEntity("recaptcha enterprise skill")]
+[SemanticEntity("google recaptcha skill")]
+prototype RecaptchaSkill : SkillEntity
+{
+	Description = "Google reCAPTCHA Enterprise key and domain management actions via service-account-authenticated gcloud CLI.";
+	ActionRoot = RecaptchaSkillAction;
+}
+
+// ===== Action Root =====
+prototype RecaptchaSkillAction : OpsAction
+{
+	Description = @"Base action type for reCAPTCHA Enterprise management tools.";
+}
+
+// ===== Shared Helpers =====
+
+// Service account key file for reCAPTCHA Enterprise management (outside source control)
+function ToRecaptchaDefaultKeyFile() : string
+{
+	return "C:\\drop\\recaptcha-enterprise-sa.json";
+}
+
+// Activates the reCAPTCHA Enterprise service account so gcloud commands work without interactive user auth
+function ToRecaptchaEnsureServiceAccount() : string
+{
+	string script = "gcloud auth activate-service-account --key-file='C:\\drop\\recaptcha-enterprise-sa.json' --quiet 2>&1; gcloud config set account recaptcha-enterprise@intelligence-fac-1731098258626.iam.gserviceaccount.com 2>&1";
+	return SystemOperations.RunPowerShell(script, 15);
+}
+
+
+function ToRecaptchaDefaultProjectId() : string
+{
+// Returns the default reCAPTCHA Enterprise project ID
+	return "intelligence-fac-1731098258626";
+}
+
+function ToRecaptchaCleanOutput(string result) : string
+{
+	// Strip "Exit code: N" suffix appended by RunPowerShellStreamingToRuntimeUi
+	int exitCodeIdx = result.IndexOf("Exit code: ");
+	if (exitCodeIdx >= 0)
+		return result.Substring(0, exitCodeIdx).Trim();
+	return result.Trim();
+}
+
+function ToRecaptchaEscapeSingleQuoted(string value) : string
+{
+	if (StringUtil.IsEmpty(value))
+		return "";
+	return value.Replace("'", "''");
+}
+
+function ToRecaptchaRunGcloud(string argumentLine, int timeoutSeconds, string label) : string
+{
+	if (timeoutSeconds <= 0)
+		timeoutSeconds = 60;
+
+	// Call gcloud directly - simpler than ProcessStartInfo and works with SystemOperations
+	string script = "$env:CLOUDSDK_CORE_DISABLE_PROMPTS='1'; ";
+	script = script + "$output = gcloud " + ToRecaptchaEscapeSingleQuoted(argumentLine) + " 2>&1; ";
+	script = script + "Write-Output $output; ";
+
+	return SystemOperations.RunPowerShell(script, timeoutSeconds);
+}
+
+function ToRecaptchaGetDomains(string keyId, string projectId) : string
+{
+	// Use gcloud --format=value() to get domains directly, avoiding JSON parsing
+	string script = "gcloud recaptcha keys describe " + keyId + " --project=" + projectId + " --format=value(webSettings.allowedDomains) --quiet 2>&1";
+	string output = SystemOperations.RunPowerShell(script, 60);
+	// gcloud value() format uses semicolons for repeated fields; normalize to commas
+	return output.Replace(";", ",").Trim();
+}
+
+// ===== Actions =====
+
+[SemanticProgram.InfinitivePhrase("to list recaptcha keys")]
+[SemanticProgram.InfinitivePhrase("to list recaptcha enterprise keys")]
+prototype ToListRecaptchaKeys : RecaptchaSkillAction
+{
+	Description = @"projectId - Google Cloud project ID. If empty, uses the current gcloud default project. Returns JSON array of reCAPTCHA Enterprise keys.";
+
+	function Execute(string projectId) : string
+	{
+		ToRecaptchaEnsureServiceAccount();
+		if (StringUtil.IsEmpty(projectId))
+			projectId = "intelligence-fac-1731098258626";
+
+		string script = "gcloud recaptcha keys list --project=" + projectId + " --format=json --quiet 2>&1";
+		return SystemOperations.RunPowerShell(script, 60);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get recaptcha key details")]
+[SemanticProgram.InfinitivePhrase("to describe a recaptcha key")]
+prototype ToGetRecaptchaKey : RecaptchaSkillAction
+{
+	Description = @"keyId - reCAPTCHA key ID or full key name. projectId - Google Cloud project ID. If empty, uses the current gcloud default project. Returns JSON with full key details including webSettings.allowedDomains.";
+
+	function Execute(string keyId, string projectId) : string
+	{
+		ToRecaptchaEnsureServiceAccount();
+		if (StringUtil.IsEmpty(projectId))
+			projectId = ToRecaptchaDefaultProjectId();
+
+		string script = "gcloud recaptcha keys describe " + keyId + " --project=" + projectId + " --format=json --quiet 2>&1";
+		return SystemOperations.RunPowerShell(script, 60);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to add a recaptcha domain")]
+[SemanticProgram.InfinitivePhrase("to add a domain to a recaptcha key")]
+prototype ToAddRecaptchaDomain : RecaptchaSkillAction
+{
+	Description = @"keyId - reCAPTCHA key ID. domain - domain to add (hostname only, no scheme/path/port). projectId - Google Cloud project ID. If empty, uses the current gcloud default project. Reads current domains, appends the new domain if not already present, and updates the key. Returns JSON with the updated domain list.";
+
+	function Execute(string keyId, string domain, string projectId) : string
+	{
+		ToRecaptchaEnsureServiceAccount();
+		if (StringUtil.IsEmpty(projectId))
+			projectId = ToRecaptchaDefaultProjectId();
+
+		// Use PowerShell to do the read-modify-write in one script
+		string psScript = "$domains = (gcloud recaptcha keys describe '" + keyId + "' --project='" + projectId + "' --format='value(webSettings.allowedDomains)' --quiet 2>$null); $domains = $domains -replace ';', ','; if ($domains -and $domains.Contains('" + domain + "')) { $newDomains = $domains } elseif ($domains) { $newDomains = $domains + ',' + '" + domain + "' } else { $newDomains = '" + domain + "' }; gcloud recaptcha keys update '" + keyId + "' --project='" + projectId + "' --web --domains=\"$newDomains\" --format=json --quiet 2>&1; Write-Output 'Exit code: 0'";
+		string raw = SystemOperations.RunPowerShell(psScript, 60);
+		return ToRecaptchaCleanOutput(raw);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to remove a recaptcha domain")]
+[SemanticProgram.InfinitivePhrase("to remove a domain from a recaptcha key")]
+prototype ToRemoveRecaptchaDomain : RecaptchaSkillAction
+{
+	Description = @"keyId - reCAPTCHA key ID. domain - domain to remove. projectId - Google Cloud project ID. If empty, uses the current gcloud default project. Reads current domains, removes the specified domain, and updates the key. Returns JSON with the updated domain list.";
+
+	function Execute(string keyId, string domain, string projectId) : string
+	{
+		ToRecaptchaEnsureServiceAccount();
+		if (StringUtil.IsEmpty(projectId))
+			projectId = ToRecaptchaDefaultProjectId();
+
+		// Use PowerShell to do the read-modify-write in one script
+		string psScript = "$domains = (gcloud recaptcha keys describe '" + keyId + "' --project='" + projectId + "' --format='value(webSettings.allowedDomains)' --quiet 2>$null); $domains = $domains -replace ';', ','; $parts = $domains -split ',' | Where-Object { $_ -ne '" + domain + "' }; $newDomains = $parts -join ','; gcloud recaptcha keys update '" + keyId + "' --project='" + projectId + "' --web --domains=\"$newDomains\" --format=json --quiet 2>&1; Write-Output 'Exit code: 0'";
+		string raw = SystemOperations.RunPowerShell(psScript, 60);
+		return ToRecaptchaCleanOutput(raw);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set recaptcha domains")]
+[SemanticProgram.InfinitivePhrase("to replace recaptcha domains")]
+prototype ToSetRecaptchaDomains : RecaptchaSkillAction
+{
+	Description = @"keyId - reCAPTCHA key ID. domains - comma-separated list of domains to set (replaces existing list entirely). projectId - Google Cloud project ID. If empty, uses the current gcloud default project. Returns JSON with the updated key details.";
+
+	function Execute(string keyId, string domains, string projectId) : string
+	{
+		ToRecaptchaEnsureServiceAccount();
+		if (StringUtil.IsEmpty(projectId))
+			projectId = ToRecaptchaDefaultProjectId();
+
+		string script = "gcloud recaptcha keys update " + keyId + " --project=" + projectId + " --web --domains=\"" + domains + "\" --quiet 2>&1";
+		return SystemOperations.RunPowerShell(script, 60);
+	}
+}

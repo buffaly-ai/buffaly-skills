@@ -2301,6 +2301,35 @@
       "HasPackageReceipt": false,
       "IsOutdated": false,
       "InstalledVersion": ""
+    },
+    {
+      "SkillName": "Recaptcha",
+      "Title": "Recaptcha",
+      "Description": "Buffaly skill package for Recaptcha.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Recaptcha",
+        "Recaptcha"
+      ],
+      "Path": "skills/Recaptcha",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "68354782c191f8b0dde0548d6e5637df5ee2d81495efa632a9b8970a4263b25e"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "d714b8071a7bc43ffd81ea7be00872afc7c7cc1d3a7c3b788d6643e676d2ec73"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "4fdf435d8b6c458806afa80bea95654f421ff30d3de010e8cad1be2813732a56"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
     }
   ]
 }
