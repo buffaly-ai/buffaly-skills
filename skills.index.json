@@ -2330,6 +2330,51 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": []
+    },
+    {
+      "SkillName": "AipAdapter",
+      "Title": "AipAdapter",
+      "Description": "Buffaly skill package for AipAdapter.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "AipAdapter",
+        "AipAdapter"
+      ],
+      "Path": "skills/AipAdapter",
+      "Files": [
+        {
+          "Path": "AipCapability.pts",
+          "Sha256": "4a2a9aa79ac4e28b23f685fedf5312c6ba7d4f127d23d91736471ed5aa0baec4"
+        },
+        {
+          "Path": "AipCapability.pts.md",
+          "Sha256": "bad159bdc86e681f150c7c26a6317659fa7989fae704f0728e9d87d4f15c6845"
+        },
+        {
+          "Path": "AipDefinitions.ReadOnly.pts",
+          "Sha256": "d98dbbb3245243170e530384b3b585f734956517309425dc7c51cc98d65f56fe"
+        },
+        {
+          "Path": "AipDefinitions.ReadOnly.pts.md",
+          "Sha256": "2cd01f6fd84293e096e4b3406e76d864fd8caca92544623d4c4ed1a063f9efd8"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "46632a6819654b712dfb1c4c80237b889e5a071c5439b27dee8e56cca38b94c8"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "711244c4574f39b69a3bfea2d08cb847592cfa18c9369d7cc731382da6fbed45"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "a6b3269399ae6432bb6c3066de7e5748aa4e760d10597e3983c41a33b0cc77ae"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
     }
   ]
 }

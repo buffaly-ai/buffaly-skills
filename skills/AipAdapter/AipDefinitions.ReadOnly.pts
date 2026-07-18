@@ -1,0 +1,83 @@
+prototype ToGetSessionPlan : AipCapability
+{
+	CapabilityID = "buffaly.session.plan.get";
+	CapabilityVersion = "1.0.0";
+	CapabilityDescription = "Read the current session plan markdown.";
+	RiskTier = "LOW";
+	EffectType = "READ";
+	LifecycleStatus = "active";
+	ExecutionPrototypeName = "ToGetSessionPlan";
+	ExecutionMethodName = "Execute";
+	Owner = "Buffaly.Agent.Tools.Sessions";
+	TagsCsv = "session,plan,read";
+}
+
+prototype ToGetSessionScratch : AipCapability
+{
+	CapabilityID = "buffaly.session.scratch.get";
+	CapabilityVersion = "1.0.0";
+	CapabilityDescription = "Read the current session scratch markdown.";
+	RiskTier = "LOW";
+	EffectType = "READ";
+	LifecycleStatus = "active";
+	ExecutionPrototypeName = "ToGetSessionScratch";
+	ExecutionMethodName = "Execute";
+	Owner = "Buffaly.Agent.Tools.Sessions";
+	TagsCsv = "session,scratch,read";
+}
+
+prototype ToListSkills : AipCapability
+{
+	CapabilityID = "buffaly.skills.list";
+	CapabilityVersion = "1.0.0";
+	CapabilityDescription = "List registered top-level Buffaly skills.";
+	RiskTier = "LOW";
+	EffectType = "READ";
+	LifecycleStatus = "active";
+	ExecutionPrototypeName = "ToListSkills";
+	ExecutionMethodName = "Execute";
+	Owner = "Buffaly.Agent.SkillManagement";
+	TagsCsv = "skills,inspection,read";
+}
+
+prototype ToListSkillActions : AipCapability
+{
+	CapabilityID = "buffaly.skills.actions.list";
+	CapabilityVersion = "1.0.0";
+	CapabilityDescription = "List actions available within a Buffaly skill.";
+	RiskTier = "LOW";
+	EffectType = "READ";
+	LifecycleStatus = "active";
+	ExecutionPrototypeName = "ToListSkillActions";
+	ExecutionMethodName = "Execute";
+	Owner = "Buffaly.Agent.SkillManagement";
+	TagsCsv = "skills,actions,inspection,read";
+}
+
+prototype ToGetFileBlock : AipCapability
+{
+	CapabilityID = "buffaly.files.block.get";
+	CapabilityVersion = "1.0.0";
+	CapabilityDescription = "Read a line range from a file.";
+	RiskTier = "MEDIUM";
+	EffectType = "READ";
+	LifecycleStatus = "active";
+	ExecutionPrototypeName = "ToGetFileBlock";
+	ExecutionMethodName = "Execute";
+	Owner = "Buffaly.Agent.Tools.FileSystem";
+	TagsCsv = "filesystem,file,read";
+}
+
+prototype ToReadTextFileRaw : AipCapability
+{
+	CapabilityID = "buffaly.files.text.read_raw";
+	CapabilityVersion = "1.0.0";
+	CapabilityDescription = "Read a text file as raw materialized text.";
+	RiskTier = "MEDIUM";
+	EffectType = "READ";
+	LifecycleStatus = "active";
+	ExecutionPrototypeName = "ToReadTextFileRaw";
+	ExecutionMethodName = "Execute";
+	Owner = "Buffaly.Agent.Tools.FileSystem";
+	TagsCsv = "filesystem,file,text,read";
+}

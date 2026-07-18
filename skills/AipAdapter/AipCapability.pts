@@ -1,0 +1,18 @@
+prototype AipCapability : ProtoScriptAction
+{
+	String CapabilityID = "";
+	String CapabilityVersion = "1.0.0";
+	String CapabilityDescription = "";
+	String RiskTier = "LOW";
+	Prototype InputType = null;
+	Prototype OutputType = null;
+	String LifecycleStatus = "active";
+	String ExecutionBindingType = "ProtoScriptSemanticProgram";
+	String ExecutionPrototypeName = "";
+	String ExecutionMethodName = "Execute";
+	String Owner = "";
+	String TagsCsv = "";
+	String EffectType = "READ";
+	Bool CapabilityGateEnabled = true;
+	Bool RequiresEvidence = true;
+}

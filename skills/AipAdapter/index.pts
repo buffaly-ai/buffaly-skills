@@ -1,0 +1,50 @@
+reference Buffaly.Agent.AipAdapter Buffaly.Agent.AipAdapter;
+import Buffaly.Agent.AipAdapter Buffaly.Agent.AipAdapter.AipAdapterFacade AipAdapterFacade;
+
+include "AipCapability.pts";
+include "AipDefinitions.ReadOnly.pts";
+
+prototype AipAdapterSkillAction : OpsAction
+{
+}
+
+prototype AipAdapterSkill : SkillEntity
+{
+	ActionRoot = AipAdapterSkillAction;
+	EntityName = "AIP adapter skill";
+	Description = "Exports selected Buffaly ProtoScript tools as AIP-shaped read-only capability manifests.";
+}
+
+[SemanticProgram.InfinitivePhrase("to get AIP adapter info")]
+prototype ToGetAipAdapterInfo : AipAdapterSkillAction
+{
+	Description = "Return AIP adapter version, support flags, projection mode, and limitations.";
+
+	function Execute() : string
+	{
+		return AipAdapterFacade.GetInfo();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list AIP capabilities")]
+[SemanticProgram.InfinitivePhrase("to project protoscript tools as AIP capabilities")]
+prototype ToListAipCapabilities : AipAdapterSkillAction
+{
+	Description = "List explicit AIP-shaped capability manifests for selected Buffaly ProtoScript tools.";
+
+	function Execute(bool includeInactive = false, bool includeInferred = false, string riskTier = "", string effectType = "", string skillName = "") : string
+	{
+		return AipAdapterFacade.ListCapabilities(_opsAgent, includeInactive, includeInferred, riskTier, effectType, skillName);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get an AIP capability")]
+prototype ToGetAipCapability : AipAdapterSkillAction
+{
+	Description = "Return one AIP-shaped capability manifest by capability id, tool name, or prototype name.";
+
+	function Execute(string capabilityIDOrToolName, bool includeInactive = false) : string
+	{
+		return AipAdapterFacade.GetCapability(_opsAgent, capabilityIDOrToolName, includeInactive);
+	}
+}
