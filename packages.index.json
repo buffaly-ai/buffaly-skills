@@ -8394,7 +8394,7 @@
       "PackageType": "WebModule",
       "Title": "Extension Publishing",
       "Description": "Buffaly Web Module package for Extension Publishing.",
-      "Version": "0.1.17",
+      "Version": "0.1.18",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/ExtensionPublishing",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/ExtensionPublishing",
@@ -8409,7 +8409,7 @@
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "24320a699174ed2fa884742786dbbb3d8c1b05b3d49e9c6b38942319ddae9511"
+          "Sha256": "13c9c42330f4e0671376aa8026ccc63d1b8aa3285a0fce25add9cc0d35b4dc85"
         },
         {
           "Path": "Buffaly.ExtensionPublishing.WebModule.deps.json",
@@ -8417,7 +8417,7 @@
         },
         {
           "Path": "Buffaly.ExtensionPublishing.WebModule.dll",
-          "Sha256": "37c47a1b11cd75021e155517a989a781565b7bc98998ca44e8beae0b2aeb6562"
+          "Sha256": "9c7f8a876f62237400714aa42a4471f85ca2dec958d98e929ef4e6a4e72e26d1"
         },
         {
           "Path": "Generated/JsonWs/Buffaly.ExtensionPublishing.WebModule.ExtensionPublishingService.ashx.js",
@@ -8436,15 +8436,48 @@
           "Sha256": "10d59df4170053ea9597e3c20adc9607ad17318ad5d8747eda3d930a5a4b463a"
         },
         {
+          "Path": "Skills/ExtensionManagement/index.pts",
+          "Sha256": "f8bf4d9da213aa1290dfa711849de2c79ba691c583670e324683f1fb55090a6c"
+        },
+        {
+          "Path": "Skills/ExtensionManagement/PromptActions.pts",
+          "Sha256": "de5680f6729e16ad97976479bdb5004b15455dc520324466e0cdef5d483bdae4"
+        },
+        {
+          "Path": "Skills/ExtensionManagement/Prompts/CreatePackageManagedWebModule.prompt.md",
+          "Sha256": "896808eeb601146fd2d8e746a4f5f7a717d5ade5d68d83ba4cf29ee578899ffc"
+        },
+        {
+          "Path": "Skills/ExtensionManagement/Prompts/DiagnoseAndRepairExtension.prompt.md",
+          "Sha256": "507cde4299470f6d8a3d90508b3b7541a3bed90a3fc55b52fc66e2b70a4eb5ed"
+        },
+        {
+          "Path": "Skills/ExtensionManagement/Prompts/InstallOrUpdateExtension.prompt.md",
+          "Sha256": "83951ede5b0472f4b045f46391dd0459b74551097daa8e5290942d9a11fd185c"
+        },
+        {
+          "Path": "Skills/ExtensionManagement/Prompts/PublishExtension.prompt.md",
+          "Sha256": "946f1e09990312017325434b968429bd6569f40e2c028ee6a9754dfda7b0b910"
+        },
+        {
+          "Path": "Skills/ExtensionManagement/Prompts/ValidateExtensionLifecycle.prompt.md",
+          "Sha256": "d38013db22e6a9d5529ec7fcc94b9685c876a867bd7c407036aa736f2b3bc4bb"
+        },
+        {
           "Path": "web-module.json",
-          "Sha256": "db84d9da15a5688abff939b6c86180f84a88c9ef742206dc26b62e103bf108e4"
+          "Sha256": "e92015f62048e6daa15d7416f81016077eeea7295edcb6e8984a04a7bbbe1115"
         },
         {
           "Path": "WebAppUtilities.dll",
           "Sha256": "b04993ec40d66d8f11ffc85f1d1c49ea52be9801406e48765e1e130fb881f5b4"
         }
       ],
-      "ProjectArtifacts": [],
+      "ProjectArtifacts": [
+        {
+          "ProjectName": "Skills/ExtensionManagement",
+          "SourcePath": "Skills/ExtensionManagement/"
+        }
+      ],
       "Dependencies": [],
       "RelatedWikiSlugs": [],
       "Prerequisites": [],

@@ -1,0 +1,60 @@
+[SemanticProgram.InfinitivePhrase("to create a package-managed web module")]
+[SemanticProgram.InfinitivePhrase("to add a new Buffaly web module")]
+prototype ToCreatePackageManagedWebModuleSkill : PromptAction, ExtensionManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/ExtensionManagement/Prompts/CreatePackageManagedWebModule.prompt.md";
+	Description = "Create a package-managed WebModule in its owning source repository with module manifest, runtime/static payload, tests, and publication readiness evidence.";
+}
+
+[SemanticProgram.InfinitivePhrase("to publish a Buffaly extension")]
+[SemanticProgram.InfinitivePhrase("to publish a web module to the skills repository")]
+[SemanticProgram.InfinitivePhrase("to promote an extension to the remote repository")]
+prototype ToPublishBuffalyExtensionSkill : PromptAction, ExtensionManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/ExtensionManagement/Prompts/PublishExtension.prompt.md";
+	Description = "Preview and publish a Skill, WebModule, or ProviderModule into canonical Local, optionally update installer profiles, and explicitly promote the exact commit to Remote.";
+}
+
+[SemanticProgram.InfinitivePhrase("to install a Buffaly extension")]
+[SemanticProgram.InfinitivePhrase("to update installed extensions")]
+[SemanticProgram.InfinitivePhrase("to consume pending extension installs")]
+[SemanticProgram.InfinitivePhrase("to explain pending next restart")]
+prototype ToInstallOrUpdateBuffalyExtensionSkill : PromptAction, ExtensionManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/ExtensionManagement/Prompts/InstallOrUpdateExtension.prompt.md";
+	Description = "Install or update packages through Skill Management/package CLI with explicit immediate-versus-pending activation and controlled pre-start handling.";
+}
+
+[SemanticProgram.InfinitivePhrase("to diagnose extension package state")]
+[SemanticProgram.InfinitivePhrase("to repair a Buffaly extension")]
+[SemanticProgram.InfinitivePhrase("to fix an extension hash mismatch")]
+[SemanticProgram.InfinitivePhrase("to repair an extension receipt")]
+prototype ToDiagnoseAndRepairBuffalyExtensionSkill : PromptAction, ExtensionManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/ExtensionManagement/Prompts/DiagnoseAndRepairExtension.prompt.md";
+	Description = "Diagnose source, catalog, Local/Remote package, index, profile/lock, receipt, installed payload, and startup activation, then repair the authoritative failed layer.";
+}
+
+[SemanticProgram.InfinitivePhrase("to validate a Buffaly extension lifecycle")]
+[SemanticProgram.InfinitivePhrase("to validate extension publishing and installation")]
+[SemanticProgram.InfinitivePhrase("to verify a web module on staging")]
+prototype ToValidateBuffalyExtensionLifecycleSkill : PromptAction, ExtensionManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/ExtensionManagement/Prompts/ValidateExtensionLifecycle.prompt.md";
+	Description = "Validate source, catalog, Local/Remote publication, profiles/locks, installation, receipts, startup activation, routes/tools/providers, and process cleanup with explicit evidence.";
+}

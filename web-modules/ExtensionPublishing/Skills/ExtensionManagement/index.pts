@@ -1,0 +1,13 @@
+prototype ExtensionManagementSkillAction : OpsAction
+{
+	Description = "Base action type for extension creation, cataloging, publishing, installation, update, repair, validation, and release workflows.";
+}
+
+[SemanticEntity("extension management skill")]
+prototype ExtensionManagementSkill : SkillEntity, CoreEntity
+{
+	Description = "Guided workflows for creating, cataloging, publishing, installing, updating, diagnosing, validating, and releasing Buffaly Skills, WebModules, and ProviderModules.";
+	ActionRoot = ExtensionManagementSkillAction;
+}
+
+include "PromptActions.pts";
