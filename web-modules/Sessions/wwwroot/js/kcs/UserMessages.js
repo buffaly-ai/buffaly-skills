@@ -1,4 +1,4 @@
-﻿/**
+/**
  * KCS Utility Module: UserMessages
  * ------------------------------------------------------------
  * Toast/banner broker that buffers messages between server round-trips

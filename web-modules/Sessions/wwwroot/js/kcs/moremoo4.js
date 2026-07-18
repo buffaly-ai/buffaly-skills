@@ -1,4 +1,4 @@
-﻿/**
+/**
  * KCS Utility Module: moremoo4
  * ------------------------------------------------------------
  * Core polyfills and helper surfaces that keep legacy MooTools-era

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * KCS Utility Module: grid4
  * ------------------------------------------------------------
  * Client-side engine behind our JsonWs-backed tables. It tracks paging,

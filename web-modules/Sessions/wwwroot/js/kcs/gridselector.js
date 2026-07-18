@@ -1,4 +1,4 @@
-﻿/**
+/**
  * KCS Utility Module: gridselector
  * ------------------------------------------------------------
  * Adds multi-select behaviour on top of JsonWsGrid3. It tracks the

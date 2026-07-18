@@ -24,11 +24,10 @@ BEGIN
 		FROM Messages m WITH (NOLOCK)
 		WHERE
 			m.SessionID = @SessionID
+			AND m.Role = N'User'
 			AND NULLIF(LTRIM(RTRIM(m.TurnID)), '') IS NOT NULL
 		GROUP BY
 			m.TurnID
-		HAVING
-			SUM(CASE WHEN m.Role = N'User' THEN 1 ELSE 0 END) > 0
 	) t
 END
 GO

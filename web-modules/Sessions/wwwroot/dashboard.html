@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Sessions Dashboard</title>
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/icons.min.css">
+	<link rel="stylesheet" href="custom_css/styles.css">
+	<link rel="stylesheet" href="css/dashboard-static.css">
+	<script src="/js/kcs/global.js"></script><script src="/js/kcs/LocalStorage2.js"></script><script src="/js/kcs/moremoo4.js"></script><script src="/js/kcs/JsonMethod.js"></script><script src="/js/kcs/validators.js"></script><script src="/js/kcs/MasterPage.js"></script>
+</head>
+<body class="dashboard-static-page">
+	<header class="dashboard-topbar"><a class="dashboard-brand" href="/">Buffaly Sessions</a><nav><a class="active" href="dashboard.html">Dashboard</a><a href="/usage">Usage</a><a href="/sessions">Sessions</a></nav></header>
+	<main class="dashboard-container" id="dashboard">
+		<section class="dashboard-hero">
+			<div><p class="dashboard-eyebrow">Sessions analysis</p><h1>Dashboard</h1><p data-range-subtitle>Loading Eastern Time date range…</p><p class="dashboard-updated">Last refreshed <span data-last-refreshed>—</span></p></div>
+			<button class="btn btn-light align-self-start" type="button" data-refresh>Refresh</button>
+		</section>
+		<section class="panel-section" data-lifetime-panel>
+			<div class="section-heading"><div><p class="dashboard-eyebrow">Lifetime baseline</p><h2>All-time activity</h2></div><span class="panel-status" data-lifetime-status>Loading…</span></div>
+			<div class="dashboard-error" data-lifetime-error hidden><span data-error-message></span><button type="button" data-lifetime-retry>Retry</button></div>
+			<div class="dashboard-kpis lifetime-grid" data-lifetime-content hidden>
+				<article class="metric-card"><span>All messages</span><strong data-lifetime="AllMessages"></strong></article><article class="metric-card"><span>User messages</span><strong data-lifetime="UserMessages"></strong></article><article class="metric-card"><span>Assistant messages</span><strong data-lifetime="AssistantMessages"></strong></article><article class="metric-card"><span>Tool calls</span><strong data-lifetime="ToolCalls"></strong></article><article class="metric-card"><span>Sessions</span><strong data-lifetime="Sessions"></strong></article><article class="metric-card"><span>First activity</span><strong class="date-value" data-lifetime="FirstActivityDate"></strong><small>Latest <b data-lifetime="LatestActivityDate"></b></small></article>
+			</div>
+		</section>
+		<section class="range-toolbar" aria-label="Selected metrics date range">
+			<div><p class="dashboard-eyebrow">Selected metrics range</p><div class="preset-group" data-presets><button type="button" data-range="7d">7D</button><button type="button" data-range="30d">30D</button><button type="button" data-range="90d">90D</button><button type="button" data-range="6m">6M</button><button type="button" data-range="1y">1Y</button><button type="button" data-range="all">All</button></div></div>
+			<form data-custom-range><label>Start <input type="date" data-start required></label><label>End <input type="date" data-end required></label><button class="btn btn-primary" type="submit">Apply</button></form>
+		</section>
+		<section class="panel-section" data-range-panel>
+			<div class="section-heading"><div><p class="dashboard-eyebrow">Selected range</p><h2>Activity and prior-period comparison</h2></div><span class="panel-status" data-range-status>Loading…</span></div>
+			<div class="dashboard-error" data-range-error hidden><span data-error-message></span><button type="button" data-range-retry>Retry</button></div>
+			<div data-range-content hidden>
+				<div class="dashboard-kpis range-grid">
+					<article class="metric-card"><span>All messages</span><strong data-summary="AllMessages"></strong><small data-comparison="AllMessages"></small></article><article class="metric-card"><span>User messages</span><strong data-summary="UserMessages"></strong><small data-comparison="UserMessages"></small></article><article class="metric-card"><span>Assistant messages</span><strong data-summary="AssistantMessages"></strong><small data-comparison="AssistantMessages"></small></article><article class="metric-card"><span>Tool calls</span><strong data-summary="ToolCalls"></strong><small data-comparison="ToolCalls"></small></article><article class="metric-card"><span>Active sessions</span><strong data-summary="ActiveSessions"></strong><small data-comparison="ActiveSessions"></small></article><article class="metric-card"><span>New sessions</span><strong data-summary="NewSessions"></strong><small data-comparison="NewSessions"></small></article>
+				</div>
+				<article class="panel-card trend-panel">
+					<div class="panel-heading"><div><p class="dashboard-eyebrow">Daily, Eastern Time</p><h2>Message trends</h2></div><div class="legend" data-series-toggles><label><input type="checkbox" value="AllMessages" checked><i class="all"></i>All</label><label><input type="checkbox" value="UserMessages" checked><i class="user"></i>User</label><label><input type="checkbox" value="AssistantMessages"><i class="assistant"></i>Assistant</label><label><input type="checkbox" value="ToolCalls"><i class="tool"></i>Tools</label></div></div>
+					<div class="chart-scroll" data-chart-scroll><svg class="line-chart" data-line-chart role="img" aria-label="Daily message trend line graph"></svg></div>
+					<button class="table-toggle" type="button" data-table-toggle aria-expanded="false">Show daily table</button>
+					<div class="table-responsive" data-trend-table-wrap hidden><table class="table"><thead><tr><th>Date (ET)</th><th>All</th><th>User</th><th>Assistant</th><th>Tools</th><th>Sessions</th></tr></thead><tbody data-trend-table></tbody></table></div>
+				</article>
+			</div>
+		</section>
+		<section class="panel-section" data-legacy-panel>
+			<div class="section-heading"><div><p class="dashboard-eyebrow">Original operational dashboard</p><h2>Today, seven-day, four-week, tools, and index data</h2></div><span class="panel-status" data-legacy-status>Loading…</span></div>
+			<div class="dashboard-error" data-legacy-error hidden><span data-error-message></span><button type="button" data-legacy-retry>Retry</button></div>
+			<div data-legacy-content hidden>
+				<div class="dashboard-kpis legacy-today-grid"><article class="metric-card"><span>Messages today</span><strong data-legacy-number="AllMessagesToday"></strong></article><article class="metric-card"><span>User messages today</span><strong data-legacy-number="UserMessagesToday"></strong></article><article class="metric-card"><span>New sessions today</span><strong data-legacy-number="SessionsToday"></strong></article><article class="metric-card"><span>Sessions all time</span><strong data-legacy-number="TotalSessionsAllTime"></strong></article></div>
+				<div class="dashboard-kpis legacy-week-grid"><article class="metric-card"><span>All messages · 7 days</span><strong data-legacy-number="MessagesThisWeek"></strong><small><b data-legacy-number="SessionArtifactsThisWeek"></b> artifacts created</small></article><article class="metric-card"><span>User messages · 7 days</span><strong data-legacy-number="UserMessagesThisWeek"></strong><small>Assistant share <b data-legacy-field="AssistantShareDisplay"></b></small></article><article class="metric-card"><span>Assistant messages · 7 days</span><strong data-legacy-number="AssistantMessagesThisWeek"></strong><small>Across <b data-legacy-number="NewSessionsThisWeek"></b> new sessions</small></article><article class="metric-card"><span>Tool calls · 7 days</span><strong data-legacy-number="ToolCallsThisWeek"></strong><small><b data-legacy-field="ToolCallRateDisplay"></b> of messages</small></article><article class="metric-card"><span>Tool success · 7 days</span><strong data-legacy-field="ToolSuccessRateDisplay"></strong><small><b data-legacy-number="FailedToolCallsThisWeek"></b> detected failures</small></article><article class="metric-card"><span>Average activity</span><strong data-legacy-field="AvgMessagesPerSessionDisplay"></strong><small>messages per new session</small></article></div>
+				<div class="dashboard-grid main-grid"><article class="panel-card"><div class="panel-heading"><div><p class="dashboard-eyebrow">Last seven days</p><h2>Daily activity</h2></div><div class="legend"><span><i class="all"></i>All messages</span><span><i class="user"></i>User messages</span></div></div><div class="legacy-line-wrap"><svg class="legacy-line-chart" data-daily-trends role="img" aria-label="Seven-day daily activity line graph"></svg></div></article><article class="panel-card"><p class="dashboard-eyebrow">Last seven days</p><h2>Message composition</h2><div class="composition-stack" data-composition-stack></div><div data-composition-list></div></article></div>
+				<div class="dashboard-grid secondary-grid"><article class="panel-card"><div class="panel-heading"><div><p class="dashboard-eyebrow">Four-week comparison</p><h2>Weekly activity</h2></div><div class="legend"><span><i class="all"></i>All</span><span><i class="user"></i>User</span><span><i class="tool"></i>Tools</span></div></div><div class="legacy-line-wrap"><svg class="legacy-line-chart" data-weekly-comparisons role="img" aria-label="Four-week activity comparison line graph"></svg></div></article><article class="panel-card"><p class="dashboard-eyebrow">Last seven days</p><h2>Top tools</h2><div class="table-responsive"><table class="table"><thead><tr><th>Rank</th><th>Tool</th><th class="text-end">Calls</th></tr></thead><tbody data-top-tools></tbody></table></div></article></div>
+				<article class="panel-card reindex-card"><div><p class="dashboard-eyebrow">Semantic conversation reindex</p><h2>Index health</h2></div><div class="reindex-grid"><div><small>Status</small><strong data-legacy-field="ReindexStatusDisplay"></strong></div><div><small>Last run</small><strong data-legacy-field="ReindexLastRunDisplay"></strong></div><div><small>Checkpoint</small><strong data-legacy-field="ReindexLastProcessedDisplay"></strong></div><div><small>Last import</small><strong data-legacy-field="ReindexImportedSessionsDisplay"></strong></div></div></article>
+			</div>
+		</section>
+	</main>
+	<script src="JsonWs/Buffaly.Sessions.Web.DashboardAdmin.ashx.js"></script><script src="js/dashboard-static.js"></script>
+</body>
+</html>

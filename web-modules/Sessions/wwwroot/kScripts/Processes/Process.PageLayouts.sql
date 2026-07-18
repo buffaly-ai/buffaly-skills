@@ -1,4 +1,4 @@
-﻿exec dbo.InsertPageLayoutSp @Url='/processes', 
+exec dbo.InsertPageLayoutSp @Url='/processes', 
 	@Handler='/k?Output=Processes\Processes.Objects.ks.html&Class=SimpleObjectsPage&Handler=Buffaly.Sessions.Web', 
 	@IsEnabled=1, @PageTitle='Processes', @SiteID=1
 

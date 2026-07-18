@@ -1,4 +1,4 @@
-﻿var ProcessesValidatorsFields = {
+var ProcessesValidatorsFields = {
 	ProcessID : {Validators : [Validators.ID], InvalidMessage: "Invalid Process ID. " + ValidatorDescriptions.ID() },
 	ProcessName : {Validators : [Validators.String], InvalidMessage: "Invalid ProcessName. " + ValidatorDescriptions.Length(1, 255) },
 	Url : {Validators : [Validators.String], InvalidMessage: "Invalid Url. " + ValidatorDescriptions.Length(0, 255) },

@@ -1,4 +1,4 @@
-﻿if (typeof window === "undefined" || typeof window.ProcessesAdminValidatorsFields !== "object") {
+if (typeof window === "undefined" || typeof window.ProcessesAdminValidatorsFields !== "object") {
 	var ProcessesAdminValidatorsFields = {};
 } else {
 	var ProcessesAdminValidatorsFields = window.ProcessesAdminValidatorsFields;

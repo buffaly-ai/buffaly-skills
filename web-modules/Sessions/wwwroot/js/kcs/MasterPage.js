@@ -1,4 +1,4 @@
-﻿/**
+/**
  * KCS Utility Module: MasterPage
  * ------------------------------------------------------------
  * Glue code that bootstraps the admin master page: message banners,

@@ -1,4 +1,4 @@
-﻿IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE Specific_Name = 'Sessions_GetArchivedSp_Sp')
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE Specific_Name = 'Sessions_GetArchivedSp_Sp')
 BEGIN
 	DROP PROCEDURE Sessions_GetArchivedSp_Sp
 END
