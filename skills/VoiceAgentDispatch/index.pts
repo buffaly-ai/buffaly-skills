@@ -30,12 +30,12 @@ prototype ToGetLatestVoiceAgentDispatcherTurn : VoiceAgentAction
 [SemanticProgram.InfinitivePhrase("to send a message back to the voice agent")]
 prototype ToSendMessageToVoiceAgent : VoiceAgentDispatcher
 {
-	Description = @"instruction - complete useful answer material to queue to the bound Voice Agent. Adds the exact dispatcher timeline label and returns an explicit delivery signal that prevents duplicate sends without terminating the dispatcher turn.";
+	Description = @"instruction - complete useful answer material to queue to the bound Voice Agent. Adds the exact dispatcher timeline label and returns immediately using the established Level 2 end-cycle pattern.";
 	function Execute(string instruction) : string
 	{
 		string voiceAgentSessionKey = UserState.GetStringOrNull("VoiceAgent.SourceSessionKey");
 		string labeledInstruction = "[label: Voice Agent Dispatcher]\n\n" + instruction.Trim();
 		SessionTools.SendToSessionTool(voiceAgentSessionKey, labeledInstruction);
-		return "Message queued to the Voice Agent. Do not send these details again; complete normal dispatcher bookkeeping and end the turn normally.";
+		return "Message delivered to the Voice Agent. End cycle now.";
 	}
 }
