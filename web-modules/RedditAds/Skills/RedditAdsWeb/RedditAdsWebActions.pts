@@ -7,7 +7,7 @@ prototype ToGetRedditAdsAccountStatus : RedditAdsWebSkillAction
 
 	function Execute() : string
 	{
-		return RedditAdsWebService.GetAccountStatus();
+		return RedditAdsWebService.GetAccountStatusJson();
 	}
 }
 
@@ -18,7 +18,7 @@ prototype ToListRedditAdsWebAdAccounts : RedditAdsWebSkillAction
 
 	function Execute() : string
 	{
-		return RedditAdsWebService.ListAdAccounts();
+		return RedditAdsWebService.ListAdAccountsJson();
 	}
 }
 
@@ -29,7 +29,7 @@ prototype ToListRedditAdsWebCampaigns : RedditAdsWebSkillAction
 
 	function Execute(string adAccountId) : string
 	{
-		return RedditAdsWebService.ListCampaigns(adAccountId);
+		return RedditAdsWebService.ListCampaignsJson(adAccountId);
 	}
 }
 
@@ -40,6 +40,6 @@ prototype ToGenerateRedditAdsWebReport : RedditAdsWebSkillAction
 
 	function Execute(string adAccountId, string reportType, string dateRangePreset) : string
 	{
-		return RedditAdsWebService.GenerateReport(adAccountId, reportType, dateRangePreset);
+		return RedditAdsWebService.GenerateReportJson(adAccountId, reportType, dateRangePreset);
 	}
 }

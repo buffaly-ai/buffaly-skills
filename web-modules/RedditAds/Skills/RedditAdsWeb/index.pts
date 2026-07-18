@@ -1,3 +1,6 @@
+reference Buffaly.RedditAds.Web Buffaly.RedditAds.Web;
+import Buffaly.RedditAds.Web Buffaly.RedditAds.Web.RedditAdsWebService RedditAdsWebService;
+
 prototype RedditAdsWebSkillAction : OpsAction
 {
 	Description = @"Base action type for Reddit Ads web module tools.";
