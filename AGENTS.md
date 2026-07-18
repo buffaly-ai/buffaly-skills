@@ -2,6 +2,13 @@
 
 This repository is a finalized Buffaly extension/package distribution repository. It is not the source-of-truth development workspace for most tools.
 
+## Canonical repository invariant
+
+- `C:\dev\buffaly-ai\buffaly-skills` is the only supported Local Buffaly extension publishing repository.
+- Do not create sibling publishing checkouts, alternate catalogs, or environment-specific repository roots such as `buffaly-skills-staging`.
+- Staging/install validation may use ignored temporary clean sources under the scripts repository, but those are installation inputs only and must never be configured as publication targets.
+- Keep `main` synchronized with `origin/main`; publication is not complete until validated package/index/profile changes are committed and pushed.
+
 ## Source-of-truth rule
 
 - Keep source code and active authoring work in the owning source repository or active runtime project.
