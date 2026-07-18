@@ -87,8 +87,7 @@ On Matt-local this commonly means:
 - sessions root: `C:\inetpub\wwwroot\matt.buffaly.local\data\sessions`
 - OpsAgent project: `C:\inetpub\wwwroot\matt.buffaly.local\content\projects\OpsAgent`
 
-On staging validation this commonly means:
-- install root: `C:\inetpub\wwwroot\staging.buffaly.local3`
+On staging validation, resolve the environment's install root from runtime context rather than embedding a machine-specific path.
 
 ### Code / package ownership only when entity identity depends on it
 - Core Buffaly reusable source: `C:\dev\buffaly-ai\buffaly-development`

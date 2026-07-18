@@ -1647,7 +1647,7 @@
       "SkillName": "SessionManagement",
       "Title": "Session Management",
       "Description": "Buffaly skill package for Session Management.",
-      "Version": "0.1.2",
+      "Version": "0.1.3",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Session Management",
@@ -1673,7 +1673,7 @@
         },
         {
           "Path": "Prompts/AnalyzeAndImproveEntitiesWithinSession.prompt.md",
-          "Sha256": "43aaf350ab4127145d9169a7bf3fb0188b2f7ff96050f6c661cfea2360bd704f"
+          "Sha256": "01f0bde0668161fdc32090c212b3f34d2ca72cdbe772157ce804d30c454bbee8"
         },
         {
           "Path": "Prompts/ToBootstrapWebhookTimelineEvent.prompt.md",
@@ -1694,11 +1694,7 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "SessionSync",
