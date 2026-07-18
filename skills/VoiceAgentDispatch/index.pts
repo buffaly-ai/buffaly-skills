@@ -11,7 +11,7 @@ prototype ToSendMessageToVoiceAgentDispatcher : VoiceAgentAction
 	function Execute(string instruction) : string
 	{
 		string dispatcherSessionKey = UserState.GetStringOrNull("VoiceAgent.DispatcherSessionKey");
-		SessionTools.SendToSessionTool(dispatcherSessionKey, instruction);
+		SessionTools.SendToSessionOncePerCurrentTurnTool(_opsAgent, "voice-to-dispatcher", dispatcherSessionKey, instruction);
 		return "Instruction delivered to the Voice Agent Dispatcher. End cycle now.";
 	}
 }
@@ -35,7 +35,7 @@ prototype ToSendMessageToVoiceAgent : VoiceAgentDispatcher
 	{
 		string voiceAgentSessionKey = UserState.GetStringOrNull("VoiceAgent.SourceSessionKey");
 		string labeledInstruction = "[label: Voice Agent Dispatcher]\n\n" + instruction.Trim();
-		SessionTools.SendToSessionTool(voiceAgentSessionKey, labeledInstruction);
+		SessionTools.SendToSessionOncePerCurrentTurnTool(_opsAgent, "dispatcher-to-voice", voiceAgentSessionKey, labeledInstruction);
 		return "Message delivered to the Voice Agent. End cycle now.";
 	}
 }

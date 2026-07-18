@@ -26,3 +26,9 @@ No dispatch DTO, event, subscription, callback, polling loop, job store, or inte
 - Concurrent-turn staging validation proved the Voice Agent could also enter another completion round and resend the same dispatcher instruction despite a successful queue acknowledgement.
 - The Voice Agent outbound action now uses the same established Level 2 end-cycle result as the dispatcher return action.
 - This makes both bridge directions symmetric: one successful delivery ends that model cycle, while later user or dispatcher inputs start ordinary new turns.
+
+## Hard per-turn duplicate suppression
+
+- Overlapping-input staging validation proved that end-cycle wording alone is advisory: providers may still issue the same side-effectful action in later completion rounds of one turn.
+- Both bridge actions now call `SessionTools.SendToSessionOncePerCurrentTurnTool(...)`, which claims the exact direction, target, and instruction against the authoritative active turn before queueing.
+- Repeated calls in the same turn are suppressed at the side-effect boundary; identical instructions remain valid in later turns. Ordinary queued session messages remain the only transport.
