@@ -7,12 +7,12 @@ prototype VoiceAgentAction : VoiceAgentDispatchSkillAction { Description = @"Nar
 [SemanticProgram.InfinitivePhrase("to send instructions to the voice agent dispatcher")]
 prototype ToSendMessageToVoiceAgentDispatcher : VoiceAgentAction
 {
-	Description = @"instruction - self-contained work or follow-up to queue to the dispatcher bound in current Voice Agent user state. Queues without waiting and returns an explicit delivery signal so the model does not resend the same instruction.";
+	Description = @"instruction - self-contained work or follow-up to queue to the dispatcher bound in current Voice Agent user state. Queues without waiting and returns immediately using the established Level 2 end-cycle pattern.";
 	function Execute(string instruction) : string
 	{
 		string dispatcherSessionKey = UserState.GetStringOrNull("VoiceAgent.DispatcherSessionKey");
 		SessionTools.SendToSessionTool(dispatcherSessionKey, instruction);
-		return "Instruction queued to the Voice Agent Dispatcher. Do not send this instruction again; acknowledge the user once and end the current turn.";
+		return "Instruction delivered to the Voice Agent Dispatcher. End cycle now.";
 	}
 }
 

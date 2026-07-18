@@ -20,3 +20,9 @@ No dispatch DTO, event, subscription, callback, polling loop, job store, or inte
 - Fresh staging validation proved that `SessionTools.SendToSessionTool(...)` queues the return but does not mechanically terminate dispatcher processing.
 - The dispatcher return now uses the established Level 2 result wording: delivery is complete and the current cycle must end now.
 - This prevents the mandatory send-back prompt from firing twice without adding DTOs, events, deduplication state, or special runtime code.
+
+## Voice Agent outbound end-cycle guard
+
+- Concurrent-turn staging validation proved the Voice Agent could also enter another completion round and resend the same dispatcher instruction despite a successful queue acknowledgement.
+- The Voice Agent outbound action now uses the same established Level 2 end-cycle result as the dispatcher return action.
+- This makes both bridge directions symmetric: one successful delivery ends that model cycle, while later user or dispatcher inputs start ordinary new turns.
