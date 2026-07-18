@@ -1,12 +1,12 @@
-reference "lib/Tebra.UIAutomation.Core.dll" Tebra.UIAutomation.Core;
-reference "lib/FlaUI.Core.dll" FlaUI.Core;
-reference "lib/FlaUI.UIA3.dll" FlaUI.UIA3;
-reference "lib/Interop.UIAutomationClient.dll" Interop.UIAutomationClient;
-reference "lib/System.Configuration.ConfigurationManager.dll" System.Configuration.ConfigurationManager;
-reference "lib/System.Diagnostics.EventLog.dll" System.Diagnostics.EventLog;
-reference "lib/System.Diagnostics.PerformanceCounter.dll" System.Diagnostics.PerformanceCounter;
-reference "lib/System.Drawing.Common.dll" System.Drawing.Common;
-reference "lib/System.Management.dll" System.Management;
+reference Tebra.UIAutomation.Core Tebra.UIAutomation.Core;
+reference FlaUI.Core FlaUI.Core;
+reference FlaUI.UIA3 FlaUI.UIA3;
+reference Interop.UIAutomationClient Interop.UIAutomationClient;
+reference System.Configuration.ConfigurationManager System.Configuration.ConfigurationManager;
+reference System.Diagnostics.EventLog System.Diagnostics.EventLog;
+reference System.Diagnostics.PerformanceCounter System.Diagnostics.PerformanceCounter;
+reference System.Drawing.Common System.Drawing.Common;
+reference System.Management System.Management;
 import Tebra.UIAutomation.Core Tebra.UIAutomation.Core.TebraAutomationTools TebraAutomationTools;
 import Buffaly.Agent.Tools.Secrets Buffaly.Agent.Tools.Secrets.UserSecrets UserSecrets;
 

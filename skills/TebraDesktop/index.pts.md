@@ -6,3 +6,4 @@ Matt-local OpsAgent skill wrapper for the Buffaly EMRs Tebra UIA library.
 ## History
 - Added for Batch 1 validation in the matt instance without staging deployment.
 - Exposes status, readiness/login, Patients navigation, UIA text dumping, and patient/notes diagnostic search actions.
+- Uses assembly-name references rather than package-relative `lib/*.dll` paths so the package loader can resolve its bundled dependencies under the standard extension contract.
