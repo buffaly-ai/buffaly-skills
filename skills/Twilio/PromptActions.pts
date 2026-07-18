@@ -1,0 +1,21 @@
+[SemanticProgram.InfinitivePhrase("to buy and configure a twilio phone number")]
+[SemanticProgram.InfinitivePhrase("to purchase a twilio number and set webhooks")]
+prototype ToBuyAndConfigureTwilioPhoneNumberSkill : TwilioManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = "Skills/Twilio/Prompts/BuyAndConfigureTwilioPhoneNumber.prompt.md";
+	Description = "Buy a Twilio number and configure webhook URLs. Uses public URLs (not localhost) and returns purchased/configured evidence.";
+}
+
+[SemanticProgram.InfinitivePhrase("to attach a twilio number to a messaging service")]
+[SemanticProgram.InfinitivePhrase("to fix twilio 30034 by using messaging service")]
+prototype ToAttachTwilioNumberToMessagingServiceSkill : TwilioManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = "Skills/Twilio/Prompts/AttachTwilioNumberToMessagingService.prompt.md";
+	Description = "Attach a phone number to a Messaging Service for compliant A2P sending path and verify attachment.";
+}

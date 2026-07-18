@@ -1,0 +1,14 @@
+include "PromptActions.pts";
+
+prototype TwilioManagementSkillAction : PromptAction
+{
+	Description = "Base action type for Twilio management/provisioning tools.";
+}
+
+[SemanticEntity("twilio management skill")]
+[SemanticEntity("twilio admin skill")]
+prototype TwilioManagementSkill : SkillEntity
+{
+	Description = "Twilio management actions for number provisioning and messaging-service configuration.";
+	ActionRoot = TwilioManagementSkillAction;
+}

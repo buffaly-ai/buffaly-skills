@@ -2440,6 +2440,47 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": []
+    },
+    {
+      "SkillName": "Twilio",
+      "Title": "Twilio",
+      "Description": "Buffaly skill package for Twilio.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Twilio",
+        "Twilio"
+      ],
+      "Path": "skills/Twilio",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "2b1d06783c7c5bd2d744691d61591d50cf9875b0c783b96a8f0c8be21e4182c5"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "c790e763ede480ad44a9b300d556e2bba3b46c6abd79491ffc7562b08a7d3063"
+        },
+        {
+          "Path": "Prompts/AttachTwilioNumberToMessagingService.prompt.md",
+          "Sha256": "a6010886e1867610b78e9698c572dd23c4f9e05d81e29e115e1131c952affdc7"
+        },
+        {
+          "Path": "Prompts/BuyAndConfigureTwilioPhoneNumber.prompt.md",
+          "Sha256": "f59fdac5d91a7ac2d1820bb540f102aed610a0483c5b46adbdab485d9061797c"
+        },
+        {
+          "Path": "Prompts/SendSmsViaTwilioMessagingService.prompt.md",
+          "Sha256": "6bc935352b7de84c8dab58a946dfa07ca5f261cf99e5b2a34d9a7bc9d1c68389"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "df40b0307f4cf0bedf3fee9d0a7217444cf3ce29b12c39082f2b9f6625fcc290"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
     }
   ]
 }
