@@ -27,13 +27,13 @@ prototype ToAttachConfiguredCodeReviewAgent : CodeReviewsAgentToolsAction
 }
 
 [SemanticProgram.InfinitivePhrase("to detach the code review agent")]
-prototype ToDetachCodeReviewAgent : CodeReviewsAgentToolsAction
+prototype ToDetachConfiguredCodeReviewAgent : CodeReviewsAgentToolsAction
 {
 	function Execute() : string { return CodeReviewTurnAgentService.DetachForCurrentSession(_opsAgent); }
 }
 
 [SemanticProgram.InfinitivePhrase("to get code review attachment status")]
-prototype ToGetCodeReviewAttachmentStatus : CodeReviewsAgentToolsAction
+prototype ToGetConfiguredCodeReviewAgentStatus : CodeReviewsAgentToolsAction
 {
 	function Execute() : string { return CodeReviewTurnAgentService.GetAttachmentStatusForCurrentSession(_opsAgent); }
 }
@@ -47,19 +47,19 @@ prototype ToDispatchCodeReviewTurnCompletedEvent : CodeReviewsAgentToolsAction
 [SemanticProgram.InfinitivePhrase("to submit grouped code review turn findings")]
 prototype ToSubmitCodeReviewTurnFindings : CodeReviewsAgentToolsAction
 {
-	function Execute(string CommitManifestJson, string ReviewText) : string { return CodeReviewFindingsService.SubmitTurnFindingsJson(CommitManifestJson, ReviewText); }
+	function Execute(string ReviewText) : string { return CodeReviewFindingsService.SubmitTurnFindingsJson(_opsAgent, ReviewText); }
 }
 
 [SemanticProgram.InfinitivePhrase("to complete a grouped code review turn without findings")]
 prototype ToCompleteCodeReviewTurnWithoutFindings : CodeReviewsAgentToolsAction
 {
-	function Execute(string CommitManifestJson) : string { return CodeReviewFindingsService.CompleteTurnWithoutFindingsJson(CommitManifestJson); }
+	function Execute() : string { return CodeReviewFindingsService.CompleteTurnWithoutFindingsJson(_opsAgent); }
 }
 
 [SemanticProgram.InfinitivePhrase("to mark a grouped code review turn failed")]
 prototype ToMarkCodeReviewTurnFailed : CodeReviewsAgentToolsAction
 {
-	function Execute(string CommitManifestJson, string FailureReason) : string { return CodeReviewFindingsService.MarkTurnFailedJson(CommitManifestJson, FailureReason); }
+	function Execute(string FailureReason) : string { return CodeReviewFindingsService.MarkTurnFailedJson(_opsAgent, FailureReason); }
 }
 
 [SemanticProgram.InfinitivePhrase("to run a source grounded code review")]
