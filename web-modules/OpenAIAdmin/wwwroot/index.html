@@ -32,6 +32,8 @@
 		<section id="usage" class="view" hidden aria-labelledby="usage-title">
 			<div class="section-heading"><div><p class="eyebrow">Spend intelligence</p><h2 id="usage-title">Usage &amp; costs</h2><p>Trace requests and tokens to models, projects, and API keys.</p></div><span class="data-chip authoritative">Authoritative cost</span></div>
 			<form id="usage-form" class="toolbar surface"><label><span>Start date (UTC)</span><input name="start" type="date" required></label><label><span>Through date (UTC)</span><input name="end" type="date" required></label><button class="button primary" type="submit">Apply dates</button></form>
+			<div class="range-total surface"><div><span>Selected range</span><strong id="range-label">—</strong></div><div class="range-cost"><span>Authoritative cost</span><strong id="range-cost">—</strong></div></div>
+			<article class="panel key-cost-panel"><div class="panel-heading"><div><span class="section-label">Estimated attribution</span><h3>Cost by API key</h3><p>Each project's authoritative cost is allocated to its keys by their share of input and output tokens. Key totals are estimates; the range total above remains authoritative.</p></div></div><div id="key-costs" class="loading-state">Calculating API-key attribution…</div></article>
 			<div class="result-tools"><div id="usage-summary" class="summary-strip"></div><label class="inline-search"><span class="sr-only">Filter usage results</span><input id="usage-filter" type="search" placeholder="Filter model, project, or key…"></label></div><div id="usage-table" class="table-state loading-state">Loading usage dimensions…</div>
 		</section>
 
