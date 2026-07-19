@@ -1,6 +1,10 @@
 reference Buffaly.CodeReviews Buffaly.CodeReviews;
 reference Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness;
+reference Buffaly.Agent.Host Buffaly.Agent.Host;
+reference BasicUtilities BasicUtilities;
 import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewFindingsService CodeReviewFindingsService;
+import Buffaly.Agent.Host Buffaly.Agent.Host.BuffalyArtifacts BuffalyArtifacts;
+import BasicUtilities BasicUtilities.JsonUtil JsonUtil;
 
 [SemanticEntity("code reviews agent tools")]
 prototype CodeReviewsAgentToolsSkill : SkillEntity
@@ -14,15 +18,105 @@ prototype CodeReviewsAgentToolsAction : OpsAction
 	Description = @"Base action type for CodeReviews agent lifecycle tools.";
 }
 
+[SemanticProgram.InfinitivePhrase("to run a source grounded code review")]
+[SemanticProgram.InfinitivePhrase("to review a commit against source session documentation")]
+prototype ToRunSourceGroundedCodeReviewSkill : PromptAction, CodeReviewsAgentToolsAction
+{
+	Description = "Review one exact CodeReviews commit against its source session's user goal, task, Plan, governing design, validation requirements, and repository guidance. Submit only material findings with source-document justification; complete clean reviews silently.";
+	SkillKind = "prompt";
+	IsPromptAction = true;
+	PromptPath = "Skills/CodeReviews/Prompts/RunSourceGroundedCodeReview.prompt.md";
+}
+
 [SemanticProgram.InfinitivePhrase("to submit code review findings")]
 [SemanticProgram.InfinitivePhrase("to deliver code review findings")]
 prototype ToSubmitCodeReviewFindings : CodeReviewsAgentToolsAction
 {
-	Description = @"RepositoryPath - local repository path. CommitSha - full or short hexadecimal commit SHA. ReviewText - full markdown/plain-text review findings. Stores findings in CodeReviews, marks the commit reviewed, and notifies the parent session from stored running-review metadata. Do not pass source or child session keys.";
+	Description = @"RepositoryPath - local repository path. CommitSha - full or short hexadecimal commit SHA. ReviewText - markdown containing one or more material actionable findings. Every finding must explain the problem and consequence, cite concrete code evidence, cite the governing source-session document or instruction that justifies it, explain the mismatch, and recommend an action for the original agent. Stores findings, marks the commit reviewed, and notifies the parent session. Do not call this action when there are no material findings; call ToCompleteCodeReviewWithoutFindings instead. Do not pass source or child session keys.";
 
 	function Execute(string RepositoryPath, string CommitSha, string ReviewText) : string
 	{
 		return CodeReviewFindingsService.SubmitFindingsJson(RepositoryPath, CommitSha, ReviewText);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to complete a code review without findings")]
+[SemanticProgram.InfinitivePhrase("to mark a code review clean")]
+prototype ToCompleteCodeReviewWithoutFindings : CodeReviewsAgentToolsAction
+{
+	Description = @"RepositoryPath - local repository path. CommitSha - full or short hexadecimal commit SHA. Marks the review complete without storing findings and without notifying the source session. Use only after completing the required source-context and code review when there are no material actionable findings.";
+
+	function Execute(string RepositoryPath, string CommitSha) : string
+	{
+		return CodeReviewFindingsService.CompleteWithoutFindingsJson(RepositoryPath, CommitSha);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read a source session plan for code review")]
+prototype ToGetCodeReviewSourceSessionPlan : CodeReviewsAgentToolsAction
+{
+	Description = @"SourceSessionKey - exact source session associated with the reviewed commit. Returns the source session Plan.md through the typed artifact service.";
+
+	function Execute(string SourceSessionKey) : string
+	{
+		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionArtifactText(SourceSessionKey, "Plan.md")).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read source session scratch for code review")]
+prototype ToGetCodeReviewSourceSessionScratch : CodeReviewsAgentToolsAction
+{
+	Description = @"SourceSessionKey - exact source session associated with the reviewed commit. Returns the source session Scratch.md through the typed artifact service. Scratch is supporting evidence and must not override the user instruction, active task, or governing design.";
+
+	function Execute(string SourceSessionKey) : string
+	{
+		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionArtifactText(SourceSessionKey, "Scratch.md")).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list source session tasks for code review")]
+prototype ToListCodeReviewSourceSessionTasks : CodeReviewsAgentToolsAction
+{
+	Description = @"SourceSessionKey - exact source session associated with the reviewed commit. Returns validated root-level task artifact names through the typed artifact service.";
+
+	function Execute(string SourceSessionKey) : string
+	{
+		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionTaskArtifactNames(SourceSessionKey)).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read a source session task for code review")]
+prototype ToReadCodeReviewSourceSessionTask : CodeReviewsAgentToolsAction
+{
+	Description = @"SourceSessionKey - exact source session associated with the reviewed commit. TaskArtifactFileName - exact task-*.md file name returned by ToListCodeReviewSourceSessionTasks. Returns the validated task artifact through the typed artifact service.";
+
+	function Execute(string SourceSessionKey, string TaskArtifactFileName) : string
+	{
+		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionTaskArtifactText(SourceSessionKey, TaskArtifactFileName)).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list source session artifacts for code review")]
+[SemanticProgram.InfinitivePhrase("to list governing documents from a source session")]
+prototype ToListCodeReviewSourceSessionArtifacts : CodeReviewsAgentToolsAction
+{
+	Description = @"SourceSessionKey - exact source session associated with the reviewed commit. Returns the typed session artifact manifest, including discoverable files under artifacts/**. Use it to identify governing design or implementation documents. Do not inspect unrelated sessions.";
+
+	function Execute(string SourceSessionKey) : string
+	{
+		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionArtifacts(SourceSessionKey)).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read a source session artifact for code review")]
+[SemanticProgram.InfinitivePhrase("to read a governing document from a source session")]
+prototype ToReadCodeReviewSourceSessionArtifact : CodeReviewsAgentToolsAction
+{
+	Description = @"SourceSessionKey - exact source session associated with the reviewed commit. ArtifactPath - exact relative artifact path returned by ToListCodeReviewSourceSessionArtifacts. Returns the artifact through the typed artifact service. Read only plausible governing documents related to the reviewed change.";
+
+	function Execute(string SourceSessionKey, string ArtifactPath) : string
+	{
+		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionArtifactText(SourceSessionKey, ArtifactPath)).ToString();
 	}
 }
 
