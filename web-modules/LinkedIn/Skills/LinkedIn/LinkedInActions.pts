@@ -35,7 +35,7 @@ prototype ToListLinkedInOrganizationPosts : LinkedInSkillAction
 [SemanticProgram.InfinitivePhrase("to list linkedin organization comments")]
 prototype ToListLinkedInOrganizationComments : LinkedInSkillAction
 {
-	Description = @"postUrn - organization post URN. start/count - paging. Returns individual comments and engagement summary. Read-only.";
+	Description = @"postUrn - one organization post URN. start/count - paging. Cache-first: returns locally cached comments when available and makes at most one guarded live request for an uncached post. Never iterate this action across posts or use it for bulk comment scanning. Read-only.";
 	function Execute(string postUrn, int start, int count) : string { return LinkedInSkillFacade.ListOrganizationComments(postUrn, start, count); }
 }
 
