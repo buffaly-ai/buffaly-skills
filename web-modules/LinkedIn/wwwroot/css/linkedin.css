@@ -126,7 +126,7 @@ textarea.buffaly-input { min-height: 100px; resize: vertical; line-height: 1.5; 
 .settings-drawer { position: fixed; inset: 0 0 0 auto; width: min(480px,100%); background: #fff; box-shadow: -4px 0 12px rgba(0,0,0,.08); transform: translateX(100%); transition: transform .2s ease; z-index: 1000; overflow: auto; }
 .settings-drawer.open { transform: translateX(0); }
 .settings-drawer.community-mode { inset: 0; width: 100%; height: 100vh; background: #f3f2ef; overflow-y: auto; }
-.settings-drawer.community-mode .settings-card { position: relative; width: min(1180px,calc(100% - 48px)); min-height: calc(100vh - 48px); margin: 24px auto; background: #f3f2ef; }
+.settings-drawer.community-mode .settings-card { position: relative; width: min(1180px,calc(100% - 48px)); min-height: calc(100vh - 48px); margin: 24px auto; background: #eef3f8; border: 2px solid #0a66c2; border-radius: 12px; }
 .settings-drawer.community-mode .settings-section { display: none; }
 .settings-drawer.community-mode .community-section { display: block; }
 .community-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
@@ -136,8 +136,9 @@ textarea.buffaly-input { min-height: 100px; resize: vertical; line-height: 1.5; 
 .community-kpi strong { display: block; color: #0a66c2; font-size: 1.35rem; }
 .community-kpi span { color: #00000099; font-size: .78rem; }
 #communityPosts { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; }
-#communityPosts .settings-section { display: block; position: static; height: auto; min-height: 0; margin: 0; overflow: visible; background: #fff; }
-#communityPosts p { line-height: 1.45; overflow-wrap: anywhere; }
+#communityPosts .settings-section { display: block; position: static; height: auto; min-height: 0; margin: 0; overflow: visible; background: #fff; border: 1px solid #9db9d5; border-left: 4px solid #0a66c2; }
+#communityPosts .settings-section::before { content: "LinkedIn organization post"; display: block; margin-bottom: 6px; color: #0a66c2; font-size: .7rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+#communityPosts p { display: -webkit-box; margin: 8px 0; overflow: hidden; overflow-wrap: anywhere; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-height: 1.35; }
 #communityComments { margin-top: 20px; padding: 16px; border: 1px solid #d8d8d8; border-radius: 8px; background: #fff; }
 @media (max-width:800px) { .community-kpis,#communityPosts { grid-template-columns: 1fr; } }
 .settings-card { padding: 20px; }
