@@ -191,10 +191,10 @@ When the instruction supplies an attached turn-level `SourceTurnContextJson`, tr
 - Review every listed repository/SHA directly. Do not omit earlier commits because the last commit appears complete.
 - Never construct one git range across repositories.
 - Evaluate the combined result against the exact completed source turn, active task, governing design, and Plan.
-- Use exactly one grouped completion action bound to the active child context. Do not pass repository paths, commit SHAs, source session keys, or manifest JSON to grouped completion actions.
-- With material findings, call `ToSubmitCodeReviewTurnFindings` once with consolidated findings-only markdown.
-- With no material findings, call `ToCompleteCodeReviewTurnWithoutFindings` once with no arguments and remain silent.
-- If review cannot be completed, call `ToMarkCodeReviewTurnFailed` once with only a concise failure reason.
+- Use exactly one grouped completion action. Pass the supplied `SourceTurnContextJson` unchanged; it is the authoritative cross-worker binding for the delivered turn. Do not pass separate repository paths, commit SHAs, or source session keys.
+- With material findings, call `ToSubmitCodeReviewTurnFindings` once with the unchanged `SourceTurnContextJson` and consolidated findings-only markdown.
+- With no material findings, call `ToCompleteCodeReviewTurnWithoutFindings` once with the unchanged `SourceTurnContextJson` and remain silent.
+- If review cannot be completed, call `ToMarkCodeReviewTurnFailed` once with the unchanged `SourceTurnContextJson` and a concise failure reason.
 - Do not call the single-commit completion actions for a turn manifest.
 
 When the instruction supplies exact `RepositoryPath` and `CommitSha` completion bindings:

@@ -47,19 +47,19 @@ prototype ToDispatchCodeReviewTurnCompletedEvent : CodeReviewsAgentToolsAction
 [SemanticProgram.InfinitivePhrase("to submit grouped code review turn findings")]
 prototype ToSubmitCodeReviewTurnFindings : CodeReviewsAgentToolsAction
 {
-	function Execute(string ReviewText) : string { return CodeReviewFindingsService.SubmitTurnFindingsJson(_opsAgent, ReviewText); }
+	function Execute(string SourceTurnContextJson, string ReviewText) : string { return CodeReviewFindingsService.SubmitTurnFindingsJson(_opsAgent, SourceTurnContextJson, ReviewText); }
 }
 
 [SemanticProgram.InfinitivePhrase("to complete a grouped code review turn without findings")]
 prototype ToCompleteCodeReviewTurnWithoutFindings : CodeReviewsAgentToolsAction
 {
-	function Execute() : string { return CodeReviewFindingsService.CompleteTurnWithoutFindingsJson(_opsAgent); }
+	function Execute(string SourceTurnContextJson) : string { return CodeReviewFindingsService.CompleteTurnWithoutFindingsJson(_opsAgent, SourceTurnContextJson); }
 }
 
 [SemanticProgram.InfinitivePhrase("to mark a grouped code review turn failed")]
 prototype ToMarkCodeReviewTurnFailed : CodeReviewsAgentToolsAction
 {
-	function Execute(string FailureReason) : string { return CodeReviewFindingsService.MarkTurnFailedJson(_opsAgent, FailureReason); }
+	function Execute(string SourceTurnContextJson, string FailureReason) : string { return CodeReviewFindingsService.MarkTurnFailedJson(_opsAgent, SourceTurnContextJson, FailureReason); }
 }
 
 [SemanticProgram.InfinitivePhrase("to run a source grounded code review")]
