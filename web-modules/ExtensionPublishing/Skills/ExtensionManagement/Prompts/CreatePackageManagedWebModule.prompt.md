@@ -1,9 +1,12 @@
-# Create a package-managed Buffaly WebModule
+# Create or register a package-managed Buffaly extension
 
-1. Resolve and edit the owning source repository, never `buffaly-skills` or an installed package copy. Read applicable `AGENTS.md` and neighboring module patterns.
-2. Define the current `IBuffalyWebModule` startup contract without adding code to `Buffaly.Agent.Host` or `buffaly.agent.web` unless explicitly approved.
-3. Add module-owned `web-module.json`, runtime assemblies/generated service artifacts, dependencies, pages, and intentional `ProjectArtifacts`.
-4. Put owned static files under module `wwwroot`; installed assets map to `/web-modules/<Module>` only after startup reads the manifest.
-5. Add build/package behavior and tests for manifest shape, registration, and representative routes/services.
-6. Build, test, update `.cs.md`, commit the owning source batch, and report what remains before publication.
-7. Use the publication workflow for catalog, package index, version, profile/lock, and Remote work; source presence alone is not package inclusion.
+Use this workflow for a new Skill, WebModule, or ProviderModule, and for an integration that exists locally but is not officially package-managed.
+
+1. Resolve the extension's package identity before editing: stable package ID, `Skill|WebModule|ProviderModule`, display name, owning source repository, runtime assembly/module name, and any embedded Skill project. A product name is not enough.
+2. Establish a real owning source repository. Standalone modules belong under `C:\dev\buffaly-ai\<ProjectName>`; shared package-managed skills belong in their owning repo or `buffaly-skills` authoring flow. Never treat Matt/staging installed files, `bin/obj`, backup folders, temp recovery trees, or `buffaly-skills` payloads as authoritative source.
+3. For a Skill, provide `index.pts`, action roots/actions or prompt actions, prompt files, and `skill-manifest.json`. For a WebModule, provide the current `IBuffalyWebModule` implementation, module-owned `web-module.json`, buildable project, runtime dependencies, generated service artifacts when applicable, and `wwwroot`. ProviderModules must preserve ProviderContracts/host build-stamp compatibility.
+4. If a WebModule carries tools or prompts, include intentional `ProjectArtifacts` in `web-module.json` that point to packaged `Skills/<Name>/` directories. Source presence alone does not import the Skill.
+5. Add exactly one typed entry to `C:\dev\buffaly-ai\scripts\extension-publishing.catalog.json`: `Id`, `Type`, title, owning source, build command, package source, canonical repository package path, index, version strategy, and intentional `DefaultPublish`. The only Local repository is `C:\dev\buffaly-ai\buffaly-skills`; do not create an alternate catalog or repository.
+6. Build/test the owner, then use the publication workflow and authoritative Extension Publishing preview/dry-run. Do not hand-copy into the package repository.
+7. If “always included” is requested, separately update the intended installer profile and platform lock files. `DefaultPublish` means selected by publisher Defaults; it does not install the package by default.
+8. Commit the owner, catalog, and package changes as separate scoped batches. Validate Local, Remote, Skill Management installation, receipt, startup registration, and one representative action/page/provider result before calling registration complete.

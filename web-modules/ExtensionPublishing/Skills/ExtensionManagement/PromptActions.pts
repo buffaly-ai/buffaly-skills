@@ -12,6 +12,10 @@ prototype ToCreatePackageManagedWebModuleSkill : PromptAction, ExtensionManageme
 [SemanticProgram.InfinitivePhrase("to publish a Buffaly extension")]
 [SemanticProgram.InfinitivePhrase("to publish a web module to the skills repository")]
 [SemanticProgram.InfinitivePhrase("to promote an extension to the remote repository")]
+[SemanticProgram.InfinitivePhrase("to preview publishing a Buffaly skill")]
+[SemanticProgram.InfinitivePhrase("to preview publish skill to Buffaly Skill Directory")]
+[SemanticProgram.InfinitivePhrase("to publish a Buffaly skill to the Skill Directory")]
+[SemanticProgram.InfinitivePhrase("to publish skill to public Buffaly skills repository")]
 prototype ToPublishBuffalyExtensionSkill : PromptAction, ExtensionManagementSkillAction
 {
 	IsPromptAction = true;
