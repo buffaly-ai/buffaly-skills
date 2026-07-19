@@ -27,6 +27,9 @@ Source context and CodeReviews lifecycle:
 - `ToSubmitCodeReviewFindings`
 - `ToCompleteCodeReviewWithoutFindings`
 - `ToMarkCodeReviewFailed`
+- `ToSubmitCodeReviewTurnFindings`
+- `ToCompleteCodeReviewTurnWithoutFindings`
+- `ToMarkCodeReviewTurnFailed`
 
 Other review tools when applicable:
 - `ToGetGitHubCommitComments`
@@ -182,6 +185,17 @@ Do not submit unsupported suspicions, praise, generic summaries, or style-only o
 A missing governing document is a finding only when it prevents required conformance verification or violates an explicit task/repository documentation requirement.
 
 ## Attached CodeReviews Child Delivery
+
+When the instruction supplies `SourceTurnCommitManifestJson`, treat the ordered manifest as one delivered implementation:
+
+- Review every listed repository/SHA directly. Do not omit earlier commits because the last commit appears complete.
+- Never construct one git range across repositories.
+- Evaluate the combined result against the exact completed source turn, active task, governing design, and Plan.
+- Pass `SourceTurnCommitManifestJson` unchanged to exactly one grouped completion action.
+- With material findings, call `ToSubmitCodeReviewTurnFindings` once with consolidated findings-only markdown.
+- With no material findings, call `ToCompleteCodeReviewTurnWithoutFindings` once and remain silent.
+- If review cannot be completed, call `ToMarkCodeReviewTurnFailed` once.
+- Do not call the single-commit completion actions for a turn manifest.
 
 When the instruction supplies exact `RepositoryPath` and `CommitSha` completion bindings:
 

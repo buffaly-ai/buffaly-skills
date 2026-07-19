@@ -167,7 +167,7 @@
 			return;
 		}
 
-		setReviewButtonState(button, "ready", "Review", "Run Code Review Agent");
+		setReviewButtonState(button, "ready", "Review commit only", "Review this commit separately");
 	}
 
 	function loadReviewButtonStatus(anchor, button) {
@@ -180,7 +180,7 @@
 			})
 			.catch(function (error) {
 				console.warn("CodeReviews review status lookup failed", error);
-				setReviewButtonState(button, "ready", "Review", "Run Code Review Agent");
+				setReviewButtonState(button, "ready", "Review commit only", "Review this commit separately");
 			});
 	}
 
@@ -191,7 +191,7 @@
 			const button = document.createElement("button");
 			button.type = "button";
 			button.className = "code-reviews-trigger-agent-review";
-			setReviewButtonState(button, "ready", "Review", "Run Code Review Agent");
+			setReviewButtonState(button, "ready", "Review commit only", "Review this commit separately");
 			button.addEventListener("click", function (event) {
 				event.preventDefault();
 				event.stopPropagation();

@@ -3,6 +3,7 @@ reference Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness;
 reference Buffaly.Agent.Host Buffaly.Agent.Host;
 reference BasicUtilities BasicUtilities;
 import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewFindingsService CodeReviewFindingsService;
+import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewTurnAgentService CodeReviewTurnAgentService;
 import Buffaly.Agent.Host Buffaly.Agent.Host.BuffalyArtifacts BuffalyArtifacts;
 import BasicUtilities BasicUtilities.JsonUtil JsonUtil;
 
@@ -16,6 +17,49 @@ prototype CodeReviewsAgentToolsSkill : SkillEntity
 prototype CodeReviewsAgentToolsAction : OpsAction
 {
 	Description = @"Base action type for CodeReviews agent lifecycle tools.";
+}
+
+[SemanticProgram.InfinitivePhrase("to attach a configured code review agent")]
+prototype ToAttachConfiguredCodeReviewAgent : CodeReviewsAgentToolsAction
+{
+	Description = @"Review one selected completed source turn and attach the deterministic CodeReviews child to future turn.completed events.";
+	function Execute(string turnKey, string provider, string modelName, string reasoningLevel) : string { return CodeReviewTurnAgentService.AttachForCurrentSession(_opsAgent, turnKey, provider, modelName, reasoningLevel); }
+}
+
+[SemanticProgram.InfinitivePhrase("to detach the code review agent")]
+prototype ToDetachCodeReviewAgent : CodeReviewsAgentToolsAction
+{
+	function Execute() : string { return CodeReviewTurnAgentService.DetachForCurrentSession(_opsAgent); }
+}
+
+[SemanticProgram.InfinitivePhrase("to get code review attachment status")]
+prototype ToGetCodeReviewAttachmentStatus : CodeReviewsAgentToolsAction
+{
+	function Execute() : string { return CodeReviewTurnAgentService.GetAttachmentStatusForCurrentSession(_opsAgent); }
+}
+
+[SemanticProgram.InfinitivePhrase("to dispatch a code review completed turn")]
+prototype ToDispatchCodeReviewTurnCompletedEvent : CodeReviewsAgentToolsAction
+{
+	function Execute(string callbackJson) : string { return CodeReviewTurnAgentService.RenderTurnDispatchFromCallback(callbackJson); }
+}
+
+[SemanticProgram.InfinitivePhrase("to submit grouped code review turn findings")]
+prototype ToSubmitCodeReviewTurnFindings : CodeReviewsAgentToolsAction
+{
+	function Execute(string CommitManifestJson, string ReviewText) : string { return CodeReviewFindingsService.SubmitTurnFindingsJson(CommitManifestJson, ReviewText); }
+}
+
+[SemanticProgram.InfinitivePhrase("to complete a grouped code review turn without findings")]
+prototype ToCompleteCodeReviewTurnWithoutFindings : CodeReviewsAgentToolsAction
+{
+	function Execute(string CommitManifestJson) : string { return CodeReviewFindingsService.CompleteTurnWithoutFindingsJson(CommitManifestJson); }
+}
+
+[SemanticProgram.InfinitivePhrase("to mark a grouped code review turn failed")]
+prototype ToMarkCodeReviewTurnFailed : CodeReviewsAgentToolsAction
+{
+	function Execute(string CommitManifestJson, string FailureReason) : string { return CodeReviewFindingsService.MarkTurnFailedJson(CommitManifestJson, FailureReason); }
 }
 
 [SemanticProgram.InfinitivePhrase("to run a source grounded code review")]

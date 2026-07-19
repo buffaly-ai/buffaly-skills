@@ -452,7 +452,7 @@
 		state.editors = {};
 		C.byId("diffTitle").textContent = snapshot.Mode === "worktree" ? "Uncommitted worktree" : (snapshot.CommitShortSha + " " + snapshot.CommitSubject);
 		state.reviewed = snapshot.Reviewed === true;
-		var html = renderSummary(snapshot, state.files) + '<div class="annotation-toolbar"><div><strong id="annotationSummary">0 pending notes</strong><span id="reviewStatusSummary" class="review-status-summary">' + reviewedBadgeHtml(state.reviewed) + '</span><p id="sendAnnotationsStatus" class="send-annotations-status" role="status" aria-live="polite"></p><p id="codeReviewAgentStatus" class="code-review-agent-status" role="status" aria-live="polite"></p></div><span class="annotation-toolbar-actions"><button id="reviewToggleButton" class="review-toggle" type="button" aria-pressed="' + (state.reviewed ? 'true' : 'false') + '"><span aria-hidden="true">' + (state.reviewed ? '&#10003;' : '&#9675;') + '</span><span>' + (state.reviewed ? 'Reviewed' : 'Unreviewed') + '</span></button><button id="sendAnnotationsButton" type="button">Send notes</button><button id="runCodeReviewAgentButton" type="button">Run Code Review Agent</button></span></div>' + (state.files.map(function (file) {
+		var html = renderSummary(snapshot, state.files) + '<div class="annotation-toolbar"><div><strong id="annotationSummary">0 pending notes</strong><span id="reviewStatusSummary" class="review-status-summary">' + reviewedBadgeHtml(state.reviewed) + '</span><p id="sendAnnotationsStatus" class="send-annotations-status" role="status" aria-live="polite"></p><p id="codeReviewAgentStatus" class="code-review-agent-status" role="status" aria-live="polite"></p></div><span class="annotation-toolbar-actions"><button id="reviewToggleButton" class="review-toggle" type="button" aria-pressed="' + (state.reviewed ? 'true' : 'false') + '"><span aria-hidden="true">' + (state.reviewed ? '&#10003;' : '&#9675;') + '</span><span>' + (state.reviewed ? 'Reviewed' : 'Unreviewed') + '</span></button><button id="sendAnnotationsButton" type="button">Send notes</button><button id="runCodeReviewAgentButton" type="button">Review this commit separately</button></span></div>' + (state.files.map(function (file) {
 			var isBinary = isBinaryLikeFile(file);
 			var patch = isBinary ? "Binary file changed. Diff body is hidden." : C.text(file.Patch || file.patch);
 			var filePath = C.text(file.Path || file.path);
@@ -626,8 +626,3 @@
 	if (Bridge.loadTargetSettings) Bridge.loadTargetSettings().then(updateConnectionSummary).catch(function (error) { C.log("Target settings load failed: " + (error.message || error)); });
 	loadDiff();
 })();
-
-
-
-
-

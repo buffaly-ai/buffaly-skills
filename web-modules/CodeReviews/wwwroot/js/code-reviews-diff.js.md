@@ -35,7 +35,7 @@
 - Added the current commit to the selector when it is outside the recent check-in list, so older direct links remain selectable after the diff loads.
 
 ## Manual Code Review Agent Trigger (2026-06-27)
-- Added a `Run Code Review Agent` action to committed diff pages.
+- Added a `Review this commit separately` action to committed diff pages.
 - The action sends the current repository, normalized commit SHA, same-origin CodeReviews URL, and `sourceSessionKey` to `TriggerCodeReviewAgent` and displays child-session queue status in the diff toolbar.
 
 ## Phase 1 Agent Review Record Panel (2026-06-30)
