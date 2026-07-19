@@ -11,6 +11,48 @@ prototype ToGetLinkedInAccountStatus : LinkedInSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to inspect linkedin connection statuses")]
+prototype ToGetLinkedInConnectionStatuses : LinkedInSkillAction
+{
+	Description = @"Returns separate Publishing and Engagement connection status, scopes, and expiration without exposing secrets.";
+	function Execute() : string { return LinkedInSkillFacade.GetConnectionStatuses(); }
+}
+
+[SemanticProgram.InfinitivePhrase("to list linkedin administered organizations")]
+prototype ToListLinkedInAdministeredOrganizations : LinkedInSkillAction
+{
+	Description = @"Lists organizations administered by the Engagement connection. Read-only.";
+	function Execute() : string { return LinkedInSkillFacade.ListAdministeredOrganizations(); }
+}
+
+[SemanticProgram.InfinitivePhrase("to list linkedin organization posts")]
+prototype ToListLinkedInOrganizationPosts : LinkedInSkillAction
+{
+	Description = @"organizationUrn - organization actor URN. start/count - paging. Returns organization posts. Read-only.";
+	function Execute(string organizationUrn, int start, int count) : string { return LinkedInSkillFacade.ListOrganizationPosts(organizationUrn, start, count); }
+}
+
+[SemanticProgram.InfinitivePhrase("to list linkedin organization comments")]
+prototype ToListLinkedInOrganizationComments : LinkedInSkillAction
+{
+	Description = @"postUrn - organization post URN. start/count - paging. Returns individual comments and engagement summary. Read-only.";
+	function Execute(string postUrn, int start, int count) : string { return LinkedInSkillFacade.ListOrganizationComments(postUrn, start, count); }
+}
+
+[SemanticProgram.InfinitivePhrase("to get linkedin organization analytics")]
+prototype ToGetLinkedInOrganizationAnalytics : LinkedInSkillAction
+{
+	Description = @"organizationUrn - organization URN. Returns organization share statistics. Read-only.";
+	function Execute(string organizationUrn) : string { return LinkedInSkillFacade.GetOrganizationAnalytics(organizationUrn); }
+}
+
+[SemanticProgram.InfinitivePhrase("to get linkedin member analytics")]
+prototype ToGetLinkedInMemberAnalytics : LinkedInSkillAction
+{
+	Description = @"metric - LinkedIn member creator metric such as IMPRESSION. Returns aggregate member analytics. Read-only.";
+	function Execute(string metric) : string { return LinkedInSkillFacade.GetMemberAnalytics(metric); }
+}
+
 [SemanticProgram.InfinitivePhrase("to get linkedin llm info")]
 prototype ToGetLinkedInLlmInfo : LinkedInSkillAction
 {
