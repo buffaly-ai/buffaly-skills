@@ -10863,7 +10863,7 @@
       "PackageType": "WebModule",
       "Title": "LinkedIn",
       "Description": "Buffaly Web Module package for LinkedIn.",
-      "Version": "0.1.67",
+      "Version": "0.1.68",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/LinkedIn",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/LinkedIn",
@@ -10878,31 +10878,15 @@
         },
         {
           "Path": "Buffaly.LinkedIn.deps.json",
-          "Sha256": "c3473da38323f1328e5299e5681b6bfb006212a9034f89cfdce818759fdfdf77"
+          "Sha256": "111a8dd0e4eed2ac8a9690f0df0199d6cef81b4298f2ac3f45b46dc780820183"
         },
         {
           "Path": "Buffaly.LinkedIn.dll",
-          "Sha256": "297d7b94e55af3ebc4bc1f4095ed592466f4f3bb5534f562c4bf0e1f6613c977"
-        },
-        {
-          "Path": "Buffaly.LinkedIn.pdb",
-          "Sha256": "071698b93ba23658bb1af8993cb6669966b1b1fd4bc32f324a90f7290bf6dd02"
+          "Sha256": "705ed6b3d891390563f9dcc61cea541108e9d89cfb105d8fe1613e69fe7f9acd"
         },
         {
           "Path": "Buffaly.ProviderContracts.dll",
           "Sha256": "a45454d80055b8b0d96781256def7313f846380a5e8abcc729e3942bed23094b"
-        },
-        {
-          "Path": "Imports.pts",
-          "Sha256": "5baf8e54c0eba250acd67f54d3d6fb9a592d9d4f249117e930db18dbc47c261d"
-        },
-        {
-          "Path": "web-module.json",
-          "Sha256": "e758c4433e38211a0cf3c208792639772050d2b67511e78c0eabff5f5ad81eb3"
-        },
-        {
-          "Path": "WebAppUtilities.dll",
-          "Sha256": "b04993ec40d66d8f11ffc85f1d1c49ea52be9801406e48765e1e130fb881f5b4"
         },
         {
           "Path": "ContextPrompts/LinkedInPostEditingContext.prompt.md",
@@ -10910,7 +10894,11 @@
         },
         {
           "Path": "Generated/JsonWs/Buffaly.LinkedIn.LinkedInService.ashx.js",
-          "Sha256": "603ed1606559bbc0349beb9c4d0be568ff507fae00740288c5b73927300eeaa4"
+          "Sha256": "2a6442db1623106883890b9295db7bd53c134536f91205b23c3da972dd5ecc6b"
+        },
+        {
+          "Path": "Imports.pts",
+          "Sha256": "5baf8e54c0eba250acd67f54d3d6fb9a592d9d4f249117e930db18dbc47c261d"
         },
         {
           "Path": "Skills/LinkedIn/DraftArtifact.pts",
@@ -10926,27 +10914,35 @@
         },
         {
           "Path": "Skills/LinkedIn/skill-manifest.json",
-          "Sha256": "589692ca5dbc7284757256eccb538171652591812672ca860701da1fd369e88d"
+          "Sha256": "bf21b281f4d6cea90c9606f7ca587f5875f1bd91a2c676e5d4de23cbbed7205c"
+        },
+        {
+          "Path": "web-module.json",
+          "Sha256": "a70313d7f60ebd36e2a97e4d49f4a9bd903ffd77ebe1a9f5e45e1e91d7a02491"
+        },
+        {
+          "Path": "WebAppUtilities.dll",
+          "Sha256": "b04993ec40d66d8f11ffc85f1d1c49ea52be9801406e48765e1e130fb881f5b4"
         },
         {
           "Path": "wwwroot/callback.html",
           "Sha256": "583ef19469a9b7751aa457e2642f81d53f986aa5f6130130267d38ab23ee1d0e"
         },
         {
-          "Path": "wwwroot/index.html",
-          "Sha256": "0e10d071b4889aeed81b7df4bedc6a8583ade4140c85f6faf126af3640c8d288"
-        },
-        {
           "Path": "wwwroot/css/buffaly-page.css",
-          "Sha256": "85fd25e4a8342565fbc759b926eed3378f4fdca1b86b6829b1ba07f4304bea56"
+          "Sha256": "e30611c717c05ade6927504d89f1af31d0495f0334cbb03ee282807cc3d9fc43"
         },
         {
           "Path": "wwwroot/css/linkedin.css",
-          "Sha256": "7854cfb3e1e3b417a5ca3e9fd90222572f7b5ac5aca863a180809977b8433de1"
+          "Sha256": "d67ec70f63341e679cd6f1360c4d1aff01d1796b4a7c8f4cc3c0d8ebe3125c8e"
+        },
+        {
+          "Path": "wwwroot/index.html",
+          "Sha256": "6e8931b594b4c50b5debf87b01465c25788dfc61fafc2948c4c289499f934690"
         },
         {
           "Path": "wwwroot/js/linkedin.js",
-          "Sha256": "6e69449cb91e42dbfc8565912cf0b97f55bfaae6b64f947637a9c69d671e4ef0"
+          "Sha256": "0bd22c61cb38d844ed96467aa116f43fca0888f7004bbcc6ce7e64b9838532c2"
         }
       ],
       "ProjectArtifacts": [
