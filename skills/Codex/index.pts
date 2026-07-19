@@ -1,3 +1,4 @@
+reference Buffaly.Agent.Tools.Codex Buffaly.Agent.Tools.Codex;
 import Buffaly.Agent.Tools.Codex Buffaly.Agent.Tools.Codex.CodexTools CodexTools;
 
 prototype CodexSkillAction : OpsAction, CodingContext
@@ -6,14 +7,25 @@ prototype CodexSkillAction : OpsAction, CodingContext
 }
 
 [SemanticEntity("codex skill")]
-prototype CodexSkill : SkillEntity, CoreEntity
+prototype CodexSkill : SkillEntity
 {
-	Description = "The Codex skill should be used for all non-ProtoScript code editing, or file editing operations. Use it instead of PowerShell / CMD options";
+	Description = "Optional Codex code-editing skill. Use it only when the user explicitly asks to use Codex.";
 	ActionRoot = CodexSkillAction;
 }
 
 include "PromptActions.pts";
 
+[SemanticProgram.InfinitivePhrase("to get codex usage reset credits")]
+[SemanticProgram.InfinitivePhrase("to check codex reset credits")]
+prototype ToGetCodexUsageResetCredits : CodexSkillAction
+{
+	Description = @"Returns available Codex usage reset credits for the currently logged-in ChatGPT/Codex account. This action is read-only and does not redeem or consume credits.";
+
+	function Execute() : string
+	{
+		return CodexTools.GetCodexUsageResetCredits(_opsAgent);
+	}
+}
 [SemanticProgram.InfinitivePhrase("to execute a codex edit turn")]
 [SemanticProgram.InfinitivePhrase("to run codex edit")]
 prototype ToCodexEditTool : CodexSkillAction
