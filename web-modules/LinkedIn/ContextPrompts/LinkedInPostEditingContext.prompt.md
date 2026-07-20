@@ -106,11 +106,11 @@ Apply these 14 editorial standards from `ProofreadTechnicalArticle.prompt.md` wh
 
 ## Editing loop
 
-1. Read the full post text before proposing any changes.
-2. Propose changes as a written breakdown first; do not silently rewrite in place.
-3. Apply only after the user confirms a direction, using the update-text tool.
-4. After each update, re-verify hard constraints (character count, plain text, no image prompts in body).
-5. Iterate in small increments; expect the user to refine one aspect at a time (hook, then tone, then structure, then proofreading).
+1. For initial creation requests, including requests that provide source content or a host-resolved source file, create the post and call `ToUpdateLinkedInDraftText` in the same turn. Do not ask for a second confirmation; the user's create instruction is the confirmation.
+2. For later discretionary rewrites of existing draft text, propose the direction first and apply it after the user confirms.
+3. Read the full supplied source and current post text before writing.
+4. After each update, re-verify hard constraints (character count, plain text, no image prompts or source paths in the body).
+5. Iterate in small increments after initial creation; expect the user to refine one aspect at a time (hook, then tone, then structure, then proofreading).
 
 ## LinkedIn-specific rules
 
