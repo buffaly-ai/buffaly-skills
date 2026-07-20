@@ -3,7 +3,7 @@
 	const root=document.getElementById("dashboard"), colors={AllMessages:"#2563eb",UserMessages:"#16a34a",AssistantMessages:"#9333ea",ToolCalls:"#f59e0b"};
 	const state={Bootstrap:null,Range:null,Generation:0,Series:new Set(["AllMessages","UserMessages"])};
 	const number=value=>Number(value).toLocaleString();
-	const errorText=error=>error instanceof Error?error.message:String(error);
+	const errorText=error=>{if(error instanceof Error)return error.message;if(error&&typeof error==="object")return error.Message||error.Error||error.message||JSON.stringify(error);return String(error);};
 	const parseJson=value=>JSON.parse(value);
 	const escapeHtml=value=>String(value).replace(/[&<>"']/g,character=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"})[character]);
 	const formatDate=value=>new Date(value+"T12:00:00").toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});

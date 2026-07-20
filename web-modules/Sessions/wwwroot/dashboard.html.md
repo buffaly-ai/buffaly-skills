@@ -18,3 +18,5 @@
 - Reordered the page so the all-time metrics appear first, followed by the date controls immediately above the selected-range metrics they affect.
 - Kept the previously loaded selected-range metrics visible and dimmed during range refreshes, with an explicit `Updating…` status, so slower ranges no longer look like the controls failed to load data.
 - Replaced the selected-range detected-success card with exact new-session counts because production-scale aggregate queries must not scan message content for heuristic failure text.
+- Render structured JsonWs failure details (`Message`/`Error`) instead of displaying `[object Object]` when a panel request fails.
+- Removed the unused legacy `MasterPage.js` dependency from the standalone dashboard so missing portal globals/jQuery no longer generate console exceptions.
