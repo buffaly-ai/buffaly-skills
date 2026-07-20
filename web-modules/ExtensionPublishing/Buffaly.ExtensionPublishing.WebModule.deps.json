@@ -8,14 +8,14 @@
     ".NETCoreApp,Version=v9.0": {
       "Buffaly.ExtensionPublishing.WebModule/1.0.0": {
         "dependencies": {
-          "Buffaly.Agent.Web.Common": "1.0.0.0",
+          "Buffaly.Agent.Web.Common": "1.0.0",
           "WebAppUtilities": "1.0.0.0"
         },
         "runtime": {
           "Buffaly.ExtensionPublishing.WebModule.dll": {}
         }
       },
-      "Buffaly.Agent.Web.Common/1.0.0.0": {
+      "Buffaly.Agent.Web.Common/1.0.0": {
         "runtime": {
           "Buffaly.Agent.Web.Common.dll": {
             "assemblyVersion": "1.0.0.0",
@@ -63,8 +63,8 @@
       "serviceable": false,
       "sha512": ""
     },
-    "Buffaly.Agent.Web.Common/1.0.0.0": {
-      "type": "reference",
+    "Buffaly.Agent.Web.Common/1.0.0": {
+      "type": "project",
       "serviceable": false,
       "sha512": ""
     },
