@@ -1494,8 +1494,8 @@
     {
       "SkillName": "OnlineSessionMemoryCritic",
       "Title": "Online Session Memory Critic",
-      "Description": "Manual one-turn online session memory review that also registers future completed-turn review, with targeted source inspection and canonical NLMemory writes.",
-      "Version": "0.3.0",
+      "Description": "Manual or explicit-source one-turn online session memory review that also registers future completed-turn review, with targeted source inspection and canonical NLMemory writes.",
+      "Version": "0.3.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Online Session Memory Critic",
@@ -1505,7 +1505,7 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "58c1088cb8a356beceb3f0d46313cf8a90c190fca2c9da2efe13b07d49f85165"
+          "Sha256": "f92e9565ac25c9976aa5739a76fa6cd498e4a6be2c29ee21e04fc006e05cc1d9"
         }
       ],
       "EntryPoint": "index.pts",
