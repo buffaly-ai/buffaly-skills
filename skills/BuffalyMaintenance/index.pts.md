@@ -2,6 +2,8 @@
 
 DLL-backed OpsAgent skill wrappers over `Buffaly.Maintenance.Client`.
 
+The skill resolves `Buffaly.Maintenance.Client` by assembly name through the installed runtime. It does not bypass runtime assembly ownership with a skill-local DLL path.
+
 - Created in the provisioning solution so the reusable maintenance/update/log code ships with the installer and can also be copied into the Matt/OpsAgent environment.
 - Keeps first-version action inputs minimal and system-resolved.
 - Returns simple JSON text envelopes: `Succeeded`, `Message`, `Data`, `Warnings`.
