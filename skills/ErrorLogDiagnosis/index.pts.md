@@ -1,5 +1,12 @@
 # ErrorLogDiagnosis Skill Change History
 
+## Add Local Error Memory Search (2026-07-20)
+
+- Added `ToSearchErrorMemories` for bounded root-wide search under the current session's scoped `Error Memory` tag.
+- Added `ToSearchErrorMemoriesInCategory` for bounded search under one exact `ErrorMemoryRoot` descendant.
+- Both actions derive `session:<sessionKey>` from the runtime host and delegate category/status filtering to the shared SemanticDatabase C# implementation. They return native prototype candidates so callers can inspect saved signatures, anchors, owner, routing rule, and status without ad hoc JSON.
+- The taxonomy itself remains session-local NLMemory and is not declared by this bundled skill.
+
 ## Add Phase 0 Skill Shell (2026-06-14)
 
 - Added the initial Error Log Diagnosis ProtoScript skill shell for future interactive-site launch actions.
@@ -40,7 +47,3 @@
 ## Fix Installed Compile Assembly Imports (2026-06-15)
 
 - Removed local `System.IO` and `RuntimeInstallRootFeature` imports from the module skill wrapper so the installed OpsAgent project uses the authoritative project-wide imports from `Imports.pts` instead of failing on repeated skill-local assembly imports.
-
-## Restore OpsAgent Skill Source Placement (2026-06-15)
-- Copied ErrorLogDiagnosis skill assets into the canonical `content/projects/OpsAgent/Skills/ErrorLogDiagnosis` source location referenced by `Skills/index.pts`.
-- Design Decision: the enabled skill index must only reference files present in the OpsAgent project tree so source, staging, and installer payloads share the same include graph.

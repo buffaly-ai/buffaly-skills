@@ -1,5 +1,7 @@
 import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.InteractiveSiteLaunchRequestContract InteractiveSiteLaunchRequestContract;
 import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.InteractiveSiteLaunchResultContract InteractiveSiteLaunchResultContract;
+reference Buffaly.Agent.Tools.SemanticDatabase Buffaly.Agent.Tools.SemanticDatabase;
+import Buffaly.Agent.Tools.SemanticDatabase Buffaly.Agent.Tools.SemanticDatabase.SemanticDatabase SemanticDatabase;
 prototype ErrorLogDiagnosisSkillAction : OpsAction
 {
 	Description = @"Base action type for Error Log Diagnosis settings and interactive-site tools.";
@@ -12,10 +14,60 @@ prototype ErrorLogDiagnosisSkill : SkillEntity
 	ActionRoot = ErrorLogDiagnosisSkillAction;
 }
 
+[SemanticProgram.InfinitivePhrase("to search local error memories")]
+prototype ToSearchErrorMemories : ErrorLogDiagnosisSkillAction
+{
+	Description = @"Searches only the current session's scoped Error Memory semantic tag and returns bounded candidates under ErrorMemoryRoot. query - stable error message query. maxResults - candidate limit clamped to 1-25.";
+
+	function Execute(string query, int maxResults = 10) : Collection
+	{
+		string sessionKey = _opsAgent.GetSessionKeyOrEmpty();
+		if (StringUtil.IsEmpty(sessionKey))
+		{
+			throw new InvalidOperationException("ToSearchErrorMemories requires an active session key.");
+		}
+
+		return SemanticDatabase.GetScopedCandidatePrototypesBySemanticTagAndCategorySearch(
+			query,
+			"Error Memory",
+			_runtime,
+			"session:" + sessionKey,
+			"ErrorMemoryRoot",
+			"",
+			0.25,
+			maxResults);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to search local error memories within a category")]
+prototype ToSearchErrorMemoriesInCategory : ErrorLogDiagnosisSkillAction
+{
+	Description = @"Searches only the current session's scoped Error Memory tag under one ErrorMemoryRoot descendant. query - stable error message query. categoryPrototypeName - exact local ontology category prototype. maxResults - candidate limit clamped to 1-25.";
+
+	function Execute(string query, string categoryPrototypeName, int maxResults = 10) : Collection
+	{
+		string sessionKey = _opsAgent.GetSessionKeyOrEmpty();
+		if (StringUtil.IsEmpty(sessionKey))
+		{
+			throw new InvalidOperationException("ToSearchErrorMemoriesInCategory requires an active session key.");
+		}
+
+		return SemanticDatabase.GetScopedCandidatePrototypesBySemanticTagAndCategorySearch(
+			query,
+			"Error Memory",
+			_runtime,
+			"session:" + sessionKey,
+			"ErrorMemoryRoot",
+			categoryPrototypeName,
+			0.25,
+			maxResults);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to run the error log diagnosis static interactive site test")]
 [SemanticProgram.InfinitivePhrase("to launch the error log diagnosis settings static site shell")]
 [SemanticProgram.InfinitivePhrase("to view error log diagnosis settings in an interactive site")]
-prototype ToRunErrorLogDiagnosisStaticInteractiveSiteTest : ErrorLogDiagnosisSkillAction
+prototype ToRunErrorLogDiagnosisStaticInteractiveSiteTest : ErrorLogDiagnosisSkillAction, CoreAction
 {
 	Description = @"Launches the Error Log Diagnosis settings interactive site for a process row. processID - Processes row ID to inspect. timeoutSeconds - maximum seconds to wait for the browser to exit.";
 
