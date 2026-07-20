@@ -1,5 +1,10 @@
 # index.pts Change History
 
+## Add Persisted Recent Session Inventory (2026-07-20)
+- Added `ToListRecentSessions(maxCount, skip)` as the general Session Management action for persisted recent-session discovery.
+- Returns canonical `SessionInfo` rows with `ParentSessionKey` and activity metadata so callers can classify top-level and child sessions without per-session probing.
+- Kept `ToListActiveSessions` unchanged for runtime-only inventory.
+
 ## Rename Session Message Lookup Inputs To MessageKey (2026-04-12)
 - Updated `ToGetSessionAssistantMessageMarkdown` and `ToExportSessionAssistantMessageMarkdownToDisk` to use `messageKey` terminology in descriptions, infinitive phrases, and parameter names.
 - Design Decision: session-message lookup skills now match the canonical Buffaly message identity contract instead of teaching obsolete `messageId` naming.

@@ -2,6 +2,7 @@ import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.SessionTools Se
 import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.QueuedInputResult QueuedInputResult;
 import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.SessionParentResult SessionParentResult;
 import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.SessionStatusResult SessionStatusResult;
+import Buffaly.Agent.Host Buffaly.Agent.Host.SessionInfo SessionInfo;
 import Buffaly.Agent.Host Buffaly.Agent.Host.TurnSummaryContract TurnSummaryContract;
 import Buffaly.Agent.Host Buffaly.Agent.Host.GetSessionTurnBootstrapResponse GetSessionTurnBootstrapResponse;
 import Buffaly.Agent.Host Buffaly.Agent.Host.GetSessionTurnPageResponse GetSessionTurnPageResponse;
@@ -235,6 +236,19 @@ prototype ToListActiveSessions : SessionManagementSkillAction
 	function Execute(int maxCount = 50) : List<SessionStatusResult>
 	{
 		return SessionTools.ListActiveSessionsTool(maxCount);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list persisted recent buffaly sessions")]
+[SemanticProgram.InfinitivePhrase("to list recent sessions with parent metadata")]
+[SemanticProgram.InfinitivePhrase("to get recent session hierarchy and activity")]
+prototype ToListRecentSessions : SessionManagementSkillAction
+{
+	Description = @"maxCount - maximum persisted recent sessions to return (defaults to 50). skip - recent rows to skip for paging. Returns canonical SessionInfo rows ordered by activity, including ParentSessionKey, AgentName, UpdatedUtc, LastFinalMessageUtc, and MessageCount.";
+
+	function Execute(int maxCount = 50, int skip = 0) : List<SessionInfo>
+	{
+		return SessionTools.ListRecentSessionsTool(maxCount, skip);
 	}
 }
 
