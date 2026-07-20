@@ -17,3 +17,7 @@ Marketing- or client-specific validated prompt workflows should live in their ow
 ## Source-of-truth rule
 
 Do not add one-off business/domain workflow actions here. Put them in their owning skill so semantic discovery resolves the original public action name to the validated action instead of to a duplicate side-by-side action.
+
+## Stable child-session reuse design (2026-07-17)
+- ToRunValidatedPromptSkill and ToRunValidatedPromptSkillFromSessionFile keep childSessionKeyOverride optional; leaving it empty uses the runner's stable parent-session/action-name key so repeated executions reuse the same child session. Use the override only when intentionally isolating a diagnostic run.
+
