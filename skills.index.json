@@ -2486,6 +2486,39 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": []
+    },
+    {
+      "SkillName": "OpenAIAdmin",
+      "Title": "OpenAI Administration",
+      "Description": "Buffaly skill package for OpenAI Administration.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "OpenAI Administration",
+        "OpenAIAdmin"
+      ],
+      "Path": "skills/OpenAIAdmin",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "cfec2a1ea889c4a978d17b6bc5e91e090eb22aaf074a9b75c110c7a7cc6a3654"
+        },
+        {
+          "Path": "OpenAiAdminAgentTools.pts",
+          "Sha256": "61b3e21bdbf9d5947a1de15c005d8e47e37c2ed2ba96ac8f29beb04135163fbc"
+        },
+        {
+          "Path": "OpenAiAdminAgentTools.pts.md",
+          "Sha256": "0733f27594c4dbcca152a6892f818a329c986a5a60bf9320bca0aa50fc4d1c8b"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "182424acede2cb59b26ad8ae575fcfbad2c9f157e02b2cd4d18fc81839e7658a"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
     }
   ]
 }

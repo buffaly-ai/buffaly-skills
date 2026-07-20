@@ -1,0 +1,16 @@
+reference Buffaly.OpenAiAdmin.WebModule;
+import Buffaly.OpenAiAdmin.WebModule Buffaly.OpenAiAdmin.WebModule.OpenAiAdminAgentTools OpenAiAdminAgentTools;
+
+[SemanticEntity("OpenAI administration skill")]
+prototype OpenAIAdminSkill : SkillEntity
+{
+	Description = "Read-only OpenAI organization usage, native costs, projects, spend alerts, and retention tools.";
+	ActionRoot = OpenAIAdminSkillAction;
+}
+
+prototype OpenAIAdminSkillAction : OpsAction
+{
+	Description = @"Base action type for read-only OpenAI administration tools.";
+}
+
+include "OpenAiAdminAgentTools.pts";

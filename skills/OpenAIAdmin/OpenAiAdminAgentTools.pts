@@ -1,0 +1,80 @@
+[SemanticProgram.InfinitivePhrase("to get OpenAI usage and costs")]
+[SemanticProgram.InfinitivePhrase("to inspect OpenAI organization usage")]
+prototype ToGetOpenAIUsageAndCosts : OpenAIAdminSkillAction
+{
+	Description = @"Thin wrapper over OpenAiAdminAgentTools.GetUsageAndCosts(startDate, endDate).
+startDate and endDate are inclusive UTC dates in yyyy-MM-dd format.
+Returns deterministic JSON with all usage dimensions and authoritative native OpenAI cost rows. No ProtoScript-side validation or reshaping.";
+
+	function Execute(string startDate, string endDate) : string
+	{
+		return OpenAiAdminAgentTools.GetUsageAndCosts(startDate, endDate);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get OpenAI costs by API key")]
+[SemanticProgram.InfinitivePhrase("to attribute OpenAI spend to API keys")]
+prototype ToGetOpenAICostsByApiKey : OpenAIAdminSkillAction
+{
+	Description = @"Thin wrapper over OpenAiAdminAgentTools.GetCostsByApiKey(startDate, endDate).
+startDate and endDate are inclusive UTC dates in yyyy-MM-dd format.
+Returns deterministic JSON grouped from native OpenAI API-key cost dimensions. No ProtoScript-side validation or reshaping.";
+
+	function Execute(string startDate, string endDate) : string
+	{
+		return OpenAiAdminAgentTools.GetCostsByApiKey(startDate, endDate);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get OpenAI costs by family")]
+[SemanticProgram.InfinitivePhrase("to group OpenAI spend by family")]
+prototype ToGetOpenAICostsByFamily : OpenAIAdminSkillAction
+{
+	Description = @"Thin wrapper over OpenAiAdminAgentTools.GetCostsByFamily(startDate, endDate).
+startDate and endDate are inclusive UTC dates in yyyy-MM-dd format.
+Returns deterministic JSON grouped from native OpenAI line-item costs. No ProtoScript-side validation or reshaping.";
+
+	function Execute(string startDate, string endDate) : string
+	{
+		return OpenAiAdminAgentTools.GetCostsByFamily(startDate, endDate);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list OpenAI projects")]
+[SemanticProgram.InfinitivePhrase("to inspect OpenAI organization projects")]
+prototype ToListOpenAIProjects : OpenAIAdminSkillAction
+{
+	Description = @"Thin wrapper over OpenAiAdminAgentTools.ListProjects().
+Returns deterministic JSON for active OpenAI organization projects and consumer mappings. No ProtoScript-side validation or reshaping.";
+
+	function Execute() : string
+	{
+		return OpenAiAdminAgentTools.ListProjects();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get OpenAI spend alerts")]
+[SemanticProgram.InfinitivePhrase("to inspect OpenAI spend alert thresholds")]
+prototype ToGetOpenAISpendAlerts : OpenAIAdminSkillAction
+{
+	Description = @"Thin wrapper over OpenAiAdminAgentTools.GetSpendAlerts().
+Returns deterministic read-only JSON for organization and project spend alerts. No ProtoScript-side validation or reshaping.";
+
+	function Execute() : string
+	{
+		return OpenAiAdminAgentTools.GetSpendAlerts();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get OpenAI data retention policies")]
+[SemanticProgram.InfinitivePhrase("to inspect OpenAI data retention")]
+prototype ToGetOpenAIDataRetentionPolicies : OpenAIAdminSkillAction
+{
+	Description = @"Thin wrapper over OpenAiAdminAgentTools.GetDataRetentionPolicies().
+Returns deterministic read-only JSON for organization and project retention policies. No ProtoScript-side validation or reshaping.";
+
+	function Execute() : string
+	{
+		return OpenAiAdminAgentTools.GetDataRetentionPolicies();
+	}
+}
