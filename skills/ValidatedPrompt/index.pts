@@ -16,9 +16,9 @@ prototype ValidatedPromptSkill : SkillEntity, CoreEntity
 [SemanticProgram.InfinitivePhrase("to execute a validated prompt action")]
 prototype ToRunValidatedPromptSkill : ValidatedPromptSkillAction
 {
-	Description = @"validatedPromptActionName - prototype name for one ValidatedPromptAction. userInput - input for the work prompt. maxAttempts - maximum validation attempts. Leave childSessionKeyOverride empty for normal validated-prompt runs so the action's ChildSessionScope applies; a non-empty override bypasses ChildSessionScope/per-parent and uses that exact session key only for explicit diagnostics or user-requested reruns. ChildSessionScope is read from the ValidatedPromptAction and defaults to per-parent.";
+	Description = @"validatedPromptActionName - prototype name for one ValidatedPromptAction. userInput - input for the work prompt. maxAttempts - maximum validation attempts. Child session selection is controlled by the ValidatedPromptAction.ChildSessionScope setting and defaults to per-parent; this action intentionally does not expose raw child session keys.";
 
-	function Execute(string validatedPromptActionName, string userInput, int maxAttempts = 2, string childSessionKeyOverride = "") : string
+	function Execute(string validatedPromptActionName, string userInput, int maxAttempts = 2) : string
 	{
 		if (_opsAgent == null)
 			return "Error: _opsAgent runtime is not available.";
@@ -49,7 +49,6 @@ prototype ToRunValidatedPromptSkill : ValidatedPromptSkillAction
 			validatedPromptAction.ValidationPromptPath,
 			userInput,
 			maxAttempts,
-			childSessionKeyOverride,
 			validatedPromptAction.ChildSessionScope);
 	}
 }
@@ -58,9 +57,9 @@ prototype ToRunValidatedPromptSkill : ValidatedPromptSkillAction
 [SemanticProgram.InfinitivePhrase("to execute a validated prompt action using a staged input file")]
 prototype ToRunValidatedPromptSkillFromSessionFile : ValidatedPromptSkillAction
 {
-	Description = @"validatedPromptActionName - prototype name for one ValidatedPromptAction. userInputRelativePath - file path under the current session directory containing the full user input. maxAttempts - maximum validation attempts. Leave childSessionKeyOverride empty for normal validated-prompt runs so the action's ChildSessionScope applies; a non-empty override bypasses ChildSessionScope/per-parent and uses that exact session key only for explicit diagnostics or user-requested reruns. ChildSessionScope is read from the ValidatedPromptAction and defaults to per-parent.";
+	Description = @"validatedPromptActionName - prototype name for one ValidatedPromptAction. userInputRelativePath - file path under the current session directory containing the full user input. maxAttempts - maximum validation attempts. Child session selection is controlled by the ValidatedPromptAction.ChildSessionScope setting and defaults to per-parent; this action intentionally does not expose raw child session keys.";
 
-	function Execute(string validatedPromptActionName, string userInputRelativePath, int maxAttempts = 2, string childSessionKeyOverride = "") : string
+	function Execute(string validatedPromptActionName, string userInputRelativePath, int maxAttempts = 2) : string
 	{
 		if (_opsAgent == null)
 			return "Error: _opsAgent runtime is not available.";
@@ -91,7 +90,6 @@ prototype ToRunValidatedPromptSkillFromSessionFile : ValidatedPromptSkillAction
 			validatedPromptAction.ValidationPromptPath,
 			userInputRelativePath,
 			maxAttempts,
-			childSessionKeyOverride,
 			validatedPromptAction.ChildSessionScope);
 	}
 }
