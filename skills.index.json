@@ -2493,6 +2493,35 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": []
+    },
+    {
+      "SkillName": "Workspace",
+      "Title": "Workspace",
+      "Description": "Buffaly skill package for Workspace.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Workspace",
+        "Workspace"
+      ],
+      "Path": "skills/Workspace",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "9c340d0246386f32042f92f2491f6e1e65c019dd7c047e3010af299cf410d999"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "fdbc5a80c2461a62992c6a801c310f908054bf1b1d70cdbb6125e94435a5c29e"
+        },
+        {
+          "Path": "lib/Buffaly.Agent.Workspaces.dll",
+          "Sha256": "84579b55022dcdd8c6745a8e2f1bd0d02b0478ae1f21b4116c335aebb176d4d5"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
     }
   ]
 }

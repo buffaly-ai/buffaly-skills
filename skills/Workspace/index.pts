@@ -1,0 +1,111 @@
+reference Buffaly.Agent.Workspaces;
+import Buffaly.Agent.Workspaces Buffaly.Agent.Workspaces.WorkspaceTools WorkspaceTools;
+import Buffaly.Agent.Workspaces Buffaly.Agent.Workspaces.WorkspaceRecord WorkspaceRecord;
+import Buffaly.Agent.Workspaces Buffaly.Agent.Workspaces.CurrentWorkspaceRecord CurrentWorkspaceRecord;
+import Buffaly.Agent.Workspaces Buffaly.Agent.Workspaces.WorkspaceFileEntry WorkspaceFileEntry;
+
+prototype WorkspaceSkillAction : OpsAction
+{
+    Description = @"Base action type for workspace tools.";
+}
+
+[SemanticEntity("workspace skill")]
+prototype WorkspaceSkill : SkillEntity, CoreEntity
+{
+    Description = "Workspace actions for attaching the current session and sharing artifacts with other sessions in the same workspace.";
+    ActionRoot = WorkspaceSkillAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to create a workspace")]
+prototype ToCreateWorkspace : WorkspaceSkillAction
+{
+    Description = @"workspaceKey - filesystem-safe key. name - display name.";
+
+    function Execute(string workspaceKey, string name) : WorkspaceRecord
+    {
+        return WorkspaceTools.CreateWorkspace(_opsAgent.GetCurrentSessionDirectory(), workspaceKey, name);
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to attach the current session to a workspace")]
+prototype ToAttachCurrentSessionToWorkspace : WorkspaceSkillAction
+{
+    Description = @"workspaceKey - existing workspace key. relationshipType - why this session belongs. summary - concise durable summary.";
+
+    function Execute(string workspaceKey, string relationshipType, string summary) : CurrentWorkspaceRecord
+    {
+        return WorkspaceTools.AttachCurrentSessionToWorkspace(
+            _opsAgent.GetCurrentSessionDirectory(),
+            _opsAgent.GetSessionKeyOrEmpty(),
+            workspaceKey,
+            relationshipType,
+            summary);
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to get the current workspace")]
+prototype ToGetCurrentWorkspace : WorkspaceSkillAction
+{
+    Description = @"Returns the workspace attached to the current session.";
+
+    function Execute() : CurrentWorkspaceRecord
+    {
+        return WorkspaceTools.GetCurrentWorkspace(_opsAgent.GetCurrentSessionDirectory(), _opsAgent.GetSessionKeyOrEmpty());
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to get the current workspace artifacts path")]
+prototype ToGetCurrentWorkspaceArtifactsPath : WorkspaceSkillAction
+{
+    Description = @"Returns the shared artifacts directory for the current session's workspace.";
+
+    function Execute() : string
+    {
+        return WorkspaceTools.GetCurrentWorkspaceArtifactsPath(_opsAgent.GetCurrentSessionDirectory(), _opsAgent.GetSessionKeyOrEmpty());
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to write a current workspace artifact")]
+prototype ToWriteCurrentWorkspaceFile : WorkspaceSkillAction
+{
+    Description = @"relativePath - path under workspace artifacts. content - text to write.";
+
+    function Execute(string relativePath, string content) : string
+    {
+        return WorkspaceTools.WriteCurrentWorkspaceFile(_opsAgent.GetCurrentSessionDirectory(), _opsAgent.GetSessionKeyOrEmpty(), relativePath, content);
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to read a current workspace artifact")]
+prototype ToReadCurrentWorkspaceFile : WorkspaceSkillAction
+{
+    Description = @"relativePath - path under workspace artifacts.";
+
+    function Execute(string relativePath) : string
+    {
+        return WorkspaceTools.ReadCurrentWorkspaceFile(_opsAgent.GetCurrentSessionDirectory(), _opsAgent.GetSessionKeyOrEmpty(), relativePath);
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to list current workspace artifacts")]
+prototype ToListCurrentWorkspaceFiles : WorkspaceSkillAction
+{
+    Description = @"relativeDirectory - optional directory under workspace artifacts; pass empty string for root.";
+
+    function Execute(string relativeDirectory) : List<WorkspaceFileEntry>
+    {
+        return WorkspaceTools.ListCurrentWorkspaceFiles(_opsAgent.GetCurrentSessionDirectory(), _opsAgent.GetSessionKeyOrEmpty(), relativeDirectory);
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to list sessions attached to a workspace")]
+prototype ToListWorkspaceSessions : WorkspaceSkillAction
+{
+    Description = @"workspaceKey - workspace whose attached sessions should be listed.";
+
+    function Execute(string workspaceKey) : List<string>
+    {
+        return WorkspaceTools.ListWorkspaceSessions(_opsAgent.GetCurrentSessionDirectory(), workspaceKey);
+    }
+}
+
