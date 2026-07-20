@@ -2191,10 +2191,11 @@
     {
       "SkillName": "Wiki",
       "Title": "Wiki",
-      "Description": "Buffaly OpsAgent skill package for Wiki.",
-      "Version": "0.1.0",
+      "Description": "Buffaly skill package for Wiki.",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "Wiki",
         "Wiki"
       ],
       "Path": "skills/Wiki",
@@ -2209,7 +2210,7 @@
         },
         {
           "Path": "PromptActions.pts",
-          "Sha256": "408a1efa710cebe91ee4df3863e08c69625add3c6080061fcd645f22a0db8b10"
+          "Sha256": "c8b7be6d5b468399ecbd79a9855915b065f97c41f89e274a110da5bac5a99356"
         },
         {
           "Path": "PromptActions.pts.md",
@@ -2225,11 +2226,11 @@
         },
         {
           "Path": "Prompts/EditWikiArticle.prompt.md",
-          "Sha256": "f7c1de58985cfec72e67bd4c412ff4fe7a49823aab47ce7301e7a9d313bcaea5"
+          "Sha256": "bbc274bb319c109fe7c40c4b9f527a6168eeb0bd9ea9b691aad3a3fb48ac1c0f"
         },
         {
           "Path": "Prompts/InsertWikiArticle.prompt.md",
-          "Sha256": "c738e5b6794521f261752525a896cfcbf7a9ab7bbb9286a37f826a5f33c3789f"
+          "Sha256": "9e6796a59ddd96af84864b09c803797a6192f3a77bbb63b707ba2a06f52eb98b"
         },
         {
           "Path": "Prompts/RefreshWikiArticle.prompt.md",
@@ -2242,11 +2243,7 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "PackageKind": "OpsAgentProtoScriptSkill",

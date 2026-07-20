@@ -1,4 +1,4 @@
-﻿# Edit Wiki Article
+# Edit Wiki Article
 
 You are editing an existing local Buffaly wiki article.
 
@@ -20,8 +20,8 @@ Improve or revise an existing markdown article under `wwwroot/Wiki` while preser
 
 ## Editing Guidance
 - Prefer direct file editing for the target markdown article.
-- Use Codex for the markdown edit when Codex is available and appropriate.
-- If Codex is unavailable, use available file-editing tools directly.
+- Use direct file-editing tools for the markdown edit.
+- Use Codex only if the user explicitly asks for Codex.
 - Keep the change tight and relevant to the requested article update.
 
 ## Rules

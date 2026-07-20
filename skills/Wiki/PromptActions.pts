@@ -59,7 +59,7 @@ prototype ToInsertWikiArticleSkill : WikiPromptAction
     SkillKind = "prompt";
     SkillVersion = "1.0.0";
     PromptPath = @"Skills/Wiki/Prompts/InsertWikiArticle.prompt.md";
-    Description = @"Loads the workflow for inserting a new wiki article into the Buffaly markdown wiki using direct file editing or Codex when available.";
+    Description = @"Loads the workflow for inserting a new wiki article into the Buffaly markdown wiki using direct file editing.";
 }
 
 [SemanticProgram.InfinitivePhrase("to edit a wiki article")]
@@ -71,6 +71,6 @@ prototype ToEditWikiArticleSkill : WikiPromptAction
     SkillKind = "prompt";
     SkillVersion = "1.0.0";
     PromptPath = @"Skills/Wiki/Prompts/EditWikiArticle.prompt.md";
-    Description = @"Loads the workflow for editing an existing wiki article in the Buffaly markdown wiki using direct file editing or Codex when available.";
+    Description = @"Loads the workflow for editing an existing wiki article in the Buffaly markdown wiki using direct file editing.";
 }
 

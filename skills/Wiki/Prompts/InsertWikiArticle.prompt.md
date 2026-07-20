@@ -1,4 +1,4 @@
-﻿# Insert Wiki Article
+# Insert Wiki Article
 
 You are inserting a new Wikipedia-style or Buffaly wiki article into the local Buffaly wiki.
 
@@ -15,8 +15,8 @@ Create a new markdown article under `wwwroot/Wiki` at the correct relative path 
 
 ## Editing Guidance
 - Prefer direct file editing for the target markdown file.
-- Use Codex for the file edit when Codex is available and appropriate.
-- If Codex is unavailable, use available file-editing tools directly.
+- Use direct file-editing tools for the file edit.
+- Use Codex only if the user explicitly asks for Codex.
 - Keep the edit scoped to the intended wiki article and any clearly necessary adjacent markdown updates.
 
 ## Rules
