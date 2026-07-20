@@ -1,54 +1,162 @@
 {
-	"Assembly":"Buffaly.Agent.SkillManagement, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-	"Type":"Buffaly.Agent.SkillManagement.PackageDirectoryService",
-	"KebabName":"package-directory-service",
-	"Methods":[{
-			"IsStatic":"true",
-			"IsReturnTypeArray":"false",
-			"KebabName":"install-package",
-			"Parameters":[{
-					"Type":"InstallPackageRequestContract",
-					"IsNullable":"false",
-					"Name":"request",
-					"IsArray":"false",
-					"IsEnum":"false"
-				}],
-			"ReturnType":"InstallPackageResponseContract",
-			"UrlName":null,
-			"Name":"InstallPackage",
-			"DataObject":{}
-		},
-		{
-			"IsStatic":"true",
-			"IsReturnTypeArray":"false",
-			"KebabName":"list-packages",
-			"Parameters":[{
-					"Type":"ListPackagesRequestContract",
-					"IsNullable":"false",
-					"Name":"request",
-					"IsArray":"false",
-					"IsEnum":"false"
-				}],
-			"ReturnType":"ListPackagesResponseContract",
-			"UrlName":null,
-			"Name":"ListPackages",
-			"DataObject":{}
-		},
-		{
-			"IsStatic":"true",
-			"IsReturnTypeArray":"false",
-			"KebabName":"preview-package-install",
-			"Parameters":[{
-					"Type":"PreviewPackageInstallRequestContract",
-					"IsNullable":"false",
-					"Name":"request",
-					"IsArray":"false",
-					"IsEnum":"false"
-				}],
-			"ReturnType":"PreviewPackageInstallResponseContract",
-			"UrlName":null,
-			"Name":"PreviewPackageInstall",
-			"DataObject":{}
-		}],
-	"Namespace":"Buffaly.Agent.SkillManagement"
+  "Assembly": "Buffaly.Agent.SkillManagement, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+  "Type": "Buffaly.Agent.SkillManagement.PackageDirectoryService",
+  "KebabName": "package-directory-service",
+  "Methods": [
+    {
+      "IsStatic": "true",
+      "IsReturnTypeArray": "false",
+      "KebabName": "list-packages",
+      "Parameters": [
+        {
+          "Type": "ListPackagesRequestContract",
+          "IsNullable": "false",
+          "Name": "request",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "ReturnType": "ListPackagesResponseContract",
+      "UrlName": null,
+      "Name": "ListPackages",
+      "DataObject": {}
+    },
+    {
+      "IsStatic": "true",
+      "IsReturnTypeArray": "false",
+      "KebabName": "list-package-sources",
+      "Parameters": [],
+      "ReturnType": "ListPackageSourcesResponseContract",
+      "UrlName": null,
+      "Name": "ListPackageSources",
+      "DataObject": {}
+    },
+    {
+      "IsStatic": "true",
+      "IsReturnTypeArray": "false",
+      "KebabName": "preview-instance-extension-profile",
+      "Parameters": [
+        {
+          "Type": "PreviewInstanceExtensionProfileRequestContract",
+          "IsNullable": "false",
+          "Name": "request",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "ReturnType": "InstanceExtensionProfileResultContract",
+      "UrlName": null,
+      "Name": "PreviewInstanceExtensionProfile",
+      "DataObject": {}
+    },
+    {
+      "IsStatic": "true",
+      "IsReturnTypeArray": "false",
+      "KebabName": "update-instance-extension-profile",
+      "Parameters": [
+        {
+          "Type": "UpdateInstanceExtensionProfileRequestContract",
+          "IsNullable": "false",
+          "Name": "request",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "ReturnType": "InstanceExtensionProfileResultContract",
+      "UrlName": null,
+      "Name": "UpdateInstanceExtensionProfile",
+      "DataObject": {}
+    },
+    {
+      "IsStatic": "true",
+      "IsReturnTypeArray": "false",
+      "KebabName": "install-profile-lock",
+      "Parameters": [
+        {
+          "Type": "InstallProfileLockRequestContract",
+          "IsNullable": "false",
+          "Name": "request",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "ReturnType": "InstallProfileLockResponseContract",
+      "UrlName": null,
+      "Name": "InstallProfileLock",
+      "DataObject": {}
+    },
+    {
+      "IsStatic": "true",
+      "IsReturnTypeArray": "false",
+      "KebabName": "backfill-skill-receipts",
+      "Parameters": [
+        {
+          "Type": "BackfillSkillReceiptsRequestContract",
+          "IsNullable": "false",
+          "Name": "request",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "ReturnType": "BackfillSkillReceiptsResponseContract",
+      "UrlName": null,
+      "Name": "BackfillSkillReceipts",
+      "DataObject": {}
+    },
+    {
+      "IsStatic": "true",
+      "IsReturnTypeArray": "false",
+      "KebabName": "preview-package-install",
+      "Parameters": [
+        {
+          "Type": "PreviewPackageInstallRequestContract",
+          "IsNullable": "false",
+          "Name": "request",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "ReturnType": "PreviewPackageInstallResponseContract",
+      "UrlName": null,
+      "Name": "PreviewPackageInstall",
+      "DataObject": {}
+    },
+    {
+      "IsStatic": "true",
+      "IsReturnTypeArray": "false",
+      "KebabName": "install-package",
+      "Parameters": [
+        {
+          "Type": "InstallPackageRequestContract",
+          "IsNullable": "false",
+          "Name": "request",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "ReturnType": "InstallPackageResponseContract",
+      "UrlName": null,
+      "Name": "InstallPackage",
+      "DataObject": {}
+    },
+    {
+      "IsStatic": "true",
+      "IsReturnTypeArray": "false",
+      "KebabName": "repair-package-activation",
+      "Parameters": [
+        {
+          "Type": "InstallPackageRequestContract",
+          "IsNullable": "false",
+          "Name": "request",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "ReturnType": "InstallPackageResponseContract",
+      "UrlName": null,
+      "Name": "RepairPackageActivation",
+      "DataObject": {}
+    }
+  ],
+  "Namespace": "Buffaly.Agent.SkillManagement"
 }
