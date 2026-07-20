@@ -47,3 +47,7 @@
 ## Fix Installed Compile Assembly Imports (2026-06-15)
 
 - Removed local `System.IO` and `RuntimeInstallRootFeature` imports from the module skill wrapper so the installed OpsAgent project uses the authoritative project-wide imports from `Imports.pts` instead of failing on repeated skill-local assembly imports.
+
+## Restore OpsAgent Skill Source Placement (2026-06-15)
+- Copied ErrorLogDiagnosis skill assets into the canonical `content/projects/OpsAgent/Skills/ErrorLogDiagnosis` source location referenced by `Skills/index.pts`.
+- Design Decision: the enabled skill index must only reference files present in the OpsAgent project tree so source, staging, and installer payloads share the same include graph.
