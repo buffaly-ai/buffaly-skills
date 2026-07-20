@@ -24,7 +24,7 @@ Ordering Rule
 Shared Guardrails (Common Across Both Phases)
 - Read `AGENTS.md` and `ProtoScript.Minimum.md` before editing `.pts`.
 - Use `ToWriteProtoScriptCodeSkill` before editing `.pts`.
-- Use `ToCoordinateCodexIncrementalEditAndValidateSkill`; keep small batches and let the calling agent validate after each batch.
+- Use direct file-editing and validation tools; keep small batches and let the calling agent validate after each batch. Use Codex only if the user explicitly asks for Codex.
 - Typed-tool-first installation rule:
 	- Use `ToImportDllIntoSkill` for DLL placement plus reference/import insertion.
 	- Use `ToUpsertPromptActionArtifacts` for prompt-action prototype plus prompt markdown registration.
@@ -38,7 +38,7 @@ Shared Guardrails (Common Across Both Phases)
 Orchestration and Tooling References
 - `ToCreateDllBackedCapabilityFromScratchSkill`
 - `ToInstallExistingDllIntoProtoScriptSkill`
-- `ToCoordinateCodexIncrementalEditAndValidateSkill`
+- Direct file-editing tools plus caller-owned validation
 - `ToWriteProtoScriptCodeSkill`
 
 DLL Refresh / Compile Sequence

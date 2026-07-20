@@ -232,10 +232,10 @@
       "SkillName": "BuffalySelfManagement",
       "Title": "Buffaly Self Management",
       "Description": "Buffaly skill package for Buffaly Self Management.",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
-        "buffaly self management",
+        "Buffaly Self Management",
         "BuffalySelfManagement"
       ],
       "Path": "skills/BuffalySelfManagement",
@@ -254,7 +254,7 @@
         },
         {
           "Path": "Prompts/AddDllBackedCapabilities.prompt.md",
-          "Sha256": "eb24d92e8920d8cd1d01d53131018838b67e2ae3e180c2adcdb984d97acd12bd"
+          "Sha256": "256308a9b40edc8ba25a2d486606d909f6ec3cc9ff016ed9330c4fa06f35504e"
         },
         {
           "Path": "Prompts/CallProtoScriptMethodsFromBuffalyApi.prompt.md",
@@ -270,7 +270,7 @@
         },
         {
           "Path": "Prompts/CreateDllBackedCapabilityFromScratch.prompt.md",
-          "Sha256": "84684bae29365de81af0257606c9d2bea6cc226e062dbebffc03fc32276acb1c"
+          "Sha256": "ac538a8d380f0d186ad9385ac934b20c03477077785864d04b910a30239e6816"
         },
         {
           "Path": "Prompts/CreateSubjectMatterExpertResearchBrief.prompt.md",
@@ -298,7 +298,7 @@
         },
         {
           "Path": "Prompts/InstallExistingDllIntoProtoScript.prompt.md",
-          "Sha256": "c6fe57a0e2ad867981d7734b35f1711283ae4c65363ec1f2a9d6579dce0e32bd"
+          "Sha256": "d0718d963cc30f82fd61b7b1d0debf13e2535e4488bdc48543eedf619b8039e9"
         },
         {
           "Path": "Prompts/RunModelQuorumWorkflow.prompt.md",
@@ -310,7 +310,7 @@
         },
         {
           "Path": "Prompts/TroubleshootBuffalyAgentRuntime.prompt.md",
-          "Sha256": "f952a5853165a9ad82fe598b5e4a1e9a97d575191a7c3b3740a32f79d540d0ff"
+          "Sha256": "483dd38c2de1253753b17bc431d96da272288b5ba1ee26cf801b28ced6b20a5c"
         },
         {
           "Path": "Prompts/TroubleshootProtoScriptDllCompilation.prompt.md",
@@ -319,11 +319,7 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "CareCascade",

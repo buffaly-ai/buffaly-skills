@@ -8,7 +8,7 @@ First Rule: Start In The Authoritative Code
 	- `c:/dev/Buffaly.Development/Buffaly.Agent.Tools`
 	- `c:/dev/Buffaly.Development/Buffaly.Agent.Web`
 - You can read that code to understand existing functionality, understand tools, and look for bugs in your implementation.
-- You may use the Codex tool to do deep dives into the code to look for issues, that is better than many tool calls yourself. 
+- Use direct inspection, typed tools, logs, and focused searches for code deep dives. Use Codex only if the user explicitly asks for Codex. 
 
 Other Tips
 - Look for more tools. You have lots of tools. You do additional searches or even open the protoscript files in your project directory to find more options

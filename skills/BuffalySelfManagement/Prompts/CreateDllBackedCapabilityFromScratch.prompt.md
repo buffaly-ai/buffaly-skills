@@ -57,7 +57,7 @@ Handoff To Companion Prompt
 Related Actions/Prompts
 - `ToAddDllBackedCapabilitiesSkill` (top-level router that selects create vs install phase).
 - `ToWriteProtoScriptCodeSkill` (used later during ProtoScript installation, not for C# API design).
-- `ToCoordinateCodexIncrementalEditAndValidateSkill` (required orchestration for incremental batches/validation).
+- Direct file-editing tools plus caller-owned validation for incremental batches.
 - `ToTroubleshootBuffalyAgentRuntimeSkill` (runtime troubleshooting after integration).
 - `ToTroubleshootProtoScriptDllCompilationSkill` (compile/import troubleshooting).
 - Companion action: `ToInstallExistingDllIntoProtoScriptSkill`.

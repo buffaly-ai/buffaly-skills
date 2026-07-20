@@ -77,10 +77,10 @@ ProtoScript Constraints + Secrets/Auth
 - Secrets/auth material must come from secure server-side configuration, never tool arguments.
 
 Incremental Delivery + Orchestration
-- Use `ToCoordinateCodexIncrementalEditAndValidateSkill`.
+- Use direct file-editing and validation tools. Use Codex only if the user explicitly asks for Codex.
 - Make small batches (skill skeleton, include, references/imports, one action at a time).
 - Stop after each batch so the calling agent can validate.
-- Do not claim compile success from the Codex subagent.
+- Do not claim compile success without direct validation evidence.
 - Preferred per-batch validation sequence:
 	1. `ToImportDllIntoSkill(...)` for DLL copy + reference/import insertion.
 	2. `ToResetProtoScriptEnvironment` only when runtime refresh is required after compile.
