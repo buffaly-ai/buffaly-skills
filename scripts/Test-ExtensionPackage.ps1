@@ -12,7 +12,7 @@ function Get-FileHashForPackage([string]$packageRoot, [string]$relativePath) {
     $filePath = Join-Path $packageRoot ($relativePath -replace '/', [System.IO.Path]::DirectorySeparatorChar)
     if (-not (Test-Path $filePath -PathType Leaf)) { return $null }
     $extension = [System.IO.Path]::GetExtension($filePath).ToLowerInvariant()
-    $normalizedTextExtensions = @('', '.pts', '.ks', '.md', '.json', '.js', '.mjs', '.ts', '.css', '.html', '.htm', '.txt', '.xml', '.config', '.props', '.targets', '.csproj', '.sln', '.prompt', '.sql', '.ps1', '.psm1', '.sh', '.bat', '.cmd', '.yml', '.yaml', '.svg', '.nuspec', '.wxs', '.wxi')
+    $normalizedTextExtensions = @('', '.pts', '.ks', '.md', '.json', '.js', '.mjs', '.ts', '.py', '.css', '.html', '.htm', '.txt', '.xml', '.config', '.props', '.targets', '.csproj', '.sln', '.prompt', '.sql', '.ps1', '.psm1', '.sh', '.bat', '.cmd', '.yml', '.yaml', '.svg', '.nuspec', '.wxs', '.wxi')
     if ($extension -in $normalizedTextExtensions) {
         $text = [System.IO.File]::ReadAllText($filePath).Replace("`r`n", "`n").Replace("`r", "`n")
         if ($text.Length -gt 0 -and $text[0] -eq [char]0xFEFF) { $text = $text.Substring(1) }
