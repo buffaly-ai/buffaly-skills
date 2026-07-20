@@ -44,12 +44,17 @@
   async function loadConfig() {
     const config = await api('/api/config');
     el.outputRoot.textContent = config.outputRoot || '';
-    el.model.value = config.defaultModel || 'gpt-5.5';
+    el.model.value = config.defaultModel || 'disabled';
     el.headless.checked = config.defaultHeadless !== false;
-    setStatus(config.hasApiKey ? 'API key loaded' : 'Missing API key', config.hasApiKey ? 'ready' : 'error');
+    setStatus(config.disabledReason || 'Browser Workbench runner removed', 'warning');
+    el.start.disabled = true;
   }
 
   async function startRun() {
+    el.stderr.textContent = 'The autonomous Browser Workbench runner has been removed. Use BrowserSessionSkill primitives and ToRunPlaywrightScript instead.';
+    el.start.disabled = true;
+    return;
+
     const instruction = (el.instruction.value || '').trim();
     if (!instruction) {
       el.stdout.textContent = 'Enter an instruction first.';

@@ -1,12 +1,15 @@
-Use the autonomous Browser Workbench only when the user explicitly asks for a nested browser agent, self-running browser task, or Browser Workbench harness validation.
+`ToRunBrowserModuleTask` has been removed.
 
-For normal browser automation, use `UseBrowserSkill` and `BrowserSessionSkill` primitives instead. Normal browser automation must not depend on a Browser web-module endpoint, internal URL, `BaseUrl`, `WorkerFeature.InternalBaseUrl`, or JsonWs route.
+Do not use, load, recreate, or route to the autonomous Browser Workbench LLM loop. That legacy path launched a separate runner process, inherited an OpenAI API key, and posted directly to the OpenAI Responses API outside the Buffaly usage ledger.
 
-Inputs:
-- instruction (required)
-- model (optional)
-- maxSteps (optional)
-- profileName (optional)
+For browser automation, use the direct BrowserSessionSkill surface instead:
+- `ToOpenBrowserSession`
+- `ToOpenBrowserUrl`
+- selector click/type/press/wait/text/attribute tools
+- `ToRunBrowserScript` for page JavaScript inspection
+- `ToRunPlaywrightScript` for compact Playwright-style native automation
+- `ToCaptureBrowserScreenshot`
+- `ToGetBrowserConsoleEvents`
 
-Call `ToRunBrowserModuleTask` only for the explicit autonomous workbench case. Provide a concrete instruction and return the run result summary. Do not provide or resolve any Browser web-module URL override.
+Normal browser automation must stay inside the main agent/tool loop and must not depend on a Browser web-module endpoint, internal URL, `BaseUrl`, `WorkerFeature.InternalBaseUrl`, JsonWs route, separate runner process, or direct model API call.
 

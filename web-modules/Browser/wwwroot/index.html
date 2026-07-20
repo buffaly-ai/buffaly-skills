@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Browser LLM Workbench</title>
+	<title>Browser Workbench Removed</title>
 	<link rel="icon" type="image/png" href="/images/bf_logo_fav_Large.png">
 	<link rel="stylesheet" href="/custom_css/buffaly-page.css?v=20260526.1">
 	<link rel="stylesheet" href="/custom_css/buffaly-navigation.css?v=20260530.4">
@@ -18,14 +18,14 @@
 		<div class="buffaly-app-strip-center">
 			<buffaly-navigation-launcher label="Navigation" variant="strip" current-href="web-modules/Browser/index.html"></buffaly-navigation-launcher>
 		</div>
-		<div class="buffaly-app-strip-page">Browser Workbench</div>
+		<div class="buffaly-app-strip-page">Browser Tools</div>
 	</div>
 	<main class="buffaly-page-shell">
 		<header class="buffaly-page-hero">
 			<div class="buffaly-page-hero-main">
 				<p class="buffaly-kicker">Buffaly Browser Driver</p>
-				<h1 class="buffaly-title">Browser LLM Workbench</h1>
-				<p class="buffaly-subtitle">Run browser tool tasks with live screenshot feedback, artifacts, and runner diagnostics.</p>
+				<h1 class="buffaly-title">Browser Workbench Removed</h1>
+				<p class="buffaly-subtitle">The autonomous Browser Workbench LLM runner was removed. Use direct BrowserSessionSkill actions and ToRunPlaywrightScript for browser automation.</p>
 			</div>
 			<div class="buffaly-page-hero-actions">
 				<div id="apiStatus" class="buffaly-status-pill warning">Checking</div>
@@ -36,14 +36,14 @@
 		<section class="workbench-grid" aria-label="Browser workbench">
 			<aside class="buffaly-panel control-panel">
 				<div class="panel-section">
-					<p class="buffaly-section-label">Command</p>
-					<h2 class="buffaly-panel-title">Instruction</h2>
+					<p class="buffaly-section-label">Status</p>
+					<h2 class="buffaly-panel-title">Use direct Playwright tools</h2>
 					<label class="buffaly-field direction-field">
 						<span class="buffaly-field-label">Task instruction</span>
-						<textarea id="instructionInput" class="buffaly-textarea" rows="7">Open https://example.com, verify the page title, and save a screenshot.</textarea>
+						<textarea id="instructionInput" class="buffaly-textarea" rows="7" readonly>The separate browser LLM loop is disabled. Use ToOpenBrowserSession, ToOpenBrowserUrl, ToRunPlaywrightScript, ToCaptureBrowserScreenshot, and related BrowserSessionSkill tools from the main agent loop.</textarea>
 					</label>
 					<div class="run-actions">
-						<button id="startButton" class="buffaly-button wide" type="button">Start run</button>
+						<button id="startButton" class="buffaly-button wide" type="button" disabled>Runner removed</button>
 						<button id="interruptButton" class="buffaly-button secondary danger wide" type="button" disabled>Stop run</button>
 					</div>
 				</div>
@@ -51,7 +51,7 @@
 				<div class="panel-section divider options-grid">
 					<label class="buffaly-field">
 						<span class="buffaly-field-label">Model</span>
-						<input id="modelInput" class="buffaly-input" value="gpt-5.5" readonly aria-readonly="true">
+						<input id="modelInput" class="buffaly-input" value="disabled" readonly aria-readonly="true">
 					</label>
 					<label class="buffaly-field">
 						<span class="buffaly-field-label">Profile</span>
@@ -79,14 +79,14 @@
 					<div>
 						<p class="buffaly-section-label">Live visual feedback</p>
 						<h2 class="buffaly-panel-title">Latest screenshot</h2>
-						<p class="buffaly-muted">The screenshot updates as the browser runner captures pages.</p>
+						<p class="buffaly-muted">Screenshots are now captured through direct BrowserSessionSkill tools, not this removed workbench runner.</p>
 					</div>
 				</div>
 				<div class="screenshot-stage" id="screenshotStage">
 					<img id="latestScreenshot" alt="Latest browser screenshot">
 					<div id="screenshotEmpty" class="buffaly-empty-state empty-state">
 						<strong>No screenshot yet.</strong>
-						<span>Start a run to see browser screenshots here.</span>
+						<span>Use ToCaptureBrowserScreenshot from the direct browser tool surface.</span>
 					</div>
 				</div>
 			</section>
@@ -107,10 +107,10 @@
 				<div class="buffaly-panel-header compact">
 					<div>
 						<p class="buffaly-section-label">Live</p>
-						<h2 class="buffaly-panel-title">Runner output</h2>
+						<h2 class="buffaly-panel-title">Guidance</h2>
 					</div>
 				</div>
-				<pre id="stdoutLog" class="buffaly-code-block">No run started.</pre>
+			<pre id="stdoutLog" class="buffaly-code-block">Use BrowserSessionSkill primitives and ToRunPlaywrightScript. Do not run or recreate the autonomous Browser Workbench loop.</pre>
 			</article>
 
 			<article class="buffaly-panel details-panel error-panel">
