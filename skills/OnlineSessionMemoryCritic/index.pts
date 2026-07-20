@@ -35,6 +35,18 @@ prototype ToAttachConfiguredOnlineSessionMemoryCritic : OnlineSessionMemoryCriti
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to attach an online memory critic to another session")]
+[SemanticProgram.InfinitivePhrase("to review a source session turn with the online memory critic")]
+prototype ToAttachOnlineSessionMemoryCriticToSession : OnlineSessionMemoryCriticSkillAction
+{
+	Description = @"sourceSessionKey - exact existing source session. turnKey - exact completed source turn to review. Ensures or reuses the deterministic critic child, configures its provider/model, registers future turn.completed delivery, and queues the selected turn without writing an instruction into the source session.";
+
+	function Execute(string sourceSessionKey, string turnKey, string provider, string modelName, string reasoningLevel) : string
+	{
+		return OnlineSessionMemoryCriticTools.RunConfiguredTurnForSession(sourceSessionKey, turnKey, provider, modelName, reasoningLevel);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to dispatch an online memory critic session event")]
 prototype ToDispatchOnlineSessionMemoryCriticEvent : OnlineSessionMemoryCriticActionRoot
 {
