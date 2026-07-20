@@ -46,24 +46,20 @@ function Test-ExtensionRepository {
     }
     if ($null -ne $packageIndex -and $packageIndex.SchemaVersion -ne 1) {
         $allErrors.Add("packages.index.json SchemaVersion is $($packageIndex.SchemaVersion), expected 1.")
-    }    # --- Collect all package IDs for duplicate detection ---
-    $allIds = [System.Collections.Generic.List[string]]::new()
-    if ($null -ne $skillIndex) {
-        foreach ($s in @($skillIndex.Skills)) { $allIds.Add([string]$s.SkillName) }
-    }
-    if ($null -ne $packageIndex) {
-        foreach ($p in @($packageIndex.Packages)) { $allIds.Add([string]$p.PackageId) }
-    }
-    $duplicates = $allIds | Group-Object | Where-Object { $_.Count -gt 1 }
+    }    # --- Detect duplicate typed identities within each index. Skill and WebModule may intentionally share a package ID. ---
+    $typedIds = @()
+    if ($null -ne $skillIndex) { $typedIds += @($skillIndex.Skills | ForEach-Object { "Skill:$([string]$_.SkillName)" }) }
+    if ($null -ne $packageIndex) { $typedIds += @($packageIndex.Packages | ForEach-Object { "$([string]$_.PackageType):$([string]$_.PackageId)" }) }
+    $duplicates = $typedIds | Group-Object | Where-Object { $_.Count -gt 1 }
     foreach ($dup in @($duplicates)) {
-        $allErrors.Add("Duplicate package ID '$($dup.Name)' appears $($dup.Count) times across indexes.")
+        $allErrors.Add("Duplicate typed package identity '$($dup.Name)' appears $($dup.Count) times in the repository indexes.")
     }
 
     # --- Validate each skill package ---
     if ($null -ne $skillIndex) {
         foreach ($skill in @($skillIndex.Skills)) {
             $name = [string]$skill.SkillName
-            $result = Test-ExtensionPackageInternal -PackageName $name -RepoRoot $RepoRoot -SkillIndex $skillIndex -PackageIndex $packageIndex
+            $result = Test-ExtensionPackageInternal -PackageName $name -PackageType Skill -RepoRoot $RepoRoot -SkillIndex $skillIndex -PackageIndex $packageIndex
             $results.Add($result)
             if (-not $result.Passed) {
                 foreach ($e in $result.Errors) { $allErrors.Add("[$name] $e") }
@@ -76,9 +72,7 @@ function Test-ExtensionRepository {
     if ($null -ne $packageIndex) {
         foreach ($pkg in @($packageIndex.Packages)) {
             $id = [string]$pkg.PackageId
-            # Skip if already validated as a skill (same ID in skills index)
-            if ($null -ne $skillIndex -and @($skillIndex.Skills | Where-Object { $_.SkillName -eq $id }).Count -gt 0) { continue }
-            $result = Test-ExtensionPackageInternal -PackageName $id -RepoRoot $RepoRoot -SkillIndex $skillIndex -PackageIndex $packageIndex
+            $result = Test-ExtensionPackageInternal -PackageName $id -PackageType ([string]$pkg.PackageType) -RepoRoot $RepoRoot -SkillIndex $skillIndex -PackageIndex $packageIndex
             $results.Add($result)
             if (-not $result.Passed) {
                 foreach ($e in $result.Errors) { $allErrors.Add("[$id] $e") }
@@ -102,7 +96,7 @@ function Test-ExtensionRepository {
             $relativePath = "skills/" + $_.Name
             if ($relativePath -notin $indexedSkillPaths) {
                 if ($_.Name -in $webModulePackageIds) {
-                    $allErrors.Add("Orphaned skills/ directory '$relativePath' overlaps with WebModule package '$($_.Name)'. Remove the skills/ directory — the package is owned by packages.index.json.")
+                    $allErrors.Add("Orphaned skills/ directory '$relativePath' overlaps with WebModule package '$($_.Name)'. Remove the skills/ directory; the package is owned by packages.index.json.")
                 } else {
                     $allWarnings.Add("Directory '$relativePath' exists but has no entry in skills.index.json.")
                 }

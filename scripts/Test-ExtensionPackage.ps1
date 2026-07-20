@@ -11,9 +11,11 @@ $ErrorActionPreference = "Stop"
 function Get-FileHashForPackage([string]$packageRoot, [string]$relativePath) {
     $filePath = Join-Path $packageRoot ($relativePath -replace '/', [System.IO.Path]::DirectorySeparatorChar)
     if (-not (Test-Path $filePath -PathType Leaf)) { return $null }
-    $extension = [System.IO.Path]::GetExtension($filePath)
-    if ($extension -ieq ".pts" -or $extension -ieq ".md") {
+    $extension = [System.IO.Path]::GetExtension($filePath).ToLowerInvariant()
+    $normalizedTextExtensions = @('', '.pts', '.ks', '.md', '.json', '.js', '.mjs', '.ts', '.css', '.html', '.htm', '.txt', '.xml', '.config', '.props', '.targets', '.csproj', '.sln', '.prompt', '.sql', '.ps1', '.psm1', '.sh', '.bat', '.cmd', '.yml', '.yaml', '.svg', '.nuspec', '.wxs', '.wxi')
+    if ($extension -in $normalizedTextExtensions) {
         $text = [System.IO.File]::ReadAllText($filePath).Replace("`r`n", "`n").Replace("`r", "`n")
+        if ($text.Length -gt 0 -and $text[0] -eq [char]0xFEFF) { $text = $text.Substring(1) }
         $bytes = [System.Text.UTF8Encoding]::new($false).GetBytes($text)
         $sha = [System.Security.Cryptography.SHA256]::Create()
         try { return ([BitConverter]::ToString($sha.ComputeHash($bytes)).Replace("-", "").ToLowerInvariant()) }
@@ -28,6 +30,7 @@ function Read-JsonFile([string]$path) {
 }function Test-ExtensionPackageInternal {
     param(
         [string]$PackageName,
+        [string]$PackageType = "",
         [string]$RepoRoot,
         $SkillIndex,
         $PackageIndex
@@ -41,13 +44,13 @@ function Read-JsonFile([string]$path) {
     $indexName = ""
     $entryType = ""
 
-    if ($null -ne $SkillIndex) {
+    if ($PackageType -in @('', 'Skill') -and $null -ne $SkillIndex) {
         $skillEntry = $SkillIndex.Skills | Where-Object { $_.SkillName -eq $PackageName } | Select-Object -First 1
         if ($null -ne $skillEntry) { $indexName = "skills.index.json"; $entryType = "Skill" }
     }
 
     if ($null -eq $skillEntry -and $null -ne $PackageIndex) {
-        $packageEntry = $PackageIndex.Packages | Where-Object { $_.PackageId -eq $PackageName } | Select-Object -First 1
+        $packageEntry = $PackageIndex.Packages | Where-Object { $_.PackageId -eq $PackageName -and ([string]::IsNullOrWhiteSpace($PackageType) -or $_.PackageType -eq $PackageType) } | Select-Object -First 1
         if ($null -ne $packageEntry) { $indexName = "packages.index.json"; $entryType = $packageEntry.PackageType }
     }
 
@@ -109,7 +112,7 @@ function Read-JsonFile([string]$path) {
     }
 
     # --- Shared exclusion lists for both reference and dependency checks ---
-    $frameworkPrefixes = @('System.', 'Microsoft.', 'Newtonsoft.', 'Serilog.', 'Npgsql.', 'Dapper.', 'Autofac.', 'MediatR.', 'Polly.', 'FluentValidation.', 'runtime.')
+    $frameworkPrefixes = @('System.', 'Microsoft.', 'Newtonsoft.', 'Serilog.', 'Npgsql.', 'Dapper.', 'Autofac.', 'MediatR.', 'Polly.', 'FluentValidation.', 'runtime.', 'runtimepack.')
     # Core/provided assemblies are supplied by the Buffaly host runtime and do not need to be in package files.
     $coreProvidedAssemblies = @('Buffaly.Agent.Host', 'Buffaly.Agent.Web.Common', 'BasicUtilities.Reference', 'Buffaly.Agent.Core', 'Buffaly.Agent.Common', 'Buffaly.Agent.Runtime.Abstractions', 'Buffaly.Agent.ProtoScript.Runtime', 'Buffaly.Agent.ProtoScriptAuthoring', 'Buffaly.DB.Core', 'Buffaly.DB.Hybrid', 'Buffaly.DB.SqlServer', 'Buffaly.DB.Postgres', 'Buffaly.Business', 'Buffaly.ProviderContracts', 'Buffaly.Sessions.DB', 'Buffaly.Sessions.DB.PostGres', 'Buffaly.Agent.SemanticDatabase', 'Buffaly.Agent.SemanticDatabase.DB', 'Buffaly.Agent.CSharpSkill', 'Buffaly.Agent.Tools.Mcp', 'Buffaly.Agent.Tools.Platform', 'Buffaly.Agent.Tools.Process', 'Buffaly.Agent.Tools.Secrets', 'Buffaly.Agent.Tools.SemanticDatabase', 'Buffaly.Agent.Tools.CodeSearch', 'Buffaly.Agent.Tools.Http', 'Buffaly.Data', 'RooTrax.Common', 'RooTrax.Common.DB', 'RooTrax.Creator.DB', 'RooTrax.SqlGenerator', 'RooTrax.VDB', 'RooTrax.VDB.DB', 'RooTrax.VDB.UI', 'FeedingFrenzy.WebPropertyEditorAgent.Tools')
 
@@ -153,7 +156,7 @@ function Read-JsonFile([string]$path) {
     # --- Validate DLL dependency completeness via .deps.json ---
     # Missing Buffaly/application DLLs are errors; missing System/Microsoft framework DLLs are warnings.
     $depsJsonFiles = Get-ChildItem $packageRoot -Filter "*.deps.json" -Recurse -File
-    $frameworkPrefixes = @('System.', 'Microsoft.', 'Newtonsoft.', 'Serilog.', 'Npgsql.', 'Dapper.', 'Autofac.', 'MediatR.', 'Polly.', 'FluentValidation.', 'runtime.')
+    $frameworkPrefixes = @('System.', 'Microsoft.', 'Newtonsoft.', 'Serilog.', 'Npgsql.', 'Dapper.', 'Autofac.', 'MediatR.', 'Polly.', 'FluentValidation.', 'runtime.', 'runtimepack.')
     # Core/provided assemblies are supplied by the Buffaly host runtime and do not need to be in package files.
     $coreProvidedAssemblies = @('Buffaly.Agent.Host', 'Buffaly.Agent.Web.Common', 'BasicUtilities.Reference', 'Buffaly.Agent.Core', 'Buffaly.Agent.Common', 'Buffaly.Agent.Runtime.Abstractions', 'Buffaly.Agent.ProtoScript.Runtime', 'Buffaly.Agent.ProtoScriptAuthoring', 'Buffaly.DB.Core', 'Buffaly.DB.Hybrid', 'Buffaly.DB.SqlServer', 'Buffaly.DB.Postgres', 'Buffaly.Business', 'Buffaly.ProviderContracts', 'Buffaly.Sessions.DB', 'Buffaly.Sessions.DB.PostGres', 'Buffaly.Agent.SemanticDatabase', 'Buffaly.Agent.SemanticDatabase.DB', 'Buffaly.Agent.CSharpSkill', 'Buffaly.Agent.Tools.Mcp', 'Buffaly.Agent.Tools.Platform', 'Buffaly.Agent.Tools.Process', 'Buffaly.Agent.Tools.Secrets', 'Buffaly.Agent.Tools.SemanticDatabase', 'Buffaly.Agent.Tools.CodeSearch', 'Buffaly.Agent.Tools.Http')
     foreach ($depsFile in @($depsJsonFiles)) {

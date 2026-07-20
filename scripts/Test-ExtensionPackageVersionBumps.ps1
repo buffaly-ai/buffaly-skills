@@ -39,9 +39,11 @@ function Compare-VersionString([string]$left, [string]$right) {
 function Get-FileHashForPackage([string]$packageRoot, [string]$relativePath) {
     $filePath = Join-Path $packageRoot ($relativePath -replace '/', [System.IO.Path]::DirectorySeparatorChar)
     if (-not (Test-Path $filePath)) { return $null }
-    $extension = [System.IO.Path]::GetExtension($filePath)
-    if ($extension -ieq ".pts" -or $extension -ieq ".md") {
+    $extension = [System.IO.Path]::GetExtension($filePath).ToLowerInvariant()
+    $normalizedTextExtensions = @('', '.pts', '.ks', '.md', '.json', '.js', '.mjs', '.ts', '.css', '.html', '.htm', '.txt', '.xml', '.config', '.props', '.targets', '.csproj', '.sln', '.prompt', '.sql', '.ps1', '.psm1', '.sh', '.bat', '.cmd', '.yml', '.yaml', '.svg', '.nuspec', '.wxs', '.wxi')
+    if ($extension -in $normalizedTextExtensions) {
         $text = [System.IO.File]::ReadAllText($filePath).Replace("`r`n", "`n").Replace("`r", "`n")
+        if ($text.Length -gt 0 -and $text[0] -eq [char]0xFEFF) { $text = $text.Substring(1) }
         $bytes = [System.Text.UTF8Encoding]::new($false).GetBytes($text)
         $sha = [System.Security.Cryptography.SHA256]::Create()
         try { return ([BitConverter]::ToString($sha.ComputeHash($bytes)).Replace("-", "").ToLowerInvariant()) }
