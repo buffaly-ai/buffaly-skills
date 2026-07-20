@@ -72,7 +72,7 @@ function Sort-PackagesOrdinal([object[]]$Packages) {
         if ($typeComparison -ne 0) { return $typeComparison }
         return [StringComparer]::Ordinal.Compare([string]$left.PackageId, [string]$right.PackageId)
     }))
-    return @($list)
+    return ,@($list)
 }
 
 function New-ExtensionProfileLock {
