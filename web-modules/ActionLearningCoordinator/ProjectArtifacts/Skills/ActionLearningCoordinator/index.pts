@@ -87,16 +87,16 @@ prototype ToAddSessionWorkEntry : SessionWorkCoordinatorSkillAction
 {
 	function Execute(string sourceSessionKey) : string
 	{
-		if (StringUtil.IsEmpty(sourceSessionKey))
-		{
-			throw new Exception(@"sourceSessionKey is required.");
-		}
 		string path = Path.Combine(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json");
-		JsonObject ledger = File.Exists(path) ? new JsonObject(File.ReadAllText(path)) : new JsonObject(@"{""SchemaVersion"":1,""CoordinatorSkill"":""ActionLearningCoordinatorSkill"",""Exists"":true,""Entries"":[]}");
-		JsonArray entries = ledger.GetJsonArrayOrFail(@"Entries", @"Session work ledger Entries is required.");
-		for (int index = 0; index < entries.Count; index++)
+		JsonObject ledger = new JsonObject(@"{""SchemaVersion"":1,""CoordinatorSkill"":""ActionLearningCoordinatorSkill"",""Exists"":true,""Entries"":[]}");
+		if (File.Exists(path))
 		{
-			JsonObject existing = entries[index].ToJsonObjectOrFail(@"Session work ledger entries must be objects.");
+			ledger = new JsonObject(File.ReadAllText(path));
+		}
+		JsonArray entries = ledger.GetJsonArrayOrFail(@"Entries", @"Session work ledger Entries is required.");
+		foreach (JsonValue value in entries)
+		{
+			JsonObject existing = value.ToJsonObjectOrFail(@"Session work ledger entries must be objects.");
 			if (existing.GetStringOrFail(@"SourceSessionKey", @"Session work entry SourceSessionKey is required.") == sourceSessionKey)
 			{
 				JsonObject unchanged = new JsonObject();
@@ -126,23 +126,24 @@ prototype ToRemoveSessionWorkEntry : SessionWorkCoordinatorSkillAction
 {
 	function Execute(string sourceSessionKey) : string
 	{
-		if (StringUtil.IsEmpty(sourceSessionKey))
-		{
-			throw new Exception(@"sourceSessionKey is required.");
-		}
 		string path = Path.Combine(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json");
 		if (!File.Exists(path))
 		{
-			return @"{""Outcome"":""NotFound"",""SourceSessionKey"":""" + sourceSessionKey + @""",""Ledger"":{""SchemaVersion"":1,""CoordinatorSkill"":""ActionLearningCoordinatorSkill"",""Exists"":false,""Entries"":[]}}";
+			JsonObject absentLedger = new JsonObject(@"{""SchemaVersion"":1,""CoordinatorSkill"":""ActionLearningCoordinatorSkill"",""Exists"":false,""Entries"":[]}");
+			JsonObject absent = new JsonObject();
+			absent[@"Outcome"] = @"NotFound";
+			absent[@"SourceSessionKey"] = sourceSessionKey;
+			absent[@"Ledger"] = absentLedger;
+			return absent.ToJSON();
 		}
 		JsonObject ledger = new JsonObject(File.ReadAllText(path));
 		JsonArray entries = ledger.GetJsonArrayOrFail(@"Entries", @"Session work ledger Entries is required.");
-		for (int index = 0; index < entries.Count; index++)
+		foreach (JsonValue value in entries)
 		{
-			JsonObject existing = entries[index].ToJsonObjectOrFail(@"Session work ledger entries must be objects.");
+			JsonObject existing = value.ToJsonObjectOrFail(@"Session work ledger entries must be objects.");
 			if (existing.GetStringOrFail(@"SourceSessionKey", @"Session work entry SourceSessionKey is required.") == sourceSessionKey)
 			{
-				entries.RemoveAt(index);
+				entries.Remove(value);
 				FileSystemTools.ReplaceTextFile(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json", ledger.ToJSON());
 				JsonObject removed = new JsonObject();
 				removed[@"Outcome"] = @"Removed";
