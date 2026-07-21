@@ -63,9 +63,8 @@
 		var requestedLabel = text(initialState.Label);
 		if (requestedKey) {
 			keyInput.value = requestedKey;
-			keyInput.readOnly = true;
-			keyLabel.textContent = "Requested secret key";
-			keyHelp.textContent = "Buffaly requested this non-secret key name. If it already exists, saving will update the stored private value.";
+			keyLabel.textContent = "Secret key";
+			keyHelp.textContent = "Buffaly supplied the requested non-secret key name as an editable default. If it already exists, saving will update the stored private value.";
 			if (requestedLabel) {
 				labelInput.value = requestedLabel;
 			}

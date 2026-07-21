@@ -1,5 +1,11 @@
 # index.pts Change History
 
+## Require Caller-Provided Secret Key (2026-07-21)
+
+- Added `secretKey` to the public `Execute(...)` action contract so normal typed callers can pass the logical UserSecrets name they already know.
+- Routed that key through the existing keyed launcher into `InitialState.SecretKey` for the collector.
+- Changed the prefilled key from read-only to an editable default; users normally enter only the private value but can correct the non-secret key name when necessary.
+
 ## Add User Secret Collector Interactive Site (2026-06-15)
 
 - Added `ToRunUserSecretCollectorInteractiveSite` to launch a self-contained browser site for collecting one secret.

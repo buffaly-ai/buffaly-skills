@@ -2021,7 +2021,7 @@
       "SkillName": "UserSecrets",
       "Title": "User Secrets",
       "Description": "Buffaly skill package for User Secrets.",
-      "Version": "0.1.2",
+      "Version": "0.1.3",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "User Secrets",
@@ -2031,11 +2031,11 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "2718cbc19a50495c672baf16783e9d34b8c154040e40ff75462fdbe668fd2517"
+          "Sha256": "1a92f3750b5e1e1a7a570706f1b354bb70713729ef8a3c34a2eaa98690aae7c2"
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "c569c823f9907d79b2ac6b5e41abeb3a247fc597caae8d87c98abdb963deea4e"
+          "Sha256": "1e811de11dc0aea56a8735f45b6c6046aab50a7e5655610e3f0e906cc38c469e"
         },
         {
           "Path": "interactive-sites/user-secret-collector/site.css",
@@ -2047,16 +2047,12 @@
         },
         {
           "Path": "interactive-sites/user-secret-collector/site.js",
-          "Sha256": "1218a7110b5a75aa1ea50323a82c889fbbb7e11139b556e0b080781235785982"
+          "Sha256": "0906f91035c706b79539134e1ed78ef49e55bab5ecb41dddeb838edef3ef8e33"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "ValidatedPrompt",

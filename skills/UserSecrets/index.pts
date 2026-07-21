@@ -26,11 +26,11 @@ prototype UserSecretsSkill : SkillEntity
 [SemanticProgram.InfinitivePhrase("to securely collect a token from the user")]
 prototype ToRunUserSecretCollectorInteractiveSite : UserSecretsSkillAction
 {
-	Description = @"Launches a blocking browser popup that asks the user to enter or update one sensitive secret value, such as an API key, private key, password, OAuth token, bearer token, or connection secret. The value is saved directly to UserSecrets secure storage. The model and timeline receive only non-secret confirmation such as status and key name; the secret value is never returned. timeoutSeconds - maximum seconds to wait for browser exit.";
+	Description = @"Launches a blocking browser popup that asks the user to enter or update one sensitive secret value, such as an API key, private key, password, OAuth token, bearer token, or connection secret. The value is saved directly to UserSecrets secure storage. The model and timeline receive only non-secret confirmation such as status and key name; the secret value is never returned. timeoutSeconds - maximum seconds to wait for browser exit. secretKey - required logical UserSecrets name to prefill as an editable default in the collector.";
 
-	function Execute(int timeoutSeconds) : string
+	function Execute(int timeoutSeconds, string secretKey) : string
 	{
-		return ExecuteForMessage(timeoutSeconds, "", "");
+		return ExecuteForMessageWithKeyAndTitle(timeoutSeconds, "", "", secretKey, "", "");
 	}
 
 	function ExecuteForKey(int timeoutSeconds, string secretKey, string label) : string
