@@ -109,7 +109,7 @@ prototype ToAddSessionWorkEntry : SessionWorkCoordinatorSkillAction
 		JsonObject entry = new JsonObject();
 		entry[@"SourceSessionKey"] = sourceSessionKey;
 		entry[@"Enabled"] = true;
-		entries.Add(entry);
+		entries.Add(new JsonValue(entry));
 		ledger[@"Entries"] = entries;
 		ledger[@"Exists"] = true;
 		FileSystemTools.ReplaceTextFile(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json", ledger.ToJSON());
