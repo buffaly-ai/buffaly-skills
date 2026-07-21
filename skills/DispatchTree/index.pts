@@ -101,7 +101,10 @@ prototype ToDispatchPlannedTask : DispatchTreeSkillAction, DispatchAgentActionRo
 		if (selectedLeaf == null)
 			throw new InvalidOperationException("Selected dispatch leaf was not found beneath DispatchMemoryRoot: " + exactLeafName);
 
-		string assignedSessionKey = selectedLeaf.SessionKey;
+		Tuple sessionKeyProperty = _runtime.ResolveProperty(selectedLeaf, "SessionKey");
+		if (sessionKeyProperty == null)
+			throw new InvalidOperationException("Selected dispatch leaf has no declared destination SessionKey property.");
+		string assignedSessionKey = selectedLeaf.Properties.GetStringOrDefault(sessionKeyProperty.Item1, "");
 		if (StringUtil.IsEmpty(assignedSessionKey))
 			throw new InvalidOperationException("Selected dispatch leaf has no assigned destination SessionKey.");
 
