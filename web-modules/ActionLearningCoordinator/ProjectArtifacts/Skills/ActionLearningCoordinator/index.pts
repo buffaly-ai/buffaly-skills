@@ -110,6 +110,7 @@ prototype ToAddSessionWorkEntry : SessionWorkCoordinatorSkillAction
 		entry[@"SourceSessionKey"] = sourceSessionKey;
 		entry[@"Enabled"] = true;
 		entries.Add(entry);
+		ledger[@"Entries"] = entries;
 		ledger[@"Exists"] = true;
 		FileSystemTools.ReplaceTextFile(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json", ledger.ToJSON());
 		JsonObject added = new JsonObject();
@@ -144,6 +145,7 @@ prototype ToRemoveSessionWorkEntry : SessionWorkCoordinatorSkillAction
 			if (existing.GetStringOrFail(@"SourceSessionKey", @"Session work entry SourceSessionKey is required.") == sourceSessionKey)
 			{
 				entries.Remove(value);
+				ledger[@"Entries"] = entries;
 				FileSystemTools.ReplaceTextFile(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json", ledger.ToJSON());
 				JsonObject removed = new JsonObject();
 				removed[@"Outcome"] = @"Removed";
