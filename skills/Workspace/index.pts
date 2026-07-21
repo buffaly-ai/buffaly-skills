@@ -92,7 +92,7 @@ prototype ToListCurrentWorkspaceFiles : WorkspaceSkillAction
 {
     Description = @"relativeDirectory - optional directory under workspace artifacts; pass empty string for root.";
 
-    function Execute(string relativeDirectory) : List<WorkspaceFileEntry>
+    function Execute(string relativeDirectory) : Collection
     {
         return WorkspaceTools.ListCurrentWorkspaceFiles(_opsAgent.GetCurrentSessionDirectory(), _opsAgent.GetSessionKeyOrEmpty(), relativeDirectory);
     }
@@ -103,7 +103,7 @@ prototype ToListWorkspaceSessions : WorkspaceSkillAction
 {
     Description = @"workspaceKey - workspace whose attached sessions should be listed.";
 
-    function Execute(string workspaceKey) : List<string>
+    function Execute(string workspaceKey) : Collection
     {
         return WorkspaceTools.ListWorkspaceSessions(_opsAgent.GetCurrentSessionDirectory(), workspaceKey);
     }
