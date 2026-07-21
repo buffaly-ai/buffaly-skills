@@ -2,6 +2,7 @@
 	"use strict";
 
 	const stylesheetHref = "/web-modules/Workspace/css/buffaly-workspace-session-ui.css?v=0.1.0";
+	const viewStateBySessionKey = new Map();
 
 	function ensureStylesheet() {
 		if (document.querySelector('link[data-bws-styles="true"]')) {
@@ -53,13 +54,14 @@
 	}
 
 	function mountWorkspace(context, summary) {
+		const viewState = viewStateBySessionKey.get(context.sessionKey) || { isOpen: false, selectedTab: "files" };
 		const root = createElement("span", "bws-root");
 		const trigger = createElement("button", "bws-chip", "Workspace: " + summary.workspaceName);
 		trigger.type = "button";
-		trigger.setAttribute("aria-expanded", "false");
+		trigger.setAttribute("aria-expanded", viewState.isOpen ? "true" : "false");
 		trigger.setAttribute("aria-haspopup", "dialog");
 		const drawer = createElement("section", "bws-drawer");
-		drawer.hidden = true;
+		drawer.hidden = !viewState.isOpen;
 		drawer.setAttribute("aria-label", summary.workspaceName + " workspace");
 		const heading = createElement("div", "bws-heading");
 		heading.appendChild(createElement("strong", "bws-title", summary.workspaceName));
@@ -102,6 +104,8 @@
 		context.slotElement.replaceChildren(root);
 
 		function setOpen(open) {
+			viewState.isOpen = open;
+			viewStateBySessionKey.set(context.sessionKey, viewState);
 			drawer.hidden = !open;
 			trigger.setAttribute("aria-expanded", open ? "true" : "false");
 			if (open) {
@@ -110,12 +114,15 @@
 		}
 
 		function select(filesSelected) {
+			viewState.selectedTab = filesSelected ? "files" : "sessions";
+			viewStateBySessionKey.set(context.sessionKey, viewState);
 			files.hidden = !filesSelected;
 			sessions.hidden = filesSelected;
 			filesTab.classList.toggle("is-active", filesSelected);
 			sessionsTab.classList.toggle("is-active", !filesSelected);
 		}
 
+		select(viewState.selectedTab !== "sessions");
 		trigger.addEventListener("click", function () { setOpen(drawer.hidden); });
 		close.addEventListener("click", function () { setOpen(false); trigger.focus(); });
 		filesTab.addEventListener("click", function () { select(true); });
