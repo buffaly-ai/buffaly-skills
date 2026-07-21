@@ -1,5 +1,7 @@
 # DispatchTree ProtoScript Skill
 
+- 2026-07-21: Replaced the unimported `ArgumentException` with the project-supported `InvalidOperationException` for required prototype-name validation.
+
 ## Purpose
 
 Provides the restricted, read-only action surface for the Dispatch agent staging proof. The skill reads and searches a session-local `DispatchMemoryRoot` hierarchy and invokes a prompt workflow that plans routes without sending, creating sessions, or mutating memory.
