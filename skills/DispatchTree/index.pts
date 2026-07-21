@@ -25,7 +25,7 @@ prototype DispatchTreeSkill : SkillEntity
 }
 
 [SemanticProgram.InfinitivePhrase("to read the local dispatch tree")]
-prototype ToGetDispatchTree : DispatchTreeSkillAction
+prototype ToGetDispatchTree : DispatchTreeSkillAction, DispatchAgentActionRoot
 {
 	Description = @"Returns DispatchMemoryRoot from the current session runtime. This action never writes memory, creates a session, queues work, or sends an instruction.";
 
@@ -39,7 +39,7 @@ prototype ToGetDispatchTree : DispatchTreeSkillAction
 }
 
 [SemanticProgram.InfinitivePhrase("to search the local dispatch tree")]
-prototype ToSearchDispatchMemories : DispatchTreeSkillAction
+prototype ToSearchDispatchMemories : DispatchTreeSkillAction, DispatchAgentActionRoot
 {
 	Description = @"Searches only the current session's scoped Dispatch Memory semantic tags below DispatchMemoryRoot. This is a candidate prefilter; the route planner must verify the result against the tree and leaf examples.";
 
@@ -62,7 +62,7 @@ prototype ToSearchDispatchMemories : DispatchTreeSkillAction
 
 [SemanticProgram.InfinitivePhrase("to dry run a hierarchical dispatch route")]
 [SemanticProgram.InfinitivePhrase("to plan a dispatch route without sending")]
-prototype ToPlanDispatchRoute : PromptAction, DispatchTreeSkillAction
+prototype ToPlanDispatchRoute : PromptAction, DispatchTreeSkillAction, DispatchAgentActionRoot
 {
 	IsPromptAction = true;
 	SkillKind = "prompt";
