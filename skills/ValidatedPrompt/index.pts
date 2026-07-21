@@ -40,7 +40,7 @@ prototype ToRunValidatedPromptSkill : ValidatedPromptSkillAction
 		if (validatedPromptAction == null)
 			return "Error: ValidatedPromptAction prototype not found: " + prototypeName;
 
-		return ValidatedPromptTools.RunValidatedPromptSkill(
+		return ValidatedPromptTools.RunValidatedPromptSkillWithoutChildSessionKey(
 			_opsAgent,
 			validatedPromptAction.PrototypeName,
 			validatedPromptAction.WorkPrompt,
@@ -81,7 +81,7 @@ prototype ToRunValidatedPromptSkillFromSessionFile : ValidatedPromptSkillAction
 		if (validatedPromptAction == null)
 			return "Error: ValidatedPromptAction prototype not found: " + prototypeName;
 
-		return ValidatedPromptTools.RunValidatedPromptSkillFromSessionFile(
+		return ValidatedPromptTools.RunValidatedPromptSkillFromSessionFileWithoutChildSessionKey(
 			_opsAgent,
 			validatedPromptAction.PrototypeName,
 			validatedPromptAction.WorkPrompt,
