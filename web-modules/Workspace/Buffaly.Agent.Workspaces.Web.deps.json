@@ -1,0 +1,92 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "Buffaly.Agent.Workspaces.Web/1.0.0": {
+        "dependencies": {
+          "Buffaly.Agent.Workspaces": "1.0.0",
+          "Buffaly.Agent.Web.Common": "1.0.0.0"
+        },
+        "runtime": {
+          "Buffaly.Agent.Workspaces.Web.dll": {}
+        }
+      },
+      "Buffaly.Agent.Workspaces/1.0.0": {
+        "runtime": {
+          "Buffaly.Agent.Workspaces.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Agent.Web.Common/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agent.Web.Common.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "BasicUtilities/1.0.0.0": {
+        "runtime": {
+          "BasicUtilities.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Microsoft.Data.SqlClient/6.0.0.0": {
+        "runtime": {
+          "Microsoft.Data.SqlClient.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.11.25226.3"
+          }
+        }
+      },
+      "Microsoft.Identity.Client/4.73.1.0": {
+        "runtime": {
+          "Microsoft.Identity.Client.dll": {
+            "assemblyVersion": "4.73.1.0",
+            "fileVersion": "4.73.1.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Buffaly.Agent.Workspaces.Web/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Agent.Workspaces/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Agent.Web.Common/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "BasicUtilities/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Microsoft.Data.SqlClient/6.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Microsoft.Identity.Client/4.73.1.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

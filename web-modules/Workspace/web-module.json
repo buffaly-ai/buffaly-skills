@@ -1,0 +1,14 @@
+{
+  "Module": {
+    "Enabled": true,
+    "Name": "Workspace",
+    "DisplayName": "Workspace",
+    "Description": "Shows the current workspace, shared artifacts, and linked sessions in Buffaly Agent Next.",
+    "AssemblyPath": "Workspace/Buffaly.Agent.Workspaces.Web.dll",
+    "TypeName": "Buffaly.Agent.Workspaces.Web.WorkspaceWebModule",
+    "LoadOrder": 420,
+    "AgentScripts": [
+      "/web-modules/Workspace/js/buffaly-workspace-session-ui.js?v=0.1.0"
+    ]
+  }
+}

@@ -16290,6 +16290,84 @@
       "Prerequisites": [],
       "RequiresRestart": true,
       "RequiresPreStartInstall": true
+    },
+    {
+      "PackageId": "Workspace",
+      "PackageType": "WebModule",
+      "Title": "Workspace",
+      "Description": "Buffaly Web Module package for Workspace.",
+      "Version": "0.1.0",
+      "PackageKind": "BuffalyWebModule",
+      "SourcePath": "web-modules/Workspace",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/Workspace",
+      "Phrases": [
+        "Workspace",
+        "Workspace"
+      ],
+      "Files": [
+        {
+          "Path": "Buffaly.Agent.Web.Common.dll",
+          "Sha256": "a475f5eb213ecb60770c9e4e5d92b92b5558e19c11b29a6744c187edd40c4ea8"
+        },
+        {
+          "Path": "Buffaly.Agent.Workspaces.dll",
+          "Sha256": "04a43b054e4ef333e305ad9029964cb855454f86ff744435c763b0a584179c30"
+        },
+        {
+          "Path": "Buffaly.Agent.Workspaces.Web.deps.json",
+          "Sha256": "f14866c87c53d1a1033d15b8a117df0d57227e41e2a6fb8b189e5828ef73dec6"
+        },
+        {
+          "Path": "Buffaly.Agent.Workspaces.Web.dll",
+          "Sha256": "7ba29144e32e065c0c19a284aaf7cfcd79bd9eefeb29943629b2186b4c85e5ef"
+        },
+        {
+          "Path": "web-module.json",
+          "Sha256": "248f94f31d551bcbf1046d08d1f2cff81d8c95011b7d8132fcc37bd3036d2b28"
+        },
+        {
+          "Path": "wwwroot/css/buffaly-workspace-session-ui.css",
+          "Sha256": "3c4dfb545480d9df77e6ebba44f7f272164f52e444b40bd9a56d2fd135e283f6"
+        },
+        {
+          "Path": "wwwroot/css/buffaly-workspace-session-ui.css.br",
+          "Sha256": "c6566977e7197f900edc23bb51f7af3fd2bd00e840ac66e4f6153659cd9cffd0"
+        },
+        {
+          "Path": "wwwroot/css/buffaly-workspace-session-ui.css.gz",
+          "Sha256": "8ecef51cb0533aa22c8a9d55311fc168b4992ab7aea31208b356563c2c53c81a"
+        },
+        {
+          "Path": "wwwroot/js/buffaly-workspace-session-ui.js",
+          "Sha256": "696931e0047e8b8b90fba4fa8fef8c4bc184dccf798cbf0681daf1072ad696e2"
+        },
+        {
+          "Path": "wwwroot/js/buffaly-workspace-session-ui.js.br",
+          "Sha256": "f26cca597d25937de429b6df876aa4db0c03f54a9a737fad8e4ad08491f100de"
+        },
+        {
+          "Path": "wwwroot/js/buffaly-workspace-session-ui.js.gz",
+          "Sha256": "6fa9af1edd6d05b0297543a467e503320f27cb6a10e8c906605b184ae6cdd316"
+        },
+        {
+          "Path": "wwwroot/js/buffaly-workspace-session-ui.js.md",
+          "Sha256": "7f50c62dd20b87aca20ccf2370febef04f3dad42a6e264771a58803753cf6d55"
+        },
+        {
+          "Path": "wwwroot/js/buffaly-workspace-session-ui.js.md.br",
+          "Sha256": "922033e20cda3d2c2cac09056d1c0547285047d05455ec34119fad0c8e23b59a"
+        },
+        {
+          "Path": "wwwroot/js/buffaly-workspace-session-ui.js.md.gz",
+          "Sha256": "22b6192866395842d0bca3411590b1ff4971338b6426a78a3e5c594d07729476"
+        }
+      ],
+      "ProjectArtifacts": [],
+      "Dependencies": [],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "RequiresRestart": true,
+      "RequiresPreStartInstall": true
     }
   ]
 }
