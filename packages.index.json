@@ -16117,7 +16117,7 @@
       "PackageType": "WebModule",
       "Title": "Action Learning Coordinator",
       "Description": "Buffaly Web Module package for Action Learning Coordinator.",
-      "Version": "0.1.7",
+      "Version": "0.1.8",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/ActionLearningCoordinator",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/ActionLearningCoordinator",
@@ -16132,15 +16132,19 @@
         },
         {
           "Path": "ActionLearningCoordinator.Web.dll",
-          "Sha256": "d4d10842115e0ed50f3e79541aa62210810a9bf8b3e3e39777278deae33884a0"
+          "Sha256": "94a16ef9a4c762c47035914f5de53b1e599c71aa76819bc567dafe560a14fba3"
         },
         {
           "Path": "ActionLearningCoordinator.Web.staticwebassets.endpoints.json",
-          "Sha256": "7ca41b091ad0ec2ba7241d7c54fcff0c5e997bed8b239d81032497e89b8be57b"
+          "Sha256": "356474c5730a37d6c99677864ee088a65a4a686d70d750381e734fe3fba3db0c"
         },
         {
           "Path": "Agents/action-learning-coordinator.agent.json",
           "Sha256": "fba852a219ae128ff183a246ec92f26a78d0ef5e3daa43b2c2a222cc1362c18b"
+        },
+        {
+          "Path": "Agents/action-learning.agent.json",
+          "Sha256": "a9b47279016eb771000f20b1d788d822111e91a2ec4e2899b0a95359ad39cf61"
         },
         {
           "Path": "BasicUtilities.dll",
@@ -16160,19 +16164,75 @@
         },
         {
           "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/index.pts",
-          "Sha256": "2434ce2c642da8722c0c251ca9b656e77a5f25abb05c660666db27cd368e33eb"
+          "Sha256": "b9e68459782a6813195aa85e7f9e88ba918ce04b463c98f7249fb08be3dcb8df"
         },
         {
           "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/index.pts.md",
-          "Sha256": "d2a81ebdf2f3f9217fce014091b93f80ae43e7d7ffe2c635e3610c8326d14565"
+          "Sha256": "b458de023bdc2578fde606894aed62c5a53941ace1608d189575e4a03806959b"
         },
         {
           "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/Prompts/ActionLearningCoordinator.md",
           "Sha256": "f10ea0ea63b00b50578123859bf2fcff0ca2fa6082cf23f8b6df8ed3d2f112c1"
         },
         {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/index.pts",
+          "Sha256": "c7789406c62591b588989de35178ff28616fef9c6f21712e342086641910d0da"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/index.pts.md",
+          "Sha256": "e843d267becdd3a9aaaddb7d9322d0fdd1857a54b02b029f1bbd9cd2670e6423"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/PromptActions.pts",
+          "Sha256": "058c5e7aadab414bac9d9aae0474f47ef4e1f1fc4e65b30f5f6fe0d63593993b"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/PromptActions.pts.md",
+          "Sha256": "1da5029387b2bcf3f04a64f9ac96f0dcd9def43ae9bee84f555b4856b502bb2f"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/ActionCandidateGroundingAndExpansion.prompt.md",
+          "Sha256": "d22fb054c0d07e06ff07e6024a9f10212518a6f1dc877014dea93ebb91a092ef"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/ActionCandidateGroundingAndExpansion.prompt.md.md",
+          "Sha256": "ed03440ac4e62291989aa7c28d67fe4172087242fdb37b022801fdb9c95ba785"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/ActionLearning.md",
+          "Sha256": "a39010bfe64676046cc7d91dff54695c8148c4007b8e553a4065d6ed97e156bf"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/BuildActionCandidateMetricsMatrix.prompt.md",
+          "Sha256": "3ed6f507068aa5880d7a652a27a8f8f5e5c9cf4d7399f972ca6b9830cc83c161"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/BuildActionCandidatePortfolio.prompt.md",
+          "Sha256": "3647f159d9fbc2188700defe24d8336e93abde5627bb922d5c8139d8f5705f5c"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/DiscoverActionCandidatesWithinSession.prompt.md",
+          "Sha256": "874a56b8d139f4939d05c4f174bfad17bb85e5b1b43f256ad772c19b57d901dd"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/EvaluateActionCandidateArtifact.prompt.md",
+          "Sha256": "994999d9c9d6e073ffd37e1016bb1163c439039cbf22ecf091371d09eaa6d018"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/RefreshActionLearningSessionCandidates.prompt.md",
+          "Sha256": "bac8809ce4f99c770fff5cd5624325bbbd628b21b535eb9a626593e545e17f4e"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/RunActionLearningCalibration.prompt.md",
+          "Sha256": "9fe57142539df2294158ae17ff200e3248aba8843eb420cfbd815d9585c939a7"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/SKILL.md",
+          "Sha256": "b3b856d1f0b258c6af133580d33f4cf7500aa9d3673682df122e88cc0a526862"
+        },
+        {
           "Path": "web-module.json",
-          "Sha256": "12a016a158409eae30d8dc03243331d6c32bd77e180eac72311aa911b0cfba8f"
+          "Sha256": "093f8c796118b5ad4db96b293dcc7f05e65ca8a8adb5cb4211d57dc65c7e27b4"
         },
         {
           "Path": "web.config",
@@ -16180,45 +16240,49 @@
         },
         {
           "Path": "wwwroot/dashboard.css",
-          "Sha256": "e1c357f91036d70d8e7823a9fdce541efb9bfa31138226f9f78692e7b7e4c4fb"
+          "Sha256": "f8bde7f3dd233aa44612af4b88b61d9a6984f37166b265679c0c194201ea6d59"
         },
         {
           "Path": "wwwroot/dashboard.css.br",
-          "Sha256": "3a1ac36fe1249a9384c47d5c9cfc3e8ff63f2e8ca9cba55731b2bf26865c6f9e"
+          "Sha256": "8c49308fe4c5c1bedca817c2acdedfebb54ce60c49804f2411e461c89f01d764"
         },
         {
           "Path": "wwwroot/dashboard.css.gz",
-          "Sha256": "637ce6c32db4f7decde2267560d58c1366b78f7f166690699933d4a5c7d2cb84"
+          "Sha256": "9f20ea27288750c006dfa28056cf5f50522c19efe497d11e93a8800bef90e3fe"
         },
         {
           "Path": "wwwroot/dashboard.html",
-          "Sha256": "42ee061b3929ce199f38761c10f9d8427481c64097ed1c248f9e51203f0f64b5"
+          "Sha256": "3a0105438131b633f760fcde064d9dd35c9f754f036c8e5a2adc15c14c6dedcb"
         },
         {
           "Path": "wwwroot/dashboard.html.br",
-          "Sha256": "b7552cada21bdd66cde69335fd0266c60cac6aea09a5850ae3b48fdaa88404a0"
+          "Sha256": "9d8b4c13682ea12cc3cafb66049d64a8fccc0203810951b2672b40008a0f58e1"
         },
         {
           "Path": "wwwroot/dashboard.html.gz",
-          "Sha256": "a73c97588d1c5d18529533270f5c7944c9532fb4d14bbe20ac59438a22ea6c90"
+          "Sha256": "7f519ee924c1134489d09e9abda546c68c44e12ebd12a5d34e3c8b612dd1a7e8"
         },
         {
           "Path": "wwwroot/dashboard.js",
-          "Sha256": "f4ac9a6035133625cb4c63fb64a4ef8bf02f280dcf460d7bb09437d1dfa86649"
+          "Sha256": "04fdffa0f0b904066e3c0972dcf2ef23d18690317b3f41fe3687faf139723eac"
         },
         {
           "Path": "wwwroot/dashboard.js.br",
-          "Sha256": "afb49af9b3b860207bdb0fcb8628da6b628b99f8f25ed997e5f55167d857ca84"
+          "Sha256": "88eb52b2ac225f01d6eae3da8c8c72f0f7861cb174713a1d82f66b584685fc35"
         },
         {
           "Path": "wwwroot/dashboard.js.gz",
-          "Sha256": "b4fdcb59b16c40f0d3cf05bc1b01c91cb5bb50c3b7e7dc9b947fd049aead4394"
+          "Sha256": "6850f1e3f35c76d59bdda41d3bec118692478ab6d935c169f455947e4dfb3721"
         }
       ],
       "ProjectArtifacts": [
         {
           "ProjectName": "Skills/ActionLearningCoordinator",
           "SourcePath": "ProjectArtifacts/Skills/ActionLearningCoordinator/"
+        },
+        {
+          "ProjectName": "Skills/ActionLearning",
+          "SourcePath": "ProjectArtifacts/Skills/ActionLearning/"
         }
       ],
       "Dependencies": [],

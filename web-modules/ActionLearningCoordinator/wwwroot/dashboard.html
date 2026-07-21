@@ -7,30 +7,18 @@
 	<link rel="stylesheet" href="/web-modules/ActionLearningCoordinator/static/dashboard.css">
 </head>
 <body>
-	<main>
-		<header>
-			<div><small>PROTO​SCRIPT COORDINATOR</small><h1>Action Learning Coordinator</h1><p>Bind this page to an actual coordinator agent, then call its live ProtoScript ledger methods.</p></div>
-			<span id="connectionBadge" class="badge idle">Unbound</span>
-		</header>
-		<section class="card binding">
-			<h2>Coordinator binding</h2>
-			<div class="fields"><label>Session key<input id="sessionKey" value="Action Learning Coordinator - Staging"></label><label>Agent name<input id="agentName" value="action-learning-coordinator" readonly></label></div>
-			<div class="actions"><button id="bindButton" class="primary">Create or bind coordinator</button><button id="infoButton" disabled>Get coordinator info</button></div>
-			<pre id="infoOutput">No coordinator is bound.</pre>
+	<div class="shell"><aside><div class="brand">Action Learning<small>Coordinator console</small></div><div class="nav on">Processing ledger</div><div class="nav">Runs</div><div class="nav">Processor skills</div></aside><main>
+		<section id="portfolio">
+			<header><div><small>PORTFOLIO · COORDINATOR</small><h1>Action Learning coordination</h1><p>Tracked source sessions and their attached Action Learning workers.</p></div><div class="actions"><span id="connectionBadge" class="badge busy">Connecting</span><button id="refreshButton">↻ Refresh</button><button id="showAddButton" class="primary">＋ Track session</button></div></header>
+			<section class="identity card"><small>ACTIVE PROTOSCRIPT OBJECT</small><h2><code>ActionLearningCoordinatorSkill</code></h2><p>inherits <code>SessionWorkCoordinatorSkill</code> · worker skill <code>ActionLearningSkill</code></p><div id="identityChips"></div></section>
+			<section class="card"><div class="section-heading"><h2>Available coordinator actions</h2><button id="toggleActionsButton">Show actions</button></div><div id="actionList" class="tool-grid collapsed"></div></section>
+			<div class="stats"><div class="stat"><span>Tracked sessions</span><b id="trackedCount">0</b></div><div class="stat"><span>Attached workers</span><b id="attachedCount">0</b></div><div class="stat"><span>Enabled</span><b id="enabledCount">0</b></div><div class="stat"><span>Needs attachment</span><b id="unattachedCount">0</b></div></div>
+			<section class="card ledger-card"><div class="section-heading"><div><h2>Session and processor attachments</h2><p>Coordinator session: <b id="coordinatorSessionLabel"></b></p></div></div><div id="emptyLedger" class="empty" hidden>No sessions are tracked yet.</div><table><thead><tr><th>Source / processor</th><th>Operation</th><th>Checkpoint</th><th>Controls</th></tr></thead><tbody id="ledgerRows"></tbody></table></section>
+			<section id="addPanel" class="card add-panel" hidden><h2>Track a source session</h2><div class="fields"><label>Source session key<input id="sourceSessionKey" placeholder="Exact existing source session key"></label><label>Worker session key<input id="workerSessionKey" placeholder="Defaults to source-action-learning"></label></div><div class="actions"><button id="cancelAddButton">Cancel</button><button id="trackButton">Track only</button><button id="attachButton" class="primary">Track and attach worker</button></div></section>
 		</section>
-		<section class="card">
-			<div class="section-heading"><div><h2>Session Work ledger</h2><p>Fixed artifact: <code>artifacts/session-work/ledger.json</code></p></div><div class="actions"><button id="initializeButton" disabled>Initialize</button><button id="getLedgerButton" disabled>Get ledger</button></div></div>
-			<div class="entry-controls"><label>Source session key<input id="sourceSessionKey" placeholder="Session to track" disabled></label><div class="actions"><button id="addEntryButton" class="primary" disabled>Add session</button><button id="removeEntryButton" disabled>Remove session</button></div></div>
-			<pre id="operationOutput">No ledger operation has run.</pre>
-			<pre id="ledgerOutput">{
-  "SchemaVersion": 1,
-  "CoordinatorSkill": "ActionLearningCoordinatorSkill",
-  "Exists": true,
-  "Entries": []
-}</pre>
-		</section>
-		<div id="error" class="error" hidden></div>
-	</main>
+		<section id="workspace" hidden><div class="crumb"><button id="backButton">Processing ledger</button> › Action Learning › <b id="workspaceSource"></b></div><header><div><small>WORKER WORKSPACE</small><h1>Action Learning workspace</h1><p>Inspect the attached processor and invoke its specialized actions.</p></div><button id="workspaceRefreshButton">↻ Refresh</button></header><section class="worker-hero"><small>WORKER PROTOSCRIPT OBJECT</small><h2><code>ActionLearningSkill</code></h2><b id="workspaceWorker"></b><p id="workspaceState"></p></section><div class="workspace-grid"><section class="card"><h2>Processor actions</h2><div id="workerActions" class="mode-list"></div></section><section class="card"><h2>Attachment status</h2><dl id="workspaceDetails"></dl><div class="actions"><button id="removeButton">Remove from ledger</button></div></section></div></section>
+		<div id="error" class="error" hidden></div><div id="toast" class="toast" hidden></div>
+	</main></div>
 	<script src="/js/kcs/global.js"></script>
 	<script src="/js/kcs/LocalStorage2.js"></script>
 	<script src="/js/kcs/moremoo4.js?v=2"></script>

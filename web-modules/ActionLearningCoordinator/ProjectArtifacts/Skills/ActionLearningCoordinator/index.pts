@@ -1,3 +1,7 @@
+reference Buffaly.Agent.Host Buffaly.Agent.Host;
+import Buffaly.Agent.Host Buffaly.Agent.Host.BuffalyAgentService BuffalyAgentService;
+import Buffaly.Agent.Host Buffaly.Agent.Host.CreateAgentInitializationContract CreateAgentInitializationContract;
+
 [SemanticEntity("session work coordinator action root")]
 prototype SessionWorkCoordinatorActionRoot : OpsAction
 {
@@ -161,4 +165,73 @@ prototype ToRemoveSessionWorkEntry : SessionWorkCoordinatorSkillAction
 		return missing.ToJSON();
 	}
 	Description = @"Removes one exact source-session entry and reports NotFound without modifying the ledger when absent.";
+}
+
+[SemanticProgram.InfinitivePhrase("to attach an action learning worker to a source session")]
+prototype ToAttachActionLearningWorker : ActionLearningCoordinatorSkillAction
+{
+	function Execute(string sourceSessionKey, string workerSessionKey) : string
+	{
+		CreateAgentInitializationContract initialization = new CreateAgentInitializationContract();
+		initialization.ParentSessionKey = sourceSessionKey;
+		BuffalyAgentService.CreateAgentFromProject(workerSessionKey, @"OpsAgent", @"action-learning", initialization);
+		string path = Path.Combine(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json");
+		JsonObject ledger = new JsonObject(@"{""SchemaVersion"":1,""CoordinatorSkill"":""ActionLearningCoordinatorSkill"",""Exists"":true,""Entries"":[]}");
+		if (File.Exists(path))
+		{
+			ledger = new JsonObject(File.ReadAllText(path));
+		}
+		JsonArray entries = ledger.GetJsonArrayOrFail(@"Entries", @"Session work ledger Entries is required.");
+		JsonArray updatedEntries = new JsonArray();
+		bool found = false;
+		foreach (JsonValue value in entries)
+		{
+			JsonObject entry = value.ToJsonObjectOrFail(@"Session work ledger entries must be objects.");
+			if (entry.GetStringOrFail(@"SourceSessionKey", @"Session work entry SourceSessionKey is required.") == sourceSessionKey)
+			{
+				entry[@"WorkerSessionKey"] = workerSessionKey;
+				entry[@"WorkerAgentName"] = @"action-learning";
+				entry[@"ProcessorSkill"] = @"ActionLearningSkill";
+				entry[@"OperationState"] = @"Attached";
+				found = true;
+			}
+			updatedEntries.Add(new JsonValue(entry));
+		}
+		if (!found)
+		{
+			JsonObject entry = new JsonObject();
+			entry[@"SourceSessionKey"] = sourceSessionKey;
+			entry[@"Enabled"] = true;
+			entry[@"WorkerSessionKey"] = workerSessionKey;
+			entry[@"WorkerAgentName"] = @"action-learning";
+			entry[@"ProcessorSkill"] = @"ActionLearningSkill";
+			entry[@"OperationState"] = @"Attached";
+			updatedEntries.Add(new JsonValue(entry));
+		}
+		ledger[@"Entries"] = updatedEntries;
+		ledger[@"Exists"] = true;
+		FileSystemTools.ReplaceTextFile(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json", ledger.ToJSON());
+		JsonObject receipt = new JsonObject();
+		string outcome = @"Attached";
+		if (found)
+		{
+			outcome = @"Updated";
+		}
+		receipt[@"Outcome"] = outcome;
+		receipt[@"SourceSessionKey"] = sourceSessionKey;
+		receipt[@"WorkerSessionKey"] = workerSessionKey;
+		receipt[@"Ledger"] = ledger;
+		return receipt.ToJSON();
+	}
+	Description = @"Creates or reuses the source-attached Action Learning worker and records its exact binding in the coordinator ledger.";
+}
+
+[SemanticProgram.InfinitivePhrase("to list action learning coordinator actions")]
+prototype ToListActionLearningCoordinatorActions : ActionLearningCoordinatorSkillAction
+{
+	function Execute() : string
+	{
+		return @"{""CommonActions"":[""ToGetSessionWorkCoordinatorInfo"",""ToGetSessionWorkLedger"",""ToInitializeSessionWorkLedger"",""ToAddSessionWorkEntry"",""ToRemoveSessionWorkEntry""],""SpecializedActions"":[""ToAttachActionLearningWorker"",""ToListActionLearningCoordinatorActions""],""WorkerActions"":[""ToDiscoverActionCandidatesWithinSessionSkill"",""ToBuildActionCandidateMetricsMatrixSkill"",""ToGroundAndExpandActionCandidateSkill"",""ToEvaluateActionLearningArtifact""]}";
+	}
+	Description = @"Returns the exact first-version coordinator and worker action names rendered by the dashboard.";
 }

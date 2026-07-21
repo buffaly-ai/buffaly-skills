@@ -1,0 +1,16 @@
+{
+  "AgentName": "action-learning",
+  "DisplayName": "Action Learning",
+  "Aliases": [],
+  "PromptFile": "Skills/ActionLearning/Prompts/ActionLearning.md",
+  "PromptContext": "none",
+  "RootActionPrototypeName": "ActionLearningActionRoot",
+  "RootEntityPrototypeName": "ActionLearningEntityRoot",
+  "Provider": "openai",
+  "DefaultModelName": "gpt-5.6-sol",
+  "UiPage": "/buffaly-agent.html",
+  "IsReadOnly": false,
+  "IsHidden": false,
+  "CanChangeModel": true,
+  "DisableLevel2AutoAttach": true
+}

@@ -1,0 +1,277 @@
+reference Buffaly.SessionSemanticDatabase Buffaly.SessionSemanticDatabase;
+import Buffaly.SessionSemanticDatabase Buffaly.SessionSemanticDatabase.SessionConversationSearchDriver SessionConversationSearchDriver;
+import Buffaly.SessionSemanticDatabase Buffaly.SessionSemanticDatabase.SessionFragmentResolutionDriver SessionFragmentResolutionDriver;
+import Buffaly.SessionSemanticDatabase Buffaly.SessionSemanticDatabase.ActionSearchTraceDriver ActionSearchTraceDriver;
+import Buffaly.Agent.Host Buffaly.Agent.Host.SessionManagement.Sessions Sessions;
+import Buffaly.Agent.Host Buffaly.Agent.Host.CreateAgentInitializationContract CreateAgentInitializationContract;
+
+[SemanticEntity("action learning action root")]
+prototype ActionLearningActionRoot : OpsAction
+{
+	Description = @"Restricted action root for the Action Learning agent.";
+}
+[SemanticEntity("action learning entity root")]
+prototype ActionLearningEntityRoot : SemanticEntityBase
+{
+	Description = @"Restricted entity root for the Action Learning agent.";
+}
+prototype ActionLearningSkillAction : ActionLearningActionRoot
+{
+	Description = @"Base action type for bounded Action Learning evidence and artifact tools.";
+}
+[SemanticEntity("action learning skill")]
+prototype ActionLearningSkill : SkillEntity
+{
+	Description = @"Discovers reusable action candidates from historical routes, prioritizes them across sessions, and grounds selected candidates in canonical evidence without implementing candidate tools.";
+	ActionRoot = ActionLearningActionRoot;
+}
+
+include "PromptActions.pts";
+[SemanticProgram.InfinitivePhrase("to create an action learning session")]
+prototype ToCreateActionLearningSession : OpsAction
+{
+	function Execute(string sessionKey) : Prototype
+	{
+		return BuffalyAgentService.CreateAgentFromProject(sessionKey, "OpsAgent", "action-learning");
+	}
+	Description = @"Parent-coordinator action only. sessionKey is the exact new or existing child key. Creates the runtime from the current OpsAgent project using the action-learning profile.";
+}
+[SemanticProgram.InfinitivePhrase("to create a source attached action learning worker")]
+prototype ToCreateSourceAttachedActionLearningWorker : OpsAction
+{
+	function Execute(string sourceSessionKey, string workerSessionKey) : Prototype
+	{
+		CreateAgentInitializationContract initialization = new CreateAgentInitializationContract();
+		initialization.ParentSessionKey = sourceSessionKey;
+		return BuffalyAgentService.CreateAgentFromProject(workerSessionKey, "OpsAgent", "action-learning", initialization);
+	}
+	Description = @"Parent-coordinator action only. Creates or reuses one deterministic action-learning worker as a child of the exact source session.";
+}
+[SemanticProgram.InfinitivePhrase("to continue an action learning session")]
+prototype ToContinueActionLearningSession : OpsAction
+{
+	function Execute(string sessionKey, string instruction) : Prototype
+	{
+		return BuffalyAgentService.CreateChildSession(_opsAgent.GetSessionKeyOrEmpty(), sessionKey, instruction, 900, null);
+	}
+	Description = @"Parent-coordinator action only. Continues one attached Action Learning child through the typed cross-worker session relay.";
+}
+[SemanticProgram.InfinitivePhrase("to get the current action learning worker context")]
+prototype ToGetActionLearningWorkerContext : ActionLearningSkillAction, ActionLearningActionRoot
+{
+	function Execute() : string
+	{
+		string sessionKey = _opsAgent.GetSessionKeyOrEmpty();
+		string parentSessionKey = SessionTools.GetParentSessionKeyTool(sessionKey);
+		return "SessionKey=" + sessionKey + ";ParentSessionKey=" + parentSessionKey;
+	}
+	Description = @"Returns the current restricted Action Learning worker key and its authoritative parent session key.";
+}
+[SemanticProgram.InfinitivePhrase("to get recent session turns for action learning")]
+prototype ToActionLearningGetRecentSessionTurns : ActionLearningSkillAction, ActionLearningActionRoot
+{
+	function Execute(string sessionKey, int maxTurns = 10) : GetSessionTurnBootstrapResponse
+	{
+		return SessionTools.GetRecentSessionTurnsTool(sessionKey, maxTurns);
+	}
+	Description = @"Bounded wrapper for recent source-session turn summaries.";
+}
+[SemanticProgram.InfinitivePhrase("to page session turns for action learning")]
+prototype ToActionLearningGetSessionTurnPage : ActionLearningSkillAction, ActionLearningActionRoot
+{
+	function Execute(string sessionKey, int skipTurns, int maxTurns = 10) : GetSessionTurnPageResponse
+	{
+		return SessionTools.GetSessionTurnPageTool(sessionKey, skipTurns, maxTurns);
+	}
+	Description = @"Bounded wrapper for paging older source-session turn summaries.";
+}
+[SemanticProgram.InfinitivePhrase("to inspect a session turn for action learning")]
+prototype ToActionLearningGetSessionTurnDetail : ActionLearningSkillAction, ActionLearningActionRoot
+{
+	function Execute(string sessionKey, string turnId, int maxRows = 200) : GetTurnDetailResponse
+	{
+		return SessionTools.GetSessionTurnDetailTool(sessionKey, turnId, maxRows);
+	}
+	Description = @"Bounded wrapper for canonical source-session calls, results, chronology, and outcome.";
+}
+[SemanticProgram.InfinitivePhrase("to search session messages for action learning")]
+prototype ToActionLearningSearchSessionMessages : ActionLearningSkillAction, ActionLearningActionRoot
+{
+	function Execute(string search, int maxRows = 25) : string
+	{
+		return SessionTools.SearchSessionMessagesTool(search, maxRows);
+	}
+	Description = @"Bounded wrapper for exact historical user-message lookup.";
+}
+[SemanticProgram.InfinitivePhrase("to search final assistant messages for action learning")]
+prototype ToActionLearningSearchSessionFinalAssistantMessages : ActionLearningSkillAction, ActionLearningActionRoot
+{
+	function Execute(string search, int maxRows = 25) : string
+	{
+		return SessionTools.SearchSessionFinalAssistantMessagesTool(search, maxRows);
+	}
+	Description = @"Bounded wrapper for exact historical terminal-outcome lookup.";
+}
+[SemanticProgram.InfinitivePhrase("to search related conversations for action learning")]
+prototype ToActionLearningFindHybridConversationsForQuery : ActionLearningSkillAction, ActionLearningActionRoot
+{
+	function Execute(string query, int topConversations, int topFragmentsPerConversation) : string
+	{
+		return SessionConversationSearchDriver.FindHybridConversationsForQuery(query, topConversations, topFragmentsPerConversation);
+	}
+	Description = @"Bounded hybrid semantic/exact conversation search. Returned fragments are leads until canonical action-search calls verify them.";
+}
+[SemanticProgram.InfinitivePhrase("to resolve a session from a semantic fragment for action learning")]
+prototype ToActionLearningResolveSessionFromSemanticFragment : ActionLearningSkillAction, ActionLearningActionRoot
+{
+	function Execute(int fragmentID) : string
+	{
+		return SessionFragmentResolutionDriver.ResolveSessionFromFragment(fragmentID);
+	}
+	Description = @"Resolves one semantic fragment lead to its canonical owning session.";
+}
+[SemanticProgram.InfinitivePhrase("to get historical action search triggers")]
+prototype ToActionLearningGetActionSearchTriggers : ActionLearningSkillAction, ActionLearningActionRoot
+{
+	function Execute(string sessionKey, string turnID = "", int maxTriggers = 50) : string
+	{
+		return ActionSearchTraceDriver.GetActionSearchTriggers(sessionKey, turnID, maxTriggers);
+	}
+	Description = @"Returns exact persisted ToSearchCandidateActions calls for one bounded session or turn, including canonical phrase normalization and message references.";
+}
+[SemanticProgram.InfinitivePhrase("to resolve a historical action search trigger fragment")]
+prototype ToActionLearningResolveTriggerFragment : ActionLearningSkillAction, ActionLearningActionRoot
+{
+	function Execute(string semanticQuery) : string
+	{
+		return ActionSearchTraceDriver.ResolveTriggerFragment(semanticQuery);
+	}
+	Description = @"Resolves an existing normalized historical action-search fragment and current vector state without inserting or embedding anything.";
+}
+[SemanticProgram.InfinitivePhrase("to find historical action search trigger neighbors")]
+prototype ToActionLearningFindTriggerNeighbors : ActionLearningSkillAction, ActionLearningActionRoot
+{
+	function Execute(string semanticQuery, int maxNeighbors = 10, int maxSampleCalls = 3) : string
+	{
+		return ActionSearchTraceDriver.FindTriggerNeighbors(semanticQuery, maxNeighbors, maxSampleCalls);
+	}
+	Description = @"Returns semantic neighbors only when each neighbor phrase maps back to canonical historical ToSearchCandidateActions calls; unrelated fragments are excluded.";
+}
+[SemanticProgram.InfinitivePhrase("to search candidate actions for action learning")]
+prototype ToActionLearningSearchCandidateActions : ActionLearningSkillAction, ActionLearningActionRoot
+{
+	function Execute(string semanticQuery, int maxResults = 10) : string
+	{
+		return ToSearchCandidateActions.Execute(semanticQuery, maxResults);
+	}
+	Description = @"Checks how exact observed historical trigger wording resolves against the current action catalog.";
+}
+[SemanticProgram.InfinitivePhrase("to inspect an action owner for action learning")]
+prototype ToActionLearningGetPrototypeDetails : ActionLearningSkillAction, ActionLearningActionRoot
+{
+	function Execute(string prototype) : string
+	{
+		return ToGetPrototypeDetails.Execute(prototype);
+	}
+	Description = @"Inspects one exact plausible current owner returned by action discovery.";
+}
+[SemanticProgram.InfinitivePhrase("to list an owner skill actions for action learning")]
+prototype ToActionLearningListSkillActions : ActionLearningSkillAction, ActionLearningActionRoot
+{
+	function Execute(SkillEntity skill) : Collection
+	{
+		return ToListSkillActions.Execute(skill);
+	}
+	Description = @"Lists one exact plausible current owner's action surface while preserving the native collection of action prototypes.";
+}
+[SemanticProgram.InfinitivePhrase("to read a source session action learning candidate artifact")]
+prototype ToReadActionLearningCandidateArtifact : ActionLearningSkillAction, ActionLearningActionRoot
+{
+	function Execute(string sourceSessionKey) : string
+	{
+		Sessions.ValidateSessionKey(sourceSessionKey);
+		string path = Path.Combine(Sessions.GetSessionsRootPath(), sourceSessionKey, @"artifacts\action-learning\action-candidates.md");
+		if (!File.Exists(path))
+		{
+			return "";
+		}
+		return File.ReadAllText(path);
+	}
+	Description = @"Reads the exact source session's living artifacts/action-learning/action-candidates.md. Missing returns an empty string.";
+}
+[SemanticProgram.InfinitivePhrase("to write a source session action learning candidate artifact")]
+prototype ToWriteActionLearningCandidateArtifact : ActionLearningSkillAction, ActionLearningActionRoot
+{
+	function Execute(string sourceSessionKey, string markdown) : string
+	{
+		Sessions.ValidateSessionKey(sourceSessionKey);
+		return FileSystemTools.ReplaceTextFile(
+			Path.Combine(Sessions.GetSessionsRootPath(), sourceSessionKey),
+			@"artifacts\action-learning\action-candidates.md",
+			markdown);
+	}
+	Description = @"Replaces the exact source session's complete living artifacts/action-learning/action-candidates.md artifact.";
+}
+[SemanticProgram.InfinitivePhrase("to read the current new tool artifact")]
+prototype ToReadNewToolArtifact : ActionLearningSkillAction, ActionLearningActionRoot
+{
+	function Execute() : string
+	{
+		string root = _opsAgent.GetCurrentSessionDirectory();
+		string path = Path.Combine(root, @"artifacts\action-learning\new-tool-artifact.md");
+		if (!File.Exists(path))
+		{
+			return "";
+		}
+		return File.ReadAllText(path);
+	}
+	Description = @"Reads the current Action Learning session's one fixed New Tool Artifact. Missing returns an empty string.";
+}
+[SemanticProgram.InfinitivePhrase("to read the action learning portfolio input")]
+prototype ToReadActionLearningPortfolioInput : ActionLearningSkillAction, ActionLearningActionRoot
+{
+	function Execute() : string
+	{
+		string root = _opsAgent.GetCurrentSessionDirectory();
+		string path = Path.Combine(root, @"artifacts\action-learning\portfolio-input.md");
+		if (!File.Exists(path))
+		{
+			return "";
+		}
+		return File.ReadAllText(path);
+	}
+	Description = @"Reads the coordinator-supplied fixed portfolio input packet. It accepts no caller-controlled path.";
+}
+[SemanticProgram.InfinitivePhrase("to read the current action learning portfolio")]
+prototype ToReadActionLearningPortfolio : ActionLearningSkillAction, ActionLearningActionRoot
+{
+	function Execute() : string
+	{
+		string root = _opsAgent.GetCurrentSessionDirectory();
+		string path = Path.Combine(root, @"artifacts\action-learning\portfolio.md");
+		if (!File.Exists(path))
+		{
+			return "";
+		}
+		return File.ReadAllText(path);
+	}
+	Description = @"Reads the current fixed Action Learning portfolio output. It accepts no caller-controlled path.";
+}
+[SemanticProgram.InfinitivePhrase("to write the current action learning portfolio")]
+prototype ToWriteActionLearningPortfolio : ActionLearningSkillAction, ActionLearningActionRoot
+{
+	function Execute(string markdown) : string
+	{
+		return FileSystemTools.ReplaceTextFile(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\action-learning\portfolio.md", markdown);
+	}
+	Description = @"Replaces the current Action Learning session's fixed artifacts/action-learning/portfolio.md file with complete Markdown.";
+}
+[SemanticProgram.InfinitivePhrase("to write the current new tool artifact")]
+prototype ToWriteNewToolArtifact : ActionLearningSkillAction, ActionLearningActionRoot
+{
+	function Execute(string markdown) : string
+	{
+		return FileSystemTools.ReplaceTextFile(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\action-learning\new-tool-artifact.md", markdown);
+	}
+	Description = @"Replaces the current Action Learning session's one fixed artifacts/action-learning/new-tool-artifact.md file with complete Markdown.";
+}

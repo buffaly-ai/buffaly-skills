@@ -1,0 +1,89 @@
+prototype ActionLearningPromptAction : ActionLearningActionRoot
+{
+	Description = @"Base trusted prompt action for Action Learning procedures.";
+	Bool IsPromptAction = true;
+	String PromptPath = new String();
+	String SkillKind = new String();
+	String SkillVersion = new String();
+
+	function Execute() : string
+	{
+		String promptText = _opsAgent.LoadTrustedPromptText(PromptPath);
+		return "## Prompt Skill Instructions\nFollow this procedure to produce the requested result. This action returns guidance, not the result.\nPrompt source: " + PromptPath + "\n\n" + promptText;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to ground and expand an action candidate from historical sessions")]
+[SemanticProgram.InfinitivePhrase("to synthesize a new tool artifact from historical action searches")]
+[SemanticProgram.InfinitivePhrase("to research a missing tool using historical action search phrases")]
+prototype ToGroundAndExpandActionCandidateSkill : ActionLearningPromptAction, ActionLearningActionRoot
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "2.0.0";
+	PromptPath = @"Skills/ActionLearning/Prompts/ActionCandidateGroundingAndExpansion.prompt.md";
+	Description = @"Runs the specialized ACGE procedure inside the restricted Action Learning agent and writes one fixed 16-section New Tool Artifact. It grounds neighbors only through canonical historical ToSearchCandidateActions calls and does not implement the candidate tool.";
+}
+
+[SemanticProgram.InfinitivePhrase("to evaluate an action learning candidate artifact")]
+prototype ToEvaluateActionLearningArtifact : ActionLearningPromptAction, ActionLearningActionRoot
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "2.0.0";
+	PromptPath = @"Skills/ActionLearning/Prompts/EvaluateActionCandidateArtifact.prompt.md";
+	Description = @"Audits the fixed New Tool Artifact against canonical evidence, schema, contamination, discoverability, reusable-boundary, savings, risk-reduction, and implementation-usefulness criteria. Returns strict JSON and does not implement or rewrite the candidate tool.";
+}
+
+[SemanticProgram.InfinitivePhrase("to build an action learning candidate portfolio")]
+prototype ToBuildActionLearningPortfolio : ActionLearningPromptAction, ActionLearningActionRoot
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "2.0.0";
+	PromptPath = @"Skills/ActionLearning/Prompts/BuildActionCandidatePortfolio.prompt.md";
+	Description = @"Reconciles evaluated Action Learning artifacts, separates controls and evidence-limited items, merges duplicates, and ranks only substantive evidence-supported candidates.";
+}
+
+[SemanticProgram.InfinitivePhrase("to run an action learning calibration iteration")]
+prototype ToRunActionLearningCalibration : ActionLearningPromptAction, ActionLearningActionRoot
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "2.0.0";
+	PromptPath = @"Skills/ActionLearning/Prompts/RunActionLearningCalibration.prompt.md";
+	Description = @"Guides the parent coordinator through one bounded source-attached candidate refresh, restart/idempotency validation, direct artifact verification, and calibration-record iteration. Parent-only session actions remain outside the child root.";
+}
+[SemanticProgram.InfinitivePhrase("to refresh action candidates for an attached historical session")]
+[SemanticProgram.InfinitivePhrase("to update a source session action learning artifact")]
+prototype ToRefreshActionLearningSessionCandidatesSkill : ActionLearningPromptAction, ActionLearningActionRoot
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "2.0.0";
+	PromptPath = @"Skills/ActionLearning/Prompts/RefreshActionLearningSessionCandidates.prompt.md";
+	Description = @"Prepares or promotes one exact Principal-assigned source-session candidate proposal while preserving the last accepted report and leaving acceptance/checkpoint advancement to the Principal.";
+}
+[SemanticProgram.InfinitivePhrase("to discover reusable action candidates within a historical session")]
+[SemanticProgram.InfinitivePhrase("to review one session for missing reusable actions")]
+[SemanticProgram.InfinitivePhrase("to find action candidates in an observed session route")]
+prototype ToDiscoverActionCandidatesWithinSessionSkill : PromptAction, ActionLearningActionRoot
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.1";
+	PromptPath = @"Skills/ActionLearning/Prompts/DiscoverActionCandidatesWithinSession.prompt.md";
+	Description = @"Reviews one historical session independently and returns zero or more evidence-bound reusable action candidates, or NONE. It does not compare sessions, require recurrence, synthesize a portfolio, score a cross-session matrix, or approve implementation.";
+}
+
+[SemanticProgram.InfinitivePhrase("to build an action candidate metrics matrix")]
+[SemanticProgram.InfinitivePhrase("to score and rank discovered action candidates")]
+[SemanticProgram.InfinitivePhrase("to prioritize action candidates by general value")]
+prototype ToBuildActionCandidateMetricsMatrixSkill : PromptAction, ActionLearningActionRoot
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/ActionLearning/Prompts/BuildActionCandidateMetricsMatrix.prompt.md";
+	Description = @"Builds a cross-session Markdown metrics matrix from per-session candidate discoveries by filtering experiment contamination, merging equivalent candidates, scoring value and risk dimensions, ranking general value, recommending consolidation, and selecting a validation tranche without approving implementation.";
+}

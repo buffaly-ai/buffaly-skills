@@ -1,53 +1,23 @@
-(function () {
-	"use strict";
-	const els = {
-		sessionKey: document.getElementById("sessionKey"), agentName: document.getElementById("agentName"),
-		badge: document.getElementById("connectionBadge"), info: document.getElementById("infoOutput"),
-		ledger: document.getElementById("ledgerOutput"), operation: document.getElementById("operationOutput"), sourceSessionKey: document.getElementById("sourceSessionKey"), error: document.getElementById("error"),
-		bind: document.getElementById("bindButton"), infoButton: document.getElementById("infoButton"),
-		initialize: document.getElementById("initializeButton"), getLedger: document.getElementById("getLedgerButton"), addEntry: document.getElementById("addEntryButton"), removeEntry: document.getElementById("removeEntryButton")
-	};
-	let bound = false;
-
-	function setBusy(text) { els.badge.className = "badge busy"; els.badge.textContent = text; els.error.hidden = true; }
-	function setBound() { bound = true; els.badge.className = "badge bound"; els.badge.textContent = "Bound"; [els.infoButton, els.initialize, els.getLedger, els.addEntry, els.removeEntry, els.sourceSessionKey].forEach(x => x.disabled = false); }
-	function fail(error) { bound = false; els.badge.className = "badge idle"; els.badge.textContent = "Error"; els.error.textContent = error && error.message ? error.message : String(error); els.error.hidden = false; }
-	function binding() { return { sessionKey: els.sessionKey.value.trim(), agentName: els.agentName.value.trim() }; }
-	async function invoke(prototypeName, args) {
-		const value = binding();
-		if (!value.sessionKey) throw new Error("Session key is required.");
-		const result = await BuffalyAgentService.RunProtoScriptMethodAsync(value.sessionKey, value.agentName, prototypeName, "Execute", JSON.stringify(args || {}));
-		if (typeof result !== "string" || result.length === 0) throw new Error(prototypeName + " returned an empty result.");
-		return result;
-	}
-	async function loadInfo() {
-		setBusy("Reading identity");
-		const text = await invoke("ToGetSessionWorkCoordinatorInfo", {});
-		const info = JSON.parse(text);
-		if (info.CoordinatorSkill !== "ActionLearningCoordinatorSkill") throw new Error("The bound runtime is not ActionLearningCoordinatorSkill.");
-		els.info.textContent = JSON.stringify(info, null, 2);
-		setBound();
-	}
-	function showLedger(value) { els.ledger.textContent = JSON.stringify(value, null, 2); }
-	function requestedSourceSessionKey() { const value = els.sourceSessionKey.value.trim(); if (!value) throw new Error("Source session key is required."); return value; }
-	async function mutate(prototypeName, busyLabel) {
-		setBusy(busyLabel);
-		const receipt = JSON.parse(await invoke(prototypeName, { sourceSessionKey: requestedSourceSessionKey() }));
-		els.operation.textContent = JSON.stringify({ Outcome: receipt.Outcome, SourceSessionKey: receipt.SourceSessionKey }, null, 2);
-		showLedger(receipt.Ledger);
-		setBound();
-	}
-	els.bind.addEventListener("click", async function () {
-		try {
-			setBusy("Creating agent");
-			const value = binding();
-			await BuffalyAgentService.CreateAgentFromProjectObjectAsync({ sessionKey:value.sessionKey, projectName:"OpsAgent", agentName:value.agentName, initialization:null });
-			await loadInfo();
-		} catch (error) { fail(error); }
-	});
-	els.infoButton.addEventListener("click", async function () { try { await loadInfo(); } catch (error) { fail(error); } });
-	els.initialize.addEventListener("click", async function () { try { setBusy("Initializing"); showLedger(JSON.parse(await invoke("ToInitializeSessionWorkLedger", {}))); setBound(); } catch (error) { fail(error); } });
-	els.getLedger.addEventListener("click", async function () { try { setBusy("Reading ledger"); showLedger(JSON.parse(await invoke("ToGetSessionWorkLedger", {}))); setBound(); } catch (error) { fail(error); } });
-	els.addEntry.addEventListener("click", async function () { try { await mutate("ToAddSessionWorkEntry", "Adding session"); } catch (error) { fail(error); } });
-	els.removeEntry.addEventListener("click", async function () { try { await mutate("ToRemoveSessionWorkEntry", "Removing session"); } catch (error) { fail(error); } });
+(function(){
+"use strict";
+const coordinatorSessionKey="Action Learning Coordinator";
+const coordinatorAgentName="action-learning-coordinator";
+const state={info:null,ledger:{Entries:[]},actions:null,current:null};
+const $=id=>document.getElementById(id);
+function error(e){$("error").hidden=false;$("error").textContent=e&&e.message?e.message:JSON.stringify(e);$("connectionBadge").textContent="Error";}
+function toast(text){$("toast").textContent=text;$("toast").hidden=false;clearTimeout(window.__toast);window.__toast=setTimeout(()=>$("toast").hidden=true,2200);}
+async function invoke(prototype,args){const text=await BuffalyAgentService.RunProtoScriptMethodAsync(coordinatorSessionKey,coordinatorAgentName,prototype,"Execute",JSON.stringify(args||{}));return JSON.parse(text);}
+async function bind(){$("connectionBadge").textContent="Connecting";await BuffalyAgentService.CreateAgentFromProjectObjectAsync({sessionKey:coordinatorSessionKey,projectName:"OpsAgent",agentName:coordinatorAgentName,initialization:null});state.info=await invoke("ToGetSessionWorkCoordinatorInfo",{});state.actions=await invoke("ToListActionLearningCoordinatorActions",{});state.ledger=await invoke("ToGetSessionWorkLedger",{});if(!state.ledger.Exists)state.ledger=await invoke("ToInitializeSessionWorkLedger",{});$("connectionBadge").className="badge bound";$("connectionBadge").textContent="Bound";render();}
+function render(){const entries=state.ledger.Entries||[];$("coordinatorSessionLabel").textContent=coordinatorSessionKey;$("trackedCount").textContent=entries.length;$("attachedCount").textContent=entries.filter(x=>x.WorkerSessionKey).length;$("enabledCount").textContent=entries.filter(x=>x.Enabled!==false).length;$("unattachedCount").textContent=entries.filter(x=>!x.WorkerSessionKey).length;$("identityChips").innerHTML=`<span class="chip">${entries.length} tracked sessions</span><span class="chip">Ledger available</span><span class="chip">${(state.actions.CommonActions||[]).length+(state.actions.SpecializedActions||[]).length} coordinator actions</span>`;renderActions();renderRows();}
+function renderActions(){const groups=[...(state.actions.CommonActions||[]).map(x=>[x,"Common ledger action"]),...(state.actions.SpecializedActions||[]).map(x=>[x,"Action Learning coordinator action"])];$("actionList").innerHTML=groups.map(x=>`<div class="tool"><b>${x[0]}</b><span>${x[1]}</span></div>`).join("");}
+function esc(v){return String(v||"").replace(/[&<>\"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function renderRows(){const entries=state.ledger.Entries||[];$("emptyLedger").hidden=entries.length>0;$("ledgerRows").innerHTML=entries.map((entry,index)=>{const attached=!!entry.WorkerSessionKey,status=entry.Enabled===false?"Disabled":attached?(entry.OperationState||"Attached"):"Tracked";return `<tr data-index="${index}"><td><span class="source">${esc(entry.SourceSessionKey)}</span><span class="sub">${attached?`Action Learning · ${esc(entry.WorkerSessionKey)}`:"Worker not attached"}</span></td><td><span class="pill ${entry.Enabled===false?"disabled":attached?"attached":"tracked"}">${esc(status)}</span><span class="sub">${attached?"Source-attached worker available":"Ready for attachment"}</span></td><td><b>${esc(entry.LastAcceptedSourceTurnId||"Not recorded")}</b><span class="sub">Delivery checkpoint</span></td><td><button class="open">Open →</button></td></tr>`}).join("");[...$("ledgerRows").querySelectorAll("tr")].forEach(row=>row.addEventListener("click",()=>openEntry(entries[Number(row.dataset.index)])));}
+function openEntry(entry){state.current=entry;$("portfolio").hidden=true;$("workspace").hidden=false;$("workspaceSource").textContent=entry.SourceSessionKey;$("workspaceWorker").textContent=entry.WorkerSessionKey||"No worker attached";$("workspaceState").textContent=entry.WorkerSessionKey?"Source-attached Action Learning processor":"Track this source, then attach its worker.";$("workspaceDetails").innerHTML=`<dt>Source session</dt><dd>${esc(entry.SourceSessionKey)}</dd><dt>Worker session</dt><dd>${esc(entry.WorkerSessionKey||"Not attached")}</dd><dt>Agent profile</dt><dd>${esc(entry.WorkerAgentName||"action-learning")}</dd><dt>State</dt><dd>${esc(entry.OperationState||"Tracked")}</dd><dt>Checkpoint</dt><dd>${esc(entry.LastAcceptedSourceTurnId||"Not recorded")}</dd>`;renderWorkerActions(entry);scrollTo(0,0);}
+function renderWorkerActions(entry){const labels={ToDiscoverActionCandidatesWithinSessionSkill:["Discover candidate actions","Review the source route and identify evidence-bound missing reusable actions."],ToBuildActionCandidateMetricsMatrixSkill:["Compute candidate metrics","Estimate breadth, savings, safety, overlap and implementation risk."],ToGroundAndExpandActionCandidateSkill:["Ground existing capabilities","Check canonical action search evidence and existing owners."],ToEvaluateActionLearningArtifact:["Evaluate candidate artifact","Review the living candidate artifact against acceptance criteria."]};$("workerActions").innerHTML=(state.actions.WorkerActions||[]).map(name=>`<div class="mode"><div><b>${labels[name][0]}</b><p>${labels[name][1]}</p></div><button data-action="${name}" ${entry.WorkerSessionKey?"":"disabled"}>Run</button></div>`).join("");[...$("workerActions").querySelectorAll("button")].forEach(button=>button.addEventListener("click",()=>toast(`${button.dataset.action} is exposed by ActionLearningSkill; dispatch wiring is the next slice.`)));}
+async function refresh(){state.ledger=await invoke("ToGetSessionWorkLedger",{});render();toast("Ledger refreshed");}
+async function track(attach){const source=$("sourceSessionKey").value.trim();if(!source)throw new Error("Source session key is required.");let worker=$("workerSessionKey").value.trim()||`${source}-action-learning`;if(attach){const receipt=await invoke("ToAttachActionLearningWorker",{sourceSessionKey:source,workerSessionKey:worker});state.ledger=receipt.Ledger;}else{const receipt=await invoke("ToAddSessionWorkEntry",{sourceSessionKey:source});state.ledger=receipt.Ledger;}$("addPanel").hidden=true;render();toast(attach?"Worker attached":"Session tracked");}
+async function removeCurrent(){if(!state.current)return;const receipt=await invoke("ToRemoveSessionWorkEntry",{sourceSessionKey:state.current.SourceSessionKey});state.ledger=receipt.Ledger;back();render();toast(receipt.Outcome);}
+function back(){$("workspace").hidden=true;$("portfolio").hidden=false;state.current=null;scrollTo(0,0);}
+$("refreshButton").addEventListener("click",()=>refresh().catch(error));$("workspaceRefreshButton").addEventListener("click",()=>refresh().then(()=>openEntry((state.ledger.Entries||[]).find(x=>x.SourceSessionKey===state.current.SourceSessionKey)||state.current)).catch(error));$("toggleActionsButton").addEventListener("click",()=>$("actionList").classList.toggle("collapsed"));$("showAddButton").addEventListener("click",()=>$("addPanel").hidden=false);$("cancelAddButton").addEventListener("click",()=>$("addPanel").hidden=true);$("trackButton").addEventListener("click",()=>track(false).catch(error));$("attachButton").addEventListener("click",()=>track(true).catch(error));$("backButton").addEventListener("click",back);$("removeButton").addEventListener("click",()=>removeCurrent().catch(error));
+bind().catch(error);
 }());
