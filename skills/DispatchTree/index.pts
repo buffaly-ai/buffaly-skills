@@ -24,6 +24,22 @@ prototype DispatchTreeSkill : SkillEntity
 	ActionRoot = DispatchTreeSkillAction;
 }
 
+// Finds an exact node recursively because GetDescendants returns only immediate children.
+function FindDispatchNode(Prototype parent, string exactPrototypeName) : Prototype
+{
+	Collection childPrototypes = parent.GetDescendants();
+	foreach (Prototype childPrototype in childPrototypes)
+	{
+		if (childPrototype.PrototypeName == exactPrototypeName)
+			return childPrototype;
+
+		Prototype nestedMatch = FindDispatchNode(childPrototype, exactPrototypeName);
+		if (nestedMatch != null)
+			return nestedMatch;
+	}
+	return null;
+}
+
 [SemanticProgram.InfinitivePhrase("to read the local dispatch tree")]
 prototype ToGetDispatchTree : DispatchTreeSkillAction, DispatchAgentActionRoot
 {
@@ -53,12 +69,9 @@ prototype ToGetDispatchNode : DispatchTreeSkillAction, DispatchAgentActionRoot
 		if (root == null)
 			throw new InvalidOperationException("DispatchMemoryRoot was not found in the current session runtime. Restore or seed the reviewed session-local ontology before routing.");
 
-		Collection descendantPrototypes = root.GetDescendants();
-		foreach (Prototype candidatePrototype in descendantPrototypes)
-		{
-			if (candidatePrototype.PrototypeName == exactPrototypeName)
-				return candidatePrototype.ShallowClone();
-		}
+		Prototype candidatePrototype = FindDispatchNode(root, exactPrototypeName);
+		if (candidatePrototype != null)
+			return candidatePrototype.ShallowClone();
 
 		throw new InvalidOperationException("Dispatch node was not found beneath DispatchMemoryRoot: " + exactPrototypeName);
 	}
