@@ -231,7 +231,7 @@ prototype ToListActionLearningCoordinatorActions : ActionLearningCoordinatorSkil
 {
 	function Execute() : string
 	{
-		return @"{""CommonActions"":[""ToGetSessionWorkCoordinatorInfo"",""ToGetSessionWorkLedger"",""ToInitializeSessionWorkLedger"",""ToAddSessionWorkEntry"",""ToRemoveSessionWorkEntry""],""SpecializedActions"":[""ToAttachActionLearningWorker"",""ToListActionLearningCoordinatorActions""],""WorkerActions"":[""ToDiscoverActionCandidatesWithinSessionSkill"",""ToBuildActionCandidateMetricsMatrixSkill"",""ToGroundAndExpandActionCandidateSkill"",""ToEvaluateActionLearningArtifact""]}";
+		return @"{""CommonActions"":[""ToGetSessionWorkCoordinatorInfo"",""ToGetSessionWorkLedger"",""ToInitializeSessionWorkLedger"",""ToAddSessionWorkEntry"",""ToRemoveSessionWorkEntry""],""SpecializedActions"":[""ToAttachActionLearningWorker"",""ToListActionLearningCoordinatorActions""],""WorkerActions"":[""ToRefreshActionLearningSessionCandidatesSkill"",""ToDiscoverActionCandidatesWithinSessionSkill"",""ToBuildActionCandidateMetricsMatrixSkill"",""ToGroundAndExpandActionCandidateSkill"",""ToEvaluateActionLearningArtifact""]}";
 	}
 	Description = @"Returns the exact first-version coordinator and worker action names rendered by the dashboard.";
 }
