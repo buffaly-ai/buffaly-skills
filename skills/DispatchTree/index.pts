@@ -34,7 +34,7 @@ prototype ToGetDispatchTree : DispatchTreeSkillAction, DispatchAgentActionRoot
 		Prototype root = _runtime.GetPrototype("DispatchMemoryRoot");
 		if (root == null)
 			throw new InvalidOperationException("DispatchMemoryRoot was not found in the current session runtime. Restore or seed the reviewed session-local ontology before routing.");
-		return root;
+		return GetDescendantsAsDistance(root);
 	}
 }
 

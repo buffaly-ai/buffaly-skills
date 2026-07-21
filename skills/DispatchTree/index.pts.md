@@ -7,7 +7,7 @@ Provides the restricted, read-only action surface for the Dispatch agent staging
 ## Contracts
 
 - `DispatchAgentActionRoot` is intentionally narrow and must never inherit a broad action root. Every concrete Dispatch action explicitly inherits it so runtime descendant discovery registers each `Execute` method on the restricted agent profile.
-- `ToGetDispatchTree` requires the current runtime to contain `DispatchMemoryRoot`.
+- `ToGetDispatchTree` requires the current runtime to contain `DispatchMemoryRoot` and returns its complete nested hierarchy through the project's canonical `GetDescendantsAsDistance` formatter.
 - `ToSearchDispatchMemories` searches only `Dispatch Memory` semantic tags in `session:<currentSessionKey>` beneath `DispatchMemoryRoot`.
 - `ToPlanDispatchRoute` is a read-only PromptAction and must call both tree read and scoped search before deciding.
 - This staged version has no queue, send, session-creation, generic invocation, or NLMemory mutation action.
