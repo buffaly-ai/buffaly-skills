@@ -8,6 +8,7 @@ Plan one route for the user's complete instruction. This is an online dry run ag
 2. Call `ToSearchDispatchMemories` once with the complete task meaning as a bounded candidate prefilter.
 3. Reconcile search candidates with the hierarchy. Start at `DispatchMemoryRoot`, compare only immediate children, and descend through the closest coherent child context.
 4. At the selected leaf, compare the task with `ContextSummary` and each separate line in `HistoricalDispatches`.
+5. Call `ToGetDispatchNode` once with the selected leaf's exact prototype name. Use this scoped node readback as the authoritative source for its assigned `SessionKey`.
 
 ## Decision
 

@@ -38,6 +38,31 @@ prototype ToGetDispatchTree : DispatchTreeSkillAction, DispatchAgentActionRoot
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to inspect one local dispatch node")]
+prototype ToGetDispatchNode : DispatchTreeSkillAction, DispatchAgentActionRoot
+{
+	Description = @"prototypeName - exact prototype name selected from DispatchMemoryRoot. Returns a shallow read-only projection with that node's assigned properties. Rejects prototypes outside the current session-local dispatch tree.";
+
+	function Execute(string prototypeName) : Prototype
+	{
+		string exactPrototypeName = prototypeName.Trim();
+		if (StringUtil.IsEmpty(exactPrototypeName))
+			throw new ArgumentException("prototypeName is required.", "prototypeName");
+
+		Prototype root = _runtime.GetPrototype("DispatchMemoryRoot");
+		if (root == null)
+			throw new InvalidOperationException("DispatchMemoryRoot was not found in the current session runtime. Restore or seed the reviewed session-local ontology before routing.");
+
+		foreach (Prototype candidatePrototype in root.GetDescendants())
+		{
+			if (candidatePrototype.PrototypeName == exactPrototypeName)
+				return candidatePrototype.ShallowClone();
+		}
+
+		throw new InvalidOperationException("Dispatch node was not found beneath DispatchMemoryRoot: " + exactPrototypeName);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to search the local dispatch tree")]
 prototype ToSearchDispatchMemories : DispatchTreeSkillAction, DispatchAgentActionRoot
 {

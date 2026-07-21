@@ -8,6 +8,7 @@ Provides the restricted, read-only action surface for the Dispatch agent staging
 
 - `DispatchAgentActionRoot` is intentionally narrow and must never inherit a broad action root. Every concrete Dispatch action explicitly inherits it so runtime descendant discovery registers each `Execute` method on the restricted agent profile.
 - `ToGetDispatchTree` requires the current runtime to contain `DispatchMemoryRoot` and returns its complete nested hierarchy through the project's canonical `GetDescendantsAsDistance` formatter.
+- `ToGetDispatchNode` accepts one exact prototype selected from the tree, verifies it is a descendant of the current runtime's `DispatchMemoryRoot`, and returns a shallow read-only projection containing its assigned properties, including `SessionKey`.
 - `ToSearchDispatchMemories` searches only `Dispatch Memory` semantic tags in `session:<currentSessionKey>` beneath `DispatchMemoryRoot`.
 - `ToPlanDispatchRoute` is a read-only PromptAction and must call both tree read and scoped search before deciding.
 - A `Reuse` receipt keeps node identity and destination identity separate: `ExistingLeaf` is the exact prototype name, while `DestinationSessionKey` is copied verbatim from that leaf's assigned `SessionKey`. A missing key fails closed as `NeedsReview`.
