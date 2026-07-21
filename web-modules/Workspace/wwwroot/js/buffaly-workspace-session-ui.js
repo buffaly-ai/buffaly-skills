@@ -39,6 +39,10 @@
 		});
 	}
 
+	function getArtifactUrl(sessionKey, relativePath) {
+		return "/api/web-modules/Workspace/artifact?sessionKey=" + encodeURIComponent(sessionKey) + "&path=" + encodeURIComponent(relativePath);
+	}
+
 	function renderItem(icon, name, detail, actionText, action) {
 		const item = createElement("div", "bws-item");
 		item.appendChild(createElement("span", "bws-item-icon", icon));
@@ -46,10 +50,18 @@
 		copy.appendChild(createElement("strong", "bws-item-name", name));
 		copy.appendChild(createElement("small", "bws-item-detail", detail));
 		item.appendChild(copy);
-		const button = createElement("button", "bws-item-action", actionText);
-		button.type = "button";
-		button.addEventListener("click", action);
-		item.appendChild(button);
+		if (actionText) {
+			const actionElement = action && action.href ? createElement("a", "bws-item-action", actionText) : createElement("button", "bws-item-action", actionText);
+			if (action && action.href) {
+				actionElement.href = action.href;
+				actionElement.target = "_blank";
+				actionElement.rel = "noopener noreferrer";
+			} else {
+				actionElement.type = "button";
+				actionElement.addEventListener("click", action);
+			}
+			item.appendChild(actionElement);
+		}
 		return item;
 	}
 
@@ -70,6 +82,10 @@
 		close.type = "button";
 		close.setAttribute("aria-label", "Close workspace drawer");
 		heading.appendChild(close);
+		const openFiles = createElement("button", "bws-open-files", "Open Files drawer");
+		openFiles.type = "button";
+		openFiles.addEventListener("click", function () { window.BuffalyAgentNextExtensions.openFilesDrawer(); });
+		heading.appendChild(openFiles);
 		drawer.appendChild(heading);
 
 		const tabs = createElement("div", "bws-tabs");
@@ -83,16 +99,15 @@
 		sessions.hidden = true;
 
 		summary.artifacts.forEach(function (artifact) {
-			files.appendChild(renderItem(artifact.kind === "Directory" ? "📁" : "📄", artifact.relativePath, artifact.kind === "Directory" ? "Shared folder" : artifact.length + " bytes", "Open", function () {
-				window.dispatchEvent(new CustomEvent("buffaly:workspace-artifact-open", { detail: artifact }));
-			}));
+			const isDirectory = artifact.kind === "Directory";
+			files.appendChild(renderItem(isDirectory ? "📁" : "📄", artifact.relativePath, isDirectory ? "Shared folder" : artifact.length + " bytes", isDirectory ? "" : "Open", isDirectory ? null : { href: getArtifactUrl(context.sessionKey, artifact.relativePath) }));
 		});
 		if (summary.artifacts.length === 0) {
 			files.appendChild(createElement("div", "bws-empty", "No shared artifacts yet."));
 		}
 
 		summary.sessions.forEach(function (session) {
-			sessions.appendChild(renderItem("💬", session.sessionKey, session.isCurrent ? "Current session" : "Linked session", session.isCurrent ? "Current" : "Open", function () {
+			sessions.appendChild(renderItem("💬", session.sessionKey, session.isCurrent ? "Current session" : "Linked session", session.isCurrent ? "" : "Open", function () {
 				if (!session.isCurrent) {
 					window.location.href = "/buffaly-agent-next.html?sessionKey=" + encodeURIComponent(session.sessionKey);
 				}
@@ -155,6 +170,27 @@
 			}
 		};
 	}
+
+	// Supply removable Workspace files to the generic Files drawer without touching its DOM.
+	window.BuffalyAgentNextExtensions.registerFileSource({
+		id: "workspace.shared-artifacts",
+		label: "Workspace files",
+		load: function (context) {
+			return loadSummary(context.sessionKey).then(function (summary) {
+				if (!summary.isAttached) {
+					return null;
+				}
+				return summary.artifacts.map(function (artifact) {
+					return {
+						Name: artifact.relativePath,
+						Kind: artifact.kind,
+						Detail: artifact.kind === "Directory" ? "Shared folder" : artifact.length + " bytes",
+						Url: artifact.kind === "Directory" ? "" : getArtifactUrl(context.sessionKey, artifact.relativePath)
+					};
+				});
+			});
+		}
+	});
 
 	window.BuffalyAgentNextExtensions.register({
 		id: "workspace.current-session",
