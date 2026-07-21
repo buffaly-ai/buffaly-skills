@@ -53,7 +53,8 @@ prototype ToGetDispatchNode : DispatchTreeSkillAction, DispatchAgentActionRoot
 		if (root == null)
 			throw new InvalidOperationException("DispatchMemoryRoot was not found in the current session runtime. Restore or seed the reviewed session-local ontology before routing.");
 
-		foreach (Prototype candidatePrototype in root.GetDescendants())
+		Collection descendantPrototypes = root.GetDescendants();
+		foreach (Prototype candidatePrototype in descendantPrototypes)
 		{
 			if (candidatePrototype.PrototypeName == exactPrototypeName)
 				return candidatePrototype.ShallowClone();
