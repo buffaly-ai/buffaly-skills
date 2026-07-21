@@ -65,7 +65,7 @@ prototype ToGetDispatchNode : DispatchTreeSkillAction, DispatchAgentActionRoot
 	{
 		string exactPrototypeName = prototypeName.Trim();
 		if (StringUtil.IsEmpty(exactPrototypeName))
-			throw new InvalidOperationException("prototypeName is required.");
+			throw new ArgumentException("prototypeName is required.", "prototypeName");
 
 		Prototype root = _runtime.GetPrototype("DispatchMemoryRoot");
 		if (root == null)
@@ -83,13 +83,14 @@ prototype ToGetDispatchNode : DispatchTreeSkillAction, DispatchAgentActionRoot
 [SemanticProgram.InfinitivePhrase("to queue a task through the dispatch tree")]
 prototype ToDispatchPlannedTask : DispatchTreeSkillAction, DispatchAgentActionRoot
 {
-	Description = @"selectedLeafPrototypeName - exact reusable leaf selected by ToPlanDispatchRoute. instruction - complete task to queue. The action fails closed unless the leaf exists beneath DispatchMemoryRoot and has a non-empty assigned SessionKey; callers cannot supply or override the destination.";
+	Description = @"selectedLeafPrototypeName - exact leaf prototype selected by ToPlanDispatchRoute. destinationSessionKey - exact SessionKey read from that leaf. instruction - complete task to queue. Fails closed unless the selected leaf exists beneath DispatchMemoryRoot and its assigned SessionKey exactly matches destinationSessionKey.";
 
-	function Execute(string selectedLeafPrototypeName, string instruction) : QueuedInputResult
+	function Execute(string selectedLeafPrototypeName, string destinationSessionKey, string instruction) : QueuedInputResult
 	{
-		string exactLeafName = selectedLeafPrototypeName.Trim();
-		if (StringUtil.IsEmpty(exactLeafName))
+		if (StringUtil.IsEmpty(selectedLeafPrototypeName.Trim()))
 			throw new InvalidOperationException("selectedLeafPrototypeName is required.");
+		if (StringUtil.IsEmpty(destinationSessionKey.Trim()))
+			throw new InvalidOperationException("destinationSessionKey is required.");
 		if (StringUtil.IsEmpty(instruction.Trim()))
 			throw new InvalidOperationException("instruction is required.");
 
@@ -97,16 +98,13 @@ prototype ToDispatchPlannedTask : DispatchTreeSkillAction, DispatchAgentActionRo
 		if (root == null)
 			throw new InvalidOperationException("DispatchMemoryRoot was not found in the current session runtime.");
 
-		Prototype selectedLeaf = FindDispatchNode(root, exactLeafName);
+		Prototype selectedLeaf = FindDispatchNode(root, selectedLeafPrototypeName.Trim());
 		if (selectedLeaf == null)
-			throw new InvalidOperationException("Selected dispatch leaf was not found beneath DispatchMemoryRoot: " + exactLeafName);
+			throw new InvalidOperationException("Selected dispatch leaf was not found beneath DispatchMemoryRoot: " + selectedLeafPrototypeName);
 
-		Tuple sessionKeyProperty = _runtime.ResolveProperty(selectedLeaf, "SessionKey");
-		if (sessionKeyProperty == null)
-			throw new InvalidOperationException("Selected dispatch leaf has no declared destination SessionKey property.");
-		string assignedSessionKey = selectedLeaf.Properties.GetStringOrDefault(sessionKeyProperty.Item1, "");
-		if (StringUtil.IsEmpty(assignedSessionKey))
-			throw new InvalidOperationException("Selected dispatch leaf has no assigned destination SessionKey.");
+		string assignedSessionKey = selectedLeaf.SessionKey;
+		if (StringUtil.IsEmpty(assignedSessionKey) || assignedSessionKey != destinationSessionKey)
+			throw new InvalidOperationException("Destination session key does not exactly match the selected dispatch leaf.");
 
 		return SessionTools.SendToSessionTool(assignedSessionKey, instruction);
 	}
