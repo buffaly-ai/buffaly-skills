@@ -83,16 +83,13 @@ prototype ToGetDispatchNode : DispatchTreeSkillAction, DispatchAgentActionRoot
 [SemanticProgram.InfinitivePhrase("to queue a task through the dispatch tree")]
 prototype ToDispatchPlannedTask : DispatchTreeSkillAction, DispatchAgentActionRoot
 {
-	Description = @"selectedLeafPrototypeName - exact reusable leaf selected by ToPlanDispatchRoute. destinationSessionKey - exact SessionKey read from that leaf. instruction - complete task to queue. The action fails closed unless the leaf exists beneath DispatchMemoryRoot and its assigned SessionKey exactly matches destinationSessionKey.";
+	Description = @"selectedLeafPrototypeName - exact reusable leaf selected by ToPlanDispatchRoute. instruction - complete task to queue. The action fails closed unless the leaf exists beneath DispatchMemoryRoot and has a non-empty assigned SessionKey; callers cannot supply or override the destination.";
 
-	function Execute(string selectedLeafPrototypeName, string destinationSessionKey, string instruction) : QueuedInputResult
+	function Execute(string selectedLeafPrototypeName, string instruction) : QueuedInputResult
 	{
 		string exactLeafName = selectedLeafPrototypeName.Trim();
-		string exactDestination = destinationSessionKey.Trim();
 		if (StringUtil.IsEmpty(exactLeafName))
 			throw new InvalidOperationException("selectedLeafPrototypeName is required.");
-		if (StringUtil.IsEmpty(exactDestination))
-			throw new InvalidOperationException("destinationSessionKey is required.");
 		if (StringUtil.IsEmpty(instruction.Trim()))
 			throw new InvalidOperationException("instruction is required.");
 
@@ -105,8 +102,8 @@ prototype ToDispatchPlannedTask : DispatchTreeSkillAction, DispatchAgentActionRo
 			throw new InvalidOperationException("Selected dispatch leaf was not found beneath DispatchMemoryRoot: " + exactLeafName);
 
 		string assignedSessionKey = selectedLeaf.SessionKey;
-		if (StringUtil.IsEmpty(assignedSessionKey) || assignedSessionKey != exactDestination)
-			throw new InvalidOperationException("Destination session key does not exactly match the selected dispatch leaf.");
+		if (StringUtil.IsEmpty(assignedSessionKey))
+			throw new InvalidOperationException("Selected dispatch leaf has no assigned destination SessionKey.");
 
 		return SessionTools.SendToSessionTool(assignedSessionKey, instruction);
 	}
