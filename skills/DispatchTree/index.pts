@@ -71,7 +71,7 @@ prototype ToGetDispatchNode : DispatchTreeSkillAction, DispatchAgentActionRoot
 
 		Prototype candidatePrototype = FindDispatchNode(root, exactPrototypeName);
 		if (candidatePrototype != null)
-			return candidatePrototype;
+			return candidatePrototype.ShallowClone();
 
 		throw new InvalidOperationException("Dispatch node was not found beneath DispatchMemoryRoot: " + exactPrototypeName);
 	}
