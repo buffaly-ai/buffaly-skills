@@ -2430,6 +2430,193 @@
       "RequiresPreStartInstall": true
     },
     {
+      "PackageId": "ActionLearningCoordinator",
+      "PackageType": "WebModule",
+      "Title": "Action Learning Coordinator",
+      "Description": "Buffaly Web Module package for Action Learning Coordinator.",
+      "Version": "0.1.20",
+      "PackageKind": "BuffalyWebModule",
+      "SourcePath": "web-modules/ActionLearningCoordinator",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/ActionLearningCoordinator",
+      "Phrases": [
+        "Action Learning Coordinator",
+        "ActionLearningCoordinator"
+      ],
+      "Files": [
+        {
+          "Path": "ActionLearningCoordinator.Web.deps.json",
+          "Sha256": "d0425eb5378d481163aca597bb53c948f0b02498168e22ab304b547f4d399cca"
+        },
+        {
+          "Path": "ActionLearningCoordinator.Web.dll",
+          "Sha256": "ed1771da4671ee3d2799dea5b50b53f7df36a0f19533c5dec52addc3290d5605"
+        },
+        {
+          "Path": "ActionLearningCoordinator.Web.staticwebassets.endpoints.json",
+          "Sha256": "79ca3d500b78c586de184b7aefa3040e9152f9393d457bf8d7cfee6046d2b675"
+        },
+        {
+          "Path": "Agents/action-learning-coordinator.agent.json",
+          "Sha256": "20bf1c68e193d8c69054427a8238b397e84f1bfa186850373dc91eeb06dbcd13"
+        },
+        {
+          "Path": "Agents/action-learning.agent.json",
+          "Sha256": "d99927c4bce19994b5d6c9c259fda79616d59fa8f4854ad47eaab7fc476bd68c"
+        },
+        {
+          "Path": "Agents/ontology-foundry-coordinator.agent.json",
+          "Sha256": "16472492be11d2e437b7dfc81143170974c4989aa94b253c8ad47972936cb59a"
+        },
+        {
+          "Path": "BasicUtilities.dll",
+          "Sha256": "3c4d742c1fad44ce8f0eece383baca07b6990776c00b4552c8cdb91dcaae2ad4"
+        },
+        {
+          "Path": "Buffaly.Agent.Web.Common.dll",
+          "Sha256": "086aa99ae97c58efcc4b4f4cc12e9671dcd32671cf2db1ffa4334eacd4eb0b33"
+        },
+        {
+          "Path": "Microsoft.Data.SqlClient.dll",
+          "Sha256": "5a34e2fa3479b1508dbc20fbeb2c9172f18c3868bdb147a185213a446645b400"
+        },
+        {
+          "Path": "Microsoft.Identity.Client.dll",
+          "Sha256": "10d59df4170053ea9597e3c20adc9607ad17318ad5d8747eda3d930a5a4b463a"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/index.pts",
+          "Sha256": "b13efba8b71e66c00f25a9ceb5996d82f08f14405e343af7b1dd0138c44b4ec3"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/index.pts.md",
+          "Sha256": "73c9843bb0fd119a919edeb676eb9971ea5edd16ab67fdae75f7830d3f501cfe"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/Prompts/ActionLearningCoordinator.md",
+          "Sha256": "f10ea0ea63b00b50578123859bf2fcff0ca2fa6082cf23f8b6df8ed3d2f112c1"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/Prompts/OntologyFoundryCoordinator.md",
+          "Sha256": "37d461c061f080c4625d44a5972234e74b3c824b2af288570e6dce049176d23f"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/index.pts",
+          "Sha256": "c7789406c62591b588989de35178ff28616fef9c6f21712e342086641910d0da"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/index.pts.md",
+          "Sha256": "e843d267becdd3a9aaaddb7d9322d0fdd1857a54b02b029f1bbd9cd2670e6423"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/PromptActions.pts",
+          "Sha256": "058c5e7aadab414bac9d9aae0474f47ef4e1f1fc4e65b30f5f6fe0d63593993b"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/PromptActions.pts.md",
+          "Sha256": "1da5029387b2bcf3f04a64f9ac96f0dcd9def43ae9bee84f555b4856b502bb2f"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/ActionCandidateGroundingAndExpansion.prompt.md",
+          "Sha256": "d22fb054c0d07e06ff07e6024a9f10212518a6f1dc877014dea93ebb91a092ef"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/ActionCandidateGroundingAndExpansion.prompt.md.md",
+          "Sha256": "ed03440ac4e62291989aa7c28d67fe4172087242fdb37b022801fdb9c95ba785"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/ActionLearning.md",
+          "Sha256": "a39010bfe64676046cc7d91dff54695c8148c4007b8e553a4065d6ed97e156bf"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/BuildActionCandidateMetricsMatrix.prompt.md",
+          "Sha256": "3ed6f507068aa5880d7a652a27a8f8f5e5c9cf4d7399f972ca6b9830cc83c161"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/BuildActionCandidatePortfolio.prompt.md",
+          "Sha256": "3647f159d9fbc2188700defe24d8336e93abde5627bb922d5c8139d8f5705f5c"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/DiscoverActionCandidatesWithinSession.prompt.md",
+          "Sha256": "874a56b8d139f4939d05c4f174bfad17bb85e5b1b43f256ad772c19b57d901dd"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/EvaluateActionCandidateArtifact.prompt.md",
+          "Sha256": "994999d9c9d6e073ffd37e1016bb1163c439039cbf22ecf091371d09eaa6d018"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/RefreshActionLearningSessionCandidates.prompt.md",
+          "Sha256": "bac8809ce4f99c770fff5cd5624325bbbd628b21b535eb9a626593e545e17f4e"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/RunActionLearningCalibration.prompt.md",
+          "Sha256": "9fe57142539df2294158ae17ff200e3248aba8843eb420cfbd815d9585c939a7"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/SKILL.md",
+          "Sha256": "b3b856d1f0b258c6af133580d33f4cf7500aa9d3673682df122e88cc0a526862"
+        },
+        {
+          "Path": "web-module.json",
+          "Sha256": "5f14f1d2c162f098535cbb4fd7095d37855af15bdd306541e90487b166fecc2b"
+        },
+        {
+          "Path": "web.config",
+          "Sha256": "755cc3963accdaa081cdc7ee1485cd81708a6345c855fee8d648dd463106e96c"
+        },
+        {
+          "Path": "wwwroot/dashboard.css",
+          "Sha256": "480b22a974380575c9c7499d37286bb5ac8af57e18915bf526eb687e3fd28794"
+        },
+        {
+          "Path": "wwwroot/dashboard.css.br",
+          "Sha256": "a5b6940f1852e77861514d1824bee946855e538b08b7d8d1934e2642cd3efb0d"
+        },
+        {
+          "Path": "wwwroot/dashboard.css.gz",
+          "Sha256": "828dd9b3ae3b9f58090e280cf8da332ee4d67eed8f42fdb5863bbe86f1a8b9db"
+        },
+        {
+          "Path": "wwwroot/dashboard.html",
+          "Sha256": "51b315a73bd562ca8465f4dc41ceae05125ea688a77ef2ee98e03ada6b56df08"
+        },
+        {
+          "Path": "wwwroot/dashboard.html.br",
+          "Sha256": "0592fa6dd8042d57d3a1f567284ce766569c7002c53ece2dd090860226b1848c"
+        },
+        {
+          "Path": "wwwroot/dashboard.html.gz",
+          "Sha256": "ac0a050a4025892c787c6e804f1b8aff58ac6d5ec6ae24bd5c0414382bc1c646"
+        },
+        {
+          "Path": "wwwroot/dashboard.js",
+          "Sha256": "9a9b110f203381f94aff3ba68c18fde04106a0455d298d483883f06f4592522d"
+        },
+        {
+          "Path": "wwwroot/dashboard.js.br",
+          "Sha256": "85a5d4d577dacdc5714846e12ba541084204deec548f8728f5aa87d042d06069"
+        },
+        {
+          "Path": "wwwroot/dashboard.js.gz",
+          "Sha256": "59374928f2b24aadbf2dfd9d289e829cbbe3e983fd51fa146b18699144b1f7a9"
+        }
+      ],
+      "ProjectArtifacts": [
+        {
+          "ProjectName": "Skills/ActionLearningCoordinator",
+          "SourcePath": "ProjectArtifacts/Skills/ActionLearningCoordinator/"
+        },
+        {
+          "ProjectName": "Skills/ActionLearning",
+          "SourcePath": "ProjectArtifacts/Skills/ActionLearning/"
+        }
+      ],
+      "Dependencies": [],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "RequiresRestart": true,
+      "RequiresPreStartInstall": true
+    },
+    {
       "PackageId": "Browser",
       "PackageType": "WebModule",
       "Title": "Browser",
@@ -4032,7 +4219,7 @@
       "PackageType": "WebModule",
       "Title": "Code Reviews",
       "Description": "Buffaly Web Module package for Code Reviews.",
-      "Version": "0.1.88",
+      "Version": "0.1.90",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/CodeReviews",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/CodeReviews",
@@ -4190,10 +4377,6 @@
           "Sha256": "bf28c3eae62d50b874392cb261e9941230e46049a17a839144a1acfe1f39951a"
         },
         {
-          "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
-          "Sha256": "6e9b997f45393346cf2f96da99f7fa868f2286964a49ce66a59988defdaf84b6"
-        },
-        {
           "Path": "CSharp.dll",
           "Sha256": "9d18eaef122218e852e7fd7e5aef8c889d4bc7655f88212f2d335440efd2ff8c"
         },
@@ -4204,6 +4387,10 @@
         {
           "Path": "CSharp.Parsers.dll",
           "Sha256": "356dbcc749389d17a2d8dd15345bd03d050317167f901ea2e68eb7bb5b094e47"
+        },
+        {
+          "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
+          "Sha256": "6e9b997f45393346cf2f96da99f7fa868f2286964a49ce66a59988defdaf84b6"
         },
         {
           "Path": "de/Microsoft.Data.SqlClient.resources.dll",
@@ -4378,12 +4565,20 @@
           "Sha256": "e8af10a208b5524003db2455166f6f30f38e8bf8871717d26d488fd0a7e48566"
         },
         {
-          "Path": "ru/Microsoft.Data.SqlClient.resources.dll",
-          "Sha256": "f7d51f47b1eba12021161ee39a7d08d24df1dcd52c131d1d94ee2c7e432f4cb4"
-        },
-        {
           "Path": "runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll",
           "Sha256": "4a95c42d14d8a83ca1007793648b6dae59cee957ea12470578f10c918f91d225"
+        },
+        {
+          "Path": "runtimes/win-arm64/native/Microsoft.Data.SqlClient.SNI.dll",
+          "Sha256": "73b61c3381e32613f59bbe3af7f58871c8cd486e04a9c0e71409f6a1972d6f84"
+        },
+        {
+          "Path": "runtimes/win-x64/native/Microsoft.Data.SqlClient.SNI.dll",
+          "Sha256": "7e37c5bba3da06a955c122e3515b2980e2f1b8732ec0297f0a7e77e79b4de331"
+        },
+        {
+          "Path": "runtimes/win-x86/native/Microsoft.Data.SqlClient.SNI.dll",
+          "Sha256": "16efa76f220e23166a95873baaed43899191470c13848c944a679ff2bf5ac941"
         },
         {
           "Path": "runtimes/win/lib/net9.0/Microsoft.Data.SqlClient.dll",
@@ -4398,16 +4593,8 @@
           "Sha256": "6902fe2034ada133d5aa8df0d101279abb3093e346ebf34bbde62670f2a0e9bf"
         },
         {
-          "Path": "runtimes/win-arm64/native/Microsoft.Data.SqlClient.SNI.dll",
-          "Sha256": "73b61c3381e32613f59bbe3af7f58871c8cd486e04a9c0e71409f6a1972d6f84"
-        },
-        {
-          "Path": "runtimes/win-x64/native/Microsoft.Data.SqlClient.SNI.dll",
-          "Sha256": "7e37c5bba3da06a955c122e3515b2980e2f1b8732ec0297f0a7e77e79b4de331"
-        },
-        {
-          "Path": "runtimes/win-x86/native/Microsoft.Data.SqlClient.SNI.dll",
-          "Sha256": "16efa76f220e23166a95873baaed43899191470c13848c944a679ff2bf5ac941"
+          "Path": "ru/Microsoft.Data.SqlClient.resources.dll",
+          "Sha256": "f7d51f47b1eba12021161ee39a7d08d24df1dcd52c131d1d94ee2c7e432f4cb4"
         },
         {
           "Path": "Skills/CodeReviews/index.pts",
@@ -4454,16 +4641,16 @@
           "Sha256": "fc8df599a964558fc9587aeaa6c956e1d375944283907193660fa3e96ee38980"
         },
         {
+          "Path": "web-module.json",
+          "Sha256": "828239903769ed05fbd10cab6ece7f43ac4f941457468009c703c999411c4cf2"
+        },
+        {
           "Path": "web.config",
           "Sha256": "a0acc7c7064d1083afce6567ddcf026271d8937ebd00cc524a84e9a65bdaf280"
         },
         {
           "Path": "WebAppUtilities.dll",
           "Sha256": "96c6f5677dbb3083dda832c7b55ca2f016127aa6f0b54226c2ed85ba64d40373"
-        },
-        {
-          "Path": "web-module.json",
-          "Sha256": "828239903769ed05fbd10cab6ece7f43ac4f941457468009c703c999411c4cf2"
         },
         {
           "Path": "wwwroot/checkins.html",
@@ -4536,6 +4723,54 @@
         {
           "Path": "wwwroot/index.html.md.gz",
           "Sha256": "3067f144b8bd5407c6a39548bc96ddfa75cd51f8654d07f4e4ef7b0cc6f440e0"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js",
+          "Sha256": "b6d9eb36f7ab66c9bab47f6b4ce57fd2fab6bd9bb59e251d55f7b96bc719f464"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js.br",
+          "Sha256": "1aa813366df1fd98d650fe9546a076bd3a8358d3a58b1e2dce6834b0158508a7"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js.gz",
+          "Sha256": "9d60259ec07fb7f6cb15c8a7800c7402a1109c84ac5824ef7ee1ac453a854ee7"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js.md",
+          "Sha256": "3d9e440f602c256a0a9b33a2ff8cbfa562d7df744c779278336e40bb8070c2e6"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js.md.br",
+          "Sha256": "e46d73243a0e0d4bfbb46900a0f53112ee759fc36c3a5dbb23fbaba559065fb5"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js.md.gz",
+          "Sha256": "ac410fe6856b7f74d8a9c7e4e200875aaf45b2688b0a1fc3abee8f5b80a031bb"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json",
+          "Sha256": "b5a2e34ed9b9f1cca92e12f5d92a530c55ae50b7bab40ef6541346f8d524c188"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json.br",
+          "Sha256": "fde73a9f78ffc6c653ca275e9ce0f90bba0e97bf1d865a97eba16381a85d801b"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json.gz",
+          "Sha256": "61067aa8bccdb94f46d3d36008ef8f04922926b2e6b7b48211ee0c08d7de9f6e"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json.md",
+          "Sha256": "031fe562685b84920513e12567663cb1de3d4927c7ed0aef9a033aa8c6243c60"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json.md.br",
+          "Sha256": "408338c3c6008e839c98b690fc16426715251b317d83c18563fdcaae2b5e37af"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json.md.gz",
+          "Sha256": "cd89c90b57797bc03d9730d93b76aa96ef9c0fb003b63175db600b213eedaf61"
         },
         {
           "Path": "wwwroot/js/code-reviews-agent-bridge.js",
@@ -4836,54 +5071,6 @@
         {
           "Path": "wwwroot/js/plugins/codemirror/mode/xml/xml.js.gz",
           "Sha256": "e4b6768ebc946197aa51661eeed1b1633b6ad23632ef17144a9bc1fcb02e1d09"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js",
-          "Sha256": "b6d9eb36f7ab66c9bab47f6b4ce57fd2fab6bd9bb59e251d55f7b96bc719f464"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js.br",
-          "Sha256": "1aa813366df1fd98d650fe9546a076bd3a8358d3a58b1e2dce6834b0158508a7"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js.gz",
-          "Sha256": "9d60259ec07fb7f6cb15c8a7800c7402a1109c84ac5824ef7ee1ac453a854ee7"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js.md",
-          "Sha256": "3d9e440f602c256a0a9b33a2ff8cbfa562d7df744c779278336e40bb8070c2e6"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js.md.br",
-          "Sha256": "e46d73243a0e0d4bfbb46900a0f53112ee759fc36c3a5dbb23fbaba559065fb5"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js.md.gz",
-          "Sha256": "ac410fe6856b7f74d8a9c7e4e200875aaf45b2688b0a1fc3abee8f5b80a031bb"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json",
-          "Sha256": "b5a2e34ed9b9f1cca92e12f5d92a530c55ae50b7bab40ef6541346f8d524c188"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json.br",
-          "Sha256": "fde73a9f78ffc6c653ca275e9ce0f90bba0e97bf1d865a97eba16381a85d801b"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json.gz",
-          "Sha256": "61067aa8bccdb94f46d3d36008ef8f04922926b2e6b7b48211ee0c08d7de9f6e"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json.md",
-          "Sha256": "031fe562685b84920513e12567663cb1de3d4927c7ed0aef9a033aa8c6243c60"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json.md.br",
-          "Sha256": "408338c3c6008e839c98b690fc16426715251b317d83c18563fdcaae2b5e37af"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json.md.gz",
-          "Sha256": "cd89c90b57797bc03d9730d93b76aa96ef9c0fb003b63175db600b213eedaf61"
         },
         {
           "Path": "wwwroot/settings.html",
@@ -16106,193 +16293,6 @@
         }
       ],
       "ProjectArtifacts": [],
-      "Dependencies": [],
-      "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "RequiresRestart": true,
-      "RequiresPreStartInstall": true
-    },
-    {
-      "PackageId": "ActionLearningCoordinator",
-      "PackageType": "WebModule",
-      "Title": "Action Learning Coordinator",
-      "Description": "Buffaly Web Module package for Action Learning Coordinator.",
-      "Version": "0.1.20",
-      "PackageKind": "BuffalyWebModule",
-      "SourcePath": "web-modules/ActionLearningCoordinator",
-      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/ActionLearningCoordinator",
-      "Phrases": [
-        "Action Learning Coordinator",
-        "ActionLearningCoordinator"
-      ],
-      "Files": [
-        {
-          "Path": "ActionLearningCoordinator.Web.deps.json",
-          "Sha256": "d0425eb5378d481163aca597bb53c948f0b02498168e22ab304b547f4d399cca"
-        },
-        {
-          "Path": "ActionLearningCoordinator.Web.dll",
-          "Sha256": "ed1771da4671ee3d2799dea5b50b53f7df36a0f19533c5dec52addc3290d5605"
-        },
-        {
-          "Path": "ActionLearningCoordinator.Web.staticwebassets.endpoints.json",
-          "Sha256": "79ca3d500b78c586de184b7aefa3040e9152f9393d457bf8d7cfee6046d2b675"
-        },
-        {
-          "Path": "Agents/action-learning-coordinator.agent.json",
-          "Sha256": "20bf1c68e193d8c69054427a8238b397e84f1bfa186850373dc91eeb06dbcd13"
-        },
-        {
-          "Path": "Agents/action-learning.agent.json",
-          "Sha256": "d99927c4bce19994b5d6c9c259fda79616d59fa8f4854ad47eaab7fc476bd68c"
-        },
-        {
-          "Path": "Agents/ontology-foundry-coordinator.agent.json",
-          "Sha256": "16472492be11d2e437b7dfc81143170974c4989aa94b253c8ad47972936cb59a"
-        },
-        {
-          "Path": "BasicUtilities.dll",
-          "Sha256": "3c4d742c1fad44ce8f0eece383baca07b6990776c00b4552c8cdb91dcaae2ad4"
-        },
-        {
-          "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "086aa99ae97c58efcc4b4f4cc12e9671dcd32671cf2db1ffa4334eacd4eb0b33"
-        },
-        {
-          "Path": "Microsoft.Data.SqlClient.dll",
-          "Sha256": "5a34e2fa3479b1508dbc20fbeb2c9172f18c3868bdb147a185213a446645b400"
-        },
-        {
-          "Path": "Microsoft.Identity.Client.dll",
-          "Sha256": "10d59df4170053ea9597e3c20adc9607ad17318ad5d8747eda3d930a5a4b463a"
-        },
-        {
-          "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/index.pts",
-          "Sha256": "b13efba8b71e66c00f25a9ceb5996d82f08f14405e343af7b1dd0138c44b4ec3"
-        },
-        {
-          "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/index.pts.md",
-          "Sha256": "73c9843bb0fd119a919edeb676eb9971ea5edd16ab67fdae75f7830d3f501cfe"
-        },
-        {
-          "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/Prompts/ActionLearningCoordinator.md",
-          "Sha256": "f10ea0ea63b00b50578123859bf2fcff0ca2fa6082cf23f8b6df8ed3d2f112c1"
-        },
-        {
-          "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/Prompts/OntologyFoundryCoordinator.md",
-          "Sha256": "37d461c061f080c4625d44a5972234e74b3c824b2af288570e6dce049176d23f"
-        },
-        {
-          "Path": "ProjectArtifacts/Skills/ActionLearning/index.pts",
-          "Sha256": "c7789406c62591b588989de35178ff28616fef9c6f21712e342086641910d0da"
-        },
-        {
-          "Path": "ProjectArtifacts/Skills/ActionLearning/index.pts.md",
-          "Sha256": "e843d267becdd3a9aaaddb7d9322d0fdd1857a54b02b029f1bbd9cd2670e6423"
-        },
-        {
-          "Path": "ProjectArtifacts/Skills/ActionLearning/PromptActions.pts",
-          "Sha256": "058c5e7aadab414bac9d9aae0474f47ef4e1f1fc4e65b30f5f6fe0d63593993b"
-        },
-        {
-          "Path": "ProjectArtifacts/Skills/ActionLearning/PromptActions.pts.md",
-          "Sha256": "1da5029387b2bcf3f04a64f9ac96f0dcd9def43ae9bee84f555b4856b502bb2f"
-        },
-        {
-          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/ActionCandidateGroundingAndExpansion.prompt.md",
-          "Sha256": "d22fb054c0d07e06ff07e6024a9f10212518a6f1dc877014dea93ebb91a092ef"
-        },
-        {
-          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/ActionCandidateGroundingAndExpansion.prompt.md.md",
-          "Sha256": "ed03440ac4e62291989aa7c28d67fe4172087242fdb37b022801fdb9c95ba785"
-        },
-        {
-          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/ActionLearning.md",
-          "Sha256": "a39010bfe64676046cc7d91dff54695c8148c4007b8e553a4065d6ed97e156bf"
-        },
-        {
-          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/BuildActionCandidateMetricsMatrix.prompt.md",
-          "Sha256": "3ed6f507068aa5880d7a652a27a8f8f5e5c9cf4d7399f972ca6b9830cc83c161"
-        },
-        {
-          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/BuildActionCandidatePortfolio.prompt.md",
-          "Sha256": "3647f159d9fbc2188700defe24d8336e93abde5627bb922d5c8139d8f5705f5c"
-        },
-        {
-          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/DiscoverActionCandidatesWithinSession.prompt.md",
-          "Sha256": "874a56b8d139f4939d05c4f174bfad17bb85e5b1b43f256ad772c19b57d901dd"
-        },
-        {
-          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/EvaluateActionCandidateArtifact.prompt.md",
-          "Sha256": "994999d9c9d6e073ffd37e1016bb1163c439039cbf22ecf091371d09eaa6d018"
-        },
-        {
-          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/RefreshActionLearningSessionCandidates.prompt.md",
-          "Sha256": "bac8809ce4f99c770fff5cd5624325bbbd628b21b535eb9a626593e545e17f4e"
-        },
-        {
-          "Path": "ProjectArtifacts/Skills/ActionLearning/Prompts/RunActionLearningCalibration.prompt.md",
-          "Sha256": "9fe57142539df2294158ae17ff200e3248aba8843eb420cfbd815d9585c939a7"
-        },
-        {
-          "Path": "ProjectArtifacts/Skills/ActionLearning/SKILL.md",
-          "Sha256": "b3b856d1f0b258c6af133580d33f4cf7500aa9d3673682df122e88cc0a526862"
-        },
-        {
-          "Path": "web-module.json",
-          "Sha256": "5f14f1d2c162f098535cbb4fd7095d37855af15bdd306541e90487b166fecc2b"
-        },
-        {
-          "Path": "web.config",
-          "Sha256": "755cc3963accdaa081cdc7ee1485cd81708a6345c855fee8d648dd463106e96c"
-        },
-        {
-          "Path": "wwwroot/dashboard.css",
-          "Sha256": "480b22a974380575c9c7499d37286bb5ac8af57e18915bf526eb687e3fd28794"
-        },
-        {
-          "Path": "wwwroot/dashboard.css.br",
-          "Sha256": "a5b6940f1852e77861514d1824bee946855e538b08b7d8d1934e2642cd3efb0d"
-        },
-        {
-          "Path": "wwwroot/dashboard.css.gz",
-          "Sha256": "828dd9b3ae3b9f58090e280cf8da332ee4d67eed8f42fdb5863bbe86f1a8b9db"
-        },
-        {
-          "Path": "wwwroot/dashboard.html",
-          "Sha256": "51b315a73bd562ca8465f4dc41ceae05125ea688a77ef2ee98e03ada6b56df08"
-        },
-        {
-          "Path": "wwwroot/dashboard.html.br",
-          "Sha256": "0592fa6dd8042d57d3a1f567284ce766569c7002c53ece2dd090860226b1848c"
-        },
-        {
-          "Path": "wwwroot/dashboard.html.gz",
-          "Sha256": "ac0a050a4025892c787c6e804f1b8aff58ac6d5ec6ae24bd5c0414382bc1c646"
-        },
-        {
-          "Path": "wwwroot/dashboard.js",
-          "Sha256": "9a9b110f203381f94aff3ba68c18fde04106a0455d298d483883f06f4592522d"
-        },
-        {
-          "Path": "wwwroot/dashboard.js.br",
-          "Sha256": "85a5d4d577dacdc5714846e12ba541084204deec548f8728f5aa87d042d06069"
-        },
-        {
-          "Path": "wwwroot/dashboard.js.gz",
-          "Sha256": "59374928f2b24aadbf2dfd9d289e829cbbe3e983fd51fa146b18699144b1f7a9"
-        }
-      ],
-      "ProjectArtifacts": [
-        {
-          "ProjectName": "Skills/ActionLearningCoordinator",
-          "SourcePath": "ProjectArtifacts/Skills/ActionLearningCoordinator/"
-        },
-        {
-          "ProjectName": "Skills/ActionLearning",
-          "SourcePath": "ProjectArtifacts/Skills/ActionLearning/"
-        }
-      ],
       "Dependencies": [],
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
