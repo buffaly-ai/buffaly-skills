@@ -54,16 +54,16 @@
 
 	function mountWorkspace(context, summary) {
 		const root = createElement("span", "bws-root");
-		const trigger = createElement("button", "bws-chip", "Workspace: " + summary.WorkspaceName);
+		const trigger = createElement("button", "bws-chip", "Workspace: " + summary.workspaceName);
 		trigger.type = "button";
 		trigger.setAttribute("aria-expanded", "false");
 		trigger.setAttribute("aria-haspopup", "dialog");
 		const drawer = createElement("section", "bws-drawer");
 		drawer.hidden = true;
-		drawer.setAttribute("aria-label", summary.WorkspaceName + " workspace");
+		drawer.setAttribute("aria-label", summary.workspaceName + " workspace");
 		const heading = createElement("div", "bws-heading");
-		heading.appendChild(createElement("strong", "bws-title", summary.WorkspaceName));
-		heading.appendChild(createElement("small", "bws-subtitle", summary.Sessions.length + " linked sessions"));
+		heading.appendChild(createElement("strong", "bws-title", summary.workspaceName));
+		heading.appendChild(createElement("small", "bws-subtitle", summary.sessions.length + " linked sessions"));
 		const close = createElement("button", "bws-close", "×");
 		close.type = "button";
 		close.setAttribute("aria-label", "Close workspace drawer");
@@ -71,8 +71,8 @@
 		drawer.appendChild(heading);
 
 		const tabs = createElement("div", "bws-tabs");
-		const filesTab = createElement("button", "bws-tab is-active", "Shared files " + summary.Artifacts.length);
-		const sessionsTab = createElement("button", "bws-tab", "Sessions " + summary.Sessions.length);
+		const filesTab = createElement("button", "bws-tab is-active", "Shared files " + summary.artifacts.length);
+		const sessionsTab = createElement("button", "bws-tab", "Sessions " + summary.sessions.length);
 		filesTab.type = sessionsTab.type = "button";
 		tabs.append(filesTab, sessionsTab);
 		drawer.appendChild(tabs);
@@ -80,19 +80,19 @@
 		const sessions = createElement("div", "bws-list");
 		sessions.hidden = true;
 
-		summary.Artifacts.forEach(function (artifact) {
-			files.appendChild(renderItem(artifact.Kind === "Directory" ? "📁" : "📄", artifact.RelativePath, artifact.Kind === "Directory" ? "Shared folder" : artifact.Length + " bytes", "Open", function () {
+		summary.artifacts.forEach(function (artifact) {
+			files.appendChild(renderItem(artifact.kind === "Directory" ? "📁" : "📄", artifact.relativePath, artifact.kind === "Directory" ? "Shared folder" : artifact.length + " bytes", "Open", function () {
 				window.dispatchEvent(new CustomEvent("buffaly:workspace-artifact-open", { detail: artifact }));
 			}));
 		});
-		if (summary.Artifacts.length === 0) {
+		if (summary.artifacts.length === 0) {
 			files.appendChild(createElement("div", "bws-empty", "No shared artifacts yet."));
 		}
 
-		summary.Sessions.forEach(function (session) {
-			sessions.appendChild(renderItem("💬", session.SessionKey, session.IsCurrent ? "Current session" : "Linked session", session.IsCurrent ? "Current" : "Open", function () {
-				if (!session.IsCurrent) {
-					window.location.href = "/buffaly-agent-next.html?sessionKey=" + encodeURIComponent(session.SessionKey);
+		summary.sessions.forEach(function (session) {
+			sessions.appendChild(renderItem("💬", session.sessionKey, session.isCurrent ? "Current session" : "Linked session", session.isCurrent ? "Current" : "Open", function () {
+				if (!session.isCurrent) {
+					window.location.href = "/buffaly-agent-next.html?sessionKey=" + encodeURIComponent(session.sessionKey);
 				}
 			}));
 		});
@@ -131,7 +131,7 @@
 			return { dispose: function () { abort.abort(); } };
 		}
 		loadSummary(context.sessionKey, abort.signal).then(function (summary) {
-			if (!summary.IsAttached || abort.signal.aborted) {
+			if (!summary.isAttached || abort.signal.aborted) {
 				context.slotElement.replaceChildren();
 				return;
 			}
