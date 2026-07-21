@@ -1,9 +1,11 @@
 reference Buffaly.Agent.Tools.SemanticDatabase Buffaly.Agent.Tools.SemanticDatabase;
 import Buffaly.Agent.Tools.SemanticDatabase Buffaly.Agent.Tools.SemanticDatabase.SemanticDatabase SemanticDatabase;
+import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.SessionTools SessionTools;
+import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.QueuedInputResult QueuedInputResult;
 
 prototype DispatchAgentActionRoot : OpsAction
 {
-	Description = @"Restricted action root for dry-run hierarchical dispatch planning. It intentionally contains no queue, send, session creation, generic invocation, or memory mutation actions.";
+	Description = @"Restricted action root for hierarchical dispatch planning and ontology-guarded delivery. It intentionally contains no generic send, session creation, generic invocation, or memory mutation actions.";
 }
 
 prototype DispatchAgentEntityRoot : SemanticEntityBase
@@ -14,7 +16,7 @@ prototype DispatchAgentEntityRoot : SemanticEntityBase
 
 prototype DispatchTreeSkillAction : DispatchAgentActionRoot
 {
-	Description = @"Base action type for read-only session-local dispatch tree operations.";
+	Description = @"Base action type for session-local dispatch tree planning and guarded delivery.";
 }
 
 [SemanticEntity("dispatch tree skill")]
@@ -63,7 +65,7 @@ prototype ToGetDispatchNode : DispatchTreeSkillAction, DispatchAgentActionRoot
 	{
 		string exactPrototypeName = prototypeName.Trim();
 		if (StringUtil.IsEmpty(exactPrototypeName))
-			throw new ArgumentException("prototypeName is required.", "prototypeName");
+			throw new InvalidOperationException("prototypeName is required.");
 
 		Prototype root = _runtime.GetPrototype("DispatchMemoryRoot");
 		if (root == null)
@@ -71,9 +73,42 @@ prototype ToGetDispatchNode : DispatchTreeSkillAction, DispatchAgentActionRoot
 
 		Prototype candidatePrototype = FindDispatchNode(root, exactPrototypeName);
 		if (candidatePrototype != null)
-			return candidatePrototype.ShallowClone();
+			return candidatePrototype;
 
 		throw new InvalidOperationException("Dispatch node was not found beneath DispatchMemoryRoot: " + exactPrototypeName);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to dispatch a planned task")]
+[SemanticProgram.InfinitivePhrase("to queue a task through the dispatch tree")]
+prototype ToDispatchPlannedTask : DispatchTreeSkillAction, DispatchAgentActionRoot
+{
+	Description = @"selectedLeafPrototypeName - exact reusable leaf selected by ToPlanDispatchRoute. destinationSessionKey - exact SessionKey read from that leaf. instruction - complete task to queue. The action fails closed unless the leaf exists beneath DispatchMemoryRoot and its assigned SessionKey exactly matches destinationSessionKey.";
+
+	function Execute(string selectedLeafPrototypeName, string destinationSessionKey, string instruction) : QueuedInputResult
+	{
+		string exactLeafName = selectedLeafPrototypeName.Trim();
+		string exactDestination = destinationSessionKey.Trim();
+		if (StringUtil.IsEmpty(exactLeafName))
+			throw new InvalidOperationException("selectedLeafPrototypeName is required.");
+		if (StringUtil.IsEmpty(exactDestination))
+			throw new InvalidOperationException("destinationSessionKey is required.");
+		if (StringUtil.IsEmpty(instruction.Trim()))
+			throw new InvalidOperationException("instruction is required.");
+
+		Prototype root = _runtime.GetPrototype("DispatchMemoryRoot");
+		if (root == null)
+			throw new InvalidOperationException("DispatchMemoryRoot was not found in the current session runtime.");
+
+		Prototype selectedLeaf = FindDispatchNode(root, exactLeafName);
+		if (selectedLeaf == null)
+			throw new InvalidOperationException("Selected dispatch leaf was not found beneath DispatchMemoryRoot: " + exactLeafName);
+
+		string assignedSessionKey = selectedLeaf.SessionKey;
+		if (StringUtil.IsEmpty(assignedSessionKey) || assignedSessionKey != exactDestination)
+			throw new InvalidOperationException("Destination session key does not exactly match the selected dispatch leaf.");
+
+		return SessionTools.SendToSessionTool(assignedSessionKey, instruction);
 	}
 }
 
