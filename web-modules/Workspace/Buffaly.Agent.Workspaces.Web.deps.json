@@ -8,19 +8,10 @@
     ".NETCoreApp,Version=v9.0": {
       "Buffaly.Agent.Workspaces.Web/1.0.0": {
         "dependencies": {
-          "Buffaly.Agent.Workspaces": "1.0.0",
           "Buffaly.Agent.Web.Common": "1.0.0.0"
         },
         "runtime": {
           "Buffaly.Agent.Workspaces.Web.dll": {}
-        }
-      },
-      "Buffaly.Agent.Workspaces/1.0.0": {
-        "runtime": {
-          "Buffaly.Agent.Workspaces.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
-          }
         }
       },
       "Buffaly.Agent.Web.Common/1.0.0.0": {
@@ -59,11 +50,6 @@
   },
   "libraries": {
     "Buffaly.Agent.Workspaces.Web/1.0.0": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "Buffaly.Agent.Workspaces/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
