@@ -2518,6 +2518,35 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": []
+    },
+    {
+      "SkillName": "DispatchTree",
+      "Title": "Dispatch Tree",
+      "Description": "Buffaly skill package for Dispatch Tree.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Dispatch Tree",
+        "DispatchTree"
+      ],
+      "Path": "skills/DispatchTree",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "e3957e55c96551cf2843a33e96b882237fbcccb1393d7f3fbe5c6997a6085013"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "62d134b9e76f449fc955c810f8d9b3524a2a93173fce3167e45eb248e31c9830"
+        },
+        {
+          "Path": "Prompts/PlanDispatchRoute.prompt.md",
+          "Sha256": "35756cc9e29f887cc6beb5c1cb779d85883579be98391f8699b2d0debf80ae65"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
     }
   ]
 }

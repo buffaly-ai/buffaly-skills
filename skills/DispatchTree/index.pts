@@ -1,0 +1,72 @@
+reference Buffaly.Agent.Tools.SemanticDatabase Buffaly.Agent.Tools.SemanticDatabase;
+import Buffaly.Agent.Tools.SemanticDatabase Buffaly.Agent.Tools.SemanticDatabase.SemanticDatabase SemanticDatabase;
+
+prototype DispatchAgentActionRoot : OpsAction
+{
+	Description = @"Restricted action root for dry-run hierarchical dispatch planning. It intentionally contains no queue, send, session creation, generic invocation, or memory mutation actions.";
+}
+
+prototype DispatchAgentEntityRoot : SemanticEntityBase
+{
+	EntityName = "dispatch agent local ontology root";
+	Description = @"Entity root for one dispatch agent's session-local hidden-context routing tree.";
+}
+
+prototype DispatchTreeSkillAction : DispatchAgentActionRoot
+{
+	Description = @"Base action type for read-only session-local dispatch tree operations.";
+}
+
+[SemanticEntity("dispatch tree skill")]
+prototype DispatchTreeSkill : SkillEntity
+{
+	Description = @"Read-only hierarchical routing over a dispatcher's session-local semantic memory.";
+	ActionRoot = DispatchTreeSkillAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to read the local dispatch tree")]
+prototype ToGetDispatchTree : DispatchTreeSkillAction
+{
+	Description = @"Returns DispatchMemoryRoot from the current session runtime. This action never writes memory, creates a session, queues work, or sends an instruction.";
+
+	function Execute() : Prototype
+	{
+		Prototype root = _runtime.GetPrototype("DispatchMemoryRoot");
+		if (root == null)
+			throw new InvalidOperationException("DispatchMemoryRoot was not found in the current session runtime. Restore or seed the reviewed session-local ontology before routing.");
+		return root;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to search the local dispatch tree")]
+prototype ToSearchDispatchMemories : DispatchTreeSkillAction
+{
+	Description = @"Searches only the current session's scoped Dispatch Memory semantic tags below DispatchMemoryRoot. This is a candidate prefilter; the route planner must verify the result against the tree and leaf examples.";
+
+	function Execute(string query, int maxResults = 10) : Collection
+	{
+		string sessionKey = _opsAgent.GetSessionKeyOrEmpty();
+		if (StringUtil.IsEmpty(sessionKey))
+			throw new InvalidOperationException("ToSearchDispatchMemories requires an active session key.");
+		return SemanticDatabase.GetScopedCandidatePrototypesBySemanticTagAndCategorySearch(
+			query,
+			"Dispatch Memory",
+			_runtime,
+			"session:" + sessionKey,
+			"DispatchMemoryRoot",
+			"",
+			0.25,
+			maxResults);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to dry run a hierarchical dispatch route")]
+[SemanticProgram.InfinitivePhrase("to plan a dispatch route without sending")]
+prototype ToPlanDispatchRoute : PromptAction, DispatchTreeSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	Description = @"Plans one route against the current session-local dispatch tree. It is strictly read-only and must return a dry-run decision without queueing, sending, creating sessions, or mutating memory.";
+	PromptPath = @"Skills/DispatchTree/Prompts/PlanDispatchRoute.prompt.md";
+}
