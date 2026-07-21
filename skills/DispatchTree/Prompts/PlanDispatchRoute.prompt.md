@@ -27,8 +27,8 @@ Return a concise routing receipt with these fields:
 - `Mode: DryRun`
 - `Path:` root-to-leaf or root-to-proposed-placement path
 - `Decision:` one value above
-- `ExistingLeaf:` prototype name or `none`
-- `DestinationSessionKey:` existing leaf destination for `Reuse`; otherwise `none`
+- `ExistingLeaf:` exact prototype name or `none`
+- `DestinationSessionKey:` for `Reuse`, copy the selected leaf's exact, non-empty `SessionKey` property value verbatim; otherwise `none`
 - `ProposedMutation:` `none` for `Reuse`/`NeedsReview`, otherwise the exact new node placement and shared context
 - `Rationale:` one short evidence-based paragraph using the saved examples
 - `SideEffects: none`
@@ -41,3 +41,6 @@ Return a concise routing receipt with these fields:
 - Do not update Plan or Scratch as routing memory.
 - Do not treat semantic similarity as the final decision.
 - Do not claim a mutation occurred; structural decisions are proposals only.
+- Never derive `DestinationSessionKey` from `ExistingLeaf`, `EntityName`, a display label, or the prototype name. These are separate identities.
+- For `Reuse`, if the selected leaf has no assigned, non-empty `SessionKey`, return `NeedsReview` with `DestinationSessionKey: none`; do not invent or infer a session key.
+- Before returning `Reuse`, verify that `ExistingLeaf` equals the selected prototype name and `DestinationSessionKey` exactly equals that prototype's `SessionKey` property, including spaces and casing.

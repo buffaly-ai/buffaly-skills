@@ -10,6 +10,7 @@ Provides the restricted, read-only action surface for the Dispatch agent staging
 - `ToGetDispatchTree` requires the current runtime to contain `DispatchMemoryRoot` and returns its complete nested hierarchy through the project's canonical `GetDescendantsAsDistance` formatter.
 - `ToSearchDispatchMemories` searches only `Dispatch Memory` semantic tags in `session:<currentSessionKey>` beneath `DispatchMemoryRoot`.
 - `ToPlanDispatchRoute` is a read-only PromptAction and must call both tree read and scoped search before deciding.
+- A `Reuse` receipt keeps node identity and destination identity separate: `ExistingLeaf` is the exact prototype name, while `DestinationSessionKey` is copied verbatim from that leaf's assigned `SessionKey`. A missing key fails closed as `NeedsReview`.
 - This staged version has no queue, send, session-creation, generic invocation, or NLMemory mutation action.
 
 ## Design Decision
