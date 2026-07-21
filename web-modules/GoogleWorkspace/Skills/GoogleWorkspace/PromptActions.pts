@@ -6,7 +6,7 @@ prototype ToCreateFormattedGoogleDocFromMarkdownSkill : PromptAction
 {
 	IsPromptAction = true;
 	SkillKind = "prompt";
-	SkillVersion = "1.0.0";
+	SkillVersion = "1.1.0";
 	PromptPath = @"Skills/GoogleWorkspace/Prompts/CreateFormattedGoogleDocFromMarkdown.prompt.md";
-	Description = @"Loads the trusted workflow for converting markdown into a clean Google Doc with real heading styles, deterministic ranges, and visual verification.";
+	Description = @"Loads the trusted workflow for converting markdown into a clean Google Doc with normalized body formatting, exact UTF-16 heading ranges, and authenticated visual verification.";
 }
