@@ -2,8 +2,8 @@
   "Module": {
     "Enabled": true,
     "Name": "ActionLearningCoordinator",
-    "DisplayName": "Action Learning Coordinator",
-    "Description": "Bind to an Action Learning Coordinator agent and inspect its session-owned work ledger through live ProtoScript methods.",
+    "DisplayName": "Session Work Coordinator",
+    "Description": "Bind to specialized session-work coordinators and inspect their source portfolios and workspaces through live ProtoScript methods.",
     "AssemblyPath": "ActionLearningCoordinator/ActionLearningCoordinator.Web.dll",
     "TypeName": "ActionLearningCoordinator.Web.ActionLearningCoordinatorModule",
     "LoadOrder": 860,
@@ -11,8 +11,14 @@
       {
         "Name": "action-learning-coordinator",
         "DisplayName": "Action Learning Coordinator",
-        "Path": "/web-modules/ActionLearningCoordinator/dashboard",
+        "Path": "/web-modules/ActionLearningCoordinator/dashboard?workspace=action-learning",
         "Description": "Bind to a coordinator agent and inspect its ProtoScript identity and ledger."
+      },
+      {
+        "Name": "ontology-foundry-coordinator",
+        "DisplayName": "Ontology Foundry Coordinator",
+        "Path": "/web-modules/ActionLearningCoordinator/dashboard?workspace=ontology-foundry",
+        "Description": "Inspect Ontology Foundry source attachments and source-owned EvidenceGraphs through the shared coordinator workspace."
       }
     ],
     "ProjectArtifacts": [

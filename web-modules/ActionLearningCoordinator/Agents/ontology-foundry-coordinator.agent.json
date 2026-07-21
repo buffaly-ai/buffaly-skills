@@ -1,0 +1,16 @@
+{
+  "AgentName": "ontology-foundry-coordinator",
+  "DisplayName": "Ontology Foundry Coordinator",
+  "Aliases": ["ontology foundry coordinator", "foundry workspace"],
+  "PromptFile": "Skills/ActionLearningCoordinator/Prompts/OntologyFoundryCoordinator.md",
+  "RootActionPrototypeName": "SessionWorkCoordinatorActionRoot",
+  "RootEntityPrototypeName": "OntologyFoundryCoordinatorEntityRoot",
+  "Provider": "openai",
+  "DefaultModelName": "gpt-5.6-sol",
+  "DefaultReasoningLevel": "medium",
+  "UiPage": "/web-modules/ActionLearningCoordinator/dashboard?workspace=ontology-foundry",
+  "IsReadOnly": false,
+  "IsHidden": false,
+  "CanChangeModel": true,
+  "CompanionAgents": []
+}

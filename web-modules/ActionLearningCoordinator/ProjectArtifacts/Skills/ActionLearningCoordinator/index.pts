@@ -1,6 +1,7 @@
 reference Buffaly.Agent.Host Buffaly.Agent.Host;
 import Buffaly.Agent.Host Buffaly.Agent.Host.BuffalyAgentService BuffalyAgentService;
 import Buffaly.Agent.Host Buffaly.Agent.Host.CreateAgentInitializationContract CreateAgentInitializationContract;
+import Buffaly.Agent.Host Buffaly.Agent.Host.SessionManagement.Sessions Sessions;
 
 [SemanticEntity("session work coordinator action root")]
 prototype SessionWorkCoordinatorActionRoot : OpsAction
@@ -26,6 +27,21 @@ prototype SessionWorkCoordinatorSkillAction : SessionWorkCoordinatorActionRoot
 	Description = @"Base action for common session-work coordinator operations.";
 }
 
+prototype SessionWorkWorkspaceDefinitionProvider : SessionWorkCoordinatorActionRoot
+{
+	Description = @"Base action type for a coordinator specialization's bounded workspace definition.";
+}
+
+prototype SessionWorkPortfolioProvider : SessionWorkCoordinatorActionRoot
+{
+	Description = @"Base action type for a coordinator specialization's bounded portfolio projection.";
+}
+
+prototype SessionWorkItemWorkspaceProvider : SessionWorkCoordinatorActionRoot
+{
+	Description = @"Base action type for one source session's bounded workspace projection.";
+}
+
 [SemanticEntity("action learning coordinator action root")]
 prototype ActionLearningCoordinatorActionRoot : SessionWorkCoordinatorActionRoot
 {
@@ -44,12 +60,40 @@ prototype ActionLearningCoordinatorSkill : SessionWorkCoordinatorSkill
 	ActionRoot = ActionLearningCoordinatorActionRoot;
 }
 
+[SemanticEntity("ontology foundry coordinator entity root")]
+prototype OntologyFoundryCoordinatorEntityRoot : SemanticEntityBase
+{
+	Description = @"Restricted entity root for the Ontology Foundry coordinator workspace.";
+}
+
+[SemanticEntity("ontology foundry coordinator action root")]
+prototype OntologyFoundryCoordinatorActionRoot : SessionWorkCoordinatorActionRoot
+{
+	Description = @"Restricted action root for the Ontology Foundry coordinator workspace.";
+}
+
+prototype OntologyFoundryCoordinatorSkillAction : OntologyFoundryCoordinatorActionRoot
+{
+	Description = @"Base action for Ontology Foundry coordinator workspace operations.";
+}
+
+[SemanticEntity("ontology foundry coordinator skill")]
+prototype OntologyFoundryCoordinatorSkill : SessionWorkCoordinatorSkill
+{
+	Description = @"Projects source-owned EvidenceGraphs into the common coordinator workspace.";
+	ActionRoot = OntologyFoundryCoordinatorActionRoot;
+}
+
 [SemanticProgram.InfinitivePhrase("to get session work coordinator information")]
 prototype ToGetSessionWorkCoordinatorInfo : SessionWorkCoordinatorSkillAction
 {
-	function Execute() : string
+	function Execute(string specialization = "action-learning") : string
 	{
-		return @"{""SchemaVersion"":1,""CoordinatorSkill"":""ActionLearningCoordinatorSkill"",""BaseSkill"":""SessionWorkCoordinatorSkill"",""WorkerSkill"":""ActionLearningSkill"",""SessionKey"":""" + _opsAgent.GetSessionKeyOrEmpty() + @""",""AgentName"":""action-learning-coordinator"",""LedgerPath"":""artifacts/session-work/ledger.json""}";
+		if (specialization == @"ontology-foundry")
+		{
+			return @"{""SchemaVersion"":2,""WorkspaceId"":""ontology-foundry"",""DisplayName"":""Ontology Foundry"",""CoordinatorSkill"":""OntologyFoundryCoordinatorSkill"",""BaseSkill"":""SessionWorkCoordinatorSkill"",""WorkerSkill"":""OntologyFoundrySkill"",""SessionKey"":""" + _opsAgent.GetSessionKeyOrEmpty() + @""",""AgentName"":""ontology-foundry-coordinator"",""LedgerPath"":""artifacts/session-work/ledger.json"",""WorkspaceDefinitionAction"":""ToGetOntologyFoundryWorkspaceDefinition"",""PortfolioAction"":""ToGetOntologyFoundryPortfolio"",""ItemWorkspaceAction"":""ToGetOntologyFoundrySourceWorkspace""}";
+		}
+		return @"{""SchemaVersion"":2,""WorkspaceId"":""action-learning"",""DisplayName"":""Action Learning"",""CoordinatorSkill"":""ActionLearningCoordinatorSkill"",""BaseSkill"":""SessionWorkCoordinatorSkill"",""WorkerSkill"":""ActionLearningSkill"",""SessionKey"":""" + _opsAgent.GetSessionKeyOrEmpty() + @""",""AgentName"":""action-learning-coordinator"",""LedgerPath"":""artifacts/session-work/ledger.json"",""WorkspaceDefinitionAction"":""ToGetActionLearningWorkspaceDefinition"",""PortfolioAction"":""ToGetActionLearningPortfolio"",""ItemWorkspaceAction"":""ToGetActionLearningSourceWorkspace""}";
 	}
 	Description = @"Returns the live coordinator identity and fixed ledger contract for the current session-owned runtime.";
 }
@@ -62,7 +106,7 @@ prototype ToGetSessionWorkLedger : SessionWorkCoordinatorSkillAction
 		string path = Path.Combine(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json");
 		if (!File.Exists(path))
 		{
-			return @"{""SchemaVersion"":1,""CoordinatorSkill"":""ActionLearningCoordinatorSkill"",""Exists"":false,""Entries"":[]}";
+			return @"{""SchemaVersion"":2,""CoordinatorSkill"":""SessionWorkCoordinatorSkill"",""Exists"":false,""Entries"":[]}";
 		}
 		return File.ReadAllText(path);
 	}
@@ -79,7 +123,7 @@ prototype ToInitializeSessionWorkLedger : SessionWorkCoordinatorSkillAction
 		{
 			return File.ReadAllText(path);
 		}
-		string ledger = @"{""SchemaVersion"":1,""CoordinatorSkill"":""ActionLearningCoordinatorSkill"",""Exists"":true,""Entries"":[]}";
+		string ledger = @"{""SchemaVersion"":2,""CoordinatorSkill"":""SessionWorkCoordinatorSkill"",""Exists"":true,""Entries"":[]}";
 		FileSystemTools.ReplaceTextFile(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json", ledger);
 		return ledger;
 	}
@@ -92,7 +136,7 @@ prototype ToAddSessionWorkEntry : SessionWorkCoordinatorSkillAction
 	function Execute(string sourceSessionKey) : string
 	{
 		string path = Path.Combine(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json");
-		JsonObject ledger = new JsonObject(@"{""SchemaVersion"":1,""CoordinatorSkill"":""ActionLearningCoordinatorSkill"",""Exists"":true,""Entries"":[]}");
+		JsonObject ledger = new JsonObject(@"{""SchemaVersion"":2,""CoordinatorSkill"":""SessionWorkCoordinatorSkill"",""Exists"":true,""Entries"":[]}");
 		if (File.Exists(path))
 		{
 			ledger = new JsonObject(File.ReadAllText(path));
@@ -134,7 +178,7 @@ prototype ToRemoveSessionWorkEntry : SessionWorkCoordinatorSkillAction
 		string path = Path.Combine(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json");
 		if (!File.Exists(path))
 		{
-			JsonObject absentLedger = new JsonObject(@"{""SchemaVersion"":1,""CoordinatorSkill"":""ActionLearningCoordinatorSkill"",""Exists"":false,""Entries"":[]}");
+			JsonObject absentLedger = new JsonObject(@"{""SchemaVersion"":2,""CoordinatorSkill"":""SessionWorkCoordinatorSkill"",""Exists"":false,""Entries"":[]}");
 			JsonObject absent = new JsonObject();
 			absent[@"Outcome"] = @"NotFound";
 			absent[@"SourceSessionKey"] = sourceSessionKey;
@@ -176,7 +220,7 @@ prototype ToAttachActionLearningWorker : ActionLearningCoordinatorSkillAction
 		initialization.ParentSessionKey = sourceSessionKey;
 		BuffalyAgentService.CreateAgentFromProject(workerSessionKey, @"OpsAgent", @"action-learning", initialization);
 		string path = Path.Combine(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json");
-		JsonObject ledger = new JsonObject(@"{""SchemaVersion"":1,""CoordinatorSkill"":""ActionLearningCoordinatorSkill"",""Exists"":true,""Entries"":[]}");
+		JsonObject ledger = new JsonObject(@"{""SchemaVersion"":2,""CoordinatorSkill"":""SessionWorkCoordinatorSkill"",""Exists"":true,""Entries"":[]}");
 		if (File.Exists(path))
 		{
 			ledger = new JsonObject(File.ReadAllText(path));
@@ -234,4 +278,115 @@ prototype ToListActionLearningCoordinatorActions : ActionLearningCoordinatorSkil
 		return @"{""CommonActions"":[""ToGetSessionWorkCoordinatorInfo"",""ToGetSessionWorkLedger"",""ToInitializeSessionWorkLedger"",""ToAddSessionWorkEntry"",""ToRemoveSessionWorkEntry""],""SpecializedActions"":[""ToAttachActionLearningWorker"",""ToListActionLearningCoordinatorActions""],""WorkerActions"":[""ToRefreshActionLearningSessionCandidatesSkill"",""ToDiscoverActionCandidatesWithinSessionSkill"",""ToBuildActionCandidateMetricsMatrixSkill"",""ToGroundAndExpandActionCandidateSkill"",""ToEvaluateActionLearningArtifact""]}";
 	}
 	Description = @"Returns the exact first-version coordinator and worker action names rendered by the dashboard.";
+}
+
+[SemanticProgram.InfinitivePhrase("to get the action learning workspace definition")]
+prototype ToGetActionLearningWorkspaceDefinition : SessionWorkWorkspaceDefinitionProvider, ActionLearningCoordinatorSkillAction
+{
+	function Execute() : string
+	{
+		return @"{""SchemaVersion"":1,""WorkspaceId"":""action-learning"",""DisplayName"":""Action Learning"",""Description"":""Evidence-bound reusable action candidates by source session."",""WorkerAgentName"":""action-learning"",""WorkerSessionSuffix"":""-action-learning"",""ArtifactPath"":""artifacts/action-learning/action-candidates.md"",""AttachAction"":""ToAttachActionLearningWorker"",""PreviewTitle"":""Discovered reusable actions"",""PreviewDescription"":""Bounded candidate preview from the living source artifact.""}";
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get the action learning coordinator portfolio")]
+prototype ToGetActionLearningPortfolio : SessionWorkPortfolioProvider, ActionLearningCoordinatorSkillAction
+{
+	function Execute() : string
+	{
+		return ToGetSessionWorkLedger.Execute();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get an action learning source workspace")]
+prototype ToGetActionLearningSourceWorkspace : SessionWorkItemWorkspaceProvider, ActionLearningCoordinatorSkillAction
+{
+	function Execute(string sourceSessionKey) : string
+	{
+		Sessions.ValidateSessionKey(sourceSessionKey);
+		string path = Path.Combine(Sessions.GetSessionsRootPath(), sourceSessionKey, @"artifacts\action-learning\action-candidates.md");
+		string markdown = @"";
+		if (File.Exists(path))
+		{
+			markdown = File.ReadAllText(path);
+		}
+		JsonObject result = new JsonObject();
+		result[@"ArtifactPath"] = @"artifacts/action-learning/action-candidates.md";
+		result[@"ArtifactTitle"] = @"Action candidates";
+		result[@"ArtifactMarkdown"] = markdown;
+		result[@"WorkerActions"] = new JsonArray(@"[""ToDiscoverActionCandidatesWithinSessionSkill"",""ToBuildActionCandidateMetricsMatrixSkill"",""ToGroundAndExpandActionCandidateSkill"",""ToEvaluateActionLearningArtifact""]");
+		return result.ToJSON();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get the ontology foundry workspace definition")]
+prototype ToGetOntologyFoundryWorkspaceDefinition : SessionWorkWorkspaceDefinitionProvider, OntologyFoundryCoordinatorSkillAction
+{
+	function Execute() : string
+	{
+		return @"{""SchemaVersion"":1,""WorkspaceId"":""ontology-foundry"",""DisplayName"":""Ontology Foundry"",""Description"":""Source-owned entity evidence, prototype resolution, and Session Entity Index proposals."",""WorkerAgentName"":""ontology-foundry"",""WorkerSessionSuffix"":""-ontology-foundry"",""ArtifactPath"":""artifacts/ontology-foundry/evidence-graph.md"",""AttachAction"":""ToAttachOntologyFoundryWorker"",""PreviewTitle"":""Entity evidence graph"",""PreviewDescription"":""Bounded evidence sections from the living source artifact.""}";
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get the ontology foundry coordinator portfolio")]
+prototype ToGetOntologyFoundryPortfolio : SessionWorkPortfolioProvider, OntologyFoundryCoordinatorSkillAction
+{
+	function Execute() : string
+	{
+		return ToGetSessionWorkLedger.Execute();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get an ontology foundry source workspace")]
+prototype ToGetOntologyFoundrySourceWorkspace : SessionWorkItemWorkspaceProvider, OntologyFoundryCoordinatorSkillAction
+{
+	function Execute(string sourceSessionKey) : string
+	{
+		Sessions.ValidateSessionKey(sourceSessionKey);
+		string path = Path.Combine(Sessions.GetSessionsRootPath(), sourceSessionKey, @"artifacts\ontology-foundry\evidence-graph.md");
+		string markdown = @"";
+		if (File.Exists(path))
+		{
+			markdown = File.ReadAllText(path);
+		}
+		JsonObject result = new JsonObject();
+		result[@"ArtifactPath"] = @"artifacts/ontology-foundry/evidence-graph.md";
+		result[@"ArtifactTitle"] = @"Evidence graph";
+		result[@"ArtifactMarkdown"] = markdown;
+		result[@"WorkerActions"] = new JsonArray(@"[]");
+		return result.ToJSON();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to attach an ontology foundry worker to a source session")]
+prototype ToAttachOntologyFoundryWorker : OntologyFoundryCoordinatorSkillAction
+{
+	function Execute(string sourceSessionKey, string workerSessionKey) : string
+	{
+		CreateAgentInitializationContract initialization = new CreateAgentInitializationContract();
+		initialization.ParentSessionKey = sourceSessionKey;
+		BuffalyAgentService.CreateAgentFromProject(workerSessionKey, @"OpsAgent", @"ontology-foundry", initialization);
+		JsonObject receipt = new JsonObject(ToAddSessionWorkEntry.Execute(sourceSessionKey));
+		JsonObject ledger = receipt.GetJsonObjectOrFail(@"Ledger", @"Session work attachment receipt Ledger is required.");
+		JsonArray entries = ledger.GetJsonArrayOrFail(@"Entries", @"Session work ledger Entries is required.");
+		foreach (JsonValue value in entries)
+		{
+			JsonObject entry = value.ToJsonObjectOrFail(@"Session work ledger entries must be objects.");
+			if (entry.GetStringOrFail(@"SourceSessionKey", @"Session work entry SourceSessionKey is required.") == sourceSessionKey)
+			{
+				entry[@"WorkerSessionKey"] = workerSessionKey;
+				entry[@"WorkerAgentName"] = @"ontology-foundry";
+				entry[@"ProcessorSkill"] = @"OntologyFoundrySkill";
+				entry[@"OperationState"] = @"Attached";
+			}
+		}
+		ledger[@"Entries"] = entries;
+		FileSystemTools.ReplaceTextFile(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json", ledger.ToJSON());
+		JsonObject attached = new JsonObject();
+		attached[@"Outcome"] = @"Attached";
+		attached[@"SourceSessionKey"] = sourceSessionKey;
+		attached[@"WorkerSessionKey"] = workerSessionKey;
+		attached[@"Ledger"] = ledger;
+		return attached.ToJSON();
+	}
 }
