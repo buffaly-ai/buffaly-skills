@@ -16111,6 +16111,137 @@
       "Prerequisites": [],
       "RequiresRestart": true,
       "RequiresPreStartInstall": true
+    },
+    {
+      "PackageId": "ActionLearningCoordinator",
+      "PackageType": "WebModule",
+      "Title": "Action Learning Coordinator",
+      "Description": "Buffaly Web Module package for Action Learning Coordinator.",
+      "Version": "0.1.0",
+      "PackageKind": "BuffalyWebModule",
+      "SourcePath": "web-modules/ActionLearningCoordinator",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/ActionLearningCoordinator",
+      "Phrases": [
+        "Action Learning Coordinator",
+        "ActionLearningCoordinator"
+      ],
+      "Files": [
+        {
+          "Path": "ActionLearningCoordinator.Web.deps.json",
+          "Sha256": "d0425eb5378d481163aca597bb53c948f0b02498168e22ab304b547f4d399cca"
+        },
+        {
+          "Path": "ActionLearningCoordinator.Web.dll",
+          "Sha256": "63caf11b162b11b13ceca0935d7c6441618c3995c2eb8561a72a757620d4e53c"
+        },
+        {
+          "Path": "ActionLearningCoordinator.Web.staticwebassets.endpoints.json",
+          "Sha256": "7232a21ce74d08f50415abfcd47457c594acdd458fa31889e073b3dccd0f5c6f"
+        },
+        {
+          "Path": "Agents/action-learning-coordinator.agent.json",
+          "Sha256": "d2ffe8ecd6d07b365c3cf037eb59bdd161afc155fa9596be238d963c29f43178"
+        },
+        {
+          "Path": "Agents/Agents/action-learning-coordinator.agent.json",
+          "Sha256": "d2ffe8ecd6d07b365c3cf037eb59bdd161afc155fa9596be238d963c29f43178"
+        },
+        {
+          "Path": "BasicUtilities.dll",
+          "Sha256": "3c4d742c1fad44ce8f0eece383baca07b6990776c00b4552c8cdb91dcaae2ad4"
+        },
+        {
+          "Path": "Buffaly.Agent.Web.Common.dll",
+          "Sha256": "7f547b13c6e039e9c4fc0a7080287120a0eee9a669548a05fdc8c79125bd6624"
+        },
+        {
+          "Path": "Microsoft.Data.SqlClient.dll",
+          "Sha256": "5a34e2fa3479b1508dbc20fbeb2c9172f18c3868bdb147a185213a446645b400"
+        },
+        {
+          "Path": "Microsoft.Identity.Client.dll",
+          "Sha256": "10d59df4170053ea9597e3c20adc9607ad17318ad5d8747eda3d930a5a4b463a"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/index.pts",
+          "Sha256": "3cf02956f14866e3279c58bde2f8962e13f1e42964531f3630f9f5630020ddbf"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/index.pts.md",
+          "Sha256": "bdd00e1e6c8c6136ce84c05375a280f0dfa541e0c25b345abd8deb347f47c21d"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/Prompts/ActionLearningCoordinator.md",
+          "Sha256": "f10ea0ea63b00b50578123859bf2fcff0ca2fa6082cf23f8b6df8ed3d2f112c1"
+        },
+        {
+          "Path": "web-module.json",
+          "Sha256": "12a016a158409eae30d8dc03243331d6c32bd77e180eac72311aa911b0cfba8f"
+        },
+        {
+          "Path": "web.config",
+          "Sha256": "755cc3963accdaa081cdc7ee1485cd81708a6345c855fee8d648dd463106e96c"
+        },
+        {
+          "Path": "wwwroot/dashboard.css",
+          "Sha256": "5d701c89b619b40c28cfc94dcc97b8e4df9ba7ed65f8f228b09e00dd0d67954d"
+        },
+        {
+          "Path": "wwwroot/dashboard.css.br",
+          "Sha256": "1c424e92137448307ef1b79f4cfdcd8fa303adb324128463ea397b7577fbd271"
+        },
+        {
+          "Path": "wwwroot/dashboard.css.gz",
+          "Sha256": "52c22f52ffddad52c5e085d9e820d43018c6a9fbe7be4abadf78f3ad164591c0"
+        },
+        {
+          "Path": "wwwroot/dashboard.html",
+          "Sha256": "8372508222edf8ad80b534ba4d50a9c24908188397cb12a05c9e902407fd5f48"
+        },
+        {
+          "Path": "wwwroot/dashboard.html.br",
+          "Sha256": "c701ddfaf6973ffa7be21af9733f4f3a74f0123074de17c8f4e29deb0d2dc407"
+        },
+        {
+          "Path": "wwwroot/dashboard.html.gz",
+          "Sha256": "0b8083d969d37a771ad087b6a31241d5b7c9735b9cfeea8d2ffa16fbc51eda37"
+        },
+        {
+          "Path": "wwwroot/dashboard.js",
+          "Sha256": "4906bc81070a076ad0b9ed58bd43b779ef9349da64e91c7be71ca58bb2321550"
+        },
+        {
+          "Path": "wwwroot/dashboard.js.br",
+          "Sha256": "ce3bb00c24a1cd2e23617214b5db94ed9527b5b94c603846047cb41c74dd77bf"
+        },
+        {
+          "Path": "wwwroot/dashboard.js.gz",
+          "Sha256": "0c83715b19696bfac651807b8c6150327938d91b7648248630f1b4ca386ade62"
+        },
+        {
+          "Path": "wwwroot/wwwroot/dashboard.css",
+          "Sha256": "5d701c89b619b40c28cfc94dcc97b8e4df9ba7ed65f8f228b09e00dd0d67954d"
+        },
+        {
+          "Path": "wwwroot/wwwroot/dashboard.html",
+          "Sha256": "8372508222edf8ad80b534ba4d50a9c24908188397cb12a05c9e902407fd5f48"
+        },
+        {
+          "Path": "wwwroot/wwwroot/dashboard.js",
+          "Sha256": "4906bc81070a076ad0b9ed58bd43b779ef9349da64e91c7be71ca58bb2321550"
+        }
+      ],
+      "ProjectArtifacts": [
+        {
+          "ProjectName": "Skills/ActionLearningCoordinator",
+          "SourcePath": "ProjectArtifacts/Skills/ActionLearningCoordinator/"
+        }
+      ],
+      "Dependencies": [],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "RequiresRestart": true,
+      "RequiresPreStartInstall": true
     }
   ]
 }

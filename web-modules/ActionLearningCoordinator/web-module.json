@@ -1,0 +1,25 @@
+{
+  "Module": {
+    "Enabled": true,
+    "Name": "ActionLearningCoordinator",
+    "DisplayName": "Action Learning Coordinator",
+    "Description": "Bind to an Action Learning Coordinator agent and inspect its session-owned work ledger through live ProtoScript methods.",
+    "AssemblyPath": "ActionLearningCoordinator/ActionLearningCoordinator.Web.dll",
+    "TypeName": "ActionLearningCoordinator.Web.ActionLearningCoordinatorModule",
+    "LoadOrder": 860,
+    "Pages": [
+      {
+        "Name": "action-learning-coordinator",
+        "DisplayName": "Action Learning Coordinator",
+        "Path": "/web-modules/ActionLearningCoordinator/dashboard",
+        "Description": "Bind to a coordinator agent and inspect its ProtoScript identity and ledger."
+      }
+    ],
+    "ProjectArtifacts": [
+      {
+        "ProjectName": "Skills/ActionLearningCoordinator",
+        "SourcePath": "ProjectArtifacts/Skills/ActionLearningCoordinator/"
+      }
+    ]
+  }
+}

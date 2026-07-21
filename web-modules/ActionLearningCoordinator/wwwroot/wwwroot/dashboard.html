@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Action Learning Coordinator</title>
+	<link rel="stylesheet" href="/web-modules/ActionLearningCoordinator/static/dashboard.css">
+</head>
+<body>
+	<main>
+		<header>
+			<div><small>PROTO​SCRIPT COORDINATOR</small><h1>Action Learning Coordinator</h1><p>Bind this page to an actual coordinator agent, then call its live ProtoScript ledger methods.</p></div>
+			<span id="connectionBadge" class="badge idle">Unbound</span>
+		</header>
+		<section class="card binding">
+			<h2>Coordinator binding</h2>
+			<div class="fields"><label>Session key<input id="sessionKey" value="Action Learning Coordinator - Staging"></label><label>Agent name<input id="agentName" value="action-learning-coordinator" readonly></label></div>
+			<div class="actions"><button id="bindButton" class="primary">Create or bind coordinator</button><button id="infoButton" disabled>Get coordinator info</button></div>
+			<pre id="infoOutput">No coordinator is bound.</pre>
+		</section>
+		<section class="card">
+			<div class="section-heading"><div><h2>Session Work ledger</h2><p>Fixed artifact: <code>artifacts/session-work/ledger.json</code></p></div><div class="actions"><button id="initializeButton" disabled>Initialize</button><button id="getLedgerButton" disabled>Get ledger</button><button id="replaceButton" disabled>Replace ledger</button></div></div>
+			<textarea id="ledgerEditor" spellcheck="false" disabled>{
+  "SchemaVersion": 1,
+  "CoordinatorSkill": "ActionLearningCoordinatorSkill",
+  "Exists": true,
+  "Entries": []
+}</textarea>
+		</section>
+		<div id="error" class="error" hidden></div>
+	</main>
+	<script src="/js/kcs/global.js"></script>
+	<script src="/js/kcs/LocalStorage2.js"></script>
+	<script src="/js/kcs/moremoo4.js?v=2"></script>
+	<script src="/js/kcs/JsonMethod.js?v=2"></script>
+	<script src="/js/kcs/validators.js?v=2"></script>
+	<script src="/js/kcs/stl.js?v=2"></script>
+	<script src="/js/buffaly-agent-service-client.js"></script>
+	<script src="/web-modules/ActionLearningCoordinator/static/dashboard.js"></script>
+</body>
+</html>

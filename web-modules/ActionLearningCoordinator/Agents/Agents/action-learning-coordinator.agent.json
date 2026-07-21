@@ -1,0 +1,15 @@
+{
+  "AgentName": "action-learning-coordinator",
+  "DisplayName": "Action Learning Coordinator",
+  "Aliases": ["action learning coordinator"],
+  "PromptFile": "Skills/ActionLearningCoordinator/Prompts/ActionLearningCoordinator.md",
+  "RootActionPrototypeName": "ActionLearningCoordinatorActionRoot",
+  "Provider": "openai",
+  "DefaultModelName": "gpt-5.6-sol",
+  "DefaultReasoningLevel": "medium",
+  "UiPage": "/web-modules/ActionLearningCoordinator/dashboard",
+  "IsReadOnly": false,
+  "IsHidden": false,
+  "CanChangeModel": true,
+  "DisableLevel2AutoAttach": true
+}
