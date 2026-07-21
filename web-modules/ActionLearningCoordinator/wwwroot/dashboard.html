@@ -19,13 +19,15 @@
 			<pre id="infoOutput">No coordinator is bound.</pre>
 		</section>
 		<section class="card">
-			<div class="section-heading"><div><h2>Session Work ledger</h2><p>Fixed artifact: <code>artifacts/session-work/ledger.json</code></p></div><div class="actions"><button id="initializeButton" disabled>Initialize</button><button id="getLedgerButton" disabled>Get ledger</button><button id="replaceButton" disabled>Replace ledger</button></div></div>
-			<textarea id="ledgerEditor" spellcheck="false" disabled>{
+			<div class="section-heading"><div><h2>Session Work ledger</h2><p>Fixed artifact: <code>artifacts/session-work/ledger.json</code></p></div><div class="actions"><button id="initializeButton" disabled>Initialize</button><button id="getLedgerButton" disabled>Get ledger</button></div></div>
+			<div class="entry-controls"><label>Source session key<input id="sourceSessionKey" placeholder="Session to track" disabled></label><div class="actions"><button id="addEntryButton" class="primary" disabled>Add session</button><button id="removeEntryButton" disabled>Remove session</button></div></div>
+			<pre id="operationOutput">No ledger operation has run.</pre>
+			<pre id="ledgerOutput">{
   "SchemaVersion": 1,
   "CoordinatorSkill": "ActionLearningCoordinatorSkill",
   "Exists": true,
   "Entries": []
-}</textarea>
+}</pre>
 		</section>
 		<div id="error" class="error" hidden></div>
 	</main>

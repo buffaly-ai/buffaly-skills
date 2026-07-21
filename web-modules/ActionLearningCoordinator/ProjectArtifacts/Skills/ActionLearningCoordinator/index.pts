@@ -17,6 +17,11 @@ prototype SessionWorkCoordinatorSkill : SkillEntity
 	ActionRoot = SessionWorkCoordinatorActionRoot;
 }
 
+prototype SessionWorkCoordinatorSkillAction : SessionWorkCoordinatorActionRoot
+{
+	Description = @"Base action for common session-work coordinator operations.";
+}
+
 [SemanticEntity("action learning coordinator action root")]
 prototype ActionLearningCoordinatorActionRoot : SessionWorkCoordinatorActionRoot
 {
@@ -25,7 +30,7 @@ prototype ActionLearningCoordinatorActionRoot : SessionWorkCoordinatorActionRoot
 
 prototype ActionLearningCoordinatorSkillAction : ActionLearningCoordinatorActionRoot
 {
-	Description = @"Base action for Action Learning coordinator identity and ledger operations.";
+	Description = @"Base action for Action Learning-specific coordinator operations.";
 }
 
 [SemanticEntity("action learning coordinator skill")]
@@ -36,7 +41,7 @@ prototype ActionLearningCoordinatorSkill : SessionWorkCoordinatorSkill
 }
 
 [SemanticProgram.InfinitivePhrase("to get session work coordinator information")]
-prototype ToGetSessionWorkCoordinatorInfo : ActionLearningCoordinatorSkillAction
+prototype ToGetSessionWorkCoordinatorInfo : SessionWorkCoordinatorSkillAction
 {
 	function Execute() : string
 	{
@@ -46,7 +51,7 @@ prototype ToGetSessionWorkCoordinatorInfo : ActionLearningCoordinatorSkillAction
 }
 
 [SemanticProgram.InfinitivePhrase("to get the session work ledger")]
-prototype ToGetSessionWorkLedger : ActionLearningCoordinatorSkillAction
+prototype ToGetSessionWorkLedger : SessionWorkCoordinatorSkillAction
 {
 	function Execute() : string
 	{
@@ -61,7 +66,7 @@ prototype ToGetSessionWorkLedger : ActionLearningCoordinatorSkillAction
 }
 
 [SemanticProgram.InfinitivePhrase("to initialize the session work ledger")]
-prototype ToInitializeSessionWorkLedger : ActionLearningCoordinatorSkillAction
+prototype ToInitializeSessionWorkLedger : SessionWorkCoordinatorSkillAction
 {
 	function Execute() : string
 	{
@@ -77,12 +82,80 @@ prototype ToInitializeSessionWorkLedger : ActionLearningCoordinatorSkillAction
 	Description = @"Creates the current coordinator session's fixed initial ledger only when it is missing.";
 }
 
-[SemanticProgram.InfinitivePhrase("to replace the session work ledger")]
-prototype ToReplaceSessionWorkLedger : ActionLearningCoordinatorSkillAction
+[SemanticProgram.InfinitivePhrase("to add a session work entry")]
+prototype ToAddSessionWorkEntry : SessionWorkCoordinatorSkillAction
 {
-	function Execute(string ledgerJson) : string
+	function Execute(string sourceSessionKey) : string
 	{
-		return FileSystemTools.ReplaceTextFile(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json", ledgerJson);
+		if (StringUtil.IsEmpty(sourceSessionKey))
+		{
+			throw new Exception(@"sourceSessionKey is required.");
+		}
+		string path = Path.Combine(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json");
+		JsonObject ledger = File.Exists(path) ? new JsonObject(File.ReadAllText(path)) : new JsonObject(@"{""SchemaVersion"":1,""CoordinatorSkill"":""ActionLearningCoordinatorSkill"",""Exists"":true,""Entries"":[]}");
+		JsonArray entries = ledger.GetJsonArrayOrFail(@"Entries", @"Session work ledger Entries is required.");
+		for (int index = 0; index < entries.Count; index++)
+		{
+			JsonObject existing = entries[index].ToJsonObjectOrFail(@"Session work ledger entries must be objects.");
+			if (existing.GetStringOrFail(@"SourceSessionKey", @"Session work entry SourceSessionKey is required.") == sourceSessionKey)
+			{
+				JsonObject unchanged = new JsonObject();
+				unchanged[@"Outcome"] = @"AlreadyExists";
+				unchanged[@"SourceSessionKey"] = sourceSessionKey;
+				unchanged[@"Ledger"] = ledger;
+				return unchanged.ToJSON();
+			}
+		}
+		JsonObject entry = new JsonObject();
+		entry[@"SourceSessionKey"] = sourceSessionKey;
+		entry[@"Enabled"] = true;
+		entries.Add(entry);
+		ledger[@"Exists"] = true;
+		FileSystemTools.ReplaceTextFile(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json", ledger.ToJSON());
+		JsonObject added = new JsonObject();
+		added[@"Outcome"] = @"Added";
+		added[@"SourceSessionKey"] = sourceSessionKey;
+		added[@"Ledger"] = ledger;
+		return added.ToJSON();
 	}
-	Description = @"Bootstrap-only complete replacement of the current coordinator session's fixed ledger JSON.";
+	Description = @"Adds one exact source-session entry to the current coordinator ledger. Repeated adds are idempotent.";
+}
+
+[SemanticProgram.InfinitivePhrase("to remove a session work entry")]
+prototype ToRemoveSessionWorkEntry : SessionWorkCoordinatorSkillAction
+{
+	function Execute(string sourceSessionKey) : string
+	{
+		if (StringUtil.IsEmpty(sourceSessionKey))
+		{
+			throw new Exception(@"sourceSessionKey is required.");
+		}
+		string path = Path.Combine(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json");
+		if (!File.Exists(path))
+		{
+			return @"{""Outcome"":""NotFound"",""SourceSessionKey"":""" + sourceSessionKey + @""",""Ledger"":{""SchemaVersion"":1,""CoordinatorSkill"":""ActionLearningCoordinatorSkill"",""Exists"":false,""Entries"":[]}}";
+		}
+		JsonObject ledger = new JsonObject(File.ReadAllText(path));
+		JsonArray entries = ledger.GetJsonArrayOrFail(@"Entries", @"Session work ledger Entries is required.");
+		for (int index = 0; index < entries.Count; index++)
+		{
+			JsonObject existing = entries[index].ToJsonObjectOrFail(@"Session work ledger entries must be objects.");
+			if (existing.GetStringOrFail(@"SourceSessionKey", @"Session work entry SourceSessionKey is required.") == sourceSessionKey)
+			{
+				entries.RemoveAt(index);
+				FileSystemTools.ReplaceTextFile(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json", ledger.ToJSON());
+				JsonObject removed = new JsonObject();
+				removed[@"Outcome"] = @"Removed";
+				removed[@"SourceSessionKey"] = sourceSessionKey;
+				removed[@"Ledger"] = ledger;
+				return removed.ToJSON();
+			}
+		}
+		JsonObject missing = new JsonObject();
+		missing[@"Outcome"] = @"NotFound";
+		missing[@"SourceSessionKey"] = sourceSessionKey;
+		missing[@"Ledger"] = ledger;
+		return missing.ToJSON();
+	}
+	Description = @"Removes one exact source-session entry and reports NotFound without modifying the ledger when absent.";
 }
