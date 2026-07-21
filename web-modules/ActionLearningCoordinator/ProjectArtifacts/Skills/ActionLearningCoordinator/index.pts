@@ -4,6 +4,12 @@ prototype SessionWorkCoordinatorActionRoot : OpsAction
 	Description = @"Restricted common action root for session-work coordinator agents.";
 }
 
+[SemanticEntity("action learning coordinator entity root")]
+prototype ActionLearningCoordinatorEntityRoot : SemanticEntityBase
+{
+	Description = @"Restricted entity root for the Action Learning coordinator.";
+}
+
 [SemanticEntity("session work coordinator skill")]
 prototype SessionWorkCoordinatorSkill : SkillEntity
 {
