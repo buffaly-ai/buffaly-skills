@@ -82,7 +82,7 @@ prototype ToRefreshOntologyFoundrySessionIndexSkill : OntologyFoundryPromptActio
 {
 	IsPromptAction = true;
 	SkillVersion = "1.0.0";
-	PromptPath = @"Nodes/Personal/OntologyFoundry/Prompts/Refresh-SessionEntityIndex.prompt.md";
+	PromptPath = @"Skills/OntologyFoundry/Prompts/Refresh-SessionEntityIndex.prompt.md";
 	Description = @"Runs the mandatory idempotent source-session card: reuse or refresh ranked evidence by exact source snapshot, reconcile every current label against the current ontology, and atomically rebuild proposed Session Entity Index evidence. Performs zero ontology and index writes.";
 }
 

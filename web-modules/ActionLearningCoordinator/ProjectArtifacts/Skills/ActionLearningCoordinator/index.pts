@@ -1,7 +1,11 @@
 reference Buffaly.Agent.Host Buffaly.Agent.Host;
 reference ActionLearningCoordinator.Web ActionLearningCoordinator.Web;
 import Buffaly.Agent.Host Buffaly.Agent.Host.BuffalyAgentService BuffalyAgentService;
+import Buffaly.Agent.Host Buffaly.Agent.Host.BuffalySessionsService BuffalySessionsService;
 import Buffaly.Agent.Host Buffaly.Agent.Host.CreateAgentInitializationContract CreateAgentInitializationContract;
+import Buffaly.Agent.Host Buffaly.Agent.Host.EvaluateInputContract EvaluateInputContract;
+import Buffaly.Agent.Host Buffaly.Agent.Host.EvaluateResponse EvaluateResponse;
+import Buffaly.Agent.Host Buffaly.Agent.Host.SessionInfo SessionInfo;
 import Buffaly.Agent.Host Buffaly.Agent.Host.SessionManagement.Sessions Sessions;
 import ActionLearningCoordinator.Web ActionLearningCoordinator.Web.OntologyFoundryProposalProjection OntologyFoundryProposalProjection;
 
@@ -326,7 +330,7 @@ prototype ToGetOntologyFoundryWorkspaceDefinition : OntologyFoundryCoordinatorSk
 {
 	function Execute() : string
 	{
-		return @"{""SchemaVersion"":1,""WorkspaceId"":""ontology-foundry"",""DisplayName"":""Ontology Foundry"",""Description"":""Source-owned entity evidence, prototype resolution, and Session Entity Index proposals."",""WorkerAgentName"":""ontology-foundry"",""WorkerSessionSuffix"":""-ontology-foundry"",""ArtifactPath"":""artifacts/ontology-foundry/evidence-graph.md"",""AttachAction"":""ToAttachOntologyFoundryWorker"",""PreviewTitle"":""Entity evidence graph"",""PreviewDescription"":""Bounded evidence sections from the living source artifact.""}";
+		return @"{""SchemaVersion"":1,""WorkspaceId"":""ontology-foundry"",""DisplayName"":""Ontology Foundry"",""Description"":""Source-owned entity evidence, prototype resolution, and Session Entity Index proposals."",""WorkerAgentName"":""ontology-foundry"",""WorkerSessionSuffix"":""-ontology-foundry"",""ArtifactPath"":""artifacts/ontology-foundry/evidence-graph.md"",""AttachAction"":""ToAttachOntologyFoundryWorker"",""RunAction"":""ToRunOntologyFoundryWorkerOperation"",""PreviewTitle"":""Entity evidence graph"",""PreviewDescription"":""Bounded evidence sections from the living source artifact.""}";
 	}
 }
 
@@ -380,4 +384,50 @@ prototype ToAttachOntologyFoundryWorker : OntologyFoundryCoordinatorSkillAction
 		attached[@"Ledger"] = ledger;
 		return attached.ToJSON();
 	}
+}
+
+[SemanticProgram.InfinitivePhrase("to run an ontology foundry worker operation")]
+prototype ToRunOntologyFoundryWorkerOperation : OntologyFoundryCoordinatorSkillAction
+{
+	function Execute(string sourceSessionKey, string actionPrototypeName, string inputValue = @"") : string
+	{
+		Sessions.ValidateSessionKey(sourceSessionKey);
+		JsonObject ledger = new JsonObject(ToGetSessionWorkLedger.Execute());
+		JsonArray entries = ledger.GetJsonArrayOrFail(@"Entries", @"Session work ledger Entries is required.");
+		string workerSessionKey = @"";
+		foreach (JsonValue value in entries)
+		{
+			JsonObject entry = value.ToJsonObjectOrFail(@"Session work ledger entries must be objects.");
+			if (entry.GetStringOrFail(@"SourceSessionKey", @"Session work entry SourceSessionKey is required.") == sourceSessionKey)
+			{
+				workerSessionKey = entry.GetStringOrFail(@"WorkerSessionKey", @"An attached Ontology Foundry worker is required.");
+			}
+		}
+		if (String.IsNullOrWhiteSpace(workerSessionKey))
+		{
+			throw new InvalidOperationException(@"No attached Ontology Foundry worker was found for source session " + sourceSessionKey);
+		}
+		SessionInfo source = BuffalySessionsService.GetRecentSessions(1, 0, sourceSessionKey)[0];
+		if (source.SessionKey != sourceSessionKey)
+		{
+			throw new InvalidOperationException(@"Exact source session inventory row was not found: " + sourceSessionKey);
+		}
+		string sourceSnapshot = @"SessionKey=" + source.SessionKey + @";UpdatedUtc=" + source.UpdatedUtc + @";LastFinalMessageUtc=" + source.LastFinalMessageUtc + @";MessageCount=" + source.MessageCount;
+		string instruction = OntologyFoundryProposalProjection.BuildWorkerInstruction(actionPrototypeName, sourceSessionKey, sourceSnapshot, inputValue);
+		EvaluateInputContract input = new EvaluateInputContract();
+		input.Instruction = instruction;
+		input.PromptContext = @"none";
+		EvaluateResponse response = BuffalyAgentService.EvaluateWithInputWorkerDispatch(workerSessionKey, input);
+		JsonObject result = new JsonObject();
+		result[@"SourceSessionKey"] = sourceSessionKey;
+		result[@"WorkerSessionKey"] = workerSessionKey;
+		result[@"ActionPrototypeName"] = actionPrototypeName;
+		result[@"SourceSnapshot"] = sourceSnapshot;
+		result[@"Status"] = response.Status;
+		result[@"IsRunning"] = response.IsRunning;
+		result[@"Message"] = response.Message;
+		result[@"Error"] = response.Error;
+		return result.ToJSON();
+	}
+	Description = @"Runs one allowlisted Ontology Foundry prompt operation on the exact source-attached worker and returns its canonical dispatch or terminal status.";
 }
