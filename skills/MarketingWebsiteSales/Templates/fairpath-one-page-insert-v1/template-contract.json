@@ -80,7 +80,9 @@
   "Rules": [
     "CSS and semantic section order are locked",
     "Populate slots with HTML-escaped plain text",
-    "OFFICIAL_SITE_SCREENSHOT_SRC must be an actual contiguous official webpage capture",
+    "For an OfficialSite lead, OFFICIAL_SITE_SCREENSHOT_SRC must reference the lead-specific annotated improved-homepage clone derived from a separately preserved contiguous live official-homepage capture",
+    "The output package must retain the unchanged live capture, capture provenance, semantic improved-clone HTML, annotated clone PNG, visual-source map, and original-versus-improved side-by-side proof",
+    "Reject a generic pharmacy mockup, package sample website, another lead's clone, or a shared website shell personalized only through text or colors",
     "Do not insert internal evidence, CRM, validation, campaign, PHI, hypothesis, or production language",
     "Do not shrink fonts or alter layout to fit; shorten content within limits",
     "Render with an HTML/CSS browser-quality engine, not Pillow text drawing",
