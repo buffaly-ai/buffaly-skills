@@ -356,11 +356,102 @@ prototype ToGetOntologyFoundrySourceWorkspace : OntologyFoundryCoordinatorSkillA
 		{
 			proposalMarkdown = markdown.Substring(proposalStart);
 		}
+		JsonArray proposalRows = new JsonArray();
+		string artifactSourceSessionKey = @"";
+		int existingCount = 0;
+		int newCandidateCount = 0;
+		int ambiguousCount = 0;
+		int rejectedCount = 0;
+		bool inResolutionSection = false;
+		bool inResolutionTable = false;
+		string[] lines = File.Exists(path) ? File.ReadAllLines(path) : new string[0];
+		foreach (string rawLine in lines)
+		{
+			string line = rawLine.Trim();
+			if (line == proposalHeading)
+			{
+				inResolutionSection = true;
+				continue;
+			}
+			if (!inResolutionSection)
+			{
+				continue;
+			}
+			if (line.StartsWith(@"- SourceLevel1SessionKey:"))
+			{
+				artifactSourceSessionKey = line.Substring(@"- SourceLevel1SessionKey:".Length).Trim();
+				continue;
+			}
+			if (line.StartsWith(@"| Source Rank | Entity | Importance | Resolution |"))
+			{
+				inResolutionTable = true;
+				continue;
+			}
+			if (!inResolutionTable)
+			{
+				continue;
+			}
+			if (line.StartsWith(@"### ") || line.StartsWith(@"## "))
+			{
+				break;
+			}
+			if (!line.StartsWith(@"| ") || line.StartsWith(@"|---"))
+			{
+				continue;
+			}
+			string[] columns = line.Split('|');
+			if (columns.Length != 10)
+			{
+				throw new InvalidOperationException(@"Ranked entity resolution rows must contain exactly eight columns. Source=" + sourceSessionKey + @"; Row=" + line);
+			}
+			JsonObject proposal = new JsonObject();
+			proposal[@"Rank"] = Convert.ToInt32(columns[1].Trim());
+			proposal[@"Entity"] = columns[2].Trim();
+			proposal[@"Importance"] = Convert.ToInt32(columns[3].Trim());
+			string resolution = columns[4].Trim();
+			proposal[@"Resolution"] = resolution;
+			proposal[@"PrototypeCandidates"] = columns[5].Trim();
+			proposal[@"SearchEvidence"] = columns[6].Trim();
+			proposal[@"DetailsEvidence"] = columns[7].Trim();
+			proposal[@"Reason"] = columns[8].Trim();
+			proposalRows.Add(new JsonValue(proposal));
+			if (resolution == @"Existing")
+			{
+				existingCount = existingCount + 1;
+			}
+			else if (resolution == @"NewCandidate")
+			{
+				newCandidateCount = newCandidateCount + 1;
+			}
+			else if (resolution == @"Ambiguous")
+			{
+				ambiguousCount = ambiguousCount + 1;
+			}
+			else if (resolution == @"Rejected")
+			{
+				rejectedCount = rejectedCount + 1;
+			}
+			else
+			{
+				throw new InvalidOperationException(@"Unknown ranked entity resolution classification: " + resolution);
+			}
+		}
+		JsonObject proposalProjection = new JsonObject();
+		proposalProjection[@"SchemaVersion"] = 1;
+		proposalProjection[@"WorkspaceSourceSessionKey"] = sourceSessionKey;
+		proposalProjection[@"ArtifactSourceSessionKey"] = artifactSourceSessionKey;
+		proposalProjection[@"TotalCount"] = proposalRows.Count;
+		proposalProjection[@"ExistingCount"] = existingCount;
+		proposalProjection[@"NewCandidateCount"] = newCandidateCount;
+		proposalProjection[@"AmbiguousCount"] = ambiguousCount;
+		proposalProjection[@"RejectedCount"] = rejectedCount;
+		proposalProjection[@"Rows"] = proposalRows;
 		JsonObject result = new JsonObject();
 		result[@"ArtifactPath"] = @"artifacts/ontology-foundry/evidence-graph.md";
 		result[@"ArtifactTitle"] = @"Evidence graph";
 		result[@"ArtifactMarkdown"] = markdown;
 		result[@"ProposalMarkdown"] = proposalMarkdown;
+		result[@"ProposalProjection"] = proposalProjection;
 		result[@"WorkerActions"] = new JsonArray(@"[]");
 		return result.ToJSON();
 	}
