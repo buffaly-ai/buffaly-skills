@@ -16432,6 +16432,48 @@
       "Prerequisites": [],
       "RequiresRestart": true,
       "RequiresPreStartInstall": true
+    },
+    {
+      "PackageId": "DispatchTreeViewer",
+      "PackageType": "WebModule",
+      "Title": "Dispatch Tree Viewer",
+      "Description": "Buffaly Web Module package for Dispatch Tree Viewer.",
+      "Version": "0.1.0",
+      "PackageKind": "BuffalyWebModule",
+      "SourcePath": "web-modules/DispatchTreeViewer",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/DispatchTreeViewer",
+      "Phrases": [
+        "Dispatch Tree Viewer",
+        "DispatchTreeViewer"
+      ],
+      "Files": [
+        {
+          "Path": "Buffaly.Agent.DispatchTree.Viewer.deps.json",
+          "Sha256": "b21795373fb1c372dd958fca842b6a5772c5d085ad3311ddc8fefd07ed5c9b33"
+        },
+        {
+          "Path": "Buffaly.Agent.DispatchTree.Viewer.dll",
+          "Sha256": "3665e41491a18ebcda573d53e455dca2ef39ab379ed5a67dc911da34c8ed92b6"
+        },
+        {
+          "Path": "web-module.json",
+          "Sha256": "1175bd1f6ad92eb5cce9ea03fae937931ebf2469ea2e4bad2c5356c3aa089b93"
+        },
+        {
+          "Path": "wwwroot/css/dispatch-tree.css",
+          "Sha256": "eb018b85268ac51a7fdafffce93911b4cde9697353237c77d39daebc3806aba9"
+        },
+        {
+          "Path": "wwwroot/js/dispatch-tree-agent-next.js",
+          "Sha256": "93fec485b1261b1f8c8a593132e96250ef7e3995bebdb0528f4c254fd38635d0"
+        }
+      ],
+      "ProjectArtifacts": [],
+      "Dependencies": [],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "RequiresRestart": true,
+      "RequiresPreStartInstall": true
     }
   ]
 }

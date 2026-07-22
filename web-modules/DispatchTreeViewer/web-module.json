@@ -1,0 +1,12 @@
+{
+  "Module": {
+    "Enabled": true,
+    "Name": "DispatchTreeViewer",
+    "DisplayName": "Dispatch Tree",
+    "Description": "Read-only Agent Next visualization for DispatchTree routing ontologies.",
+    "AssemblyPath": "DispatchTreeViewer/Buffaly.Agent.DispatchTree.Viewer.dll",
+    "TypeName": "Buffaly.Agent.DispatchTree.Viewer.DispatchTreeViewerWebModule",
+    "LoadOrder": 500,
+    "AgentScripts": ["/web-modules/DispatchTreeViewer/js/dispatch-tree-agent-next.js?v=0.1.0"]
+  }
+}
