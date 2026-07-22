@@ -11,8 +11,8 @@ prototype ToSendMessageToVoiceAgentDispatcher : VoiceAgentAction
 	function Execute(string instruction) : string
 	{
 		string dispatcherSessionKey = UserState.GetStringOrNull("VoiceAgent.DispatcherSessionKey");
-		SessionTools.SendToSessionOncePerCurrentTurnTool(_opsAgent, "voice-to-dispatcher", dispatcherSessionKey, instruction);
-		return "Instruction delivered to the Voice Agent Dispatcher. End cycle now.";
+		string queueItemId = SessionTools.SendToVoiceAgentDispatcherOncePerCurrentTurnTool(_opsAgent, "voice-to-dispatcher", dispatcherSessionKey, instruction);
+		return "Instruction queued for the Voice Agent Dispatcher. Queue ID: " + queueItemId + ". End cycle now.";
 	}
 }
 

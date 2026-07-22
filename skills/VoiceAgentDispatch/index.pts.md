@@ -4,11 +4,18 @@ This bundled infrastructure skill implements the minimal queued-message bridge b
 
 - `VoiceAgentAction` exposes only `ToSendMessageToVoiceAgentDispatcher` and `ToGetLatestVoiceAgentDispatcherTurn`.
 - `VoiceAgentDispatcher` is the dispatcher prompt-context prototype and supplemental action root; its specialized action is `ToSendMessageToVoiceAgent`.
-- Send actions call `SessionTools.SendToSessionTool` and return a truthful plain-text delivery signal that prevents model-driven duplicate sends; latest-turn recovery returns the existing `TurnSummaryContract`.
+- Voice-to-dispatcher sends call `SessionTools.SendToVoiceAgentDispatcherOncePerCurrentTurnTool`, return the durable admission queue ID immediately, and leave cold dispatcher runtime construction to the asynchronous inbox drain. Dispatcher-to-Voice sends retain the ordinary per-turn cross-session queue helper. Latest-turn recovery returns the existing `TurnSummaryContract`.
 - Targets come only from runtime-bound `VoiceAgent.DispatcherSessionKey` and `VoiceAgent.SourceSessionKey`.
 - Dispatcher returns begin with `[label: Voice Agent Dispatcher]`.
 
-No dispatch DTO, event, subscription, callback, polling loop, job store, or internal HTTP path is introduced.
+No new evaluation authority, event, subscription, callback, polling loop, or internal HTTP path is introduced. The Host-owned dispatcher inbox is only a durable admission boundary ahead of the existing authoritative cross-session queue.
+
+## Durable dispatcher admission
+
+- Voice Agent outbound work is atomically persisted before any dispatcher worker or runtime construction.
+- The action returns the persisted queue ID immediately and directs the model to end its cycle.
+- Same-turn duplicate suppression remains ahead of persistence.
+- The asynchronous Host drain preserves FIFO order, restart recovery, retry state, and idempotent downstream delivery through the existing session queue.
 
 ## Queue-acceptance acknowledgement guard
 
