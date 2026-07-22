@@ -2,6 +2,51 @@
   "SchemaVersion": 1,
   "Skills": [
     {
+      "SkillName": "AipAdapter",
+      "Title": "AipAdapter",
+      "Description": "Buffaly skill package for AipAdapter.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "AipAdapter",
+        "AipAdapter"
+      ],
+      "Path": "skills/AipAdapter",
+      "Files": [
+        {
+          "Path": "AipCapability.pts",
+          "Sha256": "4a2a9aa79ac4e28b23f685fedf5312c6ba7d4f127d23d91736471ed5aa0baec4"
+        },
+        {
+          "Path": "AipCapability.pts.md",
+          "Sha256": "bad159bdc86e681f150c7c26a6317659fa7989fae704f0728e9d87d4f15c6845"
+        },
+        {
+          "Path": "AipDefinitions.ReadOnly.pts",
+          "Sha256": "d98dbbb3245243170e530384b3b585f734956517309425dc7c51cc98d65f56fe"
+        },
+        {
+          "Path": "AipDefinitions.ReadOnly.pts.md",
+          "Sha256": "2cd01f6fd84293e096e4b3406e76d864fd8caca92544623d4c4ed1a063f9efd8"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "46632a6819654b712dfb1c4c80237b889e5a071c5439b27dee8e56cca38b94c8"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "711244c4574f39b69a3bfea2d08cb847592cfa18c9369d7cc731382da6fbed45"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "a6b3269399ae6432bb6c3066de7e5748aa4e760d10597e3983c41a33b0cc77ae"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
       "SkillName": "Antigravity",
       "Title": "Antigravity",
       "Description": "Buffaly skill package for Antigravity.",
@@ -149,6 +194,39 @@
       "InstalledVersion": ""
     },
     {
+      "SkillName": "BuffalyMaintenance",
+      "Title": "Buffaly Maintenance",
+      "Description": "Buffaly skill package for Buffaly Maintenance.",
+      "Version": "0.1.7",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Buffaly Maintenance",
+        "BuffalyMaintenance"
+      ],
+      "Path": "skills/BuffalyMaintenance",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "112ccc51ffa7e42bfc10611e9e00803892f7fc0b1adf8584f1bcef76e39502ac"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "3ef9468ad7e7e0fd208eaf32112e81a05adfdd94d90a585ca6a173e7dcca0dc1"
+        },
+        {
+          "Path": "lib/Buffaly.Agent.Provisioning.dll",
+          "Sha256": "b81f7c25af954b387ecbc062d2a72c70b6812d3e4022b26f093cfb67dec6e9d4"
+        },
+        {
+          "Path": "lib/Buffaly.Maintenance.Client.dll",
+          "Sha256": "de72ba94148b70ee3e2d9c0a2bd4dfd2d839cbf8f4bb21c9f29e096021e92712"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
       "SkillName": "BuffalyNLMemory",
       "Title": "Buffaly NL Memory",
       "Description": "Transactional session-local memory authoring with canonical ProtoScript round-trip merge, clean restore, semantic reachability, and temporary memory actions.",
@@ -194,39 +272,6 @@
       "HasPackageReceipt": false,
       "IsOutdated": false,
       "InstalledVersion": ""
-    },
-    {
-      "SkillName": "BuffalyMaintenance",
-      "Title": "Buffaly Maintenance",
-      "Description": "Buffaly skill package for Buffaly Maintenance.",
-      "Version": "0.1.7",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [
-        "Buffaly Maintenance",
-        "BuffalyMaintenance"
-      ],
-      "Path": "skills/BuffalyMaintenance",
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "112ccc51ffa7e42bfc10611e9e00803892f7fc0b1adf8584f1bcef76e39502ac"
-        },
-        {
-          "Path": "index.pts.md",
-          "Sha256": "3ef9468ad7e7e0fd208eaf32112e81a05adfdd94d90a585ca6a173e7dcca0dc1"
-        },
-        {
-          "Path": "lib/Buffaly.Agent.Provisioning.dll",
-          "Sha256": "b81f7c25af954b387ecbc062d2a72c70b6812d3e4022b26f093cfb67dec6e9d4"
-        },
-        {
-          "Path": "lib/Buffaly.Maintenance.Client.dll",
-          "Sha256": "de72ba94148b70ee3e2d9c0a2bd4dfd2d839cbf8f4bb21c9f29e096021e92712"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [],
-      "Prerequisites": []
     },
     {
       "SkillName": "BuffalySelfManagement",
@@ -472,6 +517,35 @@
       "HasPackageReceipt": false,
       "IsOutdated": false,
       "InstalledVersion": ""
+    },
+    {
+      "SkillName": "DispatchTree",
+      "Title": "Dispatch Tree",
+      "Description": "Buffaly skill package for Dispatch Tree.",
+      "Version": "0.1.15",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Dispatch Tree",
+        "DispatchTree"
+      ],
+      "Path": "skills/DispatchTree",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "4e8aa8ad335fd9a7d1a6de5d38a0491b447a2afdec8850ffb9b9b5b93ee40ec7"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "92f06938ab5ebcd63b75f137f0b4528598beafb089f8e97fae6a4bf9a33539d3"
+        },
+        {
+          "Path": "Prompts/PlanDispatchRoute.prompt.md",
+          "Sha256": "7547464b5d964bc47ddc9bb0d2b21425bef5816b1fc0744d181a3a1f568ef2e9"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
     },
     {
       "SkillName": "DllEchoSample",
@@ -1024,6 +1098,34 @@
       "InstalledVersion": ""
     },
     {
+      "SkillName": "Level2Watcher",
+      "Title": "Level2 Watcher",
+      "Description": "Buffaly OpsAgent skill package for Level2Watcher.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Level2Watcher"
+      ],
+      "Path": "skills/Level2Watcher",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "c7f513d0b4373f41a01b243aa3e71306352d882d7b6ef149432c5a5e21f23b87"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "2069223198f565d01f46e2e1ed31cc6b40b1070417ccc268428fb25c07fd5a01"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
+    },
+    {
       "SkillName": "LLM",
       "Title": "L L M",
       "Description": "Buffaly skill package for L L M.",
@@ -1074,34 +1176,6 @@
         {
           "Path": "RuntimeProfiles.pts.md",
           "Sha256": "8577a81a6eab331f83e24e9bffe7774c64b372c65a6d18a59cd73e610ae39d47"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
-    },
-    {
-      "SkillName": "Level2Watcher",
-      "Title": "Level2 Watcher",
-      "Description": "Buffaly OpsAgent skill package for Level2Watcher.",
-      "Version": "0.1.0",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [
-        "Level2Watcher"
-      ],
-      "Path": "skills/Level2Watcher",
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "c7f513d0b4373f41a01b243aa3e71306352d882d7b6ef149432c5a5e21f23b87"
-        },
-        {
-          "Path": "index.pts.md",
-          "Sha256": "2069223198f565d01f46e2e1ed31cc6b40b1070417ccc268428fb25c07fd5a01"
         }
       ],
       "EntryPoint": "index.pts",
@@ -1501,6 +1575,39 @@
       "InstalledVersion": ""
     },
     {
+      "SkillName": "OpenAIAdmin",
+      "Title": "OpenAI Administration",
+      "Description": "Buffaly skill package for OpenAI Administration.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "OpenAI Administration",
+        "OpenAIAdmin"
+      ],
+      "Path": "skills/OpenAIAdmin",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "cfec2a1ea889c4a978d17b6bc5e91e090eb22aaf074a9b75c110c7a7cc6a3654"
+        },
+        {
+          "Path": "OpenAiAdminAgentTools.pts",
+          "Sha256": "61b3e21bdbf9d5947a1de15c005d8e47e37c2ed2ba96ac8f29beb04135163fbc"
+        },
+        {
+          "Path": "OpenAiAdminAgentTools.pts.md",
+          "Sha256": "0733f27594c4dbcca152a6892f818a329c986a5a60bf9320bca0aa50fc4d1c8b"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "182424acede2cb59b26ad8ae575fcfbad2c9f157e02b2cd4d18fc81839e7658a"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
       "SkillName": "Process",
       "Title": "Process",
       "Description": "Buffaly OpsAgent skill package for Process.",
@@ -1576,6 +1683,35 @@
       "HasPackageReceipt": false,
       "IsOutdated": false,
       "InstalledVersion": ""
+    },
+    {
+      "SkillName": "Recaptcha",
+      "Title": "Recaptcha",
+      "Description": "Buffaly skill package for Recaptcha.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Recaptcha",
+        "Recaptcha"
+      ],
+      "Path": "skills/Recaptcha",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "68354782c191f8b0dde0548d6e5637df5ee2d81495efa632a9b8970a4263b25e"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "d714b8071a7bc43ffd81ea7be00872afc7c7cc1d3a7c3b788d6643e676d2ec73"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "4fdf435d8b6c458806afa80bea95654f421ff30d3de010e8cad1be2813732a56"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
     },
     {
       "SkillName": "Services",
@@ -1899,6 +2035,71 @@
       "InstalledVersion": ""
     },
     {
+      "SkillName": "TebraDesktop",
+      "Title": "TebraDesktop",
+      "Description": "Buffaly skill package for TebraDesktop.",
+      "Version": "0.1.1",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "TebraDesktop",
+        "TebraDesktop"
+      ],
+      "Path": "skills/TebraDesktop",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "41666936eff8d5e1065a24470bca39117d2c604c9541b64348c4f4f4aa6304eb"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "5dc8e13e70adeb96566f76fd3016ddf2169889d0a488543ea93da93c5ab7219c"
+        },
+        {
+          "Path": "lib/FlaUI.Core.dll",
+          "Sha256": "1696c344d2ff54598fb5ae869e9cbcf363c0be3ebff744cc50ba834056b43b6f"
+        },
+        {
+          "Path": "lib/FlaUI.UIA3.dll",
+          "Sha256": "d00fa5203c56b9d1c7b0bc624cffa84d599d6b8dfa6f27c0324e3059f343754c"
+        },
+        {
+          "Path": "lib/Interop.UIAutomationClient.dll",
+          "Sha256": "dcea43a1f5a2114b7bcc9e41cc1377064307611d0caa50f1ec203b887f4c20bb"
+        },
+        {
+          "Path": "lib/System.Configuration.ConfigurationManager.dll",
+          "Sha256": "f7ea3a9618aca48fb57fd06e9102b327ab66468ceb78c96d56f7d2eee2945983"
+        },
+        {
+          "Path": "lib/System.Diagnostics.EventLog.dll",
+          "Sha256": "3f8064e2499f13a8948ad2da0c6040d12683a9a90aaab786dbd6b653f17ac9cc"
+        },
+        {
+          "Path": "lib/System.Diagnostics.PerformanceCounter.dll",
+          "Sha256": "27571769f43067be4a0473916b6682c3f19443e83b4f884b69104ab6152fc58a"
+        },
+        {
+          "Path": "lib/System.Drawing.Common.dll",
+          "Sha256": "9da16df4486b8cffcd96d784521217b7823b9768ccdcb493fb099c8c79a21426"
+        },
+        {
+          "Path": "lib/System.Management.dll",
+          "Sha256": "c5f69a258fc609d42e6d50903e9b4449027f4d332faa8daec04bdc3cb9286d4b"
+        },
+        {
+          "Path": "lib/Tebra.UIAutomation.Core.dll",
+          "Sha256": "f6be725868d735d5accbe4332244e75a9707194d12bdce7957b92c5fa8edf561"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "b9004acf9e1793bcefa179867baff7fe7391188374eccd49edcd60b033c09775"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
       "SkillName": "TebraWeb",
       "Title": "Tebra Web",
       "Description": "Buffaly skill package for Tebra Web.",
@@ -1930,6 +2131,47 @@
       "HasPackageReceipt": false,
       "IsOutdated": false,
       "InstalledVersion": ""
+    },
+    {
+      "SkillName": "Twilio",
+      "Title": "Twilio",
+      "Description": "Buffaly skill package for Twilio.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Twilio",
+        "Twilio"
+      ],
+      "Path": "skills/Twilio",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "2b1d06783c7c5bd2d744691d61591d50cf9875b0c783b96a8f0c8be21e4182c5"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "c790e763ede480ad44a9b300d556e2bba3b46c6abd79491ffc7562b08a7d3063"
+        },
+        {
+          "Path": "Prompts/AttachTwilioNumberToMessagingService.prompt.md",
+          "Sha256": "a6010886e1867610b78e9698c572dd23c4f9e05d81e29e115e1131c952affdc7"
+        },
+        {
+          "Path": "Prompts/BuyAndConfigureTwilioPhoneNumber.prompt.md",
+          "Sha256": "f59fdac5d91a7ac2d1820bb540f102aed610a0483c5b46adbdab485d9061797c"
+        },
+        {
+          "Path": "Prompts/SendSmsViaTwilioMessagingService.prompt.md",
+          "Sha256": "6bc935352b7de84c8dab58a946dfa07ca5f261cf99e5b2a34d9a7bc9d1c68389"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "df40b0307f4cf0bedf3fee9d0a7217444cf3ce29b12c39082f2b9f6625fcc290"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
     },
     {
       "SkillName": "TwitterXApi",
@@ -2242,6 +2484,35 @@
       "Prerequisites": []
     },
     {
+      "SkillName": "Workspace",
+      "Title": "Workspace",
+      "Description": "Buffaly skill package for Workspace.",
+      "Version": "0.1.9",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Workspace",
+        "Workspace"
+      ],
+      "Path": "skills/Workspace",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "34de33af0126440288e7725dc214300c5b96f13667d7810cf6f4f097aad14a78"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "03c3583dcac05e2a29b7db5341b3d24f555fd1fd2bf570d7b22142aa8494fd3f"
+        },
+        {
+          "Path": "lib/Buffaly.Agent.Workspaces.dll",
+          "Sha256": "b2452fe78cd3351b1529a44445a51761eed21428509861352be958965f562621"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
       "PackageKind": "OpsAgentProtoScriptSkill",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/skills/XSearch",
       "Title": "X Search",
@@ -2278,270 +2549,206 @@
       "InstalledVersion": ""
     },
     {
-      "SkillName": "Recaptcha",
-      "Title": "Recaptcha",
-      "Description": "Buffaly skill package for Recaptcha.",
+      "SkillName": "MarketingWebsiteSales",
+      "Title": "Marketing Website Sales",
+      "Description": "Validated website-sales and FairPath pharmacy-growth workflows, including personalized one-page direct-mail inserts with packaged template and validation.",
       "Version": "0.1.0",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
-        "Recaptcha",
-        "Recaptcha"
+        "marketing website sales",
+        "pharmacy growth proposal",
+        "personalized pharmacy one-page growth insert",
+        "FairPath pharmacy direct-mail insert"
       ],
-      "Path": "skills/Recaptcha",
+      "Path": "skills/MarketingWebsiteSales",
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "68354782c191f8b0dde0548d6e5637df5ee2d81495efa632a9b8970a4263b25e"
+          "Sha256": "ee77f01bb6c8d93dfc90c0432def8751182a3d239206768b8e54fedf1e75e8e8"
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "d714b8071a7bc43ffd81ea7be00872afc7c7cc1d3a7c3b788d6643e676d2ec73"
+          "Sha256": "8393e40cbd5efff205b706392871b906cbdee2f8a89b848ef29e82cef6524ebf"
+        },
+        {
+          "Path": "Prompts/AnalyzeExistingWebsiteForImprovements.prompt.md",
+          "Sha256": "b88b692053e56a671d36115618ec880dfc85524cb4c235b79801bcd7f8152a9f"
+        },
+        {
+          "Path": "Prompts/AnalyzeExistingWebsiteForImprovements.validation.prompt.md",
+          "Sha256": "c3b747aaba5cc7f7d336751105b99f4853890446971d30b7be45282f743af570"
+        },
+        {
+          "Path": "Prompts/AnalyzeExistingWebsiteForImprovements.work.prompt.md",
+          "Sha256": "ec85421044aa03113410ee3bd6f651208e1e5d296d6ef88590ea0f88700fb876"
+        },
+        {
+          "Path": "Prompts/BuildDemoWebsiteFromAnalysis.prompt.md",
+          "Sha256": "16beae36828e6fdda15ca4267e0bd441a08c0634316c98b1743437edf37f644e"
+        },
+        {
+          "Path": "Prompts/BuildDemoWebsiteFromAnalysis.validation.prompt.md",
+          "Sha256": "6d2dc3bbf1706a79812f462ad777eb80bd78e9c49d3575c4afade8f7b61c3583"
+        },
+        {
+          "Path": "Prompts/BuildDemoWebsiteFromAnalysis.work.prompt.md",
+          "Sha256": "eae54e58520a01b2ab7aae0d1c994887037c4b7d076df138ee66d48077e000f9"
+        },
+        {
+          "Path": "Prompts/CheckPharmacyReputation.prompt.md",
+          "Sha256": "c4c7f86a3b1a0a647f451ede766fd201dc190e489ba9b71b447f96863f0c4b05"
+        },
+        {
+          "Path": "Prompts/CreateClientFacingWebsiteReport.prompt.md",
+          "Sha256": "6cd3c11f72732b4f244f8d5f56c758e53c3527175a8bc1c8f75480810e046197"
+        },
+        {
+          "Path": "Prompts/CreateClientFacingWebsiteReport.validation.prompt.md",
+          "Sha256": "d5b765e02cdb580f8aecd25df08096d6739bf2507a1347ad1382b7fddeea6506"
+        },
+        {
+          "Path": "Prompts/CreateClientFacingWebsiteReport.work.prompt.md",
+          "Sha256": "f4d2a9d012c2e62a54e8406764dbc8dc75138ac527fe8ce09f0d1080599f0f39"
+        },
+        {
+          "Path": "Prompts/CreateFeedingFrenzyWebsiteServiceOrderAddendum.prompt.md",
+          "Sha256": "f296b5a453acad134985a84edc6ed69895b2158977e82410107edbe6fd3219d1"
+        },
+        {
+          "Path": "Prompts/CreateFeedingFrenzyWebsiteServiceOrderAddendum.validation.prompt.md",
+          "Sha256": "8bc9520e890c2e79128c06e620dd4e8ab4d71ed58ff9196cce3a39b876261b93"
+        },
+        {
+          "Path": "Prompts/CreateFeedingFrenzyWebsiteServiceOrderAddendum.work.prompt.md",
+          "Sha256": "d339a4ece5f6956277bfe7da8590273d555e2d4ac9828c1d70e6ee28b54a1070"
+        },
+        {
+          "Path": "Prompts/CreatePersonalizedPharmacyOnePageGrowthInsert.validation.prompt.md",
+          "Sha256": "2167db8584ab5a1e1cdf3ebd13413d88e1063df08c42a0bfdb5a9535efcfdd90"
+        },
+        {
+          "Path": "Prompts/CreatePersonalizedPharmacyOnePageGrowthInsert.work.prompt.md",
+          "Sha256": "b57167446ccedc51c375bb5324f301d5e6b998eaf1a83f7d3c84a29c2e7a8bf7"
+        },
+        {
+          "Path": "Prompts/CreatePharmacyGrowthProposalDeck.validation.prompt.md",
+          "Sha256": "f3aa2cb2f33532e8582c842454d8309844528b816911c3cd3f4d7e1566a6ec94"
+        },
+        {
+          "Path": "Prompts/CreatePharmacyGrowthProposalDeck.work.prompt.md",
+          "Sha256": "606e62a100b8715e98f84ba45e20f1383c3faaf408f9330cc3e471abb81f7de9"
+        },
+        {
+          "Path": "Prompts/CreateWebsiteAnalysisSalesPacket.prompt.md",
+          "Sha256": "9fe50ebc1e9730c53867af60a6897df74a00572b73f6d6c50826bf947d0d52b3"
+        },
+        {
+          "Path": "Prompts/CreateWebsiteAnalysisSalesPacket.validation.prompt.md",
+          "Sha256": "512ff654c09423d9dc856a2a6fdbff4604c442bea037559b0f47d6f2d1463bb5"
+        },
+        {
+          "Path": "Prompts/CreateWebsiteAnalysisSalesPacket.work.prompt.md",
+          "Sha256": "63e792d561c2520b6248041a5989bddfb03503f6de70447c8bbc4b2c84363989"
+        },
+        {
+          "Path": "Prompts/CreateWebsiteGrowthProposalDeck.prompt.md",
+          "Sha256": "ddc3266d125898d80e19f916f5595d348e454a985a764a1ceba252dca1748cf4"
+        },
+        {
+          "Path": "Prompts/CreateWebsiteGrowthProposalDeck.validation.prompt.md",
+          "Sha256": "662f219d812e4abc0cbf6814db78ca75f5cc26f2612795842669a3e77e689bf6"
+        },
+        {
+          "Path": "Prompts/CreateWebsiteGrowthProposalDeck.work.prompt.md",
+          "Sha256": "3c61190b02cc5b3c1c5bc2f2aebe701fc5a06fcd9e4ee402f34adae0a2404126"
+        },
+        {
+          "Path": "Prompts/DeployGeneratedDemoWebsiteToFeedingFrenzyStaging.prompt.md",
+          "Sha256": "488138e7503a95d879a2de8e9592b6e1defe96a20a8abe582c63fc69817d03d7"
+        },
+        {
+          "Path": "Prompts/DeployGeneratedDemoWebsiteToFeedingFrenzyStaging.validation.prompt.md",
+          "Sha256": "0864547bb25bc8c3c729bf7221e4ff5efbb21c94f200d6ccacd5fdcad6367a14"
+        },
+        {
+          "Path": "Prompts/DeployGeneratedDemoWebsiteToFeedingFrenzyStaging.work.prompt.md",
+          "Sha256": "8d5194c967cf4f10dd6b9f46f55de58c6aee56ff6d7ae4f79c121b82ee133d28"
+        },
+        {
+          "Path": "Prompts/DraftClientDemoEmail.prompt.md",
+          "Sha256": "df0541efb2200be802abbc6e03af2cb748c098120f4b26de4c1ca162f8cddeb3"
+        },
+        {
+          "Path": "Prompts/DraftClientDemoEmail.validation.prompt.md",
+          "Sha256": "4e96e633859f39d728506523c230b73dbf45b7439dacb80cacdda5e074651f76"
+        },
+        {
+          "Path": "Prompts/DraftClientDemoEmail.work.prompt.md",
+          "Sha256": "9de327bece95415c69c52b2fecf98dc14f455fc99bf15d7ee44e80945f40571a"
+        },
+        {
+          "Path": "Prompts/EnrichPharmacyLead.validation.prompt.md",
+          "Sha256": "0bd902d857cbfd5245f3a8d7873fb348615862f92bd7af62808ce66c6fb66cf1"
+        },
+        {
+          "Path": "Prompts/EnrichPharmacyLead.work.prompt.md",
+          "Sha256": "42b40275df2bd8a000317c20e2dd437a9f86fd70afe0aad68f1f94348d3fe78d"
+        },
+        {
+          "Path": "reference-packet-template/bvp-deck-assets/fairpath-eligibility-score.jpg",
+          "Sha256": "eaa9eedcab27bdbb99894a6f0f0b65301f55c05a55c11f01e3493c135eb88bf4"
+        },
+        {
+          "Path": "reference-packet-template/bvp-deck-assets/fairpath-logo-dark.png",
+          "Sha256": "7b575b4341ffe0cfbb96a02d1c517525ed25e0a4d76f422b2ebb6f79865ada3e"
+        },
+        {
+          "Path": "reference-packet-template/bvp-deck-assets/fairpath-logo.png",
+          "Sha256": "ad8b2f8d3e88256a0c0de683cf3c103ed8254ea111d71caa4a31d76e7302b7e2"
+        },
+        {
+          "Path": "reference-packet-template/bvp-deck-assets/fairpath-unified-work-queue.jpg",
+          "Sha256": "006c8c5666631430918a16a0281d2e3b4d9dd859ebe85ff95a5214af029e06d0"
+        },
+        {
+          "Path": "reference-packet-template/bvp-deck-assets/fonts/Glancyr-Medium.otf",
+          "Sha256": "e818ba07e03a22aec8f0aa52747cb7b9be1d94659a82acd58a078d4c73858442"
+        },
+        {
+          "Path": "reference-packet-template/bvp-deck-assets/fonts/Glancyr-Regular.otf",
+          "Sha256": "e1cf270c2ffae5c13475d158f5b949d7f47a630a4ce51c8fa792116b40b597dd"
+        },
+        {
+          "Path": "reference-packet-template/bvp-deck-assets/fonts/Glancyr-SemiBold.otf",
+          "Sha256": "90815c100062c2682d4324dcde413ecb0916b7b4f2333799ed6dc41142e4e9f8"
+        },
+        {
+          "Path": "reference-packet-template/bvp-deck-assets/intelligence-factory-logo.png",
+          "Sha256": "f4af4ff600cb1f28bf5d338322523816932292cbd6b05e5c5645b39243830c2f"
+        },
+        {
+          "Path": "reference-packet-template/index.html",
+          "Sha256": "9f7c649146dbf953363f49991fcf35038a0cc0bb2ee1ae1345e4f1d8266b5375"
+        },
+        {
+          "Path": "References/pharmacy-reputation-directory-checklist.md",
+          "Sha256": "78b532f31d5aded6f7a56f2de866de1e142f7497f5391bfcc2bfd87fa59c5277"
         },
         {
           "Path": "SKILL.md",
-          "Sha256": "4fdf435d8b6c458806afa80bea95654f421ff30d3de010e8cad1be2813732a56"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [],
-      "Prerequisites": []
-    },
-    {
-      "SkillName": "AipAdapter",
-      "Title": "AipAdapter",
-      "Description": "Buffaly skill package for AipAdapter.",
-      "Version": "0.1.0",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [
-        "AipAdapter",
-        "AipAdapter"
-      ],
-      "Path": "skills/AipAdapter",
-      "Files": [
-        {
-          "Path": "AipCapability.pts",
-          "Sha256": "4a2a9aa79ac4e28b23f685fedf5312c6ba7d4f127d23d91736471ed5aa0baec4"
+          "Sha256": "9800577f73233d105f66341ddde5ff96ffaf6c1a10e0f29093749a58ee40ad5e"
         },
         {
-          "Path": "AipCapability.pts.md",
-          "Sha256": "bad159bdc86e681f150c7c26a6317659fa7989fae704f0728e9d87d4f15c6845"
+          "Path": "Templates/fairpath-one-page-insert-v1/fairpath-logo-complete.png",
+          "Sha256": "9e8af4d58d1783ba5d54f04ea388cc09941926c2b438e44ada32739c9728749a"
         },
         {
-          "Path": "AipDefinitions.ReadOnly.pts",
-          "Sha256": "d98dbbb3245243170e530384b3b585f734956517309425dc7c51cc98d65f56fe"
+          "Path": "Templates/fairpath-one-page-insert-v1/fairpath-one-page-insert.template.html",
+          "Sha256": "bcf716f871b81a7ba58af567dade9168b6aab9a00d2fe7f57c3d663041686ee7"
         },
         {
-          "Path": "AipDefinitions.ReadOnly.pts.md",
-          "Sha256": "2cd01f6fd84293e096e4b3406e76d864fd8caca92544623d4c4ed1a063f9efd8"
-        },
-        {
-          "Path": "index.pts",
-          "Sha256": "46632a6819654b712dfb1c4c80237b889e5a071c5439b27dee8e56cca38b94c8"
-        },
-        {
-          "Path": "index.pts.md",
-          "Sha256": "711244c4574f39b69a3bfea2d08cb847592cfa18c9369d7cc731382da6fbed45"
-        },
-        {
-          "Path": "SKILL.md",
-          "Sha256": "a6b3269399ae6432bb6c3066de7e5748aa4e760d10597e3983c41a33b0cc77ae"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [],
-      "Prerequisites": []
-    },
-    {
-      "SkillName": "TebraDesktop",
-      "Title": "TebraDesktop",
-      "Description": "Buffaly skill package for TebraDesktop.",
-      "Version": "0.1.1",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [
-        "TebraDesktop",
-        "TebraDesktop"
-      ],
-      "Path": "skills/TebraDesktop",
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "41666936eff8d5e1065a24470bca39117d2c604c9541b64348c4f4f4aa6304eb"
-        },
-        {
-          "Path": "index.pts.md",
-          "Sha256": "5dc8e13e70adeb96566f76fd3016ddf2169889d0a488543ea93da93c5ab7219c"
-        },
-        {
-          "Path": "lib/FlaUI.Core.dll",
-          "Sha256": "1696c344d2ff54598fb5ae869e9cbcf363c0be3ebff744cc50ba834056b43b6f"
-        },
-        {
-          "Path": "lib/FlaUI.UIA3.dll",
-          "Sha256": "d00fa5203c56b9d1c7b0bc624cffa84d599d6b8dfa6f27c0324e3059f343754c"
-        },
-        {
-          "Path": "lib/Interop.UIAutomationClient.dll",
-          "Sha256": "dcea43a1f5a2114b7bcc9e41cc1377064307611d0caa50f1ec203b887f4c20bb"
-        },
-        {
-          "Path": "lib/System.Configuration.ConfigurationManager.dll",
-          "Sha256": "f7ea3a9618aca48fb57fd06e9102b327ab66468ceb78c96d56f7d2eee2945983"
-        },
-        {
-          "Path": "lib/System.Diagnostics.EventLog.dll",
-          "Sha256": "3f8064e2499f13a8948ad2da0c6040d12683a9a90aaab786dbd6b653f17ac9cc"
-        },
-        {
-          "Path": "lib/System.Diagnostics.PerformanceCounter.dll",
-          "Sha256": "27571769f43067be4a0473916b6682c3f19443e83b4f884b69104ab6152fc58a"
-        },
-        {
-          "Path": "lib/System.Drawing.Common.dll",
-          "Sha256": "9da16df4486b8cffcd96d784521217b7823b9768ccdcb493fb099c8c79a21426"
-        },
-        {
-          "Path": "lib/System.Management.dll",
-          "Sha256": "c5f69a258fc609d42e6d50903e9b4449027f4d332faa8daec04bdc3cb9286d4b"
-        },
-        {
-          "Path": "lib/Tebra.UIAutomation.Core.dll",
-          "Sha256": "f6be725868d735d5accbe4332244e75a9707194d12bdce7957b92c5fa8edf561"
-        },
-        {
-          "Path": "SKILL.md",
-          "Sha256": "b9004acf9e1793bcefa179867baff7fe7391188374eccd49edcd60b033c09775"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [],
-      "Prerequisites": []
-    },
-    {
-      "SkillName": "Twilio",
-      "Title": "Twilio",
-      "Description": "Buffaly skill package for Twilio.",
-      "Version": "0.1.0",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [
-        "Twilio",
-        "Twilio"
-      ],
-      "Path": "skills/Twilio",
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "2b1d06783c7c5bd2d744691d61591d50cf9875b0c783b96a8f0c8be21e4182c5"
-        },
-        {
-          "Path": "PromptActions.pts",
-          "Sha256": "c790e763ede480ad44a9b300d556e2bba3b46c6abd79491ffc7562b08a7d3063"
-        },
-        {
-          "Path": "Prompts/AttachTwilioNumberToMessagingService.prompt.md",
-          "Sha256": "a6010886e1867610b78e9698c572dd23c4f9e05d81e29e115e1131c952affdc7"
-        },
-        {
-          "Path": "Prompts/BuyAndConfigureTwilioPhoneNumber.prompt.md",
-          "Sha256": "f59fdac5d91a7ac2d1820bb540f102aed610a0483c5b46adbdab485d9061797c"
-        },
-        {
-          "Path": "Prompts/SendSmsViaTwilioMessagingService.prompt.md",
-          "Sha256": "6bc935352b7de84c8dab58a946dfa07ca5f261cf99e5b2a34d9a7bc9d1c68389"
-        },
-        {
-          "Path": "SKILL.md",
-          "Sha256": "df40b0307f4cf0bedf3fee9d0a7217444cf3ce29b12c39082f2b9f6625fcc290"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [],
-      "Prerequisites": []
-    },
-    {
-      "SkillName": "OpenAIAdmin",
-      "Title": "OpenAI Administration",
-      "Description": "Buffaly skill package for OpenAI Administration.",
-      "Version": "0.1.0",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [
-        "OpenAI Administration",
-        "OpenAIAdmin"
-      ],
-      "Path": "skills/OpenAIAdmin",
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "cfec2a1ea889c4a978d17b6bc5e91e090eb22aaf074a9b75c110c7a7cc6a3654"
-        },
-        {
-          "Path": "OpenAiAdminAgentTools.pts",
-          "Sha256": "61b3e21bdbf9d5947a1de15c005d8e47e37c2ed2ba96ac8f29beb04135163fbc"
-        },
-        {
-          "Path": "OpenAiAdminAgentTools.pts.md",
-          "Sha256": "0733f27594c4dbcca152a6892f818a329c986a5a60bf9320bca0aa50fc4d1c8b"
-        },
-        {
-          "Path": "SKILL.md",
-          "Sha256": "182424acede2cb59b26ad8ae575fcfbad2c9f157e02b2cd4d18fc81839e7658a"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [],
-      "Prerequisites": []
-    },
-    {
-      "SkillName": "Workspace",
-      "Title": "Workspace",
-      "Description": "Buffaly skill package for Workspace.",
-      "Version": "0.1.9",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [
-        "Workspace",
-        "Workspace"
-      ],
-      "Path": "skills/Workspace",
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "34de33af0126440288e7725dc214300c5b96f13667d7810cf6f4f097aad14a78"
-        },
-        {
-          "Path": "index.pts.md",
-          "Sha256": "03c3583dcac05e2a29b7db5341b3d24f555fd1fd2bf570d7b22142aa8494fd3f"
-        },
-        {
-          "Path": "lib/Buffaly.Agent.Workspaces.dll",
-          "Sha256": "b2452fe78cd3351b1529a44445a51761eed21428509861352be958965f562621"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [],
-      "Prerequisites": []
-    },
-    {
-      "SkillName": "DispatchTree",
-      "Title": "Dispatch Tree",
-      "Description": "Buffaly skill package for Dispatch Tree.",
-      "Version": "0.1.15",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [
-        "Dispatch Tree",
-        "DispatchTree"
-      ],
-      "Path": "skills/DispatchTree",
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "4e8aa8ad335fd9a7d1a6de5d38a0491b447a2afdec8850ffb9b9b5b93ee40ec7"
-        },
-        {
-          "Path": "index.pts.md",
-          "Sha256": "92f06938ab5ebcd63b75f137f0b4528598beafb089f8e97fae6a4bf9a33539d3"
-        },
-        {
-          "Path": "Prompts/PlanDispatchRoute.prompt.md",
-          "Sha256": "7547464b5d964bc47ddc9bb0d2b21425bef5816b1fc0744d181a3a1f568ef2e9"
+          "Path": "Templates/fairpath-one-page-insert-v1/template-contract.json",
+          "Sha256": "59a2ac2fa3d9378c2ad217e3bfcf0d8f7f83fbd9b3a424e6f5e28175eeef3286"
         }
       ],
       "EntryPoint": "index.pts",
