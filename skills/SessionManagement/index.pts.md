@@ -1,5 +1,9 @@
 # index.pts Change History
 
+## Preserve Cross-Session Sender Identity (2026-07-22)
+- Updated `ToSendToSession` to pass `_opsAgent` into the typed session facade so queued instructions carry authoritative source-session and agent identity.
+- Kept the ProtoScript action as thin glue; persistence and validation remain in the C# contracts and services.
+
 ## Add Persisted Recent Session Inventory (2026-07-20)
 - Added `ToListRecentSessions(maxCount, skip)` as the general Session Management action for persisted recent-session discovery.
 - Returns canonical `SessionInfo` rows with `ParentSessionKey` and activity metadata so callers can classify top-level and child sessions without per-session probing.

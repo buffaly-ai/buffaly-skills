@@ -126,7 +126,7 @@ prototype ToSendToSession : SessionManagementSkillAction
 
 	function Execute(string sessionKey, string instruction) : QueuedInputResult
 	{
-		return SessionTools.SendToSessionTool(sessionKey, instruction);
+		return SessionTools.SendToSessionTool(_opsAgent, sessionKey, instruction);
 	}
 }
 
