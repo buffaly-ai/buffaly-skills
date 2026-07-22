@@ -281,7 +281,7 @@ prototype ToListActionLearningCoordinatorActions : ActionLearningCoordinatorSkil
 }
 
 [SemanticProgram.InfinitivePhrase("to get the action learning workspace definition")]
-prototype ToGetActionLearningWorkspaceDefinition : SessionWorkWorkspaceDefinitionProvider, ActionLearningCoordinatorSkillAction
+prototype ToGetActionLearningWorkspaceDefinition : ActionLearningCoordinatorSkillAction, SessionWorkWorkspaceDefinitionProvider
 {
 	function Execute() : string
 	{
@@ -290,7 +290,7 @@ prototype ToGetActionLearningWorkspaceDefinition : SessionWorkWorkspaceDefinitio
 }
 
 [SemanticProgram.InfinitivePhrase("to get the action learning coordinator portfolio")]
-prototype ToGetActionLearningPortfolio : SessionWorkPortfolioProvider, ActionLearningCoordinatorSkillAction
+prototype ToGetActionLearningPortfolio : ActionLearningCoordinatorSkillAction, SessionWorkPortfolioProvider
 {
 	function Execute() : string
 	{
@@ -299,7 +299,7 @@ prototype ToGetActionLearningPortfolio : SessionWorkPortfolioProvider, ActionLea
 }
 
 [SemanticProgram.InfinitivePhrase("to get an action learning source workspace")]
-prototype ToGetActionLearningSourceWorkspace : SessionWorkItemWorkspaceProvider, ActionLearningCoordinatorSkillAction
+prototype ToGetActionLearningSourceWorkspace : ActionLearningCoordinatorSkillAction, SessionWorkItemWorkspaceProvider
 {
 	function Execute(string sourceSessionKey) : string
 	{
@@ -320,7 +320,7 @@ prototype ToGetActionLearningSourceWorkspace : SessionWorkItemWorkspaceProvider,
 }
 
 [SemanticProgram.InfinitivePhrase("to get the ontology foundry workspace definition")]
-prototype ToGetOntologyFoundryWorkspaceDefinition : SessionWorkWorkspaceDefinitionProvider, OntologyFoundryCoordinatorSkillAction
+prototype ToGetOntologyFoundryWorkspaceDefinition : OntologyFoundryCoordinatorSkillAction, SessionWorkWorkspaceDefinitionProvider
 {
 	function Execute() : string
 	{
@@ -329,7 +329,7 @@ prototype ToGetOntologyFoundryWorkspaceDefinition : SessionWorkWorkspaceDefiniti
 }
 
 [SemanticProgram.InfinitivePhrase("to get the ontology foundry coordinator portfolio")]
-prototype ToGetOntologyFoundryPortfolio : SessionWorkPortfolioProvider, OntologyFoundryCoordinatorSkillAction
+prototype ToGetOntologyFoundryPortfolio : OntologyFoundryCoordinatorSkillAction, SessionWorkPortfolioProvider
 {
 	function Execute() : string
 	{
@@ -338,7 +338,7 @@ prototype ToGetOntologyFoundryPortfolio : SessionWorkPortfolioProvider, Ontology
 }
 
 [SemanticProgram.InfinitivePhrase("to get an ontology foundry source workspace")]
-prototype ToGetOntologyFoundrySourceWorkspace : SessionWorkItemWorkspaceProvider, OntologyFoundryCoordinatorSkillAction
+prototype ToGetOntologyFoundrySourceWorkspace : OntologyFoundryCoordinatorSkillAction, SessionWorkItemWorkspaceProvider
 {
 	function Execute(string sourceSessionKey) : string
 	{
