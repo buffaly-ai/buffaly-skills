@@ -1,11 +1,9 @@
 reference Buffaly.Agent.Tools.SemanticDatabase Buffaly.Agent.Tools.SemanticDatabase;
 import Buffaly.Agent.Tools.SemanticDatabase Buffaly.Agent.Tools.SemanticDatabase.SemanticDatabase SemanticDatabase;
-import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.SessionTools SessionTools;
-import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.QueuedInputResult QueuedInputResult;
 
 prototype DispatchAgentActionRoot : OpsAction
 {
-	Description = @"Restricted action root for hierarchical dispatch planning and ontology-guarded delivery. It intentionally contains no generic send, session creation, generic invocation, or memory mutation actions.";
+	Description = @"Action root for read-only session-local dispatch tree planning helpers. Delivery remains the responsibility of the normal Buffaly agent through ToSendToSession.";
 }
 
 prototype DispatchAgentEntityRoot : SemanticEntityBase
@@ -16,7 +14,7 @@ prototype DispatchAgentEntityRoot : SemanticEntityBase
 
 prototype DispatchTreeSkillAction : DispatchAgentActionRoot
 {
-	Description = @"Base action type for session-local dispatch tree planning and guarded delivery.";
+	Description = @"Base action type for read-only session-local dispatch tree planning.";
 }
 
 [SemanticEntity("dispatch tree skill")]
@@ -76,24 +74,6 @@ prototype ToGetDispatchNode : DispatchTreeSkillAction, DispatchAgentActionRoot
 			return candidatePrototype;
 
 		throw new InvalidOperationException("Dispatch node was not found beneath DispatchMemoryRoot: " + exactPrototypeName);
-	}
-}
-
-[SemanticProgram.InfinitivePhrase("to dispatch a planned task")]
-[SemanticProgram.InfinitivePhrase("to queue a task through the dispatch tree")]
-prototype ToDispatchPlannedTask : DispatchTreeSkillAction, DispatchAgentActionRoot
-{
-	Description = @"selectedLeafPrototypeName - exact reusable leaf selected by ToPlanDispatchRoute. destinationSessionKey - exact destination returned by the planner. instruction - complete task to queue. This is the Dispatch agent's sole delivery action; generic send remains hidden.";
-
-	function Execute(string selectedLeafPrototypeName, string destinationSessionKey, string instruction) : QueuedInputResult
-	{
-		if (StringUtil.IsEmpty(selectedLeafPrototypeName.Trim()))
-			throw new InvalidOperationException("selectedLeafPrototypeName is required.");
-		if (StringUtil.IsEmpty(destinationSessionKey.Trim()))
-			throw new InvalidOperationException("destinationSessionKey is required.");
-		if (StringUtil.IsEmpty(instruction.Trim()))
-			throw new InvalidOperationException("instruction is required.");
-		return SessionTools.SendToSessionTool(destinationSessionKey, instruction);
 	}
 }
 
