@@ -229,14 +229,12 @@
     {
       "SkillName": "BuffalyNLMemory",
       "Title": "Buffaly NL Memory",
-      "Description": "Transactional session-local memory authoring with canonical ProtoScript round-trip merge, clean restore, semantic reachability, and temporary memory actions.",
-      "Version": "0.2.1",
+      "Description": "Buffaly skill package for Buffaly NL Memory.",
+      "Version": "0.2.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Buffaly NL Memory",
-        "BuffalyNLMemory",
-        "session local memory",
-        "temporary memory"
+        "BuffalyNLMemory"
       ],
       "Path": "skills/BuffalyNLMemory",
       "Files": [
@@ -258,7 +256,7 @@
         },
         {
           "Path": "lib/Buffaly.NLMemory.dll",
-          "Sha256": "34a51efc346516b69612b6a12182422b3e256c16831dc682d630d0e079a1bf76"
+          "Sha256": "6597b89d29e8c27c83f2db9b25c0f07d21a0389a4f86905b7a1e39224bf5e196"
         },
         {
           "Path": "Prompts/ToRememberSomethingTemporarilySkill.prompt.md",
@@ -267,11 +265,7 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "BuffalySelfManagement",
