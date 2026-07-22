@@ -34,6 +34,17 @@ prototype ToRunOntologyFoundryExpandSkill : OntologyFoundryPromptAction, Ontolog
 	Description = @"Expands one exact seed, resolves and classifies every evidence finding, and emits exact schema-valid typed enhancement proposals in the same EvidenceGraph. Plan-first and zero-write; guarded apply remains blocked.";
 }
 
+[SemanticProgram.InfinitivePhrase("to generalize related physical objects into ontology")]
+[SemanticProgram.InfinitivePhrase("to discover and organize physical peers in ontology")]
+[SemanticProgram.InfinitivePhrase("to run ontology foundry generalization")]
+prototype ToRunOntologyFoundryGeneralizeSkill : OntologyFoundryPromptAction, OntologyFoundryActionRoot
+{
+	IsPromptAction = true;
+	SkillVersion = "2.0.0-plan";
+	PromptPath = @"Skills/OntologyFoundry/Prompts/Generalize-PhysicalPeers.prompt.md";
+	Description = @"Starts from one exact real-world seed, follows its grounding relationships to an authoritative enclosing system, enumerates physical peers with an existing typed action, resolves and classifies them, then proposes organized objects and relationships. Plan-only; zero writes.";
+}
+
 [SemanticProgram.InfinitivePhrase("to harvest ontology candidates from level two sessions")]
 [SemanticProgram.InfinitivePhrase("to run ontology foundry harvest")]
 prototype ToRunOntologyFoundryHarvestSkill : OntologyFoundryPromptAction, OntologyFoundryActionRoot

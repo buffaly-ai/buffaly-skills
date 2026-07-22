@@ -40,6 +40,6 @@
 ## Physical-seed generalization (2026-07-19)
 
 - Replaced the family/inventory-first Generalize procedure and removed its web-module special case.
-- `ToRunOntologyFoundryGeneralizeSkill` is independently registered under `Nodes/Personal/OntologyFoundry/PromptActions.pts` with `Generalize-PhysicalPeers.prompt.md`.
+- `ToRunOntologyFoundryGeneralizeSkill` and `Generalize-PhysicalPeers.prompt.md` are package-owned under `Skills/OntologyFoundry` so every installed Foundry worker can advertise and run the same plan-only procedure. The older Matt-local registration was the source copied into this owning package and should no longer be required by portable installations.
 - The action now starts from one exact physical/operational seed, follows a grounded enclosing relation, selects an existing typed enumerator, discovers real peers, resolves every peer, and only then proposes organizing parents, missing objects, relationships, and shared structure.
 - Existing descendants are a late collision/organization check, never the discovery source. The operation remains plan-only and zero-write.
