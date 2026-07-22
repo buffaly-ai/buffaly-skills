@@ -1,7 +1,9 @@
 reference Buffaly.Agent.Host Buffaly.Agent.Host;
+reference ActionLearningCoordinator.Web ActionLearningCoordinator.Web;
 import Buffaly.Agent.Host Buffaly.Agent.Host.BuffalyAgentService BuffalyAgentService;
 import Buffaly.Agent.Host Buffaly.Agent.Host.CreateAgentInitializationContract CreateAgentInitializationContract;
 import Buffaly.Agent.Host Buffaly.Agent.Host.SessionManagement.Sessions Sessions;
+import ActionLearningCoordinator.Web ActionLearningCoordinator.Web.OntologyFoundryProposalProjection OntologyFoundryProposalProjection;
 
 [SemanticEntity("session work coordinator action root")]
 prototype SessionWorkCoordinatorActionRoot : OpsAction
@@ -343,120 +345,7 @@ prototype ToGetOntologyFoundrySourceWorkspace : OntologyFoundryCoordinatorSkillA
 	function Execute(string sourceSessionKey) : string
 	{
 		Sessions.ValidateSessionKey(sourceSessionKey);
-		string path = Path.Combine(Sessions.GetSessionsRootPath(), sourceSessionKey, @"artifacts\ontology-foundry\evidence-graph.md");
-		string markdown = @"";
-		if (File.Exists(path))
-		{
-			markdown = File.ReadAllText(path);
-		}
-		string proposalMarkdown = markdown;
-		string proposalHeading = @"## Ranked entity resolutions";
-		int proposalStart = markdown.IndexOf(proposalHeading);
-		if (proposalStart >= 0)
-		{
-			proposalMarkdown = markdown.Substring(proposalStart);
-		}
-		JsonArray proposalRows = new JsonArray();
-		string artifactSourceSessionKey = @"";
-		int existingCount = 0;
-		int newCandidateCount = 0;
-		int ambiguousCount = 0;
-		int rejectedCount = 0;
-		bool inResolutionSection = false;
-		bool inResolutionTable = false;
-		if (File.Exists(path))
-		{
-			string[] lines = File.ReadAllLines(path);
-			foreach (string rawLine in lines)
-			{
-				string line = rawLine.Trim();
-				if (line == proposalHeading)
-				{
-					inResolutionSection = true;
-					continue;
-				}
-				if (!inResolutionSection)
-				{
-					continue;
-				}
-				if (line.StartsWith(@"- SourceLevel1SessionKey:"))
-				{
-					artifactSourceSessionKey = line.Substring(25).Trim();
-					continue;
-				}
-				if (line.StartsWith(@"| Source Rank | Entity | Importance | Resolution |"))
-				{
-					inResolutionTable = true;
-					continue;
-				}
-				if (!inResolutionTable)
-				{
-					continue;
-				}
-				if (line.StartsWith(@"### ") || line.StartsWith(@"## "))
-				{
-					break;
-				}
-				if (!line.StartsWith(@"| ") || line.StartsWith(@"|---"))
-				{
-					continue;
-				}
-				string[] columns = line.Split(@"|");
-				if (columns.Length != 10)
-				{
-					throw new InvalidOperationException(@"Ranked entity resolution rows must contain exactly eight columns. Source=" + sourceSessionKey + @"; Row=" + line);
-				}
-				JsonObject proposal = new JsonObject();
-				proposal[@"Rank"] = Convert.ToInt32(columns[1].Trim());
-				proposal[@"Entity"] = columns[2].Trim();
-				proposal[@"Importance"] = Convert.ToInt32(columns[3].Trim());
-				string resolution = columns[4].Trim();
-				proposal[@"Resolution"] = resolution;
-				proposal[@"PrototypeCandidates"] = columns[5].Trim();
-				proposal[@"SearchEvidence"] = columns[6].Trim();
-				proposal[@"DetailsEvidence"] = columns[7].Trim();
-				proposal[@"Reason"] = columns[8].Trim();
-				proposalRows.Add(new JsonValue(proposal));
-				if (resolution == @"Existing")
-				{
-					existingCount = existingCount + 1;
-				}
-				else if (resolution == @"NewCandidate")
-				{
-					newCandidateCount = newCandidateCount + 1;
-				}
-				else if (resolution == @"Ambiguous")
-				{
-					ambiguousCount = ambiguousCount + 1;
-				}
-				else if (resolution == @"Rejected")
-				{
-					rejectedCount = rejectedCount + 1;
-				}
-				else
-				{
-					throw new InvalidOperationException(@"Unknown ranked entity resolution classification: " + resolution);
-				}
-			}
-		}
-		JsonObject proposalProjection = new JsonObject();
-		proposalProjection[@"SchemaVersion"] = 1;
-		proposalProjection[@"WorkspaceSourceSessionKey"] = sourceSessionKey;
-		proposalProjection[@"ArtifactSourceSessionKey"] = artifactSourceSessionKey;
-		proposalProjection[@"TotalCount"] = proposalRows.Count;
-		proposalProjection[@"ExistingCount"] = existingCount;
-		proposalProjection[@"NewCandidateCount"] = newCandidateCount;
-		proposalProjection[@"AmbiguousCount"] = ambiguousCount;
-		proposalProjection[@"RejectedCount"] = rejectedCount;
-		proposalProjection[@"Rows"] = proposalRows;
-		JsonObject result = new JsonObject();
-		result[@"ArtifactPath"] = @"artifacts/ontology-foundry/evidence-graph.md";
-		result[@"ArtifactTitle"] = @"Evidence graph";
-		result[@"ArtifactMarkdown"] = markdown;
-		result[@"ProposalMarkdown"] = proposalMarkdown;
-		result[@"ProposalProjection"] = proposalProjection;
-		result[@"WorkerActions"] = new JsonArray(@"[]");
-		return result.ToJSON();
+		return OntologyFoundryProposalProjection.BuildSourceWorkspace(Sessions.GetSessionsRootPath(), sourceSessionKey);
 	}
 }
 
