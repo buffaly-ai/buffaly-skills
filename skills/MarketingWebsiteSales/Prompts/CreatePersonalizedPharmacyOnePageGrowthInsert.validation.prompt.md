@@ -21,6 +21,11 @@ For a successful visual deliverable, fail unless all exist in one reported outpu
 - exact 33-slot structured-content JSON;
 - private evidence/strategy record containing the five-part specificity gate;
 - one contiguous official-site screenshot;
+- one semantic HTML/CSS improved-homepage clone derived from that exact official-site capture;
+- one annotated improved-clone PNG containing exactly three visible numbered targets;
+- original-homepage capture provenance JSON;
+- visual-source map identifying preserved and intentionally improved source-site elements;
+- original-versus-improved side-by-side HTML and PNG;
 - final semantic HTML;
 - one-page PDF;
 - exact 2550 x 3300 preview PNG rendered from that HTML/PDF production path;
@@ -43,11 +48,20 @@ Fail unless:
 - CSS and semantic section order remain unchanged;
 - HTML contains semantic text and is not an image-only wrapper;
 - the screenshot is an actual official-page capture rather than a directory card, search result, collage, or fabricated mockup;
+- the original official-page capture remains a separate unchanged provenance artifact and is not misrepresented as the improved design;
+- the image placed in the final insert is the annotated lead-specific improved-homepage clone, not a generic pharmacy mockup, the unchanged source capture, the package sample, or another lead's website shell;
+- the improved clone is semantic HTML/CSS and preserves recognizable source-homepage visual identity, including relevant logo/wordmark, palette, typography character, header/hero composition, imagery treatment, CTA placement, and section rhythm;
+- exactly three numbered targets are visible inside the improved clone and each maps one-to-one to a specific customer-facing recommendation without obscuring critical text or controls;
+- the visual-source map accounts for every retained source element, intentional improvement, and added pharmacy fact;
+- side-by-side proof shows recognizable continuity between the live homepage and improved clone plus a material improvement in hierarchy, readability, conversion path, or the selected mechanism;
+- lead-specific clone CSS, DOM, and image hashes do not duplicate another lead's clone or the package sample except for approved shared FairPath assets;
 - every local image/font reference resolves;
 - PDF has exactly one page;
 - preview dimensions are exactly 2550 x 3300.
 
 ## Pharmacy-specific mechanism gate
+
+For an OfficialSite lead, fail immediately if the upper-half website could be reused for another pharmacy by changing only the name, contact line, service list, or colors. A shared generic green pharmacy page, text-substituted sample website, or clone lacking source-site visual continuity is a blocking failure even when all copy, OCR, dimensions, and print geometry pass.
 
 Fail unless the private strategy and customer-facing upper half establish:
 

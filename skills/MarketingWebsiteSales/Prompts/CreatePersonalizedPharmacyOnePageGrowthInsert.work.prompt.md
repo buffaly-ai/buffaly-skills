@@ -15,7 +15,7 @@ Use this runbook before reading the detailed sections. Read deeper sections only
 4. Obtain the reputation scan. `ToCheckPharmacyReputationSkill` returns the owned checklist instructions, not a completed lead report. Read those instructions once, execute the checklist research for this exact pharmacy, and save the resulting report. A supplied current completed report may be reused after identity/date/source checks.
 5. Synthesize services, workflow, practical local context, and evidence limits.
 6. Generate three materially different growth ideas using the detailed candidate procedure; select one by evidence, usefulness, FairPath fit, visual clarity, and owner relevance.
-7. Build the upper half around the selected pharmacy-specific idea and a meaningful official-site screenshot. Build the lower half around FairPath outcomes: remote care, less manual intake/process work, and more patients.
+7. For an approved lead with an official website, capture the live homepage in Chromium, build a lead-specific improved homepage clone from that capture, annotate three concrete improvements inside the clone, and use that annotated clone as the upper-half visual. Preserve the original capture separately for provenance and side-by-side validation. Never substitute a generic pharmacy mockup or another lead's website shell. Build the lower half around FairPath outcomes: remote care, less manual intake/process work, and more patients. For a lead without an official website, use the evidence-backed service-line visual route instead of fabricating a website.
 8. Render one canonical HTML, one-page PDF, and exact preview PNG. OCR and visually inspect that exact PNG. Fix and rerender substantive defects.
 9. Release only when evidence, screenshot, language, visual, artifact-identity, and mail-safety gates pass. Otherwise return the defined nonvisual blocker package.
 
@@ -29,7 +29,7 @@ You are the senior research strategist, pharmacy-growth sales strategist, direct
 
 You must do the judgment work. Research is not the deliverable. A list of findings is not the deliverable. A smaller proposal deck is not the deliverable. Your job is to discover one useful, believable, pharmacy-specific growth idea; explain it in language a human pharmacy owner can absorb quickly; connect it to outcomes FairPath can help create; and turn it into a polished one-page visual that makes the owner want to learn more.
 
-Perform full pharmacy-specific reasoning for every approved lead. Do not create shallow tiers in which only a few leads receive genuine customization. Each page's central idea, evidence, wording, screenshot, and visual flow must be selected specifically for that pharmacy.
+Perform full pharmacy-specific reasoning for every approved lead. Do not create shallow tiers in which only a few leads receive genuine customization. Each page's central idea, evidence, wording, source capture, improved homepage clone, annotations, and visual flow must be selected specifically for that pharmacy. A pharmacy name and copy inserted into a shared mock website is not customization and must fail.
 
 ---
 
@@ -92,20 +92,49 @@ The visual master is external, versioned, and mandatory:
 
 This template is the sterilized form of the approved visual master. Its CSS, semantic section order, grid proportions, typography, spacing, colors, cards, result band, CTA treatment, and footer position are locked. Do not redesign it. Do not adapt proportions. Do not move or replace sections. Do not create a new scaffold. Do not use Pillow, SVG text drawing, a canvas, or a flattened image as the authoring surface. Do not make an HTML file that merely wraps a PNG.
 
+The lock applies to the outer FairPath print page only. It does not freeze the website shown inside the screenshot region. For an OfficialSite lead, that region must contain a unique, lead-specific annotated improved-homepage clone derived from the lead's current live homepage. Never reuse the template's sample website, a prior lead's clone, a generic green pharmacy shell, or a text-substituted shared website mockup.
+
+### Mandatory OfficialSite visual-source and clone contract
+
+For every OfficialSite lead, complete these steps before populating the print template:
+
+1. Capture the exact live official homepage in Chromium at a recorded URL, viewport, checked date, and final resolved URL. Save the original full-page or contiguous above-the-fold capture unchanged.
+2. Save provenance JSON containing LeadID, pharmacy identity, source URL, resolved URL, capture timestamp, viewport, browser engine, screenshot SHA-256, and identity evidence tying the domain to the exact pharmacy/location.
+3. Inspect and record the source homepage's recognizable visual tokens: logo/wordmark, palette, typography character, header/navigation structure, hero composition, imagery, CTA placement, section order, spacing rhythm, and distinctive pharmacy-specific elements.
+4. Build a separate semantic HTML/CSS improved-homepage clone. Start from the source site's observed visual system and recognizable above-the-fold composition; do not start from the FairPath sample website or a generic pharmacy template. Preserve enough identity that the owner can immediately recognize their site, while improving hierarchy, readability, conversion paths, and the selected evidence-backed mechanism.
+5. Use only public facts verified for this exact pharmacy/location. Do not transfer services, ownership, imagery, claims, or contact details from another location or lead.
+6. Add exactly three visible numbered targets inside the improved clone. Each target must point to one specific changed element in the clone and map one-to-one to one plain-language recommendation on the FairPath page. Targets may not obscure critical text or controls.
+7. Render and save the improved clone as its own image artifact. The print template's screenshot slot must reference this annotated improved-clone image, not the unchanged original capture. Preserve the original capture beside it for review and side-by-side proof.
+8. Save a visual-source map identifying which original visual elements were preserved, which were intentionally improved, and the evidence for every added pharmacy fact or service.
+9. Compare the original capture and improved clone side by side. Confirm recognizable continuity in brand and page structure, visible improvement, truthful content, and absence of broken or fabricated media.
+10. Compare the improved clone against at least one other generated lead concept or the package sample. If the page could be mistaken for another pharmacy after hiding the name, reject it as generic and rebuild it.
+
+Required OfficialSite visual artifacts in the lead output folder:
+
+- `<basename>-original-homepage-chromium.png`;
+- `<basename>-original-homepage-provenance.json`;
+- `<basename>-improved-homepage-clone.html`;
+- `<basename>-improved-homepage-clone-annotated.png`;
+- `<basename>-visual-source-map.json`;
+- `<basename>-original-vs-improved-side-by-side.html` and PNG;
+- final insert HTML, one-page PDF, exact 2550 x 3300 preview, content JSON, and validation JSON.
+
+If the official site cannot be captured coherently or a recognizable evidence-backed clone cannot be built, do not fall back to a generic website. Return the defined visual-production blocker, or route to the evidence-backed service-line insert only when the campaign contract explicitly permits that route.
+
 The agent performing research and sales reasoning produces structured content only. The deterministic renderer then:
 
 1. reads the template and contract;
 2. verifies `TemplateId = fairpath-one-page-insert-v1`;
 3. copies the template and approved FairPath logo into the lead output directory;
-4. populates every required slot with HTML-escaped plain text or a validated local image path;
+4. populates every required slot with HTML-escaped plain text or a validated local image path; for OfficialSite leads, the screenshot/image slot must be the annotated improved-homepage clone and must not be the unchanged source capture or a generic mockup;
 5. enforces every `MaxCharacters` limit before rendering;
 6. rejects missing, extra, unresolved, or over-limit fields;
-7. rejects any screenshot that is not one contiguous capture of an actual official webpage;
+7. validates both visual artifacts: the original is one contiguous capture of the actual official homepage, and the insert image is a contiguous render of the lead-specific annotated improved clone derived from that capture;
 8. writes semantic HTML containing the recipient-visible text;
 9. renders that HTML through a browser-quality HTML/CSS engine to one-page PDF and exact PNG;
 10. validates design fidelity, exact content, and the exact rendered image.
 
-Only these content regions vary by pharmacy: recipient identity, kicker, split headline, introduction, three-step idea flow, 90-day outcome, proof label/headline/copy, actual official-site screenshot, the three outcome-card bodies, result context, approved financial amount/qualifier, CTA, and disclaimer. The fixed FairPath section headings and visual language remain unchanged.
+Only these content regions vary by pharmacy: recipient identity, kicker, split headline, introduction, three-step idea flow, 90-day outcome, proof label/headline/copy, the lead-specific annotated improved-homepage clone image, the three outcome-card bodies, result context, approved financial amount/qualifier, CTA, and disclaimer. The unchanged original official-site capture remains a required provenance artifact but is not the final insert image. The fixed FairPath section headings and visual language remain unchanged.
 
 If content does not fit, shorten and improve the content. Never shrink fonts, alter CSS, change page geometry, remove whitespace, replace the website screenshot with a collage, or switch to coordinate-based raster drawing.
 
@@ -117,7 +146,11 @@ Required fidelity checks:
 - final HTML has the same locked section sequence and classes;
 - all 33 required slots were populated exactly once and no braces remain;
 - final HTML includes semantic recipient-visible text and is not an image wrapper;
-- screenshot source is a contiguous official webpage capture;
+- original screenshot source is a contiguous official homepage capture with provenance;
+- final screenshot slot contains the annotated improved-homepage clone derived from that source;
+- side-by-side proof shows recognizable source-site continuity and meaningful improvement;
+- visual-source map accounts for preserved and changed elements;
+- clone CSS, DOM, and image hashes are lead-specific and do not match another lead's clone or the package sample except for approved shared FairPath assets;
 - PDF has exactly one Letter page;
 - exact PNG preserves header, intro, idea flow, proof card, three outcome cards, dark result band, CTA, and footer;
 - text density and whitespace remain comparable to the approved master;
