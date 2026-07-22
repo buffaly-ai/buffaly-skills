@@ -2,7 +2,7 @@
 
 ## Idempotent Session Index Refresh (2026-07-20)
 
-- Added `ToRefreshOntologyFoundrySessionIndexSkill`, backed by `Nodes/Personal/OntologyFoundry/Prompts/Refresh-SessionEntityIndex.prompt.md`.
+- Added `ToRefreshOntologyFoundrySessionIndexSkill`, backed by the package-owned `Skills/OntologyFoundry/Prompts/Refresh-SessionEntityIndex.prompt.md` so every installed Foundry worker can run the dashboard-advertised refresh procedure.
 - This is the standard repeatable card for one Level1 source: the principal supplies an exact inventory snapshot, Gather is reused only when that snapshot matches, and the coordinator directly rechecks current ontology identity with the restricted search/detail tools.
 - Reconciliation is intentionally self-contained instead of loading the standalone Resolve prompt action mid-card; live validation showed nested prompt-action composition repeatedly stalled after commentary. The standalone Resolve skill remains available for explicitly separate use.
 - The coordinator keeps active refresh state separate from the last completed result, then atomically promotes ranked evidence, resolutions, delta classifications, and proposed Session Entity Index evidence only after whole-run validation.

@@ -407,6 +407,11 @@ prototype ToRunOntologyFoundryWorkerOperation : OntologyFoundryCoordinatorSkillA
 		{
 			throw new InvalidOperationException(@"No attached Ontology Foundry worker was found for source session " + sourceSessionKey);
 		}
+		SessionInfo worker = BuffalySessionsService.GetRecentSessions(1, 0, workerSessionKey)[0];
+		if (worker.SessionKey != workerSessionKey || worker.ParentSessionKey != sourceSessionKey || worker.AgentName != @"ontology-foundry")
+		{
+			throw new InvalidOperationException(@"Attached worker identity mismatch. Worker=" + workerSessionKey + @"; ExpectedParent=" + sourceSessionKey + @"; ActualParent=" + worker.ParentSessionKey + @"; AgentName=" + worker.AgentName);
+		}
 		SessionInfo source = BuffalySessionsService.GetRecentSessions(1, 0, sourceSessionKey)[0];
 		if (source.SessionKey != sourceSessionKey)
 		{
