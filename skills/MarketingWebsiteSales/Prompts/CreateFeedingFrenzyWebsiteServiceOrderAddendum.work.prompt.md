@@ -2,8 +2,7 @@
 >
 > Do not run this markdown file directly as ordinary prompt guidance.
 > This prompt must be executed through the corresponding ProtoScript `ValidatedPromptAction` so the validation prompt runs after the work turn.
-> If you are the parent routing agent, call the action/tool instead of loading this file directly.
-> If you are already inside a `ValidatedPromptAction work turn` for this action, do **not** call this action, `ToCreateFeedingFrenzyWebsiteServiceOrderAddendumSkill`, or `ToRunValidatedPromptSkill` again. Continue with the workflow steps in this prompt and produce the requested work result.
+> If you are an agent, call the action/tool instead of loading this file directly.
 
 # Create Feeding Frenzy Website Service Order Addendum Workflow
 

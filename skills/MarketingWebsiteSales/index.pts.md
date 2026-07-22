@@ -1,5 +1,13 @@
 # MarketingWebsiteSales PromptActions.pts Change Notes
 
+## Route pharmacy proposals by prospect maturity (2026-07-22)
+
+- Updated `ToCreatePharmacyGrowthProposalDeckSkill` to v3.2.0 with explicit routing for single- versus multi-location prospects, no/weak/established websites, social and reputation proof, retail strengths, clinical maturity, and local care pressure.
+- Reworked the 16-slide cadence to lead with prospect momentum, introduce Intelligence Factory/FairPath after the opportunity, and present website growth and remote care as independent, sequenced, or combined paths.
+- Replaced audit/procurement jargon with owner-friendly titles, added social-proof/screenshot guidance, removed static template pricing, and limited customer-facing disclaimers to short material qualifications.
+- Kept detailed sources, evidence states, equations, assumptions, and operational caveats authoritative in the market ledger and evidence summary; validation still recomputes every financial scenario.
+- Added language, prospect-fit, template-contamination, and rendered visual-QA checks plus four regression routing fixtures.
+
 ## Add personalized pharmacy one-page growth inserts (2026-07-22)
 
 - Added `ToCreatePersonalizedPharmacyOnePageGrowthInsertSkill` as a validated prompt action for one evidence-grounded, customer-facing FairPath direct-mail insert.

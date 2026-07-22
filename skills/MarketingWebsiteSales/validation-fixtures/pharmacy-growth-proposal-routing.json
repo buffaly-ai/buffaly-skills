@@ -1,0 +1,33 @@
+{
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "single-no-website-strong-social",
+      "profile": { "locations": 1, "website": "none", "social": "strong", "reputation": "strong", "remoteCare": "meaningful" },
+      "expectedCadence": "social-proof-first-two-path",
+      "requiredConcepts": ["existing momentum", "owned searchable home", "remote care", "manageable patient group"],
+      "forbiddenConcepts": ["website score", "per location", "systemwide rollout"]
+    },
+    {
+      "id": "single-weak-website",
+      "profile": { "locations": 1, "website": "weak", "social": "developing", "reputation": "strong", "remoteCare": "limited" },
+      "expectedCadence": "customer-actions-first-website",
+      "requiredConcepts": ["customer actions", "local discovery", "practical fix"],
+      "forbiddenConcepts": ["per location", "systemwide rollout", "operating motion"]
+    },
+    {
+      "id": "multi-location-operator",
+      "profile": { "locations": 12, "website": "weak", "social": "developing", "reputation": "strong", "remoteCare": "meaningful" },
+      "expectedCadence": "multi-location-two-path",
+      "requiredConcepts": ["location pages", "rollout sequencing", "remote care"],
+      "forbiddenConcepts": ["not a 12-location leap", "illustrative capture scenarios"]
+    },
+    {
+      "id": "strong-website-remote-care-opportunity",
+      "profile": { "locations": 1, "website": "established", "social": "strong", "reputation": "strong", "remoteCare": "meaningful" },
+      "expectedCadence": "remote-care-forward",
+      "requiredConcepts": ["shorten the website section", "introduce remote care earlier", "patient check-ins"],
+      "forbiddenConcepts": ["website rebuild", "fabricated score", "remote care afterthought"]
+    }
+  ]
+}

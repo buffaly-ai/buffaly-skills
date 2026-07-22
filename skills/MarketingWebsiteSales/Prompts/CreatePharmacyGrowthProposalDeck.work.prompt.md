@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Produce a polished, evidence-qualified, 16-slide HTML proposal deck for an independent pharmacy lead. The deck uses a fixed reference template (design system, CSS, fonts, images, navigation) and substitutes lead-specific research findings into each slide.
+Produce a polished, independently validated, 16-slide HTML proposal deck for an independent pharmacy lead. The deck uses a fixed reference design system while choosing a customer-friendly narrative from the prospect's actual size, digital maturity, reputation, social presence, and clinical-services opportunity. Detailed evidence and arithmetic remain authoritative in the supporting ledger and evidence summary; the visible deck should read like a clear owner conversation rather than an audit report.
 
 ## Input
 
@@ -129,6 +129,54 @@ The deck includes a self-executing IIFE that handles:
 
 ---
 
+## Prospect Classification and Narrative Routing
+
+Classify the prospect before selecting slide copy or cadence. Record this routing decision in the evidence summary.
+
+Required classification dimensions:
+
+- Single-location, small multi-location, or enterprise/multi-location operator.
+- Owner-operated or manager/committee-led.
+- No functioning standalone website, weak website, or established website.
+- Strong, developing, weak, or unavailable social presence.
+- Strong, developing, weak, or unavailable public-reputation evidence.
+- Retail/gift merchandising or other non-prescription product activity.
+- Current clinical-services maturity.
+- Meaningful rural-care, physician-access, or provider-partnership pressure.
+- Website-growth opportunity, remote-care opportunity, or both.
+
+Choose the narrative from the evidence:
+
+- **No website + strong social/reputation:** open with what the pharmacy has already built. Present the website as an owned, searchable home behind successful social channels, never as a replacement for them.
+- **Weak existing website:** open with customer experience, local discovery, and concrete missed actions. Use technical findings only to support plain-language business consequences.
+- **Established website + clinical-services gap:** shorten the website section and introduce remote care earlier.
+- **Single-location / owner-operated:** use small steps, direct benefits, manageable workload, and one-pharmacy language. Never use multi-location rollout language.
+- **Multi-location operator:** use consistency, location pages, rollout sequencing, and scale language only when location evidence supports it.
+- **Both opportunities are meaningful:** present two distinct but connected paths—get found and convert interest online; support patients between visits through remote care. Each path may stand alone, run in sequence, or launch together. Neither may be reduced to an afterthought.
+
+Do not infer youth, ownership style, sophistication, or budget from appearance alone. Use CRM, public evidence, and the prospect's observable operating model.
+
+## Customer-Language Contract
+
+- Lead with the prospect's strengths and opportunity, not Intelligence Factory.
+- Normally introduce Intelligence Factory and FairPath after the reader understands why the proposal matters, around slides 7–9.
+- Every title must be immediately understandable when spoken aloud to an independent pharmacy owner.
+- Prefer concrete nouns and actions. Avoid consulting, procurement, audit, and software jargon in visible headings.
+- Do not use customer-facing headings such as `illustrative capture scenarios`, `explicit capture assumptions`, `operating motion`, `gated`, `evidence-backed`, `credible comparison`, `readiness gate`, `controlled enrollment`, `evidence review`, `systemwide rollout`, or `validation workshop`.
+- Prefer `What patient participation could mean`, `Three simple starting points`, `Two paths that work together`, `Check-ins at 30, 60, and 90 days`, `Start with a manageable patient group`, and `Review what worked`.
+- If meaningful social proof exists, place the strongest screenshot or reputation proof on slide 2 or 3. Show identity and key metrics, add three compact proof points, and caption it positively. Do not claim organic reach, ad spend, or conversion performance without evidence.
+- Remove `Confidential` by default. Add it only when the user or a real business requirement calls for it.
+
+## Evidence and Disclaimer Separation
+
+The ledger and evidence summary—not the visible deck—carry the full audit machinery.
+
+- Keep source years, URLs, evidence states, formulas, rate bases, operational caveats, and detailed uncertainty in `market-economics-ledger.json` and `evidence-summary.md`.
+- Keep the visible deck accurate, internally consistent, and non-misleading, but conversational.
+- Use only short qualifications that materially affect the buying decision: financial examples are not promises; remote care depends on patient, payer, staffing, and operational fit; final scope and pricing are agreed before work begins.
+- Do not repeat `Verified`, `Observed`, `Estimated`, `Not verified`, evidence-file counts, audit methodology, email-pattern uncertainty, or long payer/compliance caveats across customer-facing slides.
+- Do not hide uncertainty. Express it in plain language or move the detail to the evidence summary without turning a directional example into a guarantee.
+
 ## Slide-by-Slide Structure (16 slides)
 
 Each slide is a `<section class="slide [lt|dk] [top]" aria-roledescription="slide" aria-label="...">` with:
@@ -141,202 +189,180 @@ Each slide is a `<section class="slide [lt|dk] [top]" aria-roledescription="slid
 **Layout:** Dark slide with FairPath dark logo top-left, large title block, bottom row with "Prepared for" (left) and "Presented by" (right).
 
 **Content to substitute:**
-- Eyebrow: `Executive Proposal · {Month Year} · Confidential`
-- H1: `A stronger digital front door.` + `<br>` + `<span style="color:#B78AFF">A validated path into remote care.</span>`
-- Lead paragraph: company name + location count + region description
-- "Prepared for" block: top 3 decision-maker names + titles (from CRM contacts or website leadership page)
-- "Presented by" block: FairPath logo image
-- Footer: `Confidential — prepared for {Company Name} leadership only`
+- Eyebrow: `{One-Part|Two-Part} Growth Plan for {Company} · {Month Year}`.
+- H1: a prospect-first statement. When both paths apply, prefer `You've already earned {Market}'s trust.` + `<br>` + `<span style="color:#B78AFF">Here are two ways to build on it.</span>`.
+- Lead paragraph: summarize the selected path(s) in plain language. Do not force a location count into the sentence.
+- "Prepared for" block: verified CRM or public decision-maker names and titles. Do not fill empty slots or infer titles.
+- "Presented by" block: FairPath logo image.
+- Footer: one short statement of the selected path(s), not a confidentiality or methodology notice.
 
-### Slide 2 — Executive Summary (light)
+### Slide 2 — Prospect Strength / Social Proof (light)
 
-**Layout:** Eyebrow + h2 + lead paragraph, then 2×2 grid of `.card.dec` (decision cards), then a `.strip` evidence-standard note.
-
-**Content to substitute:**
-- H2: `One practical first move — not a {N}-location leap`
-- Lead: `We are asking for permission to validate, fix the low-risk items, and design a scoped pilot. Nothing in this proposal commits {Company} to a systemwide rollout.`
-- 4 decision cards:
-  1. **Verified digital issue** — top technical finding from audit
-  2. **Strategic opportunity** — market positioning + remote care
-  3. **Recommended first move** — validate, quick wins, pilot scoping
-  4. **Decision requested** — authorize discovery and pilot scoping
-- Evidence standard strip: `observations come from the public website and cited public data. Service availability, economics, compliance posture, and operational fit all require stakeholder validation.`
-- Footer left: `Decision requested: approve a validation workshop and scoped pilot design`
-
-### Slide 3 — Who We Are (light)
-
-**Layout:** Eyebrow + h2, then 2-column grid with two cards.
-
-**Content (static — does not change between leads):**
-- Left card: Intelligence Factory logo + "The company" description + 3 bullet points
-- Right card: FairPath logo + "The platform" description + capability chips (RPM, CCM, AWV, SMS outreach, Intake/consent/referrals, Billing reports)
-- Footer: `intelligencefactory.ai · fairpath.ai`
-
-### Slide 4 — Website Audit (light)
-
-**Layout:** 2-column grid (1.15fr / 0.85fr). Left: eyebrow + h2 + lead text + strip. Right: score panel.
+**Layout:** Choose the best evidence-led opener. Prefer a 58% narrative / 42% screenshot split when strong social or reputation proof exists; otherwise use a balanced card grid.
 
 **Content to substitute:**
-- Eyebrow: `Public website audit · {Month Year}`
-- H2: `Your strongest content is hard for machines to see` (or audit-specific headline)
-- Lead: describe the site's technical architecture (e.g., client-side rendering, SPA framework)
-- Score panel: overall score (e.g., `3.5 / 10`) + 4 bar rows for sub-scores (Crawlability, AI-search readiness, Local SEO, Content)
-- Strip: opportunity statement
-- Footer left: `Source: public-site technical audit, {N}-area scorecard with {N} evidence files · Observations require stakeholder validation`
+- Eyebrow: `What You've Already Built`, `What's Already Working`, or another prospect-specific strength label.
+- H2: a warm proof-led title such as `Your customers already love you online`.
+- Lead: explain the existing trust, reputation, social audience, service strength, or local position before discussing gaps.
+- If using a screenshot, copy it into the deck assets, preserve its important identity/metric region, and add three compact evidence-backed proof points.
+- Caption: observational and positive, for example `Your Facebook page today—real trust, real activity, and content ready to build from.`
+- Never use `not a {N}-location leap`, rebut an objection the deck has not established, or lead with a decision request.
 
-### Slide 5 — What's Working (light)
+### Slide 3 — The Gap (light)
+
+**Layout:** Eyebrow + h2 + plain-language lead, then three concrete consequence cards and one next-step strip.
+
+**Content to substitute:**
+- For no-website prospects: explain gently that social trust has no owned, searchable home and that people outside the current following have a discovery gap.
+- For weak websites: describe the customer actions that are difficult today rather than leading with framework or crawl terminology.
+- For established websites: use this slide for the most important remaining growth gap.
+- Do not introduce Intelligence Factory here unless the prospect already knows the opportunity and the user explicitly prefers an early introduction.
+
+### Slide 4 — The Practical Website Move (light)
+
+**Layout:** Use a three-card benefit layout for no-website prospects or the score-panel layout only when a retrievable site and real scored audit exist.
+
+**Content to substitute:**
+- No website: `A website built from what you already have`; show the existing photos/posts/reviews/voice, core customer actions, and a small first scope.
+- Weak website: state the clearest customer/business consequence and the practical fix; technical architecture belongs in supporting evidence.
+- Established website: show the next conversion/local-search improvement rather than forcing a rebuild story.
+- Never manufacture a technical score, architecture claim, or crawl finding when no retrievable site exists.
+
+### Slide 5 — What the Website Adds (light)
 
 **Layout:** Eyebrow + h2 + lead, then 3-column grid of 6 cards with SVG icons.
 
 **Content to substitute:**
-- H2: `What's already working`
-- Lead: positive framing of existing strengths
-- 6 cards: each with an SVG icon, h3 title, and p description
-  - Examples: Clean design, Location schema, Transfer form, Mobile app, Leadership story, Service content
-  - Adapt to actual audit findings — highlight what the specific lead's website does well
+- H2: explain the owner/customer value in plain language, for example `What a website can do that social media can't`.
+- For social-first prospects, explain owned search visibility, one permanent information source, measurable actions, and durable content without diminishing Facebook or Instagram.
+- For website prospects, highlight actual strengths and show how the proposal builds on them.
+- Use only evidence-supported examples; do not carry template strengths into a new lead.
 
-### Slide 6 — Key Issues (light)
+### Slide 6 — Immediate Opportunity (light)
 
-**Layout:** Eyebrow + h2, then a full-width table.
-
-**Content to substitute:**
-- H2: `What's holding the site back`
-- Table columns: Issue | Why it matters | Fix effort
-- Fix effort pills: `.pill-red` (High), `.pill-amber` (Medium), `.pill-green` (Low), `.pill-slate` (Review)
-- Include 6-10 rows from the audit findings
-- Footer left: `{N} items are quick wins deliverable in the first two weeks · Full audit packet with {N} evidence files available`
-
-### Slide 7 — Competitor Landscape (light)
-
-**Layout:** Eyebrow + h2, then a comparison table.
+**Layout:** Prefer three outcome cards. Use an issue table only when a real website audit produced substantive, customer-relevant findings.
 
 **Content to substitute:**
-- H2: `Strong differentiators — invisible online`
-- Table columns: Capability | {Company Name} | Competitor 1 | Competitor 2 | Chains (Walgreens/CVS)
-- Rows: Locations, Compounding, Mobility aids, Compliance packaging, Server-rendered website, Individual location pages, Online immunization scheduling, RPM/CCM/AWV, AI-search readiness
-- Use `.yes`, `.no`, `.na` classes for Yes/No/N/A
-- Caveat below table: `*Absence from the public website does not prove a service is not offered — it may be available offline or through the patient portal.`
-- Footer left: competitive differentiation summary
+- H2: state the opportunity, for example `Help more {Market} neighbors find you`.
+- Use `Find`, `Trust`, and `Act` or similarly concrete customer outcomes.
+- If an issue table is warranted, limit it to the 3–5 issues that affect customer discovery or action. Keep audit counts and technical detail in the evidence summary.
 
-### Slide 8 — Market Opportunity (light)
+### Slide 7 — Local Market / Care Need (light)
 
-**Layout:** 2-column grid (1fr / 0.82fr). Left: table of cities with population and Medicare estimates. Right: 3 stacked metric cards.
+**Layout:** Market metrics plus three practical opportunity cards. Use a competitor table only when direct, comparable evidence materially helps the sale.
 
 **Content to substitute:**
-- H2: `The market around your {N} locations`
-- Table: City | Est. population | Medicare (est.) — one row per location city, plus a Total row
-- Right column: 3 metric cards:
-  1. Total service-area population
-  2. Estimated Medicare beneficiaries
-  3. Physician offices in primary county
-- Caveat: `Estimates from public population data — directional context, not verified revenue figures.`
-- Footer left: `Each location likely has 50–200+ physician offices within a five-mile radius`
+- Website-led path: show the local population and practical discovery opportunity.
+- Remote-care or two-path proposal: connect the Medicare-age market, physician/clinic context, and any evidence-supported access pressure to patient support between visits.
+- Do not use categorical competitor yes/no cells without direct evidence. Unknown capabilities belong in the evidence summary, not as a customer-facing matrix of `Not verified` cells.
+
+### Slide 8 — Who Is Behind the Plan (light)
+
+**Layout:** Two balanced cards for Intelligence Factory and FairPath after the prospect opportunity has been established.
+
+**Content to substitute:**
+- H2: use plain language such as `A small team helping independent pharmacies grow online and in patient care`.
+- Keep total narrative copy under 70 words outside labels.
+- For a two-path proposal, label the cards `Path 1 · Get found online` and `Path 2 · Support patients remotely` and explain how each can stand alone or work together.
+- For a one-path proposal, keep the unused service secondary rather than forcing equal weight.
 
 ### Slide 9 — Remote Care Opportunity (dark)
 
 **Layout:** 2-column grid (1fr / 0.92fr). Left: eyebrow + h2 + lead + 3 service cards. Right: FairPath eligibility screenshot in `.frame` + source tag + caveat.
 
 **Content to substitute:**
-- H2: `Remote care: a revenue line worth validating`
-- Lead: list current services from website, note absence of RPM/CCM/AWV
+- Eyebrow: `Path 2 · Remote Care` when both paths apply, or another plain-language service label.
+- H2: explain the patient and pharmacy value, for example `A new way to support patients—and grow beyond the counter`.
+- Lead: connect evidence-supported local care needs and current pharmacy strengths to patient check-ins between visits.
 - 3 service cards:
   1. **RPM** — Bluetooth devices, CPT 99453/99454/99457
   2. **CCM** — Monthly care coordination, CPT 99490
   3. **AWV** — Health-risk assessments, G0438/G0439
 - Right: `fairpath-eligibility-score.jpg` in a `.frame` with caption
-- Source tag: `Real FairPath product interface · fairpath.ai`
-- Caveat: `Absence from the public site is not proof {Company} lacks a service — some capability may exist offline or in the patient portal. This analysis uses public website content only.`
-- Footer left: CRM lead notes classification if available (e.g., "Services Builder" with readiness level)
+- Source tag: `FairPath product interface · fairpath.ai` when useful.
+- State in plain language that the service should start with a manageable patient group and grow only when the team is ready. Put detailed operational qualification in the evidence summary.
+- Footer: one patient/pharmacy value statement, not an internal CRM classification.
 
-### Slide 10 — Illustrative Economics (light)
+### Slide 10 — Remote-Care Growth Examples (light)
 
-**Layout:** 2-column grid (1fr / 1fr). Left: per-service rate table. Right: scenario table + score panel summary.
-
-**Content to substitute:**
-- H2: `Illustrative gross billing — not a forecast`
-- Left table: Service | Rate | Per patient/year
-  - CCM (CPT 99490): ~$42.72/mo, ~$513/yr
-  - RPM setup (99453): ~$19.53 once
-  - RPM device (99454): ~$50.27/mo, ~$603/yr
-  - RPM management (99457): ~$50.80/mo, ~$610/yr
-  - AWV initial (G0438): ~$187.96 once
-  - AWV subsequent (G0439): ~$93.69/yr
-- Right table: Scenario | Patients/loc | Total | Annual gross billing
-  - Conservative: 50 patients/loc → ${low}–${high}
-  - Moderate: 100 → ${low}–${high}
-  - Aggressive: 200 → ${low}–${high}
-- Score panel: `${low}M–${high}M` illustrative annual gross billing range
-- Caveats: `Historical illustrative rates only — validate current CMS and payer-specific rules before use.` and `Gross billing illustration — not net revenue, not a forecast.`
-- Footer left: `All figures subject to current CMS / payer validation and {Company} operating assumptions`
-
-### Slide 11 — Three-Part Growth Plan (light)
-
-**Layout:** Eyebrow + h2, then 3-column grid of 3 cards.
+**Layout:** Prioritize one clear scenario table or three scenario cards. Keep technical rate detail in the ledger unless the user asks for it.
 
 **Content to substitute:**
-- H2: `Three parts, one operating motion`
-- Card 1 — **01 · WEBSITE REBUILD**: Now (quick wins), Architecture (SSR/static), Add (location pages, FAQs, scheduling), Result
-- Card 2 — **02 · REMOTE CARE PLATFORM**: RPM, CCM, AWV, Plus (online booking)
-- Card 3 — **03 · PHYSICIAN PARTNERSHIPS**: Connect, Partner, Compliance, Network
-- Footer left: `Sequenced so digital wins land first and clinical programs launch only after the readiness gate`
+- H2: `What patient participation could mean for the pharmacy` or another immediately understandable title.
+- Table labels: Starting point | Share who join | Patients | Example per patient/year | Example annual billing.
+- Scenario labels: `A Cautious Start`, `Steady Growth`, `Strong Participation`, mapped to the ledger's low/base/high values.
+- Never use `patients per location` for a single-location lead. Use per-location scenarios only when multi-location evidence and the ledger support them.
+- Keep the ledger's exact market rate, patient count, per-patient value, equation, and annual total.
+- Visible qualification: `Examples only—not a promise. Actual results depend on patient participation, services provided, and current reimbursement.`
+- Do not present annual billing as net revenue, profit, or guaranteed income.
+
+### Slide 11 — How the Paths Work Together (light)
+
+**Layout:** Eyebrow + h2, then two or three cards showing the selected path and sequence.
+
+**Content to substitute:**
+- H2: `Two paths that work together` when both opportunities apply.
+- Show `Website first`, `Remote care first`, and `Both together` as legitimate choices when the evidence supports both paths.
+- Explain how the website can turn social attention and search traffic into customer actions and remote-care interest without implying that remote care requires a website rebuild.
+- For one-path proposals, use this slide for a simple sequence of practical improvements instead of showing an irrelevant second path.
+- Do not use `operating motion`, `readiness gate`, or enterprise rollout language for a small independent pharmacy.
 
 ### Slide 12 — FairPath Platform (dark)
 
 **Layout:** 2-column grid (0.78fr / 1fr). Left: eyebrow + h2 + bullet list + source tag. Right: `fairpath-unified-work-queue.jpg` in `.frame` with caption.
 
-**Content (mostly static):**
-- H2: `One operational view for the pharmacy team`
-- Bullet list: Patient intake queue, RPM device assignment, CCM care coordination, AWV scheduling, SMS templates, Billing reports
+**Content to substitute:**
+- H2: `A manageable way to support patients between visits` or another team-centered title.
+- Explain who handles patient outreach, device or service coordination, documentation, scheduling, and billing support. Distinguish verified platform capabilities from pharmacy responsibilities.
+- Bullet examples: Patient intake, outreach queue, device assignment when applicable, care coordination, scheduling, messaging, and billing reports.
 - Right: product screenshot with caption
-- Footer left: `RPM, proactive outreach, and data-driven insight in one system`
+- Footer left: one plain-language workload or patient-support benefit.
 
-### Slide 13 — 90-Day Pilot (light)
+### Slide 13 — 90-Day Start (light)
 
 **Layout:** 2-column grid (1fr / 1fr). Left: timeline rows. Right: success measures table + strip.
 
 **Content to substitute:**
-- H2: `A 90-day pilot at one or two locations, gated at 30 / 60 / 90 days`
+- H2: `A 90-day start with check-ins along the way`.
 - Timeline:
-  - WEEKS 1–2: Quick wins live
-  - WEEKS 3–4: Readiness gate
-  - WEEKS 5–8: Controlled enrollment (25–50 patients per location)
-  - WEEKS 9–12: Evidence review
-- Recommended pilot sites: suggest 1-2 locations (one urban, one rural if possible)
-- Success measures table: Website visibility score, Location pages ranking, RPM patients, CCM patients, Physician partners, Gross billing signal, Immunization scheduling
-- Strip: `30 / 60 / 90-day gates: technical validation → operational readiness → compliant workflow approval → scale, adjust, or stop.`
-- Footer left: `We show you the impact before you commit to all {N} locations`
+  - DAYS 1–30: Build the foundation and agree on the first patient/customer actions.
+  - DAYS 31–60: Launch a manageable first group and learn from real use.
+  - DAYS 61–90: Review what worked and choose the next step.
+- For two-path proposals, include visible work for both the website and remote-care path. For a single path, remove the unused work rather than leaving placeholder milestones.
+- Success measures must fit the route: customer calls, directions, form activity, social-to-site visits, participating patients, completed outreach, or another measurable evidence-backed result.
+- Use per-location targets only for verified multi-location prospects. Never imply a small pharmacy must commit systemwide before seeing results.
 
-### Slide 14 — Commercial Terms (light)
+### Slide 14 — Scope and Pricing Conversation (light)
 
 **Layout:** Eyebrow + h2, then 3-column grid of pricing cards, then strip + caveat.
 
-**Content (static pricing — do not change):**
-- Card 1 — One-time: $15,000 (Implementation & setup)
-- Card 2 — Monthly: $2,500/mo (FairPath platform)
-- Card 3 — Per location: $250/mo (Per active location)
-- Strip: pilot-scale example calculation
-- Caveat: `Platform fees only — excludes devices, staffing, and clearinghouse / billing-service costs. Final terms in a mutually agreed statement of work. No reimbursement level or revenue outcome is guaranteed.`
-- Footer left: `Pricing subject to final SOW · No revenue outcome guaranteed`
+**Content to substitute:**
+- Show separate cards for `Website`, `Remote care`, and `Both together` when both paths apply; show only relevant scope for a one-path proposal.
+- Use confirmed pricing only. Do not carry static package pricing, per-location fees, or implementation assumptions into a lead without validation.
+- If pricing is not confirmed, describe what each scope includes and state that final scope and pricing will be agreed before work begins.
+- Keep one short material qualifier; detailed exclusions and assumptions belong in the evidence summary.
 
-### Slide 15 — Why IF + FairPath (light)
+### Slide 15 — Why One Partner (light)
 
 **Layout:** Eyebrow + h2, then 3-column grid of 6 cards with SVG icons.
 
-**Content (static — does not change between leads):**
-- 6 cards: Evidence-based, Compliance-aware, Revenue-focused, Built for pharmacies, Low-friction onboarding, Scales when proven
-- Footer left: `Technology for independent pharmacy growth`
+**Content to substitute:**
+- H2: explain the practical benefit of continuity across online presence, outreach, measurement, and remote-care administration.
+- Use 3–6 concise capabilities supported by the actual proposed scope. Avoid generic self-praise and procurement language.
+- Keep the prospect and the work ahead central; this is supporting rationale, not a second company introduction.
 
-### Slide 16 — Next Steps (dark)
+### Slide 16 — Choose a Starting Path (dark)
 
 **Layout:** 2-column grid (1fr / 0.9fr). Left: eyebrow + h2 + 3 step rows. Right: contact card + FairPath logo.
 
 **Content to substitute:**
-- H2: `Three steps to a confident decision`
-- 3 steps: 01 Validate, 02 Scope, 03 Decide
+- H2: `Which path should we start with?` when both opportunities apply.
+- Options: `Website first`, `Remote care first`, and `Both together`, each with one concrete first action.
+- For a one-path proposal, ask for one simple next step instead of presenting false choices.
 - Contact card: sales rep name, title, email, websites
   - Default: `Justin Brochetti` · `Chief Executive Officer · Intelligence Factory` · `justin@intelligencefactory.ai`
   - Override with assigned sales rep if different
-- Footer left: `Public-site observations only — validate services, reimbursement, compliance, economics, and operating assumptions with {Company} stakeholders`
+- Footer left: one warm next-step statement. Keep methodology and detailed qualification in the evidence summary.
 
 ---
 

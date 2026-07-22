@@ -1,4 +1,4 @@
-﻿# Validate Pharmacy Growth Proposal Deck
+# Validate Pharmacy Growth Proposal Deck
 
 Independently validate the final, post-enhancement pharmacy growth proposal and its market/economics calculation ledger. Do not accept a completion narrative or pre-enhancement draft as evidence.
 
@@ -21,11 +21,11 @@ Fail if:
 - The client name/title is incorrect.
 - Any `<img>` or `@font-face` reference is unresolved.
 - The required reference-template design system, navigation, fixed slide canvas, or print styling is missing or materially broken.
-- Required evidence-state labels or caveats are absent.
+- A financial example lacks a short, plain-language statement that it is not a promise, or remote-care copy implies guaranteed participation, reimbursement, or results.
 
 ## Market-sizing checks
 
-Fail unless both the ledger and final deck contain:
+Fail unless the ledger and evidence summary contain:
 
 - Geographic unit(s), source, and year.
 - Service-area population.
@@ -35,22 +35,22 @@ Fail unless both the ledger and final deck contain:
 - Estimated physician count or range.
 - Estimated physician-office/clinic count or range and its stated basis.
 
-Directional estimates are allowed and expected when exact local values are unavailable, but they must be labeled **Estimated** and must show enough basis or arithmetic to be understood. Do not require exact first-party values when an order-of-magnitude estimate can be calculated.
+Directional estimates are allowed and expected when exact local values are unavailable, but the ledger and evidence summary must label them **Estimated** and show enough basis or arithmetic to be understood. The deck may use a shorter conversational label if it remains accurate and does not imply verification. Do not require exact first-party values when an order-of-magnitude estimate can be calculated.
 
 ## Economics continuity checks
 
-Fail unless the ledger and final deck show low, base, and high scenarios with all of:
+Fail unless the ledger contains low, base, and high scenarios with all of:
 
 - Assumed market-capture rate.
 - Resulting enrolled-patient count.
 - Illustrative annual gross billing per enrolled patient.
 - Illustrative annual gross-billing total.
 
-The deck must visibly communicate this equation:
+The ledger must explicitly communicate this equation:
 
 `estimated Medicare market × assumed capture rate × illustrative annual gross billing per enrolled patient = illustrative annual gross billing`
 
-Independently recompute each scenario from ledger values. Allow ordinary display rounding, but fail if patient counts or billing totals materially disagree with the stated inputs. Compare final slide values to the ledger and name every mismatch.
+Independently recompute each scenario from ledger values. Allow ordinary display rounding, but fail if patient counts or billing totals materially disagree with the stated inputs. Compare the final slide's patient counts, per-patient examples, and annual totals to the ledger and name every mismatch. The deck may use plain-language scenario names and does not need to display the full equation, rate table, or every assumption.
 
 If the Medicare market is a range, verify that the selected low/base/high basis is explicit and that the resulting patient counts are arithmetically plausible within that range.
 
@@ -63,17 +63,32 @@ Fail if:
 - A later slide contradicts an earlier market estimate.
 - Market estimates are relabeled as Verified without primary evidence.
 - Illustrative gross billing is presented as net revenue, profit, guaranteed reimbursement, or a forecast.
-- Required caveats about payer rules, rates, program mix, billable months, staffing, devices, denials, collections, compliance, or partner economics are omitted.
+- The ledger or evidence summary omits material caveats about payer rules, rates, program mix, billable months, staffing, devices, denials, collections, compliance, or partner economics.
 - Anti-Gravity polishing removed or changed required figures, arithmetic, labels, or caveats.
 
 ## Other proposal coverage
 
-Fail if the deck lacks substantive, lead-specific coverage of:
+Fail if the deck lacks substantive, lead-specific coverage of the applicable items:
 
-- Website audit findings and observed strengths.
+- Website opportunity and observed strengths. Do not require audit findings or a technical score when no retrievable website exists.
 - Competitive/service-gap context.
 - Remote-care opportunity and FairPath capabilities.
 - Recommended growth plan, pilot/discovery sequence, roles, investment framing, and next step.
+
+## Narrative, language, and visual checks
+
+Fail if:
+
+- Single-location copy uses unsupported multi-location, systemwide rollout, or per-location language.
+- A no-website prospect receives a fabricated website score, crawl finding, architecture claim, or rebuild narrative.
+- Strong public social or reputation evidence is ignored instead of being used as early positive proof.
+- Intelligence Factory or FairPath is introduced before the prospect's strengths and opportunity without a lead-specific reason.
+- A meaningful website or remote-care opportunity is reduced to an afterthought when the ledger supports both paths.
+- Visible headings use internal jargon such as `illustrative capture scenarios`, `explicit capture assumptions`, `operating motion`, `gated`, `credible comparison`, `readiness gate`, `controlled enrollment`, `evidence review`, `systemwide rollout`, or `validation workshop`.
+- Repeated evidence labels, methodology notes, or long caveat blocks overwhelm the customer narrative. Detailed rigor belongs in the ledger and evidence summary.
+- Static template claims, pricing, strengths, location counts, contacts, screenshots, or capabilities remain without lead-specific support.
+
+Render and inspect at minimum the cover, strongest screenshot/social-proof slide, financial scenario slide, 90-day slide, and closing slide. Fail for clipped or unreadable text, unresolved image crops, severe whitespace imbalance, navigation/footer collisions, off-canvas content, or a closing choice that is not visually clear. Also verify that the screenshot caption does not claim reach, conversion, ad spend, or ownership facts absent from the evidence.
 
 ## Validation response
 

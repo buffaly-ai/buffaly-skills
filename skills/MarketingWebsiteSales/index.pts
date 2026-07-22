@@ -180,9 +180,9 @@ prototype ToEnrichPharmacyLeadSkill : ValidatedPromptAction, MarketingWebsiteSal
 [SemanticEntity("create pharmacy growth proposal deck, build pharmacy pitch deck, FairPath pharmacy proposal, lead proposal deck")]
 prototype ToCreatePharmacyGrowthProposalDeckSkill : ValidatedPromptAction, MarketingWebsiteSalesSkillAction
 {
-	Description = "Create an independently validated, image-backed Intelligence Factory / FairPath growth proposal deck for an independent pharmacy lead. Accepts a Feeding Frenzy LeadID (preferred) or company name plus website URL. Includes evidence-labeled local market sizing and illustrative economics whose population, Medicare, physician, clinic, enrollment, and gross-billing figures remain arithmetically consistent through the final post-Antigravity deck. Uses the packaged reference template and delivers validated artifacts to the session.";
+	Description = "Create an independently validated, image-backed Intelligence Factory / FairPath growth proposal deck for an independent pharmacy lead. Accepts a Feeding Frenzy LeadID (preferred) or company name plus website URL. Routes the story by prospect size, website maturity, social proof, reputation, and remote-care fit; presents website growth and remote care as independent or connected paths; and keeps customer language conversational while preserving evidence, arithmetic, and caveats in the ledger and evidence summary. Uses the packaged reference template and delivers validated artifacts to the session.";
 	SkillKind = "validated-prompt";
-	SkillVersion = "3.1.0";
+	SkillVersion = "3.2.0";
 	IsPromptAction = true;
 	PromptPath = @"Skills/MarketingWebsiteSales/Prompts/CreatePharmacyGrowthProposalDeck.work.prompt.md";
 	WorkPromptPath = @"Skills/MarketingWebsiteSales/Prompts/CreatePharmacyGrowthProposalDeck.work.prompt.md";
