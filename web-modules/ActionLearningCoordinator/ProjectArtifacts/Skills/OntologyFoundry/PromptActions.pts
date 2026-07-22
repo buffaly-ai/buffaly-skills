@@ -1,0 +1,96 @@
+prototype OntologyFoundryPromptAction : OntologyFoundryActionRoot
+{
+	Description = @"Base prompt action type for Ontology Foundry workflows.";
+	Bool IsPromptAction = true;
+	String PromptPath = new String();
+	String SkillVersion = new String();
+
+	function Execute() : string
+	{
+		String promptText = _opsAgent.LoadTrustedPromptText(PromptPath);
+		return "## Prompt Skill Instructions\nFollow this procedure to produce the requested result. This action returns guidance, not the result.\nPrompt source: " + PromptPath + "\n\n" + promptText;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to run ontology foundry evidence graph learning")]
+[SemanticProgram.InfinitivePhrase("to generate ontology candidates from session evidence")]
+prototype ToRunOntologyFoundryEvidenceGraphSkill : OntologyFoundryPromptAction, OntologyFoundryActionRoot
+{
+	IsPromptAction = true;
+	SkillVersion = "2.0.0";
+	PromptPath = @"Skills/OntologyFoundry/Prompts/EvidenceGraph-LearnFromEntitySearch.prompt.md";
+	Description = @"Runs bounded candidate learning from persisted historical entity-search episodes plus current ontology and conversation evidence, revising one evidence-graph.md artifact and stopping before ontology writes.";
+}
+
+[SemanticProgram.InfinitivePhrase("to expand an ontology entity from session evidence")]
+[SemanticProgram.InfinitivePhrase("to run ontology foundry entity expansion")]
+[SemanticProgram.InfinitivePhrase("to expand and enhance an ontology entity")]
+[SemanticProgram.InfinitivePhrase("to plan typed ontology enhancements from expansion evidence")]
+prototype ToRunOntologyFoundryExpandSkill : OntologyFoundryPromptAction, OntologyFoundryActionRoot
+{
+	IsPromptAction = true;
+	SkillVersion = "2.0.0-plan";
+	PromptPath = @"Skills/OntologyFoundry/Prompts/Expand-ModeB.prompt.md";
+	Description = @"Expands one exact seed, resolves and classifies every evidence finding, and emits exact schema-valid typed enhancement proposals in the same EvidenceGraph. Plan-first and zero-write; guarded apply remains blocked.";
+}
+
+[SemanticProgram.InfinitivePhrase("to harvest ontology candidates from level two sessions")]
+[SemanticProgram.InfinitivePhrase("to run ontology foundry harvest")]
+prototype ToRunOntologyFoundryHarvestSkill : OntologyFoundryPromptAction, OntologyFoundryActionRoot
+{
+	IsPromptAction = true;
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/OntologyFoundry/Prompts/Harvest-BatchExtractFilter.prompt.md";
+	Description = @"Runs GatherAndRank plus ResolveRanked for a bounded Level2 cohort and produces proposed session-owned RelatedEntities maps from confirmed existing prototypes in the single EvidenceGraph artifact.";
+}
+
+[SemanticProgram.InfinitivePhrase("to gather and rank entities from a level two session")]
+[SemanticProgram.InfinitivePhrase("to collect ranked level two entities")]
+prototype ToGatherAndRankLevel2EntitiesSkill : OntologyFoundryPromptAction, OntologyFoundryActionRoot
+{
+	IsPromptAction = true;
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/OntologyFoundry/Prompts/Gather-RankedLevel2Entities.prompt.md";
+	Description = @"Asks one exact Level2 observer for up to ten evidence-grounded durable entities ranked by importance and saves the correlated response in the single EvidenceGraph artifact. It performs no ontology search or write.";
+}
+
+[SemanticProgram.InfinitivePhrase("to coordinate ontology foundry gather")]
+[SemanticProgram.InfinitivePhrase("to run autonomous ontology foundry gather")]
+prototype ToCoordinateOntologyFoundryGatherSkill : OntologyFoundryPromptAction, OntologyFoundryActionRoot
+{
+	IsPromptAction = true;
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/OntologyFoundry/Prompts/Coordinate-Gather.prompt.md";
+	Description = @"Coordinates one exact Gather through terminal collection when possible, using the single EvidenceGraph and never auto-running Resolve.";
+}
+
+[SemanticProgram.InfinitivePhrase("to refresh a session entity index from current session evidence")]
+[SemanticProgram.InfinitivePhrase("to reconcile a source session with the current ontology")]
+[SemanticProgram.InfinitivePhrase("to run an idempotent ontology foundry session refresh")]
+prototype ToRefreshOntologyFoundrySessionIndexSkill : OntologyFoundryPromptAction, OntologyFoundryActionRoot
+{
+	IsPromptAction = true;
+	SkillVersion = "1.0.0";
+	PromptPath = @"Nodes/Personal/OntologyFoundry/Prompts/Refresh-SessionEntityIndex.prompt.md";
+	Description = @"Runs the mandatory idempotent source-session card: reuse or refresh ranked evidence by exact source snapshot, reconcile every current label against the current ontology, and atomically rebuild proposed Session Entity Index evidence. Performs zero ontology and index writes.";
+}
+
+[SemanticProgram.InfinitivePhrase("to resolve ranked level two entities to ontology prototypes")]
+[SemanticProgram.InfinitivePhrase("to relate ranked entities to existing or new prototypes")]
+prototype ToResolveRankedLevel2EntitiesSkill : OntologyFoundryPromptAction, OntologyFoundryActionRoot
+{
+	IsPromptAction = true;
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/OntologyFoundry/Prompts/Resolve-RankedLevel2Entities.prompt.md";
+	Description = @"Resolves ranked Level2 labels and produces a proposed Session Entity Index RelatedEntities map from confirmed existing prototypes. Unresolved labels remain evidence; it performs zero writes.";
+}
+
+[SemanticProgram.InfinitivePhrase("to propose ontology builds from foundry harvest")]
+[SemanticProgram.InfinitivePhrase("to run ontology foundry propose build")]
+prototype ToRunOntologyFoundryProposeBuildSkill : OntologyFoundryPromptAction, OntologyFoundryActionRoot
+{
+	IsPromptAction = true;
+	SkillVersion = "1.0.0-propose";
+	PromptPath = @"Skills/OntologyFoundry/Prompts/ProposeBuild.prompt.md";
+	Description = @"Turns explicitly promoted ontology-construction candidates into duplicate-checked, schema-aware, reachable ProtoScript proposals. Session-index unresolved labels do not trigger construction automatically.";
+}

@@ -1,0 +1,17 @@
+{
+  "AgentName": "ontology-foundry",
+  "DisplayName": "Ontology Foundry",
+  "PromptFile": "Prompts/OntologyFoundry.md",
+  "PromptContext": "none",
+  "Provider": "openai",
+  "RootActionPrototypeName": "OntologyFoundryActionRoot",
+  "RootEntityPrototypeName": "OntologyFoundryEntityRoot",
+  "DefaultModelName": "gpt-5.6-sol",
+  "DefaultReasoningLevel": "medium",
+  "UiPage": "/buffaly-agent.html",
+  "IsReadOnly": false,
+  "IsHidden": false,
+  "DisableLevel2AutoAttach": true,
+  "CanChangeModel": true,
+  "CompanionAgents": []
+}

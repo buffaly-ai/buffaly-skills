@@ -12,6 +12,8 @@ All common methods derive from `SessionWorkCoordinatorSkillAction`; specializati
 
 The first specialized operation, `ToAttachActionLearningWorker`, creates or reuses an `action-learning` worker with the exact source session as its parent and records the worker binding in the ledger. `ToListActionLearningCoordinatorActions` provides the exact common, specialized, and worker action inventory rendered by the two-level dashboard; the worker inventory includes `ToRefreshActionLearningSessionCandidatesSkill` as the primary living-artifact stage.
 
+The package also carries the canonical Ontology Foundry worker profile, master prompt, and complete `Skills/OntologyFoundry` prompt-skill tree so `ToAttachOntologyFoundryWorker` can create the real restricted worker in every installation. The Foundry source projection returns the complete source-owned EvidenceGraph plus a bounded `ProposalMarkdown` view beginning at `## Ranked entity resolutions`; the shared browser displays that proposal excerpt as plain text and links the complete artifact.
+
 `ToAttachOntologyFoundryWorker` applies the same source-child pattern with the `ontology-foundry` profile. The first Foundry workspace is read-only beyond common track, attach, and remove bookkeeping: it exposes no acceptance, promotion, Session Entity Index materialization, ontology authoring, expansion, or generalization operation.
 
 The browser does not read session files or parse domain Markdown. Each source-workspace provider validates the exact source key and reads only its fixed source-owned artifact. New ledgers identify `SessionWorkCoordinatorSkill`; existing version-1 Action Learning ledgers remain readable and are not rewritten merely by loading the workspace.

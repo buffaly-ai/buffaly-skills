@@ -1,0 +1,244 @@
+reference Buffaly.SessionSemanticDatabase Buffaly.SessionSemanticDatabase;
+import Buffaly.SessionSemanticDatabase Buffaly.SessionSemanticDatabase.SessionConversationSearchDriver SessionConversationSearchDriver;
+import Buffaly.Agent.Host Buffaly.Agent.Host.SessionManagement.Sessions Sessions;
+
+[SemanticEntity("ontology foundry action root")]
+prototype OntologyFoundryActionRoot : OpsAction
+{
+	Description = @"Restricted action root for the Ontology Foundry agent.";
+}
+
+[SemanticEntity("ontology foundry entity root")]
+prototype OntologyFoundryEntityRoot : SemanticEntityBase
+{
+	Description = @"Restricted entity root for the Ontology Foundry agent.";
+}
+
+prototype OntologyFoundrySkillAction : OntologyFoundryActionRoot
+{
+	Description = @"Base action type for Ontology Foundry tools.";
+}
+
+[SemanticProgram.InfinitivePhrase("to evaluate an ontology foundry calibration session")]
+prototype ToEvaluateOntologyFoundryCalibrationSession : OpsAction
+{
+	Description = @"Parent-coordinator action only. sessionKey - existing attached calibration child. instruction - next bounded continuation input. Evaluates through the typed cross-worker CreateChildSession relay.";
+
+	function Execute(string sessionKey, string instruction) : Prototype
+	{
+		return BuffalyAgentService.CreateChildSession(
+			_opsAgent.GetSessionKeyOrEmpty(),
+			sessionKey,
+			instruction,
+			900,
+			null);
+	}
+}
+
+[SemanticEntity("ontology foundry skill")]
+prototype OntologyFoundrySkill : SkillEntity
+{
+	Description = @"Bounded historical-session evidence analysis for reviewable ontology candidates.";
+	ActionRoot = OntologyFoundryActionRoot;
+}
+
+include "PromptActions.pts";
+
+[SemanticProgram.InfinitivePhrase("to create an ontology foundry session")]
+prototype ToCreateOntologyFoundrySession : OpsAction
+{
+	Description = @"Parent-coordinator action only. sessionKey - exact new or existing session key. Creates the runtime from the current OpsAgent project using the ontology-foundry agent profile.";
+
+	function Execute(string sessionKey) : Prototype
+	{
+		return BuffalyAgentService.CreateAgentFromProject(sessionKey, "OpsAgent", "ontology-foundry");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to search ontology foundry candidate entities")]
+prototype ToOntologyFoundrySearchCandidateEntities : OntologyFoundrySkillAction, OntologyFoundryActionRoot
+{
+	Description = @"semanticQuery - focused model-generated or analyst-selected entity query. maxResults - bounded result count. includeParentType - include parent type context.";
+
+	function Execute(string semanticQuery, int maxResults = 8, bool includeParentType = true) : string
+	{
+		return CoreOntologyTools.SearchCandidateEntities(_opsAgent, semanticQuery, maxResults, includeParentType);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to inspect ontology foundry prototype details")]
+prototype ToOntologyFoundryGetPrototypeDetails : OntologyFoundrySkillAction, OntologyFoundryActionRoot
+{
+	Description = @"prototype - exact current prototype to inspect.";
+
+	function Execute(Prototype prototype) : string
+	{
+		return PrototypeLogging.ToFriendlyString(prototype).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to inspect ontology foundry prototype schema")]
+prototype ToOntologyFoundryGetPrototypePropertySchema : OntologyFoundrySkillAction, OntologyFoundryActionRoot
+{
+	Description = @"prototype - exact prototype reference to inspect.";
+
+	function Execute(string prototype) : string
+	{
+		return _runtime.FormatResolvedPropertySchema(_runtime.GetPrototype(prototype));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to search ontology foundry conversations semantically")]
+prototype ToOntologyFoundryFindConversationsForProbe : OntologyFoundrySkillAction, OntologyFoundryActionRoot
+{
+	Description = @"query - probe text. topConversations and topFragmentsPerConversation - explicit bounded result limits.";
+
+	function Execute(string query, int topConversations, int topFragmentsPerConversation) : string
+	{
+		return SessionConversationSearchDriver.FindTopConversationsForQuery(query, topConversations, topFragmentsPerConversation);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to search ontology foundry conversations exactly")]
+prototype ToOntologyFoundryFindExactConversationsForProbe : OntologyFoundrySkillAction, OntologyFoundryActionRoot
+{
+	Description = @"query - exact text probe. topConversations and topFragmentsPerConversation - explicit bounded result limits.";
+
+	function Execute(string query, int topConversations, int topFragmentsPerConversation) : string
+	{
+		return SessionConversationSearchDriver.FindExactConversationsForQuery(query, topConversations, topFragmentsPerConversation);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to search ontology foundry source user messages")]
+prototype ToOntologyFoundrySearchSessionMessages : OntologyFoundrySkillAction, OntologyFoundryActionRoot
+{
+	Description = @"search - focused surface-form or hard-identity probe. maxRows - bounded user-message results.";
+
+	function Execute(string search, int maxRows = 25) : string
+	{
+		return SessionTools.SearchSessionMessagesTool(search, maxRows);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to search ontology foundry source final assistant messages")]
+prototype ToOntologyFoundrySearchSessionFinalAssistantMessages : OntologyFoundrySkillAction, OntologyFoundryActionRoot
+{
+	Description = @"search - focused outcome-language probe. maxRows - bounded final-assistant results.";
+
+	function Execute(string search, int maxRows = 25) : string
+	{
+		return SessionTools.SearchSessionFinalAssistantMessagesTool(search, maxRows);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list ontology foundry prototype descendants")]
+prototype ToOntologyFoundryListPrototypeFirstLevelDescendants : OntologyFoundrySkillAction, OntologyFoundryActionRoot
+{
+	Description = @"prototype - exact seed or family root. Returns direct descendants only; never recursively traverses.";
+
+	function Execute(Prototype prototype) : Collection
+	{
+		return ToListPrototypeFirstLevelDescendants.Execute(prototype);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list ontology foundry installed web modules")]
+prototype ToOntologyFoundryListInstalledWebModules : OntologyFoundrySkillAction, OntologyFoundryActionRoot
+{
+	Description = @"Returns the authoritative installed web-module inventory, enabled state, and declared UI pages for family comparison.";
+
+	function Execute() : string
+	{
+		return ToListInstalledCapabilityWebModules.Execute();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list ontology foundry active level two sessions")]
+prototype ToOntologyFoundryListActiveSessions : OntologyFoundrySkillAction, OntologyFoundryActionRoot
+{
+	Description = @"maxCount - bounded active runtime sessions. Harvest selects only exact keys ending in -level-two.";
+	function Execute(int maxCount = 100) : List<SessionStatusResult>
+	{
+		return SessionTools.ListActiveSessionsTool(maxCount);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to send an ontology foundry harvest instruction to a session")]
+prototype ToOntologyFoundrySendToSession : OntologyFoundrySkillAction, OntologyFoundryActionRoot
+{
+	Description = @"sessionKey - exact existing Level2 key. instruction - exact inspect-only harvest prompt. Returns queued IDs used for correlation.";
+	function Execute(string sessionKey, string instruction) : QueuedInputResult
+	{
+		return SessionTools.SendToSessionTool(sessionKey, instruction);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to evaluate one ontology foundry level two harvest")]
+prototype ToOntologyFoundryEvaluateLevel2Harvest : OntologyFoundrySkillAction, OntologyFoundryActionRoot
+{
+	Description = @"Runs one exact Level2 harvest through the typed child-session relay and returns its bounded terminal result.";
+
+	function Execute(string sessionKey, string instruction) : string
+	{
+		return BuffalyAgentService.CreateChildSession(
+			_opsAgent.GetSessionKeyOrEmpty(),
+			sessionKey,
+			instruction,
+			900,
+			null).Response.Message;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get the most recent ontology foundry source turn")]
+prototype ToOntologyFoundryGetMostRecentSessionTurn : OntologyFoundrySkillAction, OntologyFoundryActionRoot
+{
+	Description = @"sessionKey - exact dispatched Level2 key. Returns the latest bounded turn summary.";
+	function Execute(string sessionKey) : TurnSummaryContract
+	{
+		return SessionTools.GetMostRecentSessionTurnTool(sessionKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get recent ontology foundry source turns")]
+prototype ToOntologyFoundryGetRecentSessionTurns : OntologyFoundrySkillAction, OntologyFoundryActionRoot
+{
+	Description = @"sessionKey - exact dispatched Level2 key. maxTurns - bounded fallback used only to correlate the dispatched MessageKey.";
+	function Execute(string sessionKey, int maxTurns = 5) : GetSessionTurnBootstrapResponse
+	{
+		return SessionTools.GetRecentSessionTurnsTool(sessionKey, maxTurns);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read a source session ontology foundry evidence graph")]
+prototype ToReadOntologyFoundryEvidenceGraph : OntologyFoundrySkillAction, OntologyFoundryActionRoot
+{
+	Description = @"sourceSessionKey - exact Level1 source session that owns the living artifacts/ontology-foundry/evidence-graph.md. Missing returns an empty string.";
+
+	function Execute(string sourceSessionKey) : string
+	{
+		Sessions.ValidateSessionKey(sourceSessionKey);
+		string root = Path.Combine(Sessions.GetSessionsRootPath(), sourceSessionKey);
+		string path = Path.Combine(root, @"artifacts\ontology-foundry\evidence-graph.md");
+		if (!File.Exists(path))
+		{
+			return "";
+		}
+		return File.ReadAllText(path);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to write a source session ontology foundry evidence graph")]
+prototype ToWriteOntologyFoundryEvidenceGraph : OntologyFoundrySkillAction, OntologyFoundryActionRoot
+{
+	Description = @"sourceSessionKey - exact Level1 source session that owns the living EvidenceGraph. markdown - complete replacement content for that source's fixed artifacts/ontology-foundry/evidence-graph.md.";
+
+	function Execute(string sourceSessionKey, string markdown) : string
+	{
+		Sessions.ValidateSessionKey(sourceSessionKey);
+		return FileSystemTools.ReplaceTextFile(
+			Path.Combine(Sessions.GetSessionsRootPath(), sourceSessionKey),
+			@"artifacts\ontology-foundry\evidence-graph.md",
+			markdown);
+	}
+}

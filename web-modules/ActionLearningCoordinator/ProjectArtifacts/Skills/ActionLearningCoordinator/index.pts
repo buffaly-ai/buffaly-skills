@@ -349,10 +349,18 @@ prototype ToGetOntologyFoundrySourceWorkspace : OntologyFoundryCoordinatorSkillA
 		{
 			markdown = File.ReadAllText(path);
 		}
+		string proposalMarkdown = markdown;
+		string proposalHeading = @"## Ranked entity resolutions";
+		int proposalStart = markdown.IndexOf(proposalHeading);
+		if (proposalStart >= 0)
+		{
+			proposalMarkdown = markdown.Substring(proposalStart);
+		}
 		JsonObject result = new JsonObject();
 		result[@"ArtifactPath"] = @"artifacts/ontology-foundry/evidence-graph.md";
 		result[@"ArtifactTitle"] = @"Evidence graph";
 		result[@"ArtifactMarkdown"] = markdown;
+		result[@"ProposalMarkdown"] = proposalMarkdown;
 		result[@"WorkerActions"] = new JsonArray(@"[]");
 		return result.ToJSON();
 	}

@@ -2434,7 +2434,7 @@
       "PackageType": "WebModule",
       "Title": "Action Learning Coordinator",
       "Description": "Buffaly Web Module package for Action Learning Coordinator.",
-      "Version": "0.1.22",
+      "Version": "0.1.23",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/ActionLearningCoordinator",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/ActionLearningCoordinator",
@@ -2449,11 +2449,11 @@
         },
         {
           "Path": "ActionLearningCoordinator.Web.dll",
-          "Sha256": "8b09735a6834319ac151fc5e55fc8e7599d53ef0a67f2212eef2007bb41805a3"
+          "Sha256": "833c0d0a0728e73391d949230f1f125439949296a3b34c63e3dec4dd736d1a17"
         },
         {
           "Path": "ActionLearningCoordinator.Web.staticwebassets.endpoints.json",
-          "Sha256": "79ca3d500b78c586de184b7aefa3040e9152f9393d457bf8d7cfee6046d2b675"
+          "Sha256": "317a6259f446883cc580eacd10bcd78a7bbe50fc99cabcf9af9cc1b402e1aec4"
         },
         {
           "Path": "Agents/action-learning-coordinator.agent.json",
@@ -2468,12 +2468,16 @@
           "Sha256": "10c13e2685023590ce84b66969a13617049afea9653b375bafdb33fa7800017e"
         },
         {
+          "Path": "Agents/ontology-foundry.agent.json",
+          "Sha256": "e770b4fae3b3d7b8d291181613fdd6e970daf89a7b606be7d490bd546787055f"
+        },
+        {
           "Path": "BasicUtilities.dll",
           "Sha256": "3c4d742c1fad44ce8f0eece383baca07b6990776c00b4552c8cdb91dcaae2ad4"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "02c4af3da616983664ba46781273770c922fbfb14b8a3e7ea4ad4af8c92f588c"
+          "Sha256": "64c5b138f847a39629b6a83f3d8d6f7a0d939be766dccf27ecf5324117de29b1"
         },
         {
           "Path": "Microsoft.Data.SqlClient.dll",
@@ -2484,12 +2488,16 @@
           "Sha256": "10d59df4170053ea9597e3c20adc9607ad17318ad5d8747eda3d930a5a4b463a"
         },
         {
+          "Path": "ProjectArtifacts/Prompts/OntologyFoundry.md",
+          "Sha256": "23dea91bdc2af5502f830b81c8f6850d6ee4dc1d424a2f9d7af2a8673d0f684e"
+        },
+        {
           "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/index.pts",
-          "Sha256": "7f9555979d00a694ddf97f2f427d568e166704b514a862cb9740103e8811557e"
+          "Sha256": "9ed4fa4df8394e29307a383ae5397f89c0e9546ca0ff4c8ce4ed91b9c2b131b5"
         },
         {
           "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/index.pts.md",
-          "Sha256": "7b61c979e8d54d004053c0248f9f30a2c4157c69c9ee6b606079f05475a3995e"
+          "Sha256": "178925bb6abde923cb4886835b7d1991520100b71f2ae823fa83fb4ff4ddf059"
         },
         {
           "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/Prompts/ActionLearningCoordinator.md",
@@ -2556,8 +2564,56 @@
           "Sha256": "b3b856d1f0b258c6af133580d33f4cf7500aa9d3673682df122e88cc0a526862"
         },
         {
+          "Path": "ProjectArtifacts/Skills/OntologyFoundry/index.pts",
+          "Sha256": "b87a8d2b68dc5178a9a6bb38b0bd8faa29812daaa8b38d82791febf0e7f00442"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/OntologyFoundry/index.pts.md",
+          "Sha256": "c968a20f19192031143a5f6af75d21f0c7197ae68b065047b2fb915d586ffb43"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/OntologyFoundry/PromptActions.pts",
+          "Sha256": "1c40418fd99029a333d5a819aa6b62addb93319042b88e278734a51d9fee2d36"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/OntologyFoundry/PromptActions.pts.md",
+          "Sha256": "9883f1858945d2bacf957cf6502b9e75a97017c19742f7e1199445160d850d8b"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/OntologyFoundry/Prompts/Coordinate-Gather.prompt.md",
+          "Sha256": "417ce60f26339596dcf4864728496c32bedaf682e4f2caf77e5c230d20cf60c3"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/OntologyFoundry/Prompts/EvidenceGraph-LearnFromEntitySearch.prompt.md",
+          "Sha256": "e007b4664711db1ea413dd60b101c08fb43b85f395375a3c2c3eb60f31c9df45"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/OntologyFoundry/Prompts/Expand-ModeB.prompt.md",
+          "Sha256": "c9e369ab65925267b023af754b3aeb9a097a7aa89550d4da9c772d91a4e246bd"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/OntologyFoundry/Prompts/Gather-RankedLevel2Entities.prompt.md",
+          "Sha256": "50c1904154a37c9fe8ee891b514bff58c76e7ca196372a7fb3e1d38bddac951f"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/OntologyFoundry/Prompts/Harvest-BatchExtractFilter.prompt.md",
+          "Sha256": "d325608fabd6fb1a055167f8c8d39e54f9cf9055f524b79b90deb1b808dd0bb9"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/OntologyFoundry/Prompts/ProposeBuild.prompt.md",
+          "Sha256": "1c1cebe451856f21d87d62e8959d553e2477b9ef3e4e1eb8bf6b14393378af7b"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/OntologyFoundry/Prompts/Resolve-RankedLevel2Entities.prompt.md",
+          "Sha256": "a4a53e40adc7a5d255fedfd94c0fe7aec7463ac51d89d134424847d1b333e1c0"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/OntologyFoundry/SKILL.md",
+          "Sha256": "09cdf6072bd70b0f4d96cde2a3489375f847993e3bcde0a1a46f864cde5ecdf4"
+        },
+        {
           "Path": "web-module.json",
-          "Sha256": "5f14f1d2c162f098535cbb4fd7095d37855af15bdd306541e90487b166fecc2b"
+          "Sha256": "564407f2e59a717891b5e07976cb9d1b31425a2f914a9839b41a14dd470005e1"
         },
         {
           "Path": "web.config",
@@ -2589,15 +2645,15 @@
         },
         {
           "Path": "wwwroot/dashboard.js",
-          "Sha256": "9a9b110f203381f94aff3ba68c18fde04106a0455d298d483883f06f4592522d"
+          "Sha256": "aab1519c7b80baf38dba064ee3ed17aecbd3a5a65955b99bb0edb80398797353"
         },
         {
           "Path": "wwwroot/dashboard.js.br",
-          "Sha256": "85a5d4d577dacdc5714846e12ba541084204deec548f8728f5aa87d042d06069"
+          "Sha256": "1debbc15090b91b70b854a5dce33e362fe89c5ffec73cd07db6cc16cfe1b7513"
         },
         {
           "Path": "wwwroot/dashboard.js.gz",
-          "Sha256": "59374928f2b24aadbf2dfd9d289e829cbbe3e983fd51fa146b18699144b1f7a9"
+          "Sha256": "53da8197396ed54163fda450fde8e7463735f5db33816096186df55c1229791a"
         }
       ],
       "ProjectArtifacts": [
@@ -2608,6 +2664,14 @@
         {
           "ProjectName": "Skills/ActionLearning",
           "SourcePath": "ProjectArtifacts/Skills/ActionLearning/"
+        },
+        {
+          "ProjectName": "Skills/OntologyFoundry",
+          "SourcePath": "ProjectArtifacts/Skills/OntologyFoundry/"
+        },
+        {
+          "ProjectName": "Prompts/OntologyFoundry.md",
+          "SourcePath": "ProjectArtifacts/Prompts/OntologyFoundry.md"
         }
       ],
       "Dependencies": [],
