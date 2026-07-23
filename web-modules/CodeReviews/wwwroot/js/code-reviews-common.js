@@ -81,24 +81,5 @@ window.CodeReviews = (function () {
 			else if (line.indexOf("diff ") === 0 || line.indexOf("index ") === 0 || line.indexOf("+++") === 0 || line.indexOf("---") === 0) editor.addLineClass(i, "background", "diff-line-meta");
 		}
 	}
-	function renderBuildFooter(info) {
-		var footer = document.getElementById("codeReviewsBuildFooter");
-		if (!footer) {
-			footer = document.createElement("footer");
-			footer.id = "codeReviewsBuildFooter";
-			footer.className = "build-footer";
-			document.body.appendChild(footer);
-		}
-		var buildId = text(info && (info.BuildId || info.buildId));
-		var buildTime = info && (info.BuildTimeUtc || info.buildTimeUtc);
-		footer.textContent = buildId ? "CodeReviews build " + buildId + " | " + formatWhen(buildTime) : "CodeReviews build unavailable";
-	}
-	function loadBuildFooter() {
-		fetch("/build-info.json", { cache: "no-store" })
-			.then(function (response) { if (!response.ok) throw new Error("HTTP " + response.status); return response.json(); })
-			.then(renderBuildFooter)
-			.catch(function () { renderBuildFooter(null); });
-	}
-	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", loadBuildFooter); else loadBuildFooter();
 	return { byId: byId, text: text, escapeHtml: escapeHtml, log: log, query: query, encode: encode, decode: decode, normalizePath: normalizePath, fileName: fileName, formatWhen: formatWhen, call: call, errorMessage: errorMessage, diffLineClass: diffLineClass, codeMirrorModeForPath: codeMirrorModeForPath, enhanceCodeBlocks: enhanceCodeBlocks, highlightDiffEditorLines: highlightDiffEditorLines };
 })();
