@@ -8753,7 +8753,7 @@
       "PackageType": "WebModule",
       "Title": "Heartbeat",
       "Description": "Buffaly Web Module package for Heartbeat.",
-      "Version": "0.1.113",
+      "Version": "0.1.114",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/Buffaly.Agent.Heartbeat",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/Buffaly.Agent.Heartbeat",
@@ -8763,8 +8763,1036 @@
       ],
       "Files": [
         {
+          "Path": "Azure.Core.dll",
+          "Sha256": "224d09cb39eae4d8c30272a0c49beb19d873c87347eae9487f0ddd859d752b56"
+        },
+        {
+          "Path": "Azure.Identity.dll",
+          "Sha256": "af18f20be25b2895c912f3ba0a9f2901a82dda823edcad76e6a19eac9886a40f"
+        },
+        {
+          "Path": "BasicUtilities.dll",
+          "Sha256": "3c4d742c1fad44ce8f0eece383baca07b6990776c00b4552c8cdb91dcaae2ad4"
+        },
+        {
+          "Path": "Buffaly.Agent.Common.dll",
+          "Sha256": "9cb295b84c5b5f0dcbfdd98cfb936839f5255f9a0c334573ab5a6e3f72f43ec1"
+        },
+        {
+          "Path": "Buffaly.Agent.Core.dll",
+          "Sha256": "a68ae0ddd2472af6c5ab652362e978ee631eda2cd45fd03ef44fa3c4fab28480"
+        },
+        {
+          "Path": "Buffaly.Agent.CSharpSkill.dll",
+          "Sha256": "fbf28922391de51cdfea513a5be8fd121f5f7d28847172077a0230d04058ee38"
+        },
+        {
+          "Path": "Buffaly.Agent.Heartbeat.deps.json",
+          "Sha256": "df4486ab203d8ff02fb5691a6a78b5da755f0ab4ab0e54ee40db21262e846ebd"
+        },
+        {
+          "Path": "Buffaly.Agent.Heartbeat.dll",
+          "Sha256": "f187786c35d3d05634747f994ffe093068610c256b9490c649090af8e19ab47e"
+        },
+        {
+          "Path": "Buffaly.Agent.Host.dll",
+          "Sha256": "2e55e6ff838916a1abc547e3ffadd5ee26607ffe5d2b758509ced3b526f8c7a4"
+        },
+        {
+          "Path": "Buffaly.Agent.ProtoScript.Runtime.dll",
+          "Sha256": "6c9c632ee86419ae166b4b5b918ef9403b746c817b94330c0e35224c44fe5808"
+        },
+        {
+          "Path": "Buffaly.Agent.ProtoScriptAuthoring.dll",
+          "Sha256": "410db9ce8537f1f53423201512c2e30fcb42848ffa14e6d52884587e7cbba601"
+        },
+        {
+          "Path": "Buffaly.Agent.Runtime.Abstractions.dll",
+          "Sha256": "04870ca9d54cd79eaa95e986495e52618b4a7ebee457bf0b02084c72d946cdb8"
+        },
+        {
+          "Path": "Buffaly.Agent.SemanticDatabase.DB.dll",
+          "Sha256": "cded05e46cad7079c73e0727a56bafa9fa11661619a4f6c0f719e514530a6ad5"
+        },
+        {
+          "Path": "Buffaly.Agent.SemanticDatabase.dll",
+          "Sha256": "7f331bc666ac6521451c4dfc505c595000d381d5be135fd0cd9d5cb299bcd57b"
+        },
+        {
+          "Path": "Buffaly.Agent.Tools.CodeSearch.dll",
+          "Sha256": "d80fa11e89ab1665330749a26bac70056ddd121cb4e389e1c72d9c687438d709"
+        },
+        {
+          "Path": "Buffaly.Agent.Tools.Http.dll",
+          "Sha256": "08f59c3c30dc691318f9eee5228162db0a9ce889e2b73ce53d2ebb53dc48e481"
+        },
+        {
+          "Path": "Buffaly.Agent.Tools.Mcp.dll",
+          "Sha256": "1101e421b94405b1b8a1a9dd3cdb08ed5f8ca2c499c048f6cb964188c32dd288"
+        },
+        {
+          "Path": "Buffaly.Agent.Tools.Platform.dll",
+          "Sha256": "193e32fee74d6200c8e3c68dddaccd6d19f8600823eee775757cb5078c7c3324"
+        },
+        {
+          "Path": "Buffaly.Agent.Tools.Process.dll",
+          "Sha256": "b5a8a9b40dfb957f4ad47d59a012218428a465f42dbf55218c447aad9e518a72"
+        },
+        {
+          "Path": "Buffaly.Agent.Tools.Secrets.dll",
+          "Sha256": "ec3089563dac314c2d0e642406b02d0da6d009b09fe6a03e863928615cac2574"
+        },
+        {
+          "Path": "Buffaly.Agent.Tools.SemanticDatabase.dll",
+          "Sha256": "12a61e43233b6c161ec04db35207aff8644028d64d16b6e9e6326180fb422a07"
+        },
+        {
+          "Path": "Buffaly.Agent.Web.Common.dll",
+          "Sha256": "19768b557dfed8d7f5e45b85299845ea21d086963c46cc01a622f3c98e21af48"
+        },
+        {
+          "Path": "Buffaly.Agents.dll",
+          "Sha256": "4a2c713544514a2e7ebbaa920a32ff6431d130ef0311b63156b70a67416bdd81"
+        },
+        {
+          "Path": "Buffaly.AIProviderAPI.dll",
+          "Sha256": "dcc95640f517a6818a758dbab125385fac92d7d3f286fbac5213d7b667cc97e4"
+        },
+        {
+          "Path": "Buffaly.Business.dll",
+          "Sha256": "2fe6fb1da4c7bc8c4979f19bd8a8f590d2897386026a14665b56dfdeb1139d94"
+        },
+        {
+          "Path": "Buffaly.Data.dll",
+          "Sha256": "abb9a011a468beaf6c0cc2563a921ba4847377aeb3f22f2793e91fb2d0f539b0"
+        },
+        {
+          "Path": "Buffaly.DB.Core.dll",
+          "Sha256": "5486b1f9191f9c37e187eaa5e85edc44e3b2a9360b64a4a7432af7d41c1ce40a"
+        },
+        {
+          "Path": "Buffaly.DB.Hybrid.dll",
+          "Sha256": "7f5a743d278e735295f08188af8a7224247a651fad769da02e4b6c8de2eec70d"
+        },
+        {
+          "Path": "Buffaly.DB.Postgres.dll",
+          "Sha256": "af2fa2d8129fbc716d0cedffa2ed1ad6a4e38fbf85bed096325748387f39d403"
+        },
+        {
+          "Path": "Buffaly.DB.SqlServer.dll",
+          "Sha256": "5fae8302a4e274341f33e9db5884601ce20fa2f898427b4dc33ea93a7d3df562"
+        },
+        {
+          "Path": "Buffaly.Development.Common.dll",
+          "Sha256": "266ad273c5cfd35761a48a0cdec44ea47a41da4b97d41378d36c21cd295d1178"
+        },
+        {
+          "Path": "Buffaly.ProviderContracts.dll",
+          "Sha256": "b15801f1bb03a05aecbfa9e7a1f833098be0239fc5f5bf1bd00ea839728056b0"
+        },
+        {
+          "Path": "Buffaly.SemanticDB.Data.dll",
+          "Sha256": "ee10ff6403e459f4add33cd3b258fed109378c6773fa5da79ae76cbc88e1f459"
+        },
+        {
+          "Path": "Buffaly.SemanticDB.dll",
+          "Sha256": "2446e5ea3c0f61529f82df1987a61910c1031da8cd0d662b0ea52810b774ccb5"
+        },
+        {
+          "Path": "Buffaly.Sessions.DB.dll",
+          "Sha256": "e588791934b6e1c8a93b94ae8cb7abf4caea7931770decb8b693baf52fb7c773"
+        },
+        {
+          "Path": "Buffaly.Sessions.DB.PostGres.dll",
+          "Sha256": "32c04674ed95d3bfd604c6287c4ced3e3e4e14723df8f59c4ec497b3ba22084f"
+        },
+        {
+          "Path": "config/tool-execution-policy.default.json",
+          "Sha256": "860192489a5e435d42f64d9c0bf39e9f0b20f48feff47874c76c4a7769687038"
+        },
+        {
+          "Path": "CSharp.dll",
+          "Sha256": "9d18eaef122218e852e7fd7e5aef8c889d4bc7655f88212f2d335440efd2ff8c"
+        },
+        {
+          "Path": "CSharp.Extensions.dll",
+          "Sha256": "3ebf08520e2cc5d794ecf5baa5420f6b6477e4474a3ea5d6bf2765ae742935cd"
+        },
+        {
+          "Path": "CSharp.Parsers.dll",
+          "Sha256": "356dbcc749389d17a2d8dd15345bd03d050317167f901ea2e68eb7bb5b094e47"
+        },
+        {
+          "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
+          "Sha256": "6e9b997f45393346cf2f96da99f7fa868f2286964a49ce66a59988defdaf84b6"
+        },
+        {
+          "Path": "de/Microsoft.Data.SqlClient.resources.dll",
+          "Sha256": "30e111759eb091735455f8a7e3cb2a5aff16287149cf3d4e7a67624f00320fc3"
+        },
+        {
+          "Path": "es/Microsoft.Data.SqlClient.resources.dll",
+          "Sha256": "6bb867e62e3aef301cecc99311603339301a086bdcfc8683c2c21f9f99850b34"
+        },
+        {
+          "Path": "fr/Microsoft.Data.SqlClient.resources.dll",
+          "Sha256": "2eac255e2a16495d0bb89aeafa5aa668f74e12358e76eb1756de271b8b91e1de"
+        },
+        {
+          "Path": "Generated/JsonWs/Buffaly.Agent.Heartbeat.HeartbeatService.ashx.js",
+          "Sha256": "50fc8f79ceb183d9c18b51dce368bdf16077d0810dc75bf0acb388c4705919d2"
+        },
+        {
+          "Path": "Generated/JsonWs/Buffaly.Agent.Heartbeat.HeartbeatService.json",
+          "Sha256": "65dcfb548c738ecc3a574674c0970cd49ba902071126c1468d914124ef0175d5"
+        },
+        {
+          "Path": "it/Microsoft.Data.SqlClient.resources.dll",
+          "Sha256": "5a50867ea6c62b3be1fe4429360fe8018f3002b95c4c7b2d306daf19b4a50053"
+        },
+        {
+          "Path": "ja/Microsoft.Data.SqlClient.resources.dll",
+          "Sha256": "75539952a99301eba174bcaeeaded6da4d758c6f12565bed4208dc50b0344abe"
+        },
+        {
+          "Path": "ko/Microsoft.Data.SqlClient.resources.dll",
+          "Sha256": "a5eac865982205ce0d1b94ae4cae4ec003b514829542140c91e67cf86312d5fc"
+        },
+        {
+          "Path": "kScript.dll",
+          "Sha256": "b1a8199ab2cffdc3c89a5e34d5b7112951e8747763f5846b35417b04c54043c1"
+        },
+        {
+          "Path": "Microsoft.Bcl.AsyncInterfaces.dll",
+          "Sha256": "136d5965cf4768e8420b547a8bddea882921f426c371833d558a858a2f0c235a"
+        },
+        {
+          "Path": "Microsoft.Bcl.Cryptography.dll",
+          "Sha256": "009a27b8e3093fdd2960bba63e4acd48eab05c4f8f8a6d9fe8c24b4657f44c4f"
+        },
+        {
+          "Path": "Microsoft.Data.SqlClient.dll",
+          "Sha256": "5a34e2fa3479b1508dbc20fbeb2c9172f18c3868bdb147a185213a446645b400"
+        },
+        {
+          "Path": "Microsoft.Extensions.Caching.Abstractions.dll",
+          "Sha256": "001baee94c7cac0cac5b4a49accce3a1e9d21053ea99abe42f871710d96640ad"
+        },
+        {
+          "Path": "Microsoft.Extensions.Caching.Memory.dll",
+          "Sha256": "b2205b4ce4ca238a3d36ab36cd312d59e5189c581c5f5af5775b9853150cb871"
+        },
+        {
+          "Path": "Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+          "Sha256": "190142694ee938f5ecd88edb959238968e68cf976a80a6e65ddd488af49f7442"
+        },
+        {
+          "Path": "Microsoft.Extensions.Logging.Abstractions.dll",
+          "Sha256": "f8422575f5591b25a70f4d32a606c0997fe3b0d0348a814ce6e51547b5446da6"
+        },
+        {
+          "Path": "Microsoft.Extensions.Options.dll",
+          "Sha256": "cee3a3432a2e7e0328d49cba4bfa57d81ca05b0b14826cefbcf6b1984153e1ad"
+        },
+        {
+          "Path": "Microsoft.Extensions.Primitives.dll",
+          "Sha256": "e84ec5f6625612d65c9d91914f8ceaf4e7fa8896c98c0f66f15a59ff9c6b0984"
+        },
+        {
+          "Path": "Microsoft.Identity.Client.dll",
+          "Sha256": "10d59df4170053ea9597e3c20adc9607ad17318ad5d8747eda3d930a5a4b463a"
+        },
+        {
+          "Path": "Microsoft.Identity.Client.Extensions.Msal.dll",
+          "Sha256": "9c1f736b16cacd318afe07d3b9d707a4b4b56def5e403b0aff471c1af413aaf0"
+        },
+        {
+          "Path": "Microsoft.IdentityModel.Abstractions.dll",
+          "Sha256": "27af0812016ee6bb9a22beef2b8697a9d1eda96913f11335878458fff79a717f"
+        },
+        {
+          "Path": "Microsoft.IdentityModel.JsonWebTokens.dll",
+          "Sha256": "e6add69ec50664469f739c527fb74c37fbffa072c36e889d91e058faa64542b1"
+        },
+        {
+          "Path": "Microsoft.IdentityModel.Logging.dll",
+          "Sha256": "4eb68fb71d38d86e93e0c9145620ea3e528fc49333d82c923140f9868f1ea426"
+        },
+        {
+          "Path": "Microsoft.IdentityModel.Protocols.dll",
+          "Sha256": "4e81eb0584e24d6274916a6f470c990ac3aaa924c2f10255e64679c1a032f0e2"
+        },
+        {
+          "Path": "Microsoft.IdentityModel.Protocols.OpenIdConnect.dll",
+          "Sha256": "8e845988a113b5c146f1392e993e8f554a34756d37563a85c64bb399e45a4c0b"
+        },
+        {
+          "Path": "Microsoft.IdentityModel.Tokens.dll",
+          "Sha256": "07d46c63c931f8792e932cc131dc9580dd4575e0872cae92878d26847c9f248e"
+        },
+        {
+          "Path": "Microsoft.SqlServer.Server.dll",
+          "Sha256": "a9dca1b42bc875f966b78b2c0880e62b838f0ed6567166d7f1f07ae4b76ec4bf"
+        },
+        {
+          "Path": "Npgsql.dll",
+          "Sha256": "5406d26e745aff267098f30fb0da5b1507a13080b2066ee9003b071163d887c2"
+        },
+        {
+          "Path": "Ontology.dll",
+          "Sha256": "14593ae213ef7f0ce67918d1a5a942db38582023f9cb059cfdd69ce9400d8cfb"
+        },
+        {
+          "Path": "Ontology.Simulation.dll",
+          "Sha256": "a30a78cd2eff61890145c826e113d3d6543caf35043a5bf90032bfb4aacf9b34"
+        },
+        {
+          "Path": "pl/Microsoft.Data.SqlClient.resources.dll",
+          "Sha256": "ca9d25b7405908146f988c7fad48ded63e7f02df0e43bd1406803010428338be"
+        },
+        {
+          "Path": "ProtoScript.CLI.Validation.dll",
+          "Sha256": "d23a0da50df6f6cf1a0dd38d488ba10e687cfac6c244c3c813f93c922a432ea7"
+        },
+        {
+          "Path": "ProtoScript.dll",
+          "Sha256": "90068b86eb14a0ae179be52e0af408810e2067d5d4efac1e2784117f2a8703b9"
+        },
+        {
+          "Path": "ProtoScript.Interpretter.dll",
+          "Sha256": "20b2a57fe53d8468b5d6deea1a80220f169bd99a733592c66f56a1ba50b9035a"
+        },
+        {
+          "Path": "ProtoScript.Parsers.dll",
+          "Sha256": "2654c420daa5dd0ea2db5e9dca13f4dab5c9eb910cb7610358c1dc5d8eddf54b"
+        },
+        {
+          "Path": "ProtoScript.Workbench.Api.dll",
+          "Sha256": "956a192d68ca5d0469b5cbc55470579d28219c2de16a4cdadbd808b3041d0b21"
+        },
+        {
+          "Path": "pt-BR/Microsoft.Data.SqlClient.resources.dll",
+          "Sha256": "2a295a383e9076b24f47c1759e1c43176dfd876bc6444a661dee21170cde6b52"
+        },
+        {
+          "Path": "RooTrax.Cache.dll",
+          "Sha256": "c18262cdc333f482e9097ba2490dab0b0b6b95b5575d2a5f25eb07c9bb30bec8"
+        },
+        {
+          "Path": "RooTrax.Common.DB.dll",
+          "Sha256": "ed77e8aa4b8bc51d36dd427cab55076cb60d17aa6b781d0637def7c08d171c56"
+        },
+        {
+          "Path": "RooTrax.Common.dll",
+          "Sha256": "b052cb72ba5f51a1aeb36a2cb5fe6991297e3d427eba9f66d34d02247e5d7898"
+        },
+        {
+          "Path": "RooTrax.Git.dll",
+          "Sha256": "8ca4b8a8927500689a6c95c56c1b2890aed671afabbf232803673b174696ff8c"
+        },
+        {
+          "Path": "runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll",
+          "Sha256": "4a95c42d14d8a83ca1007793648b6dae59cee957ea12470578f10c918f91d225"
+        },
+        {
+          "Path": "runtimes/win-arm64/native/Microsoft.Data.SqlClient.SNI.dll",
+          "Sha256": "73b61c3381e32613f59bbe3af7f58871c8cd486e04a9c0e71409f6a1972d6f84"
+        },
+        {
+          "Path": "runtimes/win-x64/native/Microsoft.Data.SqlClient.SNI.dll",
+          "Sha256": "7e37c5bba3da06a955c122e3515b2980e2f1b8732ec0297f0a7e77e79b4de331"
+        },
+        {
+          "Path": "runtimes/win-x86/native/Microsoft.Data.SqlClient.SNI.dll",
+          "Sha256": "16efa76f220e23166a95873baaed43899191470c13848c944a679ff2bf5ac941"
+        },
+        {
+          "Path": "runtimes/win/lib/net9.0/Microsoft.Data.SqlClient.dll",
+          "Sha256": "13011951ee100b419e0b494baecdbe1402be5cb487d72056014a83253afc1d6e"
+        },
+        {
+          "Path": "runtimes/win/lib/net9.0/System.Diagnostics.EventLog.dll",
+          "Sha256": "567bbc886e7c44aa6868c4679d1d1c4a14872eaa1634b0cf678381813af9ecf5"
+        },
+        {
+          "Path": "runtimes/win/lib/net9.0/System.Security.Cryptography.Pkcs.dll",
+          "Sha256": "6902fe2034ada133d5aa8df0d101279abb3093e346ebf34bbde62670f2a0e9bf"
+        },
+        {
+          "Path": "ru/Microsoft.Data.SqlClient.resources.dll",
+          "Sha256": "f7d51f47b1eba12021161ee39a7d08d24df1dcd52c131d1d94ee2c7e432f4cb4"
+        },
+        {
+          "Path": "Scripts/000_schema_migrations.sql",
+          "Sha256": "8342b543b84c89199d6596591c21c5fd9c15bb2cbea9f9e856edbecf09381054"
+        },
+        {
+          "Path": "Scripts/001_semantic_vector_schema.sql",
+          "Sha256": "534b5ce7a01f1c65e64a40ee67d9cffdfe59b5a78de04c8afb54ec44e1f841f3"
+        },
+        {
+          "Path": "Scripts/002_semantic_vector_routines.sql",
+          "Sha256": "f6aacfcf7001d3b0ad7a6fb88d5a4bb2cd50143fe908216fe1634de9ca383046"
+        },
+        {
+          "Path": "Scripts/003_embeddings_fragments_repository_routines.sql",
+          "Sha256": "0d69a68705f7e9ce2fa0c68dcbdfcb52c21b390b1f83db09a9aa24927f2bdb1e"
+        },
+        {
+          "Path": "Scripts/004_features_repository_routines.sql",
+          "Sha256": "31c855816adb620702d224e810319e6eb321b7f6b2050fe4377af4a0d9b0581c"
+        },
+        {
+          "Path": "Scripts/004_vector_contract_fix.sql",
+          "Sha256": "67876da33da1172700c3bfd6412521134d3508f85e762459a93bb031d14a1ffe"
+        },
+        {
+          "Path": "Scripts/005_sessions_repository_routines.sql",
+          "Sha256": "053f20a09914a49de9cdde389d4b5a736134cb785dc7af79f98a6af1492cfba4"
+        },
+        {
+          "Path": "Scripts/006_messages_repository_routines.sql",
+          "Sha256": "de155a3629a20d6ed17b865f18adb0a1657129bede90c6166c729ed16a5bb752"
+        },
+        {
+          "Path": "Scripts/007_processes_repository_routines.sql",
+          "Sha256": "6b6f6ec3e3bada1290eb05e15392d9a724dcffc4627ee8a7c21dce1ab21f6005"
+        },
+        {
+          "Path": "Scripts/007_session_artifacts_repository_routines.sql",
+          "Sha256": "40ee32003626f8957924fa9a292f212d521363f8e8340432af3be5ad46373941"
+        },
+        {
+          "Path": "Scripts/007_turns_repository_routines.sql",
+          "Sha256": "8ff90a4234f71823600b42430aada70a494a45b376b94328497d29d42493ccdf"
+        },
+        {
+          "Path": "Scripts/008_fragment_message_map_repository_routines.sql",
+          "Sha256": "0ef43c87a407dcfc69e002f3acd22f99460bd40e8243a746eef01e8dc1e1cff3"
+        },
+        {
+          "Path": "Scripts/008_page_layouts_repository_routines.sql",
+          "Sha256": "60bd313e98adf354d2e228153c14541c8a0d490c0724d707c96af9f5040cb0ed"
+        },
+        {
+          "Path": "Scripts/008_session_subscriptions_repository_routines.sql",
+          "Sha256": "c9b2c1dfb6e79344ea3f4b31c7a44b709255bc9f6e80d56ec1cb33f23f293609"
+        },
+        {
+          "Path": "Scripts/009_exact_name_compatibility_routines.sql",
+          "Sha256": "ffc106e37fb57e611a524dbad28d939a6ce253f47910412f47bc14980154fcae"
+        },
+        {
+          "Path": "Scripts/Cleanup_TestSessions_ArchiveSp.sql",
+          "Sha256": "4a4028d969de8ed78e4625f3fd63ae64e592e061f12e7714e8d34911e62a38fa"
+        },
+        {
+          "Path": "Scripts/CopyFeatureSp.sql",
+          "Sha256": "0743668420f33973c8177bd38b8a4b0a8aec4ef58d162b9e9b884d8e516c18ec"
+        },
+        {
+          "Path": "Scripts/CopyMessageSp.sql",
+          "Sha256": "1f4e97bf64a347a058b4cee43bed9f979a525e5600457d0bb858c80b13443237"
+        },
+        {
+          "Path": "Scripts/CopyPageLayoutSp.sql",
+          "Sha256": "5670140180c71a747261a7e80f313014af78c4678d10b8f673717aa6816ce135"
+        },
+        {
+          "Path": "Scripts/CopyProcessSp.sql",
+          "Sha256": "acda26e0a07a4a71e07bbbd3df11d78072b15f427ed6313688e2475f0abaafc7"
+        },
+        {
+          "Path": "Scripts/CopySessionSp.sql",
+          "Sha256": "f47a5a86ab048346c6299e5d71b72fd19e936610872575613495f0850fdb134d"
+        },
+        {
+          "Path": "Scripts/CopySessionSubscriptionSp.sql",
+          "Sha256": "fba02e7aefda230780f3db8780bf7e6af697fe0afbdee85229c04889e85c78c2"
+        },
+        {
+          "Path": "Scripts/Deploy_Sessions_GetAll_And_Archived.sql",
+          "Sha256": "6b6ba0d5b64a2e2062b2534bc8d70aef086a924036236bf1e7c03546ad94d4b6"
+        },
+        {
+          "Path": "Scripts/Embeddings.sql",
+          "Sha256": "0748f2ecbf262bc69a95b6c707b7fd8852783720443bd5a7bd01725b4bfc9d2b"
+        },
+        {
+          "Path": "Scripts/Features.sql",
+          "Sha256": "62b0e12ccfe7f6f6da12e1db8dbba64be3f978ac5e970d93881046bb9cfa7070"
+        },
+        {
+          "Path": "Scripts/FragmentMessageMap.sql",
+          "Sha256": "753ad2ac4a3849ca48dd8c01a7e71430de1f57bd56d7b2267b28a07a4c8ba626"
+        },
+        {
+          "Path": "Scripts/Fragments.sql",
+          "Sha256": "e43d9ab74212546faa8ff46b893aa9a182164fec7fe6b388f238125c07e9e1ab"
+        },
+        {
+          "Path": "Scripts/FragmentVectorsNative.sql",
+          "Sha256": "c2cb90a71930f2bfd1cd06917c62af0c6542452ce952d694b6e9e64605a5b746"
+        },
+        {
+          "Path": "Scripts/GetAllEpochsBySessionIDSp.sql",
+          "Sha256": "ce00f32a6b74680ef248b9113a6f4b74e24831c54e5198cd0a45aedbe1462d3c"
+        },
+        {
+          "Path": "Scripts/GetFeatureByFeatureNameSp.sql",
+          "Sha256": "991db0a3b340fbd848a953aaf110944a2c5ffa953aed78bf028e80de7f2b2acc"
+        },
+        {
+          "Path": "Scripts/GetFeatureSp.sql",
+          "Sha256": "4ae61d9ad0a98f268732a5ad688651abc4e33789d54849996b1b6c320e4cdadd"
+        },
+        {
+          "Path": "Scripts/GetFeaturesSp.sql",
+          "Sha256": "bee376b6a5f994aab837fba73ae34cd1ad1808f0233e05232a01f19859548b98"
+        },
+        {
+          "Path": "Scripts/GetFeaturesSp_CountSp.sql",
+          "Sha256": "317887aa0e1ec4ab5a9e03f2b90f30963a996bb7235936aaf1f7b7be2a3b4042"
+        },
+        {
+          "Path": "Scripts/GetFeaturesSp_PagingSp.sql",
+          "Sha256": "0af115b0e4c838def4b5df8aa5cc0b2d81dde72afde4be863ddd49fab670a508"
+        },
+        {
+          "Path": "Scripts/GetMessageByMessageIDSp.sql",
+          "Sha256": "16ab936ff95280effde24a85d711f3b4d5dcfbec72d472f960d9fb5cff4f2cdb"
+        },
+        {
+          "Path": "Scripts/GetMessageByMessageKeySp.sql",
+          "Sha256": "bcd3a3164aea462a9770e174f7b9607f57a108c3850a3667ef84bd7163210b4f"
+        },
+        {
+          "Path": "Scripts/GetMessagesBeforeBySessionIDAndMessageKeySp.sql",
+          "Sha256": "8e81753efef327e89e514354e2e6ca63fb866daaadd7b87989241bf57d3e07d0"
+        },
+        {
+          "Path": "Scripts/GetMessagesByCompactionEpochKeySessionIDSp.sql",
+          "Sha256": "d691f95b066ababfa6b03993fe4b7b55833bec9c43a354e05b95a7f5a332f33a"
+        },
+        {
+          "Path": "Scripts/GetMessagesByCompactionEpochKeySp.sql",
+          "Sha256": "c62faa5076b62d8f153abae7ce864b2b7316822f105ad46942d5d2f8755ab993"
+        },
+        {
+          "Path": "Scripts/GetMessagesByMessageKeySp.sql",
+          "Sha256": "7cbeda3ba6bfd25085e3288a1dc04198336c68c25ac5f05559390ec0c25fdd71"
+        },
+        {
+          "Path": "Scripts/GetMessagesBySessionIDSp.sql",
+          "Sha256": "d5d950443ec3cc294fc609f3d9325537671da684c691f23c2b80304a3f56989b"
+        },
+        {
+          "Path": "Scripts/GetMessagesBySessionIDSp_CountSp.sql",
+          "Sha256": "16c94670b2bb1ac0cf03120d3b1e8b8e4797004ec01431cfa574aeb6a0604973"
+        },
+        {
+          "Path": "Scripts/GetMessagesBySessionIDSp_PagingSp.sql",
+          "Sha256": "2439a3261984ae6ab20bc7e0c02e2c229c0892ca05d8c495ecd68c84b79ad1bb"
+        },
+        {
+          "Path": "Scripts/GetMessagesByTurnIDSp.sql",
+          "Sha256": "5e729b7cbaec91c808c9004be07707ef6ab6f22453526b38bd2848a823e904ac"
+        },
+        {
+          "Path": "Scripts/GetMessageSp.sql",
+          "Sha256": "c4a954742fdeef107544c8f3aa6e25d36dade86a98ae8a9c0a15c55e95586535"
+        },
+        {
+          "Path": "Scripts/GetMessagesSinceBySessionIDAndMessageKeySp.sql",
+          "Sha256": "1a9e61c329871818096ca308ad7ca2d1c6e37a63ac671298967ca16e9f366272"
+        },
+        {
+          "Path": "Scripts/GetMessagesSp.sql",
+          "Sha256": "3839fbccdcbc9977aa347fa4cb4f877c1fc3184bdbdd06c948cd3076e04d5e5b"
+        },
+        {
+          "Path": "Scripts/GetMessagesSp_CountSp.sql",
+          "Sha256": "9dd04ec0ecaa65f43b9195703fa5204adca4fd70157c007569c8ee26b79bb619"
+        },
+        {
+          "Path": "Scripts/GetMessagesSp_PagingSp.sql",
+          "Sha256": "0090955303241dfa8346eb9b5f42ba92a85262253121d61f8cc003ea169b2c10"
+        },
+        {
+          "Path": "Scripts/GetPageLayoutByUrlSp.sql",
+          "Sha256": "b528e1b143120cc152775e499571dd7ea26e395ee8fcedd87eaae08693dbe064"
+        },
+        {
+          "Path": "Scripts/GetPageLayoutSp.sql",
+          "Sha256": "4c55a418805d496d5da8437a7c3c31801d0343b1f1e0d6d32cf0e1725fbbaa7b"
+        },
+        {
+          "Path": "Scripts/GetPageLayoutsSp.sql",
+          "Sha256": "2a30da05a0507142b139ef31f206a8a7aa1b74b68bbd4bc6dd78104166c3636c"
+        },
+        {
+          "Path": "Scripts/GetPageLayoutsSp_CountSp.sql",
+          "Sha256": "38b8024a4abf2174c717d101596f9b77f65df34ac8af720d481f1e4ca36aa413"
+        },
+        {
+          "Path": "Scripts/GetPageLayoutsSp_PagingSp.sql",
+          "Sha256": "5534ba4c3af822ea450677d48835263ce5e15e034dc90bcc649adcf7bfb65397"
+        },
+        {
+          "Path": "Scripts/GetProcessesSp.sql",
+          "Sha256": "321815da4bf51faa35ed27b1727866512e7ddc826d2f50dc88697ee38c8919d6"
+        },
+        {
+          "Path": "Scripts/GetProcessesSp_CountSp.sql",
+          "Sha256": "3876b34f0eaffbf1945a1f647ba4122177c5119d297d1d9969da155325edbbf4"
+        },
+        {
+          "Path": "Scripts/GetProcessesSp_PagingSp.sql",
+          "Sha256": "da39bdea1fe2b4f3a7df6acdc1daeb624bf3c517370fa68bc055822dc2528f7e"
+        },
+        {
+          "Path": "Scripts/GetProcessSp.sql",
+          "Sha256": "00d962493a4788d836df745c1cae9b662d23f6058f3eec486cda7ebffcffcb2d"
+        },
+        {
+          "Path": "Scripts/GetSessionBySessionKeySp.sql",
+          "Sha256": "c1dbb87f8e6cde9039a7442fcc8ab08ce47dbb35959e9591d7e164572c0d34bb"
+        },
+        {
+          "Path": "Scripts/GetSessionsByParentSessionIDSp.sql",
+          "Sha256": "891566148edfcc2f92744b9fcff051e5cb782e478ef7c0b7a73d977521a392f5"
+        },
+        {
+          "Path": "Scripts/GetSessionsByParentSessionIDSp_CountSp.sql",
+          "Sha256": "84f1792c233d2cc9736f1a3f8acfeeea9a3cd3a1ceaea84350acf73b5e7ba7ee"
+        },
+        {
+          "Path": "Scripts/GetSessionsByParentSessionIDSp_PagingSp.sql",
+          "Sha256": "af6dc24b0a1b4771a4d764299420f237e2d75eb7e56507df4cf53209631cda7b"
+        },
+        {
+          "Path": "Scripts/GetSessionSp.sql",
+          "Sha256": "65771438e5a11819101e0a581717bde4c98291c6ebb646ef62c2706d4635f460"
+        },
+        {
+          "Path": "Scripts/GetSessionsSp.sql",
+          "Sha256": "d2f065df3bb7bb63f99839d5c50f592eb14485bf7b672ff6714a24212620f800"
+        },
+        {
+          "Path": "Scripts/GetSessionsSp_CountSp.sql",
+          "Sha256": "f2fcee4618d2cece85a327a0aa40fc1d0b6342e9bd775feb32c4bab615757517"
+        },
+        {
+          "Path": "Scripts/GetSessionsSp_PagingSp.sql",
+          "Sha256": "7435ed0713afc02e5c8e99a35016ef6747028c6615d456706201037954bd5fc8"
+        },
+        {
+          "Path": "Scripts/GetSessionSubscriptionBySubscriptionIdentitySp.sql",
+          "Sha256": "bfe4ec9844cebce8d8a024a9c7836cf5c041a39d58ab93e5c46381b68c9166a1"
+        },
+        {
+          "Path": "Scripts/GetSessionSubscriptionsBySessionIDSp.sql",
+          "Sha256": "c82c81ba214ef82bf1532aaab0af94fd6d06dded9f1f234e795bc69fbb52fef3"
+        },
+        {
+          "Path": "Scripts/GetSessionSubscriptionsBySessionIDSp_CountSp.sql",
+          "Sha256": "af7930ad6bc48b43ecfe9bd4aeb110786ac2088055e8fdbebd0fc34a3e2bca22"
+        },
+        {
+          "Path": "Scripts/GetSessionSubscriptionsBySessionIDSp_PagingSp.sql",
+          "Sha256": "c843a461ebbdcce79e56767fdebc5635bfb9211aa5c280f4cb9cc52af842995c"
+        },
+        {
+          "Path": "Scripts/GetSessionSubscriptionsBySubscriberSessionKeySp.sql",
+          "Sha256": "26c0c1eb98842dd150637a425b0ac10563eff6998628aaeaa1678f0bbd13d7e3"
+        },
+        {
+          "Path": "Scripts/GetSessionSubscriptionSp.sql",
+          "Sha256": "d3af3c0a7ccd1589fbbd990c60cd12f01ecdbc9743671d3b21a2c89620f25b42"
+        },
+        {
+          "Path": "Scripts/GetSessionSubscriptionsSp.sql",
+          "Sha256": "a261b6dca932ec7f06c2e2f6636cc120133e6d941d170c4a736a0034c29774c1"
+        },
+        {
+          "Path": "Scripts/GetSessionSubscriptionsSp_CountSp.sql",
+          "Sha256": "3496f040aae3a351724834fd298dfdb3fb1ac9a764e107df51cc64b74be9ce94"
+        },
+        {
+          "Path": "Scripts/GetSessionSubscriptionsSp_PagingSp.sql",
+          "Sha256": "f540161147c817cfff53d5d0c7348104ff04adaab30d05050bae7b200e451b4e"
+        },
+        {
+          "Path": "Scripts/GetUsageDashboardDetailRowsSp.sql",
+          "Sha256": "0f6aefc7643b533a8aac2e700d37cde836caac7d681b63c487d03b53eddf0723"
+        },
+        {
+          "Path": "Scripts/GetUsageDashboardFilterOptionsSp.sql",
+          "Sha256": "a94c58716e6754d93df52539c3bceb4ba884495325a0414f638fae6fd905b593"
+        },
+        {
+          "Path": "Scripts/GetUsageDashboardProviderLimitRowsSp.sql",
+          "Sha256": "0b524db819fa330150f4a237f49101e3e4cf10a6067bef84b8a0f686e7be7209"
+        },
+        {
+          "Path": "Scripts/GetUsageDashboardProviderModelRowsSp.sql",
+          "Sha256": "9c7a0d58939d87fa5c85848d66cec03706a7dfd79f7043c65b4a4c85e91bc103"
+        },
+        {
+          "Path": "Scripts/GetUsageDashboardSessionRowsSp.sql",
+          "Sha256": "832932c9506d52fcfdc74a8f8de8ceb8a0676b44c50ffb277389986340306b95"
+        },
+        {
+          "Path": "Scripts/GetUsageDashboardSummarySp.sql",
+          "Sha256": "44ddc69c73ec5cc13bdaf64f9ba046a19fe99eed440d7dfb9de36842cc86c7f5"
+        },
+        {
+          "Path": "Scripts/GetUsageDashboardTimeBucketsSp.sql",
+          "Sha256": "121f7f21532c07f0e866da6cf1bb4340389698a84cf4817a1e821218ce383faa"
+        },
+        {
+          "Path": "Scripts/InsertFeatureSp.sql",
+          "Sha256": "c9eb706507b49cbe18632a10d266a51e49deed786cc870d1345e04847b51afdf"
+        },
+        {
+          "Path": "Scripts/InsertMessageSp.sql",
+          "Sha256": "bc35dbd1beff340ab20e20e58163ae57c934ef8085665e2959cac8462b62a175"
+        },
+        {
+          "Path": "Scripts/InsertPageLayoutSp.sql",
+          "Sha256": "6cb690c790fee7f8b8db6475100c9ef29132bc3b9d1d26cc7ba53fe68263f149"
+        },
+        {
+          "Path": "Scripts/InsertProcessSp.sql",
+          "Sha256": "f0826b12b5f1600d85dba409f0dd8fd57d9043e9daa1f3fd649d53e59ec00660"
+        },
+        {
+          "Path": "Scripts/InsertSessionSp.sql",
+          "Sha256": "f25438258ddb2dba00ab2f1306d0a8b43956cc0dc923e5384e4f1b3f7ce0cf0c"
+        },
+        {
+          "Path": "Scripts/InsertSessionSubscriptionSp.sql",
+          "Sha256": "b3e2f2710d1e928f317d7a70f55803b3b6bba2650ef838245ffccbd1596465e1"
+        },
+        {
+          "Path": "Scripts/MarkFeatureAsEnabledSp.sql",
+          "Sha256": "ae5797bc406ebd0bb55caa85643c1a7232798c1e8d5202c8233144172110b528"
+        },
+        {
+          "Path": "Scripts/MarkFeatureAsNotEnabledSp.sql",
+          "Sha256": "9ca0231fb90d457fb39895ae886a8fd7b386515c8d1e22e02cdab8c4141a549a"
+        },
+        {
+          "Path": "Scripts/MarkMessageAsCompactedSp.sql",
+          "Sha256": "076c4518296c633c8c2a75161bd410a71663f769a185d603f155b09b6ad1c1bc"
+        },
+        {
+          "Path": "Scripts/MarkMessageAsNotCompactedSp.sql",
+          "Sha256": "013a664c470e9d6c5129834fb4f34d4c39b534a25fc2fa15e4db4d956f93ef5e"
+        },
+        {
+          "Path": "Scripts/MarkPageLayoutAsEnabledSp.sql",
+          "Sha256": "4635f309cee53900cbf2569de06ec51b50c71ac50dbadd19bce981498f998743"
+        },
+        {
+          "Path": "Scripts/MarkPageLayoutAsNotEnabledSp.sql",
+          "Sha256": "f3f4337b060d9503a616cdc5a0e2a6c22053346a809e1cc539ab7ede60df2718"
+        },
+        {
+          "Path": "Scripts/MarkProcessAsEnabledSp.sql",
+          "Sha256": "3624cca625387600c1091d7161121c30b7097fde46cbef80d51a6cb048523151"
+        },
+        {
+          "Path": "Scripts/MarkProcessAsNotEnabledSp.sql",
+          "Sha256": "55bffd5ae380916169e819060ec28aa2af3925c84b042781fc7a2162f085bdab"
+        },
+        {
+          "Path": "Scripts/MarkProcessAsNotRunningSp.sql",
+          "Sha256": "4038295a13fc8b83b2d35e7ad8acaec02623d5162602e0dd67a7d0bcf460b80b"
+        },
+        {
+          "Path": "Scripts/MarkProcessAsNotTimedOutSp.sql",
+          "Sha256": "e09133d9408a6388926396509053b557db94f9387d89b492ac2c46148d0276e8"
+        },
+        {
+          "Path": "Scripts/MarkProcessAsRunningSp.sql",
+          "Sha256": "8debf840c42e598220618ff150103e61190cda9c70682b7236bca8079da8c78a"
+        },
+        {
+          "Path": "Scripts/MarkProcessAsTimedOutSp.sql",
+          "Sha256": "e5d017fd6f9eeb4cec6789f3740d8cdbdfe78ad7dc5922d5ee9bc26ab6179536"
+        },
+        {
+          "Path": "Scripts/MarkSessionAsArchivedSp.sql",
+          "Sha256": "0741ac9a87d9c0cba37a9005677e911efc4dae72a0cd84ae8b50069e5d8407bb"
+        },
+        {
+          "Path": "Scripts/MarkSessionAsNotArchivedSp.sql",
+          "Sha256": "0dd4a599e57dac863f5bda2fd6d087afd5409f6ae7561341b8ce0487e1d0f8bf"
+        },
+        {
+          "Path": "Scripts/MarkSessionSubscriptionAsEnabledSp.sql",
+          "Sha256": "9da6c9726ffba50ea18e40e36369929de2938981dc25fa5fdd75c464e64677f7"
+        },
+        {
+          "Path": "Scripts/MarkSessionSubscriptionAsNotEnabledSp.sql",
+          "Sha256": "8c121b7645c024b823e27a2e344b33d27beb5caad9a86d4c84b18fa4dcb1bad6"
+        },
+        {
+          "Path": "Scripts/Messages.sql",
+          "Sha256": "33bebd71bdc19777515ae884f26ba258d28694cde1665be1bb7e4ce21b2b08ac"
+        },
+        {
+          "Path": "Scripts/Messages_GetByMessageIDs_Sp.sql",
+          "Sha256": "527a16e2b1033443febeec8a67917694b957b2ea1a2ba6d9102aaf11c1139d96"
+        },
+        {
+          "Path": "Scripts/Messages_GetBySessionIDDateRangeSp.sql",
+          "Sha256": "ee087efca4cbc943119b8a5b05024d4194a1196cde80241ac3eb70fd656a5281"
+        },
+        {
+          "Path": "Scripts/Messages_GetBySessionIDTurnKey_Sp.sql",
+          "Sha256": "3489684ba36e2d118b479e217fa5374510ec7557dd1a91059866ad8400774472"
+        },
+        {
+          "Path": "Scripts/Messages_GetBySessionID_Sp.sql",
+          "Sha256": "30bf57a72e83a79e5c2012cf3c433e8ac3804c121fd32db7e701e835421f44cc"
+        },
+        {
+          "Path": "Scripts/Messages_GetCountBySessionID_Sp.sql",
+          "Sha256": "eec248a79261970b2a769d27eb85ff8ec308e59eb0ddd119aafbb98e9d56334a"
+        },
+        {
+          "Path": "Scripts/Messages_GetLatestMessageKeyBySessionID_Sp.sql",
+          "Sha256": "ea58a6630aa42e362917cb73cdb79b92eca1a88caae44e49bfea06c9b9b76a57"
+        },
+        {
+          "Path": "Scripts/Messages_GetTurnDeltasSinceBySessionIDAndMessageKey_Sp.sql",
+          "Sha256": "22ec70a67491ff30b51ea57b767eafc9f6f8664cf20b2736ce12de4eb13ab811"
+        },
+        {
+          "Path": "Scripts/PageLayouts.sql",
+          "Sha256": "82855729618f2665c4b3f04bf151fd04398873bbd14d2b4a15533391f595ba8d"
+        },
+        {
+          "Path": "Scripts/Processes.sql",
+          "Sha256": "a116cdc692a2976facc0eecae996b24ac9d9b38e0ca64d4cad9afa8a74de78f5"
+        },
+        {
+          "Path": "Scripts/RemoveFeatureSp.sql",
+          "Sha256": "1ec0875d93be52fc47c067210fb640602fd8741f276f31e23bd7b007745237e6"
+        },
+        {
+          "Path": "Scripts/RemoveMessageSp.sql",
+          "Sha256": "ee0d2967b7369d5d0534e5a49cd9dd89a16e6aa1c37fdb418c8da818ac017e5a"
+        },
+        {
+          "Path": "Scripts/RemovePageLayoutSp.sql",
+          "Sha256": "43cebf1be2be72215b49eb01da9fe912e4715dc071a3407a981c13f5e93a7c02"
+        },
+        {
+          "Path": "Scripts/RemoveProcessSp.sql",
+          "Sha256": "65983ac0cdbe66ab46089d43cd770e5475afab1ad36eb667914b9e9270a7f470"
+        },
+        {
+          "Path": "Scripts/RemoveSessionSp.sql",
+          "Sha256": "5cd69c6851eb7559e84adeb8fd3af56e8af639ce4eccb2b2cff8d268c723f658"
+        },
+        {
+          "Path": "Scripts/RemoveSessionSubscriptionSp.sql",
+          "Sha256": "fbd2207f756c0ca4088020617bda60ca9c0eeb326376bbb0e680c5439a706364"
+        },
+        {
+          "Path": "Scripts/SessionArtifacts.sql",
+          "Sha256": "9807a7002b14b1987bce88c92ac8f2549e959035fd042ff55d8d4d3a7c79962b"
+        },
+        {
+          "Path": "Scripts/Sessions.sql",
+          "Sha256": "714ce0de445540875c1bbf7c721ed7e11fb92e287034c788272fbfc4f21f2777"
+        },
+        {
+          "Path": "Scripts/SessionSubscriptions.sql",
+          "Sha256": "ba60bde920aee9feedc83edb69f23995e8f87a54d7416d1440e3aa9d4b08ae1f"
+        },
+        {
+          "Path": "Scripts/Sessions_GetAll_Sp.sql",
+          "Sha256": "c2a059f13840a8174ec6dd5d621d845c35284506a536246b4b0305c9da26d587"
+        },
+        {
+          "Path": "Scripts/Sessions_GetAll_Sp_CountSp.sql",
+          "Sha256": "2fd544003613afb165c12a4eef4e0364c423eab633d65dd640a30fb098d8daf1"
+        },
+        {
+          "Path": "Scripts/Sessions_GetAll_Sp_PagingSp.sql",
+          "Sha256": "484b0d39e9676ea26e27e5fc489b9aeed1a43a2e070fe414e278041fb90dbb28"
+        },
+        {
+          "Path": "Scripts/Sessions_GetArchivedSp_Sp.sql",
+          "Sha256": "028235781ec09b5cc735c777089b052629a4f2c28e3eaff101fb851bc5dff2c3"
+        },
+        {
+          "Path": "Scripts/Sessions_GetArchivedSp_Sp_CountSp.sql",
+          "Sha256": "1b9bb0fc6dc9a45d2ecd336c40596941f98ed4f5aba0e5eb1a7853d98edf5811"
+        },
+        {
+          "Path": "Scripts/Sessions_GetArchivedSp_Sp_PagingSp.sql",
+          "Sha256": "6c4b83ecacfff3c946f6e0ff52eeb0526c34e43beeb8c9bb10335820096d02a0"
+        },
+        {
+          "Path": "Scripts/Sessions_ResetRunningRuntimeStatusOnWebStartupSp.sql",
+          "Sha256": "72d6cf22e7bdee8413da4de9a3784f00477f1f05a317a5825549b8460e5ab744"
+        },
+        {
+          "Path": "Scripts/StoredProcedureHasParameterSp.sql",
+          "Sha256": "a1e5467b24f4790b86b85f2fd34657a4e7412d14d589e043671df7c1d541c681"
+        },
+        {
+          "Path": "Scripts/Tags.sql",
+          "Sha256": "235c21b749d3e3973cfd4003803afc19d32c55aef5ed3622ce16866893521d33"
+        },
+        {
+          "Path": "Scripts/Turns_GetBySessionIDTurnKeys_Sp.sql",
+          "Sha256": "65ff5fda3ca2fe455495d318629a227ca4096683175f1c5ab81a28870f183c13"
+        },
+        {
+          "Path": "Scripts/Turns_GetBySessionID_Sp.sql",
+          "Sha256": "9238400dd8c01fcd69e669d0f527a97c604fdcf607727c130081193e1b5966b7"
+        },
+        {
+          "Path": "Scripts/Turns_GetCountBySessionID_Sp.sql",
+          "Sha256": "83c6cf3319c5a577be34cf277171b5c93e0281b8861cc3199b8c0eee79b1a330"
+        },
+        {
+          "Path": "Scripts/Turns_GetPagingSp.sql",
+          "Sha256": "6522944882d164827556b91ddcd715a5f478f848a707c48ab7ca4a306790dfbd"
+        },
+        {
+          "Path": "Scripts/UpdateFeatureDataSp.sql",
+          "Sha256": "7d8f4622ab7ce06da233b6e0ee0223e02b96a1e9bdb6c22744bb3f1cc3c6d048"
+        },
+        {
+          "Path": "Scripts/UpdateFeatureSettingsSp.sql",
+          "Sha256": "117866fcc38607610d5d9e9fd0a6665f0b231c8246efa7ed3797bf9c8d733530"
+        },
+        {
+          "Path": "Scripts/UpdateFeatureSp.sql",
+          "Sha256": "6b0e327d24f81113b535ad1aa29f288e8244ab62281d75b48cc6ffed47aae631"
+        },
+        {
+          "Path": "Scripts/UpdateMessageCompactionEpochAtomicSp.sql",
+          "Sha256": "81098d236ac277ae445fc4f9f12b7c54f3e1e42c50dbc45690d7d7086353fd12"
+        },
+        {
+          "Path": "Scripts/UpdateMessageDataSp.sql",
+          "Sha256": "1feb37ef079f916c8f369ea6e71a7b2bbd735dc31fdfd6442e949776aac7fa2d"
+        },
+        {
+          "Path": "Scripts/UpdateMessageDateCreatedSp.sql",
+          "Sha256": "19c21573890ef3965c103843d1f8980ba5b4d3f79cbc007cd8bab9b50b0c197f"
+        },
+        {
+          "Path": "Scripts/UpdateMessageSp.sql",
+          "Sha256": "c0f9415f2ccf9d3b81c08edc140df33e82deb2a62f83ec9b0190459f33343fae"
+        },
+        {
+          "Path": "Scripts/UpdateMessageToolArgumentsSp.sql",
+          "Sha256": "aedd5be0cb8526e65efaeaaa89aab1b934cf530f12e20831be0954a2e4c58837"
+        },
+        {
+          "Path": "Scripts/UpdatePageLayoutSp.sql",
+          "Sha256": "0e098e9e5796ddbf381bbbeb38f30129a0c257dcb52bdb4f8b516d9447fb4b12"
+        },
+        {
+          "Path": "Scripts/UpdateProcessRunDataSp.sql",
+          "Sha256": "96bf48750d4a8ef14052519e3d8baca0d9d27bf52109fe44122f9eb32965dd4e"
+        },
+        {
+          "Path": "Scripts/UpdateProcessSp.sql",
+          "Sha256": "0762eb1010d196b45a13b14401f5d86aabae8c5b55f19f062b1a746323872f1e"
+        },
+        {
+          "Path": "Scripts/UpdateSessionDataSp.sql",
+          "Sha256": "744b7c31395c22db47caaf9a41069b4056fb6e87b643052d2571155a35b0d915"
+        },
+        {
+          "Path": "Scripts/UpdateSessionDateCreatedSp.sql",
+          "Sha256": "d55a24059e60e9cd733032821e63dedc1e602798ce39ef465b637c7269952609"
+        },
+        {
+          "Path": "Scripts/UpdateSessionNameSp.sql",
+          "Sha256": "b73a6c70e966685c25eb7f279ca93fdc8ebab102ba1cfc307cc62149a3b291ba"
+        },
+        {
+          "Path": "Scripts/UpdateSessionParentSessionIDSp.sql",
+          "Sha256": "49f0dd6c21c752fb711a11dd82ebe2a97fc8198f5e68826c1edcf910465769ec"
+        },
+        {
+          "Path": "Scripts/UpdateSessionPromptContextSp.sql",
+          "Sha256": "de935c0a707327e6b68ab4d6117ea6eb41a73a8a2e137a527a675d44dcb2aaea"
+        },
+        {
+          "Path": "Scripts/UpdateSessionProviderSelectionSp.sql",
+          "Sha256": "f83debdd8e7dc7d6f2e0f5cbf9b754f485c5c5ff08337d165f713bbbd281e36a"
+        },
+        {
+          "Path": "Scripts/UpdateSessionSp.sql",
+          "Sha256": "b01010400fd1425ee0893ec989598fc8a44e4bcf04d1748c753a6f1ad72a2224"
+        },
+        {
+          "Path": "Scripts/UpdateSessionSubscriptionDataSp.sql",
+          "Sha256": "857655c9b3b6d28df67056bb58964b0fdc443d3d18193608d30553dc26f96231"
+        },
+        {
+          "Path": "Scripts/UpdateSessionSubscriptionSp.sql",
+          "Sha256": "3749a5c1649c60e4fc7c2643575aebb2607c9a344c3d8771552ea89766fafaf7"
+        },
+        {
+          "Path": "System.ClientModel.dll",
+          "Sha256": "ce44a4fae4c4787c12475700e19a365fc2f388ae5d0f6182557ce5ea175be7f6"
+        },
+        {
+          "Path": "System.Configuration.ConfigurationManager.dll",
+          "Sha256": "08b618461d62fe65451bdac4dbc25f8ac8ab16a914a687f2dbe3923bf0e8b3e7"
+        },
+        {
+          "Path": "System.Diagnostics.EventLog.dll",
+          "Sha256": "df5c292e44872ddbf657e393a4cef4259825d2db573e6e6db794bbf1157b41d0"
+        },
+        {
+          "Path": "System.IdentityModel.Tokens.Jwt.dll",
+          "Sha256": "8027f6bfe795fd5718b1c7bbb3951af064ba29cb92ee965bbe237f6808cfd28c"
+        },
+        {
+          "Path": "System.Memory.Data.dll",
+          "Sha256": "bae79a4ff6e8fcfb65a3d88eb53d281898e699e5471ebd780843e5616753f0c3"
+        },
+        {
+          "Path": "System.Security.Cryptography.Pkcs.dll",
+          "Sha256": "dfa1ee60ca07b74f7c4de24e3b9a93a302cb0f0e67813801562ffdf2fb89f219"
+        },
+        {
+          "Path": "System.Security.Cryptography.ProtectedData.dll",
+          "Sha256": "02321322ec85e0a68f28ad33e549213b1dbf3de0e66c3f7803f9ae32c0d00ffd"
+        },
+        {
+          "Path": "tr/Microsoft.Data.SqlClient.resources.dll",
+          "Sha256": "fc8df599a964558fc9587aeaa6c956e1d375944283907193660fa3e96ee38980"
+        },
+        {
           "Path": "web-module.json",
           "Sha256": "a6506b43648591f8aa3f704446f74ebd909aca5f5cbc00c788ec67a700df497b"
+        },
+        {
+          "Path": "WebAppUtilities.dll",
+          "Sha256": "b04993ec40d66d8f11ffc85f1d1c49ea52be9801406e48765e1e130fb881f5b4"
+        },
+        {
+          "Path": "zh-Hans/Microsoft.Data.SqlClient.resources.dll",
+          "Sha256": "d12450a0c88feaafbf3db907ba9e66e0735ecf43f9089a1b6b583675e561a571"
+        },
+        {
+          "Path": "zh-Hant/Microsoft.Data.SqlClient.resources.dll",
+          "Sha256": "6a045428a176c4a42518ef6918b93ba0ee4a126dd15b523cc123bb14cad55e21"
         }
       ],
       "ProjectArtifacts": [],
