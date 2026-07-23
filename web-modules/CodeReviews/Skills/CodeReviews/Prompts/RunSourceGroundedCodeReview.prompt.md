@@ -24,6 +24,8 @@ Source context and CodeReviews lifecycle:
 - `ToReadCodeReviewSourceSessionTask`
 - `ToListCodeReviewSourceSessionArtifacts`
 - `ToReadCodeReviewSourceSessionArtifact`
+- `ToGetCodeReviewCommitDiff`
+- `ToGetCodeReviewFileAtCommit`
 - `ToSubmitCodeReviewFindings`
 - `ToCompleteCodeReviewWithoutFindings`
 - `ToMarkCodeReviewFailed`
@@ -52,7 +54,7 @@ Read and follow every guidance file corresponding to the changed file types. The
 ## Resolve the Review Target
 
 1. Resolve the exact requested target from the instruction and supplied bindings.
-2. Inspect direct evidence for that target: commit, diff, patch, changed files, tests, and necessary surrounding code.
+2. Inspect direct evidence for that target. For every repository/SHA pair, call `ToGetCodeReviewCommitDiff` with the exact values supplied in the instruction. Use `ToGetCodeReviewFileAtCommit` for a changed file only when its diff needs surrounding committed context. These CodeReviews-native actions are the authoritative read-only route for commit metadata, patches, and file-at-commit content.
 3. If one commit is named, review that commit rather than searching history for another target.
 4. If the target is ambiguous, use safe git and file discovery before asking a question.
 5. Do not submit findings for a different commit from a reused child session.
@@ -189,6 +191,8 @@ A missing governing document is a finding only when it prevents required conform
 When the instruction supplies an attached turn-level `SourceTurnContextJson`, treat the ordered commit manifest as one delivered implementation:
 
 - Review every listed repository/SHA directly. Do not omit earlier commits because the last commit appears complete.
+- Call `ToGetCodeReviewCommitDiff` once for every listed repository/SHA before reaching a completion decision. If that action is unavailable, discover and load it by its exact name with `ToLoadProtoScriptActionTool`; do not substitute status/history tools or mark the review clean without reading every diff.
+- Use `ToGetCodeReviewFileAtCommit` with the same repository/SHA when a patch lacks enough surrounding context to validate a possible finding.
 - Never construct one git range across repositories.
 - Evaluate the combined result against the exact completed source turn, active task, governing design, and Plan.
 - Use exactly one grouped completion action. Pass the supplied `SourceTurnContextJson` unchanged; it is the authoritative cross-worker binding for the delivered turn. Do not pass separate repository paths, commit SHAs, or source session keys.

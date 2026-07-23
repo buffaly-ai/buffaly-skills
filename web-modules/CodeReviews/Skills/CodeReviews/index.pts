@@ -4,6 +4,9 @@ reference Buffaly.Agent.Host Buffaly.Agent.Host;
 reference BasicUtilities BasicUtilities;
 import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewFindingsService CodeReviewFindingsService;
 import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewTurnAgentService CodeReviewTurnAgentService;
+import Buffaly.CodeReviews Buffaly.CodeReviews.GitCheckInBrowserService GitCheckInBrowserService;
+import Buffaly.CodeReviews Buffaly.CodeReviews.DiffSnapshotRequest DiffSnapshotRequest;
+import Buffaly.CodeReviews Buffaly.CodeReviews.FileContentRequest FileContentRequest;
 import Buffaly.Agent.Host Buffaly.Agent.Host.BuffalyArtifacts BuffalyArtifacts;
 import BasicUtilities BasicUtilities.JsonUtil JsonUtil;
 
@@ -161,6 +164,43 @@ prototype ToReadCodeReviewSourceSessionArtifact : CodeReviewsAgentToolsAction
 	function Execute(string SourceSessionKey, string ArtifactPath) : string
 	{
 		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionArtifactText(SourceSessionKey, ArtifactPath)).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to inspect a commit diff for code review")]
+[SemanticProgram.InfinitivePhrase("to read a git commit diff for code review")]
+prototype ToGetCodeReviewCommitDiff : CodeReviewsAgentToolsAction
+{
+	Description = @"RepositoryPath - exact local repository path from the review manifest. CommitSha - exact hexadecimal commit SHA from the review manifest. Returns the read-only commit metadata, changed-file manifest, and bounded patches through the CodeReviews git service. Use this for every commit in a grouped review; never construct a range across repositories.";
+
+	function Execute(string RepositoryPath, string CommitSha) : string
+	{
+		DiffSnapshotRequest request = new DiffSnapshotRequest();
+		request.RepositoryPath = RepositoryPath;
+		request.Mode = "commit";
+		request.CommitSha = CommitSha;
+		request.MaxFiles = 240;
+		request.MaxPatchChars = 1000000;
+		request.ContextLines = 3;
+		return JsonUtil.ToStringExt((new GitCheckInBrowserService()).GetDiffSnapshot(request)).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read a file at a commit for code review")]
+[SemanticProgram.InfinitivePhrase("to inspect committed file context for code review")]
+prototype ToGetCodeReviewFileAtCommit : CodeReviewsAgentToolsAction
+{
+	Description = @"RepositoryPath - exact local repository path from the review manifest. CommitSha - exact hexadecimal commit SHA being reviewed. Path - exact repository-relative path identified in that commit's diff. Returns bounded read-only file content at that commit through the CodeReviews git service. Use only when surrounding context is needed to validate a concrete diff finding.";
+
+	function Execute(string RepositoryPath, string CommitSha, string Path) : string
+	{
+		FileContentRequest request = new FileContentRequest();
+		request.RepositoryPath = RepositoryPath;
+		request.Mode = "commit";
+		request.CommitSha = CommitSha;
+		request.Path = Path;
+		request.MaxContentChars = 600000;
+		return JsonUtil.ToStringExt((new GitCheckInBrowserService()).GetFileContent(request)).ToString();
 	}
 }
 
