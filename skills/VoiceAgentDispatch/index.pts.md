@@ -32,3 +32,7 @@ No dispatch DTO, event, subscription, callback, polling loop, job store, or inte
 - Overlapping-input staging validation proved that end-cycle wording alone is advisory: providers may still issue the same side-effectful action in later completion rounds of one turn.
 - Both bridge actions now call `SessionTools.SendToSessionOncePerCurrentTurnTool(...)`, which claims the exact direction, target, and instruction against the authoritative active turn before queueing.
 - Repeated calls in the same turn are suppressed at the side-effect boundary; identical instructions remain valid in later turns. Ordinary queued session messages remain the only transport.
+
+## Durable queue acknowledgement (2026-07-22)
+
+ToSendMessageToVoiceAgentDispatcher now calls the Voice-specific durable admission helper and returns the inbox Queue ID immediately. The action says queued rather than delivered; dispatcher construction and cross-session queue delivery occur asynchronously.
