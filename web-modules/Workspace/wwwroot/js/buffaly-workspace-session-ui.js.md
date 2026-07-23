@@ -12,3 +12,8 @@
 
 - Read the module endpoint's ASP.NET Core camel-case JSON properties directly.
 - Keep the browser fixture in the same wire shape so client tests detect serialization-contract drift.
+
+## Optional Next-Shell Host Guard (2026-07-23)
+
+- Guard the top-level `BuffalyAgentNextExtensions` registration path so generic WebModule AgentScripts can load on non-next-shell pages without throwing.
+- Keep the Workspace header contribution and shared file source active when the next-shell registry is present.

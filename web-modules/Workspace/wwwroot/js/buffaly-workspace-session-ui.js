@@ -4,6 +4,10 @@
 	const stylesheetHref = "/web-modules/Workspace/css/buffaly-workspace-session-ui.css?v=0.1.0";
 	const viewStateBySessionKey = new Map();
 
+	function getNextExtensions() {
+		return window.BuffalyAgentNextExtensions;
+	}
+
 	function ensureStylesheet() {
 		if (document.querySelector('link[data-bws-styles="true"]')) {
 			return;
@@ -84,7 +88,12 @@
 		heading.appendChild(close);
 		const openFiles = createElement("button", "bws-open-files", "Open Files drawer");
 		openFiles.type = "button";
-		openFiles.addEventListener("click", function () { window.BuffalyAgentNextExtensions.openFilesDrawer(); });
+		openFiles.addEventListener("click", function () {
+			const extensions = getNextExtensions();
+			if (extensions && typeof extensions.openFilesDrawer === "function") {
+				extensions.openFilesDrawer();
+			}
+		});
 		heading.appendChild(openFiles);
 		drawer.appendChild(heading);
 
@@ -171,28 +180,35 @@
 		};
 	}
 
-	// Supply removable Workspace files to the generic Files drawer without touching its DOM.
-	window.BuffalyAgentNextExtensions.registerFileSource({
-		id: "workspace.shared-artifacts",
-		label: "Workspace files",
-		load: function (context) {
-			return loadSummary(context.sessionKey).then(function (summary) {
-				if (!summary.isAttached) {
-					return null;
-				}
-				return summary.artifacts.map(function (artifact) {
-					return {
-						Name: artifact.relativePath,
-						Kind: artifact.kind,
-						Detail: artifact.kind === "Directory" ? "Shared folder" : artifact.length + " bytes",
-						Url: artifact.kind === "Directory" ? "" : getArtifactUrl(context.sessionKey, artifact.relativePath)
-					};
-				});
-			});
-		}
-	});
+	const extensions = getNextExtensions();
+	if (!extensions || typeof extensions.register !== "function") {
+		return;
+	}
 
-	window.BuffalyAgentNextExtensions.register({
+	// Supply removable Workspace files to the generic Files drawer without touching its DOM.
+	if (typeof extensions.registerFileSource === "function") {
+		extensions.registerFileSource({
+			id: "workspace.shared-artifacts",
+			label: "Workspace files",
+			load: function (context) {
+				return loadSummary(context.sessionKey).then(function (summary) {
+					if (!summary.isAttached) {
+						return null;
+					}
+					return summary.artifacts.map(function (artifact) {
+						return {
+							Name: artifact.relativePath,
+							Kind: artifact.kind,
+							Detail: artifact.kind === "Directory" ? "Shared folder" : artifact.length + " bytes",
+							Url: artifact.kind === "Directory" ? "" : getArtifactUrl(context.sessionKey, artifact.relativePath)
+						};
+					});
+				});
+			}
+		});
+	}
+
+	extensions.register({
 		id: "workspace.current-session",
 		slot: "sessionHeader.context",
 		mount: mount
