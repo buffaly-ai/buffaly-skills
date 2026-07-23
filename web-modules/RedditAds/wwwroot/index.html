@@ -63,6 +63,26 @@
 				</div>
 			</div>
 		</div>
+		<section id="draftsView" class="buffaly-panel drafts-panel">
+			<div class="list-view-header">
+				<div><h2 class="buffaly-panel-title">Creative drafts</h2><p class="buffaly-muted">Local drafts only. Saving here does not submit anything to Reddit.</p></div>
+				<button id="toggleDraftFormBtn" class="buffaly-button" type="button">New draft</button>
+			</div>
+			<form id="draftForm" class="draft-form" style="display:none">
+				<div class="draft-fields">
+					<label>Draft name<input id="draftName" class="buffaly-input" required></label>
+					<label>Post title<textarea id="draftTitle" class="buffaly-input" required></textarea></label>
+					<label>Post copy<textarea id="draftPostCopy" class="buffaly-input" required></textarea></label>
+					<label>Destination URL<input id="draftDestinationUrl" class="buffaly-input" type="url" required></label>
+					<label>Call to action<input id="draftCallToAction" class="buffaly-input" value="Read More" required></label>
+					<label>Image<input id="draftImage" class="buffaly-input" type="file" accept="image/png,image/jpeg,image/webp" required></label>
+					<button id="saveDraftBtn" class="buffaly-button" type="submit">Save draft</button>
+				</div>
+				<div class="reddit-preview"><div class="preview-meta">u/FairPath_RemoteCare <span>Promoted preview</span></div><h3 id="draftPreviewTitle">Your post title</h3><p id="draftPreviewCopy">Your post copy</p><img id="draftPreviewImage" alt="Draft creative preview"><div class="preview-footer"><span id="draftPreviewUrl">fairpath.ai</span><strong id="draftPreviewCta">Read More</strong></div></div>
+			</form>
+			<p id="draftsStatus" class="buffaly-muted">Loading drafts...</p>
+			<div id="draftsList" class="draft-list"></div>
+		</section>
 		<section id="adAccountView" class="buffaly-panel" style="display:none">
 			<div class="list-view-header">
 				<div><h2 class="buffaly-panel-title">Ad Accounts</h2><p class="buffaly-muted">Reddit ad accounts visible to your token.</p></div>
@@ -90,6 +110,6 @@
 			<div id="reportContent" class="buffaly-panel-body"></div>
 		</section>
 	</main>
-	<script src="js/redditads.js?v=2"></script>
+	<script src="js/redditads.js?v=3"></script>
 </body>
 </html>

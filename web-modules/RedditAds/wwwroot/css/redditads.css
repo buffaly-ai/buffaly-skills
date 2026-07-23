@@ -20,6 +20,19 @@
 /* ===== Panels / Cards ===== */
 .buffaly-panel { background: #fff; border: 1px solid #edeff1; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.04); padding: 16px; }
 .buffaly-panel-title { margin: 0; font-size: 1rem; font-weight: 600; color: #1a1a1b; }
+.drafts-panel { margin-bottom: 16px; }
+.draft-form { grid-template-columns: minmax(280px,1fr) minmax(320px,1fr); gap: 24px; border-top: 1px solid #edeff1; border-bottom: 1px solid #edeff1; margin: 16px -16px; padding: 20px 16px; }
+.draft-fields { display: flex; flex-direction: column; gap: 12px; }
+.draft-fields label { display: flex; flex-direction: column; gap: 4px; font-size: .8125rem; font-weight: 600; }
+.reddit-preview { border: 1px solid #edeff1; border-radius: 12px; padding: 16px; align-self: start; overflow: hidden; }
+.reddit-preview .preview-meta { font-weight: 600; margin-bottom: 12px; }.reddit-preview .preview-meta span { color: #7c7c7c; font-weight: 400; margin-left: 8px; }
+.reddit-preview h3 { font-size: 1.25rem; line-height: 1.25; }.reddit-preview p { white-space: pre-wrap; color: #343536; }
+.reddit-preview img { width: 100%; max-height: 460px; object-fit: contain; background: #f6f7f8; border-radius: 8px; }
+.reddit-preview img:not([src]) { display: none; }
+.preview-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; color: #7c7c7c; }.preview-footer strong { color: #ff4500; border: 1px solid #ff4500; border-radius: 20px; padding: 6px 14px; }
+.draft-list { display: grid; grid-template-columns: repeat(auto-fit,minmax(300px,1fr)); gap: 16px; }
+.draft-card { border: 1px solid #edeff1; border-radius: 10px; overflow: hidden; background: #fff; }.draft-card > img { width: 100%; height: 260px; object-fit: contain; background: #f6f7f8; }.draft-card-body { padding: 14px; }.draft-card h3 { font-size: 1rem; margin: 8px 0; }.draft-card p { font-size: .875rem; white-space: pre-wrap; }.draft-card small,.draft-destination { color: #7c7c7c; font-size: .75rem; overflow-wrap: anywhere; }.draft-status { color: #ff4500; font-size: .7rem; font-weight: 700; letter-spacing: .08em; }
+@media (max-width: 760px) { .draft-form { grid-template-columns: 1fr; }.workspace-topbar { align-items: flex-start; flex-direction: column; gap: 12px; } }
 
 /* ===== Buttons ===== */
 .buffaly-button { display: inline-flex; align-items: center; gap: 6px; border: none; border-radius: 20px; padding: 8px 16px; font-size: .875rem; font-weight: 600; font-family: inherit; background: #ff4500; color: #fff; cursor: pointer; transition: background .15s; }
