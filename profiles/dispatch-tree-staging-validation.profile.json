@@ -1,11 +1,12 @@
 {
   "SchemaVersion": 1,
   "ProfileId": "dispatch-tree-staging-validation",
-  "ProfileVersion": "1.0.2",
-  "Description": "Staging-only canonical installer validation profile for the coordinated DispatchTree skill and Agent Next viewer, with the standard OpenAI provider required by the installer package contract.",
+  "ProfileVersion": "1.0.3",
+  "Description": "Staging-only canonical installer validation profile for the coordinated DispatchTree skill and Agent Next viewer, including staging agent prompt ownership and the standard OpenAI provider.",
   "Packages": [
     { "PackageType": "Skill", "PackageId": "DispatchTree", "Platforms": ["windows", "linux", "mac"] },
     { "PackageType": "WebModule", "PackageId": "DispatchTreeViewer", "Platforms": ["windows", "linux", "mac"] },
+    { "PackageType": "WebModule", "PackageId": "ActionLearningCoordinator", "Platforms": ["windows", "linux", "mac"] },
     { "PackageType": "ProviderModule", "PackageId": "Buffaly.Provider.OpenAi", "Platforms": ["windows", "linux", "mac"] }
   ]
 }
