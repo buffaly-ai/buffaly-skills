@@ -1402,7 +1402,7 @@ class Exception {
 
 var ErrorLogging = {
 	// Ignore ResizeObserver noise from Chromium (see crbug.com/1266297) so it does not trigger portal level error dialogs.
-	IgnoreErrors: ["ResizeObserver loop limit exceeded", "ResizeObserver loop completed with undelivered notifications.", "EvalError: Possible side-effect in debug-evaluate", "Failed to fetch"],
+	IgnoreErrors: ["ResizeObserver loop limit exceeded", "ResizeObserver loop completed with undelivered notifications.", "EvalError: Possible side-effect in debug-evaluate", "Failed to fetch", "Codex backend usage limit reached"],
 
 	IsIgnored: function (sError) {
 
