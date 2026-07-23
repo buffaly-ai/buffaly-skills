@@ -861,14 +861,8 @@
     setMaskMode('paint');
     updateMaskHint();
     try {
-      if (!state.rootDirectory) {
-        const response = await fetch('/api/image-harness/default-root', { headers: { 'kcs-IsAjax': 'true' } });
-        if (response.ok) {
-          const defaultRoot = await response.json();
-          state.rootDirectory = defaultRoot.rootDirectory || defaultRoot.RootDirectory || '';
-        }
-      }
       const config = await service.GetConfigAsync({ RootDirectory: state.rootDirectory, FileName: state.fileName });
+      state.rootDirectory = config.RootDirectory || config.rootDirectory || state.rootDirectory;
       const hasApiKey = config.HasApiKey === true || config.hasApiKey === true;
       setStatus(hasApiKey ? 'API key loaded' : 'Missing API key', hasApiKey ? 'ready' : 'error');
       await refreshGallery();

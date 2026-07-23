@@ -1,4 +1,4 @@
-﻿/**
+/**
  * KCS Utility Module: JsonMethod
  * ------------------------------------------------------------
  * Centralised JSON web service client that mirrors the legacy
