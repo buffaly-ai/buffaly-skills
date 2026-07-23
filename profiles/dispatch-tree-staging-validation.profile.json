@@ -1,10 +1,10 @@
 {
   "SchemaVersion": 1,
   "ProfileId": "dispatch-tree-staging-validation",
-  "ProfileVersion": "1.0.0",
+  "ProfileVersion": "1.0.1",
   "Description": "Staging-only validation profile for the coordinated DispatchTree skill and Agent Next viewer.",
   "Packages": [
-    { "PackageType": "Skill", "PackageId": "DispatchTree", "Platforms": ["windows"] },
-    { "PackageType": "WebModule", "PackageId": "DispatchTreeViewer", "Platforms": ["windows"] }
+    { "PackageType": "Skill", "PackageId": "DispatchTree", "Platforms": ["windows", "linux", "mac"] },
+    { "PackageType": "WebModule", "PackageId": "DispatchTreeViewer", "Platforms": ["windows", "linux", "mac"] }
   ]
 }
