@@ -3,14 +3,16 @@
     "Enabled": true,
     "Name": "Office365",
     "DisplayName": "Office 365",
-    "Description": "Buffaly web module package for Office 365.",
+    "Description": "Manage Microsoft 365 account connections for Mail, Calendar, and related integrations.",
     "AssemblyPath": "Office365/Buffaly.Office365.WebModule.dll",
     "TypeName": "Buffaly.Office365.WebModule.Office365WebModule",
     "LoadOrder": 300,
     "Pages": [
       {
-        "Path": "office-365-accounts.html",
-        "Title": "Office 365 Accounts"
+        "Name": "office-365-accounts",
+        "DisplayName": "Office 365 Accounts",
+        "Path": "/web-modules/Office365/office-365-accounts.html",
+        "Description": "View and manage Microsoft 365 account connections."
       }
     ]
   }
