@@ -1,5 +1,11 @@
 # SkillDirectory/index.pts
 
+## 2026-07-22 Installed extension update actions
+
+- Added package-directory actions that belong to the existing Skill Management/Skill Directory surface rather than Extension Publishing: `ToPreviewInstalledBuffalyExtensionUpdates`, `ToUpdateInstalledBuffalyExtensions`, `ToPreviewBuffalyExtensionProfileUpdate`, and `ToUpdateBuffalyExtensionProfile`.
+- These actions call `Buffaly.Agent.SkillManagement.PackageDirectoryService` through internal JsonWs and reuse existing package receipts, source selection, profile, and pre-start lifecycle rules.
+- `ToUpdateInstalledBuffalyExtensions` is the executable agent route for natural-language requests like "update all installed Buffaly extensions"; callers should use `dryRun=true` first and set `allowPreStartInstall=true` only during a controlled stopped-instance update.
+
 ## Purpose
 Defines the OpsAgent SkillDirectory skill and thin ProtoScript actions for official remote skill directory operations.
 

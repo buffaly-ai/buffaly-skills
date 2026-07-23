@@ -77,3 +77,80 @@ prototype ToInstallBuffalySkillFromDirectory : SkillDirectorySkillAction
 		return ToCallSkillDirectoryService("/api/buffaly.agent.skillmanagement/skill-directory-service/install-remote-skill", "InstallRemoteSkill", request);
 	}
 }
+
+function ToCallPackageDirectoryService(string methodRoute, string methodName, JsonObject request) : string
+{
+	JsonObject args = new JsonObject();
+	args["request"] = request;
+	return JsonWsHelper.CallInternalJsonWsSecure("/api/buffaly.agent.skillmanagement/package-directory-service/" + methodRoute, methodName, "WorkerFeature.InternalAuthToken", args);
+}
+
+[SemanticProgram.InfinitivePhrase("to preview Buffaly extension updates")]
+[SemanticProgram.InfinitivePhrase("to check installed Buffaly extension updates")]
+[SemanticProgram.InfinitivePhrase("to check all Buffaly extensions for updates")]
+prototype ToPreviewInstalledBuffalyExtensionUpdates : SkillDirectorySkillAction
+{
+	Description = @"sourceId - repository source id, normally BuffalyPublic or blank for default. repositorySource - Local or Remote. packageType - optional Skill, WebModule, or ProviderModule filter; blank checks all package types.";
+
+	function Execute(string sourceId, string repositorySource, string packageType) : string
+	{
+		JsonObject request = new JsonObject();
+		request["SourceId"] = sourceId;
+		request["RepositorySource"] = repositorySource;
+		request["PackageType"] = packageType;
+		request["DryRun"] = true;
+		request["AllowPreStartInstall"] = false;
+		return ToCallPackageDirectoryService("preview-all-package-updates", "PreviewAllPackageUpdates", request);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to update all installed Buffaly extensions")]
+[SemanticProgram.InfinitivePhrase("to update Buffaly extensions from a repository")]
+[SemanticProgram.InfinitivePhrase("to apply installed Buffaly extension updates")]
+prototype ToUpdateInstalledBuffalyExtensions : SkillDirectorySkillAction
+{
+	Description = @"sourceId - repository source id, normally BuffalyPublic or blank for default. repositorySource - Local or Remote. packageType - optional Skill, WebModule, or ProviderModule filter; blank updates all package types. dryRun - true previews without mutation. allowPreStartInstall - true only during a controlled stopped-instance update; live use queues WebModule/ProviderModule pre-start installs instead of overwriting loaded files.";
+
+	function Execute(string sourceId, string repositorySource, string packageType, bool dryRun, bool allowPreStartInstall) : string
+	{
+		JsonObject request = new JsonObject();
+		request["SourceId"] = sourceId;
+		request["RepositorySource"] = repositorySource;
+		request["PackageType"] = packageType;
+		request["DryRun"] = dryRun;
+		request["AllowPreStartInstall"] = allowPreStartInstall;
+		return ToCallPackageDirectoryService("update-all-packages", "UpdateAllPackages", request);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to preview a Buffaly extension profile update")]
+[SemanticProgram.InfinitivePhrase("to check a Buffaly extension profile update")]
+prototype ToPreviewBuffalyExtensionProfileUpdate : SkillDirectorySkillAction
+{
+	Description = @"profileId - exact instance extension profile id. repositorySource - Local or Remote.";
+
+	function Execute(string profileId, string repositorySource) : string
+	{
+		JsonObject request = new JsonObject();
+		request["ProfileId"] = profileId;
+		request["RepositorySource"] = repositorySource;
+		return ToCallPackageDirectoryService("preview-instance-extension-profile", "PreviewInstanceExtensionProfile", request);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to update a Buffaly extension profile")]
+[SemanticProgram.InfinitivePhrase("to update all Buffaly personal extensions")]
+prototype ToUpdateBuffalyExtensionProfile : SkillDirectorySkillAction
+{
+	Description = @"profileId - exact instance extension profile id. repositorySource - Local or Remote. dryRun - true previews without mutation. allowPreStartInstall - true only during a controlled stopped-instance update.";
+
+	function Execute(string profileId, string repositorySource, bool dryRun, bool allowPreStartInstall) : string
+	{
+		JsonObject request = new JsonObject();
+		request["ProfileId"] = profileId;
+		request["RepositorySource"] = repositorySource;
+		request["DryRun"] = dryRun;
+		request["AllowPreStartInstall"] = allowPreStartInstall;
+		return ToCallPackageDirectoryService("update-instance-extension-profile", "UpdateInstanceExtensionProfile", request);
+	}
+}
