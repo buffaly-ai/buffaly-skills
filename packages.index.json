@@ -8982,7 +8982,7 @@
       "PackageType": "WebModule",
       "Title": "Google Workspace",
       "Description": "Buffaly Web Module package for Google Workspace.",
-      "Version": "0.1.118",
+      "Version": "0.1.120",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/GoogleWorkspace",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/GoogleWorkspace",
@@ -9200,10 +9200,6 @@
           "Sha256": "0728b519683525fb96a115f09578e16d310bcfb37a7bcd70af35422d64a93054"
         },
         {
-          "Path": "ru/Microsoft.Data.SqlClient.resources.dll",
-          "Sha256": "f7d51f47b1eba12021161ee39a7d08d24df1dcd52c131d1d94ee2c7e432f4cb4"
-        },
-        {
           "Path": "runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll",
           "Sha256": "4a95c42d14d8a83ca1007793648b6dae59cee957ea12470578f10c918f91d225"
         },
@@ -9234,6 +9230,10 @@
         {
           "Path": "runtimes/win/lib/net9.0/System.Security.Cryptography.Pkcs.dll",
           "Sha256": "6902fe2034ada133d5aa8df0d101279abb3093e346ebf34bbde62670f2a0e9bf"
+        },
+        {
+          "Path": "ru/Microsoft.Data.SqlClient.resources.dll",
+          "Sha256": "f7d51f47b1eba12021161ee39a7d08d24df1dcd52c131d1d94ee2c7e432f4cb4"
         },
         {
           "Path": "Skills/GoogleWorkspace/Auth.pts",
@@ -9396,6 +9396,30 @@
           "Sha256": "3db979987911ac67ad22da62408ab7576227f7d59edd55781d46926c0551b48d"
         },
         {
+          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.ashx.js",
+          "Sha256": "da171ceaacac3c7fcdc41731b1cbce5784b60f832f0d6d92b37382d7ad8e782e"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.ashx.js.br",
+          "Sha256": "65cd4631ccd4cf8b099eeb90e319a7ecb0083a0472dc8e9729115f2e56bcb467"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.ashx.js.gz",
+          "Sha256": "171328341ef96e2d1788ce7767606550629f4f4a002aecb64841f25b14afe21a"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.json",
+          "Sha256": "72cf7a7beb116eb605b4ee6154abcfbd58e308132d1739e8200a2b116b7514a5"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.json.br",
+          "Sha256": "75f4def0893fe535c049b47687bd1234c6a191a2365aaa7194fab1b67d213271"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.json.gz",
+          "Sha256": "bc0182cfdee364b74a609c78572c24ef66601c512dfb95f7dd403fd79ea3ea45"
+        },
+        {
           "Path": "wwwroot/js/kcs/global.js",
           "Sha256": "747743e4c5edd6fab4f76f6f28ca375b8fffd0f92e068aff5dc10fa528d39b93"
         },
@@ -9490,30 +9514,6 @@
         {
           "Path": "wwwroot/js/services/google-workspace/google-workspace-accounts.js.md.gz",
           "Sha256": "d24753e643adeedbc0705ebd7d757fd467db28bd346a69bbd600e0402f01ef85"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.ashx.js",
-          "Sha256": "da171ceaacac3c7fcdc41731b1cbce5784b60f832f0d6d92b37382d7ad8e782e"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.ashx.js.br",
-          "Sha256": "65cd4631ccd4cf8b099eeb90e319a7ecb0083a0472dc8e9729115f2e56bcb467"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.ashx.js.gz",
-          "Sha256": "171328341ef96e2d1788ce7767606550629f4f4a002aecb64841f25b14afe21a"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.json",
-          "Sha256": "72cf7a7beb116eb605b4ee6154abcfbd58e308132d1739e8200a2b116b7514a5"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.json.br",
-          "Sha256": "75f4def0893fe535c049b47687bd1234c6a191a2365aaa7194fab1b67d213271"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.GoogleWorkspace.WebModule.GoogleWorkspaceAdminJsonWsService.json.gz",
-          "Sha256": "bc0182cfdee364b74a609c78572c24ef66601c512dfb95f7dd403fd79ea3ea45"
         },
         {
           "Path": "zh-Hans/Microsoft.Data.SqlClient.resources.dll",
