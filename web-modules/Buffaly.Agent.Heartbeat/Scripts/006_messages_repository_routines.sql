@@ -180,6 +180,30 @@ LANGUAGE sql AS $$
 SELECT * FROM update_message_compaction_epoch_atomic_sp(p_session_id,p_message_key,p_compaction_epoch,p_compaction_epoch_key);
 $$;
 
+CREATE OR REPLACE FUNCTION "UpdateToolResultPairCompactionEpochKeyAtomicSp"(p_session_id integer,p_tool_call_message_key text,p_tool_result_message_key text,p_source_compaction_epoch integer,p_source_compaction_epoch_key text,p_target_compaction_epoch_key text)
+RETURNS TABLE ("UpdatedRows" integer)
+LANGUAGE sql AS $$
+	WITH candidates AS MATERIALIZED
+	(
+		SELECT message_id
+		FROM messages
+		WHERE session_id = p_session_id
+			AND compaction_epoch = p_source_compaction_epoch
+			AND compaction_epoch_key = p_source_compaction_epoch_key
+			AND ((message_key = p_tool_call_message_key AND role = 'ToolCall')
+				OR (message_key = p_tool_result_message_key AND role = 'Tools'))
+	), updated AS
+	(
+		UPDATE messages
+	SET compaction_epoch_key = p_target_compaction_epoch_key,
+		last_updated = now()
+		WHERE message_id IN (SELECT message_id FROM candidates)
+			AND (SELECT COUNT(*) FROM candidates) = 2
+		RETURNING 1
+	)
+	SELECT COUNT(*)::integer AS "UpdatedRows" FROM updated;
+$$;
+
 CREATE OR REPLACE FUNCTION update_message_date_created_sp(p_message_id integer,p_date_created timestamp)
 RETURNS void LANGUAGE sql AS $$
 	UPDATE messages SET date_created = p_date_created WHERE message_id = p_message_id;
