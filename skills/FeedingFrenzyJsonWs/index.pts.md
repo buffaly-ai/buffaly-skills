@@ -1,5 +1,10 @@
 # FeedingFrenzyJsonWs ProtoScript Change History
 
+## Simple Lead Agreement Draft Tools (2026-07-24)
+- Added one MSA action and one Feeding Frenzy website-addendum action with the same minimal input shape: service binding, LeadID, and completed Markdown `StringRef`.
+- Kept ProtoScript transport-only. Feeding Frenzy resolves lead identity, configured default countersigner, expiration/reminder defaults, lead attachment, hash, and Draft persistence.
+- Both tools explicitly create unsent Drafts; sending remains a separate reviewed operation.
+
 ## Multi-File JsonWs Mirror Surface (2026-04-22)
 - Reworked the FeedingFrenzyJsonWs skill from a small single-file route helper into a multi-file surface that mirrors the direct DLL-backed FeedingFrenzy skill layout.
 

@@ -710,7 +710,7 @@
       "SkillName": "FeedingFrenzyJsonWs",
       "Title": "Feeding Frenzy JsonWs",
       "Description": "Buffaly skill package for Feeding Frenzy JsonWs.",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Feeding Frenzy JsonWs",
@@ -720,11 +720,11 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "d895bb85eb39c28d57b39846b1db51396e72ba6879085858ea439ad857ee1bd0"
+          "Sha256": "612db9dfee45167616cb33f65573798872a6a76e4d8ce138c7bb81679fb5d6fe"
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "07cd3805402720efa91981cda7d0f2618b3e9ed978ca96defb757643849aa291"
+          "Sha256": "c74331a714c14429afb7179d7934e08fe2b102ee2a9124890113b5b0c081902e"
         },
         {
           "Path": "LeadAutomation.pts",
@@ -788,7 +788,7 @@
         },
         {
           "Path": "SKILL.md",
-          "Sha256": "12be9d1d1970494473aaf88ebd3796fcabf2bd86ef036f57f0e12fefb298bc84"
+          "Sha256": "4d20272ae35bee1a3125fdb07c1c7b22d9f8a6617dd39f934b3d0aeac53dc605"
         },
         {
           "Path": "Sources.pts",
@@ -805,6 +805,14 @@
         {
           "Path": "Tags.pts.md",
           "Sha256": "d51fb486facf38891f86f5128460e5172215a47c38480ed42008d1a9a0b9218b"
+        },
+        {
+          "Path": "AgreementSigning.pts",
+          "Sha256": "90d024b959d737f94cbfedee857013533f8f3a78c9bd902e928ca7b5d39822fc"
+        },
+        {
+          "Path": "AgreementSigning.pts.md",
+          "Sha256": "6de7bf8321fc567ed5a596753eecff776a705c24900fc0976a06c19649b50440"
         }
       ],
       "EntryPoint": "index.pts",
