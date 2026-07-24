@@ -2,7 +2,8 @@
 
 This bundled infrastructure skill implements the minimal queued-message bridge between a lightweight Voice Agent and its automatically attached full Buffaly dispatcher child.
 
-- `VoiceAgentAction` exposes only `ToSendMessageToVoiceAgentDispatcher` and `ToGetLatestVoiceAgentDispatcherTurn`.
+- `VoiceAgentAction` exposes dispatcher actions plus three read-only session-bound actions: recent turns, selected turn detail, and selected message markdown.
+- Bound actions accept no session key. They delegate to `SessionTools`, which resolves the target from trusted Voice Agent runtime state and enforces binding limits.
 - `VoiceAgentDispatcher` is the dispatcher prompt-context prototype and supplemental action root; its specialized action is `ToSendMessageToVoiceAgent`.
 - Send actions call `SessionTools.SendToSessionTool` and return a truthful plain-text delivery signal that prevents model-driven duplicate sends; latest-turn recovery returns the existing `TurnSummaryContract`.
 - Targets come only from runtime-bound `VoiceAgent.DispatcherSessionKey` and `VoiceAgent.SourceSessionKey`.
