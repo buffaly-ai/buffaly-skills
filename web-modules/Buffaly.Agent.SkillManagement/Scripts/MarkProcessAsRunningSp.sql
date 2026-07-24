@@ -10,10 +10,13 @@ CREATE PROCEDURE dbo.MarkProcessAsRunningSp (
 )
 AS
 
-    UPDATE Processes SET IsRunning = 1 ,
+    UPDATE Processes SET IsRunning = 1,
+    RunStarted = getdate(),
     LastUpdated = getdate()
-    WHERE ProcessID = @ProcessID	
+    WHERE ProcessID = @ProcessID
+        AND IsRunning = 0
+
+    SELECT CONVERT(int, @@ROWCOUNT) AS Claimed
 
 GO
 
-	
