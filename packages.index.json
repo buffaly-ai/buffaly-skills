@@ -16360,7 +16360,7 @@
       "PackageType": "WebModule",
       "Title": "Wiki",
       "Description": "Buffaly Web Module package for Wiki.",
-      "Version": "0.1.112",
+      "Version": "0.1.113",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/Buffaly.Agent.Wiki",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/Buffaly.Agent.Wiki",
@@ -16383,19 +16383,19 @@
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "f4575f6bd925b88770c389773b207d854d3e10e600552ff78d12e176d60d1366"
+          "Sha256": "a8e4924715f42cb809202023f7dfb2c7e11686bfbae195ea0a9b981365d61455"
         },
         {
           "Path": "Buffaly.Agent.Core.dll",
-          "Sha256": "5f3a82826988c3ba6e83ee2eabbcc417b944c764b859cc21aa1c2f56cb855f2f"
+          "Sha256": "ff1248480d0cc2005354998b3ba30cd082961e36a40e6d4576c922503e383a54"
         },
         {
           "Path": "Buffaly.Agent.Runtime.Abstractions.dll",
-          "Sha256": "5c1679e15deca2eb93b76d6668b45d25a3e3aafa2a3afd245f43477c075f7e5d"
+          "Sha256": "f03a3fe2d56677918c8d8b46b9efe20d21f72bde4cea92c7e61419b2d61a24cd"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "a0cd590615295ea7394662de4df69830df44a91ed7adf126fb27b63090fab496"
+          "Sha256": "791f6d439730a17b5631e6db06879205b7985a2e9c26063c426aa6a6b4255743"
         },
         {
           "Path": "Buffaly.Agent.Wiki.deps.json",
@@ -16403,19 +16403,19 @@
         },
         {
           "Path": "Buffaly.Agent.Wiki.dll",
-          "Sha256": "e62a5223f486a6312a2ead46d24b89a54c00554c754987c24a9b02c82ba4f93b"
+          "Sha256": "0486e7a87324e8eee673cd7fd217d2fc30f2427b137cb34c42c8604471daa439"
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "84f22becf41cfba58b8dfee8b426c8c3375f408cd8fde3feaab620993ed9f49c"
+          "Sha256": "3be22c10c8296025d183533a4edea360459734d08cc3677201345a063c493941"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "e137fd19882dec1614b75623e21ecb294db6a5b8646f024ad744b7d9fd53b24d"
+          "Sha256": "3b22209d59f04dd02ba0d97ded70fb535b89403441b44229b6ff2dd72842f682"
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "42e1ed9b9db1915f08b7794025a88229fa2be77f2a68ed2b9ff60cfe3d863416"
+          "Sha256": "e6ad09ec8cdf247d1d57f70cd7ac7ac84253b6981f8c36902bc7a9762d3eb12f"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -16543,15 +16543,15 @@
         },
         {
           "Path": "RooTrax.Cache.dll",
-          "Sha256": "c18262cdc333f482e9097ba2490dab0b0b6b95b5575d2a5f25eb07c9bb30bec8"
+          "Sha256": "d8c9645b5a7a85d9166e284ea3bb6e8475d1f452d4b3afd42a017b1c1acb8fb7"
         },
         {
           "Path": "RooTrax.Common.DB.dll",
-          "Sha256": "ed77e8aa4b8bc51d36dd427cab55076cb60d17aa6b781d0637def7c08d171c56"
+          "Sha256": "31ac0d587221294fae0d015715cd3ef490fcdb6c2f3b595140f045047fc04ebd"
         },
         {
           "Path": "RooTrax.Common.dll",
-          "Sha256": "b052cb72ba5f51a1aeb36a2cb5fe6991297e3d427eba9f66d34d02247e5d7898"
+          "Sha256": "45ccca7381c1dad17352e95a21bc7ec37e73f7e93a0364012976ca9db5cd59dd"
         },
         {
           "Path": "runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll",
@@ -16919,7 +16919,7 @@
         },
         {
           "Path": "Scripts/MarkProcessAsRunningSp.sql",
-          "Sha256": "8debf840c42e598220618ff150103e61190cda9c70682b7236bca8079da8c78a"
+          "Sha256": "0bd164ecfe7fdce4a97b43b74246dd9fc2ca80c9d6d257f786829652670f7ffa"
         },
         {
           "Path": "Scripts/MarkProcessAsTimedOutSp.sql",
@@ -17148,6 +17148,10 @@
         {
           "Path": "Scripts/UpdateSessionSubscriptionSp.sql",
           "Sha256": "3749a5c1649c60e4fc7c2643575aebb2607c9a344c3d8771552ea89766fafaf7"
+        },
+        {
+          "Path": "Scripts/UpdateToolResultPairCompactionEpochKeyAtomicSp.sql",
+          "Sha256": "8233f57b8dc6ddce04e3ac9c1b330963837d0400d063d0a102736e94e167269f"
         },
         {
           "Path": "System.ClientModel.dll",
