@@ -1,4 +1,6 @@
 import Buffaly.Agent.Host Buffaly.Agent.Host.TurnSummaryContract TurnSummaryContract;
+import Buffaly.Agent.Host Buffaly.Agent.Host.GetSessionTurnBootstrapResponse GetSessionTurnBootstrapResponse;
+import Buffaly.Agent.Host Buffaly.Agent.Host.GetTurnDetailResponse GetTurnDetailResponse;
 import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.SessionTools SessionTools;
 
 prototype VoiceAgentDispatchSkillAction : OpsAction { Description = @"Base action type for the lightweight Voice Agent dispatcher bridge."; }
@@ -31,7 +33,7 @@ prototype ToGetLatestVoiceAgentDispatcherTurn : VoiceAgentAction
 prototype ToGetBoundSessionRecentTurns : VoiceAgentAction
 {
 	Description = @"maxTurns - number of recent turn summaries to read, from 1 through 10. Resolves the target only from the current Voice Agent's trusted server binding.";
-	function Execute(int maxTurns = 5) : Buffaly.Agent.Host.GetSessionTurnBootstrapResponse
+	function Execute(int maxTurns = 5) : GetSessionTurnBootstrapResponse
 	{
 		return SessionTools.GetBoundSessionRecentTurnsTool(_opsAgent, maxTurns);
 	}
@@ -41,7 +43,7 @@ prototype ToGetBoundSessionRecentTurns : VoiceAgentAction
 prototype ToGetBoundSessionTurnDetail : VoiceAgentAction
 {
 	Description = @"turnId - selected turn identifier from bound recent turns. maxRows - bounded detail row count, from 1 through 200. The target session cannot be supplied or changed.";
-	function Execute(string turnId, int maxRows = 100) : Buffaly.Agent.Host.GetTurnDetailResponse
+	function Execute(string turnId, int maxRows = 100) : GetTurnDetailResponse
 	{
 		return SessionTools.GetBoundSessionTurnDetailTool(_opsAgent, turnId, maxRows);
 	}
