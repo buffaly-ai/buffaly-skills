@@ -7,7 +7,7 @@
 	const parseJson=value=>JSON.parse(value);
 	const escapeHtml=value=>String(value).replace(/[&<>"']/g,character=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"})[character]);
 	const formatDate=value=>new Date(value+"T12:00:00").toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});
-	const chartWidth=(svg,pointCount)=>Math.max(760,svg.parentElement.clientWidth-16,pointCount*8);
+	const chartWidth=(svg,pointCount)=>Math.max(svg.parentElement.clientWidth-16,pointCount*8);
 	function easternToday(){return state.Bootstrap.MaximumActivityDate;}
 	function subtractDays(value,days){const date=new Date(value+"T12:00:00Z");date.setUTCDate(date.getUTCDate()-days);return date.toISOString().slice(0,10);}
 	function subtractMonths(value,months){const date=new Date(value+"T12:00:00Z");date.setUTCMonth(date.getUTCMonth()-months);return date.toISOString().slice(0,10);}

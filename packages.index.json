@@ -13000,7 +13000,7 @@
       "PackageType": "WebModule",
       "Title": "Sessions",
       "Description": "Buffaly Web Module package for Sessions.",
-      "Version": "0.1.128",
+      "Version": "0.1.129",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/Sessions",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/Sessions",
@@ -13027,19 +13027,19 @@
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "e79719d68641e71b98931ab115d6da5902c917d2c6a19b25ffb82f6438ab63dd"
+          "Sha256": "e6bdb37e1bef045b255cf2c1e64f2ed283b851fdf3e932fa4bbb4391ae776fa0"
         },
         {
           "Path": "Buffaly.Agent.SemanticDatabase.DB.dll",
-          "Sha256": "f6c4ca94c152ce8af6fcc5ac2486bdd8adb086e3dd3d3ac8f0a6c430bbdee81f"
+          "Sha256": "fa7db5f559dbdfe0159f60cf7e86d733f200897508591ddaab15d1fd96e9990a"
         },
         {
           "Path": "Buffaly.Agent.Tools.Secrets.dll",
-          "Sha256": "baa87c01a43f0889c98452831733e5bcfec22b8ce2965cdc19b63d94cff312ae"
+          "Sha256": "60e6ca93dd14ed5acdd27122d7e8b4184ed6628918422e951de64edbba4e5b40"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "49606b933887472ae3b226354df62bdd6e7765efb109c12893a7175e7f7a832f"
+          "Sha256": "854e3ba7f94ab4e2b6460535c89b7dcc2f8184d5bc0a794ba5c1f091b9bd6ec9"
         },
         {
           "Path": "Buffaly.AIProviderAPI.dll",
@@ -13047,7 +13047,7 @@
         },
         {
           "Path": "Buffaly.Business.dll",
-          "Sha256": "ae2387a84067be63b82b125274bc32aef91dbcf621f6739dc22cbb1cea36ba6c"
+          "Sha256": "598c5dc1c51d203d90ef66dd57d6e90c9254975e739c42b6735e2699992b18b6"
         },
         {
           "Path": "Buffaly.Common.dll",
@@ -13059,23 +13059,23 @@
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "15ccc2f6bcaa481f1a19fffa12505731ec55506d4e67a66994b6563f0eaf3589"
+          "Sha256": "d63b9a80c7a2aed0cb1c468ba7c2c87b836fe1dd1343c3a919060663aad91511"
         },
         {
           "Path": "Buffaly.DB.Hybrid.dll",
-          "Sha256": "3ed559d9aacf0ef2692226880081259fcf13916aa0d50bc084ab54c7b4600999"
+          "Sha256": "0de6aeaac97bc3851b038acd665c6ec49d3eaf56d2cf58018477878c8ec02f62"
         },
         {
           "Path": "Buffaly.DB.Postgres.dll",
-          "Sha256": "da87933232675481994dfb0f7d59991109c8d460f1e46cde8c232348e2b285e5"
+          "Sha256": "3f1c7df9f6eba9efa3e59fb2cad3dcffbb5f5dcd84e0c8651731c57924dee62b"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "a5b026821650d3420060ee59349cd1af3c5b591adc067ed89dbeb750390b0511"
+          "Sha256": "468fef9dd3306efe9eaa11458a5d809ef90716719475b9dbcdf2dcda8d5278cd"
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "8532c625c31cf444f7d2b79bcaee3a2588698c43ae9de1f21ec15f5aeb700388"
+          "Sha256": "263e12322f705db4d039815253c4c61f2f7aecb161e5bfc3872048cbe312ecef"
         },
         {
           "Path": "Buffaly.Sessions.Web.deps.json",
@@ -13083,11 +13083,11 @@
         },
         {
           "Path": "Buffaly.Sessions.Web.dll",
-          "Sha256": "f6b0e4361082f7c9d4c7c89696bcb7a0b0da6e94cc92dc93fb239ec99885f9d4"
+          "Sha256": "d510db56eb978fee7656129ac6917f1036d5a67556fccb2351bbd4ed64fd265f"
         },
         {
           "Path": "Buffaly.Sessions.Web.exe",
-          "Sha256": "df9dc8ff4ada522a401c7359d31b47d5c0f114947541944e3e22943cab69e7a3"
+          "Sha256": "20369285cdb639025aba951a3ddaa896703244e6ec76136b52fb9f0664e2ebff"
         },
         {
           "Path": "Buffaly.Sessions.Web.runtimeconfig.json",
@@ -13095,7 +13095,7 @@
         },
         {
           "Path": "Buffaly.SessionSemanticDatabase.dll",
-          "Sha256": "b7be1f9d9381a4d6c57b71dd23e35eb497a40d63a30495897981a1427c70381b"
+          "Sha256": "f6c382523b9ab6c2d002c1e7861ca34d88e1b966370b4f925e13b20ee2028050"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -13842,6 +13842,10 @@
           "Sha256": "3749a5c1649c60e4fc7c2643575aebb2607c9a344c3d8771552ea89766fafaf7"
         },
         {
+          "Path": "Scripts/UpdateToolResultPairCompactionEpochKeyAtomicSp.sql",
+          "Sha256": "ecccbc901777e91a4f3916d516d7802f21e0c9eab9c547150d20d9bca0f5a4c1"
+        },
+        {
           "Path": "System.ClientModel.dll",
           "Sha256": "ce44a4fae4c4787c12475700e19a365fc2f388ae5d0f6182557ce5ea175be7f6"
         },
@@ -14391,7 +14395,7 @@
         },
         {
           "Path": "wwwroot/js/dashboard-static.js",
-          "Sha256": "58f3e6c7ef5517a127b51295027a958e948a0869f74a0117754e6a01dba98c13"
+          "Sha256": "472c116563836997eef335d74ffbe4b0fdb152887c87728d1086e34be3510663"
         },
         {
           "Path": "wwwroot/js/head.js",
