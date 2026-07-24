@@ -27,6 +27,36 @@ prototype ToGetLatestVoiceAgentDispatcherTurn : VoiceAgentAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to get recent turns from the session bound to the voice agent")]
+prototype ToGetBoundSessionRecentTurns : VoiceAgentAction
+{
+	Description = @"maxTurns - number of recent turn summaries to read, from 1 through 10. Resolves the target only from the current Voice Agent's trusted server binding.";
+	function Execute(int maxTurns = 5) : Buffaly.Agent.Host.GetSessionTurnBootstrapResponse
+	{
+		return SessionTools.GetBoundSessionRecentTurnsTool(_opsAgent, maxTurns);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get a turn from the session bound to the voice agent")]
+prototype ToGetBoundSessionTurnDetail : VoiceAgentAction
+{
+	Description = @"turnId - selected turn identifier from bound recent turns. maxRows - bounded detail row count, from 1 through 200. The target session cannot be supplied or changed.";
+	function Execute(string turnId, int maxRows = 100) : Buffaly.Agent.Host.GetTurnDetailResponse
+	{
+		return SessionTools.GetBoundSessionTurnDetailTool(_opsAgent, turnId, maxRows);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get a message from the session bound to the voice agent")]
+prototype ToGetBoundSessionMessageMarkdown : VoiceAgentAction
+{
+	Description = @"messageKey - selected message identifier from bound turn detail. Returns bounded markdown from the trusted target session; no session key or file path is accepted.";
+	function Execute(string messageKey) : string
+	{
+		return SessionTools.GetBoundSessionMessageMarkdownTool(_opsAgent, messageKey);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to send a message back to the voice agent")]
 prototype ToSendMessageToVoiceAgent : VoiceAgentDispatcher
 {
