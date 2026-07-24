@@ -217,14 +217,23 @@ prototype ToRemoveSessionWorkEntry : SessionWorkCoordinatorSkillAction
 	Description = @"Removes one exact source-session entry and reports NotFound without modifying the ledger when absent.";
 }
 
+[SemanticProgram.InfinitivePhrase("to list session work attachment choices")]
+prototype ToListSessionWorkAttachmentChoices : SessionWorkCoordinatorSkillAction
+{
+	function Execute(string expectedWorkerAgentName, string workerSessionSuffix, int maxSources = 100) : string
+	{
+		return OntologyFoundryProposalProjection.BuildAttachmentChoices(expectedWorkerAgentName, workerSessionSuffix, maxSources);
+	}
+	Description = @"Lists bounded eligible source sessions and existing exact-profile workers for the shared coordinator attachment UI.";
+}
+
 [SemanticProgram.InfinitivePhrase("to attach an action learning worker to a source session")]
 prototype ToAttachActionLearningWorker : ActionLearningCoordinatorSkillAction
 {
 	function Execute(string sourceSessionKey, string workerSessionKey) : string
 	{
-		CreateAgentInitializationContract initialization = new CreateAgentInitializationContract();
-		initialization.ParentSessionKey = sourceSessionKey;
-		BuffalyAgentService.CreateAgentFromProject(workerSessionKey, @"OpsAgent", @"action-learning", initialization);
+		JsonObject validated = new JsonObject(OntologyFoundryProposalProjection.ValidateWorkerAttachment(sourceSessionKey, workerSessionKey, @"action-learning", @"-action-learning"));
+		workerSessionKey = validated.GetStringOrFail(@"WorkerSessionKey", @"Validated worker session key is required.");
 		string path = Path.Combine(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json");
 		JsonObject ledger = new JsonObject(@"{""SchemaVersion"":2,""CoordinatorSkill"":""SessionWorkCoordinatorSkill"",""Exists"":true,""Entries"":[]}");
 		if (File.Exists(path))
@@ -232,6 +241,19 @@ prototype ToAttachActionLearningWorker : ActionLearningCoordinatorSkillAction
 			ledger = new JsonObject(File.ReadAllText(path));
 		}
 		JsonArray entries = ledger.GetJsonArrayOrFail(@"Entries", @"Session work ledger Entries is required.");
+		foreach (JsonValue value in entries)
+		{
+			JsonObject existingEntry = value.ToJsonObjectOrFail(@"Session work ledger entries must be objects.");
+			string existingSource = existingEntry.GetStringOrDefault(@"SourceSessionKey", @"");
+			string existingWorker = existingEntry.GetStringOrDefault(@"WorkerSessionKey", @"");
+			if (existingWorker == workerSessionKey && existingSource != sourceSessionKey)
+			{
+				throw new InvalidOperationException(@"Worker is already attached to a different source in this coordinator ledger: " + existingSource);
+			}
+		}
+		CreateAgentInitializationContract initialization = new CreateAgentInitializationContract();
+		initialization.ParentSessionKey = sourceSessionKey;
+		BuffalyAgentService.CreateAgentFromProject(workerSessionKey, @"OpsAgent", @"action-learning", initialization);
 		JsonArray updatedEntries = new JsonArray();
 		bool found = false;
 		foreach (JsonValue value in entries)
@@ -358,12 +380,26 @@ prototype ToAttachOntologyFoundryWorker : OntologyFoundryCoordinatorSkillAction
 {
 	function Execute(string sourceSessionKey, string workerSessionKey) : string
 	{
+		JsonObject validated = new JsonObject(OntologyFoundryProposalProjection.ValidateWorkerAttachment(sourceSessionKey, workerSessionKey, @"ontology-foundry", @"-ontology-foundry"));
+		workerSessionKey = validated.GetStringOrFail(@"WorkerSessionKey", @"Validated worker session key is required.");
+		JsonObject ledger = new JsonObject(ToGetSessionWorkLedger.Execute());
+		JsonArray entries = ledger.GetJsonArrayOrFail(@"Entries", @"Session work ledger Entries is required.");
+		foreach (JsonValue value in entries)
+		{
+			JsonObject existingEntry = value.ToJsonObjectOrFail(@"Session work ledger entries must be objects.");
+			string existingSource = existingEntry.GetStringOrDefault(@"SourceSessionKey", @"");
+			string existingWorker = existingEntry.GetStringOrDefault(@"WorkerSessionKey", @"");
+			if (existingWorker == workerSessionKey && existingSource != sourceSessionKey)
+			{
+				throw new InvalidOperationException(@"Worker is already attached to a different source in this coordinator ledger: " + existingSource);
+			}
+		}
 		CreateAgentInitializationContract initialization = new CreateAgentInitializationContract();
 		initialization.ParentSessionKey = sourceSessionKey;
 		BuffalyAgentService.CreateAgentFromProject(workerSessionKey, @"OpsAgent", @"ontology-foundry", initialization);
 		JsonObject receipt = new JsonObject(ToAddSessionWorkEntry.Execute(sourceSessionKey));
-		JsonObject ledger = receipt.GetJsonObjectOrFail(@"Ledger", @"Session work attachment receipt Ledger is required.");
-		JsonArray entries = ledger.GetJsonArrayOrFail(@"Entries", @"Session work ledger Entries is required.");
+		ledger = receipt.GetJsonObjectOrFail(@"Ledger", @"Session work attachment receipt Ledger is required.");
+		entries = ledger.GetJsonArrayOrFail(@"Entries", @"Session work ledger Entries is required.");
 		foreach (JsonValue value in entries)
 		{
 			JsonObject entry = value.ToJsonObjectOrFail(@"Session work ledger entries must be objects.");
