@@ -18,8 +18,6 @@ CREATE PROCEDURE [dbo].[UpdateToolResultPairCompactionEpochKeyAtomicSp]
 AS
 BEGIN
 	SET NOCOUNT ON
-	SET XACT_ABORT ON
-	BEGIN TRANSACTION
 
 	UPDATE Messages
 	SET CompactionEpochKey = @TargetCompactionEpochKey,
@@ -29,16 +27,17 @@ BEGIN
 		AND CompactionEpochKey = @SourceCompactionEpochKey
 		AND ((MessageKey = @ToolCallMessageKey AND Role = 'ToolCall')
 			OR (MessageKey = @ToolResultMessageKey AND Role = 'Tools'))
+		AND 2 =
+		(
+			SELECT COUNT(*)
+			FROM Messages
+			WHERE SessionID = @SessionID
+				AND CompactionEpoch = @SourceCompactionEpoch
+				AND CompactionEpochKey = @SourceCompactionEpochKey
+				AND ((MessageKey = @ToolCallMessageKey AND Role = 'ToolCall')
+					OR (MessageKey = @ToolResultMessageKey AND Role = 'Tools'))
+		)
 
-	DECLARE @UpdatedRows [int] = @@ROWCOUNT
-	IF @UpdatedRows <> 2
-	BEGIN
-		ROLLBACK TRANSACTION
-		SELECT 0 AS UpdatedRows
-		RETURN
-	END
-
-	COMMIT TRANSACTION
-	SELECT @UpdatedRows AS UpdatedRows
+	SELECT @@ROWCOUNT AS UpdatedRows
 END
 GO
