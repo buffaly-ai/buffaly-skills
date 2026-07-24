@@ -91,13 +91,17 @@ prototype ToGetDispatchNode : DispatchTreeContextAction
 [SemanticProgram.InfinitivePhrase("to find routing-tree anchors for a task")]
 prototype ToSearchDispatchMemories : DispatchTreeContextAction
 {
-	Description = @"query - one concise phrase containing distinctive identity, topic, operation, artifact, or constraint terms, not generic dispatch language. maxResults - bounded candidate limit. subtreeRootPrototypeName - DispatchMemoryRoot or one exact descendant used to scope a local tie-breaker. Searches only current-session Dispatch Memory tags. Results are compact semantic anchors, never final routes; locate candidates in the graph and verify context and saved examples before reuse.";
+	Description = @"query - one concise phrase containing distinctive identity, topic, operation, artifact, or constraint terms, not generic dispatch language. maxResults - candidate window from 10 through 20, defaulting to 12. subtreeRootPrototypeName - DispatchMemoryRoot or one exact descendant used to scope a local tie-breaker. Searches only current-session Dispatch Memory tags. Results are compact semantic anchors, never final routes; locate candidates in the graph, traverse immediate children, and verify context and saved examples before reuse.";
 
-	function Execute(string query, int maxResults = 10, string subtreeRootPrototypeName = "DispatchMemoryRoot") : List<DispatchNodeSummary>
+	function Execute(string query, int maxResults = 12, string subtreeRootPrototypeName = "DispatchMemoryRoot") : List<DispatchNodeSummary>
 	{
 		string sessionKey = _opsAgent.GetSessionKeyOrEmpty();
 		if (StringUtil.IsEmpty(sessionKey))
 			throw new InvalidOperationException("ToSearchDispatchMemories requires an active session key.");
+		if (maxResults < 10)
+			throw new InvalidOperationException("maxResults must be at least 10 so routing can compare a useful semantic candidate window.");
+		if (maxResults > 20)
+			throw new InvalidOperationException("maxResults must not exceed 20 for bounded routing context.");
 		List<Prototype> candidates = SemanticDatabase.GetScopedCandidatePrototypesBySemanticTagAndCategorySearch(
 			query,
 			"Dispatch Memory",
@@ -135,13 +139,4 @@ prototype ToGetDispatchPath : DispatchTreeContextAction
 	{
 		return RuntimeDispatchTreeFacade.GetPath(_runtime, prototypeName);
 	}
-}
-
-prototype ToPlanDispatchRoute : PromptAction, DispatchTreeSkillAction, DispatchAgentActionRoot
-{
-	IsPromptAction = true;
-	SkillKind = "prompt";
-	SkillVersion = "1.0.0";
-	Description = @"Deprecated compatibility prompt. Active Dispatch agents follow DispatchContext and use the bounded read actions directly. This action does not search, traverse, select, dispatch, or mutate a route.";
-	PromptPath = @"Skills/DispatchTree/Prompts/PlanDispatchRoute.prompt.md";
 }
