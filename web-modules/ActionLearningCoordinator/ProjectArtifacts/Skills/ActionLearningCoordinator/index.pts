@@ -8,6 +8,7 @@ import Buffaly.Agent.Host Buffaly.Agent.Host.EvaluateResponse EvaluateResponse;
 import Buffaly.Agent.Host Buffaly.Agent.Host.SessionInfo SessionInfo;
 import Buffaly.Agent.Host Buffaly.Agent.Host.SessionManagement.Sessions Sessions;
 import ActionLearningCoordinator.Web ActionLearningCoordinator.Web.OntologyFoundryProposalProjection OntologyFoundryProposalProjection;
+import ActionLearningCoordinator.Web ActionLearningCoordinator.Web.ActionLearningCandidateProjection ActionLearningCandidateProjection;
 
 [SemanticEntity("session work coordinator action root")]
 prototype SessionWorkCoordinatorActionRoot : OpsAction
@@ -332,18 +333,7 @@ prototype ToGetActionLearningSourceWorkspace : ActionLearningCoordinatorSkillAct
 	function Execute(string sourceSessionKey) : string
 	{
 		Sessions.ValidateSessionKey(sourceSessionKey);
-		string path = Path.Combine(Sessions.GetSessionsRootPath(), sourceSessionKey, @"artifacts\action-learning\action-candidates.md");
-		string markdown = @"";
-		if (File.Exists(path))
-		{
-			markdown = File.ReadAllText(path);
-		}
-		JsonObject result = new JsonObject();
-		result[@"ArtifactPath"] = @"artifacts/action-learning/action-candidates.md";
-		result[@"ArtifactTitle"] = @"Action candidates";
-		result[@"ArtifactMarkdown"] = markdown;
-		result[@"WorkerActions"] = new JsonArray(@"[""ToDiscoverActionCandidatesWithinSessionSkill"",""ToBuildActionCandidateMetricsMatrixSkill"",""ToGroundAndExpandActionCandidateSkill"",""ToEvaluateActionLearningArtifact""]");
-		return result.ToJSON();
+		return ActionLearningCandidateProjection.BuildSourceWorkspace(Sessions.GetSessionsRootPath(), sourceSessionKey);
 	}
 }
 
