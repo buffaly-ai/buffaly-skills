@@ -20,11 +20,6 @@ prototype DispatchTreeSkillAction : DispatchAgentActionRoot
 	Description = @"Base action type for read-only session-local dispatch tree planning.";
 }
 
-prototype DispatchTreeContextAction : DispatchTreeSkillAction, DispatchContext
-{
-	Description = @"Bounded read-only DispatchTree actions automatically available while DispatchContext is active.";
-}
-
 [SemanticEntity("dispatch tree skill")]
 prototype DispatchTreeSkill : SkillEntity
 {
@@ -64,7 +59,7 @@ prototype ToGetDispatchTree : DispatchTreeSkillAction, DispatchAgentActionRoot
 [SemanticProgram.InfinitivePhrase("to inspect a dispatch node and its saved examples")]
 [SemanticProgram.InfinitivePhrase("to verify one exact dispatch leaf")]
 [SemanticProgram.InfinitivePhrase("to read one dispatch node's routing evidence")]
-prototype ToGetDispatchNode : DispatchTreeContextAction
+prototype ToGetDispatchNode : DispatchTreeSkillAction, DispatchContext
 {
 	Description = @"prototypeName - exact prototype name selected beneath DispatchMemoryRoot. Read one exact node with its assigned semantic identity, context summary, historical dispatch examples, status, and exact destination session key. Use only after narrowing to verify a semantic anchor or final leaf. This action never decides a route, sends, or mutates memory.";
 
@@ -89,7 +84,7 @@ prototype ToGetDispatchNode : DispatchTreeContextAction
 [SemanticProgram.InfinitivePhrase("to find dispatch nodes by semantic meaning")]
 [SemanticProgram.InfinitivePhrase("to search dispatch memory for matching work")]
 [SemanticProgram.InfinitivePhrase("to find routing-tree anchors for a task")]
-prototype ToSearchDispatchMemories : DispatchTreeContextAction
+prototype ToSearchDispatchMemories : DispatchTreeSkillAction, DispatchContext
 {
 	Description = @"query - one concise phrase containing distinctive identity, topic, operation, artifact, or constraint terms, not generic dispatch language. maxResults - candidate window from 10 through 20, defaulting to 12. subtreeRootPrototypeName - DispatchMemoryRoot or one exact descendant used to scope a local tie-breaker. Searches only current-session Dispatch Memory tags. Results are compact semantic anchors, never final routes; locate candidates in the graph, traverse immediate children, and verify context and saved examples before reuse.";
 
@@ -118,7 +113,7 @@ prototype ToSearchDispatchMemories : DispatchTreeContextAction
 [SemanticProgram.InfinitivePhrase("to list immediate dispatch child nodes")]
 [SemanticProgram.InfinitivePhrase("to compare the next dispatch branches")]
 [SemanticProgram.InfinitivePhrase("to read one level of the dispatch tree")]
-prototype ToGetDispatchChildren : DispatchTreeContextAction
+prototype ToGetDispatchChildren : DispatchTreeSkillAction, DispatchContext
 {
 	Description = @"parentPrototypeName - exact DispatchMemoryRoot node, defaulting to the root. maxResults - bounded child count. Read only the immediate children of one verified node for a top-down traversal step. Returns compact assigned routing evidence, never grandchildren, historical examples, or destination values, and never chooses a branch.";
 
@@ -131,7 +126,7 @@ prototype ToGetDispatchChildren : DispatchTreeContextAction
 [SemanticProgram.InfinitivePhrase("to locate a dispatch node in the routing hierarchy")]
 [SemanticProgram.InfinitivePhrase("to read the ancestor path for a dispatch node")]
 [SemanticProgram.InfinitivePhrase("to place a semantic dispatch match in its tree branch")]
-prototype ToGetDispatchPath : DispatchTreeContextAction
+prototype ToGetDispatchPath : DispatchTreeSkillAction, DispatchContext
 {
 	Description = @"prototypeName - exact semantic candidate beneath DispatchMemoryRoot. Return its compact root-to-node path with direct parent names and assigned context summaries. Use after semantic search to locate the candidate's branch and compare siblings through ToGetDispatchChildren. It never returns examples or destination values and never selects or dispatches a route.";
 
