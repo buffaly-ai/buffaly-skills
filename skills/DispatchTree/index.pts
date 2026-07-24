@@ -1,9 +1,12 @@
 reference Buffaly.Agent.Tools.SemanticDatabase Buffaly.Agent.Tools.SemanticDatabase;
 import Buffaly.Agent.Tools.SemanticDatabase Buffaly.Agent.Tools.SemanticDatabase.SemanticDatabase SemanticDatabase;
+reference Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer;
+import Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer.RuntimeDispatchTreeFacade RuntimeDispatchTreeFacade;
+import Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer.DispatchNodeSummary DispatchNodeSummary;
 
 prototype DispatchAgentActionRoot : OpsAction
 {
-	Description = @"Action root for read-only session-local dispatch tree planning helpers. Delivery remains the responsibility of the normal Buffaly agent through ToSendToSession.";
+	Description = @"Action root for read-only session-local dispatch tree planning helpers. Delivery remains outside this skill and belongs to the normal Buffaly agent.";
 }
 
 prototype DispatchAgentEntityRoot : SemanticEntityBase
@@ -15,6 +18,11 @@ prototype DispatchAgentEntityRoot : SemanticEntityBase
 prototype DispatchTreeSkillAction : DispatchAgentActionRoot
 {
 	Description = @"Base action type for read-only session-local dispatch tree planning.";
+}
+
+prototype DispatchTreeContextAction : DispatchTreeSkillAction, DispatchContext
+{
+	Description = @"Bounded read-only DispatchTree actions automatically available while DispatchContext is active.";
 }
 
 [SemanticEntity("dispatch tree skill")]
@@ -40,10 +48,9 @@ function FindDispatchNode(Prototype parent, string exactPrototypeName) : Prototy
 	return null;
 }
 
-[SemanticProgram.InfinitivePhrase("to read the local dispatch tree")]
 prototype ToGetDispatchTree : DispatchTreeSkillAction, DispatchAgentActionRoot
 {
-	Description = @"Returns DispatchMemoryRoot from the current session runtime. This action never writes memory, creates a session, queues work, or sends an instruction.";
+	Description = @"Diagnostic complete-topology projection. Do not use for normal route traversal; it recursively returns node/parent structure without assigned routing evidence. This compatibility action never writes memory, creates a session, queues work, or sends an instruction.";
 
 	function Execute() : Prototype
 	{
@@ -54,10 +61,12 @@ prototype ToGetDispatchTree : DispatchTreeSkillAction, DispatchAgentActionRoot
 	}
 }
 
-[SemanticProgram.InfinitivePhrase("to inspect one local dispatch node")]
-prototype ToGetDispatchNode : DispatchTreeSkillAction, DispatchAgentActionRoot
+[SemanticProgram.InfinitivePhrase("to inspect a dispatch node and its saved examples")]
+[SemanticProgram.InfinitivePhrase("to verify one exact dispatch leaf")]
+[SemanticProgram.InfinitivePhrase("to read one dispatch node's routing evidence")]
+prototype ToGetDispatchNode : DispatchTreeContextAction
 {
-	Description = @"prototypeName - exact prototype name selected from DispatchMemoryRoot. Returns a shallow read-only projection with that node's assigned properties. Rejects prototypes outside the current session-local dispatch tree.";
+	Description = @"prototypeName - exact prototype name selected beneath DispatchMemoryRoot. Read one exact node with its assigned semantic identity, context summary, historical dispatch examples, status, and exact destination session key. Use only after narrowing to verify a semantic anchor or final leaf. This action never decides a route, sends, or mutates memory.";
 
 	function Execute(string prototypeName) : Prototype
 	{
@@ -77,35 +86,62 @@ prototype ToGetDispatchNode : DispatchTreeSkillAction, DispatchAgentActionRoot
 	}
 }
 
-[SemanticProgram.InfinitivePhrase("to search the local dispatch tree")]
-prototype ToSearchDispatchMemories : DispatchTreeSkillAction, DispatchAgentActionRoot
+[SemanticProgram.InfinitivePhrase("to find dispatch nodes by semantic meaning")]
+[SemanticProgram.InfinitivePhrase("to search dispatch memory for matching work")]
+[SemanticProgram.InfinitivePhrase("to find routing-tree anchors for a task")]
+prototype ToSearchDispatchMemories : DispatchTreeContextAction
 {
-	Description = @"Searches only the current session's scoped Dispatch Memory semantic tags below DispatchMemoryRoot. This is a candidate prefilter; the route planner must verify the result against the tree and leaf examples.";
+	Description = @"query - one concise phrase containing distinctive identity, topic, operation, artifact, or constraint terms, not generic dispatch language. maxResults - bounded candidate limit. subtreeRootPrototypeName - DispatchMemoryRoot or one exact descendant used to scope a local tie-breaker. Searches only current-session Dispatch Memory tags. Results are compact semantic anchors, never final routes; locate candidates in the graph and verify context and saved examples before reuse.";
 
-	function Execute(string query, int maxResults = 10) : Collection
+	function Execute(string query, int maxResults = 10, string subtreeRootPrototypeName = "DispatchMemoryRoot") : List<DispatchNodeSummary>
 	{
 		string sessionKey = _opsAgent.GetSessionKeyOrEmpty();
 		if (StringUtil.IsEmpty(sessionKey))
 			throw new InvalidOperationException("ToSearchDispatchMemories requires an active session key.");
-		return SemanticDatabase.GetScopedCandidatePrototypesBySemanticTagAndCategorySearch(
+		List<Prototype> candidates = SemanticDatabase.GetScopedCandidatePrototypesBySemanticTagAndCategorySearch(
 			query,
 			"Dispatch Memory",
 			_runtime,
 			"session:" + sessionKey,
 			"DispatchMemoryRoot",
-			"",
+			subtreeRootPrototypeName,
 			0.25,
 			maxResults);
+		return RuntimeDispatchTreeFacade.ProjectSemanticCandidates(_runtime, candidates, maxResults);
 	}
 }
 
-[SemanticProgram.InfinitivePhrase("to dry run a hierarchical dispatch route")]
-[SemanticProgram.InfinitivePhrase("to plan a dispatch route without sending")]
+[SemanticProgram.InfinitivePhrase("to list immediate dispatch child nodes")]
+[SemanticProgram.InfinitivePhrase("to compare the next dispatch branches")]
+[SemanticProgram.InfinitivePhrase("to read one level of the dispatch tree")]
+prototype ToGetDispatchChildren : DispatchTreeContextAction
+{
+	Description = @"parentPrototypeName - exact DispatchMemoryRoot node, defaulting to the root. maxResults - bounded child count. Read only the immediate children of one verified node for a top-down traversal step. Returns compact assigned routing evidence, never grandchildren, historical examples, or destination values, and never chooses a branch.";
+
+	function Execute(string parentPrototypeName = "DispatchMemoryRoot", int maxResults = 25) : List<DispatchNodeSummary>
+	{
+		return RuntimeDispatchTreeFacade.GetChildren(_runtime, parentPrototypeName, maxResults);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to locate a dispatch node in the routing hierarchy")]
+[SemanticProgram.InfinitivePhrase("to read the ancestor path for a dispatch node")]
+[SemanticProgram.InfinitivePhrase("to place a semantic dispatch match in its tree branch")]
+prototype ToGetDispatchPath : DispatchTreeContextAction
+{
+	Description = @"prototypeName - exact semantic candidate beneath DispatchMemoryRoot. Return its compact root-to-node path with direct parent names and assigned context summaries. Use after semantic search to locate the candidate's branch and compare siblings through ToGetDispatchChildren. It never returns examples or destination values and never selects or dispatches a route.";
+
+	function Execute(string prototypeName) : List<DispatchNodeSummary>
+	{
+		return RuntimeDispatchTreeFacade.GetPath(_runtime, prototypeName);
+	}
+}
+
 prototype ToPlanDispatchRoute : PromptAction, DispatchTreeSkillAction, DispatchAgentActionRoot
 {
 	IsPromptAction = true;
 	SkillKind = "prompt";
 	SkillVersion = "1.0.0";
-	Description = @"Plans one route against the current session-local dispatch tree. It is strictly read-only and must return a dry-run decision without queueing, sending, creating sessions, or mutating memory.";
+	Description = @"Deprecated compatibility prompt. Active Dispatch agents follow DispatchContext and use the bounded read actions directly. This action does not search, traverse, select, dispatch, or mutate a route.";
 	PromptPath = @"Skills/DispatchTree/Prompts/PlanDispatchRoute.prompt.md";
 }
