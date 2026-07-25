@@ -8,11 +8,18 @@ prototype BrowserSessionSkillAction : OpsAction, CodingContext
 
 [SemanticEntity("browser skill")]
 [SemanticEntity("default browser skill")]
-[SemanticEntity("browser session skill")]
-prototype BrowserSessionSkill : SkillEntity
+prototype BrowserSkill : SkillEntity
 {
-	EntityName = "browser skill, default browser skill, browser session skill";
-	Description = @"Canonical default Browser Skill deterministic browser tools backed by Buffaly.Agent.Tools.Browser.BrowserTools. BrowserSessionSkill is retained as a compatibility identity for the same action surface. Use for generic browser requests, selector actions, DOM inspection, JavaScript execution, screenshots, console events, and browser session control.";
+	EntityName = "browser skill, default browser skill";
+	Description = @"Canonical default Browser Skill deterministic browser tools backed by Buffaly.Agent.Tools.Browser.BrowserTools. Use for generic browser requests, selector actions, DOM inspection, JavaScript execution, screenshots, console events, and browser session control.";
+	ActionRoot = BrowserSessionSkillAction;
+}
+
+[SemanticEntity("browser session skill")]
+prototype BrowserSessionSkill : BrowserSkill
+{
+	EntityName = "browser session skill";
+	Description = @"Compatibility alias for BrowserSkill. Existing BrowserSessionSkill references continue to resolve to the canonical default Browser Skill action surface; new generic browser routing should bind to BrowserSkill.";
 	ActionRoot = BrowserSessionSkillAction;
 }
 
@@ -34,6 +41,7 @@ include "PromptActions.pts";
 
 [SemanticProgram.InfinitivePhrase("to open a browser session")]
 [SemanticProgram.InfinitivePhrase("to start a browser session")]
+[SemanticProgram.InfinitivePhrase("to open a playwright browser session")]
 prototype ToOpenBrowserSession : BrowserSessionSkillAction
 {
 	Description = @"Thin wrapper over BrowserTools.BrowserSubAgentOpenTool(_opsAgent, profileName). profileName - persistent browser profile name. Returns JSON containing subAgentId/profile/status.";
@@ -49,11 +57,11 @@ prototype ToOpenBrowserSession : BrowserSessionSkillAction
 [SemanticProgram.InfinitivePhrase("to start a playwright browser session")]
 prototype ToOpenPlaywrightBrowserSession : PlaywrightBrowserSkillAction
 {
-	Description = @"Explicit Playwright session opener that creates a Playwright-backed session without changing the generic CDP browser default.";
+	Description = @"Explicit Playwright session opener retained for Playwright-specific routing. Currently delegates to BrowserTools.BrowserSubAgentOpenTool without changing global browser defaults.";
 
 	function Execute(string profileName) : string
 	{
-		return BrowserTools.PlaywrightBrowserSubAgentOpenTool(_opsAgent, profileName);
+		return BrowserTools.BrowserSubAgentOpenTool(_opsAgent, profileName);
 	}
 }
 

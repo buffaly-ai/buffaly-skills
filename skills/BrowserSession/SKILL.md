@@ -2,7 +2,7 @@
 
 Canonical default Browser Skill deterministic browser surface backed by `Buffaly.Agent.Tools.Browser.BrowserTools`.
 
-The package directory and compatibility prototype remain `BrowserSession`, but its public routing identity is Browser Skill / default browser. Generic browser requests should route here.
+The package directory remains `BrowserSession`, but its public routing identity is Browser Skill / default browser. Generic browser requests should route here.
 
 `BrowserSkill` is the canonical public `SkillEntity`. `BrowserSessionSkill` inherits from it as a compatibility alias for older references.
 
