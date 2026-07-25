@@ -1,0 +1,36 @@
+[SemanticProgram.InfinitivePhrase("to inspect facebook ads account status")]
+prototype ToGetFacebookAdsAccountStatus : FacebookAdsWebSkillAction { Description = @"Return read-only Facebook Ads connection status as JSON."; function Execute() : string { return FacebookAdsWebService.GetAccountStatusJson(); } }
+
+[SemanticProgram.InfinitivePhrase("to list facebook ads ad accounts")]
+prototype ToListFacebookAdsAdAccounts : FacebookAdsWebSkillAction { Description = @"Return Meta ad accounts with stable account IDs and account state as JSON."; function Execute() : string { return FacebookAdsWebService.ListAdAccountsJson(); } }
+
+[SemanticProgram.InfinitivePhrase("to list facebook ads campaigns")]
+prototype ToListFacebookAdsCampaigns : FacebookAdsWebSkillAction { Description = @"Return campaign inventory and metrics as JSON. Use the returned campaign ID with ToViewFacebookAdsCampaignInteractiveSite or ToListFacebookAdsCampaignContents."; function Execute(string adAccountId, string datePreset) : string { return FacebookAdsWebService.ListCampaignsJson(adAccountId, datePreset); } }
+
+[SemanticProgram.InfinitivePhrase("to list facebook ads campaign contents")]
+prototype ToListFacebookAdsCampaignContents : FacebookAdsWebSkillAction { Description = @"Return one campaign plus its ad-set and ad inventories with stable IDs as JSON. Use a returned ad ID with ToViewFacebookAdInteractiveSite."; function Execute(string adAccountId, string campaignId, string datePreset) : string { return FacebookAdsWebService.ListCampaignContentsJson(adAccountId, campaignId, datePreset); } }
+
+prototype FacebookAdsInteractiveSiteLauncher
+{
+ function Execute(IAgentRuntimeHost opsAgent, string title, string screen, string adAccountId, string datePreset, string campaignId, string adId, int timeoutSeconds) : string
+ {
+  if (timeoutSeconds <= 0) { timeoutSeconds = 120; }
+  string siteRoot = Path.Combine(opsAgent.GetCurrentProjectDirectory(), "Skills", "FacebookAdsWeb", "interactive-sites", "facebook-ads-module");
+  string html = File.ReadAllText(Path.Combine(siteRoot, "site.html")); string css = File.ReadAllText(Path.Combine(siteRoot, "site.css")); string js = File.ReadAllText(Path.Combine(siteRoot, "site.js"));
+  string config = FacebookAdsInteractiveSiteConfiguration.BuildJavaScript(title, screen, adAccountId, datePreset, campaignId, adId); string javascript = String.Concat(config, js);
+  InteractiveSiteLaunchResultContract result = opsAgent.LaunchInteractiveSite(new InteractiveSiteLaunchRequestContract { Title = title, MessageKey = opsAgent.GetCurrentToolMessageKeyOrEmpty(), ToolInvocationId = opsAgent.GetCurrentToolInvocationIdOrEmpty(), Html = html, Css = css, JavaScript = javascript, TimeoutSeconds = timeoutSeconds });
+  return "Facebook Ads " + screen + " interactive site exited with status: " + result.Status + "; value: " + result.Value;
+ }
+}
+
+[SemanticProgram.InfinitivePhrase("to show facebook ads performance")]
+prototype ToViewFacebookAdsPerformanceInteractiveSite : FacebookAdsWebSkillAction { Description = @"Open read-only Facebook Ads performance for one account."; function Execute(string adAccountId, string datePreset, int timeoutSeconds) : string { return FacebookAdsInteractiveSiteLauncher.Execute(_opsAgent, "Facebook Ads Performance", "performance", adAccountId, datePreset, "", "", timeoutSeconds); } }
+
+[SemanticProgram.InfinitivePhrase("to show facebook ads campaigns")]
+prototype ToViewFacebookAdsCampaignsInteractiveSite : FacebookAdsWebSkillAction { Description = @"Open the read-only campaign table for one account."; function Execute(string adAccountId, string datePreset, int timeoutSeconds) : string { return FacebookAdsInteractiveSiteLauncher.Execute(_opsAgent, "Facebook Ads Campaigns", "campaigns", adAccountId, datePreset, "", "", timeoutSeconds); } }
+
+[SemanticProgram.InfinitivePhrase("to show a specific facebook ads campaign")]
+prototype ToViewFacebookAdsCampaignInteractiveSite : FacebookAdsWebSkillAction { Description = @"Open one campaign. Resolve campaignId first with ToListFacebookAdsCampaigns."; function Execute(string adAccountId, string campaignId, string datePreset, int timeoutSeconds) : string { return FacebookAdsInteractiveSiteLauncher.Execute(_opsAgent, "Facebook Campaign " + campaignId, "campaign", adAccountId, datePreset, campaignId, "", timeoutSeconds); } }
+
+[SemanticProgram.InfinitivePhrase("to show a specific facebook ad")]
+prototype ToViewFacebookAdInteractiveSite : FacebookAdsWebSkillAction { Description = @"Open one ad creative and diagnostics view. Resolve campaignId and adId first with ToListFacebookAdsCampaignContents."; function Execute(string adAccountId, string campaignId, string adId, string datePreset, int timeoutSeconds) : string { return FacebookAdsInteractiveSiteLauncher.Execute(_opsAgent, "Facebook Ad " + adId, "ad", adAccountId, datePreset, campaignId, adId, timeoutSeconds); } }
