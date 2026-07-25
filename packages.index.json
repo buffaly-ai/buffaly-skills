@@ -13017,7 +13017,7 @@
       "PackageType": "WebModule",
       "Title": "Reddit Ads",
       "Description": "Buffaly Web Module package for Reddit Ads.",
-      "Version": "0.1.34",
+      "Version": "0.1.35",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/RedditAds",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/RedditAds",
@@ -13052,7 +13052,7 @@
         },
         {
           "Path": "Buffaly.RedditAds.Web.dll",
-          "Sha256": "b9802fa0f7f50bb06ece8d435a265c7b74c922d673a2d2ecd8a0815ac315610c"
+          "Sha256": "c64c3338b59e563471f4436a7b41d2a28fc7c026a3d310814a97017281111510"
         },
         {
           "Path": "Imports.pts",
@@ -13060,19 +13060,31 @@
         },
         {
           "Path": "Skills/RedditAdsWeb/index.pts",
-          "Sha256": "e21fd9e64d9f67fcaf2984ca3825e1ec41ba401faf8af57f3fbb81fa9277ffe5"
+          "Sha256": "3146d958cf77440d15eb04672684974ebd2e7783846c7d6db13a65a78cce293b"
+        },
+        {
+          "Path": "Skills/RedditAdsWeb/interactive-sites/reddit-ads-module/site.css",
+          "Sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "Path": "Skills/RedditAdsWeb/interactive-sites/reddit-ads-module/site.html",
+          "Sha256": "d968ba93f1fb3ced49de6b65d5a2ce321bf92b5c82e7fdebfa1041dc3b08baf9"
+        },
+        {
+          "Path": "Skills/RedditAdsWeb/interactive-sites/reddit-ads-module/site.js",
+          "Sha256": "37dade0e50b39f09bddd7ec1f0f8386a5bc4ad5e9308c65246473a77a382a48e"
         },
         {
           "Path": "Skills/RedditAdsWeb/RedditAdsWebActions.pts",
-          "Sha256": "0428e3f1d555d94891b68cebed5a4ed6b19dc2da0f49d3d01544c6c00a6a1ab9"
+          "Sha256": "d9a25f34eeea947c74f7b2c8bb97c03002cef6e4e13c8b9764e9bb538f7489c1"
         },
         {
           "Path": "Skills/RedditAdsWeb/skill-manifest.json",
-          "Sha256": "5c0643bf8116313ee38156ce28dd2c5bf58d37c314f7a6ade403aa03b792109b"
+          "Sha256": "69b5113fb9e0c4af091d3824ef24aa00c34494d16e4c21f587c9e81673637c5d"
         },
         {
           "Path": "web-module.json",
-          "Sha256": "dbfc971c4e748e438ba26aaedf30ecd99067bc3cb19a4453e8a076aa2a0bcfb3"
+          "Sha256": "dc5f5581538f1e27a5360241314893aadeb2c27e7aaffcd4bbd48cc55ee67839"
         },
         {
           "Path": "WebAppUtilities.dll",
@@ -13083,12 +13095,16 @@
           "Sha256": "4419918ab018e24d6eda2485988e2bcea5431a9fe0789fe7ca6a2c2ef8505dd6"
         },
         {
+          "Path": "wwwroot/components/reddit-ads-module.js",
+          "Sha256": "69d42853070ad69b25cb7038b7ffbbe083742830542f6ed94ac1c1f6da33e3a0"
+        },
+        {
           "Path": "wwwroot/css/buffaly-page.css",
           "Sha256": "e30611c717c05ade6927504d89f1af31d0495f0334cbb03ee282807cc3d9fc43"
         },
         {
           "Path": "wwwroot/css/redditads.css",
-          "Sha256": "c3ae07a6fa6819f21287bf509d666c012c07f9bdb60ef8db81facc8fae45dfb8"
+          "Sha256": "207f2d53b43012be6d75a61761499b242d43cdc5011e48f1a716ba74607c4686"
         },
         {
           "Path": "wwwroot/index.html",
@@ -13096,7 +13112,7 @@
         },
         {
           "Path": "wwwroot/js/redditads.js",
-          "Sha256": "93a66cbe9313349a2833f0a82b4493a856a08cc66feda4455f758613b6a62e86"
+          "Sha256": "1cfff5370ed96f139bfef2e258265f0f393a7e8d5e2b75f2a9f8e360970fb687"
         }
       ],
       "ProjectArtifacts": [

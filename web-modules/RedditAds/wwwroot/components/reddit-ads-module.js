@@ -1,0 +1,13 @@
+const VIEWS=Object.freeze({workspace:{route:"drafts",required:[]},report:{route:"report",required:["adAccountId","reportType","dateRangePreset"]}});
+class RedditAdsModule extends HTMLElement{
+ constructor(){super();this._configuration=null;this._frame=null;this._started=false;this._onMessage=this._onMessage.bind(this)}
+ configure(configuration){if(this._started)throw new Error("Reddit Ads module cannot be reconfigured after start().");const view=VIEWS[configuration&&configuration.screen];if(!view)throw new Error("Unsupported Reddit Ads screen: "+(configuration&&configuration.screen));const state=configuration.state||{};view.required.forEach(k=>{if(typeof state[k]!=="string"||!state[k])throw new Error(k+" is required for Reddit Ads "+configuration.screen)});this._configuration={...configuration,state}}
+ connectedCallback(){if(this.childElementCount)return;this.className="reddit-ads-component-host";this.textContent="Loading Reddit Ads…"}
+ async start(){if(!this._configuration)throw new Error("configure() must be called before start().");if(this._started)return;this._started=true;window.addEventListener("message",this._onMessage);const f=document.createElement("iframe");f.className="reddit-ads-component-frame";f.title="Reddit Ads "+this._configuration.screen;this.replaceChildren(f);this._frame=f;this._setLocation()}
+ navigate(screen,state){if(!VIEWS[screen])throw new Error("Unsupported Reddit Ads screen: "+screen);this._configuration={...this._configuration,screen,state:state||{}};if(this._frame)this._setLocation()}
+ dispose(){window.removeEventListener("message",this._onMessage);if(this._frame)this._frame.src="about:blank";this.replaceChildren();this._frame=null;this._started=false}
+ _setLocation(){const s=this._configuration.state,p=new URLSearchParams({componentHost:this._configuration.interactive?"interactive":"page",screen:this._configuration.screen});Object.keys(s).forEach(k=>{if(s[k])p.set(k,s[k])});this._frame.src="/web-modules/RedditAds/index.html?"+p.toString()+"#"+VIEWS[this._configuration.screen].route}
+ _onMessage(event){if(event.origin!==location.origin||!this._frame||event.source!==this._frame.contentWindow||!event.data)return;const type=event.data.type;if(type!=="buffaly-view-ready"&&type!=="buffaly-view-error")return;const mapped=type==="buffaly-view-ready"?"buffaly-component-ready":"buffaly-component-error";this.dispatchEvent(new CustomEvent(mapped,{bubbles:true,detail:{moduleName:"RedditAds",screen:this._configuration.screen,message:event.data.message||""}}))}
+}
+if(!customElements.get("reddit-ads-module"))customElements.define("reddit-ads-module",RedditAdsModule);
+export{RedditAdsModule};

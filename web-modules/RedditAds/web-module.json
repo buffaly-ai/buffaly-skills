@@ -20,6 +20,14 @@
                                      "Path":  "/web-modules/RedditAds/index.html",
                                      "Description":  "Open the Reddit Ads integration UI."
                                  }
-                             ]
+                             ],
+                   "Component": {
+                     "TagName": "reddit-ads-module",
+                     "EntryUrl": "/web-modules/RedditAds/components/reddit-ads-module.js",
+                     "ScriptType": "module",
+                     "DefaultScreen": "workspace",
+                     "Screens": ["workspace", "report"],
+                     "InteractiveScreens": ["report"]
+                   }
                }
 }

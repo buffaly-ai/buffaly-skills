@@ -43,3 +43,36 @@ prototype ToGenerateRedditAdsWebReport : RedditAdsWebSkillAction
 		return RedditAdsWebService.GenerateReportJson(adAccountId, reportType, dateRangePreset);
 	}
 }
+
+prototype RedditAdsInteractiveSiteLauncher
+{
+	function Execute(IAgentRuntimeHost opsAgent, string title, string adAccountId, string reportType, string dateRangePreset, int timeoutSeconds) : string
+	{
+		if (timeoutSeconds <= 0) { timeoutSeconds = 120; }
+		string siteRoot = Path.Combine(opsAgent.GetCurrentProjectDirectory(), "Skills", "RedditAdsWeb", "interactive-sites", "reddit-ads-module");
+		string html = File.ReadAllText(Path.Combine(siteRoot, "site.html"));
+		string css = File.ReadAllText(Path.Combine(siteRoot, "site.css"));
+		string js = File.ReadAllText(Path.Combine(siteRoot, "site.js"));
+		string config = RedditAdsInteractiveSiteConfiguration.BuildJavaScript(title, adAccountId, reportType, dateRangePreset);
+		string javascript = String.Concat(config, js);
+		InteractiveSiteLaunchResultContract result = opsAgent.LaunchInteractiveSite(new InteractiveSiteLaunchRequestContract
+		{
+			Title = title,
+			MessageKey = opsAgent.GetCurrentToolMessageKeyOrEmpty(),
+			ToolInvocationId = opsAgent.GetCurrentToolInvocationIdOrEmpty(),
+			Html = html,
+			Css = css,
+			JavaScript = javascript,
+			TimeoutSeconds = timeoutSeconds
+		});
+		return "Reddit Ads report interactive site exited with status: " + result.Status + "; value: " + result.Value;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to view a reddit ads report in an interactive site")]
+[SemanticProgram.InfinitivePhrase("to show reddit ads performance")]
+prototype ToViewRedditAdsReportInteractiveSite : RedditAdsWebSkillAction
+{
+	Description = @"Launch a read-only Reddit Ads performance report popup. reportType is campaign, ad_group, or ad. dateRangePreset is last_24h, last_7d, or last_30d.";
+	function Execute(string adAccountId, string reportType, string dateRangePreset, int timeoutSeconds) : string { return RedditAdsInteractiveSiteLauncher.Execute(_opsAgent, "Reddit Ads Performance", adAccountId, reportType, dateRangePreset, timeoutSeconds); }
+}
