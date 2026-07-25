@@ -153,7 +153,9 @@ function ToChatGPTProRun(string argumentLine, int timeoutSeconds) : string
 function ToChatGPTProCheckAuthErrors(string result) : string
 {
 	string lower = result.ToLower();
-	if (lower.Contains("no chatgpt cookies") || lower.Contains("not signed in") || lower.Contains("manual-login"))
+	// "Manual-login mode may show..." is a normal Oracle info message, not an error.
+	// Only "No ChatGPT cookies" and "cannot proceed" are real auth errors.
+	if (lower.Contains("no chatgpt cookies") || lower.Contains("not signed in") || lower.Contains("cannot proceed in browser mode"))
 		return "AUTH_REQUIRED";
 	if (lower.Contains("quota") || lower.Contains("usage limit") || lower.Contains("plan limit") || lower.Contains("rate limit") || lower.Contains("429") || lower.Contains("too many requests"))
 		return "RATE_LIMITED";
@@ -353,7 +355,7 @@ prototype ToTalkToChatGPTPro : ChatGPTProSkillAction
 	Description = @"prompt - the user's message to forward to Oracle.
 model - optional model override. Defaults to gpt-5.5-pro.
 timeoutSeconds - optional timeout. Auto-selected based on prompt content if not specified.
-This is the main pass-through action. It automatically manages model selection, timeout, and long-prompt file handling. The user just talks and Oracle responds.";
+This is the main pass-through action. It manages model selection, timeout, and working directory. Browser mode creates a new ChatGPT conversation each call (Oracle --followup is API-only). The user just talks and Oracle responds.";
 
 	function Execute(string prompt, string model, int timeoutSeconds) : string
 	{
@@ -365,6 +367,8 @@ This is the main pass-through action. It automatically manages model selection, 
 
 		// Read current state
 		string currentModel = ToChatGPTProPtReadState(ToChatGPTProPtModelFile());
+		string currentWorkDir = ToChatGPTProPtReadState(ToChatGPTProPtWorkDirFile());
+		string currentSlug = ToChatGPTProPtReadState(ToChatGPTProPtConvIdFile());
 
 		// Use provided model or current model or default
 		string useModel = model;
@@ -373,17 +377,33 @@ This is the main pass-through action. It automatically manages model selection, 
 		if (StringUtil.IsEmpty(useModel))
 			useModel = "gpt-5.5-pro";
 
-		// Build args
-		string args = "--engine browser --browser-manual-login --model " + useModel + " --slug buffaly-chatgptpro-passthrough --prompt " + ToChatGPTProQuoted(prompt);
+		// Browser mode: each call is a new ChatGPT conversation (Oracle --followup is API-only)
+		string useSlug = "buffaly-chatgptpro-passthrough";
+		if (!StringUtil.IsEmpty(currentSlug) && currentSlug != "none")
+			useSlug = currentSlug;
 
-		string result = ToChatGPTProRun(args, timeoutSeconds);
+		// Build args — no --followup in browser mode
+		string args = "--engine browser --browser-manual-login --model " + useModel + " --slug " + useSlug + " --prompt " + ToChatGPTProQuoted(prompt);
+
+		// Build script with working directory support
+		string script = "$ErrorActionPreference='Continue';";
+		if (!StringUtil.IsEmpty(currentWorkDir) && currentWorkDir != "none")
+		{
+			script = script + "if(Test-Path -LiteralPath '" + ToChatGPTProEscapePowerShellSingleQuoted(currentWorkDir) + "'){ Set-Location -LiteralPath '" + ToChatGPTProEscapePowerShellSingleQuoted(currentWorkDir) + "' };";
+		}
+		script = script + ToChatGPTProBuildRunScript("", args);
+
+		string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, "", "ChatGPT Pro Pass-Through");
 
 		// Check for auth errors
 		string authError = ToChatGPTProCheckAuthErrors(result);
 		if (!StringUtil.IsEmpty(authError))
 			return "Status=" + authError + "`n" + result;
 
-		// Increment turn count via PowerShell (same pattern as ClaudeCode)
+		// Save session slug (for state tracking; not used for browser continuation)
+		ToChatGPTProPtWriteState(ToChatGPTProPtConvIdFile(), useSlug);
+
+		// Increment turn count via PowerShell
 		string turnScript = "$f=Join-Path ([System.IO.Path]::GetTempPath()) '" + ToChatGPTProEscapePowerShellSingleQuoted(ToChatGPTProPtTurnsFile()) + "'; $cur=0; if(Test-Path -LiteralPath $f){ $v=(Get-Content -LiteralPath $f -Raw -ErrorAction SilentlyContinue); if($v){ $cur=[int]$v.Trim() } }; $cur=$cur+1; Set-Content -LiteralPath $f -Value $cur -Encoding utf8 -NoNewline; Write-Output $cur";
 		string turnResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(turnScript, "", 10, _opsAgent, "", "ChatGPT Pro PT Turn Count");
 		string turnCount = ToChatGPTProCleanOutput(turnResult);
@@ -394,10 +414,10 @@ This is the main pass-through action. It automatically manages model selection, 
 		string stateSummary = "\n\n--- Pass-Through State ---";
 		stateSummary = stateSummary + "\nModel=" + useModel;
 		stateSummary = stateSummary + "\nTurn=" + turnCount;
-		if (!StringUtil.IsEmpty(currentModel))
-			stateSummary = stateSummary + "\nContinued=true";
-		else
-			stateSummary = stateSummary + "\nContinued=false";
+		stateSummary = stateSummary + "\nSession=" + useSlug;
+		stateSummary = stateSummary + "\nContinued=false (browser mode: new conversation each call)";
+		if (!StringUtil.IsEmpty(currentWorkDir) && currentWorkDir != "none")
+			stateSummary = stateSummary + "\nWorkingDirectory=" + currentWorkDir;
 
 		return result + stateSummary;
 	}

@@ -10,8 +10,8 @@ Wrappers for the third-party `oracle` CLI (steipete/oracle) that drives ChatGPT 
 - `ToRunChatGPTProPrompt` — one-shot prompt with model selection, engine mode (browser/api), file attachment, working directory, session slug, and timeout. In browser mode, targets ChatGPT Pro (gpt-5.5-pro, gpt-5.6, etc.). API mode also supports Gemini and Claude models via the oracle CLI's multi-provider routing.
 
 ## Pass-through actions
-- `ToTalkToChatGPTPro` — main pass-through. Forwards a user message to the oracle CLI with automatic model selection, timeout, and long-prompt file handling.
-- `ToStartNewChatGPTProConversation` — resets conversation context so the next call starts fresh.
+- `ToTalkToChatGPTPro` — main pass-through. Forwards a user message to the oracle CLI with automatic model selection, timeout, and working directory. Browser mode creates a new ChatGPT conversation each call (Oracle `--followup` is API-only; conversation continuation is not available in browser mode).
+- `ToStartNewChatGPTProConversation` — resets pass-through state (model, turn count). Browser mode always starts a new ChatGPT conversation regardless.
 - `ToGetChatGPTProConversationState` — returns current model, working directory, and turn count.
 - `ToSetChatGPTProModel` — switches model for subsequent pass-through calls.
 - `ToSetChatGPTProWorkingDirectory` — changes working directory for oracle CLI calls.
