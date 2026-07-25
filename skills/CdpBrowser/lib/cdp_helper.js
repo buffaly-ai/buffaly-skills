@@ -1045,7 +1045,19 @@ handlers.launchChrome = async (params) => {
         fs.mkdirSync(profileDir, { recursive: true });
     }
     
-    const chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+    const chromeCandidates = process.platform === 'win32'
+        ? [
+            path.join(process.env.PROGRAMFILES || '', 'Google/Chrome/Application/chrome.exe'),
+            path.join(process.env['PROGRAMFILES(X86)'] || '', 'Google/Chrome/Application/chrome.exe'),
+            path.join(process.env.LOCALAPPDATA || '', 'Google/Chrome/Application/chrome.exe')
+        ]
+        : process.platform === 'darwin'
+            ? ['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome']
+            : ['/usr/bin/google-chrome', '/usr/bin/google-chrome-stable', '/usr/bin/chromium', '/usr/bin/chromium-browser'];
+    const chromePath = chromeCandidates.find(candidate => candidate && fs.existsSync(candidate));
+    if (!chromePath) {
+        throw new Error(`Chrome executable not found for platform ${process.platform}`);
+    }
     const args = [
         `--remote-debugging-port=${port}`,
         `--user-data-dir=${profileDir}`,
