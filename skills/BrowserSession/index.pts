@@ -3,7 +3,7 @@ import Buffaly.Agent.Tools.Browser Buffaly.Agent.Tools.Browser.BrowserSessionToo
 
 prototype BrowserSessionSkillAction : OpsAction, CodingContext
 {
-	Description = @"Base action type for the default Browser Skill deterministic browser tools. BrowserSessionSkill remains a compatibility name for this action surface.";
+	Description = @"Base action type for the canonical default Browser Skill deterministic browser tools.";
 }
 
 [SemanticEntity("browser skill")]
@@ -11,7 +11,7 @@ prototype BrowserSessionSkillAction : OpsAction, CodingContext
 prototype BrowserSkill : SkillEntity
 {
 	EntityName = "browser skill, default browser skill";
-	Description = @"Canonical default Browser Skill deterministic browser tools backed by Buffaly.Agent.Tools.Browser.BrowserTools. Use for generic browser requests, selector actions, DOM inspection, JavaScript execution, screenshots, console events, and browser session control.";
+	Description = @"Canonical default Browser Skill backed by the C# CDP browser runtime. Use for generic browser requests, selector actions, DOM inspection, trusted input, screenshots, console events, and browser session control.";
 	ActionRoot = BrowserSessionSkillAction;
 }
 
@@ -19,21 +19,20 @@ prototype BrowserSkill : SkillEntity
 prototype BrowserSessionSkill : BrowserSkill
 {
 	EntityName = "browser session skill";
-	Description = @"Compatibility alias for BrowserSkill. Existing BrowserSessionSkill references continue to resolve to the canonical default Browser Skill action surface; new generic browser routing should bind to BrowserSkill.";
+	Description = @"Compatibility alias for the canonical BrowserSkill action surface.";
 	ActionRoot = BrowserSessionSkillAction;
 }
 
 prototype PlaywrightBrowserSkillAction : BrowserSessionSkillAction
 {
-	Description = @"Base action type for explicit Playwright browser tools. Use only when the user asks for Playwright or isolated Playwright-style automation.";
+	Description = @"Base action type for explicit Playwright browser tools.";
 }
 
 [SemanticEntity("playwright browser skill")]
-[SemanticEntity("playwright skill")]
 prototype PlaywrightBrowserSkill : SkillEntity
 {
 	EntityName = "playwright browser skill";
-	Description = @"Explicit Playwright browser automation tools. Use only when the user asks for Playwright, an isolated Playwright browser, or Playwright-style automation. Generic browser requests route to the default Browser Skill instead.";
+	Description = @"Explicit Playwright browser automation. Generic browser requests route to BrowserSkill/CDP instead.";
 	ActionRoot = PlaywrightBrowserSkillAction;
 }
 
@@ -41,7 +40,6 @@ include "PromptActions.pts";
 
 [SemanticProgram.InfinitivePhrase("to open a browser session")]
 [SemanticProgram.InfinitivePhrase("to start a browser session")]
-[SemanticProgram.InfinitivePhrase("to open a playwright browser session")]
 prototype ToOpenBrowserSession : BrowserSessionSkillAction
 {
 	Description = @"Thin wrapper over BrowserTools.BrowserSubAgentOpenTool(_opsAgent, profileName). profileName - persistent browser profile name. Returns JSON containing subAgentId/profile/status.";
@@ -54,14 +52,13 @@ prototype ToOpenBrowserSession : BrowserSessionSkillAction
 
 [SemanticProgram.InfinitivePhrase("to open a playwright browser session")]
 [SemanticProgram.InfinitivePhrase("to open an isolated playwright browser")]
-[SemanticProgram.InfinitivePhrase("to start a playwright browser session")]
 prototype ToOpenPlaywrightBrowserSession : PlaywrightBrowserSkillAction
 {
-	Description = @"Explicit Playwright session opener retained for Playwright-specific routing. Currently delegates to BrowserTools.BrowserSubAgentOpenTool without changing global browser defaults.";
+	Description = @"Opens an explicitly Playwright-backed browser session without changing the generic CDP default.";
 
 	function Execute(string profileName) : string
 	{
-		return BrowserTools.BrowserSubAgentOpenTool(_opsAgent, profileName);
+		return BrowserTools.PlaywrightBrowserSubAgentOpenTool(_opsAgent, profileName);
 	}
 }
 

@@ -110,38 +110,35 @@
     },
     {
       "SkillName": "BrowserSession",
-      "Title": "Browser Skill",
-      "Description": "Canonical default browser skill package. BrowserSession remains a compatibility identity for the same deterministic browser surface; explicit Playwright routing is separated.",
-      "Version": "0.1.3",
+      "Title": "Browser Session",
+      "Description": "Buffaly skill package for Browser Session.",
+      "Version": "0.1.4",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
-        "Browser Skill",
-        "Default Browser Skill",
         "Browser Session",
-        "BrowserSession",
-        "Playwright Browser Skill"
+        "BrowserSession"
       ],
       "Path": "skills/BrowserSession",
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "48f9632035a9f177ff1e7fc64c5e7cbf6533dc4b8a445f375418901f0fe3b0de"
+          "Sha256": "f0128c514377fb7739aca8a8393825b12c862d83764065c317ca4cc680f55396"
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "8d7eff103704ecdeef863e2960e8482c5c502b313f8562491dae87b546aa5fb3"
+          "Sha256": "576e46dcec59840ae93721e0288b273b9d8ebfd1f0b973ec5d8c6cdc863281b7"
         },
         {
           "Path": "PromptActions.pts",
-          "Sha256": "f545f70b8977e216f70feec917fa0caeb824e8d3172cb5c574297b7881d63c99"
+          "Sha256": "1893e8ede5496607e3b994e2263b39af55eb3da3c1d1336b44c5e305b5b32785"
         },
         {
           "Path": "Prompts/UseBrowserSkill.prompt.md",
-          "Sha256": "cc3ef70426bffd2344f1b78a9d044d2ebd64bd9294d89acc5e7ef9eeea89b458"
+          "Sha256": "753a9b6680a085d9b60abaa1c42568f1cdcf8589636ac466e2e6f05ea13d88f9"
         },
         {
           "Path": "SKILL.md",
-          "Sha256": "7d38265ed3db1c427bc35e0ad4c4f8ba06ac403cebea68b7b387c5e65bea5a85"
+          "Sha256": "a6fc9250c95c9bc06f9d673f39d6c89d99326a2c96ceac5a457ccd411202f371"
         }
       ],
       "EntryPoint": "index.pts",
