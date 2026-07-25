@@ -110,35 +110,38 @@
     },
     {
       "SkillName": "BrowserSession",
-      "Title": "Browser Session",
-      "Description": "Buffaly skill package for Browser Session.",
-      "Version": "0.1.2",
+      "Title": "Browser Skill",
+      "Description": "Canonical default browser skill package. BrowserSession remains a compatibility identity for the same deterministic browser surface; explicit Playwright routing is separated.",
+      "Version": "0.1.3",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "Browser Skill",
+        "Default Browser Skill",
         "Browser Session",
-        "BrowserSession"
+        "BrowserSession",
+        "Playwright Browser Skill"
       ],
       "Path": "skills/BrowserSession",
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "8216cae28fdc7a350bbc3902dbf486eee9d412fc9487a01773a813d1de8c24ec"
+          "Sha256": "cb28ab9ce324ad61251d9a7a81c1c2b02fd7c742a0e043c76c53c3c42f88a0dd"
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "248f666c2ef3037f52baa2c399785cbb050bcb63dfcc52c4b50c736d5fc1bf39"
+          "Sha256": "61e03a37fb6ff2c19189e3119157a781822772387cc34a5def8d3287fef65a48"
         },
         {
           "Path": "PromptActions.pts",
-          "Sha256": "85445bccc1073bd077bd181b4740128e64d8565d4a873d11afede026e62c4adf"
+          "Sha256": "05f0edeeac3f8399fb67faa8934797e18d9afe08fa014deb1dddd733443332bc"
         },
         {
           "Path": "Prompts/UseBrowserSkill.prompt.md",
-          "Sha256": "cc3ef70426bffd2344f1b78a9d044d2ebd64bd9294d89acc5e7ef9eeea89b458"
+          "Sha256": "c0218acafcfd95f5799c976bb0a2f7d7887815484f285a289ba49abef9af97aa"
         },
         {
           "Path": "SKILL.md",
-          "Sha256": "32574e91d97fc757cefd28348e7368b1c059be013c30d608a4621c4a2b2be606"
+          "Sha256": "8174ed88241f7a2e04b4cae69cae9f11b5ed997899d4b8778d1a8be6f1071f82"
         }
       ],
       "EntryPoint": "index.pts",
@@ -382,7 +385,7 @@
       "SkillName": "CdpBrowser",
       "Title": "CDP Browser",
       "Description": "CDP browser automation tools that connect to the user real Chrome via Chrome DevTools Protocol. Preserves logins, avoids anti-bot detection, uses trusted input events. Tier 1 actions are always available; Tier 2 actions require approval.",
-      "Version": "1.0.7",
+      "Version": "1.0.8",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "CDP Browser",
@@ -398,15 +401,15 @@
         },
         {
           "Path": "PromptActions.pts",
-          "Sha256": "a26c620b8c5faf9c59f9c9efd383d3be9780f2e400c4a1687b77e8fbe4c6aa5f"
+          "Sha256": "0c2aa13b4da9a59ebdb707172c4053f1e3a8b992c3f7d9e353c4e880e848db10"
         },
         {
           "Path": "SKILL.md",
-          "Sha256": "0c0dd53faf540713c3c3e6ce7f7bbff9997a8607d7793008a1c8c297aee2b066"
+          "Sha256": "2858cb98cff6fa2741df46f9c2fbbe68caa9ee60652a2ef3723e9a0623e137c7"
         },
         {
           "Path": "Prompts/UseCdpBrowserSkill.prompt.md",
-          "Sha256": "b20e7d4900d90bb668df3f9445c4abe683dcc1cf63000918d0de1de67fbb2345"
+          "Sha256": "580a2edcfee79370fa98e33bd2a0f7a31c6e9d542c59fa88a897b366231b765a"
         },
         {
           "Path": "lib/cdp_helper.js",

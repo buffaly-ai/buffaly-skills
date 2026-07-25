@@ -3,25 +3,53 @@ import Buffaly.Agent.Tools.Browser Buffaly.Agent.Tools.Browser.BrowserSessionToo
 
 prototype BrowserSessionSkillAction : OpsAction, CodingContext
 {
-	Description = @"Base action type for deterministic browser session tools.";
+	Description = @"Base action type for the default Browser Skill deterministic browser tools. BrowserSessionSkill remains a compatibility name for this action surface.";
 }
 
+[SemanticEntity("browser skill")]
+[SemanticEntity("default browser skill")]
 [SemanticEntity("browser session skill")]
 prototype BrowserSessionSkill : SkillEntity
 {
-	EntityName = "browser session skill";
-	Description = @"Deterministic browser session tools backed by Buffaly.Agent.Tools.Browser.BrowserTools. Use for selector actions, DOM inspection, JavaScript execution, screenshots, console events, and browser session control.";
+	EntityName = "browser skill, default browser skill, browser session skill";
+	Description = @"Canonical default Browser Skill deterministic browser tools backed by Buffaly.Agent.Tools.Browser.BrowserTools. BrowserSessionSkill is retained as a compatibility identity for the same action surface. Use for generic browser requests, selector actions, DOM inspection, JavaScript execution, screenshots, console events, and browser session control.";
 	ActionRoot = BrowserSessionSkillAction;
+}
+
+prototype PlaywrightBrowserSkillAction : BrowserSessionSkillAction
+{
+	Description = @"Base action type for explicit Playwright browser tools. Use only when the user asks for Playwright or isolated Playwright-style automation.";
+}
+
+[SemanticEntity("playwright browser skill")]
+[SemanticEntity("playwright skill")]
+prototype PlaywrightBrowserSkill : SkillEntity
+{
+	EntityName = "playwright browser skill";
+	Description = @"Explicit Playwright browser automation tools. Use only when the user asks for Playwright, an isolated Playwright browser, or Playwright-style automation. Generic browser requests route to the default Browser Skill instead.";
+	ActionRoot = PlaywrightBrowserSkillAction;
 }
 
 include "PromptActions.pts";
 
 [SemanticProgram.InfinitivePhrase("to open a browser session")]
 [SemanticProgram.InfinitivePhrase("to start a browser session")]
-[SemanticProgram.InfinitivePhrase("to open a playwright browser session")]
 prototype ToOpenBrowserSession : BrowserSessionSkillAction
 {
 	Description = @"Thin wrapper over BrowserTools.BrowserSubAgentOpenTool(_opsAgent, profileName). profileName - persistent browser profile name. Returns JSON containing subAgentId/profile/status.";
+
+	function Execute(string profileName) : string
+	{
+		return BrowserTools.BrowserSubAgentOpenTool(_opsAgent, profileName);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to open a playwright browser session")]
+[SemanticProgram.InfinitivePhrase("to open an isolated playwright browser")]
+[SemanticProgram.InfinitivePhrase("to start a playwright browser session")]
+prototype ToOpenPlaywrightBrowserSession : PlaywrightBrowserSkillAction
+{
+	Description = @"Explicit Playwright session opener retained for Playwright-specific routing. Currently delegates to BrowserTools.BrowserSubAgentOpenTool without changing global browser defaults.";
 
 	function Execute(string profileName) : string
 	{
@@ -175,7 +203,7 @@ prototype ToGetBrowserConsoleEvents : BrowserSessionSkillAction
 [SemanticProgram.InfinitivePhrase("to run playwright script")]
 [SemanticProgram.InfinitivePhrase("to execute playwright automation")]
 [SemanticProgram.InfinitivePhrase("to interact with a browser using playwright")]
-prototype ToRunPlaywrightScript : BrowserSessionSkillAction
+prototype ToRunPlaywrightScript : PlaywrightBrowserSkillAction
 {
 	Description = @"Runs a Playwright-style automation script natively through Buffaly's Microsoft.Playwright runtime. This is not page JavaScript and does not run command-line Playwright.";
 

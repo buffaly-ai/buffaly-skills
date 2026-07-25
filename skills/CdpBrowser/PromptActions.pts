@@ -3,11 +3,12 @@
 [SemanticProgram.InfinitivePhrase("to automate a web page via CDP")]
 [SemanticProgram.InfinitivePhrase("to interact with a CDP browser session")]
 [SemanticProgram.InfinitivePhrase("to use Chrome DevTools Protocol")]
+[SemanticProgram.InfinitivePhrase("to use real Chrome via CDP")]
 prototype UseCdpBrowserSkill : PromptAction, CdpBrowserSkillAction
 {
 	IsPromptAction = true;
 	SkillKind = "prompt";
 	SkillVersion = "1.0.0";
 	PromptPath = @"Skills/CdpBrowser/Prompts/UseCdpBrowserSkill.prompt.md";
-	Description = @"Prompt/routing skill for CDP browser automation. Teaches agents when to use CdpBrowser (CDP) vs BrowserSessionSkill (Playwright). CdpBrowser connects to the user's real Chrome via CDP, preserving logins and avoiding anti-bot detection.";
+	Description = @"Prompt/routing skill for explicit CDP browser automation. Use only when the user asks for CDP, Chrome DevTools Protocol, real Chrome via CDP, existing login preservation, or trusted CDP input. Generic browser requests route to UseBrowserSkill.";
 }

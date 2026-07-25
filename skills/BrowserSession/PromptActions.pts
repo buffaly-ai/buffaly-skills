@@ -3,12 +3,26 @@
 [SemanticProgram.InfinitivePhrase("to automate a web page")]
 [SemanticProgram.InfinitivePhrase("to interact with a browser session")]
 [SemanticProgram.InfinitivePhrase("to run JavaScript in a browser")]
-[SemanticProgram.InfinitivePhrase("to use Playwright or CDP through Buffaly")]
+[SemanticProgram.InfinitivePhrase("to use the default browser")]
 prototype UseBrowserSkill : PromptAction, BrowserSessionSkillAction
 {
 	IsPromptAction = true;
 	SkillKind = "prompt";
 	SkillVersion = "1.0.0";
 	PromptPath = @"Skills/BrowserSession/Prompts/UseBrowserSkill.prompt.md";
-	Description = @"Prompt/routing skill for browser automation. It teaches agents when to use BrowserSessionSkill primitives, when to use the Browser web-module task runner, and when to use domain skills such as TebraWebSkill.";
+	Description = @"Prompt/routing skill for the canonical default Browser Skill. It routes generic browser requests to BrowserSessionSkill-compatible deterministic primitives and keeps Playwright/CDP alternatives explicit.";
+}
+
+[SemanticProgram.InfinitivePhrase("to use Playwright")]
+[SemanticProgram.InfinitivePhrase("to use Playwright browser")]
+[SemanticProgram.InfinitivePhrase("to control a browser with Playwright")]
+[SemanticProgram.InfinitivePhrase("to automate a web page with Playwright")]
+[SemanticProgram.InfinitivePhrase("to use an isolated Playwright browser")]
+prototype UsePlaywrightBrowserSkill : PromptAction, PlaywrightBrowserSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/BrowserSession/Prompts/UseBrowserSkill.prompt.md";
+	Description = @"Prompt/routing skill for explicit Playwright browser automation. Use only when the user asks for Playwright or an isolated Playwright browser; generic browser requests route to UseBrowserSkill.";
 }

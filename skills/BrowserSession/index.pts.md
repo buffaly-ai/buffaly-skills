@@ -2,13 +2,14 @@
 
 ## Purpose
 
-Defines `BrowserSessionSkill`, deterministic browser action wrappers, and includes the `UseBrowserSkill` prompt action.
+Defines the canonical default Browser Skill identity while preserving the `BrowserSessionSkill` compatibility prototype, deterministic browser action wrappers, explicit Playwright routing, and the `UseBrowserSkill` prompt action.
 
 ## History
 
 - Added BrowserSessionSkill with thin wrappers over `BrowserTools` for session, selector, script, screenshot, and console operations.
 - Added `ToFillBrowserSelectorWithSecret` using the C# `string` boundary expected by `BrowserSessionTools.FillBrowserSelectorWithSecret`; callers can pass a `StringRef` handle directly and ProtoScript materializes it at the typed boundary for redacted password fill.
 - Added deterministic browser discovery phrases for page navigation, page inspection, and page screenshots so normal browser requests route to BrowserSession primitives instead of the autonomous Browser Workbench runner.
+- Made `BrowserSessionSkill` the compatibility prototype for the canonical public Browser Skill/default browser identity, with generic browser phrases routed to `UseBrowserSkill` and explicit Playwright phrases routed to `PlaywrightBrowserSkill` / `UsePlaywrightBrowserSkill`.
 
 ## 2026-06-27
 - Added ToRunPlaywrightScript so agents can run Playwright-style browser automation natively through BrowserSessionSkill.

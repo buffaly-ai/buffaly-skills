@@ -1,5 +1,7 @@
 # CdpBrowser Skill
 
+Explicit CDP/real-Chrome browser automation skill. Generic browser requests route to Browser Skill / `UseBrowserSkill`; use this package only for explicit CDP, Chrome DevTools Protocol, real Chrome, existing-login preservation, or trusted CDP input requirements.
+
 ## Overview
 
 CDP browser automation skill that connects to the user's real Chrome instance via the Chrome DevTools Protocol (CDP). Preserves logged-in sessions, avoids anti-bot detection, and uses trusted input events.

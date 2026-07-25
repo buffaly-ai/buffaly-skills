@@ -1,16 +1,19 @@
 # Use CDP Browser Skill
 
-Use this prompt skill when the user asks to use, control, inspect, or automate a web browser via CDP (Chrome DevTools Protocol).
+Use this prompt skill only when the user explicitly asks to use, control, inspect, or automate a web browser via CDP (Chrome DevTools Protocol), real Chrome via CDP, existing-login preservation, or trusted CDP input.
 
 ## CDP Browser capability stack
 
 - `UseCdpBrowserSkill` is the prompt/routing entry point for CDP-based browser automation.
 - `CdpBrowserSkill` is the deterministic browser primitive surface backed by `chrome-remote-interface` and the user's real Chrome.
+- Generic browser requests route to `UseBrowserSkill` / Browser Skill instead of CdpBrowser. CdpBrowser remains an explicit CDP/real-Chrome alternative until the C# CDP default-browser migration is complete.
 - Connects to a running Chrome instance with `--remote-debugging-port=9222 --user-data-dir=<debug-profile>`.
 - Creates a new dedicated tab (does not touch user's existing tabs).
 - Uses trusted CDP input events (`isTrusted=true`) for all Tier 1 interactions.
 
-## When to use CdpBrowser vs BrowserSessionSkill
+## When to use CdpBrowser vs Browser Skill
+
+Use `UseBrowserSkill` for unqualified browser requests. Use CdpBrowser only when the request or evidence explicitly points to CDP/Chrome DevTools Protocol, real Chrome, existing login/cookies, browser extensions, anti-bot detection, or trusted CDP input.
 
 ### Use CdpBrowser when:
 - The site has anti-bot detection (Cloudflare, reCAPTCHA, etc.)
@@ -21,11 +24,15 @@ Use this prompt skill when the user asks to use, control, inspect, or automate a
 - The site checks `navigator.webdriver`
 - The site requires trusted input events (React apps that ignore synthetic events)
 
-### Use BrowserSessionSkill (Playwright) when:
-- Headless operation is preferred
-- No need for real session/cookies
-- Site does not block Playwright
-- Playwright driver is working
+### Use Browser Skill when:
+- The user asks generically to use/control/automate a browser
+- BrowserSession-compatible selector, DOM, screenshot, console, and JavaScript primitives are enough
+- There is no explicit CDP/real-Chrome requirement
+
+### Use Playwright only when:
+- The user explicitly asks for Playwright
+- An isolated Playwright browser or Playwright-style automation is required
+- An evidence-driven fallback selects Playwright
 
 ## Tier usage rules
 
