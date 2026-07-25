@@ -6,6 +6,9 @@
   const treeRequests = new Map();
   let cachedResponse = null;
   let cachedSessionKey = "";
+  let loadInFlightKey = "";
+  let cachedFileItems = null;
+  let cachedFileItemsKey = "";
 
   function readTree(sessionKey, forceRefresh) {
     if (forceRefresh) treeRequests.delete(sessionKey);
@@ -40,19 +43,25 @@
   }
 
   function loadFileSourceItems(context) {
+    if (cachedFileItems && cachedFileItemsKey === context.sessionKey) return cachedFileItems;
+    if (loadInFlightKey === context.sessionKey) return null;
+    loadInFlightKey = context.sessionKey;
     return readTree(context.sessionKey, false)
       .then(function (value) {
         if (!value || !value.providers || value.providers.length === 0) return null;
         cachedResponse = value;
         cachedSessionKey = context.sessionKey;
-        return value.providers.map(function (provider, index) {
+        cachedFileItems = value.providers.map(function (provider, index) {
           return {
             Name: provider.displayName || ("Routing Tree " + (index + 1)),
             Url: "#dtv-open:" + index
           };
         });
+        cachedFileItemsKey = context.sessionKey;
+        return cachedFileItems;
       })
-      .catch(function () { return null; });
+      .catch(function () { return null; })
+      .finally(function () { loadInFlightKey = ""; });
   }
 
   function openViewer(providerIndex) {
