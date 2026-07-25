@@ -3,6 +3,10 @@ prototype GoDaddySkillAction : OpsAction
 	Description = @"Base action type for GoDaddy skill tools.";
 }
 
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.WebModuleComponentLaunchRequestContract WebModuleComponentLaunchRequestContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.InteractiveSiteLaunchResultContract InteractiveSiteLaunchResultContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.IAgentRuntimeHost IAgentRuntimeHost;
+
 [SemanticEntity("godaddy skill")]
 prototype GoDaddySkill : SkillEntity
 {
@@ -15,3 +19,4 @@ include "GoDaddyActions.pts";
 reference Buffaly.GoDaddy.Web Buffaly.GoDaddy.Web;
 
 import Buffaly.GoDaddy.Web Buffaly.GoDaddy.Web.GoDaddySkillFacade GoDaddySkillFacade;
+import Buffaly.GoDaddy.Web Buffaly.GoDaddy.Web.GoDaddyInteractiveSiteConfiguration GoDaddyInteractiveSiteConfiguration;

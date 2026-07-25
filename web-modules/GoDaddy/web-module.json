@@ -20,6 +20,22 @@
         "Path": "/web-modules/GoDaddy/index.html",
         "Description": "Open the GoDaddy domain management workspace."
       }
-    ]
+    ],
+    "Component": {
+      "TagName": "godaddy-module",
+      "EntryUrl": "/web-modules/GoDaddy/components/godaddy-module.js",
+      "ScriptType": "module",
+      "DefaultScreen": "domains",
+      "Screens": [
+        "domains",
+        "domain",
+        "dns"
+      ],
+      "InteractiveScreens": [
+        "domains",
+        "domain",
+        "dns"
+      ]
+    }
   }
 }

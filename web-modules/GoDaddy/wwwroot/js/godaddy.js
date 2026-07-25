@@ -5,8 +5,19 @@ let sortColumn = 'expires';
 let sortDirection = 'asc';
 let dnsEditMode = false;
 let editingDnsRecord = null;
+const launch = new URLSearchParams(location.search);
+const componentHost = launch.get("componentHost") === "interactive";
+const launchScreen = launch.get("screen") || "domains";
+const launchDomain = launch.get("domain") || "";
+const interactiveWriteEndpoints = new Set(["/save-token", "/disconnect", "/add-dns-record", "/set-dns-record", "/delete-dns-record", "/set-name-servers", "/initiate-transfer"]);
+
+function viewEvent(type, message) {
+	if (window.parent === window) return;
+	window.parent.postMessage({ type, message: message || "", moduleName: "GoDaddy", screen: launchScreen, domain: launchDomain }, location.origin);
+}
 
 async function apiCall(endpoint, body, retries) {
+	if (componentHost && interactiveWriteEndpoints.has(endpoint)) throw new Error("GoDaddy interactive views are read-only.");
 	retries = retries || 0;
 	const opts = { method: "POST", headers: { "Content-Type": "application/json" } };
 	if (body) opts.body = JSON.stringify(body);
@@ -102,10 +113,20 @@ async function loadDomains() {
 		const domains = await apiCall("/list-domains");
 		allDomains = domains || [];
 		document.getElementById("loadingMsg").style.display = "none";
-		if (allDomains.length === 0) { document.getElementById("emptyMsg").style.display = "block"; return; }
+		if (allDomains.length === 0) {
+			document.getElementById("emptyMsg").style.display = "block";
+			if (launchScreen === "domain" || launchScreen === "dns") throw new Error("Domain " + launchDomain + " was not found. Relist domains and try again.");
+			viewEvent("buffaly-view-ready");
+			return;
+		}
 		document.getElementById("domainPanel").style.display = "block";
 		renderDomainTable();
-	} catch (e) { document.getElementById("loadingMsg").style.display = "none"; showError(e.message); }
+		if (launchScreen === "domain" || launchScreen === "dns") {
+			if (!launchDomain || !allDomains.some(d => d.domain === launchDomain)) throw new Error("Domain " + launchDomain + " was not found. Relist domains and try again.");
+			await selectDomain(launchDomain);
+		}
+		viewEvent("buffaly-view-ready");
+	} catch (e) { document.getElementById("loadingMsg").style.display = "none"; showError(e.message); viewEvent("buffaly-view-error", e.message); }
 }
 
 function sortDomains(domains) {

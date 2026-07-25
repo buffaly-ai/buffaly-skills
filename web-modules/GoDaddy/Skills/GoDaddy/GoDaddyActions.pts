@@ -1,5 +1,8 @@
 // -- Safe tools (reads, local writes) --
 
+// Interactive displays use the shared registered-component host. Hide/Reopen is owned by the Agent UI;
+// the shared component Close/Done action completes the waiting tool invocation.
+
 [SemanticProgram.InfinitivePhrase("to inspect godaddy account status")]
 prototype ToGetGoDaddyAccountStatus : GoDaddySkillAction
 {
@@ -136,4 +139,44 @@ prototype ToCheckGoDaddyTransferStatus : GoDaddySkillAction
 	{
 		return GoDaddySkillFacade.CheckTransferStatus(domain);
 	}
+}
+
+prototype GoDaddyInteractiveSiteLauncher
+{
+	function Execute(IAgentRuntimeHost opsAgent, string screen, string title, string domain, int timeoutSeconds) : string
+	{
+		string stateJson = GoDaddyInteractiveSiteConfiguration.BuildStateJson(screen, domain);
+		InteractiveSiteLaunchResultContract result = opsAgent.LaunchWebModuleComponent(new WebModuleComponentLaunchRequestContract
+		{
+			Title = title,
+			MessageKey = opsAgent.GetCurrentToolMessageKeyOrEmpty(),
+			ToolInvocationId = opsAgent.GetCurrentToolInvocationIdOrEmpty(),
+			ModuleName = "GoDaddy",
+			Screen = screen,
+			StateJson = stateJson,
+			TimeoutSeconds = timeoutSeconds
+		});
+		return "GoDaddy " + screen + " interactive site exited with status: " + result.Status + "; value: " + result.Value;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to show godaddy domains")]
+prototype ToViewGoDaddyDomainsInteractiveSite : GoDaddySkillAction
+{
+	Description = @"Open the read-only GoDaddy domain portfolio in an interactive site.";
+	function Execute(int timeoutSeconds) : string { return GoDaddyInteractiveSiteLauncher.Execute(_opsAgent, "domains", "GoDaddy Domains", "", timeoutSeconds); }
+}
+
+[SemanticProgram.InfinitivePhrase("to show a specific godaddy domain")]
+prototype ToViewGoDaddyDomainInteractiveSite : GoDaddySkillAction
+{
+	Description = @"Open one read-only GoDaddy domain. Resolve the exact domain first with ToListGoDaddyDomains.";
+	function Execute(string domain, int timeoutSeconds) : string { return GoDaddyInteractiveSiteLauncher.Execute(_opsAgent, "domain", "GoDaddy Domain " + domain, domain, timeoutSeconds); }
+}
+
+[SemanticProgram.InfinitivePhrase("to show godaddy dns records")]
+prototype ToViewGoDaddyDnsInteractiveSite : GoDaddySkillAction
+{
+	Description = @"Open the read-only DNS and name-server view for one exact GoDaddy domain. Resolve the domain first with ToListGoDaddyDomains.";
+	function Execute(string domain, int timeoutSeconds) : string { return GoDaddyInteractiveSiteLauncher.Execute(_opsAgent, "dns", "GoDaddy DNS " + domain, domain, timeoutSeconds); }
 }

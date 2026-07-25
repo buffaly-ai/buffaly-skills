@@ -8940,7 +8940,7 @@
       "PackageType": "WebModule",
       "Title": "GoDaddy",
       "Description": "Buffaly Web Module package for GoDaddy.",
-      "Version": "0.1.34",
+      "Version": "0.1.35",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/GoDaddy",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/GoDaddy",
@@ -8963,7 +8963,7 @@
         },
         {
           "Path": "Buffaly.GoDaddy.Web.dll",
-          "Sha256": "2bcdcb07108f1f4c810f15b2fddcae46bedcf8f3d793e893b9ec366755922089"
+          "Sha256": "fd15a0d112dae6a698d3e7e77d3102d4d586dd9ad1cf3e894c038fa02bca58bd"
         },
         {
           "Path": "Buffaly.ProviderContracts.dll",
@@ -8975,11 +8975,19 @@
         },
         {
           "Path": "Skills/GoDaddy/GoDaddyActions.pts",
-          "Sha256": "63bcd5f01cc6bfb430d56327f02abd8539bf64894f18a9f1ff8a305ca1f02716"
+          "Sha256": "f4d7db566261b9d295323c8e3ce278dcba50a6d5c2ede02fe2e7903bc4cd81f9"
+        },
+        {
+          "Path": "Skills/GoDaddy/GoDaddyActions.pts.md",
+          "Sha256": "29de462c6ac45e5ffb306d3f23064521547b7a9ea1b43917ec352c3b4c5567a7"
         },
         {
           "Path": "Skills/GoDaddy/index.pts",
-          "Sha256": "cd6062a4e6b319b2e99001bac4d8022e95a28be95277ada69623791ef9e193b7"
+          "Sha256": "45264e13dae83cc011ce713e12ccdfe6839f01d92949ca117bd856156a26ece9"
+        },
+        {
+          "Path": "Skills/GoDaddy/index.pts.md",
+          "Sha256": "e4bbafd165ccd4c1e9d36f4309188f8408b0318b38fc0de068415a475a9a26b2"
         },
         {
           "Path": "Skills/GoDaddy/skill-manifest.json",
@@ -8987,11 +8995,19 @@
         },
         {
           "Path": "web-module.json",
-          "Sha256": "84c31e3262d5c070cc326480a1e17ac6f429faaa88320613369cc3c7d1ef1a47"
+          "Sha256": "a88bcc73014dc8ea4d8aad6fce2eaa0ef91b5fe9ddf30770b3a87639d996ca72"
         },
         {
           "Path": "WebAppUtilities.dll",
           "Sha256": "b04993ec40d66d8f11ffc85f1d1c49ea52be9801406e48765e1e130fb881f5b4"
+        },
+        {
+          "Path": "wwwroot/components/godaddy-module.js",
+          "Sha256": "d0a72d6c845352e8722315a0769e0111d231a352079b245e5ff4e28a3f30dc29"
+        },
+        {
+          "Path": "wwwroot/components/godaddy-module.js.md",
+          "Sha256": "4a7e9bdb4c7b8dbdf651b6523581657e29840ae1255f6d00f807aa8298327147"
         },
         {
           "Path": "wwwroot/css/buffaly-page.css",
@@ -9003,11 +9019,15 @@
         },
         {
           "Path": "wwwroot/index.html",
-          "Sha256": "cce210d031ee8f82d1687b7d3c8eead8e044816e1a6eff9388bb4347baa68380"
+          "Sha256": "529ba671eb8c829e7b5173cb6a35309d60494e31fa86293d08ad5c0ac22cb03b"
         },
         {
           "Path": "wwwroot/js/godaddy.js",
-          "Sha256": "fd568732134f789d2ea68631c574edfa15e5f00a8acd8c3a17e3eed8a2a82a65"
+          "Sha256": "7aa98780972ce02bb79951294f5003dee811a0fcd269dafd148b7874dd9e68d8"
+        },
+        {
+          "Path": "wwwroot/js/godaddy.js.md",
+          "Sha256": "144a8a32a50b57477e749800ec136113b0fefc15893c4654874fb306586b3f24"
         }
       ],
       "ProjectArtifacts": [
