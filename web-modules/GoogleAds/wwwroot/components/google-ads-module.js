@@ -13,6 +13,7 @@ class GoogleAdsModule extends HTMLElement {
     this._configuration = null;
     this._started = false;
     this._frame = null;
+    this._onMessage = this._onMessage.bind(this);
   }
 
   configure(configuration) {
@@ -32,6 +33,7 @@ class GoogleAdsModule extends HTMLElement {
     if (!this._configuration) throw new Error("configure() must be called before start().");
     if (this._started) return;
     this._started = true;
+    window.addEventListener("message", this._onMessage);
     this._renderFrame();
   }
 
@@ -42,6 +44,7 @@ class GoogleAdsModule extends HTMLElement {
   }
 
   dispose() {
+    window.removeEventListener("message", this._onMessage);
     if (this._frame) this._frame.src = "about:blank";
     this.replaceChildren();
     this._frame = null;
@@ -84,6 +87,16 @@ class GoogleAdsModule extends HTMLElement {
       "body{background:#f5f7fb}"
     ].join("");
     document.head.appendChild(style);
+  }
+
+  _onMessage(event) {
+    if (event.origin !== location.origin || !this._frame || event.source !== this._frame.contentWindow || !event.data) return;
+    if (event.data.type !== "buffaly-view-ready" && event.data.type !== "buffaly-view-error") return;
+    const type = event.data.type === "buffaly-view-ready" ? "buffaly-component-ready" : "buffaly-component-error";
+    this.dispatchEvent(new CustomEvent(type, {
+      bubbles: true,
+      detail: { moduleName: "GoogleAds", screen: this._configuration.screen, message: event.data.message || "" }
+    }));
   }
 }
 
