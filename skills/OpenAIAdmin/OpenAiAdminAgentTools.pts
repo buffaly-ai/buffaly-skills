@@ -78,3 +78,44 @@ Returns deterministic read-only JSON for organization and project retention poli
 		return OpenAiAdminAgentTools.GetDataRetentionPolicies();
 	}
 }
+
+prototype OpenAiAdminInteractiveSiteLauncher
+{
+	function Execute(IAgentRuntimeHost opsAgent, string screen, string title, string startDate, string endDate, string projectId, int timeoutSeconds) : string
+	{
+		string stateJson = OpenAiAdminInteractiveSiteConfiguration.BuildStateJson(screen, startDate, endDate, projectId);
+		InteractiveSiteLaunchResultContract result = opsAgent.LaunchWebModuleComponent(new WebModuleComponentLaunchRequestContract
+		{
+			Title = title,
+			MessageKey = opsAgent.GetCurrentToolMessageKeyOrEmpty(),
+			ToolInvocationId = opsAgent.GetCurrentToolInvocationIdOrEmpty(),
+			ModuleName = "OpenAIAdmin",
+			Screen = screen,
+			StateJson = stateJson,
+			TimeoutSeconds = timeoutSeconds
+		});
+		return "OpenAI Administration " + screen + " interactive site exited with status: " + result.Status + "; value: " + result.Value;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to show OpenAI usage")]
+[SemanticProgram.InfinitivePhrase("to open OpenAI usage analytics")]
+prototype ToViewOpenAIUsageInteractiveSite : OpenAIAdminSkillAction
+{
+	Description = @"Open the read-only OpenAI organization usage component for an inclusive UTC date range. Call ToGetOpenAIUsageAndCosts first so the Agent can summarize the same range in text.";
+	function Execute(string startDate, string endDate, int timeoutSeconds) : string
+	{
+		return OpenAiAdminInteractiveSiteLauncher.Execute(_opsAgent, "usage", "OpenAI Usage", startDate, endDate, "", timeoutSeconds);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to show OpenAI project usage")]
+[SemanticProgram.InfinitivePhrase("to open OpenAI project analytics")]
+prototype ToViewOpenAIProjectUsageInteractiveSite : OpenAIAdminSkillAction
+{
+	Description = @"Open read-only usage for one exact active OpenAI project and inclusive UTC date range. Resolve projectId with ToListOpenAIProjects first; an unknown project is rejected and never falls back to organization usage.";
+	function Execute(string projectId, string startDate, string endDate, int timeoutSeconds) : string
+	{
+		return OpenAiAdminInteractiveSiteLauncher.Execute(_opsAgent, "project-usage", "OpenAI Project Usage", startDate, endDate, projectId, timeoutSeconds);
+	}
+}
