@@ -111,20 +111,15 @@ prototype GoogleAdsInteractiveSiteLauncher
 			timeoutSeconds = 120;
 		}
 
-		string siteRoot = Path.Combine(opsAgent.GetCurrentProjectDirectory(), "Skills", "GoogleAdsWeb", "interactive-sites", "google-ads-module");
-		string html = File.ReadAllText(Path.Combine(siteRoot, "site.html"));
-		string css = File.ReadAllText(Path.Combine(siteRoot, "site.css"));
-		string js = File.ReadAllText(Path.Combine(siteRoot, "site.js"));
-		string config = GoogleAdsInteractiveSiteConfiguration.BuildJavaScript(screen, title, customerId, loginCustomerId, dateRangePreset, adId);
-		string javascript = String.Concat(config, js);
-		InteractiveSiteLaunchResultContract result = opsAgent.LaunchInteractiveSite(new InteractiveSiteLaunchRequestContract
+		string stateJson = GoogleAdsInteractiveSiteConfiguration.BuildStateJson(screen, customerId, loginCustomerId, dateRangePreset, adId);
+		InteractiveSiteLaunchResultContract result = opsAgent.LaunchWebModuleComponent(new WebModuleComponentLaunchRequestContract
 		{
 			Title = title,
 			MessageKey = opsAgent.GetCurrentToolMessageKeyOrEmpty(),
 			ToolInvocationId = opsAgent.GetCurrentToolInvocationIdOrEmpty(),
-			Html = html,
-			Css = css,
-			JavaScript = javascript,
+			ModuleName = "GoogleAds",
+			Screen = screen,
+			StateJson = stateJson,
 			TimeoutSeconds = timeoutSeconds
 		});
 		return "Google Ads " + screen + " interactive site exited with status: " + result.Status + "; value: " + result.Value;
@@ -136,13 +131,8 @@ prototype GoogleAdsEntityInteractiveSiteLauncher
 	function Execute(IAgentRuntimeHost opsAgent, string screen, string title, string customerId, string loginCustomerId, string dateRangePreset, string entityId, int timeoutSeconds) : string
 	{
 		if (timeoutSeconds <= 0) { timeoutSeconds = 120; }
-		string siteRoot = Path.Combine(opsAgent.GetCurrentProjectDirectory(), "Skills", "GoogleAdsWeb", "interactive-sites", "google-ads-module");
-		string html = File.ReadAllText(Path.Combine(siteRoot, "site.html"));
-		string css = File.ReadAllText(Path.Combine(siteRoot, "site.css"));
-		string js = File.ReadAllText(Path.Combine(siteRoot, "site.js"));
-		string config = GoogleAdsInteractiveSiteConfiguration.BuildEntityJavaScript(screen, title, customerId, loginCustomerId, dateRangePreset, entityId);
-		string javascript = String.Concat(config, js);
-		InteractiveSiteLaunchResultContract result = opsAgent.LaunchInteractiveSite(new InteractiveSiteLaunchRequestContract { Title = title, MessageKey = opsAgent.GetCurrentToolMessageKeyOrEmpty(), ToolInvocationId = opsAgent.GetCurrentToolInvocationIdOrEmpty(), Html = html, Css = css, JavaScript = javascript, TimeoutSeconds = timeoutSeconds });
+		string stateJson = GoogleAdsInteractiveSiteConfiguration.BuildEntityStateJson(screen, customerId, loginCustomerId, dateRangePreset, entityId);
+		InteractiveSiteLaunchResultContract result = opsAgent.LaunchWebModuleComponent(new WebModuleComponentLaunchRequestContract { Title = title, MessageKey = opsAgent.GetCurrentToolMessageKeyOrEmpty(), ToolInvocationId = opsAgent.GetCurrentToolInvocationIdOrEmpty(), ModuleName = "GoogleAds", Screen = screen, StateJson = stateJson, TimeoutSeconds = timeoutSeconds });
 		return "Google Ads " + screen + " interactive site exited with status: " + result.Status + "; value: " + result.Value;
 	}
 }

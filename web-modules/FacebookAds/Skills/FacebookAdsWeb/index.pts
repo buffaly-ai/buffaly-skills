@@ -1,11 +1,9 @@
 reference Buffaly.FacebookAds Buffaly.FacebookAds;
 import Buffaly.FacebookAds Buffaly.FacebookAds.FacebookAdsWebService FacebookAdsWebService;
 import Buffaly.FacebookAds Buffaly.FacebookAds.FacebookAdsInteractiveSiteConfiguration FacebookAdsInteractiveSiteConfiguration;
-import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.InteractiveSiteLaunchRequestContract InteractiveSiteLaunchRequestContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.WebModuleComponentLaunchRequestContract WebModuleComponentLaunchRequestContract;
 import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.InteractiveSiteLaunchResultContract InteractiveSiteLaunchResultContract;
 import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.IAgentRuntimeHost IAgentRuntimeHost;
-reference System.Private.CoreLib System.Private.CoreLib;
-import System.Private.CoreLib System.String String;
 
 prototype FacebookAdsWebSkillAction : OpsAction { Description = @"Base action type for Facebook Ads read-only tools."; }
 [SemanticEntity("facebook ads web skill")]

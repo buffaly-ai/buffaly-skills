@@ -22,3 +22,7 @@
 - Added text/JSON inventory tools for ad groups and ads. Their records retain campaign, ad-group, and ad IDs so the Agent can resolve names before launching UI.
 - Added exact campaign and ad-group display tools. Their allowlisted route state is JSON serialized, uses the existing shared host, and preserves the `System.String.Concat` launcher workaround.
 - Route lookup is exact. A missing or stale ID produces a visible component error and does not fall back to another entity.
+
+## Use Typed Registered-Component Launch (2026-07-25)
+- Replaced package-owned shell reads and `String.Concat` JavaScript composition with `LaunchWebModuleComponent` and structured `StateJson`.
+- The browser now resolves the installed Google Ads component declaration and interactive screen allowlist from `web-module.json`; the domain builder retains ID, screen, and date validation only.

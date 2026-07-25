@@ -2434,6 +2434,30 @@
       "RequiresPreStartInstall": true
     },
     {
+      "PackageId": "ChatGPTPro",
+      "PackageType": "Skill",
+      "Title": "ChatGPT Pro",
+      "Description": "ChatGPT Pro skill: one-shot prompts, file context, and pass-through conversation management via the oracle CLI (steipete/oracle) with browser-mode ChatGPT Pro auth.",
+      "Version": "0.1.1",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "SourcePath": "skills/ChatGPTPro",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/skills/ChatGPTPro",
+      "Phrases": [
+        "ChatGPT Pro",
+        "ChatGPTPro"
+      ],
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "5b693888949a9642d89943d03ccdec7f9795fcb1dbe5a574be93debd5486a44a"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "715654ac34468799fadce2de9ef6a784c11f9977ae477c85e5aff7d599220b0a"
+        }
+      ]
+    },
+    {
       "PackageId": "ActionLearningCoordinator",
       "PackageType": "WebModule",
       "Title": "Action Learning Coordinator",
@@ -8114,7 +8138,7 @@
       "PackageType": "WebModule",
       "Title": "Facebook Ads",
       "Description": "Read-only Facebook Ads reporting web module.",
-      "Version": "0.1.10",
+      "Version": "0.1.11",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/FacebookAds",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/FacebookAds",
@@ -8125,7 +8149,7 @@
       "Files": [
         {
           "Path": "Buffaly.Facebook.dll",
-          "Sha256": "a0c6e0c0feb633a47cf9902c607f8dc5246f48b04e8867b2103082ff880b72ae"
+          "Sha256": "644921d95b7a403720b1beb92b708f86d042dbd248bbe2dde32bc342d457803a"
         },
         {
           "Path": "Buffaly.FacebookAds.deps.json",
@@ -8133,7 +8157,7 @@
         },
         {
           "Path": "Buffaly.FacebookAds.dll",
-          "Sha256": "314e1962d7f0112d67ef480a2931d02821ef7891e74d62e7cbdb2449b223eb52"
+          "Sha256": "bc916724c30167678950fe9847f34750ddec6aca6fe2e5eb6271b196da2b3081"
         },
         {
           "Path": "Imports.pts",
@@ -8141,11 +8165,11 @@
         },
         {
           "Path": "Skills/FacebookAdsWeb/FacebookAdsWebActions.pts",
-          "Sha256": "9eb0555844ed182bb0ab6c495344bb9077f3ca7d90b3cc20ec47447ee6bd8bfa"
+          "Sha256": "82a73cbaae1a37b1a0fd3b6b64fb6013fde3328e4d7f401d2111cc82710d13de"
         },
         {
           "Path": "Skills/FacebookAdsWeb/index.pts",
-          "Sha256": "2d7a4d70e92c8fd5db52647f6291bdccb4d55bc728dd62c4840426734a4e7588"
+          "Sha256": "2a3e520393588615a107c801de0aa09de22ba863c0d07a952a8bbff0311eae66"
         },
         {
           "Path": "Skills/FacebookAdsWeb/interactive-sites/facebook-ads-module/site.css",
@@ -9027,7 +9051,7 @@
       "PackageType": "WebModule",
       "Title": "Google Ads",
       "Description": "Read-only Google Ads reporting web module.",
-      "Version": "0.1.12",
+      "Version": "0.1.13",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/GoogleAds",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/GoogleAds",
@@ -9043,7 +9067,7 @@
         },
         {
           "Path": "Buffaly.GoogleAds.dll",
-          "Sha256": "01e53f57e04784552fc948249cfb0a741bd81bc01f523b36b436b057c4f65850"
+          "Sha256": "a11980b2ce3c48590aad7975c91d3045337bc293b7c81c5e1b8e98907050f7d6"
         },
         {
           "Path": "Imports.pts",
@@ -9051,15 +9075,15 @@
         },
         {
           "Path": "Skills/GoogleAdsWeb/GoogleAdsWebActions.pts",
-          "Sha256": "56d2476c4e97621aa528fd0f7e646cd4a8971f262fb567a3409c16966842b16e"
+          "Sha256": "4f688a509ed65f69819dc3cc3f055b274ff8c0ddaae93119fd4811d59140e4e1"
         },
         {
           "Path": "Skills/GoogleAdsWeb/GoogleAdsWebActions.pts.md",
-          "Sha256": "5d58364378055a70b73357578daf969d54086ec0b77371f1584c08a2c86f8a73"
+          "Sha256": "bb0cdf70be8e38f96f1078154a5d9c632e2ba8bd73cd699a1ffb11024e071209"
         },
         {
           "Path": "Skills/GoogleAdsWeb/index.pts",
-          "Sha256": "4b3afe65409270f02a40d5db1f4f2d9ec556a2ef3b7ad4529c476d9e28b6ed77"
+          "Sha256": "06d4073f4df5ba788b43c94174dc61fb4b13df4c0a921aabca20413ecb14eaa6"
         },
         {
           "Path": "Skills/GoogleAdsWeb/index.pts.md",
@@ -17517,30 +17541,6 @@
       "Prerequisites": [],
       "RequiresRestart": true,
       "RequiresPreStartInstall": true
-    },
-    {
-      "PackageId": "ChatGPTPro",
-      "PackageType": "Skill",
-      "Title": "ChatGPT Pro",
-      "Description": "ChatGPT Pro skill: one-shot prompts, file context, and pass-through conversation management via the oracle CLI (steipete/oracle) with browser-mode ChatGPT Pro auth.",
-      "Version": "0.1.1",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "SourcePath": "skills/ChatGPTPro",
-      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/skills/ChatGPTPro",
-      "Phrases": [
-        "ChatGPT Pro",
-        "ChatGPTPro"
-      ],
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "5b693888949a9642d89943d03ccdec7f9795fcb1dbe5a574be93debd5486a44a"
-        },
-        {
-          "Path": "SKILL.md",
-          "Sha256": "715654ac34468799fadce2de9ef6a784c11f9977ae477c85e5aff7d599220b0a"
-        }
-      ]
     }
   ]
 }
