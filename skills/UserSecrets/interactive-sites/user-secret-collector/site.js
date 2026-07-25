@@ -124,7 +124,16 @@
 		valueInput.focus();
 	}
 
-	visibilityButton.addEventListener("click", toggleSecretVisibility);
+	visibilityButton.addEventListener("pointerdown", function (event) {
+		event.preventDefault();
+		event.stopPropagation();
+	});
+
+	context.root.addEventListener("click", function (event) {
+		if (event.target && event.target.closest && event.target.closest("[data-toggle-visibility]")) {
+			toggleSecretVisibility(event);
+		}
+	});
 
 	context.root.querySelector("[data-cancel]").addEventListener("click", function () {
 		if (!confirmDiscardIfNeeded()) {
