@@ -38,48 +38,8 @@
     styleLoaded = true;
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.3.0";
+    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.4.0";
     document.head.appendChild(link);
-  }
-
-  function escapeHtml(text) {
-    var div = document.createElement("div");
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
-  function formatProtoScript(raw) {
-    if (!raw) return "";
-    var escaped = escapeHtml(raw);
-    var lines = escaped.split("\n");
-    var result = [];
-    for (var i = 0; i < lines.length; i++) {
-      var line = lines[i];
-      var processed = "";
-      var remaining = line;
-      while (remaining.length > 0) {
-        var commentMatch = remaining.match(/^(\/\/.*)/);
-        if (commentMatch) { processed += '<span class="dtv-ps-comment">' + commentMatch[1] + "</span>"; remaining = ""; break; }
-        var stringMatch = remaining.match(/^("(?:[^"\\]|\\.)*")/);
-        if (stringMatch) { processed += '<span class="dtv-ps-string">' + stringMatch[1] + "</span>"; remaining = remaining.substring(stringMatch[1].length); continue; }
-        var annotationMatch = remaining.match(/^(\[Semantic(?:Entity|Tag|Program)[^\]]*\])/);
-        if (annotationMatch) { processed += '<span class="dtv-ps-annotation">' + annotationMatch[1] + "</span>"; remaining = remaining.substring(annotationMatch[1].length); continue; }
-        var attrMatch = remaining.match(/^(@[A-Za-z_][\w.]*)/);
-        if (attrMatch) { processed += '<span class="dtv-ps-annotation">' + attrMatch[1] + "</span>"; remaining = remaining.substring(attrMatch[1].length); continue; }
-        var keywordMatch = remaining.match(/^(include|prototype|reference|import|function|init|using|namespace|partial|extern|return|if|else|for|foreach|while|switch|case|default|break|continue|throw|try|catch|finally)(?![\w$])/);
-        if (keywordMatch) { processed += '<span class="dtv-ps-keyword">' + keywordMatch[1] + "</span>"; remaining = remaining.substring(keywordMatch[1].length); continue; }
-        var protoRefMatch = remaining.match(/^([A-Za-z_][\w]*#[A-Za-z_][\w]*)/);
-        if (protoRefMatch) { processed += '<span class="dtv-ps-ref">' + protoRefMatch[1] + "</span>"; remaining = remaining.substring(protoRefMatch[1].length); continue; }
-        var boolMatch = remaining.match(/^(true|false|null)(?![\w$])/);
-        if (boolMatch) { processed += '<span class="dtv-ps-atom">' + boolMatch[1] + "</span>"; remaining = remaining.substring(boolMatch[1].length); continue; }
-        var otherMatch = remaining.match(/^([A-Za-z_][\w]*)/);
-        if (otherMatch) { processed += otherMatch[1]; remaining = remaining.substring(otherMatch[1].length); continue; }
-        processed += remaining.charAt(0);
-        remaining = remaining.substring(1);
-      }
-      result.push(processed);
-    }
-    return result.join("\n");
   }
 
   function loadFileSourceItems(context) {
@@ -217,12 +177,18 @@
           for (var e = 0; e < selected.evidence.length; e++) evSec.appendChild(element("p", "dtv-evidence-item", selected.evidence[e]));
           card.appendChild(evSec);
         }
-        var rawSec = element("div", "dtv-raw-section");
-        rawSec.appendChild(element("h4", "dtv-section-heading", "Raw Prototype"));
-        var rawPre = element("pre", "dtv-raw");
-        rawPre.innerHTML = formatProtoScript(selected.rawPrototype || "Raw source unavailable.");
-        rawSec.appendChild(rawPre);
-        card.appendChild(rawSec);
+       var rawSec = element("div", "dtv-raw-section");
+       rawSec.appendChild(element("h4", "dtv-section-heading", "Raw Prototype"));
+       var rawPre = element("pre", "dtv-raw");
+       var rawCode = element("code");
+       rawCode.className = "language-pts";
+       rawCode.textContent = selected.rawPrototype || "Raw source unavailable.";
+       rawPre.appendChild(rawCode);
+       rawSec.appendChild(rawPre);
+       if (window.BuffalyMarkdownCodeBlocks && typeof window.BuffalyMarkdownCodeBlocks.renderHighlightedMarkdownCodeBlocks === "function") {
+         window.BuffalyMarkdownCodeBlocks.renderHighlightedMarkdownCodeBlocks(rawSec);
+       }
+       card.appendChild(rawSec);
         if (selected.sourceRelativePath) card.appendChild(element("small", "dtv-source-path", selected.sourceRelativePath));
         detailsCol.appendChild(card);
       }
