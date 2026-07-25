@@ -8113,8 +8113,8 @@
       "PackageId": "FacebookAds",
       "PackageType": "WebModule",
       "Title": "Facebook Ads",
-      "Description": "Buffaly Web Module package for Facebook Ads.",
-      "Version": "0.1.8",
+      "Description": "Read-only Facebook Ads reporting web module.",
+      "Version": "0.1.9",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/FacebookAds",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/FacebookAds",
@@ -8125,7 +8125,7 @@
       "Files": [
         {
           "Path": "Buffaly.Facebook.dll",
-          "Sha256": "06c513dcdd6588def4e979822d01e6af2c49c8b3004633af1d20282f324d401f"
+          "Sha256": "395fb36a8411d7fb78c218f0703b9b7e2664d13988082a789f4f6aab51edb2e9"
         },
         {
           "Path": "Buffaly.FacebookAds.deps.json",
@@ -8133,35 +8133,7 @@
         },
         {
           "Path": "Buffaly.FacebookAds.dll",
-          "Sha256": "c95b5a375e3f3f6a54b53ab8c3b4e22d0834c2d22995ede5c5e49fd1420ec0e7"
-        },
-        {
-          "Path": "Imports.pts",
-          "Sha256": "ebbde37ad86f8f6e39a20d629cf95b7e8e5f2338aaff44b7d22d86aad8d76cc1"
-        },
-        {
-          "Path": "Skills/FacebookAdsWeb/FacebookAdsWebActions.pts",
-          "Sha256": "9eb0555844ed182bb0ab6c495344bb9077f3ca7d90b3cc20ec47447ee6bd8bfa"
-        },
-        {
-          "Path": "Skills/FacebookAdsWeb/index.pts",
-          "Sha256": "2d7a4d70e92c8fd5db52647f6291bdccb4d55bc728dd62c4840426734a4e7588"
-        },
-        {
-          "Path": "Skills/FacebookAdsWeb/interactive-sites/facebook-ads-module/site.css",
-          "Sha256": "f669123042147ba0024bec7e2d65427f4e130c644688dc4493101f5d8d2b8fc1"
-        },
-        {
-          "Path": "Skills/FacebookAdsWeb/interactive-sites/facebook-ads-module/site.html",
-          "Sha256": "2bf6dca4edd955a5ef328c54249f5896c1a9843fa6df4e23f6ae9c93ef7cc7bc"
-        },
-        {
-          "Path": "Skills/FacebookAdsWeb/interactive-sites/facebook-ads-module/site.js",
-          "Sha256": "58c0072cc7bfb6b5f20e5dee20c754f73729c3137b31974f645506fc7d4a932a"
-        },
-        {
-          "Path": "Skills/FacebookAdsWeb/skill-manifest.json",
-          "Sha256": "0ac7aa92d9dbd38598b7ad067917d88e642477dc0bf718185445fe1335856517"
+          "Sha256": "c956beca6acbb2f182732a9fbf49eeeb4e8b58019f8c7236e2010aa24ca6e16f"
         },
         {
           "Path": "web-module.json",
@@ -8205,15 +8177,10 @@
         },
         {
           "Path": "wwwroot/js/facebook-ads.js",
-          "Sha256": "40ee485bc63ad1008313511aaecd201043afcec78e4ca66201c587d83ee82177"
+          "Sha256": "38f1871de95006f702918ada386abe327645eb46bf47fc41120885a46dc81fe9"
         }
       ],
-      "ProjectArtifacts": [
-        {
-          "ProjectName": "Skills/FacebookAdsWeb",
-          "SourcePath": "Skills/FacebookAdsWeb/"
-        }
-      ],
+      "ProjectArtifacts": [],
       "Dependencies": [],
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
