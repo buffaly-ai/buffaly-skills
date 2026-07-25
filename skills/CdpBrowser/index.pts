@@ -83,9 +83,20 @@ function ToCdpGrantFilePath() : string
 function ToCdpCheckAdvancedApproved() : bool
 {
 	string grantPath = ToCdpGrantFilePath();
-	string script = "$f='" + grantPath.Replace("'", "''") + "'; if(Test-Path -LiteralPath $f){ try { $g=Get-Content -LiteralPath $f -Raw | ConvertFrom-Json; $now=[DateTimeOffset]::UtcNow.ToUnixTimeSeconds(); if($g.expiresAt -gt $now -and $g.sessionDir -eq '" + _opsAgent.GetCurrentSessionDirectory().Replace("'", "''") + "'){ 'True' } else { 'False' } } catch { 'False' } } else { 'False' }";
-	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 5, _opsAgent, "", "CDP Advanced Check");
-	return ToCdpCleanOutput(result).Contains("True");
+	if (!File.Exists(grantPath))
+		return false;
+	try
+	{
+		System.Text.Json.JsonDocument grant = System.Text.Json.JsonDocument.Parse(File.ReadAllText(grantPath));
+		long expiresAt = grant.RootElement.GetProperty("expiresAt").GetInt64();
+		string sessionDir = grant.RootElement.GetProperty("sessionDir").GetString();
+		long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+		return expiresAt > now && sessionDir == _opsAgent.GetCurrentSessionDirectory();
+	}
+	catch
+	{
+		return false;
+	}
 }
 
 function ToCdpRequireApproval() : string
