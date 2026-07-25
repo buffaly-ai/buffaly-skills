@@ -4,6 +4,8 @@ reference Buffaly.GoogleAds Buffaly.GoogleAds;
 import Buffaly.GoogleAds Buffaly.GoogleAds.GoogleAdsWebService GoogleAdsWebService;
 import Buffaly.GoogleAds Buffaly.GoogleAds.GoogleAdsInteractiveSiteConfiguration GoogleAdsInteractiveSiteConfiguration;
 import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.IAgentRuntimeHost IAgentRuntimeHost;
+reference System.Private.CoreLib System.Private.CoreLib;
+import System.Private.CoreLib System.String String;
 
 prototype GoogleAdsWebSkillAction : OpsAction
 {

@@ -9,3 +9,7 @@
 ## Serialize Browser Configuration Safely (2026-07-25)
 - Replaced executable JavaScript string concatenation with the typed `GoogleAdsInteractiveSiteConfiguration.BuildJavaScript` serializer.
 - Public tool arguments now remain JSON data; optional account IDs are constrained to digits by the typed builder.
+
+## Avoid ProtoScript AddOperator in Launch Initializer (2026-07-25)
+- Compose the serialized configuration and static site JavaScript with `System.Private.CoreLib`'s `System.String.Concat(config, js)` before constructing `InteractiveSiteLaunchRequestContract`.
+- Assign the precomputed `javascript` value in the member initializer; do not replace this with `config + js`, because that invokes ProtoScript `AddOperator` conversion and has failed at runtime as not convertible to string.
