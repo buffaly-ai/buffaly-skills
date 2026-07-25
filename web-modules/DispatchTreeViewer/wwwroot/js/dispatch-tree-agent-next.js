@@ -38,8 +38,48 @@
     styleLoaded = true;
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.2.0";
+    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.3.0";
     document.head.appendChild(link);
+  }
+
+  function escapeHtml(text) {
+    var div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  function formatProtoScript(raw) {
+    if (!raw) return "";
+    var escaped = escapeHtml(raw);
+    var lines = escaped.split("\n");
+    var result = [];
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i];
+      var processed = "";
+      var remaining = line;
+      while (remaining.length > 0) {
+        var commentMatch = remaining.match(/^(\/\/.*)/);
+        if (commentMatch) { processed += '<span class="dtv-ps-comment">' + commentMatch[1] + "</span>"; remaining = ""; break; }
+        var stringMatch = remaining.match(/^("(?:[^"\\]|\\.)*")/);
+        if (stringMatch) { processed += '<span class="dtv-ps-string">' + stringMatch[1] + "</span>"; remaining = remaining.substring(stringMatch[1].length); continue; }
+        var annotationMatch = remaining.match(/^(\[Semantic(?:Entity|Tag|Program)[^\]]*\])/);
+        if (annotationMatch) { processed += '<span class="dtv-ps-annotation">' + annotationMatch[1] + "</span>"; remaining = remaining.substring(annotationMatch[1].length); continue; }
+        var attrMatch = remaining.match(/^(@[A-Za-z_][\w.]*)/);
+        if (attrMatch) { processed += '<span class="dtv-ps-annotation">' + attrMatch[1] + "</span>"; remaining = remaining.substring(attrMatch[1].length); continue; }
+        var keywordMatch = remaining.match(/^(include|prototype|reference|import|function|init|using|namespace|partial|extern|return|if|else|for|foreach|while|switch|case|default|break|continue|throw|try|catch|finally)(?![\w$])/);
+        if (keywordMatch) { processed += '<span class="dtv-ps-keyword">' + keywordMatch[1] + "</span>"; remaining = remaining.substring(keywordMatch[1].length); continue; }
+        var protoRefMatch = remaining.match(/^([A-Za-z_][\w]*#[A-Za-z_][\w]*)/);
+        if (protoRefMatch) { processed += '<span class="dtv-ps-ref">' + protoRefMatch[1] + "</span>"; remaining = remaining.substring(protoRefMatch[1].length); continue; }
+        var boolMatch = remaining.match(/^(true|false|null)(?![\w$])/);
+        if (boolMatch) { processed += '<span class="dtv-ps-atom">' + boolMatch[1] + "</span>"; remaining = remaining.substring(boolMatch[1].length); continue; }
+        var otherMatch = remaining.match(/^([A-Za-z_][\w]*)/);
+        if (otherMatch) { processed += otherMatch[1]; remaining = remaining.substring(otherMatch[1].length); continue; }
+        processed += remaining.charAt(0);
+        remaining = remaining.substring(1);
+      }
+      result.push(processed);
+    }
+    return result.join("\n");
   }
 
   function loadFileSourceItems(context) {
@@ -81,6 +121,9 @@
     panel.setAttribute("role", "dialog");
     panel.setAttribute("aria-label", provider.displayName);
     header.appendChild(element("h2", "dtv-title", provider.displayName));
+    var headerIcon = element("span", "dtv-title-icon");
+    headerIcon.innerHTML = "&#128218;";
+    header.insertBefore(headerIcon, header.firstChild);
 
     var headerActions = element("div", "dtv-header-actions");
     var refreshBtn = element("button", "dtv-btn", "Refresh");
@@ -114,8 +157,8 @@
 
     function renderBody() {
       body.replaceChildren();
-      var tree = element("div", "dtv-tree");
-      var details = element("div", "dtv-details");
+      var treeCol = element("div", "dtv-tree");
+      var detailsCol = element("div", "dtv-details");
       var byParent = new Map();
       provider.nodes.forEach(function (node) {
         var key = node.parentNodeId || "";
@@ -129,31 +172,61 @@
         return !filterText || text.includes(filterText);
       }
       function hasMatch(node) { return matches(node) || (byParent.get(node.nodeId) || []).some(hasMatch); }
-      function addChildren(parentId, container, depth) {
-        (byParent.get(parentId) || []).sort(function (a, b) { return a.label.localeCompare(b.label); }).forEach(function (node) {
-          if (!hasMatch(node)) return;
+      function buildTree(parentId, depth) {
+        var children = (byParent.get(parentId) || []).sort(function (a, b) { return a.label.localeCompare(b.label); });
+        if (children.length === 0) return null;
+        var ul = element("ul", "dtv-branch" + (depth === 0 ? " dtv-branch-root" : ""));
+        for (var i = 0; i < children.length; i++) {
+          var node = children[i];
+          if (!hasMatch(node)) continue;
+          var li = element("li", "dtv-leaf");
           var row = element("button", "dtv-node" + (node.nodeId === selectedNodeId ? " is-selected" : ""));
           row.type = "button";
-          row.style.paddingLeft = (10 + depth * 18) + "px";
+          if ((byParent.get(node.nodeId) || []).length > 0) row.classList.add("dtv-node-branch");
           row.textContent = node.label + (node.destination && node.destination.value ? " \u2192 " + node.destination.value : "");
           row.onclick = function () { selectedNodeId = node.nodeId; renderBody(); };
-          container.appendChild(row);
-          addChildren(node.nodeId, container, depth + 1);
-        });
+          li.appendChild(row);
+          var subTree = buildTree(node.nodeId, depth + 1);
+          if (subTree) li.appendChild(subTree);
+          ul.appendChild(li);
+        }
+        return ul;
       }
-      addChildren("", tree, 0);
+      var treeRoot = buildTree("", 0);
+      if (treeRoot) treeCol.appendChild(treeRoot);
       var selected = provider.nodes.find(function (node) { return node.nodeId === selectedNodeId; });
       if (selected) {
-        details.append(element("h3", "dtv-node-label", selected.label), element("code", "dtv-prototype", selected.prototypeName));
-        if (selected.contextSummary) details.appendChild(element("p", "dtv-context", selected.contextSummary));
-        if (selected.destination && selected.destination.value) details.appendChild(element("p", "dtv-destination", "Destination (" + selected.destination.propertyName + "): " + selected.destination.value));
-        var tags = element("div", "dtv-tags");
-        (selected.semanticTerms || []).forEach(function (term) { tags.appendChild(element("span", "dtv-tag", term.category + ": " + term.text)); });
-        details.appendChild(tags);
-        details.append(element("h4", "dtv-raw-heading", "Raw prototype"), element("pre", "dtv-raw", selected.rawPrototype || "Raw source unavailable."));
-        if (selected.sourceRelativePath) details.appendChild(element("small", "dtv-source-path", selected.sourceRelativePath));
+        var card = element("div", "dtv-detail-card");
+        card.appendChild(element("h3", "dtv-node-label", selected.label));
+        card.appendChild(element("code", "dtv-prototype", selected.prototypeName));
+        if (selected.contextSummary) card.appendChild(element("p", "dtv-context", selected.contextSummary));
+        if (selected.destination && selected.destination.value) {
+          var dest = element("div", "dtv-destination-row");
+          dest.appendChild(element("span", "dtv-destination-label", "Destination (" + selected.destination.propertyName + ")"));
+          dest.appendChild(element("span", "dtv-destination-value", selected.destination.value));
+          card.appendChild(dest);
+        }
+        if (selected.semanticTerms && selected.semanticTerms.length > 0) {
+          var tags = element("div", "dtv-tags");
+          for (var t = 0; t < selected.semanticTerms.length; t++) tags.appendChild(element("span", "dtv-tag", selected.semanticTerms[t].category + ": " + selected.semanticTerms[t].text));
+          card.appendChild(tags);
+        }
+        if (selected.evidence && selected.evidence.length > 0) {
+          var evSec = element("div", "dtv-evidence-section");
+          evSec.appendChild(element("h4", "dtv-section-heading", "Evidence"));
+          for (var e = 0; e < selected.evidence.length; e++) evSec.appendChild(element("p", "dtv-evidence-item", selected.evidence[e]));
+          card.appendChild(evSec);
+        }
+        var rawSec = element("div", "dtv-raw-section");
+        rawSec.appendChild(element("h4", "dtv-section-heading", "Raw Prototype"));
+        var rawPre = element("pre", "dtv-raw");
+        rawPre.innerHTML = formatProtoScript(selected.rawPrototype || "Raw source unavailable.");
+        rawSec.appendChild(rawPre);
+        card.appendChild(rawSec);
+        if (selected.sourceRelativePath) card.appendChild(element("small", "dtv-source-path", selected.sourceRelativePath));
+        detailsCol.appendChild(card);
       }
-      body.append(tree, details);
+      body.append(treeCol, detailsCol);
     }
     renderBody();
   }
@@ -186,12 +259,22 @@
     if (!host) return;
     var sections = host.querySelectorAll('section[data-file-source-id="dispatch-tree-viewer"]');
     for (var i = 1; i < sections.length; i++) sections[i].remove();
+    var first = sections[0];
+    if (first) {
+      var heading = first.querySelector("h3");
+      if (heading && !heading.querySelector(".dtv-section-icon")) {
+        var icon = document.createElement("span");
+        icon.className = "dtv-section-icon";
+        icon.innerHTML = "&#128218;";
+        heading.insertBefore(icon, heading.firstChild);
+      }
+    }
   }
 
   var dedupObserver = new MutationObserver(function () { deduplicateSections(); });
   function startDedupObserver() {
     var host = document.querySelector('[data-buffaly-next-file-sources="true"]');
-    if (host) dedupObserver.observe(host, { childList: true });
+    if (host) dedupObserver.observe(host, { childList: true, subtree: true });
   }
 
   api.registerFileSource({
