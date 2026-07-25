@@ -128,7 +128,7 @@ prototype ToGetDispatchChildren : DispatchTreeSkillAction, DispatchContext
 [SemanticProgram.InfinitivePhrase("to place a semantic dispatch match in its tree branch")]
 prototype ToGetDispatchPath : DispatchTreeSkillAction, DispatchContext
 {
-	Description = @"prototypeName - exact semantic candidate beneath DispatchMemoryRoot. Return its compact root-to-node path with direct parent names and assigned context summaries. Use after semantic search to locate the candidate's branch and compare siblings through ToGetDispatchChildren. It never returns examples or destination values and never selects or dispatches a route.";
+	Description = @"prototypeName - exact semantic candidate beneath DispatchMemoryRoot. Return its compact root-to-node path with direct parent names and assigned context summaries. Use after semantic search only to establish the candidate's lineage. Verify a useful leaf directly; for a useful internal anchor, traverse downward through ToGetDispatchChildren. Do not automatically move upward to compare the anchor's parent or siblings. It never returns examples or destination values and never selects or dispatches a route.";
 
 	function Execute(string prototypeName) : List<DispatchNodeSummary>
 	{
