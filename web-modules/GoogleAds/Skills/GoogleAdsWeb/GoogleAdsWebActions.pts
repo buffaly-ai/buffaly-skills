@@ -102,6 +102,7 @@ prototype GoogleAdsInteractiveSiteLauncher
 		string css = File.ReadAllText(Path.Combine(siteRoot, "site.css"));
 		string js = File.ReadAllText(Path.Combine(siteRoot, "site.js"));
 		string config = GoogleAdsInteractiveSiteConfiguration.BuildJavaScript(screen, title, customerId, loginCustomerId, dateRangePreset);
+		string javascript = String.Concat(config, js);
 		InteractiveSiteLaunchResultContract result = opsAgent.LaunchInteractiveSite(new InteractiveSiteLaunchRequestContract
 		{
 			Title = title,
@@ -109,7 +110,7 @@ prototype GoogleAdsInteractiveSiteLauncher
 			ToolInvocationId = opsAgent.GetCurrentToolInvocationIdOrEmpty(),
 			Html = html,
 			Css = css,
-			JavaScript = config + js,
+			JavaScript = javascript,
 			TimeoutSeconds = timeoutSeconds
 		});
 		return "Google Ads " + screen + " interactive site exited with status: " + result.Status + "; value: " + result.Value;
