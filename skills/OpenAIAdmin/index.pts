@@ -1,5 +1,9 @@
 reference Buffaly.OpenAiAdmin.WebModule;
 import Buffaly.OpenAiAdmin.WebModule Buffaly.OpenAiAdmin.WebModule.OpenAiAdminAgentTools OpenAiAdminAgentTools;
+import Buffaly.OpenAiAdmin.WebModule Buffaly.OpenAiAdmin.WebModule.OpenAiAdminInteractiveSiteConfiguration OpenAiAdminInteractiveSiteConfiguration;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.WebModuleComponentLaunchRequestContract WebModuleComponentLaunchRequestContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.InteractiveSiteLaunchResultContract InteractiveSiteLaunchResultContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.IAgentRuntimeHost IAgentRuntimeHost;
 
 [SemanticEntity("OpenAI administration skill")]
 prototype OpenAIAdminSkill : SkillEntity
