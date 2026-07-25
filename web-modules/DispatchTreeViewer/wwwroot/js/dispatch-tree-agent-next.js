@@ -3,6 +3,24 @@
   const api = window.BuffalyAgentNextExtensions;
   if (!api) return;
   let styleLoaded = false;
+  const treeRequests = new Map();
+
+  function readTree(sessionKey, forceRefresh) {
+    if (forceRefresh) treeRequests.delete(sessionKey);
+    if (!treeRequests.has(sessionKey)) {
+      const request = fetch("/api/web-modules/DispatchTreeViewer/tree?sessionKey=" + encodeURIComponent(sessionKey))
+        .then(function (result) {
+          if (!result.ok) throw new Error("Routing tree request failed (" + result.status + ").");
+          return result.json();
+        })
+        .catch(function (error) {
+          treeRequests.delete(sessionKey);
+          throw error;
+        });
+      treeRequests.set(sessionKey, request);
+    }
+    return treeRequests.get(sessionKey);
+  }
 
   function element(tag, className, text) {
     const node = document.createElement(tag);
@@ -22,7 +40,6 @@
 
   function mount(context) {
     ensureStyle();
-    const abortController = new AbortController();
     const host = element("span", "dtv-host");
     let disposed = false;
     let response = null;
@@ -30,12 +47,8 @@
     let filterText = "";
     context.slotElement.appendChild(host);
 
-    function load(reopen) {
-      return fetch("/api/web-modules/DispatchTreeViewer/tree?sessionKey=" + encodeURIComponent(context.sessionKey), { signal: abortController.signal })
-        .then(function (result) {
-          if (!result.ok) throw new Error("Routing tree request failed (" + result.status + ").");
-          return result.json();
-        })
+    function load(reopen, forceRefresh) {
+      return readTree(context.sessionKey, forceRefresh)
         .then(function (value) {
           if (disposed || context.sessionKey !== value.sessionKey) return;
           if (!value.providers || value.providers.length === 0) {
@@ -47,9 +60,7 @@
           renderChip();
           if (reopen) openViewer();
         })
-        .catch(function (error) {
-          if (error.name !== "AbortError") context.diagnostics.report({ Type: "tree-load-failed", Message: error.message });
-        });
+        .catch(function (error) { context.diagnostics.report({ Type: "tree-load-failed", Message: error.message }); });
     }
 
     function renderChip() {
@@ -73,7 +84,7 @@
       panel.setAttribute("aria-label", provider.displayName);
       header.appendChild(element("h2", "", provider.displayName));
       const refresh = element("button", "", "Refresh");
-      refresh.onclick = function () { shade.remove(); load(true); };
+      refresh.onclick = function () { shade.remove(); load(true, true); };
       const close = element("button", "", "Close");
       close.onclick = function () { shade.remove(); };
       header.append(refresh, close);
@@ -132,7 +143,7 @@
     }
 
     load(false);
-    return { dispose: function () { disposed = true; abortController.abort(); host.remove(); } };
+    return { dispose: function () { disposed = true; host.remove(); } };
   }
 
   api.register({ id: "dispatch-tree-viewer", slot: "sessionHeader.context", mount: mount });
