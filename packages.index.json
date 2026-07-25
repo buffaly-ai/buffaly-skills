@@ -1308,7 +1308,7 @@
       "PackageType": "ProviderModule",
       "Title": "Ollama Provider",
       "Description": "Buffaly Provider Module package for Ollama Provider.",
-      "Version": "0.1.3",
+      "Version": "0.1.4",
       "PackageKind": "BuffalyProviderModule",
       "SourcePath": "provider-modules/Buffaly.Provider.Ollama",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/provider-modules/Buffaly.Provider.Ollama",
@@ -1327,27 +1327,27 @@
         },
         {
           "Path": "BasicUtilities.dll",
-          "Sha256": "4938647f139a04550321bbf8b9a31315583c6b57eebac906ffd0c1fc48c57c17"
+          "Sha256": "31132c338a68e1bacda9a60d52d7804191312c66d41b07f03f407ae4ba31f240"
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "71f4af794929eb4b71ce77d2676b4ac2ab2d1fbe9856a02a40a386e939c57834"
+          "Sha256": "63ff229f1cd08a01a374982821ad5c5d094a025c94f2aacbb3410abbd90ebbd8"
         },
         {
           "Path": "Buffaly.Agent.Tools.Secrets.dll",
-          "Sha256": "7b68b7e2dd46335e53512d2f0138a69920aa8a23656bd5d834c1c2f62d98bb8f"
+          "Sha256": "f096b3c13870bdf78c8e7cc5508c78152d848f8e99f439a4269c8d2444e5b7b8"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "efd821fac26a59f968662d165da64a992df2599df9a8efac82b3a016c51d1102"
+          "Sha256": "ae54bc625226f459250ca1c1dfcd84ba68e8f8dba379db6268bac42345dc5504"
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "971dfc1c362e96d9698e6acba906b3bd6e126e6646c09addc8a3dee26361c1ac"
+          "Sha256": "dba4d872c6985e10302e8e2957a4be9ce1f1ad95b1741af508558f8d41d1b51d"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "bac666dbdf3a1630367d52d4e7afe421d1aaa4aee6ad5162b6fc15c6f116c247"
+          "Sha256": "5002d78d6d15cdb5e45747600e0322cc624bfce634e423439cd0937d0fe0b16f"
         },
         {
           "Path": "Buffaly.Provider.Ollama.deps.json",
@@ -1355,7 +1355,7 @@
         },
         {
           "Path": "Buffaly.Provider.Ollama.dll",
-          "Sha256": "4746d6f40bec63f24d71889527fe3b2defdb228fc8248dde1aa18940be83fd4e"
+          "Sha256": "1a2781af27b65e2df139f6ebe0c1c04440fd2d5567c8545f244e86715e979077"
         },
         {
           "Path": "Buffaly.ProviderContracts.dll",
@@ -1363,7 +1363,7 @@
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "298d03b91f726e8ef4089458eaf259e2cfbc3994faa7bc04ef480ae6c08544b4"
+          "Sha256": "219f2c90bfb682759d96411437526dd3b64b8dba1921bcab170727e4ee9b4c1d"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -1395,7 +1395,7 @@
         },
         {
           "Path": "kScript.dll",
-          "Sha256": "b1a8199ab2cffdc3c89a5e34d5b7112951e8747763f5846b35417b04c54043c1"
+          "Sha256": "d025baf818a71f75bed0f9d3c8a53f8d7a3448f1aa931544301d03b33b9cee1e"
         },
         {
           "Path": "Microsoft.Bcl.AsyncInterfaces.dll",
@@ -1483,15 +1483,15 @@
         },
         {
           "Path": "RooTrax.Cache.dll",
-          "Sha256": "de5b3366cdbd35680a0510b6cb602677e4cfbf760db5de6cf047c3df45152470"
+          "Sha256": "d8c9645b5a7a85d9166e284ea3bb6e8475d1f452d4b3afd42a017b1c1acb8fb7"
         },
         {
           "Path": "RooTrax.Common.DB.dll",
-          "Sha256": "0728b519683525fb96a115f09578e16d310bcfb37a7bcd70af35422d64a93054"
+          "Sha256": "31ac0d587221294fae0d015715cd3ef490fcdb6c2f3b595140f045047fc04ebd"
         },
         {
           "Path": "RooTrax.Common.dll",
-          "Sha256": "afa57703c8593550dfe165213e8712fd0647da29a4529e04666f5b12ec7c1d93"
+          "Sha256": "45ccca7381c1dad17352e95a21bc7ec37e73f7e93a0364012976ca9db5cd59dd"
         },
         {
           "Path": "runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll",
@@ -1859,7 +1859,7 @@
         },
         {
           "Path": "Scripts/MarkProcessAsRunningSp.sql",
-          "Sha256": "8debf840c42e598220618ff150103e61190cda9c70682b7236bca8079da8c78a"
+          "Sha256": "0bd164ecfe7fdce4a97b43b74246dd9fc2ca80c9d6d257f786829652670f7ffa"
         },
         {
           "Path": "Scripts/MarkProcessAsTimedOutSp.sql",
@@ -2090,6 +2090,10 @@
           "Sha256": "3749a5c1649c60e4fc7c2643575aebb2607c9a344c3d8771552ea89766fafaf7"
         },
         {
+          "Path": "Scripts/UpdateToolResultPairCompactionEpochKeyAtomicSp.sql",
+          "Sha256": "8233f57b8dc6ddce04e3ac9c1b330963837d0400d063d0a102736e94e167269f"
+        },
+        {
           "Path": "System.ClientModel.dll",
           "Sha256": "ce44a4fae4c4787c12475700e19a365fc2f388ae5d0f6182557ce5ea175be7f6"
         },
@@ -2123,7 +2127,7 @@
         },
         {
           "Path": "WebAppUtilities.dll",
-          "Sha256": "b04993ec40d66d8f11ffc85f1d1c49ea52be9801406e48765e1e130fb881f5b4"
+          "Sha256": "335967df11f698a811b0b25cd3564a4fd11db2585ea25603ea96d826b0b26050"
         },
         {
           "Path": "zh-Hans/Microsoft.Data.SqlClient.resources.dll",
