@@ -1,4 +1,9 @@
-# Browser Skill ProtoScript Change History
+# Browser Workbench Skill ProtoScript Change History
+
+## Rename web-module identity to avoid BrowserSkill collision (2026-07-25)
+- Renamed the embedded web-module skill identity from `BrowserSkill` / `BrowserSkillAction` to `BrowserWorkbenchSkill` / `BrowserWorkbenchSkillAction`.
+- This package continues to represent the disabled Browser Workbench/web-module runner compatibility surface.
+- The standalone `skills/BrowserSession` package owns the canonical default-browser semantic identity.
 
 ## Remove autonomous workbench action (2026-07-18)
 - Removed `ToRunBrowserModuleTask` from the source-controlled Browser skill package.

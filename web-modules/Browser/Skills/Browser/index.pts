@@ -2,16 +2,16 @@ reference Buffaly.Browser.WebHarness Buffaly.Browser.WebHarness;
 import BasicUtilities BasicUtilities.StringUtil StringUtil;
 import Buffaly.Browser.WebHarness Buffaly.Browser.WebHarness.BrowserWorkbenchServiceHost BrowserWorkbenchServiceHost;
 
-prototype BrowserSkillAction : OpsAction
+prototype BrowserWorkbenchSkillAction : OpsAction
 {
 	Description = @"Base action type for Browser web-module tools.";
 }
 
 [SemanticEntity("browser web module skill")]
-prototype BrowserSkill : SkillEntity
+prototype BrowserWorkbenchSkill : SkillEntity
 {
 	Description = "Run browser LLM tasks through the installed Browser web module and runner.";
-	ActionRoot = BrowserSkillAction;
+	ActionRoot = BrowserWorkbenchSkillAction;
 }
 
 prototype BrowserWebModuleService : Service
