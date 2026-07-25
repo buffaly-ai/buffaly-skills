@@ -21,6 +21,20 @@ prototype ToListGoogleAdsCampaigns : GoogleAdsWebSkillAction
 	function Execute(string customerId, string loginCustomerId) : string { return GoogleAdsWebService.ListCampaignsJson(customerId, loginCustomerId); }
 }
 
+[SemanticProgram.InfinitivePhrase("to list google ads ad groups")]
+prototype ToListGoogleAdsAdGroups : GoogleAdsWebSkillAction
+{
+	Description = @"List Google Ads ad groups with stable IDs and campaign parent IDs. Resolve an adGroupId here before opening ToViewGoogleAdsAdGroupInteractiveSite. Returns JSON.";
+	function Execute(string customerId, string loginCustomerId) : string { return GoogleAdsWebService.ListAdGroupsJson(customerId, loginCustomerId); }
+}
+
+[SemanticProgram.InfinitivePhrase("to list google ads ads")]
+prototype ToListGoogleAdsAds : GoogleAdsWebSkillAction
+{
+	Description = @"List Google ads with stable ad, ad-group, and campaign IDs plus creative and performance fields. Resolve an adId here before opening ToViewGoogleAdInteractiveSite. Returns JSON.";
+	function Execute(string customerId, string loginCustomerId, string dateRangePreset) : string { return GoogleAdsWebService.RunAdCreativeReportJson(customerId, loginCustomerId, dateRangePreset); }
+}
+
 [SemanticProgram.InfinitivePhrase("to run google ads campaign report")]
 prototype ToRunGoogleAdsCampaignReport : GoogleAdsWebSkillAction
 {
@@ -117,6 +131,22 @@ prototype GoogleAdsInteractiveSiteLauncher
 	}
 }
 
+prototype GoogleAdsEntityInteractiveSiteLauncher
+{
+	function Execute(IAgentRuntimeHost opsAgent, string screen, string title, string customerId, string loginCustomerId, string dateRangePreset, string entityId, int timeoutSeconds) : string
+	{
+		if (timeoutSeconds <= 0) { timeoutSeconds = 120; }
+		string siteRoot = Path.Combine(opsAgent.GetCurrentProjectDirectory(), "Skills", "GoogleAdsWeb", "interactive-sites", "google-ads-module");
+		string html = File.ReadAllText(Path.Combine(siteRoot, "site.html"));
+		string css = File.ReadAllText(Path.Combine(siteRoot, "site.css"));
+		string js = File.ReadAllText(Path.Combine(siteRoot, "site.js"));
+		string config = GoogleAdsInteractiveSiteConfiguration.BuildEntityJavaScript(screen, title, customerId, loginCustomerId, dateRangePreset, entityId);
+		string javascript = String.Concat(config, js);
+		InteractiveSiteLaunchResultContract result = opsAgent.LaunchInteractiveSite(new InteractiveSiteLaunchRequestContract { Title = title, MessageKey = opsAgent.GetCurrentToolMessageKeyOrEmpty(), ToolInvocationId = opsAgent.GetCurrentToolInvocationIdOrEmpty(), Html = html, Css = css, JavaScript = javascript, TimeoutSeconds = timeoutSeconds });
+		return "Google Ads " + screen + " interactive site exited with status: " + result.Status + "; value: " + result.Value;
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to view google ads performance in an interactive site")]
 [SemanticProgram.InfinitivePhrase("to show google ads performance")]
 prototype ToViewGoogleAdsPerformanceInteractiveSite : GoogleAdsWebSkillAction
@@ -130,6 +160,20 @@ prototype ToViewGoogleAdsCampaignsInteractiveSite : GoogleAdsWebSkillAction
 {
 	Description = @"Launch a read-only Google Ads campaign table popup.";
 	function Execute(string customerId, string loginCustomerId, string dateRangePreset, int timeoutSeconds) : string { return GoogleAdsInteractiveSiteLauncher.Execute(_opsAgent, "campaigns", "Google Ads Campaigns", customerId, loginCustomerId, dateRangePreset, "", timeoutSeconds); }
+}
+
+[SemanticProgram.InfinitivePhrase("to show a specific google ads campaign")]
+prototype ToViewGoogleAdsCampaignInteractiveSite : GoogleAdsWebSkillAction
+{
+	Description = @"Open one read-only Google Ads campaign. Resolve campaignId first with ToListGoogleAdsCampaigns.";
+	function Execute(string customerId, string loginCustomerId, string campaignId, string dateRangePreset, int timeoutSeconds) : string { return GoogleAdsEntityInteractiveSiteLauncher.Execute(_opsAgent, "campaign", "Google Ads Campaign " + campaignId, customerId, loginCustomerId, dateRangePreset, campaignId, timeoutSeconds); }
+}
+
+[SemanticProgram.InfinitivePhrase("to show a specific google ads ad group")]
+prototype ToViewGoogleAdsAdGroupInteractiveSite : GoogleAdsWebSkillAction
+{
+	Description = @"Open one read-only Google Ads ad group. Resolve adGroupId first with ToListGoogleAdsAdGroups.";
+	function Execute(string customerId, string loginCustomerId, string adGroupId, string dateRangePreset, int timeoutSeconds) : string { return GoogleAdsEntityInteractiveSiteLauncher.Execute(_opsAgent, "ad-group", "Google Ads Ad Group " + adGroupId, customerId, loginCustomerId, dateRangePreset, adGroupId, timeoutSeconds); }
 }
 
 [SemanticProgram.InfinitivePhrase("to view google ads search terms in an interactive site")]

@@ -4,7 +4,9 @@ const SCREEN_ROUTES = Object.freeze({
   campaigns: "campaigns",
   "search-terms": "overview",
   creatives: "ads",
-  creative: "ads"
+  creative: "ads",
+  campaign: "campaigns",
+  "ad-group": "ads"
 });
 
 class GoogleAdsModule extends HTMLElement {
@@ -20,6 +22,9 @@ class GoogleAdsModule extends HTMLElement {
     if (this._started) throw new Error("Google Ads module cannot be reconfigured after start().");
     const screen = configuration && configuration.screen;
     if (!Object.prototype.hasOwnProperty.call(SCREEN_ROUTES, screen)) throw new Error("Unsupported Google Ads screen: " + screen);
+    const state = configuration.state || {};
+    const required = screen === "creative" ? "adId" : screen === "campaign" ? "campaignId" : screen === "ad-group" ? "adGroupId" : "";
+    if (required && (!state[required] || typeof state[required] !== "string")) throw new Error(required + " is required for Google Ads " + screen);
     this._configuration = { ...configuration, screen };
   }
 
@@ -72,6 +77,8 @@ class GoogleAdsModule extends HTMLElement {
     if (state.loginCustomerId) parameters.set("loginCustomerId", state.loginCustomerId);
     if (state.dateRangePreset) parameters.set("dateRangePreset", state.dateRangePreset);
     if (state.adId) parameters.set("adId", state.adId);
+    if (state.campaignId) parameters.set("campaignId", state.campaignId);
+    if (state.adGroupId) parameters.set("adGroupId", state.adGroupId);
     this._frame.src = "/web-modules/GoogleAds/workspace.html?" + parameters.toString() + "#" + route;
   }
 

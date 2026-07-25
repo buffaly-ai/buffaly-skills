@@ -17,3 +17,8 @@
 ## Add Specific-Ad Route (2026-07-25)
 - Added `ToViewGoogleAdInteractiveSite`, which requires a digits-only `adId` and launches the `creative` component screen.
 - The route reuses the same web-module component and workspace page but passes `adId` as bounded state so only the selected creative is rendered.
+
+## Add Agent Inspect-Resolve-Display Routes (2026-07-25)
+- Added text/JSON inventory tools for ad groups and ads. Their records retain campaign, ad-group, and ad IDs so the Agent can resolve names before launching UI.
+- Added exact campaign and ad-group display tools. Their allowlisted route state is JSON serialized, uses the existing shared host, and preserves the `System.String.Concat` launcher workaround.
+- Route lookup is exact. A missing or stale ID produces a visible component error and does not fall back to another entity.
