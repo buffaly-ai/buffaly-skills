@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>Source Viewer</title>
+	<link rel="stylesheet" href="vendor/codemirror/lib/codemirror.css?v=1">
+	<link rel="stylesheet" href="css/source-viewer.css?v=1">
+</head>
+<body>
+	<main class="source-viewer">
+		<header class="source-viewer__header">
+			<div class="source-viewer__identity">
+				<span id="kind" class="source-viewer__kind" aria-hidden="true">TXT</span>
+				<div><h1 id="title">Source file</h1><p id="path"></p></div>
+			</div>
+			<div class="source-viewer__actions"><button id="copy" type="button" disabled>Copy</button><button id="close" type="button">Close</button></div>
+		</header>
+		<div id="status" class="source-viewer__status" role="status">Loading…</div>
+		<div class="source-viewer__editor"><textarea id="source" aria-label="Source code"></textarea></div>
+	</main>
+	<script src="vendor/codemirror/lib/codemirror.js?v=1"></script>
+	<script src="vendor/codemirror/mode/javascript/javascript.js?v=1"></script>
+	<script src="vendor/codemirror/mode/clike/clike.js?v=1"></script>
+	<script src="js/source-viewer.js?v=1"></script>
+</body>
+</html>

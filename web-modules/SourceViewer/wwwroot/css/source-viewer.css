@@ -1,0 +1,21 @@
+:root { color-scheme: light; --border: #cbd5e1; --muted: #64748b; --blue: #2563eb; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Inter, "Segoe UI", system-ui, sans-serif; color: #0f172a; background: #f8fafc; }
+.source-viewer { height: 100vh; display: flex; flex-direction: column; }
+.source-viewer__header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .8rem 1rem; background: #fff; border-bottom: 1px solid var(--border); }
+.source-viewer__identity { display: flex; align-items: center; gap: .75rem; min-width: 0; }
+.source-viewer__kind { display: grid; place-items: center; width: 2.65rem; height: 2.65rem; flex: 0 0 auto; border-radius: .65rem; color: #fff; background: var(--blue); font-size: .72rem; font-weight: 800; letter-spacing: .03em; }
+.source-viewer__identity h1 { margin: 0; font-size: 1rem; }
+.source-viewer__identity p { margin: .2rem 0 0; color: var(--muted); font-size: .78rem; word-break: break-all; }
+.source-viewer__actions { display: flex; gap: .5rem; }
+.source-viewer button { border: 1px solid #9db8e8; border-radius: 999px; background: #fff; color: #1d4ed8; padding: .4rem .75rem; font-weight: 700; cursor: pointer; }
+.source-viewer button:disabled { opacity: .5; cursor: default; }
+.source-viewer__status { padding: .5rem 1rem; color: var(--muted); font-size: .8rem; }
+.source-viewer__status.error { color: #b91c1c; }
+.source-viewer__editor { flex: 1; min-height: 0; border-top: 1px solid var(--border); }
+.CodeMirror { height: 100%; font-size: 14px; line-height: 1.45; background: #fff; }
+.cm-s-default .cm-keyword { color: #0000ff; }
+.cm-s-default .cm-def, .cm-s-default .cm-variable-2 { color: #2b91af; }
+.cm-s-default .cm-string { color: #a31515; }
+.cm-s-default .cm-comment { color: #008000; }
+@media (max-width: 640px) { .source-viewer__header { align-items: flex-start; } .source-viewer__kind { display: none; } .source-viewer__actions { flex-direction: column; } }
