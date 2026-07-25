@@ -2574,6 +2574,31 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": []
+    },
+    {
+      "SkillName": "ChatGPTPro",
+      "Title": "ChatGPTPro",
+      "Description": "ChatGPT Pro skill: one-shot prompts, file context, and pass-through conversation management via the oracle CLI (steipete/oracle) with browser-mode ChatGPT Pro auth.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "ChatGPTPro",
+        "ChatGPT Pro"
+      ],
+      "Path": "skills/ChatGPTPro",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "3e35992e7e5ab3ee43d0896055e8eff9091effe9885d3464722c68e4e83e8256"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "4790dbb27a306b398cdc77793db14c5c1225fcd8845ea7f25ee3f5823c8a87bd"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
     }
   ]
 }

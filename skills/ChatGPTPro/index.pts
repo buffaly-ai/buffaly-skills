@@ -1,0 +1,484 @@
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.LiveToolInputCollectionRequestContract LiveToolInputCollectionRequestContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.LiveToolInputCollectionResultContract LiveToolInputCollectionResultContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.RuntimeUiEventOutputContract RuntimeUiEventOutputContract;
+import Buffaly.Agent.Tools.Process Buffaly.Agent.Tools.Process.ProcessToolDisplayOptions ProcessToolDisplayOptions;
+
+[SemanticEntity("chatgpt pro skill")]
+[SemanticEntity("chatgpt skill")]
+[SemanticEntity("chatgpt pro browser skill")]
+[SemanticEntity("openai chatgpt pro skill")]
+[SemanticEntity("gpt pro skill")]
+prototype ChatGPTProSkill : SkillEntity
+{
+	Description = "ChatGPT Pro tools: auth status, one-shot prompt execution with file context, and pass-through conversation management. Uses the third-party oracle CLI (steipete/oracle) as a subprocess tool to drive ChatGPT Pro via browser automation or API keys.";
+	ActionRoot = ChatGPTProSkillAction;
+}
+
+prototype ChatGPTProSkillAction : OpsAction
+{
+	Description = @"Base action type for ChatGPT Pro tools backed by the oracle CLI (steipete/oracle).";
+}
+
+function ToChatGPTProDefaultExePath() : string
+{
+	// Execution scripts resolve oracle from PATH at runtime.
+	return "";
+}
+
+function ToChatGPTProTempPath() : string
+{
+	string script = "Write-Output ([System.IO.Path]::GetTempPath().TrimEnd([System.IO.Path]::DirectorySeparatorChar))";
+	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 5, _opsAgent, "", "ChatGPT Pro Temp Path");
+	string tempPath = ToChatGPTProCleanOutput(result);
+
+	// Fail-safe: never return empty or root "/"
+	if (StringUtil.IsEmpty(tempPath) || tempPath == "/")
+	{
+		string fallbackScript = "if($env:TMPDIR){ Write-Output ($env:TMPDIR.TrimEnd([System.IO.Path]::DirectorySeparatorChar)) } elseif($env:TEMP){ Write-Output ($env:TEMP.TrimEnd([System.IO.Path]::DirectorySeparatorChar)) } else { Write-Output '/tmp' }";
+		string fallbackResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(fallbackScript, "", 5, _opsAgent, "", "ChatGPT Pro Temp Path Fallback");
+		tempPath = ToChatGPTProCleanOutput(fallbackResult);
+	}
+
+	if (StringUtil.IsEmpty(tempPath) || tempPath == "/")
+		tempPath = "/tmp";
+
+	return tempPath;
+}
+
+function ToChatGPTProCleanOutput(string result) : string
+{
+	// RunPowerShellStreamingToRuntimeUi output format:
+	//   Exit code: 0
+	//   Output:
+	//   <stdout content>
+	//   Error:
+	//   <stderr content>
+	// Or legacy format:
+	//   <stdout content>
+	//   Exit code: 0
+
+	string content = result;
+
+	// If "Output:\n" is present, use current format
+	int outputIdx = content.IndexOf("Output:\n");
+	if (outputIdx >= 0)
+	{
+		content = content.Replace("Output:\n", "");
+
+		int exitIdx = content.IndexOf("Exit code: ");
+		if (exitIdx == 0)
+		{
+			int nlIdx = content.IndexOf("\n");
+			if (nlIdx >= 0)
+			{
+				string exitPrefix = content.Substring(0, nlIdx);
+				content = content.Replace(exitPrefix + "\n", "");
+			}
+			else
+			{
+				content = "";
+			}
+		}
+
+		int errorIdx = content.IndexOf("\nError:");
+		if (errorIdx >= 0)
+			content = content.Substring(0, errorIdx);
+
+		return content.Trim();
+	}
+
+	// Legacy format: "Exit code: N" appended after stdout
+	int exitCodeIdx = content.IndexOf("Exit code: ");
+	if (exitCodeIdx > 0)
+		return content.Substring(0, exitCodeIdx).Trim();
+
+	if (exitCodeIdx == 0)
+		return "";
+
+	return content.Trim();
+}
+
+function ToChatGPTProEscapePowerShellSingleQuoted(string value) : string
+{
+	if (StringUtil.IsEmpty(value))
+		return "";
+	return value.Replace("'", "''");
+}
+
+function ToChatGPTProQuoted(string value) : string
+{
+	// Wrap in double quotes and escape inner double quotes with backslash
+	// for ProcessStartInfo.Arguments (shell-free, no interpretation).
+	string escaped = value.Replace("\"", "\\\"");
+	return "\"" + escaped + "\"";
+}
+
+function ToChatGPTProBuildRunScript(string exePath, string argumentLine) : string
+{
+	string script = "$ErrorActionPreference='Continue';";
+	script = script + "$exe=(Get-Command oracle -ErrorAction SilentlyContinue).Source;";
+	script = script + "if(-not $exe){ Write-Output 'Error: ChatGPT Pro CLI (oracle) not found on PATH'; exit 2 };";
+	// Uses ProcessStartInfo.Arguments (shell-free, no Invoke-Expression).
+	// The argumentLine is pre-quoted by the caller (ToChatGPTProQuoted escapes inner double quotes).
+	// Diagnostic shim confirmed all argv entries arrive correctly on macOS.
+	script = script + "$argsLine='" + ToChatGPTProEscapePowerShellSingleQuoted(argumentLine) + "';";
+	script = script + "$psi=New-Object System.Diagnostics.ProcessStartInfo;";
+	script = script + "$psi.FileName=$exe;";
+	script = script + "$psi.Arguments=$argsLine;";
+	script = script + "$psi.RedirectStandardOutput=$true;";
+	script = script + "$psi.RedirectStandardError=$true;";
+	script = script + "$psi.UseShellExecute=$false;";
+	script = script + "$psi.CreateNoWindow=$true;";
+	script = script + "$p=[System.Diagnostics.Process]::Start($psi);";
+	script = script + "$stdoutTask=$p.StandardOutput.ReadToEndAsync();";
+	script = script + "$stderrTask=$p.StandardError.ReadToEndAsync();";
+	script = script + "$p.WaitForExit();";
+	script = script + "Write-Output ('exitCode=' + $p.ExitCode);";
+	script = script + "Write-Output '--- stdout ---';";
+	script = script + "Write-Output $stdoutTask.Result;";
+	script = script + "$err=$stderrTask.Result; if($err){ Write-Output '--- stderr ---'; Write-Output $err } else { Write-Output '--- stderr ---' };";
+	script = script + "exit $p.ExitCode;";
+	return script;
+}
+
+function ToChatGPTProRun(string argumentLine, int timeoutSeconds) : string
+{
+	if (timeoutSeconds <= 0)
+		timeoutSeconds = 600;
+	string exe = ToChatGPTProDefaultExePath();
+	string script = ToChatGPTProBuildRunScript(exe, argumentLine);
+	return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, "", "ChatGPT Pro CLI");
+}
+
+function ToChatGPTProCheckAuthErrors(string result) : string
+{
+	string lower = result.ToLower();
+	if (lower.Contains("no chatgpt cookies") || lower.Contains("not signed in") || lower.Contains("manual-login"))
+		return "AUTH_REQUIRED";
+	if (lower.Contains("quota") || lower.Contains("usage limit") || lower.Contains("plan limit") || lower.Contains("rate limit") || lower.Contains("429") || lower.Contains("too many requests"))
+		return "RATE_LIMITED";
+	if (lower.Contains("model not found") || lower.Contains("invalid model") || lower.Contains("unknown model"))
+		return "MODEL_NOT_FOUND";
+	if (lower.Contains("connection refused") || lower.Contains("network error") || lower.Contains("econnrefused"))
+		return "NETWORK_ERROR";
+	return "";
+}
+
+// ===== State Management (Pass-Through) =====
+
+function ToChatGPTProPtConvIdFile() : string
+{
+	return "chatgptpro_pt_conv_id.txt";
+}
+
+function ToChatGPTProPtModelFile() : string
+{
+	return "chatgptpro_pt_model.txt";
+}
+
+function ToChatGPTProPtWorkDirFile() : string
+{
+	return "chatgptpro_pt_workdir.txt";
+}
+
+function ToChatGPTProPtTurnsFile() : string
+{
+	return "chatgptpro_pt_turns.txt";
+}
+
+function ToChatGPTProPtReadState(string filePath) : string
+{
+	string script = "$f=Join-Path ([System.IO.Path]::GetTempPath()) '" + ToChatGPTProEscapePowerShellSingleQuoted(filePath) + "'; if(Test-Path -LiteralPath $f){ Get-Content -LiteralPath $f -Raw -ErrorAction SilentlyContinue } else { '' }";
+	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 10, _opsAgent, "", "ChatGPT Pro PT State Read");
+	return ToChatGPTProCleanOutput(result);
+}
+
+function ToChatGPTProPtWriteState(string filePath, string value) : string
+{
+	if (StringUtil.IsEmpty(filePath) || filePath.StartsWith("/oracle_") || filePath.StartsWith("\\oracle_"))
+		return "Error: invalid state file path (temp resolution likely failed): " + filePath;
+	string script = "$ErrorActionPreference='Continue'; $f=Join-Path ([System.IO.Path]::GetTempPath()) '" + ToChatGPTProEscapePowerShellSingleQuoted(filePath) + "'; $p=Split-Path -Parent $f; if(-not (Test-Path -LiteralPath $p)){ New-Item -Path $p -ItemType Directory -Force | Out-Null }; Set-Content -LiteralPath $f -Value '" + ToChatGPTProEscapePowerShellSingleQuoted(value) + "' -Encoding utf8 -NoNewline; if(Test-Path -LiteralPath $f){ 'WROTE_OK' } else { 'WROTE_FAIL' }";
+	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 10, _opsAgent, "", "ChatGPT Pro PT State Write");
+	string cleanResult = ToChatGPTProCleanOutput(result);
+	if (!cleanResult.Contains("WROTE_OK"))
+		return "Error: state write verification failed for " + filePath + " — output: " + cleanResult;
+	return "";
+}
+
+function ToChatGPTProPtAutoTimeout(string prompt) : int
+{
+	string lower = prompt.ToLower();
+	if (lower.Contains("audit") || lower.Contains("browse") || lower.Contains("thorough") || lower.Contains("comprehensive") || lower.Contains("entire site") || lower.Contains("all pages"))
+		return 3600;
+	if (lower.Contains("analyze") || lower.Contains("review") || lower.Contains("compare") || lower.Contains("evaluate") || lower.Contains("deep") || lower.Contains("detailed") || lower.Contains("generate") || lower.Contains("create") || lower.Contains("build") || lower.Contains("improve"))
+		return 600;
+	return 300;
+}
+
+// ===== Auth Actions =====
+
+[SemanticProgram.InfinitivePhrase("to check chatgpt pro auth status")]
+[SemanticProgram.InfinitivePhrase("to get chatgpt pro auth status")]
+[SemanticProgram.InfinitivePhrase("to check if chatgpt pro is installed")]
+prototype ToGetChatGPTProAuthStatus : ChatGPTProSkillAction
+{
+	Description = @"Returns whether the ChatGPT Pro CLI is installed and whether browser-mode ChatGPT auth appears available. Non-secret status only.";
+
+	function Execute() : string
+	{
+		string existsScript = "$exe=(Get-Command oracle -ErrorAction SilentlyContinue).Source; if($exe -and (Test-Path -LiteralPath $exe)){ $exe } else { 'MISSING' }";
+		string existsResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(existsScript, "", 15, _opsAgent, "", "ChatGPT Pro Exists");
+		string exe = ToChatGPTProCleanOutput(existsResult);
+		if (existsResult.Contains("MISSING"))
+		{
+			return "Installed=false`nAuthenticated=false`nExePath=" + exe + "`nMessage=ChatGPT Pro CLI is not installed.`nRecommendation=Install with: brew install steipete/tap/oracle  or  npm i -g @steipete/oracle";
+		}
+
+		// Check version
+		string versionResult = ToChatGPTProRun("--version", 15);
+		string version = ToChatGPTProCleanOutput(versionResult);
+
+		// Check if browser profile exists (indicates prior manual login)
+		string profileScript = "if(Test-Path -LiteralPath (Join-Path $env:HOME '.oracle/browser-profile')){ 'PROFILE_EXISTS' } else { 'NO_PROFILE' }";
+		string profileResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(profileScript, "", 10, _opsAgent, "", "ChatGPT Pro Profile Check");
+		bool hasProfile = ToChatGPTProCleanOutput(profileResult).Contains("PROFILE_EXISTS");
+
+		// Check if OPENAI_API_KEY is set (API mode auth)
+		string apiKeyScript = "if($env:OPENAI_API_KEY){ 'HAS_API_KEY' } else { 'NO_API_KEY' }";
+		string apiKeyResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(apiKeyScript, "", 10, _opsAgent, "", "ChatGPT Pro API Key Check");
+		bool hasApiKey = ToChatGPTProCleanOutput(apiKeyResult).Contains("HAS_API_KEY");
+
+		bool authenticated = hasProfile || hasApiKey;
+		string authText = "false";
+		if (authenticated)
+			authText = "true";
+
+		string message = "ChatGPT Pro CLI is installed.";
+		if (hasProfile && hasApiKey)
+			message = "ChatGPT Pro CLI is installed. Browser profile and API key both available.";
+		else if (hasProfile)
+			message = "ChatGPT Pro CLI is installed. Browser profile found (browser mode ready).";
+		else if (hasApiKey)
+			message = "ChatGPT Pro CLI is installed. API key found (API mode ready).";
+		else
+			message = "ChatGPT Pro CLI is installed but no browser profile or API key found. Use --browser-manual-login for browser mode or set OPENAI_API_KEY for API mode.";
+
+		string recommendation = "Use ToRunChatGPTProPrompt for one-shot prompts. Use --browser-manual-login for first-time browser auth.";
+		if (!authenticated)
+			recommendation = "Run oracle with --browser-manual-login to sign into ChatGPT, or set OPENAI_API_KEY for API mode.";
+
+		return "Installed=true`nAuthenticated=" + authText + "`nExePath=" + exe + "`nVersion=" + version + "`nBrowserProfile=" + (hasProfile ? "true" : "false") + "`nApiKey=" + (hasApiKey ? "true" : "false") + "`nMessage=" + message + "`nRecommendation=" + recommendation;
+	}
+}
+
+// ===== One-Shot Prompt Execution =====
+
+[SemanticProgram.InfinitivePhrase("to run an ChatGPT Pro Prompt")]
+[SemanticProgram.InfinitivePhrase("to send a prompt to chatgpt pro")]
+[SemanticProgram.InfinitivePhrase("to execute chatgpt pro")]
+prototype ToRunChatGPTProPrompt : ChatGPTProSkillAction
+{
+	Description = @"prompt - required prompt text.
+model - optional model name. Defaults to gpt-5.5-pro. Valid: gpt-5.5-pro, gpt-5.5, gpt-5.6, gpt-5.6-sol, gpt-5.4-pro, gpt-5.4, gpt-5.1-pro, gpt-5-pro, gpt-5.1, gpt-5.1-codex, gpt-5.2, gpt-5.2-instant, gpt-5.2-pro, gemini-3.1-flash-lite, gemini-3.5-flash, gemini-3.1-pro, gemini-3-pro, claude-4.6-sonnet, claude-4.1-opus.
+engine - optional engine mode: browser or api. Defaults to browser if no OPENAI_API_KEY, api if set.
+files - optional comma-separated list of file paths to attach.
+workingDirectory - optional cwd for the CLI process.
+timeoutSeconds - max wait seconds (default 600, auto for Pro models).
+slug - optional session slug (3-5 words).
+Runs official ChatGPT Pro CLI and returns stdout/stderr/exit code.";
+
+	function Execute(string prompt, string model, string engine, string files, string workingDirectory, int timeoutSeconds, string slug) : string
+	{
+		if (StringUtil.IsEmpty(prompt))
+			return "Error: prompt is required.";
+
+		if (timeoutSeconds <= 0)
+			timeoutSeconds = ToChatGPTProPtAutoTimeout(prompt);
+
+	// Build argument line
+	string args = "--prompt " + ToChatGPTProQuoted(prompt);
+
+	// Model
+	if (!StringUtil.IsEmpty(model))
+		args = args + " --model " + model;
+
+	// Engine
+	if (!StringUtil.IsEmpty(engine))
+		args = args + " --engine " + engine;
+	else
+		args = args + " --engine browser";
+
+	// Browser manual login (needed for browser mode)
+	// Always add when engine is browser or unset (default is browser)
+	// Skip for API mode to avoid passing browser flags to API runs
+	if (StringUtil.IsEmpty(engine) || !engine.Contains("api"))
+		args = args + " --browser-manual-login";
+
+	// Files - pass comma-separated paths directly to oracle --file (supports multiple paths)
+	if (!StringUtil.IsEmpty(files))
+		args = args + " --file " + ToChatGPTProQuoted(files);
+
+	// Slug
+	if (!StringUtil.IsEmpty(slug))
+		args = args + " --slug " + slug;
+	else
+		args = args + " --slug buffaly-chatgptpro-run";
+
+		// Working directory
+		string script = "$ErrorActionPreference='Continue';";
+		if (!StringUtil.IsEmpty(workingDirectory))
+		{
+			script = script + "if(Test-Path -LiteralPath '" + ToChatGPTProEscapePowerShellSingleQuoted(workingDirectory) + "'){ Set-Location -LiteralPath '" + ToChatGPTProEscapePowerShellSingleQuoted(workingDirectory) + "' };";
+		}
+		script = script + ToChatGPTProBuildRunScript("", args);
+
+		string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, "", "ChatGPT Pro Prompt");
+
+		// Check for auth errors
+		string authError = ToChatGPTProCheckAuthErrors(result);
+		if (!StringUtil.IsEmpty(authError))
+			return "Status=" + authError + "`n" + result;
+
+		return result;
+	}
+}
+
+// ===== Pass-Through Actions =====
+
+[SemanticProgram.InfinitivePhrase("to chat with chatgpt pro")]
+[SemanticProgram.InfinitivePhrase("to talk to chatgpt pro")]
+[SemanticProgram.InfinitivePhrase("to pass through to chatgpt pro")]
+prototype ToTalkToChatGPTPro : ChatGPTProSkillAction
+{
+	Description = @"prompt - the user's message to forward to Oracle.
+model - optional model override. Defaults to gpt-5.5-pro.
+timeoutSeconds - optional timeout. Auto-selected based on prompt content if not specified.
+This is the main pass-through action. It automatically manages model selection, timeout, and long-prompt file handling. The user just talks and Oracle responds.";
+
+	function Execute(string prompt, string model, int timeoutSeconds) : string
+	{
+		if (StringUtil.IsEmpty(prompt))
+			return "Error: prompt is required.";
+
+		if (timeoutSeconds <= 0)
+			timeoutSeconds = ToChatGPTProPtAutoTimeout(prompt);
+
+		// Read current state
+		string currentModel = ToChatGPTProPtReadState(ToChatGPTProPtModelFile());
+
+		// Use provided model or current model or default
+		string useModel = model;
+		if (StringUtil.IsEmpty(useModel))
+			useModel = currentModel;
+		if (StringUtil.IsEmpty(useModel))
+			useModel = "gpt-5.5-pro";
+
+		// Build args
+		string args = "--engine browser --browser-manual-login --model " + useModel + " --slug buffaly-chatgptpro-passthrough --prompt " + ToChatGPTProQuoted(prompt);
+
+		string result = ToChatGPTProRun(args, timeoutSeconds);
+
+		// Check for auth errors
+		string authError = ToChatGPTProCheckAuthErrors(result);
+		if (!StringUtil.IsEmpty(authError))
+			return "Status=" + authError + "`n" + result;
+
+		// Increment turn count via PowerShell (same pattern as ClaudeCode)
+		string turnScript = "$f=Join-Path ([System.IO.Path]::GetTempPath()) '" + ToChatGPTProEscapePowerShellSingleQuoted(ToChatGPTProPtTurnsFile()) + "'; $cur=0; if(Test-Path -LiteralPath $f){ $v=(Get-Content -LiteralPath $f -Raw -ErrorAction SilentlyContinue); if($v){ $cur=[int]$v.Trim() } }; $cur=$cur+1; Set-Content -LiteralPath $f -Value $cur -Encoding utf8 -NoNewline; Write-Output $cur";
+		string turnResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(turnScript, "", 10, _opsAgent, "", "ChatGPT Pro PT Turn Count");
+		string turnCount = ToChatGPTProCleanOutput(turnResult);
+
+		ToChatGPTProPtWriteState(ToChatGPTProPtModelFile(), useModel);
+
+		// Build state summary
+		string stateSummary = "\n\n--- Pass-Through State ---";
+		stateSummary = stateSummary + "\nModel=" + useModel;
+		stateSummary = stateSummary + "\nTurn=" + turnCount;
+		if (!StringUtil.IsEmpty(currentModel))
+			stateSummary = stateSummary + "\nContinued=true";
+		else
+			stateSummary = stateSummary + "\nContinued=false";
+
+		return result + stateSummary;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to start fresh with chatgpt pro")]
+[SemanticProgram.InfinitivePhrase("to reset ChatGPT Pro conversation")]
+prototype ToStartNewChatGPTProConversation : ChatGPTProSkillAction
+{
+	Description = @"Clears the current ChatGPT Pro conversation context so the next ToTalkToChatGPTPro call starts a fresh conversation. Optional model parameter to set the model for the new conversation.";
+
+	function Execute(string model) : string
+	{
+		// Clear state files
+		ToChatGPTProPtWriteState(ToChatGPTProPtConvIdFile(), "");
+		ToChatGPTProPtWriteState(ToChatGPTProPtTurnsFile(), "0");
+
+		string useModel = model;
+		if (StringUtil.IsEmpty(useModel))
+			useModel = ToChatGPTProPtReadState(ToChatGPTProPtModelFile());
+		if (StringUtil.IsEmpty(useModel))
+			useModel = "gpt-5.5-pro";
+
+		ToChatGPTProPtWriteState(ToChatGPTProPtModelFile(), useModel);
+
+		return "ChatGPT Pro conversation reset.`nModel=" + useModel + "`nTurnCount=0";
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to check ChatGPT Pro conversation status")]
+[SemanticProgram.InfinitivePhrase("to get ChatGPT Pro conversation state")]
+prototype ToGetChatGPTProConversationState : ChatGPTProSkillAction
+{
+	Description = @"Returns the current ChatGPT Pro Pass-Through state: model, working directory, and turn count.";
+
+	function Execute() : string
+	{
+		string model = ToChatGPTProPtReadState(ToChatGPTProPtModelFile());
+		string workDir = ToChatGPTProPtReadState(ToChatGPTProPtWorkDirFile());
+		string turns = ToChatGPTProPtReadState(ToChatGPTProPtTurnsFile());
+		string convId = ToChatGPTProPtReadState(ToChatGPTProPtConvIdFile());
+
+		if (StringUtil.IsEmpty(model))
+			model = "gpt-5.5-pro";
+		if (StringUtil.IsEmpty(workDir))
+			workDir = "(default)";
+		if (StringUtil.IsEmpty(turns))
+			turns = "0";
+		if (StringUtil.IsEmpty(convId))
+			convId = "none";
+
+		return "ChatGPT Pro Pass-Through State`nConversationId=" + convId + "`nModel=" + model + "`nWorkingDirectory=" + workDir + "`nTurnCount=" + turns;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set ChatGPT Pro model")]
+prototype ToSetChatGPTProModel : ChatGPTProSkillAction
+{
+	Description = @"Switches the ChatGPT Pro model for subsequent pass-through calls. Valid: gpt-5.5-pro, gpt-5.5, gpt-5.6, gpt-5.6-sol, gemini-3.1-pro, gemini-3.5-flash, claude-4.6-sonnet, claude-4.1-opus, or ChatGPT labels.";
+
+	function Execute(string model) : string
+	{
+		if (StringUtil.IsEmpty(model))
+			return "Error: model is required.";
+
+		ToChatGPTProPtWriteState(ToChatGPTProPtModelFile(), model);
+		return "ChatGPT Pro model set to: " + model;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set ChatGPT Pro working directory")]
+prototype ToSetChatGPTProWorkingDirectory : ChatGPTProSkillAction
+{
+	Description = @"Changes the working directory for ChatGPT Pro Pass-Through calls.";
+
+	function Execute(string workingDirectory) : string
+	{
+		if (StringUtil.IsEmpty(workingDirectory))
+			return "Error: workingDirectory is required.";
+
+		ToChatGPTProPtWriteState(ToChatGPTProPtWorkDirFile(), workingDirectory);
+		return "ChatGPT Pro working directory set to: " + workingDirectory;
+	}
+}
