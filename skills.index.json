@@ -805,19 +805,27 @@
     },
     {
       "SkillName": "FeedingFrenzyJsonWs",
-      "Title": "Feeding Frenzy JsonWs",
-      "Description": "Buffaly skill package for Feeding Frenzy JsonWs.",
-      "Version": "0.1.1",
+      "Title": "Feeding Frenzy JsonWS",
+      "Description": "Buffaly skill package for Feeding Frenzy JsonWS.",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
-        "Feeding Frenzy JsonWs",
+        "Feeding Frenzy JsonWS",
         "FeedingFrenzyJsonWs"
       ],
       "Path": "skills/FeedingFrenzyJsonWs",
       "Files": [
         {
+          "Path": "AgreementSigning.pts",
+          "Sha256": "90d024b959d737f94cbfedee857013533f8f3a78c9bd902e928ca7b5d39822fc"
+        },
+        {
+          "Path": "AgreementSigning.pts.md",
+          "Sha256": "6de7bf8321fc567ed5a596753eecff776a705c24900fc0976a06c19649b50440"
+        },
+        {
           "Path": "index.pts",
-          "Sha256": "612db9dfee45167616cb33f65573798872a6a76e4d8ce138c7bb81679fb5d6fe"
+          "Sha256": "a1c22060f70af9ab435328787011f69ce4e0306d34ba5952d681983314c5653f"
         },
         {
           "Path": "index.pts.md",
@@ -832,16 +840,20 @@
           "Sha256": "b3f3ec5402307df757916fb3bbacc9ec2c5512d7c5d3c908ff0ceed448322531"
         },
         {
+          "Path": "LeadDocuments.pts",
+          "Sha256": "3f0ea0e5f2b9761714ea410ac7787d9a17c0eb19b4924191c4ef020ef875cfe5"
+        },
+        {
+          "Path": "LeadFileDocuments.pts",
+          "Sha256": "dff5a1b34730979a6723d70ffd960be6f06d56ca4bbafff33b6b81c7cccf444c"
+        },
+        {
           "Path": "Leads.pts",
           "Sha256": "7d13c232a28678190ec860ad69308885f9a21a0e0bbe7d36185649e26eeaa937"
         },
         {
           "Path": "Leads.pts.md",
           "Sha256": "e4461775ed66d7f6ba6eb035afa41a6e93cc576ffa7b4d860ebbbefa4e87a394"
-        },
-        {
-          "Path": "LeadDocuments.pts",
-          "Sha256": "3f0ea0e5f2b9761714ea410ac7787d9a17c0eb19b4924191c4ef020ef875cfe5"
         },
         {
           "Path": "LeadsAdmin.pts",
@@ -902,23 +914,11 @@
         {
           "Path": "Tags.pts.md",
           "Sha256": "d51fb486facf38891f86f5128460e5172215a47c38480ed42008d1a9a0b9218b"
-        },
-        {
-          "Path": "AgreementSigning.pts",
-          "Sha256": "90d024b959d737f94cbfedee857013533f8f3a78c9bd902e928ca7b5d39822fc"
-        },
-        {
-          "Path": "AgreementSigning.pts.md",
-          "Sha256": "6de7bf8321fc567ed5a596753eecff776a705c24900fc0976a06c19649b50440"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "FileSystem",
