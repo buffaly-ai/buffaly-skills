@@ -2545,6 +2545,35 @@
       "HasPackageReceipt": false,
       "IsOutdated": false,
       "InstalledVersion": ""
+    },
+    {
+      "SkillName": "ComputerUse",
+      "Title": "Computer Use",
+      "Description": "Buffaly skill package for Computer Use.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Computer Use",
+        "ComputerUse"
+      ],
+      "Path": "skills/ComputerUse",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "808e8f098c20402be92ece076423bf838205ee97ce0b376e1de461677bcaf278"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "dd8433198e20748f459e1e2138d6b016a07a003b5fbbf284db44a34dbaaf7d84"
+        },
+        {
+          "Path": "Prompts/RunComputerUseTask.prompt.md",
+          "Sha256": "7e8f29903c6645f3b61e253e5f1f5211fa63d9d213098c46d41058e17be315fc"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
     }
   ]
 }
