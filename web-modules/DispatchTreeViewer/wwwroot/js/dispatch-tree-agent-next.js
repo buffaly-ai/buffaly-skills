@@ -181,10 +181,24 @@
 
   document.addEventListener("click", handleFileSourceClick, true);
 
+  function deduplicateSections() {
+    var host = document.querySelector('[data-buffaly-next-file-sources="true"]');
+    if (!host) return;
+    var sections = host.querySelectorAll('section[data-file-source-id="dispatch-tree-viewer"]');
+    for (var i = 1; i < sections.length; i++) sections[i].remove();
+  }
+
+  var dedupObserver = new MutationObserver(function () { deduplicateSections(); });
+  function startDedupObserver() {
+    var host = document.querySelector('[data-buffaly-next-file-sources="true"]');
+    if (host) dedupObserver.observe(host, { childList: true });
+  }
+
   api.registerFileSource({
     id: "dispatch-tree-viewer",
     label: "Routing Tree",
     priority: 50,
     load: function (context) { return loadFileSourceItems(context); }
   });
+  startDedupObserver();
 })();
