@@ -4,6 +4,8 @@ Canonical default Browser Skill deterministic browser surface backed by `Buffaly
 
 The package directory and compatibility prototype remain `BrowserSession`, but its public routing identity is Browser Skill / default browser. Generic browser requests should route here.
 
+`BrowserSkill` is the canonical public `SkillEntity`. `BrowserSessionSkill` inherits from it as a compatibility alias for older references.
+
 This skill exposes browser subagent/session primitives, selector operations, inline JavaScript execution, screenshots, console diagnostics, and secret-aware selector fill for login forms.
 
 Explicit Playwright routing is available through `PlaywrightBrowserSkill`, `UsePlaywrightBrowserSkill`, `ToOpenPlaywrightBrowserSession`, and `ToRunPlaywrightScript`. Do not treat `BrowserSessionSkill` as a Playwright synonym.
