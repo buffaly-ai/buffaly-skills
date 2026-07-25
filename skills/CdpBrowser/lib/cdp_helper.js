@@ -617,9 +617,7 @@ handlers.runAutomation = async (params) => {
         await client.Page.enable();
         await client.Runtime.enable();
         await client.DOM.enable();
-        await client.Input.enable();
         try { await client.Network.enable(); } catch(e) {}
-        try { await client.Emulation.enable(); } catch(e) {}
         
         // The script gets access to page, runtime, dom, input, network, emulation
         const fn = new Function('page', 'runtime', 'dom', 'input', 'network', 'emulation', 'args', params.script);
@@ -993,7 +991,13 @@ async function resetOverrides(client, session, cdpSessionId) {
     if (overrides.injectedScriptIds && overrides.injectedScriptIds.length > 0) {
         previousValues.injectedScriptIds = overrides.injectedScriptIds;
         for (const scriptId of overrides.injectedScriptIds) {
-            await client.Page.removeScriptToEvaluateOnNewDocument({ identifier: scriptId });
+            // Chrome may discard registered scripts after navigation or target lifecycle changes.
+            // Reset remains idempotent when an already-absent script reports "Script not found".
+            try {
+                await client.Page.removeScriptToEvaluateOnNewDocument({ identifier: scriptId });
+            } catch (error) {
+                if (!String(error && error.message || error).includes('Script not found')) throw error;
+            }
         }
         cleared.push('injectedScripts');
     }
