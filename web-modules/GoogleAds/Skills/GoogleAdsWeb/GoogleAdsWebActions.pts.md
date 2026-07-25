@@ -10,5 +10,5 @@
 - Public tool arguments now remain JSON data; optional account IDs are constrained to digits by the typed builder.
 
 ## Avoid ProtoScript AddOperator in Launch Initializer (2026-07-25)
-- Compose the final browser JavaScript with `System.String.Concat(config, js)` before constructing `InteractiveSiteLaunchRequestContract`.
+- Compose the final browser JavaScript with `System.Private.CoreLib`'s `System.String.Concat(config, js)` before constructing `InteractiveSiteLaunchRequestContract`.
 - Assign the precomputed `javascript` value in the member initializer so the launcher does not depend on ProtoScript `+` conversion for the `JavaScript` property.
