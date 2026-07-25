@@ -8,15 +8,14 @@
   function readTree(sessionKey, forceRefresh) {
     if (forceRefresh) treeRequests.delete(sessionKey);
     if (!treeRequests.has(sessionKey)) {
-      const request = fetch("/api/web-modules/DispatchTreeViewer/tree?sessionKey=" + encodeURIComponent(sessionKey))
+      let request = fetch("/api/web-modules/DispatchTreeViewer/tree?sessionKey=" + encodeURIComponent(sessionKey))
         .then(function (result) {
           if (!result.ok) throw new Error("Routing tree request failed (" + result.status + ").");
           return result.json();
-        })
-        .catch(function (error) {
-          treeRequests.delete(sessionKey);
-          throw error;
         });
+      request = request.finally(function () {
+        if (treeRequests.get(sessionKey) === request) treeRequests.delete(sessionKey);
+      });
       treeRequests.set(sessionKey, request);
     }
     return treeRequests.get(sessionKey);
