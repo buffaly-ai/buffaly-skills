@@ -1,11 +1,9 @@
 reference Buffaly.RedditAds.Web Buffaly.RedditAds.Web;
 import Buffaly.RedditAds.Web Buffaly.RedditAds.Web.RedditAdsWebService RedditAdsWebService;
 import Buffaly.RedditAds.Web Buffaly.RedditAds.Web.RedditAdsInteractiveSiteConfiguration RedditAdsInteractiveSiteConfiguration;
-import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.InteractiveSiteLaunchRequestContract InteractiveSiteLaunchRequestContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.WebModuleComponentLaunchRequestContract WebModuleComponentLaunchRequestContract;
 import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.InteractiveSiteLaunchResultContract InteractiveSiteLaunchResultContract;
 import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.IAgentRuntimeHost IAgentRuntimeHost;
-reference System.Private.CoreLib System.Private.CoreLib;
-import System.Private.CoreLib System.String String;
 
 prototype RedditAdsWebSkillAction : OpsAction
 {

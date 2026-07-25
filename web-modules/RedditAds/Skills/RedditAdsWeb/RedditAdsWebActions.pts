@@ -63,20 +63,15 @@ prototype RedditAdsInteractiveSiteLauncher
 	function Execute(IAgentRuntimeHost opsAgent, string title, string adAccountId, string reportType, string dateRangePreset, int timeoutSeconds) : string
 	{
 		if (timeoutSeconds <= 0) { timeoutSeconds = 120; }
-		string siteRoot = Path.Combine(opsAgent.GetCurrentProjectDirectory(), "Skills", "RedditAdsWeb", "interactive-sites", "reddit-ads-module");
-		string html = File.ReadAllText(Path.Combine(siteRoot, "site.html"));
-		string css = File.ReadAllText(Path.Combine(siteRoot, "site.css"));
-		string js = File.ReadAllText(Path.Combine(siteRoot, "site.js"));
-		string config = RedditAdsInteractiveSiteConfiguration.BuildJavaScript(title, adAccountId, reportType, dateRangePreset);
-		string javascript = String.Concat(config, js);
-		InteractiveSiteLaunchResultContract result = opsAgent.LaunchInteractiveSite(new InteractiveSiteLaunchRequestContract
+		string stateJson = RedditAdsInteractiveSiteConfiguration.BuildStateJson(adAccountId, reportType, dateRangePreset);
+		InteractiveSiteLaunchResultContract result = opsAgent.LaunchWebModuleComponent(new WebModuleComponentLaunchRequestContract
 		{
 			Title = title,
 			MessageKey = opsAgent.GetCurrentToolMessageKeyOrEmpty(),
 			ToolInvocationId = opsAgent.GetCurrentToolInvocationIdOrEmpty(),
-			Html = html,
-			Css = css,
-			JavaScript = javascript,
+			ModuleName = "RedditAds",
+			Screen = "report",
+			StateJson = stateJson,
 			TimeoutSeconds = timeoutSeconds
 		});
 		return "Reddit Ads report interactive site exited with status: " + result.Status + "; value: " + result.Value;
@@ -88,13 +83,8 @@ prototype RedditAdsEntityInteractiveSiteLauncher
 	function Execute(IAgentRuntimeHost opsAgent, string title, string screen, string adAccountId, string entityId, int timeoutSeconds) : string
 	{
 		if (timeoutSeconds <= 0) { timeoutSeconds = 120; }
-		string siteRoot = Path.Combine(opsAgent.GetCurrentProjectDirectory(), "Skills", "RedditAdsWeb", "interactive-sites", "reddit-ads-module");
-		string html = File.ReadAllText(Path.Combine(siteRoot, "site.html"));
-		string css = File.ReadAllText(Path.Combine(siteRoot, "site.css"));
-		string js = File.ReadAllText(Path.Combine(siteRoot, "site.js"));
-		string config = RedditAdsInteractiveSiteConfiguration.BuildEntityJavaScript(title, screen, adAccountId, entityId);
-		string javascript = String.Concat(config, js);
-		InteractiveSiteLaunchResultContract result = opsAgent.LaunchInteractiveSite(new InteractiveSiteLaunchRequestContract { Title = title, MessageKey = opsAgent.GetCurrentToolMessageKeyOrEmpty(), ToolInvocationId = opsAgent.GetCurrentToolInvocationIdOrEmpty(), Html = html, Css = css, JavaScript = javascript, TimeoutSeconds = timeoutSeconds });
+		string stateJson = RedditAdsInteractiveSiteConfiguration.BuildEntityStateJson(screen, adAccountId, entityId);
+		InteractiveSiteLaunchResultContract result = opsAgent.LaunchWebModuleComponent(new WebModuleComponentLaunchRequestContract { Title = title, MessageKey = opsAgent.GetCurrentToolMessageKeyOrEmpty(), ToolInvocationId = opsAgent.GetCurrentToolInvocationIdOrEmpty(), ModuleName = "RedditAds", Screen = screen, StateJson = stateJson, TimeoutSeconds = timeoutSeconds });
 		return "Reddit Ads " + screen + " interactive site exited with status: " + result.Status + "; value: " + result.Value;
 	}
 }
