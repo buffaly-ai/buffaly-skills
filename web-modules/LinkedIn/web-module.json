@@ -20,6 +20,20 @@
         "Path": "/web-modules/LinkedIn/index.html",
         "Description": "Open the LinkedIn integration UI."
       }
-    ]
+    ],
+    "Component": {
+      "TagName": "linkedin-module",
+      "EntryUrl": "/web-modules/LinkedIn/components/linkedin-module.js",
+      "ScriptType": "module",
+      "DefaultScreen": "published-post",
+      "Screens": [
+        "published-post",
+        "draft-preview"
+      ],
+      "InteractiveScreens": [
+        "published-post",
+        "draft-preview"
+      ]
+    }
   }
 }

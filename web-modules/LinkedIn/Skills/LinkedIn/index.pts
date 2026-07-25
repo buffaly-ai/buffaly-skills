@@ -3,6 +3,10 @@ prototype LinkedInSkillAction : OpsAction
 	Description = @"Base action type for LinkedIn skill tools.";
 }
 
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.WebModuleComponentLaunchRequestContract WebModuleComponentLaunchRequestContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.InteractiveSiteLaunchResultContract InteractiveSiteLaunchResultContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.IAgentRuntimeHost IAgentRuntimeHost;
+
 [SemanticEntity("linkedin skill")]
 prototype LinkedInSkill : SkillEntity
 {
@@ -18,6 +22,7 @@ reference Buffaly.OpenAI.ImageGeneration Buffaly.OpenAI.ImageGeneration;
 reference Buffaly.Agent.Host Buffaly.Agent.Host;
 
 import Buffaly.LinkedIn Buffaly.LinkedIn.LinkedInSkillFacade LinkedInSkillFacade;
+import Buffaly.LinkedIn Buffaly.LinkedIn.LinkedInInteractiveSiteConfiguration LinkedInInteractiveSiteConfiguration;
 import Buffaly.OpenAI.ImageGeneration Buffaly.OpenAI.ImageGeneration.OpenAIImageGenerationServiceRuntime OpenAIImageGenerationServiceRuntime;
 import Buffaly.Agent.Host Buffaly.Agent.Host.OpenAIFeature OpenAIFeature;
 import BasicUtilities BasicUtilities.StringUtil StringUtil;

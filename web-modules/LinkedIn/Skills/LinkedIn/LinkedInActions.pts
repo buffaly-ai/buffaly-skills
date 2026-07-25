@@ -174,6 +174,46 @@ prototype ToListLinkedInPublishedPosts : LinkedInSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to get a linkedin published post")]
+prototype ToGetLinkedInPublishedPost : LinkedInSkillAction
+{
+	Description = @"postUrn - exact post URN returned by ToListLinkedInPublishedPosts. Returns one non-deleted local published-post record.";
+	function Execute(string postUrn) : string { return LinkedInSkillFacade.GetPublishedPost(postUrn); }
+}
+
+prototype LinkedInInteractiveSiteLauncher
+{
+	function Execute(IAgentRuntimeHost opsAgent, string screen, string title, string recordId, int timeoutSeconds) : string
+	{
+		string stateJson = LinkedInInteractiveSiteConfiguration.BuildStateJson(screen, recordId);
+		InteractiveSiteLaunchResultContract result = opsAgent.LaunchWebModuleComponent(new WebModuleComponentLaunchRequestContract
+		{
+			Title = title,
+			MessageKey = opsAgent.GetCurrentToolMessageKeyOrEmpty(),
+			ToolInvocationId = opsAgent.GetCurrentToolInvocationIdOrEmpty(),
+			ModuleName = "LinkedIn",
+			Screen = screen,
+			StateJson = stateJson,
+			TimeoutSeconds = timeoutSeconds
+		});
+		return "LinkedIn " + screen + " interactive site exited with status: " + result.Status + "; value: " + result.Value;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to show a linkedin published post")]
+prototype ToViewLinkedInPublishedPostInteractiveSite : LinkedInSkillAction
+{
+	Description = @"Open one read-only LinkedIn published post. Resolve the exact postUrn first with ToListLinkedInPublishedPosts and validate it with ToGetLinkedInPublishedPost.";
+	function Execute(string postUrn, int timeoutSeconds) : string { return LinkedInInteractiveSiteLauncher.Execute(_opsAgent, "published-post", "LinkedIn Published Post", postUrn, timeoutSeconds); }
+}
+
+[SemanticProgram.InfinitivePhrase("to preview a linkedin draft")]
+prototype ToViewLinkedInDraftInteractiveSite : LinkedInSkillAction
+{
+	Description = @"Open one read-only LinkedIn draft preview. Resolve the exact draftId first with ToListLinkedInDrafts and validate it with ToGetLinkedInDraft.";
+	function Execute(string draftId, int timeoutSeconds) : string { return LinkedInInteractiveSiteLauncher.Execute(_opsAgent, "draft-preview", "LinkedIn Draft Preview", draftId, timeoutSeconds); }
+}
+
 // -- High-risk tools (external writes, require confirmation) ------------
 
 [SemanticProgram.InfinitivePhrase("to publish a linkedin draft")]

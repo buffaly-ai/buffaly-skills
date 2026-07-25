@@ -13,7 +13,10 @@
     { "name": "GetVoice", "infinitivePhrase": "to get linkedin voice profile", "description": "Get the brand voice profile for LinkedIn content." },
     { "name": "SetVoice", "infinitivePhrase": "to set linkedin voice profile", "description": "Update the brand voice profile fields." },
     { "name": "PermissionProbe", "infinitivePhrase": "to probe linkedin permissions", "description": "Check which LinkedIn operations are available based on granted scopes." },
-   { "name": "ListPublishedPosts", "infinitivePhrase": "to list linkedin published posts", "description": "List published post history." }
+    { "name": "ListPublishedPosts", "infinitivePhrase": "to list linkedin published posts", "description": "List published post history." },
+    { "name": "GetPublishedPost", "infinitivePhrase": "to get a linkedin published post", "description": "Get one exact non-deleted published-post record." },
+    { "name": "ViewPublishedPost", "infinitivePhrase": "to show a linkedin published post", "description": "Open one exact published post in a read-only interactive site." },
+    { "name": "ViewDraft", "infinitivePhrase": "to preview a linkedin draft", "description": "Open one exact draft in a read-only interactive site." }
  ],
   "draftArtifactTools": [
     { "name": "GetDraftArtifact", "infinitivePhrase": "to get a linkedin draft artifact", "description": "Load the current LinkedIn draft artifact state including text, media, variants, and revision history." },
