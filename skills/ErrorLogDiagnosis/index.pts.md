@@ -4,6 +4,7 @@
 
 - Added `ToSearchErrorMemories` for bounded root-wide search under the current session's scoped `Error Memory` tag.
 - Added `ToSearchErrorMemoriesInCategory` for bounded search under one exact `ErrorMemoryRoot` descendant.
+- Added `ToValidateErrorMemoryDefinition` as a required write gate for recursive taxonomy branches and tagged routable leaves. Branches may be nested to any depth under the root; leaves fail validation when they are flat, untagged, or missing verification/routing fields.
 - Both actions derive `session:<sessionKey>` from the runtime host and delegate category/status filtering to the shared SemanticDatabase C# implementation. They return native prototype candidates so callers can inspect saved signatures, anchors, owner, routing rule, and status without ad hoc JSON.
 - The taxonomy itself remains session-local NLMemory and is not declared by this bundled skill.
 

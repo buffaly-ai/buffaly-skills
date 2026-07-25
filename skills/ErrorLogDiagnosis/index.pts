@@ -64,6 +64,17 @@ prototype ToSearchErrorMemoriesInCategory : ErrorLogDiagnosisSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to validate an error memory taxonomy definition")]
+prototype ToValidateErrorMemoryDefinition : ErrorLogDiagnosisSkillAction
+{
+	Description = @"Validates one recursive Error Memory taxonomy branch or routable leaf before NLMemory persistence. prototypeDefinition - exactly one raw ProtoScript definition. definitionKind - Branch or Leaf. Parents may be any depth beneath ErrorMemoryRoot; leaves require scoped Error Memory tags and routing verification fields.";
+
+	function Execute(string prototypeDefinition, string definitionKind) : string
+	{
+		return SemanticDatabase.ValidateErrorMemoryDefinition(_runtime, prototypeDefinition, definitionKind);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to run the error log diagnosis static interactive site test")]
 [SemanticProgram.InfinitivePhrase("to launch the error log diagnosis settings static site shell")]
 [SemanticProgram.InfinitivePhrase("to view error log diagnosis settings in an interactive site")]
