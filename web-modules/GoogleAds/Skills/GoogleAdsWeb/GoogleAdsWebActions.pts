@@ -92,14 +92,6 @@ prototype GoogleAdsInteractiveSiteLauncher
 {
 	function Execute(IAgentRuntimeHost opsAgent, string screen, string title, string customerId, string loginCustomerId, string dateRangePreset, int timeoutSeconds) : string
 	{
-		if (screen != "performance" && screen != "campaigns" && screen != "search-terms" && screen != "creatives")
-		{
-			return "Error: unsupported Google Ads interactive screen.";
-		}
-		if (dateRangePreset != "LAST_7_DAYS" && dateRangePreset != "LAST_30_DAYS" && dateRangePreset != "THIS_MONTH" && dateRangePreset != "LAST_MONTH" && dateRangePreset != "TODAY" && dateRangePreset != "YESTERDAY")
-		{
-			return "Error: unsupported dateRangePreset.";
-		}
 		if (timeoutSeconds <= 0)
 		{
 			timeoutSeconds = 120;
@@ -109,7 +101,7 @@ prototype GoogleAdsInteractiveSiteLauncher
 		string html = File.ReadAllText(Path.Combine(siteRoot, "site.html"));
 		string css = File.ReadAllText(Path.Combine(siteRoot, "site.css"));
 		string js = File.ReadAllText(Path.Combine(siteRoot, "site.js"));
-		string config = "window.GoogleAdsInteractiveSiteConfig={Title:'" + title + "',Screen:'" + screen + "',Component:{TagName:'google-ads-module',EntryUrl:'/web-modules/GoogleAds/components/google-ads-module.js',ScriptType:'module',DefaultScreen:'workspace',Screens:['workspace','performance','campaigns','search-terms','creatives'],InteractiveScreens:['performance','campaigns','search-terms','creatives']},State:{customerId:'" + customerId + "',loginCustomerId:'" + loginCustomerId + "',dateRangePreset:'" + dateRangePreset + "'}};\n";
+		string config = GoogleAdsInteractiveSiteConfiguration.BuildJavaScript(screen, title, customerId, loginCustomerId, dateRangePreset);
 		InteractiveSiteLaunchResultContract result = opsAgent.LaunchInteractiveSite(new InteractiveSiteLaunchRequestContract
 		{
 			Title = title,
