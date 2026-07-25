@@ -85,18 +85,10 @@ function ToCdpCheckAdvancedApproved() : bool
 	string grantPath = ToCdpGrantFilePath();
 	if (!File.Exists(grantPath))
 		return false;
-	try
-	{
-		System.Text.Json.JsonDocument grant = System.Text.Json.JsonDocument.Parse(File.ReadAllText(grantPath));
-		long expiresAt = grant.RootElement.GetProperty("expiresAt").GetInt64();
-		string sessionDir = grant.RootElement.GetProperty("sessionDir").GetString();
-		long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-		return expiresAt > now && sessionDir == _opsAgent.GetCurrentSessionDirectory();
-	}
-	catch
-	{
-		return false;
-	}
+	string content = File.ReadAllText(grantPath);
+	string escapedSessionDir = _opsAgent.GetCurrentSessionDirectory().Replace("\\", "\\\\");
+	bool hasRequiredGrantFields = content.Contains("\"approvedAt\":") && content.Contains("\"expiresAt\":") && content.Contains("\"scope\":\"all\"") && content.Contains("\"sessionDir\":\"" + escapedSessionDir + "\"");
+	return hasRequiredGrantFields && File.GetLastWriteTimeUtc(grantPath).AddHours(4) > DateTime.UtcNow;
 }
 
 function ToCdpRequireApproval() : string
