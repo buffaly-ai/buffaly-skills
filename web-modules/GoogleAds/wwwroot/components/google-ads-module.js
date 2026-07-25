@@ -3,7 +3,8 @@ const SCREEN_ROUTES = Object.freeze({
   performance: "overview",
   campaigns: "campaigns",
   "search-terms": "overview",
-  creatives: "ads"
+  creatives: "ads",
+  creative: "ads"
 });
 
 class GoogleAdsModule extends HTMLElement {
@@ -67,6 +68,7 @@ class GoogleAdsModule extends HTMLElement {
     if (state.customerId) parameters.set("customerId", state.customerId);
     if (state.loginCustomerId) parameters.set("loginCustomerId", state.loginCustomerId);
     if (state.dateRangePreset) parameters.set("dateRangePreset", state.dateRangePreset);
+    if (state.adId) parameters.set("adId", state.adId);
     this._frame.src = "/web-modules/GoogleAds/workspace.html?" + parameters.toString() + "#" + route;
   }
 

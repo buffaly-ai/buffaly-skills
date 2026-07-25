@@ -13,3 +13,7 @@
 ## Avoid ProtoScript AddOperator in Launch Initializer (2026-07-25)
 - Compose the serialized configuration and static site JavaScript with `System.Private.CoreLib`'s `System.String.Concat(config, js)` before constructing `InteractiveSiteLaunchRequestContract`.
 - Assign the precomputed `javascript` value in the member initializer; do not replace this with `config + js`, because that invokes ProtoScript `AddOperator` conversion and has failed at runtime as not convertible to string.
+
+## Add Specific-Ad Route (2026-07-25)
+- Added `ToViewGoogleAdInteractiveSite`, which requires a digits-only `adId` and launches the `creative` component screen.
+- The route reuses the same web-module component and workspace page but passes `adId` as bounded state so only the selected creative is rendered.

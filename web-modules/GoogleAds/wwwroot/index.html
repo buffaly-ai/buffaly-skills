@@ -12,7 +12,7 @@
   <script>
     (async function () {
       var hash = location.hash.slice(1);
-      var screen = ["performance", "campaigns", "search-terms", "creatives"].includes(hash) ? hash : "workspace";
+      var screen = ["performance", "campaigns", "search-terms", "creatives", "creative"].includes(hash) ? hash : "workspace";
       await window.BuffalyWebModuleLoader.mount({
         host: document.getElementById("moduleHost"),
         moduleName: "GoogleAds",
@@ -23,8 +23,8 @@
           EntryUrl: "/web-modules/GoogleAds/components/google-ads-module.js",
           ScriptType: "module",
           DefaultScreen: "workspace",
-          Screens: ["workspace", "performance", "campaigns", "search-terms", "creatives"],
-          InteractiveScreens: ["performance", "campaigns", "search-terms", "creatives"]
+          Screens: ["workspace", "performance", "campaigns", "search-terms", "creatives", "creative"],
+          InteractiveScreens: ["performance", "campaigns", "search-terms", "creatives", "creative"]
         },
         state: Object.fromEntries(new URLSearchParams(location.search))
       });
