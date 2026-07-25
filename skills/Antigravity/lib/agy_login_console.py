@@ -8,10 +8,14 @@ import queue
 import webbrowser
 
 # Always use a stable absolute path so Buffaly live-tool-input and this wrapper agree.
-DEFAULT_CODE_FILE = r"C:\Users\Administrator\AppData\Local\Temp\agy_auth_code.txt"
-DEFAULT_URL_FILE = r"C:\Users\Administrator\AppData\Local\Temp\agy_oauth_url.txt"
-DEFAULT_STATUS_FILE = r"C:\Users\Administrator\AppData\Local\Temp\agy_login_status.txt"
-DEFAULT_EXE = r"C:\Users\Administrator\AppData\Local\agy\bin\agy.exe"
+import tempfile
+import shutil
+
+_TMP = tempfile.gettempdir()
+DEFAULT_CODE_FILE = os.path.join(_TMP, "agy_auth_code.txt")
+DEFAULT_URL_FILE = os.path.join(_TMP, "agy_oauth_url.txt")
+DEFAULT_STATUS_FILE = os.path.join(_TMP, "agy_login_status.txt")
+DEFAULT_EXE = shutil.which("agy") or ""
 
 def clean(s: str) -> str:
     s = re.sub(r"\x1b\[[0-9;?]*[A-Za-z]", "", s or "")
@@ -96,9 +100,12 @@ def main():
         return 2
 
     try:
-        from winpty import PtyProcess
+        try:
+            from ptyprocess import PtyProcess
+        except ImportError:
+            from winpty import PtyProcess
     except Exception as e:
-        print("ERROR: pywinpty is required for interactive agy login.", flush=True)
+        print("ERROR: ptyprocess (or pywinpty) is required for interactive agy login.", flush=True)
         print(str(e), flush=True)
         return 2
 

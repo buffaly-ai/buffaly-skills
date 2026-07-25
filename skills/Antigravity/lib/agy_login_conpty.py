@@ -1,5 +1,8 @@
 import argparse, json, os, re, time, threading, queue
-from winpty import PtyProcess
+try:
+    from ptyprocess import PtyProcess
+except ImportError:
+    from winpty import PtyProcess
 
 def clean(s):
     s = re.sub(r"\x1b\[[0-9;?]*[A-Za-z]", "", s or "")
@@ -39,10 +42,12 @@ def main():
     ap.add_argument("--exe", required=True)
     ap.add_argument("--timeout", type=int, default=600)
     ap.add_argument("--auth-code", default="")
-    ap.add_argument("--code-file", default=r"C:\Users\Administrator\AppData\Local\Temp\agy_auth_code.txt")
-    ap.add_argument("--status-file", default=r"C:\Users\Administrator\AppData\Local\Temp\agy_login_status.json")
-    ap.add_argument("--url-file", default=r"C:\Users\Administrator\AppData\Local\Temp\agy_oauth_url.txt")
-    ap.add_argument("--live-file", default=r"C:\Users\Administrator\AppData\Local\Temp\agy_login_live2.txt")
+    import tempfile
+    _tmp = tempfile.gettempdir()
+    ap.add_argument("--code-file", default=os.path.join(_tmp, "agy_auth_code.txt"))
+    ap.add_argument("--status-file", default=os.path.join(_tmp, "agy_login_status.json"))
+    ap.add_argument("--url-file", default=os.path.join(_tmp, "agy_oauth_url.txt"))
+    ap.add_argument("--live-file", default=os.path.join(_tmp, "agy_login_live2.txt"))
     args=ap.parse_args()
 
     for p in [args.status_file, args.url_file, args.live_file]:

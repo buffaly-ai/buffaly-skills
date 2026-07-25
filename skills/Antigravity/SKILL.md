@@ -28,4 +28,5 @@ Official `agy` wrappers plus a transparent pass-through layer:
 
 Requires:
 - `agy` installed
-- Python + `pywinpty` for interactive TUI helpers
+- `agy` installed and on PATH
+- Python + `ptyprocess` (or `pywinpty` on Windows) for interactive TUI helpers

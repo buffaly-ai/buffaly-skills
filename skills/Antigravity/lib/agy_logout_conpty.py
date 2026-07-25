@@ -7,9 +7,12 @@ def clean(s):
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument("--exe", required=True); ap.add_argument("--timeout", type=int, default=45); args=ap.parse_args()
     try:
-        from winpty import PtyProcess
+        try:
+            from ptyprocess import PtyProcess
+        except ImportError:
+            from winpty import PtyProcess
     except Exception as e:
-        print(json.dumps({"ok":False,"error":f"pywinpty missing: {e}"})); return 2
+        print(json.dumps({"ok":False,"error":f"ptyprocess (or pywinpty) missing: {e}"})); return 2
     if not os.path.isfile(args.exe):
         print(json.dumps({"ok":False,"error":f"agy not found: {args.exe}"})); return 2
     proc=PtyProcess.spawn([args.exe], dimensions=(40,120), cwd=os.path.expanduser("~"))
