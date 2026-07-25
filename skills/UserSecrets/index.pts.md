@@ -38,3 +38,8 @@
 - Added configurable display-title initial state so callers and the staging harness can set the popup heading.
 - Updated the opening copy to say Buffaly requires a sensitive value, paused working, and will not provide the information to the model.
 - Removed the Examples block, normalized field/input sizing, and added a show/hide private-value icon button.
+
+## Fix private-value visibility toggle (2026-07-24)
+
+- Replaced the canceled `pointerdown` plus delegated root click chain with a direct eye-button `click` listener so embedded popup hosts reliably reveal and mask the private value.
+- Kept the icon, title, and accessible label synchronized with the current visibility state.
