@@ -391,6 +391,82 @@
       "InstalledVersion": ""
     },
     {
+      "SkillName": "CdpBrowser",
+      "Title": "CDP Browser",
+      "Description": "CDP browser automation tools that connect to the user real Chrome via Chrome DevTools Protocol. Preserves logins, avoids anti-bot detection, uses trusted input events. Tier 1 actions are always available; Tier 2 actions require approval.",
+      "Version": "1.0.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "CDP Browser",
+        "CdpBrowser",
+        "cdp browser skill",
+        "cdp browser session skill"
+      ],
+      "Path": "skills/CdpBrowser",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "f13e321a22d4e3f5cb6be5c81b0218a327684ecefcdce193b821492a3d709b21"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "a26c620b8c5faf9c59f9c9efd383d3be9780f2e400c4a1687b77e8fbe4c6aa5f"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "8ecba7163e781abf6c71f0448c3e48ea92aa850d0f27134cd454bceb7b1b8db3"
+        },
+        {
+          "Path": "Prompts/UseCdpBrowserSkill.prompt.md",
+          "Sha256": "b20e7d4900d90bb668df3f9445c4abe683dcc1cf63000918d0de1de67fbb2345"
+        },
+        {
+          "Path": "lib/cdp_helper.js",
+          "Sha256": "ab7cd79bbe204c174238124b171d394e239fa00d7cbe731f997758ea61d08ed6"
+        },
+        {
+          "Path": "lib/package.json",
+          "Sha256": "05e12ab17009206e4d00051d86e2cd76036945b0e43991836da3f7b101fa0e63"
+        },
+        {
+          "Path": "lib/package-lock.json",
+          "Sha256": "f9926ed76996235c232d254d9ba48bf982e6b0cc3021e372e3f91cbe0bab721d"
+        },
+        {
+          "Path": "lib/.gitignore",
+          "Sha256": "4d56952b0fb13bf8f9b6c13a6d4c34a075bac3af447636a1df4335d7576e2f97"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "ChatGPTPro",
+      "Title": "ChatGPTPro",
+      "Description": "ChatGPT Pro skill: one-shot prompts, file context, and pass-through conversation management via the oracle CLI (steipete/oracle) with browser-mode ChatGPT Pro auth.",
+      "Version": "0.1.1",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "ChatGPTPro",
+        "ChatGPT Pro"
+      ],
+      "Path": "skills/ChatGPTPro",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "5b693888949a9642d89943d03ccdec7f9795fcb1dbe5a574be93debd5486a44a"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "715654ac34468799fadce2de9ef6a784c11f9977ae477c85e5aff7d599220b0a"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
       "SkillName": "ClaudeCode",
       "Title": "Claude Code",
       "Description": "Buffaly skill package for Claude Code.",
@@ -462,6 +538,35 @@
       "HasPackageReceipt": false,
       "IsOutdated": false,
       "InstalledVersion": ""
+    },
+    {
+      "SkillName": "ComputerUse",
+      "Title": "Computer Use",
+      "Description": "Buffaly skill package for Computer Use.",
+      "Version": "0.1.3",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Computer Use",
+        "ComputerUse"
+      ],
+      "Path": "skills/ComputerUse",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "c6d653ac195406e2e11b279971d6df50501a71ecdab477221f1aac7416dba308"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "7c09a21fd211f99c610a34c4059ab5e733aa969e503f1f3af71727f805e8ee28"
+        },
+        {
+          "Path": "Prompts/RunComputerUseTask.prompt.md",
+          "Sha256": "7e8f29903c6645f3b61e253e5f1f5211fa63d9d213098c46d41058e17be315fc"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
     },
     {
       "SkillName": "Desktop",
@@ -611,6 +716,43 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": []
+    },
+    {
+      "SkillName": "FFmpeg",
+      "Title": "FFmpeg Media Tools",
+      "Description": "Buffaly skill package for FFmpeg Media Tools.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "FFmpeg Media Tools",
+        "FFmpeg"
+      ],
+      "Path": "skills/FFmpeg",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "fc2fbc27f9794cb1545b6adce7e53dc7b6bc2d002a41970c380aaa8ea22269a4"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "81d185c293526b969b1a2465e882d8ddfe80f9fbb230d9534c54d313f82a21f9"
+        },
+        {
+          "Path": "Prompts/ToReconstructVisualStoryFromRawVideo.prompt.md",
+          "Sha256": "bb01abd77509f495464f386d21f7375740c6d8b2a6e034c2d06e8a5873c1dd85"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "c01480f9b38ed6c048e9ee7f76d1dd89ca2f7b578fc196c57d914675693e560d"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
     },
     {
       "SkillName": "FairPathJsonWs",
@@ -809,43 +951,6 @@
         {
           "Path": "AgreementSigning.pts.md",
           "Sha256": "6de7bf8321fc567ed5a596753eecff776a705c24900fc0976a06c19649b50440"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
-    },
-    {
-      "SkillName": "FFmpeg",
-      "Title": "FFmpeg Media Tools",
-      "Description": "Buffaly skill package for FFmpeg Media Tools.",
-      "Version": "0.1.0",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [
-        "FFmpeg Media Tools",
-        "FFmpeg"
-      ],
-      "Path": "skills/FFmpeg",
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "fc2fbc27f9794cb1545b6adce7e53dc7b6bc2d002a41970c380aaa8ea22269a4"
-        },
-        {
-          "Path": "index.pts.md",
-          "Sha256": "81d185c293526b969b1a2465e882d8ddfe80f9fbb230d9534c54d313f82a21f9"
-        },
-        {
-          "Path": "Prompts/ToReconstructVisualStoryFromRawVideo.prompt.md",
-          "Sha256": "bb01abd77509f495464f386d21f7375740c6d8b2a6e034c2d06e8a5873c1dd85"
-        },
-        {
-          "Path": "SKILL.md",
-          "Sha256": "c01480f9b38ed6c048e9ee7f76d1dd89ca2f7b578fc196c57d914675693e560d"
         }
       ],
       "EntryPoint": "index.pts",
@@ -1096,34 +1201,6 @@
       "InstalledVersion": ""
     },
     {
-      "SkillName": "Level2Watcher",
-      "Title": "Level2 Watcher",
-      "Description": "Buffaly OpsAgent skill package for Level2Watcher.",
-      "Version": "0.1.0",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [
-        "Level2Watcher"
-      ],
-      "Path": "skills/Level2Watcher",
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "c7f513d0b4373f41a01b243aa3e71306352d882d7b6ef149432c5a5e21f23b87"
-        },
-        {
-          "Path": "index.pts.md",
-          "Sha256": "2069223198f565d01f46e2e1ed31cc6b40b1070417ccc268428fb25c07fd5a01"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
-    },
-    {
       "SkillName": "LLM",
       "Title": "L L M",
       "Description": "Buffaly skill package for L L M.",
@@ -1174,6 +1251,34 @@
         {
           "Path": "RuntimeProfiles.pts.md",
           "Sha256": "8577a81a6eab331f83e24e9bffe7774c64b372c65a6d18a59cd73e610ae39d47"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
+    },
+    {
+      "SkillName": "Level2Watcher",
+      "Title": "Level2 Watcher",
+      "Description": "Buffaly OpsAgent skill package for Level2Watcher.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Level2Watcher"
+      ],
+      "Path": "skills/Level2Watcher",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "c7f513d0b4373f41a01b243aa3e71306352d882d7b6ef149432c5a5e21f23b87"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "2069223198f565d01f46e2e1ed31cc6b40b1070417ccc268428fb25c07fd5a01"
         }
       ],
       "EntryPoint": "index.pts",
@@ -2545,60 +2650,6 @@
       "HasPackageReceipt": false,
       "IsOutdated": false,
       "InstalledVersion": ""
-    },
-    {
-      "SkillName": "ComputerUse",
-      "Title": "Computer Use",
-      "Description": "Buffaly skill package for Computer Use.",
-      "Version": "0.1.3",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [
-        "Computer Use",
-        "ComputerUse"
-      ],
-      "Path": "skills/ComputerUse",
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "c6d653ac195406e2e11b279971d6df50501a71ecdab477221f1aac7416dba308"
-        },
-        {
-          "Path": "index.pts.md",
-          "Sha256": "7c09a21fd211f99c610a34c4059ab5e733aa969e503f1f3af71727f805e8ee28"
-        },
-        {
-          "Path": "Prompts/RunComputerUseTask.prompt.md",
-          "Sha256": "7e8f29903c6645f3b61e253e5f1f5211fa63d9d213098c46d41058e17be315fc"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [],
-      "Prerequisites": []
-    },
-    {
-      "SkillName": "ChatGPTPro",
-      "Title": "ChatGPTPro",
-      "Description": "ChatGPT Pro skill: one-shot prompts, file context, and pass-through conversation management via the oracle CLI (steipete/oracle) with browser-mode ChatGPT Pro auth.",
-      "Version": "0.1.1",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "Phrases": [
-        "ChatGPTPro",
-        "ChatGPT Pro"
-      ],
-      "Path": "skills/ChatGPTPro",
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "5b693888949a9642d89943d03ccdec7f9795fcb1dbe5a574be93debd5486a44a"
-        },
-        {
-          "Path": "SKILL.md",
-          "Sha256": "715654ac34468799fadce2de9ef6a784c11f9977ae477c85e5aff7d599220b0a"
-        }
-      ],
-      "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [],
-      "Prerequisites": []
     }
   ]
 }

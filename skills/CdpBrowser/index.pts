@@ -1,0 +1,891 @@
+prototype CdpBrowserSkillAction : OpsAction, CodingContext
+{
+	Description = @"Base action type for CDP browser tools.";
+}
+
+[SemanticEntity("cdp browser skill")]
+[SemanticEntity("cdp browser session skill")]
+prototype CdpBrowserSkill : SkillEntity
+{
+	EntityName = "cdp browser skill";
+	Description = @"CDP browser automation tools that connect to the user's real Chrome via Chrome DevTools Protocol. Preserves logins, avoids anti-bot detection, uses trusted input events. Tier 1 actions are always available; Tier 2 actions require approval.";
+	ActionRoot = CdpBrowserSkillAction;
+}
+
+include "PromptActions.pts";
+
+// ===== Helper Functions =====
+
+function ToCdpCleanOutput(string result) : string
+{
+	string content = result;
+	int outputIdx = content.IndexOf("Output:\n");
+	if (outputIdx >= 0)
+	{
+		content = content.Replace("Output:\n", "");
+		int exitIdx = content.IndexOf("Exit code: ");
+		if (exitIdx == 0)
+		{
+			int nlIdx = content.IndexOf("\n");
+			if (nlIdx >= 0)
+			{
+				string exitPrefix = content.Substring(0, nlIdx);
+				content = content.Replace(exitPrefix + "\n", "");
+			}
+			else
+				content = "";
+		}
+		int errorIdx = content.IndexOf("\nError:");
+		if (errorIdx >= 0)
+			content = content.Substring(0, errorIdx);
+		return content.Trim();
+	}
+	int exitCodeIdx = content.IndexOf("Exit code: ");
+	if (exitCodeIdx > 0)
+		return content.Substring(0, exitCodeIdx).Trim();
+	if (exitCodeIdx == 0)
+		return "";
+	return content.Trim();
+}
+
+function ToCdpJsonEscape(string value) : string
+{
+	if (value == null || value == "")
+		return "";
+	string result = value.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t");
+	return result;
+}
+
+function ToCdpHelperPath() : string
+{
+	string script = "$helper=''; $roots = Get-ChildItem -Path $env:HOME -Directory -Filter 'buffaly*' -ErrorAction SilentlyContinue; foreach($r in $roots){ $p=Join-Path $r.FullName 'content/projects/OpsAgent/Skills/CdpBrowser/lib/cdp_helper.js'; if(Test-Path -LiteralPath $p){ $helper=$p; break } }; if(-not $helper){ $p=Join-Path $env:HOME 'buffaly/content/projects/OpsAgent/Skills/CdpBrowser/lib/cdp_helper.js'; if(Test-Path -LiteralPath $p){ $helper=$p } }; Write-Output $helper";
+	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 10, _opsAgent, "", "CDP Helper Path");
+	return ToCdpCleanOutput(result);
+}
+
+function ToCdpRunCommand(string cmdJson, int timeoutSeconds, string label) : string
+{
+	string helper = ToCdpHelperPath();
+	if (StringUtil.IsEmpty(helper))
+		return "Error: cdp_helper.js not found. Ensure the CdpBrowser skill is installed.";
+	string script = "$ErrorActionPreference='Continue'; $tmp=[System.IO.Path]::GetTempFileName(); Set-Content -LiteralPath $tmp -Value '" + cmdJson.Replace("'", "''") + "' -Encoding utf8 -NoNewline; $result = & node '" + helper.Replace("'", "''") + "' $tmp 2>&1; Remove-Item $tmp -Force -ErrorAction SilentlyContinue; Write-Output $result";
+	return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, "", label);
+}
+
+function ToCdpGrantFilePath() : string
+{
+	string sessionDir = _opsAgent.GetCurrentSessionDirectory();
+	return Path.Combine(sessionDir, ".cdp", "grant.json");
+}
+
+function ToCdpCheckAdvancedApproved() : bool
+{
+	string grantPath = ToCdpGrantFilePath();
+	string script = "$f='" + grantPath.Replace("'", "''") + "'; if(Test-Path -LiteralPath $f){ try { $g=Get-Content -LiteralPath $f -Raw | ConvertFrom-Json; $now=[DateTimeOffset]::UtcNow.ToUnixTimeSeconds(); if($g.expiresAt -gt $now -and $g.sessionDir -eq '" + _opsAgent.GetCurrentSessionDirectory().Replace("'", "''") + "'){ 'True' } else { 'False' } } catch { 'False' } } else { 'False' }";
+	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 5, _opsAgent, "", "CDP Advanced Check");
+	return ToCdpCleanOutput(result).Contains("True");
+}
+
+function ToCdpRequireApproval() : string
+{
+	if (!ToCdpCheckAdvancedApproved())
+		return "Error: Tier 2 actions require approval. Ask the user, then call ToApproveCdpAdvancedActions first.";
+	return "";
+}
+
+// ===== Approval Actions =====
+
+[SemanticProgram.InfinitivePhrase("to approve CDP advanced actions")]
+[SemanticProgram.InfinitivePhrase("to enable Tier 2 CDP browser tools")]
+[SemanticProgram.InfinitivePhrase("to unlock privileged CDP browser actions")]
+prototype ToApproveCdpAdvancedActions : CdpBrowserSkillAction
+{
+	Description = @"[Approval] Enables Tier 2 (privileged) CDP browser actions for this session. Tier 2 includes JS execution, cookie access, file upload, tab management, fingerprint modification. Ask the user for explicit approval before calling. Session-scoped, expires after 4 hours.";
+
+	function Execute() : string
+	{
+		string grantPath = ToCdpGrantFilePath();
+		string sessionDir = _opsAgent.GetCurrentSessionDirectory();
+		string script = "$p='" + grantPath.Replace("'", "''") + "'; $d=Split-Path -Parent $p; if(-not(Test-Path -LiteralPath $d)){ New-Item -Path $d -ItemType Directory -Force | Out-Null }; $now=[DateTimeOffset]::UtcNow.ToUnixTimeSeconds(); $exp=$now + 14400; $g=@{approvedAt=$now; expiresAt=$exp; scope='all'; sessionDir='" + sessionDir.Replace("'", "''") + "'} | ConvertTo-Json -Compress; Set-Content -LiteralPath $p -Value $g -Encoding utf8 -NoNewline; 'APPROVED'";
+		SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 5, _opsAgent, "", "CDP Advanced Approve");
+		return "Tier 2 CDP actions approved for this session. Expires in 4 hours. Privileged CDP browser tools are now available.";
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to revoke CDP advanced actions")]
+[SemanticProgram.InfinitivePhrase("to disable Tier 2 CDP browser tools")]
+prototype ToRevokeCdpAdvancedActions : CdpBrowserSkillAction
+{
+	Description = @"[Approval] Revokes Tier 2 approval. Tier 2 actions will fail until re-approved.";
+
+	function Execute() : string
+	{
+		string grantPath = ToCdpGrantFilePath();
+		string script = "$p='" + grantPath.Replace("'", "''") + "'; if(Test-Path -LiteralPath $p){ Remove-Item -LiteralPath $p -Force }";
+		SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 5, _opsAgent, "", "CDP Advanced Revoke");
+		return "Tier 2 CDP actions revoked. Privileged CDP browser tools are no longer available.";
+	}
+}
+
+// ===== Tier 1: Session Management =====
+
+[SemanticProgram.InfinitivePhrase("to open a CDP browser session")]
+[SemanticProgram.InfinitivePhrase("to connect to a running Chrome browser")]
+[SemanticProgram.InfinitivePhrase("to start a CDP browser session")]
+prototype ToOpenCdpBrowserSession : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Connects to Chrome via CDP, creates a new tab, enables Page/Runtime/DOM/Input domains, optionally navigates to URL. Returns { cdpSessionId, tabId, tabUrl, port }.";
+
+	function Execute(int port, string url) : string
+	{
+		string cdpCmd = "{\"action\":\"open\",\"port\":" + port + ",\"url\":\"" + ToCdpJsonEscape(url) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 30, "CDP Open Session");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to close a CDP browser session")]
+[SemanticProgram.InfinitivePhrase("to close a CDP browser tab")]
+prototype ToCloseCdpBrowserSession : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Closes the agent-owned tab, resets overrides, removes session state. Does not close Chrome or affect other tabs.";
+
+	function Execute(string cdpSessionId) : string
+	{
+		string cdpCmd = "{\"action\":\"close\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Close Session");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list CDP browser sessions")]
+prototype ToListCdpBrowserSessions : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Lists all active CDP browser sessions managed by this skill.";
+
+	function Execute() : string
+	{
+		string cdpCmd = "{\"action\":\"list_sessions\"}";
+		return ToCdpRunCommand(cdpCmd, 10, "CDP List Sessions");
+	}
+}
+
+// ===== Tier 1: Navigation =====
+
+[SemanticProgram.InfinitivePhrase("to navigate a CDP browser")]
+[SemanticProgram.InfinitivePhrase("to navigate a CDP browser page")]
+prototype ToNavigateCdpBrowser : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Navigates to URL. Waits for Page.loadEventFired. Returns { url, title, status }.";
+
+	function Execute(string cdpSessionId, string url) : string
+	{
+		string cdpCmd = "{\"action\":\"navigate\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"url\":\"" + ToCdpJsonEscape(url) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 30, "CDP Navigate");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get CDP browser URL")]
+prototype ToGetCdpBrowserUrl : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Returns current URL.";
+
+	function Execute(string cdpSessionId) : string
+	{
+		string cdpCmd = "{\"action\":\"get_url\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 10, "CDP Get URL");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get CDP browser title")]
+prototype ToGetCdpBrowserTitle : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Returns page title.";
+
+	function Execute(string cdpSessionId) : string
+	{
+		string cdpCmd = "{\"action\":\"get_title\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 10, "CDP Get Title");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to go back in CDP browser")]
+prototype ToGoBackCdpBrowser : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Navigates back in history.";
+
+	function Execute(string cdpSessionId) : string
+	{
+		string cdpCmd = "{\"action\":\"go_back\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Go Back");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to go forward in CDP browser")]
+prototype ToGoForwardCdpBrowser : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Navigates forward in history.";
+
+	function Execute(string cdpSessionId) : string
+	{
+		string cdpCmd = "{\"action\":\"go_forward\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Go Forward");
+	}
+}
+
+// ===== Tier 1: DOM Interaction (Trusted Input) =====
+
+[SemanticProgram.InfinitivePhrase("to click a CDP selector")]
+[SemanticProgram.InfinitivePhrase("to click a browser element via CDP")]
+prototype ToClickCdpSelector : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Clicks element by CSS selector using Input.dispatchMouseEvent (isTrusted=true). Returns { clicked, selector, x, y }.";
+
+	function Execute(string cdpSessionId, string selector, int timeoutMs) : string
+	{
+		string cdpCmd = "{\"action\":\"click\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"selector\":\"" + ToCdpJsonEscape(selector) + "\",\"timeoutMs\":" + timeoutMs + "}";
+		return ToCdpRunCommand(cdpCmd, 30, "CDP Click");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to type into a CDP selector")]
+[SemanticProgram.InfinitivePhrase("to fill a CDP selector")]
+prototype ToTypeCdpSelector : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Types text using Input.insertText (trusted input). More reliable than synthetic JS for React apps.";
+
+	function Execute(string cdpSessionId, string selector, string text, bool clearFirst, int timeoutMs) : string
+	{
+		string clearStr = "true";
+		if (!clearFirst)
+			clearStr = "false";
+		string cdpCmd = "{\"action\":\"type\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"selector\":\"" + ToCdpJsonEscape(selector) + "\",\"text\":\"" + ToCdpJsonEscape(text) + "\",\"clearFirst\":" + clearStr + ",\"timeoutMs\":" + timeoutMs + "}";
+		return ToCdpRunCommand(cdpCmd, 30, "CDP Type");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to press a CDP key")]
+prototype ToPressCdpKey : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Presses key via Input.dispatchKeyEvent (trusted). Supports Enter, Tab, Escape, ArrowDown, etc.";
+
+	function Execute(string cdpSessionId, string key, int timeoutMs) : string
+	{
+		string cdpCmd = "{\"action\":\"press_key\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"key\":\"" + ToCdpJsonEscape(key) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Press Key");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to press a CDP selector key")]
+prototype ToPressCdpSelectorKey : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Focuses element by selector, then presses key.";
+
+	function Execute(string cdpSessionId, string selector, string key, int timeoutMs) : string
+	{
+		string cdpCmd = "{\"action\":\"press_selector_key\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"selector\":\"" + ToCdpJsonEscape(selector) + "\",\"key\":\"" + ToCdpJsonEscape(key) + "\",\"timeoutMs\":" + timeoutMs + "}";
+		return ToCdpRunCommand(cdpCmd, 30, "CDP Press Selector Key");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to hover a CDP selector")]
+prototype ToHoverCdpSelector : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Dispatches mouseMoved over element. Useful for hover-triggered menus.";
+
+	function Execute(string cdpSessionId, string selector, int timeoutMs) : string
+	{
+		string cdpCmd = "{\"action\":\"hover\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"selector\":\"" + ToCdpJsonEscape(selector) + "\",\"timeoutMs\":" + timeoutMs + "}";
+		return ToCdpRunCommand(cdpCmd, 30, "CDP Hover");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to scroll a CDP browser")]
+prototype ToScrollCdpBrowser : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Scrolls page or scrolls to element by selector.";
+
+	function Execute(string cdpSessionId, string selector, int x, int y) : string
+	{
+		string cdpCmd = "{\"action\":\"scroll\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\"";
+		if (!StringUtil.IsEmpty(selector))
+			cdpCmd = cdpCmd + ",\"selector\":\"" + ToCdpJsonEscape(selector) + "\"";
+		cdpCmd = cdpCmd + ",\"x\":" + x + ",\"y\":" + y + "}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Scroll");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to select a CDP option")]
+prototype ToSelectCdpOption : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Selects option in a <select> element by value.";
+
+	function Execute(string cdpSessionId, string selector, string value, int timeoutMs) : string
+	{
+		string cdpCmd = "{\"action\":\"select_option\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"selector\":\"" + ToCdpJsonEscape(selector) + "\",\"value\":\"" + ToCdpJsonEscape(value) + "\",\"timeoutMs\":" + timeoutMs + "}";
+		return ToCdpRunCommand(cdpCmd, 30, "CDP Select Option");
+	}
+}
+
+// ===== Tier 1: DOM Inspection (Read-Only) =====
+
+[SemanticProgram.InfinitivePhrase("to get CDP selector text")]
+prototype ToGetCdpSelectorText : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Returns text content of first matching element. Read-only.";
+
+	function Execute(string cdpSessionId, string selector, int timeoutMs) : string
+	{
+		string cdpCmd = "{\"action\":\"get_text\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"selector\":\"" + ToCdpJsonEscape(selector) + "\",\"timeoutMs\":" + timeoutMs + "}";
+		return ToCdpRunCommand(cdpCmd, 30, "CDP Get Text");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get CDP selector attribute")]
+prototype ToGetCdpSelectorAttribute : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Returns attribute value of first matching element. Read-only.";
+
+	function Execute(string cdpSessionId, string selector, string attributeName, int timeoutMs) : string
+	{
+		string cdpCmd = "{\"action\":\"get_attribute\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"selector\":\"" + ToCdpJsonEscape(selector) + "\",\"attributeName\":\"" + ToCdpJsonEscape(attributeName) + "\",\"timeoutMs\":" + timeoutMs + "}";
+		return ToCdpRunCommand(cdpCmd, 30, "CDP Get Attribute");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to check CDP selector exists")]
+prototype ToCheckCdpSelectorExists : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Returns whether selector matches and how many. Read-only.";
+
+	function Execute(string cdpSessionId, string selector, int timeoutMs) : string
+	{
+		string cdpCmd = "{\"action\":\"check_exists\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"selector\":\"" + ToCdpJsonEscape(selector) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Check Exists");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to wait for CDP selector")]
+prototype ToWaitForCdpSelector : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Polls until selector matches in specified state (visible, hidden, attached, detached). Read-only.";
+
+	function Execute(string cdpSessionId, string selector, string state, int timeoutMs) : string
+	{
+		string cdpCmd = "{\"action\":\"wait_for_selector\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"selector\":\"" + ToCdpJsonEscape(selector) + "\",\"state\":\"" + ToCdpJsonEscape(state) + "\",\"timeoutMs\":" + timeoutMs + "}";
+		return ToCdpRunCommand(cdpCmd, 60, "CDP Wait For Selector");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get CDP viewport size")]
+prototype ToGetCdpViewportSize : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Returns viewport dimensions. Read-only.";
+
+	function Execute(string cdpSessionId) : string
+	{
+		string cdpCmd = "{\"action\":\"get_viewport\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 10, "CDP Get Viewport");
+	}
+}
+
+// ===== Tier 1: Capture =====
+
+[SemanticProgram.InfinitivePhrase("to capture CDP screenshot")]
+[SemanticProgram.InfinitivePhrase("to take a CDP browser screenshot")]
+prototype ToCaptureCdpScreenshot : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Captures screenshot via Page.captureScreenshot. CDP-level, not detectable by page. Saves to session artifacts.";
+
+	function Execute(string cdpSessionId, string relativePath, bool fullPage) : string
+	{
+		string sessionDir = _opsAgent.GetCurrentSessionDirectory();
+		string filePath = Path.Combine(sessionDir, "artifacts");
+		if (!StringUtil.IsEmpty(relativePath))
+			filePath = Path.Combine(filePath, relativePath);
+		else
+			filePath = Path.Combine(filePath, "cdp-screenshot.png");
+		string fpStr = "false";
+		if (fullPage)
+			fpStr = "true";
+		string cdpCmd = "{\"action\":\"screenshot\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"filePath\":\"" + ToCdpJsonEscape(filePath) + "\",\"fullPage\":" + fpStr + "}";
+		return ToCdpRunCommand(cdpCmd, 30, "CDP Screenshot");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get CDP console events")]
+[SemanticProgram.InfinitivePhrase("to read CDP console diagnostics")]
+prototype ToGetCdpConsoleEvents : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Returns captured console events. Passive listening via Runtime.consoleAPICalled.";
+
+	function Execute(string cdpSessionId, int maxCount, bool clearAfterRead) : string
+	{
+		string cdpCmd = "{\"action\":\"console_events\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"maxCount\":" + maxCount + "}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Console Events");
+	}
+}
+
+// ===== Tier 1: Secret-Aware =====
+
+[SemanticProgram.InfinitivePhrase("to fill a CDP selector with a secret")]
+prototype ToFillCdpSelectorWithSecret : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Fills selector with StringRef secret. Secret never appears in logs or returns. Uses Input.insertText.";
+
+	function Execute(string cdpSessionId, string selector, string secretValue, int timeoutMs) : string
+	{
+		string cdpCmd = "{\"action\":\"fill_secret\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"selector\":\"" + ToCdpJsonEscape(selector) + "\",\"secretValue\":\"" + ToCdpJsonEscape(secretValue) + "\",\"timeoutMs\":" + timeoutMs + "}";
+		return ToCdpRunCommand(cdpCmd, 30, "CDP Fill Secret");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to fill a CDP password with a secret")]
+prototype ToFillCdpPasswordWithSecret : CdpBrowserSkillAction
+{
+	Description = @"[Tier 1] Fills password field with StringRef secret. Redacted return only.";
+
+	function Execute(string cdpSessionId, string secretValue, string selector, int timeoutMs) : string
+	{
+		if (StringUtil.IsEmpty(selector))
+			selector = "input[type=password]";
+		string cdpCmd = "{\"action\":\"fill_password_secret\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"selector\":\"" + ToCdpJsonEscape(selector) + "\",\"secretValue\":\"" + ToCdpJsonEscape(secretValue) + "\",\"timeoutMs\":" + timeoutMs + "}";
+		return ToCdpRunCommand(cdpCmd, 30, "CDP Fill Password Secret");
+	}
+}
+
+// ===== Tier 2: Chrome Lifecycle =====
+
+[SemanticProgram.InfinitivePhrase("to launch CDP Chrome")]
+prototype ToLaunchCdpChrome : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Launches Chrome with --remote-debugging-port and non-default --user-data-dir. Requires approval: call ToApproveCdpAdvancedActions first.";
+
+	function Execute(int port, string profileDir) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string cdpCmd = "{\"action\":\"launch_chrome\",\"port\":" + port + ",\"profileDir\":\"" + ToCdpJsonEscape(profileDir) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 30, "CDP Launch Chrome");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to check CDP Chrome")]
+prototype ToCheckCdpChrome : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Checks if CDP endpoint is active. Requires approval.";
+
+	function Execute(int port) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string cdpCmd = "{\"action\":\"check_chrome\",\"port\":" + port + "}";
+		return ToCdpRunCommand(cdpCmd, 10, "CDP Check Chrome");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to close CDP Chrome")]
+prototype ToCloseCdpChrome : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Kills Chrome process on CDP port. Requires approval.";
+
+	function Execute(int port) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string cdpCmd = "{\"action\":\"close_chrome\",\"port\":" + port + "}";
+		return ToCdpRunCommand(cdpCmd, 10, "CDP Close Chrome");
+	}
+}
+
+// ===== Tier 2: JavaScript Execution =====
+
+[SemanticProgram.InfinitivePhrase("to run a CDP script")]
+[SemanticProgram.InfinitivePhrase("to evaluate JavaScript in a CDP browser")]
+prototype ToRunCdpScript : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Evaluates arbitrary JavaScript via Runtime.evaluate. Can touch detectable properties, modify DOM. Requires approval. Use only when Tier 1 actions cannot express the operation.";
+
+	function Execute(string cdpSessionId, string script, string argsJson, int timeoutMs) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string cdpCmd = "{\"action\":\"run_script\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"script\":\"" + ToCdpJsonEscape(script) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 60, "CDP Run Script");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to run a CDP mutation script")]
+prototype ToRunCdpMutationScript : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Evaluates JavaScript that modifies the DOM. Page MutationObservers can detect changes. Requires approval.";
+
+	function Execute(string cdpSessionId, string script, string argsJson, int timeoutMs) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string cdpCmd = "{\"action\":\"run_mutation\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"script\":\"" + ToCdpJsonEscape(script) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 60, "CDP Run Mutation");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to run CDP automation")]
+prototype ToRunCdpAutomation : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Runs multi-step CDP automation with raw domain access (page, runtime, dom, input, network, emulation). Requires approval.";
+
+	function Execute(string cdpSessionId, string script, string argsJson, int timeoutMs) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string cdpCmd = "{\"action\":\"run_automation\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"script\":\"" + ToCdpJsonEscape(script) + "\",\"argsJson\":\"" + ToCdpJsonEscape(argsJson) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 60, "CDP Run Automation");
+	}
+}
+
+// ===== Tier 2: File Upload =====
+
+[SemanticProgram.InfinitivePhrase("to upload a CDP file")]
+prototype ToUploadCdpFile : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Uploads file via DOM.setFileInputFiles. Page sees change event and file metadata. Requires approval.";
+
+	function Execute(string cdpSessionId, string selector, string filePath) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string cdpCmd = "{\"action\":\"upload_file\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"selector\":\"" + ToCdpJsonEscape(selector) + "\",\"filePath\":\"" + ToCdpJsonEscape(filePath) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 30, "CDP Upload File");
+	}
+}
+
+// ===== Tier 2: Cookie Access =====
+
+[SemanticProgram.InfinitivePhrase("to get CDP cookies")]
+prototype ToGetCdpCookies : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Returns cookies via Network.getAllCookies. Values redacted - only names, domains, metadata. Requires approval.";
+
+	function Execute(string cdpSessionId) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string cdpCmd = "{\"action\":\"get_cookies\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Get Cookies");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set a CDP cookie")]
+prototype ToSetCdpCookie : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Sets cookie via Network.setCookie. Modifies session state. Requires approval.";
+
+	function Execute(string cdpSessionId, string name, string value, string domain, string path, bool secure, bool httpOnly) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string secStr = "false";
+		if (secure)
+			secStr = "true";
+		string httpStr = "false";
+		if (httpOnly)
+			httpStr = "true";
+		if (StringUtil.IsEmpty(path))
+			path = "/";
+		string cdpCmd = "{\"action\":\"set_cookie\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"name\":\"" + ToCdpJsonEscape(name) + "\",\"value\":\"" + ToCdpJsonEscape(value) + "\",\"domain\":\"" + ToCdpJsonEscape(domain) + "\",\"path\":\"" + ToCdpJsonEscape(path) + "\",\"secure\":" + secStr + ",\"httpOnly\":" + httpStr + "}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Set Cookie");
+	}
+}
+
+// ===== Tier 2: Network Monitoring =====
+
+[SemanticProgram.InfinitivePhrase("to get CDP network requests")]
+prototype ToGetCdpNetworkRequests : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Returns captured network requests. Reveals API patterns. Requires approval.";
+
+	function Execute(string cdpSessionId, int maxCount, bool clearAfterRead) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string cdpCmd = "{\"action\":\"get_network_requests\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"maxCount\":" + maxCount + "}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Network Requests");
+	}
+}
+
+// ===== Tier 2: Tab Management =====
+
+[SemanticProgram.InfinitivePhrase("to list CDP tabs")]
+prototype ToListCdpTabs : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Lists all open tabs. Cross-tab visibility. Requires approval.";
+
+	function Execute(string cdpSessionId) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string cdpCmd = "{\"action\":\"list_tabs\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 10, "CDP List Tabs");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create a CDP tab")]
+prototype ToCreateCdpTab : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Creates new tab via Target.createTarget. Requires approval.";
+
+	function Execute(string cdpSessionId, string url) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string cdpCmd = "{\"action\":\"create_tab\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"url\":\"" + ToCdpJsonEscape(url) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Create Tab");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to close a CDP tab")]
+prototype ToCloseCdpTab : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Closes tab by ID. Ownership check: only closes skill-created tabs unless force=true. Requires approval.";
+
+	function Execute(string cdpSessionId, string tabId, bool force) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string forceStr = "false";
+		if (force)
+			forceStr = "true";
+		string cdpCmd = "{\"action\":\"close_tab\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"tabId\":\"" + ToCdpJsonEscape(tabId) + "\",\"force\":" + forceStr + "}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Close Tab");
+	}
+}
+
+// ===== Tier 2: Reload =====
+
+[SemanticProgram.InfinitivePhrase("to reload a CDP browser")]
+prototype ToReloadCdpBrowser : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Reloads page. Cache bypass is detectable behavior change. Requires approval.";
+
+	function Execute(string cdpSessionId, bool ignoreCache) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string igStr = "false";
+		if (ignoreCache)
+			igStr = "true";
+		string cdpCmd = "{\"action\":\"reload\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"ignoreCache\":" + igStr + "}";
+		return ToCdpRunCommand(cdpCmd, 30, "CDP Reload");
+	}
+}
+
+// ===== Tier 2: Page Content =====
+
+[SemanticProgram.InfinitivePhrase("to get CDP selector HTML")]
+prototype ToGetCdpSelectorHtml : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Returns outerHTML of first matching element. Requires approval.";
+
+	function Execute(string cdpSessionId, string selector, int timeoutMs) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string cdpCmd = "{\"action\":\"get_selector_html\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"selector\":\"" + ToCdpJsonEscape(selector) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Get Selector HTML");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get CDP page HTML")]
+prototype ToGetCdpPageHtml : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Returns full page HTML. Requires approval.";
+
+	function Execute(string cdpSessionId) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string cdpCmd = "{\"action\":\"get_page_html\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Get Page HTML");
+	}
+}
+
+// ===== Tier 2: Browser Fingerprint Modification =====
+
+[SemanticProgram.InfinitivePhrase("to set CDP user agent")]
+prototype ToSetCdpUserAgent : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Sets user agent via Network.setUserAgentOverride. Warning: Detectable by anti-bot systems. For debugging only. Requires approval.";
+
+	function Execute(string cdpSessionId, string userAgent) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string cdpCmd = "{\"action\":\"set_user_agent\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"userAgent\":\"" + ToCdpJsonEscape(userAgent) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Set User Agent");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set CDP device metrics")]
+prototype ToSetCdpDeviceMetrics : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Sets device metrics via Emulation.setDeviceMetricsOverride. Warning: Detectable. For debugging only. Requires approval.";
+
+	function Execute(string cdpSessionId, int width, int height, int deviceScaleFactor, bool mobile) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string mobStr = "false";
+		if (mobile)
+			mobStr = "true";
+		string cdpCmd = "{\"action\":\"set_device_metrics\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"width\":" + width + ",\"height\":" + height + ",\"deviceScaleFactor\":" + deviceScaleFactor + ",\"mobile\":" + mobStr + "}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Set Device Metrics");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set CDP geolocation")]
+prototype ToSetCdpGeolocation : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Sets geolocation via Emulation.setGeolocationOverride. Warning: Detectable. For debugging only. Requires approval.";
+
+	function Execute(string cdpSessionId, string latitude, string longitude, int accuracy) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string cdpCmd = "{\"action\":\"set_geolocation\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"latitude\":\"" + ToCdpJsonEscape(latitude) + "\",\"longitude\":\"" + ToCdpJsonEscape(longitude) + "\",\"accuracy\":" + accuracy + "}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Set Geolocation");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set CDP timezone")]
+prototype ToSetCdpTimezone : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Sets timezone via Emulation.setTimezoneOverride. Warning: Detectable. For debugging only. Requires approval.";
+
+	function Execute(string cdpSessionId, string timezoneId) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string cdpCmd = "{\"action\":\"set_timezone\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"timezoneId\":\"" + ToCdpJsonEscape(timezoneId) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Set Timezone");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set CDP extra headers")]
+prototype ToSetCdpExtraHeaders : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Sets extra HTTP headers via Network.setExtraHTTPHeaders. Warning: Adds fingerprintable headers. For debugging only. Requires approval.";
+
+	function Execute(string cdpSessionId, string headersJson) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string cdpCmd = "{\"action\":\"set_extra_headers\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"headersJson\":\"" + ToCdpJsonEscape(headersJson) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Set Extra Headers");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to inject CDP script on load")]
+prototype ToInjectCdpScriptOnLoad : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Injects JS before every page load via Page.addScriptToEvaluateOnNewDocument. Warning: Detectable. For debugging only. Requires approval.";
+
+	function Execute(string cdpSessionId, string script) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string cdpCmd = "{\"action\":\"inject_script_on_load\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"script\":\"" + ToCdpJsonEscape(script) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Inject Script On Load");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set CDP touch emulation")]
+prototype ToSetCdpTouchEmulation : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Enables/disables touch emulation via Emulation.setTouchEmulationEnabled. Warning: Detectable. For debugging only. Requires approval.";
+
+	function Execute(string cdpSessionId, bool enabled) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string enStr = "false";
+		if (enabled)
+			enStr = "true";
+		string cdpCmd = "{\"action\":\"set_touch_emulation\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"enabled\":" + enStr + "}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Set Touch Emulation");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set CDP bypass CSP")]
+prototype ToSetCdpBypassCsp : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Bypasses Content Security Policy via Page.setBypassCSP. Warning: Bypasses page security model. For debugging only. Requires approval.";
+
+	function Execute(string cdpSessionId, bool enabled) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string enStr = "false";
+		if (enabled)
+			enStr = "true";
+		string cdpCmd = "{\"action\":\"set_bypass_csp\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"enabled\":" + enStr + "}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Set Bypass CSP");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set CDP cache disabled")]
+prototype ToSetCdpCacheDisabled : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Disables cache via Network.setCacheDisabled. Warning: Changes cache behavior, detectable. For debugging only. Requires approval.";
+
+	function Execute(string cdpSessionId, bool disabled) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string disStr = "false";
+		if (disabled)
+			disStr = "true";
+		string cdpCmd = "{\"action\":\"set_cache_disabled\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\",\"disabled\":" + disStr + "}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Set Cache Disabled");
+	}
+}
+
+// ===== Tier 2: Override Reset =====
+
+[SemanticProgram.InfinitivePhrase("to reset CDP overrides")]
+[SemanticProgram.InfinitivePhrase("to clear CDP fingerprint overrides")]
+prototype ToResetCdpOverrides : CdpBrowserSkillAction
+{
+	Description = @"[Tier 2 - Privileged] Clears all active fingerprint overrides (user agent, device metrics, geolocation, timezone, extra headers, injected scripts, touch emulation, CSP bypass, cache disable). Returns audit summary. Called automatically by ToCloseCdpBrowserSession. Requires approval.";
+
+	function Execute(string cdpSessionId) : string
+	{
+		string check = ToCdpRequireApproval();
+		if (!StringUtil.IsEmpty(check))
+			return check;
+		string cdpCmd = "{\"action\":\"reset_overrides\",\"cdpSessionId\":\"" + ToCdpJsonEscape(cdpSessionId) + "\"}";
+		return ToCdpRunCommand(cdpCmd, 15, "CDP Reset Overrides");
+	}
+}
