@@ -58,7 +58,9 @@ function ToCdpJsonEscape(string value) : string
 
 function ToCdpHelperPath() : string
 {
-	string script = "$helper=''; $roots = Get-ChildItem -Path $env:HOME -Directory -Filter 'buffaly*' -ErrorAction SilentlyContinue; foreach($r in $roots){ $p=Join-Path $r.FullName 'content/projects/OpsAgent/Skills/CdpBrowser/lib/cdp_helper.js'; if(Test-Path -LiteralPath $p){ $helper=$p; break } }; if(-not $helper){ $p=Join-Path $env:HOME 'buffaly/content/projects/OpsAgent/Skills/CdpBrowser/lib/cdp_helper.js'; if(Test-Path -LiteralPath $p){ $helper=$p } }; Write-Output $helper";
+	// Resolve from the active session because Buffaly installs are not located under the worker account's HOME.
+	string sessionDir = _opsAgent.GetCurrentSessionDirectory();
+	string script = "$sessionDir='" + sessionDir.Replace("'", "''") + "'; $installRoot=[System.IO.Directory]::GetParent([System.IO.Directory]::GetParent($sessionDir).FullName).Parent.FullName; $helper=Join-Path $installRoot 'content/projects/OpsAgent/Skills/CdpBrowser/lib/cdp_helper.js'; if(Test-Path -LiteralPath $helper){ Write-Output $helper }";
 	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 10, _opsAgent, "", "CDP Helper Path");
 	return ToCdpCleanOutput(result);
 }
