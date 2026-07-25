@@ -88,7 +88,7 @@ function ToCdpCheckAdvancedApproved() : bool
 	string content = File.ReadAllText(grantPath);
 	string escapedSessionDir = _opsAgent.GetCurrentSessionDirectory().Replace("\\", "\\\\");
 	bool hasRequiredGrantFields = content.Contains("\"approvedAt\":") && content.Contains("\"expiresAt\":") && content.Contains("\"scope\":\"all\"") && content.Contains("\"sessionDir\":\"" + escapedSessionDir + "\"");
-	return hasRequiredGrantFields && File.GetLastWriteTimeUtc(grantPath).AddHours(4) > DateTime.UtcNow;
+	return hasRequiredGrantFields && DateTime.Compare(File.GetLastWriteTimeUtc(grantPath).AddHours(4), DateTime.UtcNow) > 0;
 }
 
 function ToCdpRequireApproval() : string
