@@ -1,0 +1,44 @@
+{
+  "Module": {
+    "Enabled": true,
+    "Name": "GoogleAds",
+    "DisplayName": "Google Ads",
+    "Description": "Google Ads reporting, creative analysis, and guarded paused Search campaign creation.",
+    "AssemblyPath": "GoogleAds/Buffaly.GoogleAds.dll",
+    "TypeName": "Buffaly.GoogleAds.GoogleAdsWebModule",
+    "LoadOrder": 1310,
+    "ProjectArtifacts": [
+      {
+        "ProjectName": "Skills/GoogleAdsWeb",
+        "SourcePath": "Skills/GoogleAdsWeb/"
+      }
+    ],
+    "Pages": [
+      {
+        "Name": "googleads",
+        "DisplayName": "Google Ads",
+        "Path": "/web-modules/GoogleAds/index.html",
+        "Description": "Open the Google Ads reporting and paused campaign management workspace."
+      }
+    ],
+    "Component": {
+      "TagName": "google-ads-module",
+      "EntryUrl": "/web-modules/GoogleAds/components/google-ads-module.js",
+      "ScriptType": "module",
+      "DefaultScreen": "workspace",
+      "Screens": [
+        "workspace",
+        "performance",
+        "campaigns",
+        "search-terms",
+        "creatives"
+      ],
+      "InteractiveScreens": [
+        "performance",
+        "campaigns",
+        "search-terms",
+        "creatives"
+      ]
+    }
+  }
+}

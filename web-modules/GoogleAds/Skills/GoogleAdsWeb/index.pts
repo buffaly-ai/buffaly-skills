@@ -1,0 +1,18 @@
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.InteractiveSiteLaunchRequestContract InteractiveSiteLaunchRequestContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.InteractiveSiteLaunchResultContract InteractiveSiteLaunchResultContract;
+reference Buffaly.GoogleAds Buffaly.GoogleAds;
+import Buffaly.GoogleAds Buffaly.GoogleAds.GoogleAdsWebService GoogleAdsWebService;
+
+prototype GoogleAdsWebSkillAction : OpsAction
+{
+	Description = @"Base action type for Google Ads web module tools.";
+}
+
+[SemanticEntity("google ads web skill")]
+prototype GoogleAdsWebSkill : SkillEntity
+{
+	Description = "Google Ads web module for OAuth, account inspection, reporting, and guarded copy draft workflows.";
+	ActionRoot = GoogleAdsWebSkillAction;
+}
+
+include "GoogleAdsWebActions.pts";

@@ -8982,6 +8982,110 @@
       "RequiresPreStartInstall": true
     },
     {
+      "PackageId": "GoogleAds",
+      "PackageType": "WebModule",
+      "Title": "Google Ads",
+      "Description": "Read-only Google Ads reporting web module.",
+      "Version": "0.1.0",
+      "PackageKind": "BuffalyWebModule",
+      "SourcePath": "web-modules/GoogleAds",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/GoogleAds",
+      "Phrases": [
+        "Google Ads",
+        "GoogleAds",
+        "AdWords"
+      ],
+      "Files": [
+        {
+          "Path": "Buffaly.GoogleAds.deps.json",
+          "Sha256": "32b277a2232a5019289db37876e36259b69ac565c7f42b8a7b45e9a418c0dd15"
+        },
+        {
+          "Path": "Buffaly.GoogleAds.dll",
+          "Sha256": "7d237b384447b0b0118d3f5ec4658fdf22d729ea9493e1d457e502fb421d3274"
+        },
+        {
+          "Path": "Imports.pts",
+          "Sha256": "6c9497671c3d9b2fe05bc7314786f4dfffec7bed1cdcb5f1293c5a3616dedcf2"
+        },
+        {
+          "Path": "Skills/GoogleAdsWeb/GoogleAdsWebActions.pts",
+          "Sha256": "6d3a8d3de28767f259d8736834ef637cb221eda2830a73c51f66976e99d1880c"
+        },
+        {
+          "Path": "Skills/GoogleAdsWeb/GoogleAdsWebActions.pts.md",
+          "Sha256": "9a2a642073601ef7aee4da9752661bd2a165f4c5fd7e9798b99a869b7d6d8bb3"
+        },
+        {
+          "Path": "Skills/GoogleAdsWeb/index.pts",
+          "Sha256": "3b56a1a68201ac3f5df96b81bdb6e174804aa887f5d0ecce2bf65f76a9400a8b"
+        },
+        {
+          "Path": "Skills/GoogleAdsWeb/index.pts.md",
+          "Sha256": "ac0a2d1dfa4a1f142434e2439d448c86328c67cf2efcefd769ed7f2d1f806476"
+        },
+        {
+          "Path": "Skills/GoogleAdsWeb/interactive-sites/google-ads-module/site.css",
+          "Sha256": "51147ccdaa6501fd124298ae1bbc3e6cd86b5bf06cc12a39201473e9d13850a2"
+        },
+        {
+          "Path": "Skills/GoogleAdsWeb/interactive-sites/google-ads-module/site.html",
+          "Sha256": "bc8c7e6663239b568e5a8522897a792615767c5bccb2509eee02480043d58189"
+        },
+        {
+          "Path": "Skills/GoogleAdsWeb/interactive-sites/google-ads-module/site.js",
+          "Sha256": "43e37969d02c1b25c31964e5fa8d6a90302fc63b7a36f906652da9f732e90267"
+        },
+        {
+          "Path": "Skills/GoogleAdsWeb/skill-manifest.json",
+          "Sha256": "6a34fefdd53a91ac1003ff37ff109e1183c61cd0c6a265cf9ad68f5a4a6dc31f"
+        },
+        {
+          "Path": "web-module.json",
+          "Sha256": "f813cb7f42c5fb56dd5dd77356343aa7f4d66ca4d369da156a8bebc0d5fe0327"
+        },
+        {
+          "Path": "wwwroot/callback.html",
+          "Sha256": "97baef9c01cb85641dd2cd38d212dfb0deb70bbb06e99fec8260208556ab0b01"
+        },
+        {
+          "Path": "wwwroot/components/google-ads-module.js",
+          "Sha256": "1fd6396411a9d7bc2140f93003999e214d558e4472b14cd9e383923affb01a44"
+        },
+        {
+          "Path": "wwwroot/css/buffaly-page.css",
+          "Sha256": "e30611c717c05ade6927504d89f1af31d0495f0334cbb03ee282807cc3d9fc43"
+        },
+        {
+          "Path": "wwwroot/css/google-ads.css",
+          "Sha256": "d9aa1e542d5b0fd7b30ebb8333f0a94152d681e7b8f3f544046e17d2df84f0ff"
+        },
+        {
+          "Path": "wwwroot/index.html",
+          "Sha256": "14290b4a9f33f879caa74fecb2687788dd3a24c16352014da8247774ed7a8ab5"
+        },
+        {
+          "Path": "wwwroot/js/google-ads.js",
+          "Sha256": "388f776a0c7f157a6488be3d928b07243296d540c9d3bcf9850e70a883b98377"
+        },
+        {
+          "Path": "wwwroot/workspace.html",
+          "Sha256": "5cbca1d34ee6619ab72a03879895a241c2c98161e1062369fdfbda1bc4bad2ae"
+        }
+      ],
+      "ProjectArtifacts": [
+        {
+          "ProjectName": "Skills/GoogleAdsWeb",
+          "SourcePath": "Skills/GoogleAdsWeb/"
+        }
+      ],
+      "Dependencies": [],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "RequiresRestart": true,
+      "RequiresPreStartInstall": true
+    },
+    {
       "PackageId": "GoogleWorkspace",
       "PackageType": "WebModule",
       "Title": "Google Workspace",

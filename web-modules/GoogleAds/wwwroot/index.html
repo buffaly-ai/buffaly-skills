@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Google Ads | Buffaly</title>
+  <style>html,body,#moduleHost{height:100%;margin:0}.google-ads-component-host{display:block;height:100%}.google-ads-component-frame{border:0;width:100%;height:100%;display:block}.google-ads-component-loading{padding:2rem;font:16px system-ui;color:#475569}</style>
+</head>
+<body>
+  <div id="moduleHost"></div>
+  <script src="/js/web-modules/buffaly-web-module-loader.js"></script>
+  <script>
+    (async function () {
+      var hash = location.hash.slice(1);
+      var screen = ["performance", "campaigns", "search-terms", "creatives"].includes(hash) ? hash : "workspace";
+      await window.BuffalyWebModuleLoader.mount({
+        host: document.getElementById("moduleHost"),
+        moduleName: "GoogleAds",
+        screen: screen,
+        interactive: false,
+        component: {
+          TagName: "google-ads-module",
+          EntryUrl: "/web-modules/GoogleAds/components/google-ads-module.js",
+          ScriptType: "module",
+          DefaultScreen: "workspace",
+          Screens: ["workspace", "performance", "campaigns", "search-terms", "creatives"],
+          InteractiveScreens: ["performance", "campaigns", "search-terms", "creatives"]
+        },
+        state: Object.fromEntries(new URLSearchParams(location.search))
+      });
+    }()).catch(function (error) { document.getElementById("moduleHost").textContent = error.message; });
+  </script>
+</body>
+</html>

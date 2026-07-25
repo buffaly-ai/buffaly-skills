@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Google Ads Performance | Buffaly</title>
+  <link rel="stylesheet" href="css/buffaly-page.css">
+  <link rel="stylesheet" href="css/google-ads.css?v=0.2.1">
+</head>
+<body>
+  <main class="ads-app">
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="google-mark">G</div>
+        <div><p class="eyebrow">Buffaly Marketing</p><h1>Google Ads Performance</h1></div>
+      </div>
+      <div class="topbar-actions">
+        <span id="status" class="status-pill"><i></i> Connecting</span>
+        <label class="compact-field"><span>Date range</span><select id="dateRange"><option>LAST_7_DAYS</option><option selected>LAST_30_DAYS</option><option>THIS_MONTH</option><option>LAST_MONTH</option><option>TODAY</option><option>YESTERDAY</option></select></label>
+        <button id="refreshDashboard" class="primary-button">Refresh</button>
+        <button id="toggleSettings" class="icon-button" aria-label="Settings">⚙</button>
+      </div>
+    </header>
+
+    <section id="settingsPanel" class="settings-panel hidden">
+      <div class="section-title"><div><p class="eyebrow">Administration</p><h2>Connection settings</h2></div><button id="closeSettings" class="text-button">Close</button></div>
+      <div class="settings-grid">
+        <label>OAuth client ID<input id="clientId" autocomplete="off"></label>
+        <label>OAuth client secret<input id="clientSecret" type="password" autocomplete="off"></label>
+        <label>Developer token<input id="developerToken" type="password" autocomplete="off"></label>
+        <label>Redirect URI<input id="redirectUri"></label>
+        <label>Reporting customer ID<input id="defaultCustomerId"></label>
+        <label>Manager customer ID<input id="defaultLoginCustomerId"></label>
+      </div>
+      <div class="button-row"><button id="saveConfig" class="primary-button">Save settings</button><button id="authorize" class="secondary-button">Authorize Google Ads</button><button id="disconnect" class="danger-button">Disconnect</button></div>
+      <input id="customerId" type="hidden"><input id="loginCustomerId" type="hidden">
+    </section>
+
+    <section id="loadingState" class="state-banner"><span class="spinner"></span><div><b>Loading Google Ads performance</b><p>Retrieving campaigns, ads, and search terms…</p></div></section>
+    <section id="errorState" class="state-banner error hidden"><div><b>Dashboard could not load</b><p id="errorMessage"></p></div><button id="retryDashboard" class="secondary-button">Try again</button></section>
+
+    <section id="dashboardShell" class="hidden workspace-shell">
+      <nav class="workspace-nav" aria-label="Google Ads workspace">
+        <button class="workspace-nav-item active" type="button" data-screen-target="overview"><span>Overview</span><small>Account health</small></button>
+        <button class="workspace-nav-item" type="button" data-screen-target="campaigns"><span>Campaigns</span><small>Performance</small></button>
+        <button class="workspace-nav-item" type="button" data-screen-target="ads"><span>Ads</span><small>Creative operations</small></button>
+        <button class="workspace-nav-item" type="button" data-screen-target="drafts"><span>Draft Studio</span><small>Local copy</small></button>
+        <button class="workspace-nav-item" type="button" data-screen-target="create"><span>Create</span><small>Paused writes</small></button>
+      </nav>
+      <section class="screen-heading" data-workspace-screen="overview"><div><p class="eyebrow">Account command center</p><h2>Performance overview</h2><p>Monitor spend, traffic, conversions, search intent, and account health.</p></div><button class="secondary-button" type="button" data-screen-target="campaigns">View campaigns</button></section>
+      <section class="overview-row" data-workspace-screen="overview">
+        <div><p class="eyebrow">Account overview</p><h2 id="periodTitle">Performance</h2><p id="overviewSubtitle" class="muted"></p></div>
+        <div id="healthBadge" class="health-badge">Analyzing</div>
+      </section>
+
+      <section id="kpiGrid" class="kpi-grid" data-workspace-screen="overview"></section>
+
+      <section class="screen-heading" data-workspace-screen="campaigns"><div><p class="eyebrow">Portfolio</p><h2>Campaigns</h2><p>Compare campaign delivery and performance for the selected date range.</p></div><button class="primary-button" type="button" data-screen-target="create">Create paused campaign</button></section>
+      <section class="content-grid" data-workspace-screen="campaigns">
+        <article class="dashboard-panel campaigns-panel">
+          <div class="section-title"><div><p class="eyebrow">Portfolio</p><h2>Campaign performance</h2></div><div class="table-tools"><input id="campaignFilter" placeholder="Filter campaigns"><select id="campaignSort"><option value="spend">Sort: Spend</option><option value="clicks">Sort: Clicks</option><option value="impressions">Sort: Impressions</option><option value="ctr">Sort: CTR</option></select></div></div>
+          <div class="table-wrap"><table><thead><tr><th>Campaign</th><th>Status</th><th>Spend</th><th>Impr.</th><th>Clicks</th><th>CTR</th><th>Conv.</th></tr></thead><tbody id="campaignTableBody"></tbody></table></div>
+          <p class="muted campaign-type-note">Legacy Smart campaigns use a different Google creative asset model. They appear here for campaign reporting, but their creative is not rendered in the responsive-search-ad library.</p>
+        </article>
+
+        <aside class="dashboard-panel attention-panel">
+          <div class="section-title"><div><p class="eyebrow">Priorities</p><h2>Attention needed</h2></div><span id="attentionCount" class="count-badge">0</span></div>
+          <div id="attentionList" class="attention-list"></div>
+        </aside>
+      </section>
+
+      <section class="screen-heading" data-workspace-screen="ads"><div><p class="eyebrow">Creative operations</p><h2>Ads</h2><p>Review live copy, policy state, performance, and safe PAUSED replacements.</p></div><button class="secondary-button" type="button" data-screen-target="drafts">Open Draft Studio</button></section>
+      <section class="dashboard-panel" data-workspace-screen="ads">
+        <div class="section-title"><div><p class="eyebrow">Creative library</p><h2>Ads and copy</h2><p class="muted">Review live creative and performance, then create a local draft.</p></div><div class="table-tools"><select id="adCampaignFilter"><option value="">All campaigns</option></select><select id="adStatusFilter"><option value="">All statuses</option><option>ENABLED</option><option>PAUSED</option><option>REMOVED</option></select></div></div>
+        <div id="adGallery" class="ad-gallery"></div>
+      </section>
+
+      <section class="dashboard-panel campaign-builder-section" id="adReplacementWorkspace" data-workspace-screen="ads">
+        <div class="section-title"><div><p class="eyebrow">Ad operations</p><h2>Paused ad replacement workspace</h2><p class="muted">Google responsive search ad assets are replaced rather than edited in place. Select an existing ad, review revised copy here, and create a new PAUSED ad without changing the source.</p></div><span class="paused-write-badge">Source remains unchanged</span></div>
+        <div class="builder-grid">
+          <div class="builder-form">
+            <div class="builder-step"><span>1</span><div><h3>Source ad</h3><div class="builder-fields"><label>Ad group ID<input id="replacementAdGroupId" readonly></label><label>Source ad ID<input id="replacementSourceAdId" readonly></label></div></div></div>
+            <div class="builder-step"><span>2</span><div><h3>Replacement creative</h3><label>Final URL<input id="replacementFinalUrl" type="url" placeholder="https://example.com/landing-page"></label><label>Headlines <small>3–15, one per line, maximum 30 characters each.</small><textarea id="replacementHeadlines" rows="7"></textarea></label><label>Descriptions <small>2–4, one per line, maximum 90 characters each.</small><textarea id="replacementDescriptions" rows="5"></textarea></label></div></div>
+          </div>
+          <aside class="builder-review">
+            <p class="eyebrow">Replacement safety</p><h3>No live ad is edited</h3><ul><li>The source ad must exist in this ad group.</li><li>The replacement is always created PAUSED.</li><li>The source ad is not enabled, paused, changed, or removed.</li><li>Validation creates no resources.</li></ul>
+            <button id="validateAdReplacement" class="secondary-button wide" type="button">Validate replacement</button>
+            <label class="confirmation-check"><input id="confirmAdReplacement" type="checkbox"> I reviewed this copy and authorize creating a new PAUSED replacement.</label>
+            <button id="createAdReplacement" class="primary-button wide" type="button" disabled>Create paused replacement</button>
+            <div id="replacementResult" class="builder-result muted">Select “Replace with paused copy” on an ad above.</div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="dashboard-panel search-terms-section" data-workspace-screen="overview">
+          <div class="section-title"><div><p class="eyebrow">Intent signals</p><h2>Search terms</h2></div><span class="muted">Highest spend first</span></div>
+          <div id="searchTermList" class="search-term-list"></div>
+      </section>
+
+      <section class="screen-heading" data-workspace-screen="drafts"><div><p class="eyebrow">Creative development</p><h2>Draft Studio</h2><p>Develop and review copy locally before choosing a guarded publishing workflow.</p></div><span class="safe-badge">No Google Ads mutations</span></section>
+      <section class="dashboard-panel draft-panel draft-workspace-section" data-workspace-screen="drafts">
+          <div class="section-title"><div><p class="eyebrow">Creative studio</p><h2>Local draft workspace</h2></div><span class="safe-badge">Local only</span></div>
+          <div class="draft-hero">
+            <div><p class="eyebrow">Ready to edit</p><h3>FairPath CMS 2027 search ads</h3><p>Load both proposed ad groups into a real draft workspace. The cards below stay local and are not sent to Google Ads.</p></div>
+            <button id="loadCuratedDraft" class="primary-button" type="button">Load 2 FairPath drafts</button>
+          </div>
+          <div class="draft-context" id="draftContext">No local draft loaded yet</div>
+          <div id="draftWorkspace" class="draft-workspace"><div class="draft-empty"><strong>No drafts loaded</strong><span>Click “Load 2 FairPath drafts” to show both editable ad cards here.</span></div></div>
+          <details class="custom-draft-tools"><summary>Generate a different local draft</summary>
+            <p class="muted">Use this for ad-hoc copy generation. Nothing is sent to Google Ads.</p>
+            <div class="draft-form">
+              <input id="copyCampaignId" type="hidden"><input id="copyAdGroupId" type="hidden">
+              <label>Landing page<input id="landingPageUrl" placeholder="https://example.com/landing-page"></label>
+              <label>Goal<input id="copyGoal" placeholder="Generate qualified leads"></label>
+              <div class="split-fields"><label>Tone<input id="copyTone" placeholder="Confident, clear"></label><label>Offer<input id="copyOffer" placeholder="Free assessment"></label></div>
+              <button id="draftCopy" class="secondary-button wide">Generate local draft</button>
+            </div>
+          </details>
+      </section>
+
+      <section class="screen-heading" data-workspace-screen="create"><div><p class="eyebrow">Guarded campaign operations</p><h2>Create</h2><p>Build a complete Search hierarchy. Google validates first and every resource is created PAUSED.</p></div><span class="paused-write-badge">Paused writes only</span></section>
+      <section class="dashboard-panel campaign-builder-section" data-workspace-screen="create">
+        <div class="section-title"><div><p class="eyebrow">Campaign operations</p><h2>Paused Search campaign builder</h2><p class="muted">Validate a complete campaign hierarchy, then create it in PAUSED status after explicit confirmation.</p></div><span class="paused-write-badge">Paused writes only</span></div>
+        <div class="builder-grid">
+          <div class="builder-form">
+            <div class="builder-step"><span>1</span><div><h3>Budget and campaign</h3><div class="builder-fields"><label>Campaign name<input id="builderCampaignName" placeholder="Campaign name"></label><label>Daily budget (USD)<input id="builderDailyBudget" type="number" min="1" step="0.01" value="10.00"></label></div></div></div>
+            <div class="builder-step"><span>2</span><div><h3>Ad group and keywords</h3><div class="builder-fields"><label>Ad group name<input id="builderAdGroupName" placeholder="Ad group name"></label><label>Max CPC bid (USD)<input id="builderCpcBid" type="number" min="0.01" step="0.01" value="1.00"></label></div><label>Keywords <small>One per line. Prefix with [exact] or "phrase".</small><textarea id="builderKeywords" rows="5" placeholder="[exact keyword]&#10;&quot;phrase keyword&quot;"></textarea></label></div></div>
+            <div class="builder-step"><span>3</span><div><h3>Responsive search ad</h3><label>Final URL<input id="builderFinalUrl" type="url" placeholder="https://example.com/landing-page"></label><label>Headlines <small>3–15, one per line, maximum 30 characters each.</small><textarea id="builderHeadlines" rows="6"></textarea></label><label>Descriptions <small>2–4, one per line, maximum 90 characters each.</small><textarea id="builderDescriptions" rows="4"></textarea></label></div></div>
+          </div>
+          <aside class="builder-review">
+            <p class="eyebrow">Safety review</p><h3>Nothing is enabled</h3><ul><li>Budget is created but cannot spend.</li><li>Campaign and ad group are PAUSED.</li><li>Keywords and responsive search ad are PAUSED.</li><li>Validation creates no resources.</li></ul>
+            <button id="validatePausedCampaign" class="secondary-button wide" type="button">Validate with Google</button>
+            <label class="confirmation-check"><input id="confirmPausedCreate" type="checkbox"> I reviewed this hierarchy and authorize creating it PAUSED.</label>
+            <button id="createPausedCampaign" class="primary-button wide" type="button" disabled>Create paused campaign</button>
+            <div id="builderResult" class="builder-result muted">Complete the form and validate it first.</div>
+          </aside>
+        </div>
+      </section>
+    </section>
+
+    <details class="diagnostics"><summary>Diagnostics and raw API data</summary><div class="button-row"><button id="listCustomers" class="secondary-button">Customers</button><button id="listCampaigns" class="secondary-button">Campaigns</button><button id="loadDashboard" class="secondary-button">Performance</button><button id="searchTerms" class="secondary-button">Search terms</button><button id="adCreatives" class="secondary-button">Ad creatives</button></div><pre id="output" class="output"></pre></details>
+  </main>
+  <script src="js/google-ads.js?v=0.2.1"></script>
+</body>
+</html>

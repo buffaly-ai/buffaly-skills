@@ -1,0 +1,154 @@
+// -- Safe tools: configuration/status and read-only Google Ads API reads ----
+
+[SemanticProgram.InfinitivePhrase("to inspect google ads account status")]
+prototype ToGetGoogleAdsAccountStatus : GoogleAdsWebSkillAction
+{
+	Description = @"Check Google Ads configuration, OAuth token state, developer token presence, and selected customer state. Returns JSON.";
+	function Execute() : string { return GoogleAdsWebService.GetAccountStatusJson(); }
+}
+
+[SemanticProgram.InfinitivePhrase("to list google ads customers")]
+prototype ToListGoogleAdsCustomers : GoogleAdsWebSkillAction
+{
+	Description = @"List Google Ads customers accessible to the stored OAuth token. Returns JSON.";
+	function Execute() : string { return GoogleAdsWebService.ListCustomersJson(); }
+}
+
+[SemanticProgram.InfinitivePhrase("to list google ads campaigns")]
+prototype ToListGoogleAdsCampaigns : GoogleAdsWebSkillAction
+{
+	Description = @"customerId - Google Ads customer id without dashes. loginCustomerId - optional manager account id without dashes. Lists campaigns. Returns JSON.";
+	function Execute(string customerId, string loginCustomerId) : string { return GoogleAdsWebService.ListCampaignsJson(customerId, loginCustomerId); }
+}
+
+[SemanticProgram.InfinitivePhrase("to run google ads campaign report")]
+prototype ToRunGoogleAdsCampaignReport : GoogleAdsWebSkillAction
+{
+	Description = @"customerId - Google Ads customer id without dashes. loginCustomerId - optional manager account id. dateRangePreset - LAST_7_DAYS, LAST_30_DAYS, THIS_MONTH, or LAST_MONTH. Returns campaign traffic/spend JSON.";
+	function Execute(string customerId, string loginCustomerId, string dateRangePreset) : string { return GoogleAdsWebService.RunCampaignReportJson(customerId, loginCustomerId, dateRangePreset); }
+}
+
+[SemanticProgram.InfinitivePhrase("to run google ads search term report")]
+prototype ToRunGoogleAdsSearchTermReport : GoogleAdsWebSkillAction
+{
+	Description = @"customerId - Google Ads customer id without dashes. loginCustomerId - optional manager account id. dateRangePreset - report date preset. Returns search-term performance JSON.";
+	function Execute(string customerId, string loginCustomerId, string dateRangePreset) : string { return GoogleAdsWebService.RunSearchTermReportJson(customerId, loginCustomerId, dateRangePreset); }
+}
+
+[SemanticProgram.InfinitivePhrase("to run google ads ad creative report")]
+prototype ToRunGoogleAdsAdCreativeReport : GoogleAdsWebSkillAction
+{
+	Description = @"customerId - Google Ads customer id without dashes. loginCustomerId - optional manager account id. dateRangePreset - report date preset. Returns ad creative, final URL, policy, and performance JSON.";
+	function Execute(string customerId, string loginCustomerId, string dateRangePreset) : string { return GoogleAdsWebService.RunAdCreativeReportJson(customerId, loginCustomerId, dateRangePreset); }
+}
+
+[SemanticProgram.InfinitivePhrase("to draft google ads copy")]
+prototype ToDraftGoogleAdsCopy : GoogleAdsWebSkillAction
+{
+	Description = @"Create local-only Google Ads copy drafts. Does not mutate Google Ads. customerId, campaignId, adGroupId, landingPageUrl, goal, tone, offer. Returns JSON.";
+	function Execute(string customerId, string campaignId, string adGroupId, string landingPageUrl, string goal, string tone, string offer) : string { return GoogleAdsWebService.DraftCopyJson(customerId, campaignId, adGroupId, landingPageUrl, goal, tone, offer); }
+}
+
+[SemanticProgram.InfinitivePhrase("to validate a paused google ads search campaign")]
+prototype ToValidatePausedGoogleAdsSearchCampaign : GoogleAdsWebSkillAction
+{
+	Description = @"Validate a complete paused Google Ads Search campaign hierarchy without creating resources. keywordsJson is an array of Text/MatchType objects; headlinesJson and descriptionsJson are string arrays. Budget and bid values use micros. Returns JSON.";
+	function Execute(string customerId, string loginCustomerId, string campaignName, int dailyBudgetMicros, string adGroupName, int adGroupCpcBidMicros, string keywordsJson, string headlinesJson, string descriptionsJson, string finalUrl) : string
+	{
+		return GoogleAdsWebService.ValidatePausedSearchCampaignJson(customerId, loginCustomerId, campaignName, dailyBudgetMicros, adGroupName, adGroupCpcBidMicros, keywordsJson, headlinesJson, descriptionsJson, finalUrl);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create a paused google ads search campaign")]
+prototype ToCreatePausedGoogleAdsSearchCampaign : GoogleAdsWebSkillAction
+{
+	Description = @"Create one complete Google Ads Search campaign hierarchy with budget, campaign, ad group, keywords, and responsive search ad. Every supported resource is forced PAUSED. confirmCreatePaused must be true. Budget and bid values use micros. Returns resource names and request ID as JSON.";
+	function Execute(string customerId, string loginCustomerId, string campaignName, int dailyBudgetMicros, string adGroupName, int adGroupCpcBidMicros, string keywordsJson, string headlinesJson, string descriptionsJson, string finalUrl, bool confirmCreatePaused) : string
+	{
+		return GoogleAdsWebService.CreatePausedSearchCampaignJson(customerId, loginCustomerId, campaignName, dailyBudgetMicros, adGroupName, adGroupCpcBidMicros, keywordsJson, headlinesJson, descriptionsJson, finalUrl, confirmCreatePaused);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to validate a paused google ad replacement")]
+prototype ToValidatePausedGoogleAdReplacement : GoogleAdsWebSkillAction
+{
+	Description = @"Validate a PAUSED responsive search ad replacement without creating it or modifying the source ad. Arrays are supplied as JSON strings. Returns JSON.";
+	function Execute(string customerId, string loginCustomerId, string adGroupId, string sourceAdId, string headlinesJson, string descriptionsJson, string finalUrl) : string
+	{
+		return GoogleAdsWebService.ValidatePausedAdReplacementJson(customerId, loginCustomerId, adGroupId, sourceAdId, headlinesJson, descriptionsJson, finalUrl);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create a paused google ad replacement")]
+prototype ToCreatePausedGoogleAdReplacement : GoogleAdsWebSkillAction
+{
+	Description = @"Create a PAUSED responsive search ad replacement in an existing ad group while leaving the source ad unchanged. confirmCreatePaused must be true. Returns JSON.";
+	function Execute(string customerId, string loginCustomerId, string adGroupId, string sourceAdId, string headlinesJson, string descriptionsJson, string finalUrl, bool confirmCreatePaused) : string
+	{
+		return GoogleAdsWebService.CreatePausedAdReplacementJson(customerId, loginCustomerId, adGroupId, sourceAdId, headlinesJson, descriptionsJson, finalUrl, confirmCreatePaused);
+	}
+}
+prototype GoogleAdsInteractiveSiteAction : GoogleAdsWebSkillAction
+{
+	function Launch(string screen, string title, string customerId, string loginCustomerId, string dateRangePreset, int timeoutSeconds) : string
+	{
+		if (screen != "performance" && screen != "campaigns" && screen != "search-terms" && screen != "creatives")
+		{
+			return "Error: unsupported Google Ads interactive screen.";
+		}
+		if (dateRangePreset != "LAST_7_DAYS" && dateRangePreset != "LAST_30_DAYS" && dateRangePreset != "THIS_MONTH" && dateRangePreset != "LAST_MONTH" && dateRangePreset != "TODAY" && dateRangePreset != "YESTERDAY")
+		{
+			return "Error: unsupported dateRangePreset.";
+		}
+		if (timeoutSeconds <= 0)
+		{
+			timeoutSeconds = 120;
+		}
+
+		string siteRoot = Path.Combine(_opsAgent.GetCurrentProjectDirectory(), "Skills", "GoogleAdsWeb", "interactive-sites", "google-ads-module");
+		string html = File.ReadAllText(Path.Combine(siteRoot, "site.html"));
+		string css = File.ReadAllText(Path.Combine(siteRoot, "site.css"));
+		string js = File.ReadAllText(Path.Combine(siteRoot, "site.js"));
+		string config = "window.GoogleAdsInteractiveSiteConfig={Title:'" + title + "',Screen:'" + screen + "',Component:{TagName:'google-ads-module',EntryUrl:'/web-modules/GoogleAds/components/google-ads-module.js',ScriptType:'module',DefaultScreen:'workspace',Screens:['workspace','performance','campaigns','search-terms','creatives'],InteractiveScreens:['performance','campaigns','search-terms','creatives']},State:{customerId:'" + customerId + "',loginCustomerId:'" + loginCustomerId + "',dateRangePreset:'" + dateRangePreset + "'}};\n";
+		InteractiveSiteLaunchResultContract result = _opsAgent.LaunchInteractiveSite(new InteractiveSiteLaunchRequestContract
+		{
+			Title = title,
+			MessageKey = _opsAgent.GetCurrentToolMessageKeyOrEmpty(),
+			ToolInvocationId = _opsAgent.GetCurrentToolInvocationIdOrEmpty(),
+			Html = html,
+			Css = css,
+			JavaScript = config + js,
+			TimeoutSeconds = timeoutSeconds
+		});
+		return "Google Ads " + screen + " interactive site exited with status: " + result.Status + "; value: " + result.Value;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to view google ads performance in an interactive site")]
+[SemanticProgram.InfinitivePhrase("to show google ads performance")]
+prototype ToViewGoogleAdsPerformanceInteractiveSite : GoogleAdsInteractiveSiteAction
+{
+	Description = @"Launch a read-only Google Ads performance popup. customerId and loginCustomerId may be blank to use saved defaults. dateRangePreset is LAST_7_DAYS, LAST_30_DAYS, THIS_MONTH, LAST_MONTH, TODAY, or YESTERDAY.";
+	function Execute(string customerId, string loginCustomerId, string dateRangePreset, int timeoutSeconds) : string { return Launch("performance", "Google Ads Performance", customerId, loginCustomerId, dateRangePreset, timeoutSeconds); }
+}
+
+[SemanticProgram.InfinitivePhrase("to view google ads campaigns in an interactive site")]
+prototype ToViewGoogleAdsCampaignsInteractiveSite : GoogleAdsInteractiveSiteAction
+{
+	Description = @"Launch a read-only Google Ads campaign table popup.";
+	function Execute(string customerId, string loginCustomerId, string dateRangePreset, int timeoutSeconds) : string { return Launch("campaigns", "Google Ads Campaigns", customerId, loginCustomerId, dateRangePreset, timeoutSeconds); }
+}
+
+[SemanticProgram.InfinitivePhrase("to view google ads search terms in an interactive site")]
+prototype ToViewGoogleAdsSearchTermsInteractiveSite : GoogleAdsInteractiveSiteAction
+{
+	Description = @"Launch a read-only Google Ads search-term performance popup.";
+	function Execute(string customerId, string loginCustomerId, string dateRangePreset, int timeoutSeconds) : string { return Launch("search-terms", "Google Ads Search Terms", customerId, loginCustomerId, dateRangePreset, timeoutSeconds); }
+}
+
+[SemanticProgram.InfinitivePhrase("to view google ads creatives in an interactive site")]
+prototype ToViewGoogleAdsCreativesInteractiveSite : GoogleAdsInteractiveSiteAction
+{
+	Description = @"Launch a read-only Google Ads creative and policy preview popup.";
+	function Execute(string customerId, string loginCustomerId, string dateRangePreset, int timeoutSeconds) : string { return Launch("creatives", "Google Ads Creatives", customerId, loginCustomerId, dateRangePreset, timeoutSeconds); }
+}
