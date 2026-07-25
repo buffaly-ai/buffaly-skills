@@ -35,4 +35,10 @@ Official `claude` (Claude Code) wrappers plus a transparent pass-through layer. 
 
 Requires:
 - `claude` CLI installed (`npm install -g @anthropic-ai/claude-code`)
+- `claude` CLI installed (`npm install -g @anthropic-ai/claude-code`) and on PATH
 - Claude Pro/Max subscription for subscription-backed auth
+
+## Cross-platform support
+- Resolves `claude` from PATH (tries `claude` first, falls back to `claude.cmd` on Windows)
+- Uses `[System.IO.Path]::GetTempPath()` for temp file paths (works on Windows, macOS, and Linux)
+- Uses `System.Diagnostics.ProcessStartInfo` for cross-platform process launching
