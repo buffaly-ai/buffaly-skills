@@ -2434,30 +2434,6 @@
       "RequiresPreStartInstall": true
     },
     {
-      "PackageId": "ChatGPTPro",
-      "PackageType": "Skill",
-      "Title": "ChatGPT Pro",
-      "Description": "ChatGPT Pro skill: one-shot prompts, file context, and pass-through conversation management via the oracle CLI (steipete/oracle) with browser-mode ChatGPT Pro auth.",
-      "Version": "0.1.1",
-      "PackageKind": "OpsAgentProtoScriptSkill",
-      "SourcePath": "skills/ChatGPTPro",
-      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/skills/ChatGPTPro",
-      "Phrases": [
-        "ChatGPT Pro",
-        "ChatGPTPro"
-      ],
-      "Files": [
-        {
-          "Path": "index.pts",
-          "Sha256": "5b693888949a9642d89943d03ccdec7f9795fcb1dbe5a574be93debd5486a44a"
-        },
-        {
-          "Path": "SKILL.md",
-          "Sha256": "715654ac34468799fadce2de9ef6a784c11f9977ae477c85e5aff7d599220b0a"
-        }
-      ]
-    },
-    {
       "PackageId": "ActionLearningCoordinator",
       "PackageType": "WebModule",
       "Title": "Action Learning Coordinator",
