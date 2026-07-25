@@ -129,26 +129,26 @@ prototype GoogleAdsInteractiveSiteAction : GoogleAdsWebSkillAction
 prototype ToViewGoogleAdsPerformanceInteractiveSite : GoogleAdsInteractiveSiteAction
 {
 	Description = @"Launch a read-only Google Ads performance popup. customerId and loginCustomerId may be blank to use saved defaults. dateRangePreset is LAST_7_DAYS, LAST_30_DAYS, THIS_MONTH, LAST_MONTH, TODAY, or YESTERDAY.";
-	function Execute(string customerId, string loginCustomerId, string dateRangePreset, int timeoutSeconds) : string { return Launch("performance", "Google Ads Performance", customerId, loginCustomerId, dateRangePreset, timeoutSeconds); }
+	function Execute(string customerId, string loginCustomerId, string dateRangePreset, int timeoutSeconds) : string { return this.Launch("performance", "Google Ads Performance", customerId, loginCustomerId, dateRangePreset, timeoutSeconds); }
 }
 
 [SemanticProgram.InfinitivePhrase("to view google ads campaigns in an interactive site")]
 prototype ToViewGoogleAdsCampaignsInteractiveSite : GoogleAdsInteractiveSiteAction
 {
 	Description = @"Launch a read-only Google Ads campaign table popup.";
-	function Execute(string customerId, string loginCustomerId, string dateRangePreset, int timeoutSeconds) : string { return Launch("campaigns", "Google Ads Campaigns", customerId, loginCustomerId, dateRangePreset, timeoutSeconds); }
+	function Execute(string customerId, string loginCustomerId, string dateRangePreset, int timeoutSeconds) : string { return this.Launch("campaigns", "Google Ads Campaigns", customerId, loginCustomerId, dateRangePreset, timeoutSeconds); }
 }
 
 [SemanticProgram.InfinitivePhrase("to view google ads search terms in an interactive site")]
 prototype ToViewGoogleAdsSearchTermsInteractiveSite : GoogleAdsInteractiveSiteAction
 {
 	Description = @"Launch a read-only Google Ads search-term performance popup.";
-	function Execute(string customerId, string loginCustomerId, string dateRangePreset, int timeoutSeconds) : string { return Launch("search-terms", "Google Ads Search Terms", customerId, loginCustomerId, dateRangePreset, timeoutSeconds); }
+	function Execute(string customerId, string loginCustomerId, string dateRangePreset, int timeoutSeconds) : string { return this.Launch("search-terms", "Google Ads Search Terms", customerId, loginCustomerId, dateRangePreset, timeoutSeconds); }
 }
 
 [SemanticProgram.InfinitivePhrase("to view google ads creatives in an interactive site")]
 prototype ToViewGoogleAdsCreativesInteractiveSite : GoogleAdsInteractiveSiteAction
 {
 	Description = @"Launch a read-only Google Ads creative and policy preview popup.";
-	function Execute(string customerId, string loginCustomerId, string dateRangePreset, int timeoutSeconds) : string { return Launch("creatives", "Google Ads Creatives", customerId, loginCustomerId, dateRangePreset, timeoutSeconds); }
+	function Execute(string customerId, string loginCustomerId, string dateRangePreset, int timeoutSeconds) : string { return this.Launch("creatives", "Google Ads Creatives", customerId, loginCustomerId, dateRangePreset, timeoutSeconds); }
 }
