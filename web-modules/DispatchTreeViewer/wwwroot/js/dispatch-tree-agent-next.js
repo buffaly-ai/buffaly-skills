@@ -59,10 +59,10 @@
         });
         cachedFileItemsKey = context.sessionKey;
         return cachedFileItems;
-      })
+     })
       .catch(function () { return null; })
-      .finally(function () { loadInFlightKey = ""; });
-  }
+      .finally(function () { if (loadInFlightKey === context.sessionKey) loadInFlightKey = ""; });
+ }
 
   function openViewer(providerIndex) {
     if (!cachedResponse) return;
