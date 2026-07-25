@@ -1,4 +1,4 @@
-const VIEWS=Object.freeze({workspace:{route:"drafts",required:[]},report:{route:"report",required:["adAccountId","reportType","dateRangePreset"]}});
+const VIEWS=Object.freeze({workspace:{route:"drafts",required:[]},report:{route:"report",required:["adAccountId","reportType","dateRangePreset"]},campaign:{route:"campaign",required:["adAccountId","campaignId"]},"ad-group":{route:"ad-group",required:["adAccountId","adGroupId"]},ad:{route:"ad",required:["adAccountId","adId"]}});
 class RedditAdsModule extends HTMLElement{
  constructor(){super();this._configuration=null;this._frame=null;this._started=false;this._onMessage=this._onMessage.bind(this)}
  configure(configuration){if(this._started)throw new Error("Reddit Ads module cannot be reconfigured after start().");const view=VIEWS[configuration&&configuration.screen];if(!view)throw new Error("Unsupported Reddit Ads screen: "+(configuration&&configuration.screen));const state=configuration.state||{};view.required.forEach(k=>{if(typeof state[k]!=="string"||!state[k])throw new Error(k+" is required for Reddit Ads "+configuration.screen)});this._configuration={...configuration,state}}

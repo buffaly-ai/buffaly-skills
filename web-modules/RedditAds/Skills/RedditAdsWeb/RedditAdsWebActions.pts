@@ -33,6 +33,20 @@ prototype ToListRedditAdsWebCampaigns : RedditAdsWebSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to list reddit ads ad groups")]
+prototype ToListRedditAdsWebAdGroups : RedditAdsWebSkillAction
+{
+	Description = @"adAccountId - Reddit ad account id. Return ad groups with stable IDs and campaign parent IDs as JSON. Use the returned ID with ToViewRedditAdsAdGroupInteractiveSite.";
+	function Execute(string adAccountId) : string { return RedditAdsWebService.ListAdGroupsJson(adAccountId); }
+}
+
+[SemanticProgram.InfinitivePhrase("to list reddit ads ads")]
+prototype ToListRedditAdsWebAds : RedditAdsWebSkillAction
+{
+	Description = @"adAccountId - Reddit ad account id. Return ads with stable IDs, names, statuses, ad-group IDs, and post IDs as JSON. Use the returned ad ID with ToViewRedditAdInteractiveSite.";
+	function Execute(string adAccountId) : string { return RedditAdsWebService.ListAdsJson(adAccountId); }
+}
+
 [SemanticProgram.InfinitivePhrase("to generate reddit ads web report")]
 prototype ToGenerateRedditAdsWebReport : RedditAdsWebSkillAction
 {
@@ -69,10 +83,48 @@ prototype RedditAdsInteractiveSiteLauncher
 	}
 }
 
+prototype RedditAdsEntityInteractiveSiteLauncher
+{
+	function Execute(IAgentRuntimeHost opsAgent, string title, string screen, string adAccountId, string entityId, int timeoutSeconds) : string
+	{
+		if (timeoutSeconds <= 0) { timeoutSeconds = 120; }
+		string siteRoot = Path.Combine(opsAgent.GetCurrentProjectDirectory(), "Skills", "RedditAdsWeb", "interactive-sites", "reddit-ads-module");
+		string html = File.ReadAllText(Path.Combine(siteRoot, "site.html"));
+		string css = File.ReadAllText(Path.Combine(siteRoot, "site.css"));
+		string js = File.ReadAllText(Path.Combine(siteRoot, "site.js"));
+		string config = RedditAdsInteractiveSiteConfiguration.BuildEntityJavaScript(title, screen, adAccountId, entityId);
+		string javascript = String.Concat(config, js);
+		InteractiveSiteLaunchResultContract result = opsAgent.LaunchInteractiveSite(new InteractiveSiteLaunchRequestContract { Title = title, MessageKey = opsAgent.GetCurrentToolMessageKeyOrEmpty(), ToolInvocationId = opsAgent.GetCurrentToolInvocationIdOrEmpty(), Html = html, Css = css, JavaScript = javascript, TimeoutSeconds = timeoutSeconds });
+		return "Reddit Ads " + screen + " interactive site exited with status: " + result.Status + "; value: " + result.Value;
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to view a reddit ads report in an interactive site")]
 [SemanticProgram.InfinitivePhrase("to show reddit ads performance")]
 prototype ToViewRedditAdsReportInteractiveSite : RedditAdsWebSkillAction
 {
 	Description = @"Launch a read-only Reddit Ads performance report popup. reportType is campaign, ad_group, or ad. dateRangePreset is last_24h, last_7d, or last_30d.";
 	function Execute(string adAccountId, string reportType, string dateRangePreset, int timeoutSeconds) : string { return RedditAdsInteractiveSiteLauncher.Execute(_opsAgent, "Reddit Ads Performance", adAccountId, reportType, dateRangePreset, timeoutSeconds); }
+}
+
+[SemanticProgram.InfinitivePhrase("to show a specific reddit ads campaign")]
+prototype ToViewRedditAdsCampaignInteractiveSite : RedditAdsWebSkillAction
+{
+	Description = @"Open one read-only Reddit campaign. Resolve campaignId first with ToListRedditAdsWebCampaigns.";
+	function Execute(string adAccountId, string campaignId, int timeoutSeconds) : string { return RedditAdsEntityInteractiveSiteLauncher.Execute(_opsAgent, "Reddit Campaign " + campaignId, "campaign", adAccountId, campaignId, timeoutSeconds); }
+}
+
+[SemanticProgram.InfinitivePhrase("to show a specific reddit ads ad group")]
+prototype ToViewRedditAdsAdGroupInteractiveSite : RedditAdsWebSkillAction
+{
+	Description = @"Open one read-only Reddit ad group. Resolve adGroupId first with ToListRedditAdsWebAdGroups.";
+	function Execute(string adAccountId, string adGroupId, int timeoutSeconds) : string { return RedditAdsEntityInteractiveSiteLauncher.Execute(_opsAgent, "Reddit Ad Group " + adGroupId, "ad-group", adAccountId, adGroupId, timeoutSeconds); }
+}
+
+[SemanticProgram.InfinitivePhrase("to show a specific reddit ad")]
+[SemanticProgram.InfinitivePhrase("to view a reddit ad in an interactive site")]
+prototype ToViewRedditAdInteractiveSite : RedditAdsWebSkillAction
+{
+	Description = @"Open one read-only Reddit ad creative. Resolve adId first with ToListRedditAdsWebAds.";
+	function Execute(string adAccountId, string adId, int timeoutSeconds) : string { return RedditAdsEntityInteractiveSiteLauncher.Execute(_opsAgent, "Reddit Ad " + adId, "ad", adAccountId, adId, timeoutSeconds); }
 }
