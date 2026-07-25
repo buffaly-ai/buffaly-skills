@@ -27,7 +27,7 @@ prototype ComputerUseSkill : SkillEntity
 prototype list_apps : ComputerUseSkillAction
 {
 	Description = @"List the apps and visible windows available to Computer Use. This tool is part of plugin Computer Use.";
-	function Execute() : ComputerUseToolResult { return ComputerUseToolService.ListApps(_opsAgent.GetCurrentSessionDirectory()); }
+	function Execute() : ComputerUseToolResult { return ComputerUseToolService.ListApps(ComputerUseToolService.GetCurrentSessionKey()); }
 }
 
 [SemanticProgram.InfinitivePhrase("to get computer app state")]
@@ -35,7 +35,7 @@ prototype list_apps : ComputerUseSkillAction
 prototype get_app_state : ComputerUseSkillAction
 {
 	Description = @"app - app name or process name. Starts or reuses an exact-window lease and returns a screenshot plus accessibility tree. Call once per assistant turn before interaction. This tool is part of plugin Computer Use.";
-	function Execute(string app) : ComputerUseToolResult { return ComputerUseToolService.GetAppState(_opsAgent.GetCurrentSessionDirectory(), app); }
+	function Execute(string app) : ComputerUseToolResult { return ComputerUseToolService.GetAppState(ComputerUseToolService.GetCurrentSessionKey(), app); }
 }
 
 [SemanticProgram.InfinitivePhrase("to click a computer app")]
@@ -45,7 +45,7 @@ prototype click : ComputerUseSkillAction
 	function Execute(string app, string elementIndex = "", double x = -1, double y = -1, int clickCount = 1, string mouseButton = "left") : ComputerUseActionResult
 	{
 		ComputerUseClickRequest request = new ComputerUseClickRequest(); request.App = app; request.ElementIndex = elementIndex; request.X = x; request.Y = y; request.ClickCount = clickCount; request.MouseButton = mouseButton;
-		return ComputerUseToolService.Click(_opsAgent.GetCurrentSessionDirectory(), request);
+		return ComputerUseToolService.Click(ComputerUseToolService.GetCurrentSessionKey(), request);
 	}
 }
 
@@ -53,49 +53,49 @@ prototype click : ComputerUseSkillAction
 prototype perform_secondary_action : ComputerUseSkillAction
 {
 	Description = @"app, elementIndex, action. Invokes one advertised UIA action: invoke, expand, collapse, toggle, select, add_to_selection, remove_from_selection, or scroll_into_view. This tool is part of plugin Computer Use.";
-	function Execute(string app, string elementIndex, string action) : ComputerUseActionResult { ComputerUseSecondaryActionRequest request = new ComputerUseSecondaryActionRequest(); request.App = app; request.ElementIndex = elementIndex; request.Action = action; return ComputerUseToolService.PerformSecondaryAction(_opsAgent.GetCurrentSessionDirectory(), request); }
+	function Execute(string app, string elementIndex, string action) : ComputerUseActionResult { ComputerUseSecondaryActionRequest request = new ComputerUseSecondaryActionRequest(); request.App = app; request.ElementIndex = elementIndex; request.Action = action; return ComputerUseToolService.PerformSecondaryAction(ComputerUseToolService.GetCurrentSessionKey(), request); }
 }
 
 [SemanticProgram.InfinitivePhrase("to set a computer app value")]
 prototype set_value : ComputerUseSkillAction
 {
 	Description = @"app, elementIndex, value. Sets an enabled settable accessibility element. This tool is part of plugin Computer Use.";
-	function Execute(string app, string elementIndex, string value) : ComputerUseActionResult { ComputerUseSetValueRequest request = new ComputerUseSetValueRequest(); request.App = app; request.ElementIndex = elementIndex; request.Value = value; return ComputerUseToolService.SetValue(_opsAgent.GetCurrentSessionDirectory(), request); }
+	function Execute(string app, string elementIndex, string value) : ComputerUseActionResult { ComputerUseSetValueRequest request = new ComputerUseSetValueRequest(); request.App = app; request.ElementIndex = elementIndex; request.Value = value; return ComputerUseToolService.SetValue(ComputerUseToolService.GetCurrentSessionKey(), request); }
 }
 
 [SemanticProgram.InfinitivePhrase("to select text in a computer app")]
 prototype select_text : ComputerUseSkillAction
 {
 	Description = @"app, elementIndex, text, prefix(optional), suffix(optional), selection(optional: text, cursor_before, cursor_after). This tool is part of plugin Computer Use.";
-	function Execute(string app, string elementIndex, string text, string prefix = "", string suffix = "", string selection = "text") : ComputerUseActionResult { ComputerUseSelectTextRequest request = new ComputerUseSelectTextRequest(); request.App = app; request.ElementIndex = elementIndex; request.Text = text; request.Prefix = prefix; request.Suffix = suffix; request.Selection = selection; return ComputerUseToolService.SelectText(_opsAgent.GetCurrentSessionDirectory(), request); }
+	function Execute(string app, string elementIndex, string text, string prefix = "", string suffix = "", string selection = "text") : ComputerUseActionResult { ComputerUseSelectTextRequest request = new ComputerUseSelectTextRequest(); request.App = app; request.ElementIndex = elementIndex; request.Text = text; request.Prefix = prefix; request.Suffix = suffix; request.Selection = selection; return ComputerUseToolService.SelectText(ComputerUseToolService.GetCurrentSessionKey(), request); }
 }
 
 [SemanticProgram.InfinitivePhrase("to scroll a computer app")]
 prototype scroll : ComputerUseSkillAction
 {
 	Description = @"app, elementIndex(optional), direction(up/down/left/right), pages(optional). This tool is part of plugin Computer Use.";
-	function Execute(string app, string direction, string elementIndex = "", double pages = 1) : ComputerUseActionResult { ComputerUseScrollRequest request = new ComputerUseScrollRequest(); request.App = app; request.ElementIndex = elementIndex; request.Direction = direction; request.Pages = pages; return ComputerUseToolService.Scroll(_opsAgent.GetCurrentSessionDirectory(), request); }
+	function Execute(string app, string direction, string elementIndex = "", double pages = 1) : ComputerUseActionResult { ComputerUseScrollRequest request = new ComputerUseScrollRequest(); request.App = app; request.ElementIndex = elementIndex; request.Direction = direction; request.Pages = pages; return ComputerUseToolService.Scroll(ComputerUseToolService.GetCurrentSessionKey(), request); }
 }
 
 [SemanticProgram.InfinitivePhrase("to drag in a computer app")]
 prototype drag : ComputerUseSkillAction
 {
 	Description = @"app and screenshot coordinates fromX, fromY, toX, toY. This tool is part of plugin Computer Use.";
-	function Execute(string app, double fromX, double fromY, double toX, double toY) : ComputerUseActionResult { ComputerUseDragRequest request = new ComputerUseDragRequest(); request.App = app; request.FromX = fromX; request.FromY = fromY; request.ToX = toX; request.ToY = toY; return ComputerUseToolService.Drag(_opsAgent.GetCurrentSessionDirectory(), request); }
+	function Execute(string app, double fromX, double fromY, double toX, double toY) : ComputerUseActionResult { ComputerUseDragRequest request = new ComputerUseDragRequest(); request.App = app; request.FromX = fromX; request.FromY = fromY; request.ToX = toX; request.ToY = toY; return ComputerUseToolService.Drag(ComputerUseToolService.GetCurrentSessionKey(), request); }
 }
 
 [SemanticProgram.InfinitivePhrase("to press a key in a computer app")]
 prototype press_key : ComputerUseSkillAction
 {
 	Description = @"app, key. Presses one key or modifier chord such as Return, Tab, win+c, or Up. This tool is part of plugin Computer Use.";
-	function Execute(string app, string key) : ComputerUseActionResult { ComputerUsePressKeyRequest request = new ComputerUsePressKeyRequest(); request.App = app; request.Key = key; return ComputerUseToolService.PressKey(_opsAgent.GetCurrentSessionDirectory(), request); }
+	function Execute(string app, string key) : ComputerUseActionResult { ComputerUsePressKeyRequest request = new ComputerUsePressKeyRequest(); request.App = app; request.Key = key; return ComputerUseToolService.PressKey(ComputerUseToolService.GetCurrentSessionKey(), request); }
 }
 
 [SemanticProgram.InfinitivePhrase("to type text in a computer app")]
 prototype type_text : ComputerUseSkillAction
 {
 	Description = @"app, text. Types literal text into the exact leased window. This tool is part of plugin Computer Use.";
-	function Execute(string app, string text) : ComputerUseActionResult { ComputerUseTypeTextRequest request = new ComputerUseTypeTextRequest(); request.App = app; request.Text = text; return ComputerUseToolService.TypeText(_opsAgent.GetCurrentSessionDirectory(), request); }
+	function Execute(string app, string text) : ComputerUseActionResult { ComputerUseTypeTextRequest request = new ComputerUseTypeTextRequest(); request.App = app; request.Text = text; return ComputerUseToolService.TypeText(ComputerUseToolService.GetCurrentSessionKey(), request); }
 }
 
 
