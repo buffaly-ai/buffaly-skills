@@ -18,7 +18,7 @@
     styleLoaded = true;
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.7.7";
+    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.7.8";
     document.head.appendChild(link);
   }
 
@@ -46,9 +46,14 @@
   function ensureSessionRuntime(sessionKey) {
     if (!sessionKey) return Promise.reject(new Error("A session key is required to load the Dispatch tree."));
     // A cold session compiles the complete project and initializes services. Staging can
-    // legitimately take several minutes, so do not report a false failure while that
-    // supported activation call is still making progress.
-    return BuffalyAgentService.EnsureAgentAsync(sessionKey);
+    // legitimately take several minutes. The host bridge can time out while the worker
+    // continues starting, so retry only those transient transport failures.
+    return BuffalyAgentService.EnsureAgentAsync(sessionKey).catch(function (error) {
+      var message = errorMessage(error);
+      if (!/JsonWs request timed out|HTTP 502/i.test(message)) throw error;
+      return new Promise(function (resolve) { window.setTimeout(resolve, 3000); })
+        .then(function () { return ensureSessionRuntime(sessionKey); });
+    });
   }
 
   ensureStyle();
