@@ -2,7 +2,7 @@
 
 Validated source commits:
 
-- Chrome extension: `dc6b25fa372033e19b32306d5d0fc5eababf6dbf`
+- Chrome extension: `0da69f240ce4d8361e4ce90901b0ebdc2a6d45c7`
 - ExtensionBrowser skill: `812982b7767a1809baaadb6ee72f80b01922c4a1`
 - Worker recovery implementation: `4111b77580939ff0afb372dc59aac17decaa2dc9`
 

@@ -25,8 +25,12 @@ for (const size of [16, 48, 128]) {
 }
 const zip = path.join(root, `.output/buffaly-browser-agent-${pkg.version}-chrome.zip`);
 check(fs.existsSync(zip) && fs.statSync(zip).size > 1000, 'versioned release archive is missing');
-const tracked = execFileSync('git', ['ls-files'], { cwd: root, encoding: 'utf8' }).split('\n');
-check(!tracked.some((file) => file.startsWith('dev/')), 'development scratch files are tracked');
+if (fs.existsSync(path.join(root, '.git'))) {
+  const tracked = execFileSync('git', ['ls-files'], { cwd: root, encoding: 'utf8' }).split('\n');
+  check(!tracked.some((file) => file.startsWith('dev/')), 'development scratch files are tracked');
+} else {
+  check(!fs.existsSync(path.join(root, 'dev')), 'development scratch directory is present in exported source');
+}
 
 if (failures.length) {
   console.error(failures.map((failure) => `FAIL: ${failure}`).join('\n'));

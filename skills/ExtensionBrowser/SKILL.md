@@ -9,7 +9,7 @@ Extension Browser is the Buffaly skill package for the **Buffaly Browser Agent**
 - `index.pts` and `PromptActions.pts`: ProtoScript skill and discovery phrases.
 - `lib/bridge.js`: persistent bridge with bounded extension-worker recovery.
 - `lib/extension_helper.js`: direct helper used by raw and diagnostic actions.
-- `extension/source`: reproducible source exported from extension commit `dc6b25fa372033e19b32306d5d0fc5eababf6dbf`.
+- `extension/source`: reproducible source exported from extension commit `0da69f240ce4d8361e4ce90901b0ebdc2a6d45c7`.
 - `extension/release/Buffaly-Browser-Agent-0.2.0-chrome.zip`: Chrome Web Store upload artifact produced by `npm run release:check`.
 - `docs/VALIDATION.md`: executed publication-gate evidence and remaining store-hosting requirements.
 
