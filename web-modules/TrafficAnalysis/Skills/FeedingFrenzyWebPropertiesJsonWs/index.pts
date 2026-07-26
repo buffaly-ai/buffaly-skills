@@ -1,0 +1,57 @@
+import Buffaly.Agent.Tools.Http Buffaly.Agent.Tools.Http.JsonWsHelper JsonWsHelper;
+import BasicUtilities BasicUtilities.JsonObject JsonObject;
+import BasicUtilities BasicUtilities.StringUtil StringUtil;
+
+prototype FeedingFrenzyWebPropertiesJsonWsSkillAction : OpsAction
+{
+	Description = @"Base action type for Feeding Frenzy WebProperties JSON WS tools.";
+}
+
+[SemanticEntity("feeding frenzy web properties json ws skill")]
+prototype FeedingFrenzyWebPropertiesJsonWsSkill : SkillEntity
+{
+	Description = "Thin Feeding Frenzy WebProperties JsonWs wrappers for traffic and analytics endpoints. This skill is independent from the CRM-focused FeedingFrenzyJsonWs skill.";
+	EntityName = "feeding frenzy web properties json ws skill";
+	ActionRoot = FeedingFrenzyWebPropertiesJsonWsSkillAction;
+}
+
+prototype FeedingFrenzyWebPropertiesJsonWsService : Service
+{
+	ServiceName = "FeedingFrenzyWebPropertiesJsonWsService";
+	Scope = "per-binding";
+	Description = @"Feeding Frenzy route-based WebProperties JSON service. Remote and Local bindings are provided as partials.";
+
+	String BaseUrl = new String();
+	String BusinessApiPrefix = "api/feedingfrenzy.admin.business";
+	String TokenKey = "FeedingFrenzy.ApiKey";
+
+	function Initialize() : string
+	{
+		if (StringUtil.IsEmpty(this.BaseUrl)) return "Error: FeedingFrenzyWebPropertiesJsonWsService.BaseUrl must be set on the binding.";
+		return "FeedingFrenzyWebPropertiesJsonWsService initialized (BaseUrl = " + this.BaseUrl + ").";
+	}
+
+	function CallWebPropertiesRoute(string routePath, JsonObject args) : string
+	{
+		JsonObject routeArgs = args == null ? new JsonObject() : args;
+		return JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.BusinessApiPrefix, routePath, this.TokenKey, routeArgs);
+	}
+}
+
+[SemanticEntity("feeding frenzy remote web properties json ws service")]
+partial prototype FeedingFrenzyWebPropertiesJsonWsService#Remote : FeedingFrenzyWebPropertiesJsonWsService
+{
+	BaseUrl = "https://ff.medek.ai";
+	TokenKey = "FeedingFrenzy.ApiKey";
+	Description = "Remote Feeding Frenzy WebProperties JSON service binding.";
+}
+
+[SemanticEntity("feeding frenzy local web properties json ws service")]
+partial prototype FeedingFrenzyWebPropertiesJsonWsService#Local : FeedingFrenzyWebPropertiesJsonWsService
+{
+	BaseUrl = "http://feedingfrenzy.local";
+	TokenKey = "FeedingFrenzy.Local.ApiKey";
+	Description = "Local Feeding Frenzy WebProperties JSON service binding.";
+}
+
+include "WebProperties.pts";

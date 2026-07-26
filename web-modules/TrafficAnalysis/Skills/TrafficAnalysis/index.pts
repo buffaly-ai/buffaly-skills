@@ -1,0 +1,62 @@
+[SemanticEntity("traffic analysis skill")]
+prototype TrafficAnalysisSkillAction : OpsAction
+{
+	Description = @"Base action type for the two-level traffic analysis pipeline.";
+}
+
+prototype TrafficAnalysisSkill : SkillEntity
+{
+	EntityName = "traffic analysis skill";
+	Description = @"Validated prompt workflows that use existing typed data-source tools for four independent collectors and a partial-failure-tolerant traffic summary aggregator.";
+	ActionRoot = TrafficAnalysisSkillAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to collect web property traffic data")]
+prototype ToCollectWebPropertyTrafficData : ValidatedPromptAction, TrafficAnalysisSkillAction
+{
+	IsPromptAction = true; SkillKind = "validated-prompt"; SkillVersion = "1.0.0"; ChildSessionScope = "per-action";
+	PromptPath = @"Skills/TrafficAnalysis/Prompts/traffic-collector.prompt.md";
+	WorkPromptPath = @"Skills/TrafficAnalysis/Prompts/traffic-collector.prompt.md";
+	ValidationPromptPath = @"Skills/TrafficAnalysis/Prompts/collector.validation.prompt.md";
+	Description = @"Collect all active Feeding Frenzy web properties through the independent WebProperties wrappers, analyze GA4 and classified tracking traffic, and save data-stream/traffic-properties.json with exact prompt provenance.";
+}
+
+[SemanticProgram.InfinitivePhrase("to collect google ads data")]
+prototype ToCollectGoogleAdsData : ValidatedPromptAction, TrafficAnalysisSkillAction
+{
+	IsPromptAction = true; SkillKind = "validated-prompt"; SkillVersion = "1.0.0"; ChildSessionScope = "per-action";
+	PromptPath = @"Skills/TrafficAnalysis/Prompts/google-ads-collector.prompt.md";
+	WorkPromptPath = @"Skills/TrafficAnalysis/Prompts/google-ads-collector.prompt.md";
+	ValidationPromptPath = @"Skills/TrafficAnalysis/Prompts/collector.validation.prompt.md";
+	Description = @"Use the existing Google Ads reporting tools to save campaign, search-term, and creative data with spend-efficiency analysis and exact prompt provenance.";
+}
+
+[SemanticProgram.InfinitivePhrase("to collect linkedin analytics")]
+prototype ToCollectLinkedInData : ValidatedPromptAction, TrafficAnalysisSkillAction
+{
+	IsPromptAction = true; SkillKind = "validated-prompt"; SkillVersion = "1.0.0"; ChildSessionScope = "per-action";
+	PromptPath = @"Skills/TrafficAnalysis/Prompts/linkedin-collector.prompt.md";
+	WorkPromptPath = @"Skills/TrafficAnalysis/Prompts/linkedin-collector.prompt.md";
+	ValidationPromptPath = @"Skills/TrafficAnalysis/Prompts/collector.validation.prompt.md";
+	Description = @"Use existing LinkedIn member and organization analytics tools to save data-stream/linkedin-analytics.json with analysis and exact prompt provenance.";
+}
+
+[SemanticProgram.InfinitivePhrase("to collect openai usage data")]
+prototype ToCollectOpenAIUsageData : ValidatedPromptAction, TrafficAnalysisSkillAction
+{
+	IsPromptAction = true; SkillKind = "validated-prompt"; SkillVersion = "1.0.0"; ChildSessionScope = "per-action";
+	PromptPath = @"Skills/TrafficAnalysis/Prompts/openai-usage-collector.prompt.md";
+	WorkPromptPath = @"Skills/TrafficAnalysis/Prompts/openai-usage-collector.prompt.md";
+	ValidationPromptPath = @"Skills/TrafficAnalysis/Prompts/collector.validation.prompt.md";
+	Description = @"Use existing OpenAI Admin usage and API-key cost tools to save data-stream/openai-usage.json with analysis and exact prompt provenance.";
+}
+
+[SemanticProgram.InfinitivePhrase("to aggregate traffic analysis and build email")]
+prototype ToAggregateTrafficAnalysis : ValidatedPromptAction, TrafficAnalysisSkillAction
+{
+	IsPromptAction = true; SkillKind = "validated-prompt"; SkillVersion = "1.0.0"; ChildSessionScope = "per-action";
+	PromptPath = @"Skills/TrafficAnalysis/Prompts/aggregator.prompt.md";
+	WorkPromptPath = @"Skills/TrafficAnalysis/Prompts/aggregator.prompt.md";
+	ValidationPromptPath = @"Skills/TrafficAnalysis/Prompts/aggregator.validation.prompt.md";
+	Description = @"Aggregate all available traffic collector envelopes, tolerate failed or missing inputs, and save an inline-SVG HTML email plus aggregator JSON with exact prompt provenance.";
+}

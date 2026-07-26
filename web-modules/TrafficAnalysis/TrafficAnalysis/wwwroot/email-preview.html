@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Traffic Analysis - Email Preview</title>
+	<link rel="stylesheet" href="/web-modules/TrafficAnalysis/traffic-analysis.css">
+</head>
+<body>
+	<main class="ta-shell">
+		<nav class="ta-nav">
+			<a href="/web-modules/TrafficAnalysis/dashboard">Dashboard</a>
+			<a href="/web-modules/TrafficAnalysis/collectors">Collectors</a>
+			<a href="/web-modules/TrafficAnalysis/prompts">Prompts</a>
+			<a href="/web-modules/TrafficAnalysis/email-preview">Email Preview</a>
+			<a href="/web-modules/TrafficAnalysis/run">Run</a>
+		</nav>
+		<section class="ta-card">
+			<h1>Email Preview</h1>
+			<div class="ta-form-row">
+				<label for="runId">Run or session ID</label>
+				<input id="runId" type="text">
+				<button id="loadEmail" type="button">Load Email</button>
+				<button id="downloadEmail" type="button">Download HTML</button>
+				<button id="sendEmail" type="button" disabled title="Email dispatch requires a configured Google Workspace send contract.">Send Email</button>
+			</div>
+			<p class="ta-muted">Send is intentionally disabled until the package is bound to an explicit Google Workspace email-send contract; download uses the generated run artifact directly.</p>
+		</section>
+		<section class="ta-card">
+			<iframe id="emailFrame" title="Traffic summary email" class="ta-email-frame"></iframe>
+		</section>
+	</main>
+	<script src="/web-modules/TrafficAnalysis/traffic-analysis.js"></script>
+	<script>
+		TrafficAnalysisPage.initializeEmailPreview();
+	</script>
+</body>
+</html>

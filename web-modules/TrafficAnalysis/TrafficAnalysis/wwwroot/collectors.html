@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Traffic Analysis - Collectors</title>
+	<link rel="stylesheet" href="/web-modules/TrafficAnalysis/traffic-analysis.css">
+</head>
+<body>
+	<main class="ta-shell">
+		<nav class="ta-nav">
+			<a href="/web-modules/TrafficAnalysis/dashboard">Dashboard</a>
+			<a href="/web-modules/TrafficAnalysis/collectors">Collectors</a>
+			<a href="/web-modules/TrafficAnalysis/prompts">Prompts</a>
+			<a href="/web-modules/TrafficAnalysis/email-preview">Email Preview</a>
+			<a href="/web-modules/TrafficAnalysis/run">Run</a>
+		</nav>
+		<section class="ta-card">
+			<h1>Collector Outputs</h1>
+			<div class="ta-form-row">
+				<label for="runId">Run or session ID</label>
+				<input id="runId" type="text">
+				<button id="loadCollectors" type="button">Load Collectors</button>
+			</div>
+		</section>
+		<section class="ta-grid" id="collectorCards"></section>
+	</main>
+	<script src="/web-modules/TrafficAnalysis/traffic-analysis.js"></script>
+	<script>
+		TrafficAnalysisPage.initializeCollectors();
+	</script>
+</body>
+</html>

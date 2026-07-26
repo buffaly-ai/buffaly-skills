@@ -1,0 +1,113 @@
+:root {
+	font-family: Arial, Helvetica, sans-serif;
+	color: #172033;
+	background: #f4f7fb;
+}
+body {
+	margin: 0;
+}
+.ta-shell {
+	max-width: 1180px;
+	margin: 0 auto;
+	padding: 24px;
+}
+.ta-nav {
+	display: flex;
+	gap: 12px;
+	flex-wrap: wrap;
+	margin-bottom: 18px;
+}
+.ta-nav a {
+	background: #ffffff;
+	border: 1px solid #d7deea;
+	border-radius: 999px;
+	color: #16447d;
+	padding: 8px 14px;
+	text-decoration: none;
+}
+.ta-card {
+	background: #ffffff;
+	border: 1px solid #dbe2ef;
+	border-radius: 14px;
+	box-shadow: 0 6px 18px rgba(20, 41, 78, 0.06);
+	margin-bottom: 18px;
+	padding: 18px;
+}
+.ta-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	gap: 16px;
+	margin-bottom: 18px;
+}
+.ta-form-row {
+	display: flex;
+	align-items: end;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+.ta-form-row label {
+	font-weight: 700;
+}
+.ta-form-row input,
+.ta-form-row select {
+	border: 1px solid #bdc8d8;
+	border-radius: 8px;
+	padding: 8px 10px;
+	min-width: 180px;
+}
+.ta-form-row button {
+	background: #195ea8;
+	border: 0;
+	border-radius: 8px;
+	color: #ffffff;
+	cursor: pointer;
+	font-weight: 700;
+	padding: 9px 14px;
+}
+.ta-badge {
+	border-radius: 999px;
+	display: inline-block;
+	font-size: 12px;
+	font-weight: 700;
+	padding: 4px 9px;
+	text-transform: uppercase;
+}
+.ta-badge-ok,
+.ta-badge-done {
+	background: #d9f4e4;
+	color: #145d32;
+}
+.ta-badge-partial,
+.ta-badge-running,
+.ta-badge-starting,
+.ta-badge-aggregating {
+	background: #fff0c2;
+	color: #765200;
+}
+.ta-badge-failed,
+.ta-badge-cancelled,
+.ta-badge-missing {
+	background: #ffe0e0;
+	color: #8c1d1d;
+}
+.ta-pre {
+	background: #101827;
+	border-radius: 10px;
+	color: #d9e8ff;
+	overflow: auto;
+	padding: 14px;
+	white-space: pre-wrap;
+}
+.ta-email-frame {
+	border: 1px solid #ccd6e5;
+	border-radius: 10px;
+	height: 720px;
+	width: 100%;
+}
+.ta-muted {
+	color: #66758d;
+}
+.ta-error {
+	color: #8c1d1d;
+	font-weight: 700;
+}

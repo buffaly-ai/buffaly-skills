@@ -1,0 +1,22 @@
+{
+  "Module": {
+    "Enabled": true,
+    "Name": "TrafficAnalysis",
+    "DisplayName": "Traffic Analysis",
+    "Description": "Inspect traffic analysis outputs, prompt provenance, email previews, and pipeline run state.",
+    "AssemblyPath": "TrafficAnalysis/FeedingFrenzy.TrafficAnalysis.Web.dll",
+    "TypeName": "FeedingFrenzy.TrafficAnalysis.Web.TrafficAnalysisWebModule",
+    "LoadOrder": 850,
+    "ProjectArtifacts": [
+      { "ProjectName": "Skills/FeedingFrenzyWebPropertiesJsonWs", "SourcePath": "Skills/FeedingFrenzyWebPropertiesJsonWs/" },
+      { "ProjectName": "Skills/TrafficAnalysis", "SourcePath": "Skills/TrafficAnalysis/" }
+    ],
+    "Pages": [
+      { "Name": "dashboard", "DisplayName": "Dashboard", "Path": "/web-modules/TrafficAnalysis/dashboard", "Description": "Pipeline status and collector health." },
+      { "Name": "collectors", "DisplayName": "Collectors", "Path": "/web-modules/TrafficAnalysis/collectors", "Description": "Collector outputs and analysis." },
+      { "Name": "prompts", "DisplayName": "Prompts", "Path": "/web-modules/TrafficAnalysis/prompts", "Description": "Current prompts and run provenance." },
+      { "Name": "email-preview", "DisplayName": "Email Preview", "Path": "/web-modules/TrafficAnalysis/email-preview", "Description": "Rendered summary email." },
+      { "Name": "run", "DisplayName": "Run", "Path": "/web-modules/TrafficAnalysis/run", "Description": "Start, monitor, and cancel a run." }
+    ]
+  }
+}

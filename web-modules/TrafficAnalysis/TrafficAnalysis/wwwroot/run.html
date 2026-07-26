@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Traffic Analysis - Run</title>
+	<link rel="stylesheet" href="/web-modules/TrafficAnalysis/traffic-analysis.css">
+</head>
+<body>
+	<main class="ta-shell">
+		<nav class="ta-nav">
+			<a href="/web-modules/TrafficAnalysis/dashboard">Dashboard</a>
+			<a href="/web-modules/TrafficAnalysis/collectors">Collectors</a>
+			<a href="/web-modules/TrafficAnalysis/prompts">Prompts</a>
+			<a href="/web-modules/TrafficAnalysis/email-preview">Email Preview</a>
+			<a href="/web-modules/TrafficAnalysis/run">Run</a>
+		</nav>
+		<section class="ta-card">
+			<h1>Run Traffic Analysis</h1>
+			<div class="ta-form-row">
+				<label for="parentSessionKey">Parent session key</label>
+				<input id="parentSessionKey" type="text" placeholder="current OpsAgent session key">
+				<label for="timeframe">Timeframe</label>
+				<select id="timeframe"><option>24h</option><option selected>7d</option><option>30d</option></select>
+				<label for="serviceBinding">Service</label>
+				<select id="serviceBinding"><option selected>Local</option><option>Remote</option></select>
+				<button id="startRun" type="button">Start Run</button>
+				<button id="cancelRun" type="button">Cancel</button>
+			</div>
+		</section>
+		<section class="ta-card">
+			<h2>State</h2>
+			<pre id="runState" class="ta-pre">Idle.</pre>
+		</section>
+	</main>
+	<script src="/web-modules/TrafficAnalysis/traffic-analysis.js"></script>
+	<script>
+		TrafficAnalysisPage.initializeRun();
+	</script>
+</body>
+</html>

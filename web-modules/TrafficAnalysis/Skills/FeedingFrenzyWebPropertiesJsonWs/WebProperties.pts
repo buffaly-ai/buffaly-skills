@@ -1,0 +1,106 @@
+[SemanticProgram.InfinitivePhrase("to list feeding frenzy web properties")]
+prototype WebProperties_GetWebProperties : FeedingFrenzyWebPropertiesJsonWsSkillAction
+{
+	Description = @"service - required local or remote FeedingFrenzyWebPropertiesJsonWsService binding. Returns the existing GetWebProperties JsonWs response without reshaping.";
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		return service.CallWebPropertiesRoute("web-properties/get-web-properties", new JsonObject());
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get a feeding frenzy web property")]
+prototype WebProperties_GetWebProperty : FeedingFrenzyWebPropertiesJsonWsSkillAction
+{
+	Description = @"service - required service binding. WebPropertyID - exact property identifier. Returns the existing GetWebProperty JsonWs response.";
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, int WebPropertyID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["WebPropertyID"] = WebPropertyID;
+		return service.CallWebPropertiesRoute("web-properties/get-web-property", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get feeding frenzy web property analytics summary")]
+prototype WebProperties_GetWebPropertyAnalyticsSummary : FeedingFrenzyWebPropertiesJsonWsSkillAction
+{
+	Description = @"Returns the existing GA4 analytics summary for WebPropertyID and Timeframe (24h, 7d, or 30d) without ProtoScript-side parsing.";
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, int WebPropertyID, string Timeframe) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["WebPropertyID"] = WebPropertyID; args["Timeframe"] = Timeframe;
+		return service.CallWebPropertiesRoute("web-properties/get-web-property-analytics-summary", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get feeding frenzy web property traffic overview")]
+prototype WebProperties_GetWebPropertyTrafficOverview : FeedingFrenzyWebPropertiesJsonWsSkillAction
+{
+	Description = @"Returns the existing tracking-log traffic overview for WebPropertyID and Timeframe without ProtoScript-side parsing.";
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, int WebPropertyID, string Timeframe) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["WebPropertyID"] = WebPropertyID; args["Timeframe"] = Timeframe;
+		return service.CallWebPropertiesRoute("web-properties/get-web-property-traffic-overview", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get feeding frenzy web property traffic agents")]
+prototype WebProperties_GetWebPropertyTrafficAgents : FeedingFrenzyWebPropertiesJsonWsSkillAction
+{
+	Description = @"Returns the existing paginated traffic-agent response without reshaping.";
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, int WebPropertyID, string Timeframe, string AgentType, string Sort, int Offset, int Limit) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["WebPropertyID"] = WebPropertyID; args["Timeframe"] = Timeframe; args["AgentType"] = AgentType; args["Sort"] = Sort; args["Offset"] = Offset; args["Limit"] = Limit;
+		return service.CallWebPropertiesRoute("web-properties/get-web-property-traffic-agents", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get feeding frenzy web property traffic dates")]
+prototype WebProperties_GetWebPropertyTrafficDates : FeedingFrenzyWebPropertiesJsonWsSkillAction
+{
+	Description = @"Returns the existing per-date tracking traffic response without reshaping.";
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, int WebPropertyID, string Timeframe) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["WebPropertyID"] = WebPropertyID; args["Timeframe"] = Timeframe;
+		return service.CallWebPropertiesRoute("web-properties/get-web-property-traffic-dates", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get feeding frenzy web property traffic sessions")]
+prototype WebProperties_GetWebPropertyTrafficSessions : FeedingFrenzyWebPropertiesJsonWsSkillAction
+{
+	Description = @"Returns the existing paginated tracking session response without reshaping.";
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, int WebPropertyID, string Timeframe, string Date, string Filter, string AgentKey, string Sort, int Offset, int Limit) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["WebPropertyID"] = WebPropertyID; args["Timeframe"] = Timeframe; args["Date"] = Date; args["Filter"] = Filter; args["AgentKey"] = AgentKey; args["Sort"] = Sort; args["Offset"] = Offset; args["Limit"] = Limit;
+		return service.CallWebPropertiesRoute("web-properties/get-web-property-traffic-sessions", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get a feeding frenzy web property traffic session detail")]
+prototype WebProperties_GetWebPropertyTrafficSessionDetail : FeedingFrenzyWebPropertiesJsonWsSkillAction
+{
+	Description = @"Returns the existing tracking session detail response without reshaping.";
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, int WebPropertyID, string Timeframe, string SessionKey) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["WebPropertyID"] = WebPropertyID; args["Timeframe"] = Timeframe; args["SessionKey"] = SessionKey;
+		return service.CallWebPropertiesRoute("web-properties/get-web-property-traffic-session-detail", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get feeding frenzy web property traffic summary")]
+prototype WebProperties_GetWebPropertyTrafficSummary : FeedingFrenzyWebPropertiesJsonWsSkillAction
+{
+	Description = @"Returns the existing combined web-property traffic summary without reshaping.";
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, int WebPropertyID, string Timeframe) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["WebPropertyID"] = WebPropertyID; args["Timeframe"] = Timeframe;
+		return service.CallWebPropertiesRoute("web-properties/get-web-property-traffic-summary", args);
+	}
+}

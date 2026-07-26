@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Traffic Analysis - Dashboard</title>
+	<link rel="stylesheet" href="/web-modules/TrafficAnalysis/traffic-analysis.css">
+</head>
+<body>
+	<main class="ta-shell">
+		<nav class="ta-nav">
+			<a href="/web-modules/TrafficAnalysis/dashboard">Dashboard</a>
+			<a href="/web-modules/TrafficAnalysis/collectors">Collectors</a>
+			<a href="/web-modules/TrafficAnalysis/prompts">Prompts</a>
+			<a href="/web-modules/TrafficAnalysis/email-preview">Email Preview</a>
+			<a href="/web-modules/TrafficAnalysis/run">Run</a>
+		</nav>
+		<section class="ta-card">
+			<h1>Traffic Analysis Dashboard</h1>
+			<p>Review the latest run state and collector health. Enter a run/session ID to inspect generated artifacts.</p>
+			<div class="ta-form-row">
+				<label for="runId">Run or session ID</label>
+				<input id="runId" type="text" placeholder="run-YYYYMMDD-HHMMSS-fff">
+				<button id="loadDashboard" type="button">Load</button>
+			</div>
+		</section>
+		<section class="ta-grid" id="summaryGrid"></section>
+		<section class="ta-card">
+			<h2>Run State</h2>
+			<pre id="runState" class="ta-pre">No run loaded.</pre>
+		</section>
+	</main>
+	<script src="/web-modules/TrafficAnalysis/traffic-analysis.js"></script>
+	<script>
+		TrafficAnalysisPage.initializeDashboard();
+	</script>
+</body>
+</html>
