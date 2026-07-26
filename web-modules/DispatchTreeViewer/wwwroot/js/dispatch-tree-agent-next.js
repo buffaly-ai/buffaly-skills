@@ -242,7 +242,10 @@
     if (!host) return;
     var section = host.querySelector('section[data-file-source-id="dispatch-tree-viewer"]');
     if (!section) return;
-    if (section.dataset.dtvRelocated === "true") return;
+    var drawerBody = document.querySelector("aside.sw-drawer-panel .sw-drawer-body .sw-files-browser");
+    if (!drawerBody) return;
+    var existing = drawerBody.querySelector('section[data-file-source-id="dispatch-tree-viewer"][data-dtv-relocated="true"]');
+    if (existing) { section.remove(); return; }
     var card = section.querySelector(".sw-special-file-card");
     if (!card) return;
     var nameText = "";
@@ -286,16 +289,13 @@
     grid.className = "sw-special-files-grid";
     grid.appendChild(article);
     section.appendChild(grid);
-    var drawerBody = document.querySelector("aside.sw-drawer-panel .sw-drawer-body .sw-files-browser");
-    if (drawerBody) {
-      var memories = drawerBody.querySelector(".sw-memory-files-section:not([data-file-source-id])");
-      if (memories) {
-        memories.insertAdjacentElement("afterend", section);
-      } else {
-        drawerBody.insertBefore(section, drawerBody.firstChild);
-      }
-      section.dataset.dtvRelocated = "true";
+    var memories = drawerBody.querySelector(".sw-memory-files-section:not([data-file-source-id])");
+    if (memories) {
+      memories.insertAdjacentElement("afterend", section);
+    } else {
+      drawerBody.insertBefore(section, drawerBody.firstChild);
     }
+    section.dataset.dtvRelocated = "true";
   }
 
   var dedupObserver = new MutationObserver(function () { deduplicateSections(); restyleAndRelocateSection(); });
