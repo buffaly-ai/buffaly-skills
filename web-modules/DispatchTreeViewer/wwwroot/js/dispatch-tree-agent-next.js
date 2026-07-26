@@ -18,7 +18,7 @@
     styleLoaded = true;
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.7.4";
+    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.7.5";
     document.head.appendChild(link);
   }
 
@@ -38,8 +38,13 @@
 
   function sessionGuidance(message) {
     return /HTTP 502|timed out|worker|session/i.test(message)
-      ? "This session's worker is unavailable. Send a message in the session to restart it, wait for initialization, then retry."
+      ? "The session runtime could not be started or reached. Wait a moment and retry; if a turn is stuck, stop it first."
       : "Confirm that this dispatcher session has a DispatchMemoryRoot and try again.";
+  }
+
+  function ensureSessionRuntime(sessionKey) {
+    if (!sessionKey) return Promise.reject(new Error("A session key is required to load the Dispatch tree."));
+    return withTimeout(BuffalyAgentService.EnsureAgentAsync(sessionKey), "Starting the session runtime");
   }
 
   ensureStyle();
@@ -65,7 +70,8 @@
 
  function readOntologyTree(rootName, after, sessionKey) {
    var args = JSON.stringify({ rootName: rootName, after: after || "" });
-   return withTimeout(BuffalyAgentService.RunProtoScriptMethodAsync(sessionKey || "", "buffaly-agent", "ToReadOntologyTree", "Execute", args), "Loading the Dispatch tree")
+   return ensureSessionRuntime(sessionKey || "")
+     .then(function () { return withTimeout(BuffalyAgentService.RunProtoScriptMethodAsync(sessionKey || "", "buffaly-agent", "ToReadOntologyTree", "Execute", args), "Loading the Dispatch tree"); })
      .then(function (resultText) { return JSON.parse(resultText); });
  }
 
