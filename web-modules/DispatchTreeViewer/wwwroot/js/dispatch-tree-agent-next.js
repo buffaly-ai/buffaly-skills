@@ -48,23 +48,35 @@
     loadInFlightKey = context.sessionKey;
     return readTree(context.sessionKey, false)
       .then(function (value) {
-        if (!value || !value.providers || value.providers.length === 0) return null;
         cachedResponse = value;
         cachedSessionKey = context.sessionKey;
-        cachedFileItems = value.providers.map(function (provider, index) {
+        cachedFileItems = ((value && value.providers) || []).map(function (provider, index) {
           return {
             Name: provider.displayName || ("Routing Tree " + (index + 1)),
-            Description: "View routing tree",
+            Description: "Session routing memory",
             Icon: "bi-diagram-3",
-            Url: "/web-modules/DispatchTreeViewer/dispatch-tree-viewer.html?sessionKey=" + encodeURIComponent(context.sessionKey) + "&provider=" + index
+            Url: "#dtv-open:" + index
           };
+        });
+        cachedFileItems.push({
+          Name: "Ontology Browser",
+          Description: "Browse the live ontology from any root",
+          Icon: "bi-diagram-2",
+          Url: "#dtv-ontology-open:" + encodeURIComponent(context.sessionKey || "")
         });
         cachedFileItemsKey = context.sessionKey;
         return cachedFileItems;
      })
-      .catch(function () { return null; })
+      .catch(function () {
+        return [{
+          Name: "Ontology Browser",
+          Description: "Browse the live ontology from any root",
+          Icon: "bi-diagram-2",
+          Url: "#dtv-ontology-open:" + encodeURIComponent(context.sessionKey || "")
+        }];
+      })
       .finally(function () { if (loadInFlightKey === context.sessionKey) loadInFlightKey = ""; });
- }
+  }
 
   function openViewer(providerIndex) {
     if (!cachedResponse) return;
@@ -210,21 +222,9 @@
       .catch(function () {});
   }
 
-  function handleFileSourceClick(event) {
-    var target = event.target;
-    while (target && target.tagName !== "A") target = target.parentElement;
-    if (!target || !target.href) return;
-    if (target.getAttribute("href").indexOf("#dtv-open:") !== 0) return;
-    event.preventDefault();
-    var index = parseInt(target.getAttribute("href").substring("#dtv-open:".length), 10) || 0;
-    openViewer(index);
-  }
-
-  
-
   api.registerFileSource({
     id: "dispatch-tree-viewer",
-    label: "Routing Tree",
+    label: "Trees",
     priority: 50,
     placement: "special-files",
     load: function (context) { return loadFileSourceItems(context); }
@@ -262,20 +262,28 @@
     headerIcon.innerHTML = "&#128202;";
     header.insertBefore(headerIcon, header.firstChild);
 
+    var isFullscreen = false;
     var headerActions = element("div", "dtv-header-actions");
+    var fullscreenBtn = element("button", "dtv-btn", "Fullscreen");
     var closeBtn = element("button", "dtv-btn", "Close");
+    fullscreenBtn.type = "button";
     closeBtn.type = "button";
+    fullscreenBtn.onclick = function () {
+      isFullscreen = !isFullscreen;
+      panel.classList.toggle("dtv-fullscreen", isFullscreen);
+      fullscreenBtn.textContent = isFullscreen ? "Exit Fullscreen" : "Fullscreen";
+    };
     closeBtn.onclick = function () { shade.remove(); };
-    headerActions.appendChild(closeBtn);
+    headerActions.append(fullscreenBtn, closeBtn);
     header.appendChild(headerActions);
 
     var rootBar = element("div", "dtv-root-bar");
-    var rootLabel = element("label", "dtv-root-label", "Root:");
+    var rootLabel = element("label", "dtv-root-label", "Ontology root");
     rootLabel.setAttribute("for", "dtv-root-input");
     var rootInput = element("input", "dtv-root-input");
     rootInput.type = "text";
     rootInput.value = ontologyState.rootName;
-    rootInput.placeholder = "Enter root prototype name...";
+    rootInput.placeholder = "Enter a prototype name and press Enter";
     rootInput.addEventListener("keydown", function (e) {
       if (e.key === "Enter") {
         var newRoot = rootInput.value.trim();
@@ -429,29 +437,20 @@
     loadAndRender();
   }
 
-  api.registerFileSource({
-    id: "ontology-tree-viewer",
-    label: "Ontology Tree",
-    priority: 60,
-    placement: "special-files",
-    load: function (context) {
-      return Promise.resolve([{
-        Name: "Ontology Tree",
-        Description: "Browse ontology hierarchy from any root",
-        Icon: "bi-diagram-2",
-        Url: "#dtv-ontology-open:" + (context.sessionKey || "")
-      }]);
-    }
-  });
-
   document.addEventListener("click", function (event) {
     var target = event.target;
     while (target && target.tagName !== "A") target = target.parentElement;
     if (!target || !target.href) return;
+    if (target.getAttribute("href").indexOf("#dtv-open:") === 0) {
+      event.preventDefault();
+      var providerIndex = parseInt(target.getAttribute("href").substring("#dtv-open:".length), 10) || 0;
+      openViewer(providerIndex);
+      return;
+    }
     if (target.getAttribute("href").indexOf("#dtv-ontology-open:") === 0) {
       event.preventDefault();
-     var sk = target.getAttribute("href").substring("#dtv-ontology-open:".length);
+      var sk = decodeURIComponent(target.getAttribute("href").substring("#dtv-ontology-open:".length));
       openOntologyViewer("DispatchMemoryRoot", sk);
-   }
+    }
   });
 })();
