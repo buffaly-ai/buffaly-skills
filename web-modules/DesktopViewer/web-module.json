@@ -1,0 +1,31 @@
+{
+    "Module":  {
+                   "Enabled":  true,
+                   "Name":  "DesktopViewer",
+                   "DisplayName":  "Desktop Viewer",
+                   "Description":  "Stream the entire desktop or a selected application window into a canvas.",
+                   "AssemblyPath":  "DesktopViewer/Buffaly.DesktopViewer.Web.dll",
+                   "TypeName":  "Buffaly.DesktopViewer.Web.DesktopViewerWebModule",
+                   "LoadOrder":  330,
+                   "Pages":  [
+                                 {
+                                     "Name":  "viewer",
+                                     "DisplayName":  "Desktop Viewer",
+                                     "Path":  "/web-modules/DesktopViewer/viewer.html",
+                                     "Description":  "Watch the desktop or a selected application window."
+                                 }
+                             ],
+                   "Component":  {
+                                     "TagName":  "desktop-viewer-module",
+                                     "EntryUrl":  "/web-modules/DesktopViewer/components/desktop-viewer-module.js",
+                                     "ScriptType":  "module",
+                                     "DefaultScreen":  "window",
+                                     "Screens":  [
+                                                     "window"
+                                                 ],
+                                     "InteractiveScreens":  [
+                                                                "window"
+                                                            ]
+                                 }
+               }
+}

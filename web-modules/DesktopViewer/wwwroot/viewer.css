@@ -1,0 +1,127 @@
+:root {
+	color-scheme: dark;
+	font-family: "Segoe UI", Arial, sans-serif;
+	background: #0e1117;
+	color: #eef2f8;
+}
+
+body {
+	margin: 0;
+	background: #0e1117;
+}
+
+button, select, input {
+	font: inherit;
+}
+
+.desktop-viewer {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	gap: 12px;
+	padding: 16px;
+	box-sizing: border-box;
+	overflow: hidden;
+}
+
+.desktop-viewer__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.desktop-viewer__kicker {
+	margin: 0 0 4px 0;
+	color: #9fb0c7;
+	font-size: 12px;
+	letter-spacing: .12em;
+	text-transform: uppercase;
+}
+
+h1 {
+	margin: 0;
+	font-size: 24px;
+}
+
+.desktop-viewer__summary {
+	margin: 6px 0 0 0;
+	max-width: 720px;
+	color: #b9c6d8;
+	font-size: 14px;
+}
+
+.desktop-viewer__actions,
+.desktop-viewer__controls {
+	display: flex;
+	align-items: end;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.desktop-viewer__controls {
+	padding: 12px;
+	border: 1px solid #273244;
+	border-radius: 10px;
+	background: #151b26;
+}
+
+label {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	color: #b9c6d8;
+	font-size: 12px;
+}
+
+select, input, button {
+	border: 1px solid #344158;
+	border-radius: 8px;
+	background: #0f1520;
+	color: #eef2f8;
+	padding: 8px 10px;
+}
+
+button {
+	cursor: pointer;
+	background: #254f9f;
+	border-color: #3466c2;
+}
+
+button:disabled, select:disabled, input:disabled {
+	opacity: .55;
+	cursor: not-allowed;
+}
+
+.desktop-viewer__status {
+	display: flex;
+	gap: 16px;
+	min-height: 24px;
+	color: #b9c6d8;
+}
+
+.desktop-viewer__canvasShell {
+	position: relative;
+	flex: 1;
+	min-height: 0;
+	border: 1px solid #273244;
+	border-radius: 12px;
+	background: #05070b;
+	overflow: auto;
+}
+
+#viewerCanvas {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.desktop-viewer__empty {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #7f8ba0;
+	pointer-events: none;
+}

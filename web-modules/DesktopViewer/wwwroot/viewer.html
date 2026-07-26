@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Desktop Viewer</title>
+	<link rel="stylesheet" href="viewer.css">
+</head>
+<body>
+	<main class="desktop-viewer">
+		<header class="desktop-viewer__header">
+			<div>
+				<p class="desktop-viewer__kicker">Buffaly</p>
+				<h1>Desktop Streaming Viewer</h1>
+				<p class="desktop-viewer__summary">Watch the remote Buffaly host desktop or a selected remote application window while Buffaly continues working elsewhere.</p>
+			</div>
+			<div class="desktop-viewer__actions">
+				<button id="refreshWindowsButton" type="button">Refresh remote windows</button>
+				<button id="startButton" type="button">Start remote stream</button>
+				<button id="stopButton" type="button" disabled>Stop</button>
+			</div>
+		</header>
+
+		<section class="desktop-viewer__controls" aria-label="Stream controls">
+			<label>
+				Remote source
+				<select id="sourceSelect">
+					<option value="screen">Entire remote desktop</option>
+					<option value="window">Remote application window</option>
+				</select>
+			</label>
+			<label>
+				Remote application window
+				<select id="windowSelect" disabled></select>
+			</label>
+			<label>
+				FPS
+				<input id="fpsInput" type="number" min="1" max="10" value="3">
+			</label>
+			<label>
+				Max width
+				<input id="maxWidthInput" type="number" min="320" max="3840" value="2400">
+			</label>
+			<label>
+				Max height
+				<input id="maxHeightInput" type="number" min="240" max="2160" value="1600">
+			</label>
+			<label>
+				Canvas fit
+				<select id="fitSelect">
+					<option value="width" selected>Fit width</option>
+					<option value="contain">Fit all</option>
+					<option value="actual">Actual size</option>
+					<option value="fill">Fill</option>
+				</select>
+			</label>
+		</section>
+
+		<section class="desktop-viewer__status" aria-live="polite">
+			<span id="statusText">Idle.</span>
+			<span id="frameText"></span>
+		</section>
+
+		<section class="desktop-viewer__canvasShell">
+			<canvas id="viewerCanvas" tabindex="0" aria-label="Desktop stream canvas"></canvas>
+			<div id="emptyState" class="desktop-viewer__empty">Choose a remote source and press Start remote stream.</div>
+		</section>
+	</main>
+	<script src="viewer.js"></script>
+</body>
+</html>
