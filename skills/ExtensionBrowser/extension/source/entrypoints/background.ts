@@ -2,13 +2,13 @@ import { handleToolCall, grantDebuggerConsent, revokeDebuggerConsent } from '../
 import { detachDebugger, isAttached } from '../lib/debugger-session';
 import { getLogEntries, getLogVersion } from '../lib/tool-log';
 
-export default defineBackground(() => {
-  // ─── CDP Entry Point: Allow external agents (e.g. Buffaly) to call tools directly ───
-  // Exposes handleToolCall on the service worker global scope so CDP Runtime.evaluate
-  // can invoke tools without going through chrome.runtime.sendMessage roundtrips.
-  (self as any).__callTool = (tool: string, args: Record<string, unknown> = {}) =>
-    handleToolCall(tool, args);
+// Export the CDP bridge hook at module evaluation time. WXT's lifecycle
+// callback can run after Chrome exposes the MV3 worker DevTools target, while
+// Buffaly must be able to observe this hook as soon as worker startup resumes.
+(self as any).__callTool = (tool: string, args: Record<string, unknown> = {}) =>
+  handleToolCall(tool, args);
 
+export default defineBackground(() => {
   // ─── Side Panel: Enable open-on-toolbar-click ───
   // CRITICAL: The manifest side_panel.default_path alone does NOT make the
   // toolbar icon open the side panel. This call is required.
@@ -91,8 +91,5 @@ export default defineBackground(() => {
 
   chrome.runtime.onInstalled.addListener(() => {
     console.log('Buffaly Browser Agent installed');
-    // Re-expose __callTool after service worker restart
-    (self as any).__callTool = (tool: string, args: Record<string, unknown> = {}) =>
-      handleToolCall(tool, args);
   });
 });

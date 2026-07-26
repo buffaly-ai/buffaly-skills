@@ -58,9 +58,7 @@ function ToExtJsonEscape(string value) : string
 
 function ToExtHelperPath() : string
 {
-	string script = "$helper=''; $roots = Get-ChildItem -Path $env:HOME -Directory -Filter 'buffaly*' -ErrorAction SilentlyContinue; foreach($r in $roots){ $p=Join-Path $r.FullName 'content/projects/OpsAgent/Skills/ExtensionBrowser/lib/extension_helper.js'; if(Test-Path -LiteralPath $p){ $helper=$p; break } }; if(-not $helper){ $p=Join-Path $env:HOME 'buffaly/content/projects/OpsAgent/Skills/ExtensionBrowser/lib/extension_helper.js'; if(Test-Path -LiteralPath $p){ $helper=$p } }; Write-Output $helper";
-	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 10, _opsAgent, "", "Extension Helper Path");
-	return ToExtCleanOutput(result);
+	return Path.Combine(_opsAgent.GetCurrentProjectDirectory(), "Skills", "ExtensionBrowser", "lib", "extension_helper.js");
 }
 
 function ToExtRunCommand(string cmdJson, int timeoutSeconds, string label) : string
@@ -76,9 +74,7 @@ function ToExtRunCommand(string cmdJson, int timeoutSeconds, string label) : str
 
 function ToExtBridgePath() : string
 {
-	string script = "$bridge=''; $roots = Get-ChildItem -Path $env:HOME -Directory -Filter 'buffaly*' -ErrorAction SilentlyContinue; foreach($r in $roots){ $p=Join-Path $r.FullName 'content/projects/OpsAgent/Skills/ExtensionBrowser/lib/bridge.js'; if(Test-Path -LiteralPath $p){ $bridge=$p; break } }; if(-not $bridge){ $p=Join-Path $env:HOME 'buffaly/content/projects/OpsAgent/Skills/ExtensionBrowser/lib/bridge.js'; if(Test-Path -LiteralPath $p){ $bridge=$p } }; Write-Output $bridge";
-	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 10, _opsAgent, "", "Extension Bridge Path");
-	return ToExtCleanOutput(result);
+	return Path.Combine(_opsAgent.GetCurrentProjectDirectory(), "Skills", "ExtensionBrowser", "lib", "bridge.js");
 }
 
 function ToExtBridgeCall(int bridgePort, string tool, string argsJson, int timeoutSeconds, string label) : string

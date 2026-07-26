@@ -35,9 +35,6 @@ async function discoverSwTarget(port) {
         if (swAlt) return swAlt;
       }
       if (sw) return sw;
-      // Fallback: any service_worker target associated with an extension
-      const swAny = targets.find(t => t.type === "service_worker" && t.url.startsWith("chrome-extension://"));
-      if (swAny) return swAny;
     } catch (e) { /* Chrome not ready */ }
     if (attempt < 4) await sleep(1000);
   }
@@ -48,7 +45,7 @@ async function discoverSwTarget(port) {
     if (browserOk) {
       const result = await browserSend("Target.getTargets", {});
       const allTargets = result.targetInfos || result.targets || [];
-      const swTarget = allTargets.find(t => t.type === "service_worker" && t.url.startsWith("chrome-extension://"));
+      const swTarget = allTargets.find(t => t.type === "service_worker" && (t.url.includes("/background.js") || t.url.includes("/service_worker.js")) && t.title?.includes("Buffaly Browser Agent"));
       if (swTarget) {
         console.log(`[bridge] Found suspended SW via Target.getTargets: ${swTarget.url}`);
         // Attach to wake it up
@@ -60,7 +57,7 @@ async function discoverSwTarget(port) {
           try {
             const resp = await fetch(`http://127.0.0.1:${port}/json/list`);
             const targets = await resp.json();
-            const sw = targets.find(t => t.type === "service_worker" && t.url.startsWith("chrome-extension://"));
+            const sw = targets.find(t => t.type === "service_worker" && t.url.includes("background.js"));
             if (sw) return sw;
           } catch (e) {}
           if (retry < 4) await sleep(1000);
@@ -423,11 +420,17 @@ async function connectToSw(allowDirectFallback = true) {
     });
 
     await cdpSend("Runtime.enable", {});
+    // MV3 workers discovered through the DevTools endpoint may be paused before
+    // their background entrypoint runs. Resume startup before checking the
+    // bridge hook; otherwise a healthy newly loaded extension looks inert.
+    await cdpSend("Runtime.runIfWaitingForDebugger", {});
 
-    // Verify __callTool exists (retry for SW restart race)
+    // Verify startup completed after resuming the worker. The runtime API is
+    // stable readiness evidence; the direct hook is then used for calls to
+    // avoid sending a runtime message from the worker back into itself.
     for (let attempt = 0; attempt < 10; attempt++) {
       const check = await cdpSend("Runtime.evaluate", {
-        expression: "typeof self.__callTool",
+        expression: "typeof chrome?.runtime?.sendMessage",
         returnByValue: true,
       });
       if (check.result && check.result.value === "function") break;
@@ -442,7 +445,7 @@ async function connectToSw(allowDirectFallback = true) {
           connecting = false;
           return false;
         }
-        console.log("[bridge] __callTool not exposed on SW, falling back to CDP direct mode");
+        console.log("[bridge] chrome.runtime.sendMessage not exposed on SW, falling back to CDP direct mode");
         // Fall back to CDP direct mode
         cdpWs.close();
         cdpWs = null;
@@ -537,7 +540,7 @@ async function callExtensionTool(tool, args) {
     }
   }
 
-  // Extension mode: call __callTool on the SW
+  // Extension mode: call the initialized worker's central typed router.
   try {
     const result = await cdpSend("Runtime.evaluate", {
       expression: `(async () => {

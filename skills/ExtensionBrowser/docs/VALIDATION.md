@@ -1,21 +1,25 @@
-# Buffaly Browser Agent 0.2.0 validation
+# Buffaly Browser Agent 0.2.1 validation
 
-Validated source commits:
+0.2.1 fixes two installed-runtime defects found during Windows IIS smoke testing:
 
-- Chrome extension: `0da69f240ce4d8361e4ce90901b0ebdc2a6d45c7`
-- ExtensionBrowser skill: `812982b7767a1809baaadb6ee72f80b01922c4a1`
-- Worker recovery implementation: `4111b77580939ff0afb372dc59aac17decaa2dc9`
+- Helper and bridge paths now resolve from the active OpsAgent project directory instead of scanning `$HOME`.
+- The CDP bridge resumes a newly discovered MV3 service worker before probing `self.__callTool`.
 
 ## Release build — PASS
 
-A clean `npm ci` followed by `npm run release:check` passed on 2026-07-26. This includes strict TypeScript checking, WXT production build, ZIP generation, manifest/version/icon/archive checks, and `npm audit --omit=dev` with zero production vulnerabilities. The packaged ZIP is 71.3 KB.
+A clean `npm ci` followed by `npm run release:check` passed on 2026-07-26. This includes strict TypeScript checking, WXT production build, ZIP generation, manifest/version/icon/archive/bridge-hook checks, and `npm audit --omit=dev` with zero production vulnerabilities.
+
+## Installed helper resolution — PASS
+
+The skill resolves `extension_helper.js` and `bridge.js` from `_opsAgent.GetCurrentProjectDirectory()/Skills/ExtensionBrowser/lib`. This was validated against the Windows IIS Matt-local project layout that exposed the 0.2.0 defect.
 
 ## Genuine extension mode — PASS
 
-Validated on Chromium 136 with the exact committed release output:
+Validated on Chromium 140 with the exact 0.2.1 production build:
 
 - Bridge connected with `mode=extension`.
-- Manifest APIs and `self.__callTool` were present in the real extension service worker.
+- `get_status` passed through the real extension service worker and returned the active tab.
+- Service-worker discovery rejected unrelated Chrome extension workers instead of accepting any `chrome-extension://` target.
 - The Buffaly Browser Agent content script injected in an isolated world.
 - All 26 routed browser tools were exercised through the real service worker.
 - Navigation and content-script reinjection passed.

@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const manifest = JSON.parse(fs.readFileSync(path.join(root, '.output/chrome-mv3/manifest.json'), 'utf8'));
 const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
+const background = fs.readFileSync(path.join(root, '.output/chrome-mv3/background.js'), 'utf8');
 const failures = [];
 const check = (condition, message) => { if (!condition) failures.push(message); };
 
@@ -13,6 +14,7 @@ check(manifest.manifest_version === 3, 'manifest_version must be 3');
 check(manifest.name === 'Buffaly Browser Agent', 'release name is incorrect');
 check(manifest.version === pkg.version, 'package and manifest versions differ');
 check(manifest.background?.service_worker === 'background.js', 'background service worker is missing');
+check(background.includes('__callTool'), 'background service worker bridge hook is missing');
 check(manifest.side_panel?.default_path === 'sidepanel.html', 'side panel is missing');
 check(manifest.content_scripts?.length === 1, 'content script declaration is missing');
 check(!manifest.permissions.includes('storage'), 'unused storage permission is present');

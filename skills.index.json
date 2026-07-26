@@ -675,24 +675,22 @@
     {
       "SkillName": "ExtensionBrowser",
       "Title": "Extension Browser",
-      "Description": "Typed browser automation through the Buffaly Browser Agent Chrome extension, with explicit debugger consent and bounded service-worker recovery.",
-      "Version": "0.2.0",
+      "Description": "Buffaly skill package for Extension Browser.",
+      "Version": "0.2.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Extension Browser",
-        "ExtensionBrowser",
-        "extension browser skill",
-        "Buffaly Browser Agent"
+        "ExtensionBrowser"
       ],
       "Path": "skills/ExtensionBrowser",
       "Files": [
         {
           "Path": "docs/VALIDATION.md",
-          "Sha256": "218c4cab69b7ad7e959ce097b63f05dd674a9db78edc47dd3774c8b4a628f359"
+          "Sha256": "aee64824b53252719a89854fce5f2d7fe64d5e3ef88837cf7785254573c38e0f"
         },
         {
-          "Path": "extension/release/Buffaly-Browser-Agent-0.2.0-chrome.zip",
-          "Sha256": "71d52227c39de953212d9fa9c6476393245971a2df9e9f65e54c25df85712972"
+          "Path": "extension/release/Buffaly-Browser-Agent-0.2.1-chrome.zip",
+          "Sha256": "571b4af6c2a33ecfbb1befde286463bd74faf2f8e2cd786536a8c884c8ea15ea"
         },
         {
           "Path": "extension/source/.gitignore",
@@ -700,7 +698,7 @@
         },
         {
           "Path": "extension/source/entrypoints/background.ts",
-          "Sha256": "346d6e7fbe551a8bbf606161f7580972702c0154067588011a15daa94aaecb30"
+          "Sha256": "aae21116a5eecc2a919e62721ddfb9a923135c8ce1c9f544a9e8bb0e4a46e806"
         },
         {
           "Path": "extension/source/entrypoints/content.ts",
@@ -744,11 +742,11 @@
         },
         {
           "Path": "extension/source/package-lock.json",
-          "Sha256": "f526a8e67aad10416c5dde455890fbd5d8c5fb49405b18331e7b56ab1e09fd64"
+          "Sha256": "ce52e2eb4dfc4e13c2398c4a0a1c80c6bc4371982e9e8e1dd65d5e4b6848b2ee"
         },
         {
           "Path": "extension/source/package.json",
-          "Sha256": "fe0ea90a8f09c03d291bdd1f84a23e4b44bccebbe3940b623fbf9dcc03b98310"
+          "Sha256": "03c892318c997df6a021a3fd39ae927eebeb4ba0e844b8a91a9e31dfef93a35c"
         },
         {
           "Path": "extension/source/PRIVACY.md",
@@ -772,7 +770,7 @@
         },
         {
           "Path": "extension/source/scripts/verify-release.mjs",
-          "Sha256": "42f9c202ca0a34a8df2dcfcd4c446a0040a6966c7c760efc91737a5811b37aff"
+          "Sha256": "bdd6c0ae018694304bbc9075eb081abe1c2c42bc54a9a98522fd57aac2ef9755"
         },
         {
           "Path": "extension/source/tsconfig.json",
@@ -780,19 +778,19 @@
         },
         {
           "Path": "extension/source/wxt.config.ts",
-          "Sha256": "8b7f9927e05d1b1e7916d704da1ac45af49eb9909fcbb579ac503b1ea7f795a6"
+          "Sha256": "5ceb4716af6aebe5f36c95d6d7943f063c96a302e96c0f1ef9524473d6fabf72"
         },
         {
           "Path": "index.pts",
-          "Sha256": "ab77b31bd68fe0f87fda43d64b4ba2e2b7f62fc8cb01e487473608c3309ae576"
+          "Sha256": "2de5ab48f092b5042dce8cfe0f427f4a1f71705fce7975e15b1361af87c0d162"
         },
         {
           "Path": "lib/bridge.js",
-          "Sha256": "6d5140d0e9e65c993f114679671130f79ca63d0b671ad071371f0054c2b49ab8"
+          "Sha256": "772349c15dc04efc0d682157d79c1f04a9b7c835883e6a969a6a7059f8525ed5"
         },
         {
           "Path": "lib/extension_helper.js",
-          "Sha256": "d9006b2bd43a0a788e38ea983fb668565f76461d8b99ad703c9191da8b3e4493"
+          "Sha256": "429748db9f38da3079e220e66edec573d90b5ed2832e616f146868f4c0314d2b"
         },
         {
           "Path": "PromptActions.pts",
@@ -800,16 +798,12 @@
         },
         {
           "Path": "SKILL.md",
-          "Sha256": "eb888e7dfe9c754848bccf98723766640f4eeedeb54cac35d679947fc28d4529"
+          "Sha256": "1c3501cae6979a25b876b79afe6407aa550f7b042edca96b404b3bf147d11cc5"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [
-        "Node.js 18 or newer",
-        "Chrome or Chromium 136 or newer",
-        "Buffaly Browser Agent extension loaded"
-      ]
+      "Prerequisites": []
     },
     {
       "SkillName": "FFmpeg",

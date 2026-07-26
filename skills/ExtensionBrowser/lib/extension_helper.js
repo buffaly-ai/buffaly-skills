@@ -54,11 +54,12 @@ async function connectAndCall(wsUrl, tool, args, maxToolRetries = 3) {
   });
 
   await send("Runtime.enable", {});
+  await send("Runtime.runIfWaitingForDebugger", {});
 
-  // Verify __callTool exists, retry if SW just restarted
+  // Verify startup completed after resuming the worker.
   for (let attempt = 0; attempt < maxToolRetries; attempt++) {
     const check = await send("Runtime.evaluate", {
-      expression: `typeof self.__callTool`,
+      expression: `typeof chrome?.runtime?.sendMessage`,
       returnByValue: true,
     });
     if (check.result && check.result.value === "function") break;
@@ -66,7 +67,7 @@ async function connectAndCall(wsUrl, tool, args, maxToolRetries = 3) {
       await sleep(500); // SW just restarted, defineBackground() is re-running
     } else {
       ws.close();
-      throw new Error("__callTool not exposed (service worker may have failed to initialize)");
+      throw new Error("chrome.runtime.sendMessage not exposed (service worker may have failed to initialize)");
     }
   }
 
