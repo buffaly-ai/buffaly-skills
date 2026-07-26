@@ -3,7 +3,7 @@
     "Enabled": true,
     "Name": "TrafficAnalysis",
     "DisplayName": "Traffic Analysis",
-    "Description": "Inspect traffic analysis outputs, prompt provenance, email previews, and pipeline run state.",
+    "Description": "Run traffic analysis, monitor source health, inspect insights, and preview the final report.",
     "AssemblyPath": "TrafficAnalysis/FeedingFrenzy.TrafficAnalysis.Web.dll",
     "TypeName": "FeedingFrenzy.TrafficAnalysis.Web.TrafficAnalysisWebModule",
     "LoadOrder": 850,
@@ -12,11 +12,15 @@
       { "ProjectName": "Skills/TrafficAnalysis", "SourcePath": "Skills/TrafficAnalysis/" }
     ],
     "Pages": [
-      { "Name": "dashboard", "DisplayName": "Dashboard", "Path": "/web-modules/TrafficAnalysis/dashboard", "Description": "Pipeline status and collector health." },
-      { "Name": "collectors", "DisplayName": "Collectors", "Path": "/web-modules/TrafficAnalysis/collectors", "Description": "Collector outputs and analysis." },
-      { "Name": "prompts", "DisplayName": "Prompts", "Path": "/web-modules/TrafficAnalysis/prompts", "Description": "Current prompts and run provenance." },
-      { "Name": "email-preview", "DisplayName": "Email Preview", "Path": "/web-modules/TrafficAnalysis/email-preview", "Description": "Rendered summary email." },
-      { "Name": "run", "DisplayName": "Run", "Path": "/web-modules/TrafficAnalysis/run", "Description": "Start, monitor, and cancel a run." }
-    ]
+      { "Name": "traffic-analysis", "DisplayName": "Traffic Analysis", "Path": "/web-modules/TrafficAnalysis/dashboard", "Description": "Open the traffic analysis and reporting workspace." }
+    ],
+    "Component": {
+      "TagName": "traffic-analysis-module",
+      "EntryUrl": "/web-modules/TrafficAnalysis/components/traffic-analysis-module.js",
+      "ScriptType": "module",
+      "DefaultScreen": "dashboard",
+      "Screens": ["dashboard", "collectors", "prompts", "email-preview", "run"],
+      "InteractiveScreens": ["dashboard", "collectors", "prompts", "email-preview", "run"]
+    }
   }
 }

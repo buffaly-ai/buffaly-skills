@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Traffic Analysis | Buffaly</title>
+	<style>html,body,#moduleHost{height:100%;margin:0}.traffic-analysis-component-host{display:block;min-height:100%;background:#f4f7fb}.ta-component-loading{padding:2rem;font:16px system-ui;color:#475569}</style>
+</head>
+<body>
+	<div id="moduleHost"></div>
+	<script src="/js/web-modules/buffaly-web-module-loader.js"></script>
+	<script>
+		(async function () {
+			var hash = location.hash.slice(1);
+			var screen = ["dashboard", "collectors", "prompts", "email-preview", "run"].includes(hash) ? hash : "dashboard";
+			await window.BuffalyWebModuleLoader.mount({
+				host: document.getElementById("moduleHost"),
+				moduleName: "TrafficAnalysis",
+				screen: screen,
+				interactive: false,
+				component: {
+					TagName: "traffic-analysis-module",
+					EntryUrl: "/web-modules/TrafficAnalysis/components/traffic-analysis-module.js",
+					ScriptType: "module",
+					DefaultScreen: "dashboard",
+					Screens: ["dashboard", "collectors", "prompts", "email-preview", "run"],
+					InteractiveScreens: ["dashboard", "collectors", "prompts", "email-preview", "run"]
+				},
+				state: Object.fromEntries(new URLSearchParams(location.search))
+			});
+		}()).catch(function (error) { document.getElementById("moduleHost").textContent = error.message; });
+	</script>
+</body>
+</html>
