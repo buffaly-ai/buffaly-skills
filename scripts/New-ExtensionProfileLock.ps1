@@ -172,12 +172,13 @@ function New-ExtensionProfileLock {
 
     if ([string]$profile.ProfileId -eq "recommended-installer") {
 		Assert-ExactMembership $profile "Skill" @("BrowserSession","AudioTranscription","BuffalyCapabilityInspection","BuffalyMaintenance","BuffalySelfManagement","Codex","ComputerUse","Desktop","DispatchTree","ErrorLogDiagnosis","FFmpeg","SessionManagement","FileSystem","LLM","Level2Watcher","GitHub","Heartbeat","HelpAgent","LocalTask","Onboarding","OnlineSessionMemoryCritic","BuffalyNLMemory","VoiceAgentDispatch","Process","ProcessManagement","Services","SessionHistory","SessionSync","SkillDirectory","SqlServer","TabularData","TailscaleExposure","TwitterXApi","UserSecrets","ValidatedPrompt","Wiki","OpenAIAdmin") $errors
-        Assert-ExactMembership $profile "WebModule" @("ActionLearningCoordinator","Browser","Buffaly.Agent.Heartbeat","Buffaly.Agent.SkillManagement","ExtensionPublishing","Buffaly.Agent.Wiki","ComputerUse","CodeReviews","CodexEmbedded","DispatchTreeViewer","OfflineOntologyCritic","Sessions","GoogleAds","GoogleWorkspace","Office365","OllamaCloud","OpenAIImageGeneration","OpenAIAdmin","LinkedIn") $errors
+		Assert-ExactMembership $profile "WebModule" @("ActionLearningCoordinator","Browser","Buffaly.Agent.Heartbeat","Buffaly.Agent.SkillManagement","ExtensionPublishing","Buffaly.Agent.Wiki","ComputerUse","CodeReviews","CodexEmbedded","DesktopViewer","DispatchTreeViewer","OfflineOntologyCritic","Sessions","GoogleAds","GoogleWorkspace","Office365","OllamaCloud","OpenAIImageGeneration","OpenAIAdmin","LinkedIn") $errors
         Assert-ExactMembership $profile "ProviderModule" @("Buffaly.Provider.Anthropic","Buffaly.Provider.Gemini","Buffaly.Provider.LlamaCpp","Buffaly.Provider.Ollama","Buffaly.Provider.OpenAi","Buffaly.Provider.Xai") $errors
 		Assert-ExcludedMembership $profile "Skill" @("VisualStudio","Unity") $errors
         Assert-ExcludedMembership $profile "WebModule" @("FeedingFrenzy.WebPropertyEditorAgent") $errors
         foreach ($item in @($profile.Packages)) {
-            if ([string]$item.PackageType -eq "Skill" -and [string]$item.PackageId -in @("ComputerUse","Desktop")) { Assert-ExactPlatforms $item @("windows") $errors }
+            if (([string]$item.PackageType -eq "Skill" -and [string]$item.PackageId -in @("ComputerUse","Desktop")) -or
+                ([string]$item.PackageType -eq "WebModule" -and [string]$item.PackageId -eq "DesktopViewer")) { Assert-ExactPlatforms $item @("windows") $errors }
             else { Assert-ExactPlatforms $item @("windows","linux","mac") $errors }
         }
     }
