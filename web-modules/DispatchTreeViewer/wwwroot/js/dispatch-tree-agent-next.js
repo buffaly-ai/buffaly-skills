@@ -38,7 +38,7 @@
     styleLoaded = true;
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.5.0";
+    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.6.0";
     document.head.appendChild(link);
   }
 
@@ -54,7 +54,7 @@
         cachedFileItems = value.providers.map(function (provider, index) {
           return {
             Name: provider.displayName || ("Routing Tree " + (index + 1)),
-            Url: "#dtv-open:" + index
+            Url: "/web-modules/DispatchTreeViewer/dispatch-tree-viewer.html?sessionKey=" + encodeURIComponent(context.sessionKey) + "&provider=" + index
           };
         });
         cachedFileItemsKey = context.sessionKey;
@@ -218,32 +218,7 @@
     openViewer(index);
   }
 
-  document.addEventListener("click", handleFileSourceClick, true);
-
-  function deduplicateSections() {
-    var host = document.querySelector('[data-buffaly-next-file-sources="true"]');
-    if (!host) return;
-    var sections = host.querySelectorAll('section[data-file-source-id="dispatch-tree-viewer"]');
-    for (var i = 1; i < sections.length; i++) sections[i].remove();
-    var first = sections[0];
-    if (first) {
-      var heading = first.querySelector("h3");
-      if (heading && !heading.querySelector(".dtv-section-icon")) {
-        var icon = document.createElement("span");
-        icon.className = "dtv-section-icon";
-        icon.innerHTML = "&#128218;";
-        heading.insertBefore(icon, heading.firstChild);
-      }
-    }
-  }
-
-  var dedupObserver = new MutationObserver(function () { deduplicateSections(); });
-  function startDedupObserver() {
-    var host = document.querySelector('[data-buffaly-next-file-sources="true"]');
-    if (host) dedupObserver.observe(host, { childList: true, subtree: true });
-
-
-  }
+  
 
   api.registerFileSource({
     id: "dispatch-tree-viewer",

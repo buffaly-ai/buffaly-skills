@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dispatch Tree Viewer | Buffaly</title>
+  <link rel="stylesheet" href="/js/plugins/codemirror/lib/codemirror.css?v=1">
+  <link rel="stylesheet" href="/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.6.0">
+  <style>
+    :root {
+      --buffaly-page-panel: #ffffff;
+      --buffaly-page-text: #0f172a;
+      --buffaly-page-muted: #64748b;
+      --buffaly-page-line: #e2e8f0;
+      --buffaly-page-line-strong: #cbd5e1;
+      --buffaly-page-accent: #2563eb;
+      --buffaly-page-accent-soft: #dbeafe;
+      --buffaly-page-accent-border: #93c5fd;
+      --buffaly-page-accent-strong: #1d4ed8;
+      --buffaly-page-panel-soft: #f1f5f9;
+      --buffaly-page-shadow: 0 10px 30px -10px rgba(15,23,42,.08);
+    }
+    html, body { height: 100%; margin: 0; }
+    body { background: var(--buffaly-page-panel-soft); color: var(--buffaly-page-text); font: 14px/1.5 system-ui, -apple-system, sans-serif; }
+    .dtv-page { display: flex; flex-direction: column; height: 100vh; }
+    .dtv-page .dtv-panel { width: 100%; height: 100vh; border: 0; border-radius: 0; max-height: none; }
+    .dtv-page .dtv-shade { position: static; background: var(--buffaly-page-panel-soft); z-index: auto; display: block; }
+    .dtv-error { padding: 2rem; text-align: center; color: var(--buffaly-page-muted); }
+    .CodeMirror { font-family: Consolas, "Courier New", monospace; font-size: .82rem; }
+    .cm-s-default .cm-keyword { color: #7c3aed; font-weight: 600; }
+    .cm-s-default .cm-attribute { color: #b45309; }
+    .cm-s-default .cm-builtin { color: #2563eb; }
+    .cm-s-default .cm-atom { color: #be123c; }
+    .cm-s-default .cm-string { color: #059669; }
+    .cm-s-default .cm-comment { color: var(--buffaly-page-muted); font-style: italic; }
+  </style>
+</head>
+<body>
+  <div id="viewerHost" class="dtv-page">
+    <div class="dtv-error">Loading…</div>
+  </div>
+  <script src="/js/plugins/codemirror/lib/codemirror.js?v=1"></script>
+  <script src="/js/plugins/codemirror/mode/clike/clike.js?v=1"></script>
+  <script src="/js/plugins/codemirror/addon/runmode/runmode.js?v=1"></script>
+  <script src="/js/protoscript-codemirror-mode.js?v=1"></script>
+  <script src="/web-modules/DispatchTreeViewer/js/dispatch-tree-viewer-page.js?v=0.6.0"></script>
+</body>
+</html>
