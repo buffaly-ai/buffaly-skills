@@ -447,17 +447,8 @@ timeoutSeconds - maximum interactive-site lifetime; the general Done/Close mecha
 
 	function Execute(string processName, string windowTitle, int frameIntervalMs, int timeoutSeconds) : string
 	{
-		string stateJson = DesktopViewerInteractiveSiteConfiguration.BuildWindowStateJson(processName, windowTitle, frameIntervalMs);
-		InteractiveSiteLaunchResultContract result = _opsAgent.LaunchWebModuleComponent(new WebModuleComponentLaunchRequestContract
-		{
-			Title = "Desktop Viewer - " + windowTitle,
-			MessageKey = _opsAgent.GetCurrentToolMessageKeyOrEmpty(),
-			ToolInvocationId = _opsAgent.GetCurrentToolInvocationIdOrEmpty(),
-			ModuleName = "DesktopViewer",
-			Screen = "window",
-			StateJson = stateJson,
-			TimeoutSeconds = timeoutSeconds
-		});
+		WebModuleComponentLaunchRequestContract request = DesktopViewerInteractiveSiteConfiguration.BuildWindowLaunchRequest(processName, windowTitle, frameIntervalMs, timeoutSeconds, _opsAgent.GetCurrentToolMessageKeyOrEmpty(), _opsAgent.GetCurrentToolInvocationIdOrEmpty());
+		InteractiveSiteLaunchResultContract result = _opsAgent.LaunchWebModuleComponent(request);
 		return "Desktop Viewer interactive site exited with status: " + result.Status + "; value: " + result.Value;
 	}
 }
