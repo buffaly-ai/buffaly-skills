@@ -9,6 +9,8 @@
 
 A clean `npm ci` followed by `npm run release:check` passed on 2026-07-26. This includes strict TypeScript checking, WXT production build, ZIP generation, manifest/version/icon/archive/bridge-hook checks, and `npm audit --omit=dev` with zero production vulnerabilities.
 
+Bridge lifecycle validation also covers one in-flight reconnect attempt shared by every close/tool trigger, bounded retry scheduling without resetting connection ownership, session-owned PID and lease files, explicit stop cleanup, and automatic termination after lease expiry.
+
 ## Installed helper resolution — PASS
 
 The skill resolves `extension_helper.js` and `bridge.js` from `_opsAgent.GetCurrentProjectDirectory()/Skills/ExtensionBrowser/lib`. This was validated against the Windows IIS Matt-local project layout that exposed the 0.2.0 defect.

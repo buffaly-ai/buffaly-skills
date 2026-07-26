@@ -4,6 +4,8 @@ const http = require("http");
 // --- Config ---
 const BRIDGE_PORT = parseInt(process.argv[3] || "8765", 10);
 const CDP_PORT = parseInt(process.argv[2] || "9233", 10);
+const LEASE_FILE = process.argv[4] || "";
+const LEASE_TIMEOUT_MS = parseInt(process.env.BUFFALY_EXTENSION_BRIDGE_LEASE_TIMEOUT_MS || "120000", 10);
 
 // --- State ---
 let cdpWs = null;
@@ -11,7 +13,7 @@ let swWsUrl = null;
 let cdpMsgId = 1;
 const cdpPending = new Map();
 let connected = false;
-let connecting = false;
+let connectPromise = null;
 let reconnectTimer = null;
 let mode = "none"; // "extension" | "cdp_direct"
 let browserWs = null;
@@ -20,6 +22,20 @@ let activeTabSessionId = null;
 let activeTabTargetId = null;
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function renewLease() {
+  if (!LEASE_FILE) return;
+  require("fs").writeFileSync(LEASE_FILE, new Date().toISOString(), "utf8");
+}
+
+function scheduleReconnect(allowDirectFallback) {
+  if (reconnectTimer) clearTimeout(reconnectTimer);
+  reconnectTimer = setTimeout(async () => {
+    reconnectTimer = null;
+    const ok = await connectToSw(allowDirectFallback);
+    if (!ok && !connected) scheduleReconnect(allowDirectFallback);
+  }, 2000);
+}
 
 // --- CDP Connection Management ---
 
@@ -109,7 +125,7 @@ async function connectToBrowser() {
     if (mode === "cdp_direct") {
       connected = false;
       if (reconnectTimer) clearTimeout(reconnectTimer);
-      reconnectTimer = setTimeout(() => { connecting = false; connectToSw(); }, 2000);
+      scheduleReconnect(true);
     }
   });
   console.log(`[bridge] Connected to browser CDP: ${url}`);
@@ -358,9 +374,16 @@ async function cdpDirectTool(tool, args) {
   }
 }
 
-async function connectToSw(allowDirectFallback = true) {
-  if (connecting || connected) return true;
-  connecting = true;
+function connectToSw(allowDirectFallback = true) {
+  if (connected) return Promise.resolve(true);
+  if (connectPromise) return connectPromise;
+  connectPromise = connectToSwAttempt(allowDirectFallback).finally(() => {
+    connectPromise = null;
+  });
+  return connectPromise;
+}
+
+async function connectToSwAttempt(allowDirectFallback) {
 
   // Try extension mode first
   try {
@@ -370,7 +393,6 @@ async function connectToSw(allowDirectFallback = true) {
         connected = false;
         mode = "none";
         swWsUrl = null;
-        connecting = false;
         return false;
       }
       console.log(`[bridge] No SW target found on port ${CDP_PORT}, falling back to CDP direct mode`);
@@ -379,11 +401,9 @@ async function connectToSw(allowDirectFallback = true) {
       if (browserOk) {
         mode = "cdp_direct";
         connected = true;
-        connecting = false;
         console.log("[bridge] Operating in CDP direct mode");
         return true;
       }
-      connecting = false;
       return false;
     }
 
@@ -412,7 +432,7 @@ async function connectToSw(allowDirectFallback = true) {
       cdpWs = null;
       swWsUrl = null;
       if (reconnectTimer) clearTimeout(reconnectTimer);
-      reconnectTimer = setTimeout(() => { connecting = false; connectToSw(false); }, 2000);
+      scheduleReconnect(false);
     });
 
     cdpWs.addEventListener("error", (err) => {
@@ -442,7 +462,6 @@ async function connectToSw(allowDirectFallback = true) {
           cdpWs.close();
           cdpWs = null;
           swWsUrl = null;
-          connecting = false;
           return false;
         }
         console.log("[bridge] chrome.runtime.sendMessage not exposed on SW, falling back to CDP direct mode");
@@ -453,18 +472,15 @@ async function connectToSw(allowDirectFallback = true) {
         if (browserOk) {
           mode = "cdp_direct";
           connected = true;
-          connecting = false;
           console.log("[bridge] Operating in CDP direct mode");
           return true;
         }
-        connecting = false;
         return false;
       }
     }
 
     connected = true;
     mode = "extension";
-    connecting = false;
     console.log(`[bridge] Connected to SW (extension mode): ${swWsUrl}`);
     return true;
   } catch (e) {
@@ -474,7 +490,6 @@ async function connectToSw(allowDirectFallback = true) {
       mode = "none";
       cdpWs = null;
       swWsUrl = null;
-      connecting = false;
       return false;
     }
     console.log("[bridge] Extension mode connect failed:", e.message, "— trying CDP direct mode");
@@ -485,12 +500,10 @@ async function connectToSw(allowDirectFallback = true) {
     if (browserOk) {
       mode = "cdp_direct";
       connected = true;
-      connecting = false;
       console.log("[bridge] Operating in CDP direct mode (fallback)");
       return true;
     }
     connected = false;
-    connecting = false;
     return false;
   }
 }
@@ -560,7 +573,6 @@ async function callExtensionTool(tool, args) {
     cdpWs = null;
     swWsUrl = null;
     mode = "none";
-    connecting = false;
     console.log("[bridge] Tool call failed, reconnecting:", e.message);
     const ok = await connectToSw(false);
     if (ok) {
@@ -590,6 +602,7 @@ async function callExtensionTool(tool, args) {
 // --- HTTP Bridge Server ---
 
 const server = http.createServer(async (req, res) => {
+  renewLease();
   // Health check
   if (req.method === "GET" && req.url === "/health") {
     res.writeHead(200, { "Content-Type": "application/json" });
@@ -620,11 +633,24 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(BRIDGE_PORT, "127.0.0.1", () => {
+  renewLease();
   console.log(`[bridge] HTTP server listening on http://127.0.0.1:${BRIDGE_PORT}`);
   console.log(`[bridge] Targeting Chrome CDP on port ${CDP_PORT}`);
   console.log(`[bridge] Endpoints: GET /health, POST /tool {tool, args}`);
   connectToSw();
 });
+const leaseTimer = LEASE_FILE ? setInterval(() => {
+  try {
+    const ageMs = Date.now() - require("fs").statSync(LEASE_FILE).mtimeMs;
+    if (ageMs > LEASE_TIMEOUT_MS) {
+      console.log(`[bridge] Session lease expired after ${ageMs}ms`);
+      shutdown();
+    }
+  } catch (e) {
+    console.log("[bridge] Session lease is missing; shutting down");
+    shutdown();
+  }
+}, Math.min(LEASE_TIMEOUT_MS / 2, 30000)) : null;
 process.on("unhandledRejection", (reason) => {
   console.error("[bridge] Unhandled rejection:", reason);
 });
@@ -637,6 +663,8 @@ function shutdown() {
   console.log("[bridge] Shutting down...");
   if (cdpWs) cdpWs.close();
   if (browserWs) browserWs.close();
+  if (reconnectTimer) clearTimeout(reconnectTimer);
+  if (leaseTimer) clearInterval(leaseTimer);
   server.close();
   process.exit(0);
 }

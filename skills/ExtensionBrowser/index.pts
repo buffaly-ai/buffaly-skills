@@ -77,9 +77,19 @@ function ToExtBridgePath() : string
 	return Path.Combine(_opsAgent.GetCurrentProjectDirectory(), "Skills", "ExtensionBrowser", "lib", "bridge.js");
 }
 
+function ToExtBridgePidPath() : string
+{
+	return Path.Combine(_opsAgent.GetCurrentSessionDirectory(), "artifacts", "extension-bridge.pid");
+}
+
+function ToExtBridgeLeasePath() : string
+{
+	return Path.Combine(_opsAgent.GetCurrentSessionDirectory(), "artifacts", "extension-bridge.lease");
+}
+
 function ToExtBridgeCall(int bridgePort, string tool, string argsJson, int timeoutSeconds, string label) : string
 {
-	string script = "try { $body = '{\"tool\":\"' + '" + tool.Replace("'", "''") + "' + '\",\"args\":' + '" + argsJson.Replace("'", "''") + "' + '}'; $resp = Invoke-WebRequest -Uri ('http://127.0.0.1:' + " + bridgePort.ToString() + " + '/tool') -Method POST -Body $body -ContentType 'application/json' -TimeoutSec " + timeoutSeconds.ToString() + " -ErrorAction Stop; Write-Output $resp.Content } catch { Write-Output ('{\"ok\":false,\"error\":\"' + $_.Exception.Message + '\",\"code\":\"BRIDGE_UNREACHABLE\"}') }";
+	string script = "try { Set-Content -LiteralPath '" + ToExtBridgeLeasePath().Replace("'", "''") + "' -Value ([DateTime]::UtcNow.ToString('O')) -NoNewline; $body = '{\"tool\":\"' + '" + tool.Replace("'", "''") + "' + '\",\"args\":' + '" + argsJson.Replace("'", "''") + "' + '}'; $resp = Invoke-WebRequest -Uri ('http://127.0.0.1:' + " + bridgePort.ToString() + " + '/tool') -Method POST -Body $body -ContentType 'application/json' -TimeoutSec " + timeoutSeconds.ToString() + " -ErrorAction Stop; Write-Output $resp.Content } catch { Write-Output ('{\"ok\":false,\"error\":\"' + $_.Exception.Message + '\",\"code\":\"BRIDGE_UNREACHABLE\"}') }";
 	return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 35, _opsAgent, "", label);
 }
 
@@ -88,8 +98,18 @@ function ToExtBridgeStart(int cdpPort, int bridgePort) : string
 	string bridge = ToExtBridgePath();
 	if (StringUtil.IsEmpty(bridge))
 		return "Error: bridge.js not found. Ensure the ExtensionBrowser skill is installed.";
-	string script = "$proc = Start-Process -FilePath 'node' -ArgumentList @('" + bridge.Replace("'", "''") + "', '" + cdpPort.ToString() + "', '" + bridgePort.ToString() + "') -PassThru -RedirectStandardOutput '" + _opsAgent.GetCurrentSessionDirectory().Replace("'", "''") + "/artifacts/bridge-stdout.log' -RedirectStandardError '" + _opsAgent.GetCurrentSessionDirectory().Replace("'", "''") + "/artifacts/bridge-stderr.log'; Start-Sleep -Seconds 2; try { $resp = Invoke-WebRequest -Uri ('http://127.0.0.1:' + " + bridgePort.ToString() + " + '/health') -TimeoutSec 5 -ErrorAction Stop; Write-Output $resp.Content } catch { Write-Output '{\"ok\":false,\"error\":\"Bridge failed to start\"}' }";
+	string pidPath = ToExtBridgePidPath();
+	string leasePath = ToExtBridgeLeasePath();
+	string script = "$ErrorActionPreference='Stop'; New-Item -ItemType Directory -Path '" + _opsAgent.GetCurrentSessionDirectory().Replace("'", "''") + "/artifacts' -Force | Out-Null; if (Test-Path '" + pidPath.Replace("'", "''") + "') { $oldPid = [int](Get-Content '" + pidPath.Replace("'", "''") + "' -Raw); $oldProc = Get-CimInstance Win32_Process -Filter ('ProcessId=' + $oldPid) -ErrorAction SilentlyContinue; if ($oldProc.CommandLine -like '*" + bridge.Replace("'", "''") + "*') { Stop-Process -Id $oldPid -Force -ErrorAction SilentlyContinue } }; Set-Content -LiteralPath '" + leasePath.Replace("'", "''") + "' -Value ([DateTime]::UtcNow.ToString('O')) -NoNewline; $proc = Start-Process -FilePath 'node' -ArgumentList @('" + bridge.Replace("'", "''") + "', '" + cdpPort.ToString() + "', '" + bridgePort.ToString() + "', '" + leasePath.Replace("'", "''") + "') -PassThru -RedirectStandardOutput '" + _opsAgent.GetCurrentSessionDirectory().Replace("'", "''") + "/artifacts/bridge-stdout.log' -RedirectStandardError '" + _opsAgent.GetCurrentSessionDirectory().Replace("'", "''") + "/artifacts/bridge-stderr.log'; Set-Content -LiteralPath '" + pidPath.Replace("'", "''") + "' -Value $proc.Id -NoNewline; Start-Sleep -Seconds 2; try { $resp = Invoke-WebRequest -Uri ('http://127.0.0.1:' + " + bridgePort.ToString() + " + '/health') -TimeoutSec 5 -ErrorAction Stop; Write-Output $resp.Content } catch { Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue; Remove-Item '" + pidPath.Replace("'", "''") + "','" + leasePath.Replace("'", "''") + "' -Force -ErrorAction SilentlyContinue; Write-Output '{\"ok\":false,\"error\":\"Bridge failed to start\"}' }";
 	return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 15, _opsAgent, "", "Extension Bridge Start");
+}
+
+function ToExtBridgeStop() : string
+{
+	string pidPath = ToExtBridgePidPath();
+	string leasePath = ToExtBridgeLeasePath();
+	string script = "$stopped=$false; if (Test-Path '" + pidPath.Replace("'", "''") + "') { $pidValue = [int](Get-Content '" + pidPath.Replace("'", "''") + "' -Raw); $ownedProc = Get-CimInstance Win32_Process -Filter ('ProcessId=' + $pidValue) -ErrorAction SilentlyContinue; if ($ownedProc.CommandLine -like '*" + ToExtBridgePath().Replace("'", "''") + "*') { Stop-Process -Id $pidValue -Force; $stopped=$true } }; Remove-Item '" + pidPath.Replace("'", "''") + "','" + leasePath.Replace("'", "''") + "' -Force -ErrorAction SilentlyContinue; Write-Output ('{\"ok\":true,\"stopped\":' + $stopped.ToString().ToLowerInvariant() + '}')";
+	return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 15, _opsAgent, "", "Extension Bridge Stop");
 }
 
 // ===== Actions =====
@@ -119,6 +139,18 @@ prototype ToStartExtensionBridge : ExtensionBrowserSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to stop the extension bridge")]
+[SemanticProgram.InfinitivePhrase("to clean up the extension bridge")]
+prototype ToStopExtensionBridge : ExtensionBrowserSkillAction
+{
+	Description = @"Stops the bridge process owned by the current Buffaly session and removes its PID and lease files. Bridges also terminate automatically when their session lease expires.";
+
+	function Execute() : string
+	{
+		return ToExtBridgeStop();
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to call an extension tool via bridge")]
 [SemanticProgram.InfinitivePhrase("to invoke an extension tool via bridge")]
 prototype ToCallExtensionToolViaBridge : ExtensionBrowserSkillAction
@@ -138,7 +170,7 @@ prototype ToCheckExtensionBridgeHealth : ExtensionBrowserSkillAction
 
 	function Execute(int bridgePort) : string
 	{
-		string script = "try { $resp = Invoke-WebRequest -Uri ('http://127.0.0.1:' + " + bridgePort.ToString() + " + '/health') -TimeoutSec 5 -ErrorAction Stop; Write-Output $resp.Content } catch { Write-Output '{\"ok\":false,\"error\":\"Bridge not running\"}' }";
+		string script = "try { Set-Content -LiteralPath '" + ToExtBridgeLeasePath().Replace("'", "''") + "' -Value ([DateTime]::UtcNow.ToString('O')) -NoNewline; $resp = Invoke-WebRequest -Uri ('http://127.0.0.1:' + " + bridgePort.ToString() + " + '/health') -TimeoutSec 5 -ErrorAction Stop; Write-Output $resp.Content } catch { Write-Output '{\"ok\":false,\"error\":\"Bridge not running\"}' }";
 		return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 10, _opsAgent, "", "Extension Bridge Health");
 	}
 }
