@@ -10996,7 +10996,7 @@
       "PackageType": "WebModule",
       "Title": "Ollama Cloud Catalog",
       "Description": "Buffaly Web Module package for Ollama Cloud Catalog.",
-      "Version": "0.1.155",
+      "Version": "0.1.156",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/OllamaCloud",
       "SourceUrl": "",
@@ -11019,15 +11019,15 @@
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "14dbdfd2445427f956a8535936770ddc8b5ecc2138dd03bcdfc2a5726ddb0809"
+          "Sha256": "0fa78dae3c67d1078c8dd2bf8893e8b46b8ff899e1b84f19bb5751a65f82ffc6"
         },
         {
           "Path": "Buffaly.Agent.Tools.Secrets.dll",
-          "Sha256": "b0d207e52eef022cccd3bd970deafc59f0b4d2a1512be27c08ca2e8ceaf6d520"
+          "Sha256": "641e2e3e8ac073f895f7d86cd6c69bc4480a0ad3f22f4a1e77fafe693d87687e"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "3991ee6f38c8a8dd5a991031e08da3f6d8da6eeeeca5eb22d7cd4c3393f4c800"
+          "Sha256": "cebd6bfc95ec6c6b29cb5987aa2112efba70fd7331420586b06368fe3d15911f"
         },
         {
           "Path": "Buffaly.Common.dll",
@@ -11039,11 +11039,11 @@
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "fd919d97676a613e52c530ded98fc7da11014288caa3f8bceee54a4eed679374"
+          "Sha256": "957c63f3d590d5c38eb7955d8d86ca56bea2b70d24e8fd1f8b39edf90fe4ce9b"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "e271aea89eee9384af858e0c39facfbe56f83e507ac5f45ab46194a7809def33"
+          "Sha256": "90289f0d44287086961a2f26e6e13b3179037b45b4a6423eccc132f5358a36fb"
         },
         {
           "Path": "Buffaly.Provider.Ollama.Web.deps.json",
@@ -11051,11 +11051,11 @@
         },
         {
           "Path": "Buffaly.Provider.Ollama.Web.dll",
-          "Sha256": "74c1d9d12f8484152d3eba7dc2daa9275961432d2cb6d490995202ff6a42308d"
+          "Sha256": "f160a971d005f94563f7631669c54d2303db14a62b19743f5c7f6c795523b448"
         },
         {
           "Path": "Buffaly.Provider.Ollama.Web.exe",
-          "Sha256": "49cbabf62b4e40e0fc721692e56ad4dc6634546574ab2ac3500814aa1b01080e"
+          "Sha256": "25f223f5b3a4a5cb595f7603975e366d44665701e9175e94e2c3a432fbffc65d"
         },
         {
           "Path": "Buffaly.Provider.Ollama.Web.runtimeconfig.json",
@@ -11063,7 +11063,7 @@
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "bd7517d3da0a651e76d74e9c6c4c58a6727d7dcd081de238c1cc3758ca62955d"
+          "Sha256": "94ae3a7a27e126bb5655a1ab4685bd9ccc61f223c7f79941bcc5a2855edc32eb"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -11871,7 +11871,8 @@
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
       "RequiresRestart": true,
-      "RequiresPreStartInstall": true
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     },
     {
       "PackageId": "OpenAIAdmin",
