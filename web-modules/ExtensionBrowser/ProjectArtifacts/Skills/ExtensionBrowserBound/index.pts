@@ -1,0 +1,17 @@
+reference ExtensionBrowser.WebModule ExtensionBrowser.WebModule;
+import ExtensionBrowser.WebModule ExtensionBrowser.WebModule.ExtensionBrowserModuleService ExtensionBrowserModuleService;
+
+prototype ExtensionBrowserBoundSkillAction : OpsAction { Description = @"Bound regular-Chrome actions routed by the current session binding."; }
+[SemanticEntity("bound extension browser skill")]
+prototype ExtensionBrowserBoundSkill : SkillEntity { EntityName = "bound extension browser skill"; Description = @"Use the Chrome extension installation bound to the current Buffaly session."; ActionRoot = ExtensionBrowserBoundSkillAction; }
+[SemanticProgram.InfinitivePhrase("to invoke a bound extension browser tool")]
+prototype ToInvokeBoundExtensionBrowserTool : ExtensionBrowserBoundSkillAction
+{
+ Description = @"Invoke a tool through the extension installation bound to the current session. No port, credential, or session target is accepted.";
+ function Execute(string tool, string argsJson) : string { return ExtensionBrowserModuleService.InvokeForSession(_opsAgent.GetSessionKeyOrEmpty(), tool, argsJson, 30); }
+}
+[SemanticProgram.InfinitivePhrase("to get the active tab from the bound extension")]
+prototype ToGetBoundExtensionActiveTab : ExtensionBrowserBoundSkillAction
+{
+ function Execute() : string { return ExtensionBrowserModuleService.InvokeForSession(_opsAgent.GetSessionKeyOrEmpty(), "get_active_tab", "{}", 15); }
+}

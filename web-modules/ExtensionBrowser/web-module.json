@@ -1,0 +1,13 @@
+{
+  "Module": {
+    "Enabled": true,
+    "Name": "ExtensionBrowser",
+    "DisplayName": "Extension Browser",
+    "Description": "Authenticated regular-Chrome installation, session binding, side-panel bootstrap, and tool channel.",
+    "AssemblyPath": "ExtensionBrowser/ExtensionBrowser.WebModule.dll",
+    "TypeName": "ExtensionBrowser.WebModule.ExtensionBrowserWebModule",
+    "LoadOrder": 1340,
+    "Pages": [{"Name":"extension-browser-health","DisplayName":"Extension Browser Health","Path":"/web-modules/ExtensionBrowser/health","Description":"Inspect secret-free ExtensionBrowser module health."}],
+    "ProjectArtifacts": [{"ProjectName":"Skills/ExtensionBrowserBound","SourcePath":"ProjectArtifacts/Skills/ExtensionBrowserBound/"}]
+  }
+}
