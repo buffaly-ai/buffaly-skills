@@ -162,6 +162,18 @@ prototype ToGetDispatchChildren : DispatchTreeSkillAction, DispatchContext
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to get the direct parents of a dispatch node")]
+[SemanticProgram.InfinitivePhrase("to inspect a dispatch node's immediate categories")]
+prototype ToGetDispatchParents : DispatchTreeSkillAction, DispatchContext
+{
+	Description = @"prototypeName - exact Dispatch node. Return only its directly assigned parents beneath DispatchMemoryRoot by using the runtime prototype's existing direct TypeOf relationships. Use only when immediate categorization needs clarification. This action does not enumerate complete paths, choose a route, mutate the graph, or dispatch work.";
+
+	function Execute(string prototypeName, int maxResults = 25) : List<DispatchNodeSummary>
+	{
+		return RuntimeDispatchTreeFacade.GetParents(_runtime, prototypeName, maxResults);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to locate a dispatch node in the routing hierarchy")]
 [SemanticProgram.InfinitivePhrase("to read the ancestor path for a dispatch node")]
 [SemanticProgram.InfinitivePhrase("to place a semantic dispatch match in its tree branch")]
