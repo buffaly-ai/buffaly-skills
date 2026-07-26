@@ -226,5 +226,4 @@
     priority: 50,
     load: function (context) { return loadFileSourceItems(context); }
   });
-  startDedupObserver();
 })();
