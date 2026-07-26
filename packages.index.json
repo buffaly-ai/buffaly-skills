@@ -16561,7 +16561,7 @@
       "PackageType": "WebModule",
       "Title": "Source Viewer",
       "Description": "Buffaly Web Module package for Source Viewer.",
-      "Version": "0.1.1",
+      "Version": "0.1.2",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/SourceViewer",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/SourceViewer",
@@ -16576,11 +16576,19 @@
         },
         {
           "Path": "Buffaly.SourceViewer.WebModule.dll",
-          "Sha256": "aee85876745ebb8cf2a4331b7280d8d49ce2336080e6a6773668f2db35847312"
+          "Sha256": "3e1d8e5767521391f399728921ad4efa64fc397d3c1d84065397a36f2c09975e"
         },
         {
           "Path": "web-module.json",
-          "Sha256": "b76d6c61fec600c72d61e106dc111a4667efeb1262388111e14855078bc1b254"
+          "Sha256": "919447c5370a2344d2751248ac2261484046f5d10669bb50c8565a1f8f86702b"
+        },
+        {
+          "Path": "wwwroot/components/source-viewer-module.js",
+          "Sha256": "9510cec0a7a74e47f2711dcd48793199d03e09a8afe697cef205afc4bf1d774e"
+        },
+        {
+          "Path": "wwwroot/components/source-viewer-module.js.md",
+          "Sha256": "1ca9b77b6bf3ee4249e79391b9f8246df8c75af9f48cef78e2f187d8de492e02"
         },
         {
           "Path": "wwwroot/css/source-viewer.css",
@@ -16623,7 +16631,12 @@
           "Sha256": "13a0d14c594b72dd74fcac39d758046a2845614e90f388388dcaf78e7acf40b7"
         }
       ],
-      "ProjectArtifacts": [],
+      "ProjectArtifacts": [
+        {
+          "ProjectName": "Skills/SourceViewer",
+          "SourcePath": "Skills/SourceViewer/"
+        }
+      ],
       "Dependencies": [],
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
