@@ -13,6 +13,10 @@ assert.match(connection, /SessionBindingId: invocation\.SessionBindingId, Invoca
 assert.match(background, /new InstallationChannel\(connection, handleToolCall\)/, 'service worker must own the installation channel and tool dispatch');
 assert.match(background, /sender\.id !== chrome\.runtime\.id \|\| !sender\.url/, 'trusted extension messages must require this extension identity and URL');
 assert.doesNotMatch(background, /sender\.tab === undefined/, 'side-panel trust must not assume the sender has no associated tab');
+assert.doesNotMatch(background, /sender\.tab !== undefined/, 'privileged side-panel paths must not reject a legitimate tab-associated sender');
+for (const messageType of ['tool_call', 'buffaly_connection_changed', 'grant_debugger_consent', 'revoke_debugger_consent', 'get_tool_log']) {
+  assert.match(background, new RegExp(`request\\.type === '${messageType}'[\\s\\S]{0,180}!isTrustedExtensionPage\\(sender\\)`), `${messageType} must use exact extension-origin trust`);
+}
 assert.match(background, /createConversation\(connection, 'CreateNew', crypto\.randomUUID\(\)/, 'service worker must create each new conversation slot');
 assert.match(background, /ACTIVE_CONVERSATION_STORAGE_KEY/, 'service worker must own the opaque active binding pointer');
 assert.match(background, /issueNavigationToken\(connection, binding\.SessionBindingId\)/, 'service worker must mint a fresh token when restoring a conversation');

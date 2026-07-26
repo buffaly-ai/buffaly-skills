@@ -38,7 +38,7 @@ export default defineBackground(() => {
 
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.type === 'tool_call') {
-      if (sender.id !== chrome.runtime.id || sender.tab !== undefined) {
+      if (!isTrustedExtensionPage(sender)) {
         sendResponse({ ok: false, error: 'Unauthorized: tool calls can only originate from the extension side panel' });
         return false;
       }
@@ -49,7 +49,7 @@ export default defineBackground(() => {
     }
 
     if (request.type === 'buffaly_connection_changed') {
-      if (sender.id !== chrome.runtime.id || sender.tab !== undefined) {
+      if (!isTrustedExtensionPage(sender)) {
         sendResponse({ ok: false, error: 'Unauthorized: connection changes can only originate from an extension page' });
         return false;
       }
@@ -121,12 +121,12 @@ export default defineBackground(() => {
     }
 
     // ─── Debugger Consent: Only extension pages (side panel) can grant consent ───
-    // Validates sender is from this extension's own pages (not content scripts or
-    // other extensions). Content scripts have sender.tab set; extension pages don't.
+    // Validates sender is from this extension's exact origin. Chrome side panels
+    // can carry sender.tab, so tab association is not an authorization boundary.
     // Note: Buffaly connects via CDP Runtime.evaluate, which bypasses the message
     // system entirely — Buffaly is an authorized caller at the CDP trust boundary.
     if (request.type === 'grant_debugger_consent') {
-      if (sender.id !== chrome.runtime.id || sender.tab !== undefined) {
+      if (!isTrustedExtensionPage(sender)) {
         sendResponse({ ok: false, error: 'Unauthorized: debugger consent can only be granted from the extension side panel' });
         return false;
       }
@@ -136,7 +136,7 @@ export default defineBackground(() => {
     }
 
     if (request.type === 'revoke_debugger_consent') {
-      if (sender.id !== chrome.runtime.id || sender.tab !== undefined) {
+      if (!isTrustedExtensionPage(sender)) {
         sendResponse({ ok: false, error: 'Unauthorized: debugger consent can only be revoked from the extension side panel' });
         return false;
       }
@@ -146,7 +146,7 @@ export default defineBackground(() => {
     }
 
     if (request.type === 'get_tool_log') {
-      if (sender.id !== chrome.runtime.id || sender.tab !== undefined) {
+      if (!isTrustedExtensionPage(sender)) {
         sendResponse({ ok: false, error: 'Unauthorized: tool logs can only be read from the extension side panel' });
         return false;
       }
