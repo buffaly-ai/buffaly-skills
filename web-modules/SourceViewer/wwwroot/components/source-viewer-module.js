@@ -25,14 +25,14 @@ class SourceViewerModule extends HTMLElement {
   connectedCallback() { if (!this.childElementCount) { this.className = "source-viewer-component-host"; this.innerHTML = '<div class="sv-loading">Loading source file...</div>'; } }
   async start() {
     if (!this._configuration) throw new Error("configure() must be called before start()."); if (this._started) return; this._started = true;
-    try { const state = this._configuration.state; await loadAssets(state.language); const model = await readSource(state.path); this._render(model); this._focus(model.Text); this.dispatchEvent(new CustomEvent("buffaly-component-ready", { bubbles: true, detail: { moduleName: "SourceViewer", screen: "file", path: model.Path } })); }
+    try { const state = this._configuration.state; await loadAssets(state.language); const model = await readSource(state.path); this._render(model); this._focus(model.text); this.dispatchEvent(new CustomEvent("buffaly-component-ready", { bubbles: true, detail: { moduleName: "SourceViewer", screen: "file", path: model.path } })); }
     catch (error) { this.innerHTML = '<style>' + SourceViewerModule.styles + '</style><section class="sv-error" role="alert"><strong>Source file unavailable</strong><p>' + escapeHtml(error.message) + '</p></section>'; this.dispatchEvent(new CustomEvent("buffaly-component-error", { bubbles: true, detail: { moduleName: "SourceViewer", screen: "file", message: error.message } })); }
   }
   dispose() { if (this._editor) this._editor.toTextArea(); this._editor = null; this.replaceChildren(); this._started = false; }
   _render(model) {
     const language = LANGUAGES[this._configuration.state.language];
-    this.innerHTML = '<style>' + SourceViewerModule.styles + '</style><article class="sv-card"><header><div><span class="sv-kicker">Source Viewer</span><h2>' + escapeHtml(model.Name) + '</h2><p title="' + escapeHtml(model.Path) + '">' + escapeHtml(model.Path) + '</p></div><span class="sv-kind">' + escapeHtml(language.kind) + '</span></header><div class="sv-editor"><textarea></textarea></div><footer><span>' + Number(model.Length).toLocaleString() + ' bytes</span><span>Read only</span><span class="sv-location"></span></footer></article>';
-    const textarea = this.querySelector("textarea"); textarea.value = model.Text;
+    this.innerHTML = '<style>' + SourceViewerModule.styles + '</style><article class="sv-card"><header><div><span class="sv-kicker">Source Viewer</span><h2>' + escapeHtml(model.name) + '</h2><p title="' + escapeHtml(model.path) + '">' + escapeHtml(model.path) + '</p></div><span class="sv-kind">' + escapeHtml(language.kind) + '</span></header><div class="sv-editor"><textarea></textarea></div><footer><span>' + Number(model.length).toLocaleString() + ' bytes</span><span>Read only</span><span class="sv-location"></span></footer></article>';
+    const textarea = this.querySelector("textarea"); textarea.value = model.text;
     this._editor = window.CodeMirror.fromTextArea(textarea, { mode: language.mode, lineNumbers: true, readOnly: true, lineWrapping: false, viewportMargin: 30 });
   }
   _focus(text) {
