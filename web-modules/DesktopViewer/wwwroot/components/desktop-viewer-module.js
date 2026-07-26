@@ -39,6 +39,10 @@ class DesktopViewerModule extends HTMLElement {
 	}
 
 	connectedCallback() {
+		this._render();
+	}
+
+	_render() {
 		if (this.childElementCount) return;
 		this.innerHTML = `<style>${DesktopViewerModule.styles}</style><article class="dv-card"><header><div><span>Desktop Viewer</span><h2></h2><p></p></div><strong>LIVE</strong></header><section><canvas></canvas><div class="dv-empty">Waiting for the first frame...</div></section><footer><span class="dv-status">Starting stream...</span><span class="dv-frames"></span></footer></article>`;
 	}
@@ -48,6 +52,7 @@ class DesktopViewerModule extends HTMLElement {
 		if (this._started) return;
 		this._started = true;
 		this._disposed = false;
+		this._render();
 		const state = this._configuration.state;
 		this.querySelector("h2").textContent = state.WindowTitle;
 		this.querySelector("header p").textContent = state.ProcessName;
