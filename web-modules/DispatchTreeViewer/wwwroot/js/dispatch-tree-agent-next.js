@@ -177,7 +177,7 @@
 
         if (isExpanded && ontologyState.childrenCache.has(node.prototypeName)) {
           var cached = ontologyState.childrenCache.get(node.prototypeName);
-          var ul = element("ul", "dtv-branch" + (depth === 0 ? " dtv-branch-root" : ""));
+          var ul = element("ul", "dtv-branch");
           cached.children.forEach(function (child) {
             if (ontologyState.filterText) {
               var text = (child.label + " " + child.prototypeName).toLowerCase();
@@ -233,10 +233,22 @@
             tr.appendChild(element("td", "dtv-prop-val", selected.properties[key]));
             propTable.appendChild(tr);
           }
-          propSec.appendChild(propTable);
-          card.appendChild(propSec);
-        }
-        detailsCol.appendChild(card);
+            propSec.appendChild(propTable);
+            card.appendChild(propSec);
+          }
+          var protoSec = element("div", "dtv-raw-section");
+          protoSec.appendChild(element("h4", "dtv-section-heading", "ProtoScript"));
+          var protoPre = element("pre", "dtv-raw");
+          var protoCode = element("code");
+          protoCode.className = "language-pts";
+          protoCode.textContent = selected.protoScriptDisplay || "ProtoScript display unavailable.";
+          protoPre.appendChild(protoCode);
+          protoSec.appendChild(protoPre);
+          if (window.BuffalyMarkdownCodeBlocks && typeof window.BuffalyMarkdownCodeBlocks.renderHighlightedMarkdownCodeBlocks === "function") {
+            window.BuffalyMarkdownCodeBlocks.renderHighlightedMarkdownCodeBlocks(protoSec);
+          }
+          card.appendChild(protoSec);
+          detailsCol.appendChild(card);
       }
       body.append(treeCol, detailsCol);
     }
