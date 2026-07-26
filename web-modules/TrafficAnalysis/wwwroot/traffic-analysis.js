@@ -1,9 +1,9 @@
 (function (global) {
 	const collectorArtifacts = [
-		{ Key: "traffic-properties", Label: "Traffic Properties", Path: "data-stream/traffic-properties.json", PromptName: "traffic-collector" },
-		{ Key: "google-ads", Label: "Google Ads", Path: "data-stream/google-ads.json", PromptName: "google-ads-collector" },
-		{ Key: "linkedin", Label: "LinkedIn", Path: "data-stream/linkedin-analytics.json", PromptName: "linkedin-collector" },
-		{ Key: "openai-usage", Label: "OpenAI Usage", Path: "data-stream/openai-usage.json", PromptName: "openai-usage-collector" }
+		{ Key: "traffic-properties", Label: "Traffic Properties", Path: "artifacts/data-stream/traffic-properties.json", PromptName: "traffic-collector" },
+		{ Key: "google-ads", Label: "Google Ads", Path: "artifacts/data-stream/google-ads.json", PromptName: "google-ads-collector" },
+		{ Key: "linkedin", Label: "LinkedIn", Path: "artifacts/data-stream/linkedin-analytics.json", PromptName: "linkedin-collector" },
+		{ Key: "openai-usage", Label: "OpenAI Usage", Path: "artifacts/data-stream/openai-usage.json", PromptName: "openai-usage-collector" }
 	];
 
 	function qs(name) {

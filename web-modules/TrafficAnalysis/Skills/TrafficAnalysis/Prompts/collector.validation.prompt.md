@@ -1,7 +1,7 @@
 # Collector Output Validator
 
 Validate the collector result before success:
-- the named `data-stream/*.json` file exists in the current session;
+- the named `artifacts/data-stream/*.json` file exists in the current session;
 - it parses as JSON and contains exactly the required common-envelope members;
 - `status` is `ok`, `partial`, `failed`, or `cancelled`;
 - `promptProvenance.promptFile`, `promptHash`, and full `promptText` exist;
