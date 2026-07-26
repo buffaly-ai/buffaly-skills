@@ -1,0 +1,25 @@
+{
+  "timeframe": "{{timeframe}}",
+  "status": "sample",
+  "promptProvenance": {
+    "promptFile": "openai-usage-collector.prompt.md",
+    "promptText": "Collect organization usage and cost data and identify cost or volume anomalies.",
+    "promptHash": "sample"
+  },
+  "collectedAt": "2026-07-26T20:00:00Z",
+  "source": "OpenAI Usage",
+  "rawData": {
+    "inputTokens": 2840000,
+    "topModel": "gpt-5",
+    "requests": 1834,
+    "outputTokens": 492000,
+    "estimatedCost": 41.28
+  },
+  "analysis": {
+    "insights": [
+      "Estimated cost is $41.28",
+      "Output volume is 492K tokens"
+    ],
+    "summary": "OpenAI workloads issued 1,834 requests at an estimated $41.28 cost. Usage is concentrated in the primary reasoning model."
+  }
+}

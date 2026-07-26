@@ -1,6 +1,6 @@
 # Traffic Analysis Aggregator
 
-Read all available current-session files under `data-stream/`: `traffic-properties.json`, `google-ads.json`, `linkedin-analytics.json`, and `openai-usage.json`. Do not require all four.
+Read all available current-session files under `data-stream/`: `traffic-properties.json`, `google-ads.json`, `linkedin-analytics.json`, `openai-usage.json`, and `reddit-ads.json`. Do not require all five.
 
 Create cross-source synthesis with an executive summary, evidence-based cross-source insights, and prioritized actionable items. Explicitly compare human traffic with AI/search/generic bot traffic when traffic data exists. Record every expected input with `ok`, `partial`, `failed`, or `missing` status. Failed/missing sources must appear in the email footer.
 

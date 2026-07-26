@@ -1,0 +1,27 @@
+{
+  "timeframe": "{{timeframe}}",
+  "status": "sample",
+  "promptProvenance": {
+    "promptFile": "traffic-collector.prompt.md",
+    "promptText": "Collect active web properties, preserve raw traffic evidence, and explain human versus bot behavior.",
+    "promptHash": "sample"
+  },
+  "collectedAt": "2026-07-26T20:00:00Z",
+  "source": "Traffic Properties",
+  "rawData": {
+    "genericBotVisits": 22,
+    "aiBotVisits": 51,
+    "humanSessions": 706,
+    "searchBotVisits": 63,
+    "sessions": 842,
+    "topLandingPage": "/services/ai-growth"
+  },
+  "analysis": {
+    "insights": [
+      "706 human sessions out of 842 total",
+      "AI bots generated 51 visits",
+      "The AI Growth page is the strongest landing page"
+    ],
+    "summary": "Human traffic accounts for 84% of sessions. The AI Growth service page leads entrances, while AI bot visibility is measurable and growing."
+  }
+}

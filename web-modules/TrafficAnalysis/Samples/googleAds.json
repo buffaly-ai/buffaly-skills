@@ -1,0 +1,25 @@
+{
+  "timeframe": "{{timeframe}}",
+  "status": "sample",
+  "promptProvenance": {
+    "promptFile": "google-ads-collector.prompt.md",
+    "promptText": "Collect campaign, search-term, and creative performance and explain spend efficiency.",
+    "promptHash": "sample"
+  },
+  "collectedAt": "2026-07-26T20:00:00Z",
+  "source": "Google Ads",
+  "rawData": {
+    "spend": 486.32,
+    "topCampaign": "AI Growth Search",
+    "conversions": 27,
+    "costPerConversion": 18.01,
+    "clicks": 391
+  },
+  "analysis": {
+    "insights": [
+      "Conversion volume is concentrated in one search campaign",
+      "Cost per conversion is $18.01"
+    ],
+    "summary": "Paid search produced 27 conversions at an $18.01 cost per conversion. The AI Growth Search campaign is the primary contributor."
+  }
+}

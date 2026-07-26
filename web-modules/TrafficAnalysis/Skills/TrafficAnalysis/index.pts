@@ -51,6 +51,16 @@ prototype ToCollectOpenAIUsageData : ValidatedPromptAction, TrafficAnalysisSkill
 	Description = @"Use existing OpenAI Admin usage and API-key cost tools to save data-stream/openai-usage.json with analysis and exact prompt provenance.";
 }
 
+[SemanticProgram.InfinitivePhrase("to collect reddit ads data")]
+prototype ToCollectRedditAdsData : ValidatedPromptAction, TrafficAnalysisSkillAction
+{
+	IsPromptAction = true; SkillKind = "validated-prompt"; SkillVersion = "1.0.0"; ChildSessionScope = "per-action";
+	PromptPath = @"Skills/TrafficAnalysis/Prompts/reddit-ads-collector.prompt.md";
+	WorkPromptPath = @"Skills/TrafficAnalysis/Prompts/reddit-ads-collector.prompt.md";
+	ValidationPromptPath = @"Skills/TrafficAnalysis/Prompts/collector.validation.prompt.md";
+	Description = @"Use the existing Reddit Ads account and reporting actions to save data-stream/reddit-ads.json with spend-efficiency analysis and exact prompt provenance.";
+}
+
 [SemanticProgram.InfinitivePhrase("to aggregate traffic analysis and build email")]
 prototype ToAggregateTrafficAnalysis : ValidatedPromptAction, TrafficAnalysisSkillAction
 {

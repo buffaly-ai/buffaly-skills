@@ -1,0 +1,26 @@
+{
+  "timeframe": "{{timeframe}}",
+  "status": "sample",
+  "promptProvenance": {
+    "promptFile": "reddit-ads-collector.prompt.md",
+    "promptText": "Use the existing Reddit Ads report action to collect campaign performance and explain spend efficiency.",
+    "promptHash": "sample"
+  },
+  "collectedAt": "2026-07-26T20:00:00Z",
+  "source": "Reddit Ads",
+  "rawData": {
+    "topCampaign": "Small Business AI",
+    "spend": 218.76,
+    "conversions": 19,
+    "clicks": 612,
+    "impressions": 88400,
+    "costPerConversion": 11.51
+  },
+  "analysis": {
+    "insights": [
+      "Cost per conversion is $11.51",
+      "Small Business AI is the leading campaign"
+    ],
+    "summary": "Reddit Ads generated 19 conversions at an $11.51 cost per conversion, outperforming the sample paid-search acquisition cost."
+  }
+}
