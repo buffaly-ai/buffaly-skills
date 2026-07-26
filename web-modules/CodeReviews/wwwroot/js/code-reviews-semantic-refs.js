@@ -143,11 +143,20 @@
 		button.disabled = true;
 		setReviewButtonState(button, "loading", "Queueing global review", "Queueing the whole assistant turn to the global CodeReviews reviewer...");
 		setReviewStatus(button, "loading", "Queueing grouped global review...");
-		call("TriggerGlobalCodeReviewTurn", { SourceSessionKey: sourceSessionKey, TurnKey: sourceTurnKey })
+		fetch(getCodeReviewsBaseUrl() + "/api/review-turn", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ SourceSessionKey: sourceSessionKey, TurnKey: sourceTurnKey })
+		})
 			.then(function (response) {
-				const count = Number(response && response.Commits && response.Commits.length) || 0;
-				setReviewButtonState(button, "queued", count > 0 ? "Global review queued (" + count + ")" : "Global review queued", text(response && response.Message) || "Grouped review queued.");
-				setReviewStatus(button, "queued", "Queued to Buffaly.CodeReviews.Global" + (count > 0 ? " for " + count + " commit" + (count === 1 ? "" : "s") : "") + ".");
+				return response.json().catch(function () { return {}; }).then(function (payload) {
+					if (!response.ok) throw new Error(text(payload && payload.Error).trim() || "Global review trigger returned HTTP " + response.status + ".");
+					return payload;
+				});
+			})
+			.then(function (response) {
+				setReviewButtonState(button, "queued", "Global review queued", text(response && response.Message) || "Grouped review queued.");
+				setReviewStatus(button, "queued", "Queued to " + (text(response && response.ReviewerSessionKey).trim() || "Buffaly.CodeReviews.Global") + ".");
 			})
 			.catch(function (error) {
 				button.disabled = false;

@@ -20,8 +20,9 @@
 
 ## Manual Global Turn Review Button (2026-07-26)
 - Added one `Review whole turn globally` action per enclosing assistant turn that contains CodeReviews commit refs, while retaining each commit's individual review action.
-- The grouped action submits the exact source session and turn keys to `TriggerGlobalCodeReviewTurn`; commit discovery remains server-owned and queues the complete turn to `Buffaly.CodeReviews.Global`.
+- The grouped action submits the exact source session and turn keys to the module-owned typed `/api/review-turn` route; commit discovery remains server-owned and queues the complete turn to `Buffaly.CodeReviews.Global`.
 - A turn-level DOM marker prevents multi-commit messages from rendering duplicate grouped-review controls.
+- The grouped path intentionally does not depend on a generated JsonWs client, preventing stale checked-in client artifacts from hiding a newly added grouped trigger.
 
 ## Styled Manual Review Button (2026-06-29)
 - Upgraded the injected `Review` button from an unstyled native button to a self-contained gradient pill with sparkle icon, hover/focus polish, and loading/queued/error visual states.
