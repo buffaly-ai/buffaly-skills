@@ -1,76 +1,7 @@
 (function () {
   "use strict";
-  // Shim BuffalyAgentNextExtensions if the Agent Next UI doesn't provide it
-  if (!window.BuffalyAgentNextExtensions) {
-    window.BuffalyAgentNextExtensions = (function () {
-      var _sources = [];
-      function registerFileSource(def) { _sources.push(def); }
-      function escapeHtml(t) { var d = document.createElement("div"); d.textContent = t || ""; return d.innerHTML; }
-      function getSessionKey() {
-        try { return new URLSearchParams(window.location.search).get("sessionKey") || ""; } catch (e) { return ""; }
-      }
-      function inject() {
-        var drawerBody = document.getElementById("swDrawerBody");
-        if (!drawerBody || !drawerBody.querySelector(".sw-special-files-grid")) return;
-        var sk = getSessionKey();
-        if (drawerBody.getAttribute("data-dtv-injected") === sk) return;
-        drawerBody.setAttribute("data-dtv-injected", sk);
-        _sources.forEach(function (src) {
-          var result = src.load({ sessionKey: sk });
-          if (result && typeof result.then === "function") {
-            result.then(function (items) { if (items && items.length) renderSection(drawerBody, src, items); }).catch(function () {});
-          } else if (result && result.length) {
-            renderSection(drawerBody, src, result);
-          }
-        });
-      }
-      function renderSection(drawerBody, src, items) {
-        var existing = drawerBody.querySelector("#dtv-fs-" + src.id);
-        if (existing) existing.remove();
-        var section = document.createElement("section");
-        section.id = "dtv-fs-" + src.id;
-        section.className = "sw-special-files-section";
-        var h3 = document.createElement("h3");
-        h3.textContent = src.label;
-        section.appendChild(h3);
-        var grid = document.createElement("div");
-        grid.className = "sw-special-files-grid";
-        items.forEach(function (item, idx) {
-          var card = document.createElement("article");
-          card.className = "sw-special-file-card";
-          var btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "sw-special-file-main";
-          btn.innerHTML = '<span class="sw-file-icon-cell"><i class="bi ' + (item.Icon || "bi-diagram-3") + '" aria-hidden="true"></i></span>' +
-            '<span class="sw-file-item-main"><span class="sw-special-file-title">' + escapeHtml(item.Name) + "</span>" +
-            '<span class="sw-files-meta">' + escapeHtml(item.Description || "") + "</span></span>";
-          btn.onclick = function () {
-            if (src.click) { src.click(item, idx); }
-            else if (item.Url) { window.open(item.Url, "_blank"); }
-          };
-          card.appendChild(btn);
-          grid.appendChild(card);
-        });
-        section.appendChild(grid);
-        var mem = drawerBody.querySelector(".sw-memory-files-section");
-        if (mem) mem.after(section); else drawerBody.appendChild(section);
-     }
-      function tryInject() {
-        var drawerBody = document.getElementById("swDrawerBody");
-        if (!drawerBody) { setTimeout(tryInject, 500); return; }
-        inject();
-        var filesBtn = document.querySelector(".sw-drawer-btn.sw-drawer-btn-inline");
-        if (filesBtn && !filesBtn.getAttribute("data-dtv-wired")) {
-        filesBtn.setAttribute("data-dtv-wired", "1");
-        filesBtn.addEventListener("click", function () { setTimeout(inject, 100); });
-        }
-      }
-      if (document.readyState === "loading") { document.addEventListener("DOMContentLoaded", tryInject); }
-      else { tryInject(); }
-      return { registerFileSource: registerFileSource };
-    })();
-  }
   const api = window.BuffalyAgentNextExtensions;
+  if (!api) return;
   let styleLoaded = false;
   const treeRequests = new Map();
   let cachedResponse = null;
@@ -296,8 +227,7 @@
     label: "Routing Tree",
     priority: 50,
     placement: "special-files",
-    load: function (context) { return loadFileSourceItems(context); },
-    click: function (item, index) { openViewer(index); }
+    load: function (context) { return loadFileSourceItems(context); }
   });
 
   // ── Ontology Tree Viewer (general ontology, lazy-loaded, paginated) ──
@@ -513,8 +443,7 @@
         Icon: "bi-diagram-2",
         Url: "#dtv-ontology-open:" + (context.sessionKey || "")
       }]);
-    },
-    click: function (item, index) { openOntologyViewer("", item.Url ? item.Url.replace("#dtv-ontology-open:", "") : ""); }
+    }
   });
 
   document.addEventListener("click", function (event) {
