@@ -54,9 +54,8 @@
         section.appendChild(grid);
         var mem = drawerBody.querySelector(".sw-memory-files-section");
         if (mem) mem.after(section); else drawerBody.appendChild(section);
-      }
-     function startObserver() {
-        function tryInject() {
+     }
+      function tryInject() {
         var drawerBody = document.getElementById("swDrawerBody");
         if (!drawerBody) { setTimeout(tryInject, 500); return; }
         inject();
