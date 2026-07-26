@@ -6,3 +6,4 @@
 
 - 2026-07-20: Replaced the package-local `lib/Buffaly.Marketing.dll` reference with assembly-name resolution so public extension reconciliation does not require a DLL copied into the source skill directory.
 - 2026-07-20: Corrected assembly-name resolution to the unquoted `reference Buffaly.Marketing Buffaly.Marketing;` form; quoted values are project-relative DLL paths in ProtoScript.
+- 2026-07-26: Added ConfigureServiceAccountCredentialJson(UserSecrets.GetSecret("GoogleAnalytics.ServiceAccountKey")) before each facade call. Without this, all GA4 report calls failed with credential not configured error. Follows the RedditAds skill pattern.
