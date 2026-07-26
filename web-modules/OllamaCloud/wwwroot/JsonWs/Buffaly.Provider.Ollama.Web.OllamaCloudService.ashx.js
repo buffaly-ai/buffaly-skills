@@ -4,8 +4,8 @@ if (typeof window === "undefined" || typeof window.OllamaCloudServiceValidatorsF
 	var OllamaCloudServiceValidatorsFields = window.OllamaCloudServiceValidatorsFields;
 }
 
-if (!OllamaCloudServiceValidatorsFields.hasOwnProperty("apiKey")) {
-	OllamaCloudServiceValidatorsFields.apiKey = { Validators: [Validators.Text], InvalidMessage: "Invalid API key" };
+if (!OllamaCloudServiceValidatorsFields.hasOwnProperty("apiKeySecretName")) {
+	OllamaCloudServiceValidatorsFields.apiKeySecretName = { Validators: [Validators.Text], InvalidMessage: "Invalid API key secret name" };
 }
 
 class OllamaCloudServiceService {
@@ -14,17 +14,17 @@ class OllamaCloudServiceService {
 		this.AuthToken = authToken;
 	}
 
-	GetCloudModels(apiKey, Callback) {
-		return this.GetCloudModelsObject({ apiKey: apiKey || "" }, Callback);
+	GetCloudModels(apiKeySecretName, Callback) {
+		return this.GetCloudModelsObject({ apiKeySecretName: apiKeySecretName || "" }, Callback);
 	}
 
 	GetCloudModelsObject(oObject, Callback) {
 		this._validate(oObject, OllamaCloudServiceValidators.GetCloudModels, this.GetCloudModels.onValidationError);
-		return this._invoke(this.Url + "/get-cloud-models", "GetCloudModels", { apiKey: oObject.apiKey || "" }, this.GetCloudModels, Callback);
+		return this._invoke(this.Url + "/get-cloud-models", "GetCloudModels", { apiKeySecretName: oObject.apiKeySecretName || "" }, this.GetCloudModels, Callback);
 	}
 
-	async GetCloudModelsAsync(apiKey) {
-		return await ObjectUtil.Promisify(this, this.GetCloudModels, [apiKey || ""]);
+	async GetCloudModelsAsync(apiKeySecretName) {
+		return await ObjectUtil.Promisify(this, this.GetCloudModels, [apiKeySecretName || ""]);
 	}
 
 	ValidateApiKey(apiKey, Callback) {
@@ -94,7 +94,7 @@ class OllamaCloudServiceService {
 
 var OllamaCloudServiceValidators = {
 	GetCloudModels: {
-		apiKey: { Validators: [Validators.Text], InvalidMessage: "Invalid API key" }
+		apiKeySecretName: { Validators: [Validators.Text], InvalidMessage: "Invalid API key secret name" }
 	},
 	ValidateApiKey: {
 		apiKey: { Validators: [Validators.MakeRequired(Validators.Text)], InvalidMessage: "Invalid API key" }
