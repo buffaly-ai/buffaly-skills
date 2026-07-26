@@ -1,8 +1,10 @@
 (function () {
   "use strict";
-  const api = window.BuffalyAgentNextExtensions;
-  if (!api) return;
-  let styleLoaded = false;
+
+  function initialize(api) {
+    if (window.__dispatchTreeViewerFileSourceRegistered) return;
+    window.__dispatchTreeViewerFileSourceRegistered = true;
+    let styleLoaded = false;
 
   function element(tag, className, text) {
     const node = document.createElement(tag);
@@ -242,7 +244,7 @@
     loadAndRender();
   }
 
-  document.addEventListener("click", function (event) {
+    document.addEventListener("click", function (event) {
     var target = event.target;
     while (target && target.tagName !== "A") target = target.parentElement;
     if (!target || !target.href) return;
@@ -251,5 +253,34 @@
       var sk = decodeURIComponent(target.getAttribute("href").substring("#dtv-ontology-open:".length));
       openOntologyViewer("DispatchMemoryRoot", sk);
     }
-  });
+    });
+  }
+
+  function registerWhenHostIsReady() {
+    if (window.BuffalyAgentNextExtensions) {
+      initialize(window.BuffalyAgentNextExtensions);
+      return;
+    }
+
+    var existing = document.querySelector('script[data-buffaly-next-extensions-loader="true"]');
+    if (existing) {
+      existing.addEventListener("load", function () { initialize(window.BuffalyAgentNextExtensions); }, { once: true });
+      return;
+    }
+
+    var loader = document.createElement("script");
+    loader.src = "/js/buffaly-agent-next-extensions.js?v=20260723.1";
+    loader.async = false;
+    loader.dataset.buffalyNextExtensionsLoader = "true";
+    loader.addEventListener("load", function () {
+      if (!window.BuffalyAgentNextExtensions) throw new Error("Buffaly Agent extension host did not initialize.");
+      initialize(window.BuffalyAgentNextExtensions);
+    }, { once: true });
+    loader.addEventListener("error", function () {
+      console.error("DispatchTreeViewer could not load the Buffaly Agent extension host.");
+    }, { once: true });
+    document.head.appendChild(loader);
+  }
+
+  registerWhenHostIsReady();
 })();
