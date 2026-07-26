@@ -6566,7 +6566,7 @@
       "PackageType": "WebModule",
       "Title": "Dispatch Tree Viewer",
       "Description": "Buffaly Web Module package for Dispatch Tree Viewer.",
-      "Version": "0.1.55",
+      "Version": "0.1.56",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/DispatchTreeViewer",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/DispatchTreeViewer",
@@ -6576,12 +6576,24 @@
       ],
       "Files": [
         {
+          "Path": "Azure.Core.dll",
+          "Sha256": "224d09cb39eae4d8c30272a0c49beb19d873c87347eae9487f0ddd859d752b56"
+        },
+        {
+          "Path": "Azure.Identity.dll",
+          "Sha256": "af18f20be25b2895c912f3ba0a9f2901a82dda823edcad76e6a19eac9886a40f"
+        },
+        {
           "Path": "Buffaly.Agent.DispatchTree.Viewer.deps.json",
           "Sha256": "2090d329709ed225ce924aadb5085566b757965da66fba66f48901081a9e4b32"
         },
         {
           "Path": "Buffaly.Agent.DispatchTree.Viewer.dll",
-          "Sha256": "cd301b1279b4aa8e2d8ae5ec177a7e3e1c61e9a96e2416dda46ddd53674ad603"
+          "Sha256": "00ec6912b7329f75e871f61d4f7f5fa368e43f23f27c01a5a9df3c4dd864b41b"
+        },
+        {
+          "Path": "Buffaly.NLMemory.dll",
+          "Sha256": "99344883c75493fabb48ef1f470dff9ee9392465cf1b78adfb6b8cedce8f8c89"
         },
         {
           "Path": "web-module.json",
