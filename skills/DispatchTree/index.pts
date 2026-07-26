@@ -3,10 +3,11 @@ import Buffaly.Agent.Tools.SemanticDatabase Buffaly.Agent.Tools.SemanticDatabase
 reference Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer;
 import Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer.RuntimeDispatchTreeFacade RuntimeDispatchTreeFacade;
 import Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer.DispatchNodeSummary DispatchNodeSummary;
+import Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer.OntologyTreeRuntimeReader OntologyTreeRuntimeReader;
 
 prototype DispatchAgentActionRoot : OpsAction
 {
-	Description = @"Action root for read-only session-local dispatch tree planning helpers. Delivery remains outside this skill and belongs to the normal Buffaly agent.";
+	Description = @"Action root for bounded session-local dispatch tree lookup and guarded building. Delivery remains outside this skill and belongs to the normal Buffaly agent.";
 }
 
 prototype DispatchAgentEntityRoot : SemanticEntityBase
@@ -17,13 +18,13 @@ prototype DispatchAgentEntityRoot : SemanticEntityBase
 
 prototype DispatchTreeSkillAction : DispatchAgentActionRoot
 {
-	Description = @"Base action type for read-only session-local dispatch tree planning.";
+	Description = @"Base action type for bounded session-local dispatch tree lookup and guarded building.";
 }
 
 [SemanticEntity("dispatch tree skill")]
 prototype DispatchTreeSkill : SkillEntity
 {
-	Description = @"Read-only hierarchical routing over a dispatcher's session-local semantic memory.";
+	Description = @"Hierarchical routing and guarded tree building over a dispatcher's session-local semantic memory.";
 	ActionRoot = DispatchTreeSkillAction;
 }
 
@@ -110,6 +111,44 @@ prototype ToSearchDispatchMemories : DispatchTreeSkillAction, DispatchContext
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to get dispatch nodes linked to an entity")]
+[SemanticProgram.InfinitivePhrase("to find dispatch nodes for a canonical entity")]
+prototype ToGetDispatchNodesForEntity : DispatchTreeSkillAction, DispatchContext
+{
+	Description = @"entity - one unambiguous canonical prototype returned by entity resolution. Return compact Dispatch nodes whose directly assigned Entity property exactly equals that typed prototype. Zero or multiple linked nodes are valid candidate-neighborhood results. This action does not accept a prototype-name string, perform semantic search, choose a route, create or bind entities, mutate memory, or send work.";
+
+	function Execute(Prototype entity, int maxResults = 25) : List<DispatchNodeSummary>
+	{
+		if (entity == null)
+			throw new InvalidOperationException("entity is required.");
+		return RuntimeDispatchTreeFacade.GetNodesForEntity(_runtime, entity, maxResults);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to add a child to the local dispatch tree")]
+[SemanticProgram.InfinitivePhrase("to create the next dispatch routing node")]
+prototype ToAddDispatchChild : DispatchTreeSkillAction, DispatchContext
+{
+	Description = @"parentPrototypeName - exact existing Dispatch node. childPrototypeName - new ProtoScript identifier. entityName - concise display label. semanticTerms - one or more grounded Dispatch Memory phrases separated by |. contextSummary - short factual routing meaning. Creates exactly one direct child through canonical NLMemory validation and persistence with Entity = null, Value = 0, and an empty HistoricalDispatches collection. It never creates a canonical entity, session, route decision, or delivery.";
+
+	function Execute(string parentPrototypeName, string childPrototypeName, string entityName, string semanticTerms, string contextSummary) : string
+	{
+		return RuntimeDispatchTreeFacade.AddChild(_runtime, _opsAgent, parentPrototypeName, childPrototypeName, entityName, semanticTerms, contextSummary);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to record a historical dispatch on a routing node")]
+[SemanticProgram.InfinitivePhrase("to save a verified dispatch example")]
+prototype ToRecordHistoricalDispatch : DispatchTreeSkillAction, DispatchContext
+{
+	Description = @"prototypeName - exact verified terminal Dispatch node. historicalDispatch - one compact grounded natural-language record containing the object, action, material distinctions, and source or historical destination only when available. Appends once to HistoricalDispatches after successful terminal verification. It does not choose a route, authorize delivery, change SessionKey, create an entity, or modify graph structure.";
+
+	function Execute(string prototypeName, string historicalDispatch) : string
+	{
+		return RuntimeDispatchTreeFacade.RecordHistoricalDispatch(_runtime, _opsAgent, prototypeName, historicalDispatch);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to list immediate dispatch child nodes")]
 [SemanticProgram.InfinitivePhrase("to compare the next dispatch branches")]
 [SemanticProgram.InfinitivePhrase("to read one level of the dispatch tree")]
@@ -133,5 +172,27 @@ prototype ToGetDispatchPath : DispatchTreeSkillAction, DispatchContext
 	function Execute(string prototypeName) : List<DispatchNodeSummary>
 	{
 		return RuntimeDispatchTreeFacade.GetPath(_runtime, prototypeName);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read ontology tree root and children")]
+prototype ToReadOntologyTree : DispatchTreeSkillAction
+{
+	Description = @"rootName - exact prototype name to use as tree root. after - optional continuation token for pagination. Returns a JSON string with root node, first page of direct children (max 200), totalChildCount, hasMore, and continuationToken. Read-only; never mutates memory.";
+
+	function Execute(string rootName, string after = "") : string
+	{
+		return OntologyTreeRuntimeReader.ReadRootJson(_runtime, rootName, after);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read ontology tree children of a node")]
+prototype ToReadOntologyChildren : DispatchTreeSkillAction
+{
+	Description = @"rootName - exact root prototype name. parentName - exact prototype name of the node to expand. after - optional continuation token for pagination. Returns a JSON string with direct children (max 200), totalChildCount, hasMore, and continuationToken. Read-only; never mutates memory.";
+
+	function Execute(string rootName, string parentName, string after = "") : string
+	{
+		return OntologyTreeRuntimeReader.ReadChildrenJson(_runtime, rootName, parentName, after);
 	}
 }
