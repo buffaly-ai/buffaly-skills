@@ -9,12 +9,16 @@ export default defineConfig({
     version: '0.2.1',
     permissions: [
       'sidePanel',
+      'storage',
       'tabs',
       'scripting',
       'activeTab',
       'debugger',
     ],
     host_permissions: ['<all_urls>'],
+    content_security_policy: {
+      extension_pages: "script-src 'self'; object-src 'self'; frame-src http://127.0.0.1:* http://localhost:* http://*.local:* https:;",
+    },
     side_panel: {
       default_path: 'sidepanel.html',
     },

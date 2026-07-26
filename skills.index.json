@@ -676,7 +676,7 @@
       "SkillName": "ExtensionBrowser",
       "Title": "Extension Browser",
       "Description": "Buffaly skill package for Extension Browser.",
-      "Version": "0.2.1",
+      "Version": "0.2.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Extension Browser",
@@ -684,6 +684,10 @@
       ],
       "Path": "skills/ExtensionBrowser",
       "Files": [
+        {
+          "Path": "docs/BROWSER-WORKSPACE-DESIGN.md",
+          "Sha256": "e4ddd7c678aac3808837baa6462fbae10a7ee53b9463bf515040a07cce903bb7"
+        },
         {
           "Path": "docs/VALIDATION.md",
           "Sha256": "aee64824b53252719a89854fce5f2d7fe64d5e3ef88837cf7785254573c38e0f"
@@ -706,7 +710,7 @@
         },
         {
           "Path": "extension/source/entrypoints/sidepanel/App.tsx",
-          "Sha256": "ad89367044fe957fd9ccbee809ea315d53cf6f3bf52c4bccc9887e5bcdd01376"
+          "Sha256": "fca7e72770bb422414e3051d733e0039c8439d05d35ada893b83527ce7c5247c"
         },
         {
           "Path": "extension/source/entrypoints/sidepanel/index.html",
@@ -718,7 +722,7 @@
         },
         {
           "Path": "extension/source/entrypoints/sidepanel/style.css",
-          "Sha256": "36432dc501724cab5cbfca6de5fe2616ac669b9ee6cde263c6d46c3395964b18"
+          "Sha256": "28184b03923b143b33c15f4c2178736fe7a26772287979345d879d68681d470f"
         },
         {
           "Path": "extension/source/lib/debugger-session.ts",
@@ -778,7 +782,7 @@
         },
         {
           "Path": "extension/source/wxt.config.ts",
-          "Sha256": "5ceb4716af6aebe5f36c95d6d7943f063c96a302e96c0f1ef9524473d6fabf72"
+          "Sha256": "3986b062b18b623a63477dea3908505976ac90ef02776ab3a0e531614a1c59f9"
         },
         {
           "Path": "index.pts",
