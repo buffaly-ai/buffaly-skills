@@ -16903,7 +16903,7 @@
       "PackageType": "WebModule",
       "Title": "Traffic Analysis",
       "Description": "Buffaly Web Module package for Traffic Analysis.",
-      "Version": "0.1.19",
+      "Version": "0.1.20",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/TrafficAnalysis",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/TrafficAnalysis",
@@ -16913,12 +16913,24 @@
       ],
       "Files": [
         {
+          "Path": "Azure.Core.dll",
+          "Sha256": "224d09cb39eae4d8c30272a0c49beb19d873c87347eae9487f0ddd859d752b56"
+        },
+        {
+          "Path": "Azure.Identity.dll",
+          "Sha256": "af18f20be25b2895c912f3ba0a9f2901a82dda823edcad76e6a19eac9886a40f"
+        },
+        {
           "Path": "FeedingFrenzy.TrafficAnalysis.Web.deps.json",
           "Sha256": "2dd290df9f4bd49f612dfb4004aa8519d290c76982f61bea547f3f4098b23249"
         },
         {
           "Path": "FeedingFrenzy.TrafficAnalysis.Web.dll",
-          "Sha256": "2200d39e9d106d2a890320b2db88a782d2f0c5dbf8438ec473d8a7aa5cc64429"
+          "Sha256": "3678a75594c7a1f7265d1785cf132e8652b4da30449e0058df682427cf5fae63"
+        },
+        {
+          "Path": "Npgsql.dll",
+          "Sha256": "5406d26e745aff267098f30fb0da5b1507a13080b2066ee9003b071163d887c2"
         },
         {
           "Path": "Samples/googleAds.json",
