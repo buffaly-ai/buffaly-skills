@@ -38,7 +38,7 @@
     styleLoaded = true;
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.4.0";
+    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.5.0";
     document.head.appendChild(link);
   }
 
@@ -237,10 +237,73 @@
     }
   }
 
-  var dedupObserver = new MutationObserver(function () { deduplicateSections(); });
+  function restyleAndRelocateSection() {
+    var host = document.querySelector('[data-buffaly-next-file-sources="true"]');
+    if (!host) return;
+    var section = host.querySelector('section[data-file-source-id="dispatch-tree-viewer"]');
+    if (!section) return;
+    if (section.dataset.dtvRelocated === "true") return;
+    var card = section.querySelector(".sw-special-file-card");
+    if (!card) return;
+    var nameText = "";
+    var openHref = "";
+    var strong = card.querySelector("strong");
+    if (strong) nameText = strong.textContent.trim();
+    var openLink = card.querySelector("a.sw-file-action-btn");
+    if (openLink) openHref = openLink.getAttribute("href");
+    if (!nameText || !openHref) return;
+    var article = document.createElement("article");
+    article.className = "sw-special-file-card sw-special-memory-card";
+    var main = document.createElement("button");
+    main.type = "button";
+    main.className = "sw-special-file-main";
+    var iconCell = document.createElement("span");
+    iconCell.className = "sw-file-icon-cell";
+    iconCell.innerHTML = '<i class="bi bi-diagram-3" aria-hidden="true"></i>';
+    var itemMain = document.createElement("span");
+    itemMain.className = "sw-file-item-main";
+    var title = document.createElement("span");
+    title.className = "sw-special-file-title";
+    title.textContent = nameText;
+    var meta = document.createElement("span");
+    meta.className = "sw-files-meta";
+    meta.textContent = "View routing tree";
+    itemMain.append(title, meta);
+    main.append(iconCell, itemMain);
+    var actions = document.createElement("div");
+    actions.className = "sw-special-file-actions";
+    var openBtn = document.createElement("a");
+    openBtn.className = "sw-file-action-btn";
+    openBtn.textContent = "Open";
+    openBtn.setAttribute("href", openHref);
+    actions.appendChild(openBtn);
+    article.append(main, actions);
+    card.replaceWith(article);
+    var heading = section.querySelector("h3");
+    if (heading) heading.textContent = "Routing Tree";
+    section.classList.add("sw-memory-files-section");
+    var grid = document.createElement("div");
+    grid.className = "sw-special-files-grid";
+    grid.appendChild(article);
+    section.appendChild(grid);
+    var drawerBody = document.querySelector("aside.sw-drawer-panel .sw-drawer-body .sw-files-browser");
+    if (drawerBody) {
+      var memories = drawerBody.querySelector(".sw-memory-files-section:not([data-file-source-id])");
+      if (memories) {
+        memories.insertAdjacentElement("afterend", section);
+      } else {
+        drawerBody.insertBefore(section, drawerBody.firstChild);
+      }
+      section.dataset.dtvRelocated = "true";
+    }
+  }
+
+  var dedupObserver = new MutationObserver(function () { deduplicateSections(); restyleAndRelocateSection(); });
   function startDedupObserver() {
     var host = document.querySelector('[data-buffaly-next-file-sources="true"]');
     if (host) dedupObserver.observe(host, { childList: true, subtree: true });
+    var drawer = document.querySelector("aside.sw-drawer-panel");
+    if (drawer) dedupObserver.observe(drawer, { childList: true, subtree: true });
   }
 
   api.registerFileSource({
