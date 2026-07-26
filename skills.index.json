@@ -677,6 +677,145 @@
       "Prerequisites": []
     },
     {
+      "SkillName": "ExtensionBrowser",
+      "Title": "Extension Browser",
+      "Description": "Typed browser automation through the Buffaly Browser Agent Chrome extension, with explicit debugger consent and bounded service-worker recovery.",
+      "Version": "0.2.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Extension Browser",
+        "ExtensionBrowser",
+        "extension browser skill",
+        "Buffaly Browser Agent"
+      ],
+      "Path": "skills/ExtensionBrowser",
+      "Files": [
+        {
+          "Path": "docs/VALIDATION.md",
+          "Sha256": "7998f9ebfbc139d0c6e10b058546025ab9c1b07834dc02c2e0600ced616bd409"
+        },
+        {
+          "Path": "extension/release/Buffaly-Browser-Agent-0.2.0-chrome.zip",
+          "Sha256": "756c85a56c32af03cb967fe88b033ea540942ea020e74785f0747321f6331f5c"
+        },
+        {
+          "Path": "extension/source/.gitignore",
+          "Sha256": "4ebecb83fe6ce7a3fb15ecd0f44ba2bb918681dcdf8e0faf85b6c8465386f068"
+        },
+        {
+          "Path": "extension/source/entrypoints/background.ts",
+          "Sha256": "346d6e7fbe551a8bbf606161f7580972702c0154067588011a15daa94aaecb30"
+        },
+        {
+          "Path": "extension/source/entrypoints/content.ts",
+          "Sha256": "b57040cb2308136e7ee0ea25a8b4f47adf8fb4ec51d99194d4a68f13a37734c3"
+        },
+        {
+          "Path": "extension/source/entrypoints/sidepanel/App.tsx",
+          "Sha256": "ad89367044fe957fd9ccbee809ea315d53cf6f3bf52c4bccc9887e5bcdd01376"
+        },
+        {
+          "Path": "extension/source/entrypoints/sidepanel/index.html",
+          "Sha256": "f2914ee6aea78a69bf0ff424d1244fd7b00151149d4b22a29a3a3a5849475417"
+        },
+        {
+          "Path": "extension/source/entrypoints/sidepanel/main.tsx",
+          "Sha256": "419617c2ce9d58cf5116f8e34941d1cb92d81023da4850e210f6bf7891c412f3"
+        },
+        {
+          "Path": "extension/source/entrypoints/sidepanel/style.css",
+          "Sha256": "36432dc501724cab5cbfca6de5fe2616ac669b9ee6cde263c6d46c3395964b18"
+        },
+        {
+          "Path": "extension/source/lib/debugger-session.ts",
+          "Sha256": "c5e2100a6c245d2029def7fb9d7139cb3a513be73bdee64d1841ceca73512586"
+        },
+        {
+          "Path": "extension/source/lib/safety.ts",
+          "Sha256": "6fe06254fe0dbeff491e33c1de9e2c4294a28605e8add45bdb809f1df2123b71"
+        },
+        {
+          "Path": "extension/source/lib/tool-log.ts",
+          "Sha256": "d91510db0d683f671ba64a9c1eb679dd806bacaf7b1bbd3323b3f2fe5ba259e2"
+        },
+        {
+          "Path": "extension/source/lib/tool-router.ts",
+          "Sha256": "8939a4f2f23d655b9a7a2c508bf58987104c1b1991bbf0ecb2a3fd0baa856b0f"
+        },
+        {
+          "Path": "extension/source/lib/types.ts",
+          "Sha256": "2cca60a054cc6331806ab668270b55bcc46db3695804a403ae3ef9da035f68bb"
+        },
+        {
+          "Path": "extension/source/package-lock.json",
+          "Sha256": "f526a8e67aad10416c5dde455890fbd5d8c5fb49405b18331e7b56ab1e09fd64"
+        },
+        {
+          "Path": "extension/source/package.json",
+          "Sha256": "fe0ea90a8f09c03d291bdd1f84a23e4b44bccebbe3940b623fbf9dcc03b98310"
+        },
+        {
+          "Path": "extension/source/PRIVACY.md",
+          "Sha256": "d8647e88dd39831033e9afcf1ea1f96bdfd56f648696f5e6982d2329d2b396fd"
+        },
+        {
+          "Path": "extension/source/public/icon/128.png",
+          "Sha256": "1b8ecd1374a0c2e535b107a23e33a07b6a5419d60fcf5bc522881e0c14336e15"
+        },
+        {
+          "Path": "extension/source/public/icon/16.png",
+          "Sha256": "96114717fdaa3351976f4fdd54bf42cb015dc2a9d69e9924fa7412ed01ee9197"
+        },
+        {
+          "Path": "extension/source/public/icon/48.png",
+          "Sha256": "18c5e2a74e2dca02bf6f7269ce50619411dcf2f9ef9bb61cc6c62077f0ec355f"
+        },
+        {
+          "Path": "extension/source/README.md",
+          "Sha256": "6b78d3296c872b8d604b7ad67df18ab3015e412fdc008af7d3bbddd98879502e"
+        },
+        {
+          "Path": "extension/source/scripts/verify-release.mjs",
+          "Sha256": "91584a625592d9dca529893482cbc1fc231231e7e1637348422e14d1a83406d6"
+        },
+        {
+          "Path": "extension/source/tsconfig.json",
+          "Sha256": "b5abd4a6017f95812317735b9d62246ca9a6d0bdb537ff74f1d54cb8ed0905ea"
+        },
+        {
+          "Path": "extension/source/wxt.config.ts",
+          "Sha256": "8b7f9927e05d1b1e7916d704da1ac45af49eb9909fcbb579ac503b1ea7f795a6"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "ab77b31bd68fe0f87fda43d64b4ba2e2b7f62fc8cb01e487473608c3309ae576"
+        },
+        {
+          "Path": "lib/bridge.js",
+          "Sha256": "6d5140d0e9e65c993f114679671130f79ca63d0b671ad071371f0054c2b49ab8"
+        },
+        {
+          "Path": "lib/extension_helper.js",
+          "Sha256": "d9006b2bd43a0a788e38ea983fb668565f76461d8b99ad703c9191da8b3e4493"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "11540e14a5cbb95a9d5dbb6c337938372b1716bdfda03c6ec5dc45aac301e734"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "760c8642b5d52e8aa3195e29da75d36128d04e72f9d739a9d1058a480e57efa1"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [
+        "Node.js 18 or newer",
+        "Chrome or Chromium 136 or newer",
+        "Buffaly Browser Agent extension loaded"
+      ]
+    },
+    {
       "SkillName": "FFmpeg",
       "Title": "FFmpeg Media Tools",
       "Description": "Buffaly skill package for FFmpeg Media Tools.",

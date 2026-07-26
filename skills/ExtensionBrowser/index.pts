@@ -1,0 +1,445 @@
+include "PromptActions.pts";
+
+// ===== Skill Definition =====
+
+prototype ExtensionBrowserSkillAction : OpsAction, CodingContext
+{
+	Description = @"Base action type for extension browser tools.";
+}
+
+[SemanticEntity("extension browser skill")]
+prototype ExtensionBrowserSkill : SkillEntity
+{
+	EntityName = "extension browser skill";
+	Description = @"Browser control tools that drive the loaded Buffaly Browser Agent extension via CDP. The extension runs in the user's real browser with their real sessions. Tools include page reading, navigation, click, type, screenshot, tab management, and DOM inspection.";
+	ActionRoot = ExtensionBrowserSkillAction;
+}
+
+// ===== Helper Functions =====
+
+function ToExtCleanOutput(string result) : string
+{
+	string content = result;
+	int outputIdx = content.IndexOf("Output:\n");
+	if (outputIdx >= 0)
+	{
+		content = content.Replace("Output:\n", "");
+		int exitIdx = content.IndexOf("Exit code: ");
+		if (exitIdx == 0)
+		{
+			int nlIdx = content.IndexOf("\n");
+			if (nlIdx >= 0)
+			{
+				string exitPrefix = content.Substring(0, nlIdx);
+				content = content.Replace(exitPrefix + "\n", "");
+			}
+			else
+				content = "";
+		}
+		int errorIdx = content.IndexOf("\nError:");
+		if (errorIdx >= 0)
+			content = content.Substring(0, errorIdx);
+		return content.Trim();
+	}
+	int exitCodeIdx = content.IndexOf("Exit code: ");
+	if (exitCodeIdx > 0)
+		return content.Substring(0, exitCodeIdx).Trim();
+	if (exitCodeIdx == 0)
+		return "";
+	return content.Trim();
+}
+
+function ToExtJsonEscape(string value) : string
+{
+	if (value == null || value == "")
+		return "";
+	return value.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t");
+}
+
+function ToExtHelperPath() : string
+{
+	string script = "$helper=''; $roots = Get-ChildItem -Path $env:HOME -Directory -Filter 'buffaly*' -ErrorAction SilentlyContinue; foreach($r in $roots){ $p=Join-Path $r.FullName 'content/projects/OpsAgent/Skills/ExtensionBrowser/lib/extension_helper.js'; if(Test-Path -LiteralPath $p){ $helper=$p; break } }; if(-not $helper){ $p=Join-Path $env:HOME 'buffaly/content/projects/OpsAgent/Skills/ExtensionBrowser/lib/extension_helper.js'; if(Test-Path -LiteralPath $p){ $helper=$p } }; Write-Output $helper";
+	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 10, _opsAgent, "", "Extension Helper Path");
+	return ToExtCleanOutput(result);
+}
+
+function ToExtRunCommand(string cmdJson, int timeoutSeconds, string label) : string
+{
+	string helper = ToExtHelperPath();
+	if (StringUtil.IsEmpty(helper))
+		return "Error: extension_helper.js not found. Ensure the ExtensionBrowser skill is installed.";
+	string script = "$ErrorActionPreference='Continue'; $tmp=[System.IO.Path]::GetTempFileName(); Set-Content -LiteralPath $tmp -Value '" + cmdJson.Replace("'", "''") + "' -Encoding utf8 -NoNewline; $result = & node '" + helper.Replace("'", "''") + "' $tmp 2>&1; Remove-Item $tmp -Force -ErrorAction SilentlyContinue; Write-Output $result";
+	return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, "", label);
+}
+
+// ===== Bridge Path (persistent HTTP bridge to extension SW) =====
+
+function ToExtBridgePath() : string
+{
+	string script = "$bridge=''; $roots = Get-ChildItem -Path $env:HOME -Directory -Filter 'buffaly*' -ErrorAction SilentlyContinue; foreach($r in $roots){ $p=Join-Path $r.FullName 'content/projects/OpsAgent/Skills/ExtensionBrowser/lib/bridge.js'; if(Test-Path -LiteralPath $p){ $bridge=$p; break } }; if(-not $bridge){ $p=Join-Path $env:HOME 'buffaly/content/projects/OpsAgent/Skills/ExtensionBrowser/lib/bridge.js'; if(Test-Path -LiteralPath $p){ $bridge=$p } }; Write-Output $bridge";
+	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 10, _opsAgent, "", "Extension Bridge Path");
+	return ToExtCleanOutput(result);
+}
+
+function ToExtBridgeCall(int bridgePort, string tool, string argsJson, int timeoutSeconds, string label) : string
+{
+	string script = "try { $body = '{\"tool\":\"' + '" + tool.Replace("'", "''") + "' + '\",\"args\":' + '" + argsJson.Replace("'", "''") + "' + '}'; $resp = Invoke-WebRequest -Uri ('http://127.0.0.1:' + " + bridgePort.ToString() + " + '/tool') -Method POST -Body $body -ContentType 'application/json' -TimeoutSec " + timeoutSeconds.ToString() + " -ErrorAction Stop; Write-Output $resp.Content } catch { Write-Output ('{\"ok\":false,\"error\":\"' + $_.Exception.Message + '\",\"code\":\"BRIDGE_UNREACHABLE\"}') }";
+	return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 35, _opsAgent, "", label);
+}
+
+function ToExtBridgeStart(int cdpPort, int bridgePort) : string
+{
+	string bridge = ToExtBridgePath();
+	if (StringUtil.IsEmpty(bridge))
+		return "Error: bridge.js not found. Ensure the ExtensionBrowser skill is installed.";
+	string script = "$proc = Start-Process -FilePath 'node' -ArgumentList @('" + bridge.Replace("'", "''") + "', '" + cdpPort.ToString() + "', '" + bridgePort.ToString() + "') -PassThru -RedirectStandardOutput '" + _opsAgent.GetCurrentSessionDirectory().Replace("'", "''") + "/artifacts/bridge-stdout.log' -RedirectStandardError '" + _opsAgent.GetCurrentSessionDirectory().Replace("'", "''") + "/artifacts/bridge-stderr.log'; Start-Sleep -Seconds 2; try { $resp = Invoke-WebRequest -Uri ('http://127.0.0.1:' + " + bridgePort.ToString() + " + '/health') -TimeoutSec 5 -ErrorAction Stop; Write-Output $resp.Content } catch { Write-Output '{\"ok\":false,\"error\":\"Bridge failed to start\"}' }";
+	return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 15, _opsAgent, "", "Extension Bridge Start");
+}
+
+// ===== Actions =====
+
+[SemanticProgram.InfinitivePhrase("to call an extension browser tool")]
+[SemanticProgram.InfinitivePhrase("to invoke an extension tool")]
+prototype ToCallExtensionTool : ExtensionBrowserSkillAction
+{
+	Description = @"Calls any tool exposed by the Buffaly Browser Agent extension via CDP. The extension must be loaded in a Chromium instance with remote debugging enabled. Returns structured ToolResult JSON.";
+
+	function Execute(int port, string tool, string argsJson) : string
+	{
+		string cmd = "{\"port\":" + port.ToString() + ",\"tool\":\"" + ToExtJsonEscape(tool) + "\",\"args\":" + argsJson + "}";
+		return ToExtRunCommand(cmd, 30, "Extension Tool: " + tool);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to start the extension bridge")]
+[SemanticProgram.InfinitivePhrase("to launch the extension bridge")]
+prototype ToStartExtensionBridge : ExtensionBrowserSkillAction
+{
+	Description = @"Starts the persistent HTTP bridge process that maintains a CDP connection to the extension service worker. The bridge listens on http://127.0.0.1:<bridgePort> (HTTP API) and connects to Chrome via CDP WebSocket internally. Forwards tool calls to the extension service worker or falls back to direct CDP. Returns { ok, connected, mode, cdpPort, swUrl }. Call this once before using ToCallExtensionToolViaBridge.";
+
+	function Execute(int cdpPort, int bridgePort) : string
+	{
+		return ToExtBridgeStart(cdpPort, bridgePort);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to call an extension tool via bridge")]
+[SemanticProgram.InfinitivePhrase("to invoke an extension tool via bridge")]
+prototype ToCallExtensionToolViaBridge : ExtensionBrowserSkillAction
+{
+	Description = @"Calls a tool on the extension via the persistent HTTP bridge (POST http://127.0.0.1:<bridgePort>/tool). The bridge must be started first with ToStartExtensionBridge. Faster than ToCallExtensionTool (no per-call process spawn). Auto-reconnects if the SW has suspended or the CDP connection is lost. Returns structured ToolResult JSON { ok, data|error, code? }.";
+
+	function Execute(int bridgePort, string tool, string argsJson) : string
+	{
+		return ToExtBridgeCall(bridgePort, tool, argsJson, 30, "Extension Bridge Tool: " + tool);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to check extension bridge health")]
+prototype ToCheckExtensionBridgeHealth : ExtensionBrowserSkillAction
+{
+	Description = @"Checks if the extension bridge is running and connected. Returns { ok, connected, mode, cdpPort, swUrl, browserWs }. mode is 'extension' (SW connected) or 'cdp_direct' (browser-level CDP fallback).";
+
+	function Execute(int bridgePort) : string
+	{
+		string script = "try { $resp = Invoke-WebRequest -Uri ('http://127.0.0.1:' + " + bridgePort.ToString() + " + '/health') -TimeoutSec 5 -ErrorAction Stop; Write-Output $resp.Content } catch { Write-Output '{\"ok\":false,\"error\":\"Bridge not running\"}' }";
+		return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 10, _opsAgent, "", "Extension Bridge Health");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get the active tab via extension")]
+prototype ToGetExtensionActiveTab : ExtensionBrowserSkillAction
+{
+	Description = @"Returns { tabId, url, title } for the current active tab in the browser running the extension.";
+
+	function Execute(int port) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"get_active_tab\",\"args\":{}}", 15, "Extension Get Active Tab");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get page text via extension")]
+prototype ToGetExtensionPageText : ExtensionBrowserSkillAction
+{
+	Description = @"Returns the text content of the page body (truncated to 10000 chars). Works via content script, no debugger needed.";
+
+	function Execute(int port) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"get_page_text\",\"args\":{}}", 15, "Extension Get Page Text");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to navigate via extension")]
+prototype ToNavigateExtension : ExtensionBrowserSkillAction
+{
+	Description = @"Navigates the active tab to a new URL. Returns { ok, finalUrl, title, tabId }. Blocked URLs (chrome://, etc.) return an error.";
+
+	function Execute(int port, string url) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"navigate\",\"args\":{\"url\":\"" + ToExtJsonEscape(url) + "\"}}", 30, "Extension Navigate");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to click via extension")]
+prototype ToClickExtension : ExtensionBrowserSkillAction
+{
+	Description = @"Clicks an element by CSS selector. Returns { clicked, selector }. Content-script path, no debugger needed.";
+
+	function Execute(int port, string selector) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"click\",\"args\":{\"selector\":\"" + ToExtJsonEscape(selector) + "\"}}", 15, "Extension Click");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to type text via extension")]
+prototype ToTypeExtensionText : ExtensionBrowserSkillAction
+{
+	Description = @"Types text into an input element by CSS selector. Returns { typed, selector, length }.";
+
+	function Execute(int port, string selector, string text) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"type_text\",\"args\":{\"selector\":\"" + ToExtJsonEscape(selector) + "\",\"text\":\"" + ToExtJsonEscape(text) + "\"}}", 15, "Extension Type Text");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to take a screenshot via extension")]
+prototype ToScreenshotExtension : ExtensionBrowserSkillAction
+{
+	Description = @"Takes a screenshot of the active tab. Requires debugger to be attached (call ToAttachExtensionDebugger first). Returns { dataUrl, width, height }.";
+
+	function Execute(int port) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"screenshot\",\"args\":{}}", 15, "Extension Screenshot");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get DOM snapshot via extension")]
+prototype ToGetExtensionDomSnapshot : ExtensionBrowserSkillAction
+{
+	Description = @"Returns interactive elements (a, button, input, select, textarea, [role], [tabindex]) with id, tag, role, name, text, selector, bounds, visible.";
+
+	function Execute(int port) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"get_dom_snapshot\",\"args\":{}}", 15, "Extension DOM Snapshot");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list tabs via extension")]
+prototype ToListExtensionTabs : ExtensionBrowserSkillAction
+{
+	Description = @"Returns array of { tabId, url, title, active } for all open tabs.";
+
+	function Execute(int port) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"list_tabs\",\"args\":{}}", 15, "Extension List Tabs");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get extension status")]
+prototype ToGetExtensionStatus : ExtensionBrowserSkillAction
+{
+	Description = @"Returns { debuggerAttached, debuggerTabId, activeTab, lastError }.";
+
+	function Execute(int port) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"get_status\",\"args\":{}}", 10, "Extension Status");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to attach extension debugger")]
+prototype ToAttachExtensionDebugger : ExtensionBrowserSkillAction
+{
+	Description = @"Attaches chrome.debugger to the active tab. Enables Page, Runtime, DOM, Input domains. Required before screenshot and debugger-based click/type.";
+
+	function Execute(int port) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"attach_debugger\",\"args\":{}}", 15, "Extension Attach Debugger");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to detach extension debugger")]
+prototype ToDetachExtensionDebugger : ExtensionBrowserSkillAction
+{
+	Description = @"Detaches chrome.debugger from the active tab. Clean up after debugger-based operations.";
+
+	function Execute(int port) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"detach_debugger\",\"args\":{}}", 10, "Extension Detach Debugger");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to find elements via extension")]
+prototype ToFindExtensionElements : ExtensionBrowserSkillAction
+{
+	Description = @"Finds elements matching a CSS query. Returns array of { id, tag, text, selector, bounds, visible }.";
+
+	function Execute(int port, string query) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"find_elements\",\"args\":{\"query\":\"" + ToExtJsonEscape(query) + "\"}}", 15, "Extension Find Elements");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to scroll via extension")]
+prototype ToScrollExtension : ExtensionBrowserSkillAction
+{
+	Description = @"Scrolls the page. Returns { scrolled, x, y }.";
+
+	function Execute(int port, string direction) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"scroll\",\"args\":{\"direction\":\"" + ToExtJsonEscape(direction) + "\"}}", 10, "Extension Scroll");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to open a tab via extension")]
+prototype ToOpenExtensionTab : ExtensionBrowserSkillAction
+{
+	Description = @"Opens a new tab with the given URL. Returns { tabId, url, title }.";
+
+	function Execute(int port, string url) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"open_tab\",\"args\":{\"url\":\"" + ToExtJsonEscape(url) + "\"}}", 15, "Extension Open Tab");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to close a tab via extension")]
+prototype ToCloseExtensionTab : ExtensionBrowserSkillAction
+{
+	Description = @"Closes the specified tab. Auto-detaches debugger if attached.";
+
+	function Execute(int port, string tabId) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"close_tab\",\"args\":{\"tabId\":\"" + ToExtJsonEscape(tabId) + "\"}}", 10, "Extension Close Tab");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to switch tab via extension")]
+prototype ToSwitchExtensionTab : ExtensionBrowserSkillAction
+{
+	Description = @"Switches to the specified tab. Returns { ok, tabId, url, title }.";
+
+	function Execute(int port, int tabId) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"switch_tab\",\"args\":{\"tabId\":" + tabId + "}}", 10, "Extension Switch Tab");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to press a key via extension")]
+prototype ToPressExtensionKey : ExtensionBrowserSkillAction
+{
+	Description = @"Presses a key via the extension. Uses debugger Input.dispatchKeyEvent if attached, otherwise dispatches KeyboardEvent. Supports Enter, Tab, Escape, ArrowDown, etc.";
+
+	function Execute(int port, string key) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"press_key\",\"args\":{\"key\":\"" + ToExtJsonEscape(key) + "\"}}", 15, "Extension Press Key");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to wait via extension")]
+prototype ToWaitExtension : ExtensionBrowserSkillAction
+{
+	Description = @"Waits for a specified duration (ms) or until a CSS selector is visible. Returns { waited } or { found, selector }.";
+
+	function Execute(int port, int ms) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"wait\",\"args\":{\"ms\":" + ms + "}}", 30, "Extension Wait");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to wait for a selector via extension")]
+prototype ToWaitForExtensionSelector : ExtensionBrowserSkillAction
+{
+	Description = @"Waits until a CSS selector is visible on the page. Returns { found, selector } or error if timeout.";
+
+	function Execute(int port, string selector, int timeoutMs) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"wait\",\"args\":{\"selector\":\"" + ToExtJsonEscape(selector) + "\",\"timeout\":" + timeoutMs + "}}", 60, "Extension Wait For Selector");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to go back via extension")]
+prototype ToGoBackExtension : ExtensionBrowserSkillAction
+{
+	Description = @"Navigates back in history. Returns { ok, url, title, tabId }.";
+
+	function Execute(int port) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"go_back\",\"args\":{}}", 15, "Extension Go Back");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to go forward via extension")]
+prototype ToGoForwardExtension : ExtensionBrowserSkillAction
+{
+	Description = @"Navigates forward in history. Returns { ok, url, title, tabId }.";
+
+	function Execute(int port) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"go_forward\",\"args\":{}}", 15, "Extension Go Forward");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to hover via extension")]
+prototype ToHoverExtension : ExtensionBrowserSkillAction
+{
+	Description = @"Hovers over an element by CSS selector. Dispatches mouseMoved via debugger if attached, otherwise dispatches mouseover/mousemove events via content script.";
+
+	function Execute(int port, string selector) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"hover\",\"args\":{\"selector\":\"" + ToExtJsonEscape(selector) + "\"}}", 15, "Extension Hover");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to select an option via extension")]
+prototype ToSelectExtensionOption : ExtensionBrowserSkillAction
+{
+	Description = @"Selects an option in a <select> element by value. Dispatches change and input events.";
+
+	function Execute(int port, string selector, string value) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"select_option\",\"args\":{\"selector\":\"" + ToExtJsonEscape(selector) + "\",\"value\":\"" + ToExtJsonEscape(value) + "\"}}", 15, "Extension Select Option");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get an attribute via extension")]
+prototype ToGetExtensionAttribute : ExtensionBrowserSkillAction
+{
+	Description = @"Returns the attribute value of the first element matching the selector. Read-only.";
+
+	function Execute(int port, string selector, string attributeName) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"get_attribute\",\"args\":{\"selector\":\"" + ToExtJsonEscape(selector) + "\",\"attributeName\":\"" + ToExtJsonEscape(attributeName) + "\"}}", 15, "Extension Get Attribute");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to check if a selector exists via extension")]
+prototype ToCheckExtensionExists : ExtensionBrowserSkillAction
+{
+	Description = @"Returns { exists, count, selector } indicating whether the selector matches and how many elements. Read-only.";
+
+	function Execute(int port, string selector) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"check_exists\",\"args\":{\"selector\":\"" + ToExtJsonEscape(selector) + "\"}}", 10, "Extension Check Exists");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get viewport size via extension")]
+prototype ToGetExtensionViewport : ExtensionBrowserSkillAction
+{
+	Description = @"Returns { width, height, scrollX, scrollY, devicePixelRatio } for the active tab. Read-only.";
+
+	function Execute(int port) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"get_viewport\",\"args\":{}}", 10, "Extension Get Viewport");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get console events via extension")]
+prototype ToGetExtensionConsoleEvents : ExtensionBrowserSkillAction
+{
+	Description = @"Returns captured console events from the active tab. Requires debugger to be attached. Returns { events, count }. Events are { type, text, url, line, timestamp }.";
+
+	function Execute(int port, int maxCount) : string
+	{
+		return ToExtRunCommand("{\"port\":" + port.ToString() + ",\"tool\":\"console_events\",\"args\":{\"maxCount\":" + maxCount + "}}", 10, "Extension Console Events");
+	}
+}
