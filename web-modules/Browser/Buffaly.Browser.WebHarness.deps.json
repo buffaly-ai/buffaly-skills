@@ -131,6 +131,14 @@
           }
         }
       },
+      "Microsoft.Data.SqlClient/6.0.0.0": {
+        "runtime": {
+          "Microsoft.Data.SqlClient.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.11.25226.3"
+          }
+        }
+      },
       "Buffaly.Data/1.0.0.0": {
         "runtime": {
           "Buffaly.Data.dll": {
@@ -240,6 +248,14 @@
           "Buffaly.DB.Postgres.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Microsoft.Identity.Client/4.73.1.0": {
+        "runtime": {
+          "Microsoft.Identity.Client.dll": {
+            "assemblyVersion": "4.73.1.0",
+            "fileVersion": "4.73.1.0"
           }
         }
       },
@@ -386,6 +402,11 @@
       "serviceable": false,
       "sha512": ""
     },
+    "Microsoft.Data.SqlClient/6.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
     "Buffaly.Data/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
@@ -452,6 +473,11 @@
       "sha512": ""
     },
     "Buffaly.DB.Postgres/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Microsoft.Identity.Client/4.73.1.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
