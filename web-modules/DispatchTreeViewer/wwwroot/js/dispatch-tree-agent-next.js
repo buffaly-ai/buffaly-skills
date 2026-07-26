@@ -54,6 +54,8 @@
         cachedFileItems = value.providers.map(function (provider, index) {
           return {
             Name: provider.displayName || ("Routing Tree " + (index + 1)),
+            Description: "View routing tree",
+            Icon: "bi-diagram-3",
             Url: "/web-modules/DispatchTreeViewer/dispatch-tree-viewer.html?sessionKey=" + encodeURIComponent(context.sessionKey) + "&provider=" + index
           };
         });
@@ -224,6 +226,7 @@
     id: "dispatch-tree-viewer",
     label: "Routing Tree",
     priority: 50,
+    placement: "special-files",
     load: function (context) { return loadFileSourceItems(context); }
   });
 })();
