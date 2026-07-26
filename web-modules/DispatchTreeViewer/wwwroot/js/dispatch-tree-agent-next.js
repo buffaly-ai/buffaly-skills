@@ -234,19 +234,17 @@
 
   var ontologyState = { rootName: "", loadedNodes: new Map(), expandedNodes: new Set(), childrenCache: new Map(), selectedNode: null, filterText: "" };
 
-  function readOntologyTree(rootName, after, sessionKey) {
-    var url = "/api/web-modules/DispatchTreeViewer/ontology-tree?root=" + encodeURIComponent(rootName);
-    if (sessionKey) url += "&sessionKey=" + encodeURIComponent(sessionKey);
-    if (after) url += "&after=" + encodeURIComponent(after);
-    return fetch(url).then(function (r) { if (!r.ok) throw new Error("Ontology tree request failed (" + r.status + ")."); return r.json(); });
-  }
+ function readOntologyTree(rootName, after, sessionKey) {
+   var args = JSON.stringify({ rootName: rootName, after: after || "" });
+   return BuffalyAgentService.RunProtoScriptMethodAsync(sessionKey || "", "buffaly-agent", "ToReadOntologyTree", "Execute", args)
+     .then(function (resultText) { return JSON.parse(resultText); });
+ }
 
-  function readOntologyChildren(rootName, parentName, after, sessionKey) {
-    var url = "/api/web-modules/DispatchTreeViewer/ontology-tree/children?root=" + encodeURIComponent(rootName) + "&parent=" + encodeURIComponent(parentName);
-    if (sessionKey) url += "&sessionKey=" + encodeURIComponent(sessionKey);
-    if (after) url += "&after=" + encodeURIComponent(after);
-    return fetch(url).then(function (r) { if (!r.ok) throw new Error("Children request failed (" + r.status + ")."); return r.json(); });
-  }
+ function readOntologyChildren(rootName, parentName, after, sessionKey) {
+   var args = JSON.stringify({ rootName: rootName, parentName: parentName, after: after || "" });
+   return BuffalyAgentService.RunProtoScriptMethodAsync(sessionKey || "", "buffaly-agent", "ToReadOntologyChildren", "Execute", args)
+     .then(function (resultText) { return JSON.parse(resultText); });
+ }
 
   function openOntologyViewer(initialRoot, sessionKey) {
     ensureStyle();
