@@ -31,6 +31,9 @@ prototype DispatchTreeSkill : SkillEntity
 // Finds an exact node recursively because GetDescendants returns only immediate children.
 function FindDispatchNode(Prototype parent, string exactPrototypeName) : Prototype
 {
+	if (parent.PrototypeName == exactPrototypeName)
+		return parent;
+
 	Collection childPrototypes = parent.GetDescendants();
 	foreach (Prototype childPrototype in childPrototypes)
 	{
@@ -62,7 +65,7 @@ prototype ToGetDispatchTree : DispatchTreeSkillAction, DispatchAgentActionRoot
 [SemanticProgram.InfinitivePhrase("to read one dispatch node's routing evidence")]
 prototype ToGetDispatchNode : DispatchTreeSkillAction, DispatchContext
 {
-	Description = @"prototypeName - exact prototype name selected beneath DispatchMemoryRoot. Read one exact node with its assigned semantic identity, context summary, historical dispatch examples, status, and exact destination session key. Use only after narrowing to verify a semantic anchor or final leaf. This action never decides a route, sends, or mutates memory.";
+	Description = @"prototypeName - exact prototype name selected at or beneath DispatchMemoryRoot, including DispatchMemoryRoot itself. Read one exact node with its assigned semantic identity, context summary, historical dispatch examples, status, and exact destination session key. Use only after narrowing to verify a semantic anchor or final leaf. This action never decides a route, sends, or mutates memory.";
 
 	function Execute(string prototypeName) : Prototype
 	{
@@ -134,6 +137,31 @@ prototype ToAddDispatchChild : DispatchTreeSkillAction, DispatchContext
 	function Execute(string parentPrototypeName, string childPrototypeName, string entityName, string semanticTerms, string contextSummary) : string
 	{
 		return RuntimeDispatchTreeFacade.AddChild(_runtime, _opsAgent, parentPrototypeName, childPrototypeName, entityName, semanticTerms, contextSummary);
+	}
+}
+
+
+[SemanticProgram.InfinitivePhrase("to ensure dispatch memory root")]
+[SemanticProgram.InfinitivePhrase("to seed the local dispatch memory root")]
+prototype EnsureDispatchMemoryRoot : DispatchTreeSkillAction, DispatchContext
+{
+	Description = @"Persist the canonical minimal untagged DispatchMemoryRoot schema into this session's NLMemory artifact and apply it live. Idempotent; it never creates sessions, routes, or semantic tags on the root. Atomic batch authoring does not perform implicit entity binding.";
+
+	function Execute() : string
+	{
+		return RuntimeDispatchTreeFacade.EnsureDispatchMemoryRoot(_runtime, _opsAgent);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to add a dispatch common parent")]
+[SemanticProgram.InfinitivePhrase("to group dispatch children under a new parent")]
+prototype ToAddDispatchCommonParent : DispatchTreeSkillAction, DispatchContext
+{
+	Description = @"existingParentPrototypeName - exact existing Dispatch parent. commonParentPrototypeName - new ProtoScript identifier for the grouping parent. commonParentEntityName/commonParentSemanticTerms/commonParentContextSummary - compact routing evidence for the new parent. newChildPrototypeName/newChildEntityName/newChildSemanticTerms/newChildContextSummary - one new child beneath that parent. selectedExistingChildPrototypeNames - | separated existing immediate children of existingParentPrototypeName to additively link to the new common parent. Preserves existing parent links, rejects invalid relationships and cycles, persists through NLMemory artifacts, and applies live.";
+
+	function Execute(string existingParentPrototypeName, string commonParentPrototypeName, string commonParentEntityName, string commonParentSemanticTerms, string commonParentContextSummary, string newChildPrototypeName, string newChildEntityName, string newChildSemanticTerms, string newChildContextSummary, string selectedExistingChildPrototypeNames) : string
+	{
+		return RuntimeDispatchTreeFacade.AddCommonParent(_runtime, _opsAgent, existingParentPrototypeName, commonParentPrototypeName, commonParentEntityName, commonParentSemanticTerms, commonParentContextSummary, newChildPrototypeName, newChildEntityName, newChildSemanticTerms, newChildContextSummary, selectedExistingChildPrototypeNames);
 	}
 }
 
