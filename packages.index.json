@@ -1308,10 +1308,10 @@
       "PackageType": "ProviderModule",
       "Title": "Ollama Provider",
       "Description": "Buffaly Provider Module package for Ollama Provider.",
-      "Version": "0.1.5",
+      "Version": "0.1.6",
       "PackageKind": "BuffalyProviderModule",
       "SourcePath": "provider-modules/Buffaly.Provider.Ollama",
-      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/provider-modules/Buffaly.Provider.Ollama",
+      "SourceUrl": "",
       "Phrases": [
         "Ollama Provider",
         "Buffaly.Provider.Ollama"
@@ -1327,27 +1327,27 @@
         },
         {
           "Path": "BasicUtilities.dll",
-          "Sha256": "31132c338a68e1bacda9a60d52d7804191312c66d41b07f03f407ae4ba31f240"
+          "Sha256": "e9fb1a3676dfd29043ab1b6ab7c6572807f6d835510277cbbe162078506952be"
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "63ff229f1cd08a01a374982821ad5c5d094a025c94f2aacbb3410abbd90ebbd8"
+          "Sha256": "cd48b2738ed09eacbc1e55f637565cf45173b689e7a8058e2c74657804666874"
         },
         {
           "Path": "Buffaly.Agent.Tools.Secrets.dll",
-          "Sha256": "f096b3c13870bdf78c8e7cc5508c78152d848f8e99f439a4269c8d2444e5b7b8"
+          "Sha256": "fdcc470b5575b20d7c4e0da34caaeed5a4fa3523df157d16e85e39d0b5b37df0"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "c0c686f6919d510c15af84702d8243681913a101a80e9e7436dbc9bd6ae72ca8"
+          "Sha256": "81f2ccc3922a25abc5b46dd2924bdd002b9684b9302b961260d58ec266d5b1e1"
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "dba4d872c6985e10302e8e2957a4be9ce1f1ad95b1741af508558f8d41d1b51d"
+          "Sha256": "1fc4726223bdccf5df0715f7bfc9d391247efeb97981914daaf23b714a9786e0"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "5002d78d6d15cdb5e45747600e0322cc624bfce634e423439cd0937d0fe0b16f"
+          "Sha256": "d28993b946bd41a1d1f365367e870760f58b67ac9ca7ef59b1196c63c1b27015"
         },
         {
           "Path": "Buffaly.Provider.Ollama.deps.json",
@@ -1355,15 +1355,15 @@
         },
         {
           "Path": "Buffaly.Provider.Ollama.dll",
-          "Sha256": "449f752474d3175af67a5651b331e00b23cf87e1d5024cd409f2ad14c2b091c1"
+          "Sha256": "a963ad56d03619b4ca0ceee8f0d529844799d87a2f77efbba01af06ed2d4839a"
         },
         {
           "Path": "Buffaly.ProviderContracts.dll",
-          "Sha256": "77449f97d2e94cc9742b032028fcadc0b975f1f17bd66225ffc86cde4ff8ab2b"
+          "Sha256": "495ef77b5cf7a3d28f79acfed58b6f8562a2bf1c748a44f9eba62bb028583374"
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "219f2c90bfb682759d96411437526dd3b64b8dba1921bcab170727e4ee9b4c1d"
+          "Sha256": "5e889feefc4f2fc3634c5aee84d66e970d00898e151e670d98e1fc7a0f714b71"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -1483,15 +1483,15 @@
         },
         {
           "Path": "RooTrax.Cache.dll",
-          "Sha256": "d8c9645b5a7a85d9166e284ea3bb6e8475d1f452d4b3afd42a017b1c1acb8fb7"
+          "Sha256": "3340746228c6058ec87954f14c7eb5b98c9c8953b0ad67e8cffa14d45a002049"
         },
         {
           "Path": "RooTrax.Common.DB.dll",
-          "Sha256": "31ac0d587221294fae0d015715cd3ef490fcdb6c2f3b595140f045047fc04ebd"
+          "Sha256": "6da90e3a55cc702cbf56a0286a3d711d06854614d0f28aa5f76107ff17ec8b37"
         },
         {
           "Path": "RooTrax.Common.dll",
-          "Sha256": "45ccca7381c1dad17352e95a21bc7ec37e73f7e93a0364012976ca9db5cd59dd"
+          "Sha256": "e5f8850039ecdfa5a1a430a5ee386cdc07013fa1f12386f17b944fa4d1edc3f8"
         },
         {
           "Path": "runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll",
@@ -2143,7 +2143,8 @@
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
       "RequiresRestart": true,
-      "RequiresPreStartInstall": true
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     },
     {
       "PackageId": "Buffaly.Provider.OpenAi",
