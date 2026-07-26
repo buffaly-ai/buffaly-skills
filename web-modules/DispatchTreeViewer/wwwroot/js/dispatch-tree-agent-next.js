@@ -251,7 +251,7 @@
     if (target.getAttribute("href").indexOf("#dtv-ontology-open:") === 0) {
       event.preventDefault();
       var sk = decodeURIComponent(target.getAttribute("href").substring("#dtv-ontology-open:".length));
-      openOntologyViewer("DispatchMemoryRoot", sk);
+       openOntologyViewer("SkillEntity", sk);
     }
     });
   }
