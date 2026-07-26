@@ -5245,7 +5245,7 @@
       "PackageType": "WebModule",
       "Title": "Codex Embedded",
       "Description": "Buffaly Web Module package for Codex Embedded.",
-      "Version": "0.1.109",
+      "Version": "0.1.110",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/CodexEmbedded",
       "SourceUrl": "",
@@ -5260,7 +5260,7 @@
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "8bcc63e2e74a3b83aa4bb35dd1f37b9f70569fc3e0cd9a55b2e271911762f881"
+          "Sha256": "cebd6bfc95ec6c6b29cb5987aa2112efba70fd7331420586b06368fe3d15911f"
         },
         {
           "Path": "Buffaly.CodexEmbedded.WebModule.deps.json",
@@ -5268,7 +5268,7 @@
         },
         {
           "Path": "Buffaly.CodexEmbedded.WebModule.dll",
-          "Sha256": "ebaa6ee7e0301ad829463a1b682e7c1e52640aa0094b8ecadd97d35d1097eb24"
+          "Sha256": "fdcb97b5c7dddea354c66c40a706f641964a9e494bfb9ac57754d1fec6e9c412"
         },
         {
           "Path": "web-module.json",
@@ -5280,7 +5280,8 @@
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
       "RequiresRestart": true,
-      "RequiresPreStartInstall": true
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     },
     {
       "PackageId": "ComputerUse",
