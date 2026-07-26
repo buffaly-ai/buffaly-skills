@@ -15,3 +15,16 @@ prototype ToGetBoundExtensionActiveTab : ExtensionBrowserBoundSkillAction
 {
  function Execute() : string { return ExtensionBrowserModuleService.InvokeForSession(_opsAgent.GetSessionKeyOrEmpty(), "get_active_tab", "{}", 15); }
 }
+[SemanticProgram.InfinitivePhrase("to navigate the current tab with the bound extension")]
+[SemanticProgram.InfinitivePhrase("to open a web page in the bound chrome tab")]
+prototype ToNavigateBoundExtensionCurrentTab : ExtensionBrowserBoundSkillAction
+{
+ Description = @"Navigate the current tab through the Chrome installation immutably bound to this Buffaly session.";
+ function Execute(string url) : string { return ExtensionBrowserModuleService.NavigateCurrentTabForSession(_opsAgent.GetSessionKeyOrEmpty(), url); }
+}
+[SemanticProgram.InfinitivePhrase("to navigate a bound extension tab")]
+prototype ToNavigateBoundExtensionTab : ExtensionBrowserBoundSkillAction
+{
+ Description = @"Navigate one explicit tab through the Chrome installation immutably bound to this Buffaly session.";
+ function Execute(string url, int tabId) : string { return ExtensionBrowserModuleService.NavigateTabForSession(_opsAgent.GetSessionKeyOrEmpty(), url, tabId); }
+}
