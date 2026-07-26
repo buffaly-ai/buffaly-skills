@@ -1,12 +1,12 @@
-# Buffaly Browser Agent 0.2.8 validation
+# Buffaly Browser Agent 0.2.9 validation
 
-0.2.8 keeps reusable installation authorization in the MV3 service worker and navigates the side-panel iframe with only a single-use conversation token.
+0.2.9 keeps reusable installation authorization in the MV3 service worker and navigates the side-panel iframe with only a single-use conversation token.
 
 Validated 2026-07-26 on Windows Google Chrome:
 
 - `npm run release:check`: PASS
 - TypeScript typecheck and WXT production build: PASS
-- Chrome MV3 archive: `Buffaly-Browser-Agent-0.2.8-chrome.zip`
+- Chrome MV3 archive: `Buffaly-Browser-Agent-0.2.9-chrome.zip`
 - `chrome.identity` installation authorization contract: PASS
 - Single-flight installation WebSocket reconnect contract: PASS
 - Composite `SessionBindingId` + `InvocationId` completion contract: PASS

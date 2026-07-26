@@ -62,7 +62,7 @@ export async function authorizeInstallation(originInput: string): Promise<Extens
   const InstallationId = existing?.InstallationId || crypto.randomUUID();
   const redirectUri = chrome.identity.getRedirectURL();
   const state = crypto.randomUUID();
-  const authorizeUrl = new URL('/api/browser-extension/installations/authorize', Origin);
+  const authorizeUrl = new URL('/web-modules/ExtensionBrowser/api/installations/authorize', Origin);
   authorizeUrl.searchParams.set('InstallationId', InstallationId);
   authorizeUrl.searchParams.set('ChromeExtensionId', chrome.runtime.id);
   authorizeUrl.searchParams.set('RedirectUri', redirectUri);
@@ -77,7 +77,7 @@ export async function authorizeInstallation(originInput: string): Promise<Extens
   }
   const InstallationRegistrationId = callbackUrl.searchParams.get('InstallationRegistrationId') || '';
   const AuthorizationCode = callbackUrl.searchParams.get('AuthorizationCode') || '';
-  const exchange = await readJson<{ InstallationRegistrationId: string; InstallationCredential: string }>(await fetch(new URL('/api/browser-extension/installations/exchange', Origin), {
+  const exchange = await readJson<{ InstallationRegistrationId: string; InstallationCredential: string }>(await fetch(new URL('/web-modules/ExtensionBrowser/api/installations/exchange', Origin), {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ InstallationRegistrationId, AuthorizationCode }),
   }));
@@ -92,7 +92,7 @@ export async function loadConnection(): Promise<ExtensionConnection | null> {
 }
 
 export async function createConversation(connection: ExtensionConnection, mode: 'ReuseCurrent' | 'CreateNew', slotId: string, displayName: string): Promise<ConversationBootstrap> {
-  const binding = await readJson<{ SessionBindingId: string; SessionKey: string }>(await fetch(new URL('/api/browser-extension/session-bindings', connection.Origin), {
+  const binding = await readJson<{ SessionBindingId: string; SessionKey: string }>(await fetch(new URL('/web-modules/ExtensionBrowser/api/session-bindings', connection.Origin), {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential, ConversationSlotId: slotId, Mode: mode, DisplayName: displayName }),
   }));
@@ -101,7 +101,7 @@ export async function createConversation(connection: ExtensionConnection, mode: 
 }
 
 export async function issueNavigationToken(connection: ExtensionConnection, sessionBindingId: string): Promise<{ NavigationToken: string }> {
-  return readJson<{ NavigationToken: string }>(await fetch(new URL('/api/browser-extension/navigation-tokens', connection.Origin), {
+  return readJson<{ NavigationToken: string }>(await fetch(new URL('/web-modules/ExtensionBrowser/api/navigation-tokens', connection.Origin), {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential, SessionBindingId: sessionBindingId }),
   }));
@@ -141,7 +141,7 @@ export class InstallationChannel {
   }
 
   private async connect(): Promise<void> {
-    const channelUrl = new URL('/api/browser-extension/channel', this.connection.Origin);
+    const channelUrl = new URL('/web-modules/ExtensionBrowser/api/channel', this.connection.Origin);
     channelUrl.protocol = channelUrl.protocol === 'https:' ? 'wss:' : 'ws:';
     const socket = new WebSocket(channelUrl);
     this.socket = socket;
