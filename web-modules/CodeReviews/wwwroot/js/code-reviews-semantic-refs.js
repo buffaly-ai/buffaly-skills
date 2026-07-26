@@ -80,9 +80,11 @@
 
 	function buildRequestFromAnchor(anchor) {
 		const url = new URL(anchor.href, window.location.href);
+		const turnOwner = anchor.closest("[data-turn-key]");
 		return {
 			Environment: "Dev",
 			SourceSessionKey: url.searchParams.get("sourceSessionKey") || getSourceSessionKey(),
+			SourceTurnKey: turnOwner ? text(turnOwner.getAttribute("data-turn-key")).trim() : "",
 			RepositoryName: url.searchParams.get("repo") || "",
 			RepositoryPath: url.searchParams.get("path") || "",
 			CommitSha: url.searchParams.get("sha") || "",

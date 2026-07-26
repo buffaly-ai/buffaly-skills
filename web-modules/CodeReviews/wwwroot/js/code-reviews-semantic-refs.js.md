@@ -16,6 +16,7 @@
 ## Manual Code Review Agent Trigger Button (2026-06-27)
 - Added a DOM enhancer that inserts a `Review` button beside rendered CodeReviews `git-commit` links.
 - The button reuses the rendered diff URL query data and calls `TriggerCodeReviewAgent` so timeline commit refs can manually start a Code Review child agent without changing the core semantic-ref renderer contract.
+- The manual request now includes the enclosing timeline card's canonical `data-turn-key`, allowing an individual commit review to read the exact originating assistant turn and sibling commit manifest for intent while still reviewing only the selected commit.
 
 ## Styled Manual Review Button (2026-06-29)
 - Upgraded the injected `Review` button from an unstyled native button to a self-contained gradient pill with sparkle icon, hover/focus polish, and loading/queued/error visual states.
