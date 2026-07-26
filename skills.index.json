@@ -2744,6 +2744,35 @@
       "HasPackageReceipt": false,
       "IsOutdated": false,
       "InstalledVersion": ""
+    },
+    {
+      "SkillName": "SourceViewer",
+      "Title": "Source Viewer",
+      "Description": "Buffaly skill package for Source Viewer.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Source Viewer",
+        "SourceViewer"
+      ],
+      "Path": "skills/SourceViewer",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "fa5157e531ca03f0a4f8c569933c12ead23813fbc55fc8e2fe197b7b5f5307c9"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "1d071c671da7bbefb000bd2ad90d8aaff8da8c91f66082880c58e96259d165c0"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "45ba9b999772135e81da5635c0b704dfdbaafd5c2ccd39e3b33f4c36a54e25a3"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
     }
   ]
 }

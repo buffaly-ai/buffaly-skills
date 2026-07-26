@@ -1,0 +1,47 @@
+reference Buffaly.SourceViewer.WebModule;
+import Buffaly.SourceViewer.WebModule Buffaly.SourceViewer.WebModule.SourceViewerInteractiveSiteConfiguration SourceViewerInteractiveSiteConfiguration;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.WebModuleComponentLaunchRequestContract WebModuleComponentLaunchRequestContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.InteractiveSiteLaunchResultContract InteractiveSiteLaunchResultContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.IAgentRuntimeHost IAgentRuntimeHost;
+
+[SemanticEntity("source viewer skill")]
+prototype SourceViewerSkill : SkillEntity
+{
+	Description = "Read-only exact source-file visualization using the registered Source Viewer component.";
+	ActionRoot = SourceViewerSkillAction;
+}
+
+prototype SourceViewerSkillAction : OpsAction
+{
+	Description = @"Base action type for read-only Source Viewer tools.";
+}
+
+prototype SourceViewerInteractiveSiteLauncher
+{
+	function Execute(IAgentRuntimeHost opsAgent, string path, string language, int line, string highlight, int timeoutSeconds) : string
+	{
+		string stateJson = SourceViewerInteractiveSiteConfiguration.BuildStateJson(path, language, line, highlight);
+		InteractiveSiteLaunchResultContract result = opsAgent.LaunchWebModuleComponent(new WebModuleComponentLaunchRequestContract
+		{
+			Title = "Source Viewer",
+			MessageKey = opsAgent.GetCurrentToolMessageKeyOrEmpty(),
+			ToolInvocationId = opsAgent.GetCurrentToolInvocationIdOrEmpty(),
+			ModuleName = "SourceViewer",
+			Screen = "file",
+			StateJson = stateJson,
+			TimeoutSeconds = timeoutSeconds
+		});
+		return "Source Viewer interactive site exited with status: " + result.Status + "; value: " + result.Value;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to view a source file interactively")]
+[SemanticProgram.InfinitivePhrase("to show an exact source file")]
+prototype ToViewSourceFileInteractiveSite : SourceViewerSkillAction
+{
+	Description = @"Open one exact authorized JavaScript, C#, JSON, CSS, HTML, XML, or text file in the read-only Source Viewer component. Resolve and inspect the exact path first with file tools. language must be text, javascript, or csharp; line is one-based or 0; highlight is optional exact text; timeoutSeconds controls only the maximum wait.";
+	function Execute(string path, string language, int line, string highlight, int timeoutSeconds) : string
+	{
+		return SourceViewerInteractiveSiteLauncher.Execute(_opsAgent, path, language, line, highlight, timeoutSeconds);
+	}
+}
