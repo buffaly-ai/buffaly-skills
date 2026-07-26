@@ -6,10 +6,11 @@ export default defineConfig({
   manifest: {
     name: 'Buffaly Browser Agent',
     description: 'Control your current browser through Buffaly with explicit debugger consent.',
-    version: '0.2.1',
+    version: '0.2.7',
     permissions: [
       'sidePanel',
       'storage',
+	  'identity',
       'tabs',
       'scripting',
       'activeTab',

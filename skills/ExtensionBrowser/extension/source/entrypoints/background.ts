@@ -1,6 +1,17 @@
 import { handleToolCall, grantDebuggerConsent, revokeDebuggerConsent } from '../lib/tool-router';
 import { detachDebugger, isAttached } from '../lib/debugger-session';
 import { getLogEntries, getLogVersion } from '../lib/tool-log';
+import { InstallationChannel, loadConnection } from '../lib/buffaly-connection';
+
+let installationChannel: InstallationChannel | null = null;
+
+async function startInstallationChannel(): Promise<void> {
+  const connection = await loadConnection();
+  if (!connection) return;
+  installationChannel?.stop();
+  installationChannel = new InstallationChannel(connection, handleToolCall);
+  await installationChannel.start();
+}
 
 // Export the CDP bridge hook at module evaluation time. WXT's lifecycle
 // callback can run after Chrome exposes the MV3 worker DevTools target, while
@@ -9,6 +20,7 @@ import { getLogEntries, getLogVersion } from '../lib/tool-log';
   handleToolCall(tool, args);
 
 export default defineBackground(() => {
+	void startInstallationChannel();
   // ─── Side Panel: Enable open-on-toolbar-click ───
   // CRITICAL: The manifest side_panel.default_path alone does NOT make the
   // toolbar icon open the side panel. This call is required.
@@ -28,6 +40,17 @@ export default defineBackground(() => {
         .then((result: unknown) => sendResponse(result))
         .catch((err: Error) => sendResponse({ ok: false, error: err.message }));
       return true; // async response
+    }
+
+    if (request.type === 'buffaly_connection_changed') {
+      if (sender.id !== chrome.runtime.id || sender.tab !== undefined) {
+        sendResponse({ ok: false, error: 'Unauthorized: connection changes can only originate from an extension page' });
+        return false;
+      }
+      startInstallationChannel()
+        .then(() => sendResponse({ ok: true }))
+        .catch((err: Error) => sendResponse({ ok: false, error: err.message }));
+      return true;
     }
 
     // ─── Debugger Consent: Only extension pages (side panel) can grant consent ───

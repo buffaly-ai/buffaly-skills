@@ -676,7 +676,7 @@
       "SkillName": "ExtensionBrowser",
       "Title": "Extension Browser",
       "Description": "Buffaly skill package for Extension Browser.",
-      "Version": "0.2.6",
+      "Version": "0.2.7",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Extension Browser",
@@ -690,11 +690,11 @@
         },
         {
           "Path": "docs/VALIDATION.md",
-          "Sha256": "be570352230fc649b8cabec298abe7415938ec097817c156aec8c94373ee32a8"
+          "Sha256": "b950323e4b78119ae27c215856ed32eafa7d015199700765d5ab524f58f31191"
         },
         {
-          "Path": "extension/release/Buffaly-Browser-Agent-0.2.1-chrome.zip",
-          "Sha256": "571b4af6c2a33ecfbb1befde286463bd74faf2f8e2cd786536a8c884c8ea15ea"
+          "Path": "extension/release/Buffaly-Browser-Agent-0.2.7-chrome.zip",
+          "Sha256": "bf6b526cb19fb11302df8ff3480cabe0eaf9084f27c6ffc82c06dead8dfc5860"
         },
         {
           "Path": "extension/source/.gitignore",
@@ -702,7 +702,7 @@
         },
         {
           "Path": "extension/source/entrypoints/background.ts",
-          "Sha256": "aae21116a5eecc2a919e62721ddfb9a923135c8ce1c9f544a9e8bb0e4a46e806"
+          "Sha256": "dd8149ade194d2ca93407591c87ceace7b45c14fdaa6f5590adabce075c6f64f"
         },
         {
           "Path": "extension/source/entrypoints/content.ts",
@@ -710,7 +710,7 @@
         },
         {
           "Path": "extension/source/entrypoints/sidepanel/App.tsx",
-          "Sha256": "d09791be1aae01a9d32c2cf0911230f10175032eea241ec53763d0c14d634e9c"
+          "Sha256": "52284e8e4b5cbadcfe7f5a52a67762b7446977abeeb45fb4d2d6cfcf9f9e27ea"
         },
         {
           "Path": "extension/source/entrypoints/sidepanel/index.html",
@@ -722,7 +722,11 @@
         },
         {
           "Path": "extension/source/entrypoints/sidepanel/style.css",
-          "Sha256": "28184b03923b143b33c15f4c2178736fe7a26772287979345d879d68681d470f"
+          "Sha256": "c5e5450e4c6b686ba822af3d9dbf4cb5e5e056ce201416dfa636de2535de9151"
+        },
+        {
+          "Path": "extension/source/lib/buffaly-connection.ts",
+          "Sha256": "46ea0a45350ee695f1eebb8ae8b83e77fc27d34e1f13fb327666f3aef4aacb03"
         },
         {
           "Path": "extension/source/lib/debugger-session.ts",
@@ -746,11 +750,11 @@
         },
         {
           "Path": "extension/source/package-lock.json",
-          "Sha256": "ce52e2eb4dfc4e13c2398c4a0a1c80c6bc4371982e9e8e1dd65d5e4b6848b2ee"
+          "Sha256": "906a2ff0ab0390dae0dcf8e6253d4aae6bdef493894eff3e6c32b96c8d4988fa"
         },
         {
           "Path": "extension/source/package.json",
-          "Sha256": "03c892318c997df6a021a3fd39ae927eebeb4ba0e844b8a91a9e31dfef93a35c"
+          "Sha256": "323a6b4050218e0aceb385a37757e6bf57b34de621977e69cdfdeaa2157c77cf"
         },
         {
           "Path": "extension/source/PRIVACY.md",
@@ -773,8 +777,16 @@
           "Sha256": "026be99c097d828cac33b9f8daa4a375ffecbe2ae1b336e3e5f7d0dd12a2b425"
         },
         {
+          "Path": "extension/source/scripts/verify-bound-lifecycle.mjs",
+          "Sha256": "765c4b182d3440d73bf658decaaf5e929b61413b0d86b519a3357a5dc836f90a"
+        },
+        {
+          "Path": "extension/source/scripts/verify-bound-lifecycle.mjs.md",
+          "Sha256": "ad9069eac19dea4e2b6b12734d35419056afe217b82f89296c89a519bac7861e"
+        },
+        {
           "Path": "extension/source/scripts/verify-release.mjs",
-          "Sha256": "74e769bd6d6d9f9cc3872c9faa71d6c884d2f5b9506efb5ed0221e517caa7b62"
+          "Sha256": "a72bae6dd46f1e7a3fdb08ebba505247e06b3e05e58612a87a20529d07dbb4df"
         },
         {
           "Path": "extension/source/tsconfig.json",
@@ -782,7 +794,7 @@
         },
         {
           "Path": "extension/source/wxt.config.ts",
-          "Sha256": "3986b062b18b623a63477dea3908505976ac90ef02776ab3a0e531614a1c59f9"
+          "Sha256": "23992973aca6b149b3478f4cd986b715c289762d93cb17941c0b650c20412e8d"
         },
         {
           "Path": "index.pts",
@@ -802,7 +814,7 @@
         },
         {
           "Path": "SKILL.md",
-          "Sha256": "1c3501cae6979a25b876b79afe6407aa550f7b042edca96b404b3bf147d11cc5"
+          "Sha256": "12415d107737f834a2da2d96610a229d206c37e93b46688105b951c5e6ac7211"
         }
       ],
       "EntryPoint": "index.pts",
