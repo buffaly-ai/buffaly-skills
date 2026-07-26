@@ -1,8 +1,13 @@
 reference Buffaly.DesktopAutomation Buffaly.DesktopAutomation;
+reference Buffaly.DesktopViewer.Web Buffaly.DesktopViewer.Web;
+reference Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions;
 import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.DesktopAutomation DesktopAutomation;
 import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.DesktopWindowTarget DesktopWindowTarget;
 import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.CapturedImageArtifact CapturedImageArtifact;
 import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.DesktopWindowActionResult DesktopWindowActionResult;
+import Buffaly.DesktopViewer.Web Buffaly.DesktopViewer.Web.DesktopViewerInteractiveSiteConfiguration DesktopViewerInteractiveSiteConfiguration;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.WebModuleComponentLaunchRequestContract WebModuleComponentLaunchRequestContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.InteractiveSiteLaunchResultContract InteractiveSiteLaunchResultContract;
 
 prototype DesktopSkillAction : OpsAction
 {
@@ -415,6 +420,45 @@ prototype ToOpenDesktopWindowControl : DesktopSkillAction
 	function ExecuteForMessage(string processName, string windowTitleContains, int frameIntervalMs, int timeoutSeconds, string messageKey, string toolInvocationId) : string
 	{
 		return DesktopAutomation.OpenDesktopWindowControlForMessage(_opsAgent, processName, windowTitleContains, frameIntervalMs, timeoutSeconds, messageKey, toolInvocationId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list visible desktop windows")]
+[SemanticProgram.InfinitivePhrase("to list windows available to watch")]
+prototype ToListVisibleDesktopWindows : DesktopSkillAction
+{
+	Description = @"Returns JSON for every visible window in the active interactive Windows session. Use the exact ProcessName and WindowTitle from this inventory when choosing a window for ToViewDesktopWindowInteractiveSite.";
+
+	function Execute() : string
+	{
+		return DesktopAutomation.ListVisibleWindowsJson();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to view a desktop window interactively")]
+[SemanticProgram.InfinitivePhrase("to watch a selected application window")]
+prototype ToViewDesktopWindowInteractiveSite : DesktopSkillAction
+{
+	Description = @"Launch the registered Desktop Viewer component for one exact visible window selected from ToListVisibleDesktopWindows.
+processName - exact ProcessName from the inventory.
+windowTitle - exact WindowTitle from the inventory.
+frameIntervalMs - frame interval from 100 through 5000 milliseconds.
+timeoutSeconds - maximum interactive-site lifetime; the general Done/Close mechanism may exit earlier.";
+
+	function Execute(string processName, string windowTitle, int frameIntervalMs, int timeoutSeconds) : string
+	{
+		string stateJson = DesktopViewerInteractiveSiteConfiguration.BuildWindowStateJson(processName, windowTitle, frameIntervalMs);
+		InteractiveSiteLaunchResultContract result = _opsAgent.LaunchWebModuleComponent(new WebModuleComponentLaunchRequestContract
+		{
+			Title = "Desktop Viewer - " + windowTitle,
+			MessageKey = _opsAgent.GetCurrentToolMessageKeyOrEmpty(),
+			ToolInvocationId = _opsAgent.GetCurrentToolInvocationIdOrEmpty(),
+			ModuleName = "DesktopViewer",
+			Screen = "window",
+			StateJson = stateJson,
+			TimeoutSeconds = timeoutSeconds
+		});
+		return "Desktop Viewer interactive site exited with status: " + result.Status + "; value: " + result.Value;
 	}
 }
 
