@@ -32,6 +32,8 @@ function getEmbedUrl(settings: BuffalyEmbedSettings): string {
 const hostname = (url: string) => { try { return new URL(url).hostname || 'Current page'; } catch { return 'Current page'; } };
 
 export default function App() {
+  const logo48Url = chrome.runtime.getURL('icon/48.png');
+  const logo128Url = chrome.runtime.getURL('icon/128.png');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [toolLog, setToolLog] = useState<ToolLogEntry[]>([]);
@@ -160,7 +162,7 @@ export default function App() {
 
   return <main className="app">
     <header className="topbar">
-      <div className="brand"><img src="/icon/48.png" alt="" /><div><strong>Buffaly</strong><span>Browser workspace</span></div></div>
+      <div className="brand"><img src={logo48Url} alt="" /><div><strong>Buffaly</strong><span>Browser workspace</span></div></div>
       <span className={`live-state ${debuggerAttached ? 'active' : ''}`}><i />{debuggerAttached ? 'In control' : 'Ready'}</span>
     </header>
 
@@ -186,7 +188,7 @@ export default function App() {
           <div className="embed-toolbar"><span><i />Connected to Buffaly</span><button onClick={() => setShowEmbedSettings(true)}>Settings</button></div>
           <iframe title="Buffaly session" src={getEmbedUrl(embedSettings)} allow="clipboard-read; clipboard-write; microphone" />
         </div> : messages.length === 0 ? <div className="welcome">
-          <img src="/icon/128.png" alt="Buffaly" />
+          <img src={logo128Url} alt="Buffaly" />
           <p className="eyebrow">BUFFALY + THIS PAGE</p>
           <h1>What should we work on?</h1>
           <p>Use a page action now. A connected Buffaly session will bring full conversation, planning, and reusable workflows into this space.</p>
@@ -202,7 +204,7 @@ export default function App() {
     </> : <section className="activity-panel">{toolLog.length === 0 ? <div className="activity-empty"><b>✓</b><h2>No browser activity yet</h2><p>Actions Buffaly takes will appear here with their result.</p></div> : toolLog.slice().reverse().map((entry) => <article key={entry.id} className={`activity-row ${entry.status}`}><i>{entry.status === 'success' ? '✓' : entry.status === 'error' ? '!' : '·'}</i><div><strong>{entry.tool.replaceAll('_', ' ')}</strong><small>{new Date(entry.timestamp).toLocaleTimeString()} · {entry.status}</small></div></article>)}</section>}
 
     {showEmbedSettings && <div className="modal-backdrop" role="presentation" onMouseDown={() => setShowEmbedSettings(false)}><section className="settings-modal" role="dialog" aria-modal="true" aria-labelledby="embed-title" onMouseDown={(event) => event.stopPropagation()}>
-      <img src="/icon/48.png" alt="" />
+      <img src={logo48Url} alt="" />
       <h2 id="embed-title">Connect a Buffaly session</h2>
       <p>Embed the real Buffaly timeline and composer. Browser permissions remain controlled by this extension shell.</p>
       <label>Buffaly origin<input value={embedDraft.Origin} onChange={(event) => setEmbedDraft({ ...embedDraft, Origin: event.target.value })} placeholder="http://127.0.0.1:5016" /></label>

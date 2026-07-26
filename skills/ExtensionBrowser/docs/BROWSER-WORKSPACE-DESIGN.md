@@ -82,7 +82,7 @@ Allowed iframe messages should be a closed union such as `embed_ready`, `session
 - Future `buffalyConnection`: `unconfigured | connecting | connected | error`; host configuration in `chrome.storage.local`, credentials owned by the Buffaly origin.
 
 ## 10. UI / UX
-- Header: official extension icon as Buffaly product mark, “Buffaly” wordmark, browser-workspace subtitle, compact live state.
+- Header: canonical Buffaly product mark, packaged as valid 16, 48, and 128 pixel PNG assets and resolved through `chrome.runtime.getURL`, plus the “Buffaly” wordmark, browser-workspace subtitle, and compact live state.
 - Page card: hostname, title/URL, refresh, and clear access wording.
 - Control banner: “Enable browser control” rather than “attach debugger,” with an explanation that page reading remains lower privilege. Active state offers “Pause control.”
 - Work: logo-led welcome, suggested outcomes (summarize/read, inspect interactive elements, screenshot), and concise result cards.
