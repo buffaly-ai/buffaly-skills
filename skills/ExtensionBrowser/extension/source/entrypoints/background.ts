@@ -1,7 +1,7 @@
 import { handleToolCall, grantDebuggerConsent, revokeDebuggerConsent } from '../lib/tool-router';
 import { detachDebugger, isAttached } from '../lib/debugger-session';
 import { getLogEntries, getLogVersion } from '../lib/tool-log';
-import { InstallationChannel, loadConnection } from '../lib/buffaly-connection';
+import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, authorizeInstallation, createConversation, issueNavigationToken, loadConnection, type ConversationBinding } from '../lib/buffaly-connection';
 
 let installationChannel: InstallationChannel | null = null;
 
@@ -11,6 +11,10 @@ async function startInstallationChannel(): Promise<void> {
   installationChannel?.stop();
   installationChannel = new InstallationChannel(connection, handleToolCall);
   await installationChannel.start();
+}
+
+function isTrustedExtensionPage(sender: chrome.runtime.MessageSender): boolean {
+  return sender.id === chrome.runtime.id && sender.tab === undefined;
 }
 
 // Export the CDP bridge hook at module evaluation time. WXT's lifecycle
@@ -49,6 +53,67 @@ export default defineBackground(() => {
       }
       startInstallationChannel()
         .then(() => sendResponse({ ok: true }))
+        .catch((err: Error) => sendResponse({ ok: false, error: err.message }));
+      return true;
+    }
+
+    if (request.type === 'authorize_buffaly_installation') {
+      if (!isTrustedExtensionPage(sender)) {
+        sendResponse({ ok: false, error: 'Unauthorized: installation authorization can only originate from an extension page' });
+        return false;
+      }
+      authorizeInstallation(request.origin)
+        .then(async (connection) => {
+          await startInstallationChannel();
+          sendResponse({ ok: true, data: { Origin: connection.Origin } });
+        })
+        .catch((err: Error) => sendResponse({ ok: false, error: err.message }));
+      return true;
+    }
+
+    if (request.type === 'get_buffaly_connection_status') {
+      if (!isTrustedExtensionPage(sender)) {
+        sendResponse({ ok: false, error: 'Unauthorized: connection status can only be read from an extension page' });
+        return false;
+      }
+      loadConnection()
+        .then((connection) => sendResponse({ ok: true, data: connection ? { Connected: true, Origin: connection.Origin } : { Connected: false, Origin: '' } }))
+        .catch((err: Error) => sendResponse({ ok: false, error: err.message }));
+      return true;
+    }
+
+    if (request.type === 'get_buffaly_conversation_bootstrap') {
+      if (!isTrustedExtensionPage(sender)) {
+        sendResponse({ ok: false, error: 'Unauthorized: conversation bootstrap can only be read from an extension page' });
+        return false;
+      }
+      Promise.all([loadConnection(), chrome.storage.local.get(ACTIVE_CONVERSATION_STORAGE_KEY)])
+        .then(async ([connection, stored]) => {
+          const binding = stored[ACTIVE_CONVERSATION_STORAGE_KEY] as ConversationBinding | undefined;
+          if (!connection || !binding) return null;
+          const navigation = await issueNavigationToken(connection, binding.SessionBindingId);
+          return { Origin: connection.Origin, ...binding, NavigationToken: navigation.NavigationToken };
+        })
+        .then((bootstrap) => sendResponse({ ok: true, data: bootstrap }))
+        .catch((err: Error) => sendResponse({ ok: false, error: err.message }));
+      return true;
+    }
+
+    if (request.type === 'create_buffaly_conversation') {
+      if (!isTrustedExtensionPage(sender)) {
+        sendResponse({ ok: false, error: 'Unauthorized: conversations can only be created from an extension page' });
+        return false;
+      }
+      loadConnection()
+        .then((connection) => {
+          if (!connection) throw new Error('Buffaly installation is not authorized.');
+          return createConversation(connection, 'CreateNew', crypto.randomUUID(), request.displayName || 'Chrome conversation');
+        })
+        .then(async (bootstrap) => {
+          const binding: ConversationBinding = { ConversationSlotId: bootstrap.ConversationSlotId, SessionBindingId: bootstrap.SessionBindingId, DisplayName: bootstrap.DisplayName };
+          await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: binding });
+          sendResponse({ ok: true, data: bootstrap });
+        })
         .catch((err: Error) => sendResponse({ ok: false, error: err.message }));
       return true;
     }

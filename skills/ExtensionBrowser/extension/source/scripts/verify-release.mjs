@@ -21,9 +21,12 @@ check(manifest.content_scripts?.length === 1, 'content script declaration is mis
 for (const permission of ['sidePanel', 'storage', 'identity', 'tabs', 'scripting', 'activeTab', 'debugger']) {
   check(manifest.permissions.includes(permission), `required permission is missing: ${permission}`);
 }
-check(sidepanel.includes('BuffalyExtensionConnection'), 'side panel installation connection storage contract is missing');
-check(sidepanel.includes('BuffalyActiveConversation'), 'side panel active conversation storage contract is missing');
+check(!sidepanel.includes('BuffalyExtensionConnection'), 'side panel must not receive the credential-bearing installation connection');
+check(!sidepanel.includes('BuffalyActiveConversation'), 'side panel must not persist conversation or navigation authority');
+check(background.includes('BuffalyActiveConversationBinding'), 'service worker active binding pointer storage contract is missing');
 check(sidepanel.includes('presentation') && sidepanel.includes('sidepanel'), 'side panel compact presentation route is missing');
+check(sidepanel.includes('navigationToken'), 'side panel one-time navigation-token bootstrap is missing');
+check(!sidepanel.includes('sessionKey') && !sidepanel.includes('SessionKey'), 'side panel must not navigate with a durable session key');
 check(background.includes('extension_handshake'), 'installation WebSocket channel handshake is missing');
 check(background.includes('tool_completion'), 'bound tool completion contract is missing');
 for (const size of [16, 48, 128]) {

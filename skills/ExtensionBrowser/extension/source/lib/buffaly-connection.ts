@@ -14,9 +14,15 @@ export interface ExtensionConnection {
 export interface ConversationBinding {
   ConversationSlotId: string;
   SessionBindingId: string;
-  SessionKey: string;
   DisplayName: string;
 }
+
+export interface ConversationBootstrap extends ConversationBinding {
+  Origin: string;
+  NavigationToken: string;
+}
+
+export const ACTIVE_CONVERSATION_STORAGE_KEY = 'BuffalyActiveConversationBinding';
 
 interface ToolInvocation {
   Type: 'tool_invocation';
@@ -85,22 +91,19 @@ export async function loadConnection(): Promise<ExtensionConnection | null> {
   return (stored[CONNECTION_STORAGE_KEY] as ExtensionConnection | undefined) || null;
 }
 
-export async function createConversation(connection: ExtensionConnection, mode: 'ReuseCurrent' | 'CreateNew', slotId: string, displayName: string): Promise<ConversationBinding & { NavigationToken: string }> {
+export async function createConversation(connection: ExtensionConnection, mode: 'ReuseCurrent' | 'CreateNew', slotId: string, displayName: string): Promise<ConversationBootstrap> {
   const binding = await readJson<{ SessionBindingId: string; SessionKey: string }>(await fetch(new URL('/api/browser-extension/session-bindings', connection.Origin), {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential, ConversationSlotId: slotId, Mode: mode, DisplayName: displayName }),
   }));
-  const navigation = await readJson<{ NavigationToken: string }>(await fetch(new URL('/api/browser-extension/navigation-tokens', connection.Origin), {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential, SessionBindingId: binding.SessionBindingId }),
-  }));
-  return { ConversationSlotId: slotId, SessionBindingId: binding.SessionBindingId, SessionKey: binding.SessionKey, DisplayName: displayName, NavigationToken: navigation.NavigationToken };
+  const navigation = await issueNavigationToken(connection, binding.SessionBindingId);
+  return { Origin: connection.Origin, ConversationSlotId: slotId, SessionBindingId: binding.SessionBindingId, DisplayName: displayName, NavigationToken: navigation.NavigationToken };
 }
 
-export async function redeemNavigation(connection: ExtensionConnection, navigationToken: string): Promise<{ SessionBindingId: string; SessionKey: string; Presentation: string }> {
-  return readJson(await fetch(new URL('/api/browser-extension/navigation-tokens/redeem', connection.Origin), {
-    method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ NavigationToken: navigationToken }),
+export async function issueNavigationToken(connection: ExtensionConnection, sessionBindingId: string): Promise<{ NavigationToken: string }> {
+  return readJson<{ NavigationToken: string }>(await fetch(new URL('/api/browser-extension/navigation-tokens', connection.Origin), {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential, SessionBindingId: sessionBindingId }),
   }));
 }
 
