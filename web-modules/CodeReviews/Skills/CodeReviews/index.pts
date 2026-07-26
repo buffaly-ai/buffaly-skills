@@ -4,6 +4,7 @@ reference Buffaly.Agent.Host Buffaly.Agent.Host;
 reference BasicUtilities BasicUtilities;
 import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewFindingsService CodeReviewFindingsService;
 import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewTurnAgentService CodeReviewTurnAgentService;
+import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewEvidenceService CodeReviewEvidenceService;
 import Buffaly.Agent.Host Buffaly.Agent.Host.BuffalyArtifacts BuffalyArtifacts;
 import BasicUtilities BasicUtilities.JsonUtil JsonUtil;
 
@@ -60,6 +61,20 @@ prototype ToCompleteCodeReviewTurnWithoutFindings : CodeReviewsAgentToolsAction
 prototype ToMarkCodeReviewTurnFailed : CodeReviewsAgentToolsAction
 {
 	function Execute(string SourceTurnContextJson, string FailureReason) : string { return CodeReviewFindingsService.MarkTurnFailedJson(_opsAgent, SourceTurnContextJson, FailureReason); }
+}
+
+[SemanticProgram.InfinitivePhrase("to inspect an exact code review commit diff")]
+prototype ToGetCodeReviewCommitDiff : CodeReviewsAgentToolsAction
+{
+	Description = @"RepositoryPath - exact local repository path from SourceTurnContextJson. CommitSha - exact manifest SHA. Returns a bounded typed commit snapshot containing metadata, changed files, rename information, and per-file patches. Read every manifest commit with this action; do not substitute the working tree or a range.";
+	function Execute(string RepositoryPath, string CommitSha) : string { return CodeReviewEvidenceService.GetCommitDiffJson(RepositoryPath, CommitSha); }
+}
+
+[SemanticProgram.InfinitivePhrase("to read a code review file at an exact commit")]
+prototype ToGetCodeReviewFileAtCommit : CodeReviewsAgentToolsAction
+{
+	Description = @"RepositoryPath - exact local repository path from SourceTurnContextJson. CommitSha - exact manifest SHA. Path - repository-relative file path from the commit snapshot. Returns bounded file content from that exact commit for surrounding context; never reads the current working tree.";
+	function Execute(string RepositoryPath, string CommitSha, string Path) : string { return CodeReviewEvidenceService.GetFileAtCommitJson(RepositoryPath, CommitSha, Path); }
 }
 
 [SemanticProgram.InfinitivePhrase("to run a source grounded code review")]

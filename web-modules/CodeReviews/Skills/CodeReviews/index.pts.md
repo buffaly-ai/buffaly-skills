@@ -5,6 +5,7 @@ The skill exposes source-grounded review readers and lifecycle completion action
 - `ToAttachConfiguredCodeReviewAgent`, `ToDetachCodeReviewAgent`, and `ToGetCodeReviewAttachmentStatus`
 - `ToDispatchCodeReviewTurnCompletedEvent` for typed event callbacks
 - grouped findings, clean-completion, and failure actions that project one result onto every manifest commit
+- `ToGetCodeReviewCommitDiff` and `ToGetCodeReviewFileAtCommit` expose bounded, read-only evidence from the exact repository/SHA manifest through `GitCheckInBrowserService`; they never substitute the working tree or use PowerShell
 
 Commit-free turns return the typed callback result with `ShouldQueue=false`. Existing single-commit actions remain available for explicitly separate historical/retry review.
 
