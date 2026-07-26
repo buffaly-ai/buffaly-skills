@@ -44,7 +44,7 @@ class DesktopViewerModule extends HTMLElement {
 
 	_render() {
 		if (this.childElementCount) return;
-		this.innerHTML = `<style>${DesktopViewerModule.styles}</style><article class="dv-card"><header><div><span>Desktop Viewer</span><h2></h2><p></p></div><strong>LIVE</strong></header><section><canvas></canvas><div class="dv-empty">Waiting for the first frame...</div></section><footer><span class="dv-status">Starting stream...</span><span class="dv-frames"></span></footer></article>`;
+		this.innerHTML = `<style>${DesktopViewerModule.styles}</style><article class="dv-card"><section><canvas></canvas><div class="dv-empty">Waiting for the first frame...</div></section><footer><span class="dv-status">Starting stream...</span><span class="dv-frames"></span></footer></article>`;
 	}
 
 	async start() {
@@ -54,8 +54,6 @@ class DesktopViewerModule extends HTMLElement {
 		this._disposed = false;
 		this._render();
 		const state = this._configuration.state;
-		this.querySelector("h2").textContent = state.WindowTitle;
-		this.querySelector("header p").textContent = state.ProcessName;
 		await this._capture();
 		if (!this._disposed) this._timer = window.setInterval(() => { void this._capture(); }, state.FrameIntervalMs);
 	}
@@ -106,7 +104,7 @@ class DesktopViewerModule extends HTMLElement {
 	}
 }
 
-DesktopViewerModule.styles = `:host{display:block;width:100%;height:100%;font:14px/1.4 Inter,Segoe UI,sans-serif;color:#e7edf7}.dv-card{width:100%;height:100%;display:grid;grid-template-rows:auto 1fr auto;background:#0b0f16;border:1px solid #273244;border-radius:14px;overflow:hidden}header{display:flex;justify-content:space-between;gap:16px;padding:14px 18px;background:#111722;border-bottom:1px solid #273244}header span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8fa7c7;font-weight:800}h2{margin:2px 0;font-size:18px;color:#fff}header p{margin:0;color:#8fa0b8}header strong{height:max-content;padding:5px 9px;border-radius:999px;background:#133f2c;color:#7ff0ad;font-size:11px}section{position:relative;min-height:0;display:flex;align-items:flex-start;justify-content:center;overflow:auto;background:#030507;padding:8px}canvas{display:block;max-width:100%;max-height:100%;background:#000}.dv-empty{position:absolute;inset:0;display:grid;place-items:center;color:#718096}.dv-empty[hidden]{display:none}footer{display:flex;justify-content:space-between;gap:12px;padding:9px 18px;border-top:1px solid #273244;background:#111722;color:#9bacbf;font-size:12px}.dv-error{color:#ff9c9c}`;
+DesktopViewerModule.styles = `:host{display:block;width:100%;height:100%;min-width:0;min-height:0;font:14px/1.4 Inter,Segoe UI,sans-serif;color:#e7edf7}.dv-card{width:100%;height:100%;min-width:0;min-height:0;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;background:#0b0f16;overflow:hidden}section{position:relative;width:100%;height:100%;min-width:0;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#030507}canvas{display:block;max-width:100%;max-height:100%;background:#000}.dv-empty{position:absolute;inset:0;display:grid;place-items:center;color:#718096}.dv-empty[hidden]{display:none}footer{display:flex;justify-content:space-between;gap:12px;padding:5px 10px;border-top:1px solid #273244;background:#111722;color:#9bacbf;font-size:11px}.dv-error{color:#ff9c9c}`;
 
 if (!customElements.get("desktop-viewer-module")) customElements.define("desktop-viewer-module", DesktopViewerModule);
 export { DesktopViewerModule };
