@@ -18,6 +18,11 @@
 - The button reuses the rendered diff URL query data and calls `TriggerCodeReviewAgent` so timeline commit refs can manually start a Code Review child agent without changing the core semantic-ref renderer contract.
 - The manual request now includes the enclosing timeline card's canonical `data-turn-key`, allowing an individual commit review to read the exact originating assistant turn and sibling commit manifest for intent while still reviewing only the selected commit.
 
+## Manual Global Turn Review Button (2026-07-26)
+- Added one `Review whole turn globally` action per enclosing assistant turn that contains CodeReviews commit refs, while retaining each commit's individual review action.
+- The grouped action submits the exact source session and turn keys to `TriggerGlobalCodeReviewTurn`; commit discovery remains server-owned and queues the complete turn to `Buffaly.CodeReviews.Global`.
+- A turn-level DOM marker prevents multi-commit messages from rendering duplicate grouped-review controls.
+
 ## Styled Manual Review Button (2026-06-29)
 - Upgraded the injected `Review` button from an unstyled native button to a self-contained gradient pill with sparkle icon, hover/focus polish, and loading/queued/error visual states.
 - Design Decision: inject the small style block from this formatter script because the button is added into Buffaly timeline content where the CodeReviews harness stylesheet is not otherwise loaded.

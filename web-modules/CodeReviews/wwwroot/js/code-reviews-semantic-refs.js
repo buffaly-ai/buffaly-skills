@@ -139,6 +139,42 @@
 		return response && response.Record || null;
 	}
 
+	function triggerGlobalCodeReviewTurn(sourceSessionKey, sourceTurnKey, button) {
+		button.disabled = true;
+		setReviewButtonState(button, "loading", "Queueing global review", "Queueing the whole assistant turn to the global CodeReviews reviewer...");
+		setReviewStatus(button, "loading", "Queueing grouped global review...");
+		call("TriggerGlobalCodeReviewTurn", { SourceSessionKey: sourceSessionKey, TurnKey: sourceTurnKey })
+			.then(function (response) {
+				const count = Number(response && response.Commits && response.Commits.length) || 0;
+				setReviewButtonState(button, "queued", count > 0 ? "Global review queued (" + count + ")" : "Global review queued", text(response && response.Message) || "Grouped review queued.");
+				setReviewStatus(button, "queued", "Queued to Buffaly.CodeReviews.Global" + (count > 0 ? " for " + count + " commit" + (count === 1 ? "" : "s") : "") + ".");
+			})
+			.catch(function (error) {
+				button.disabled = false;
+				setReviewButtonState(button, "error", "Retry global review", "Global review trigger failed: " + errorMessage(error));
+				setReviewStatus(button, "error", "Global review trigger failed: " + errorMessage(error));
+			});
+	}
+
+	function ensureGlobalTurnReviewButton(anchor, individualButton) {
+		const turnOwner = anchor.closest("[data-turn-key]");
+		if (!turnOwner || turnOwner.getAttribute("data-code-review-global-trigger-enhanced") === "true") return;
+		const sourceTurnKey = text(turnOwner.getAttribute("data-turn-key")).trim();
+		const sourceSessionKey = getSourceSessionKey();
+		if (isEmpty(sourceTurnKey) || isEmpty(sourceSessionKey)) return;
+		turnOwner.setAttribute("data-code-review-global-trigger-enhanced", "true");
+		const globalButton = document.createElement("button");
+		globalButton.type = "button";
+		globalButton.className = "code-reviews-trigger-agent-review code-reviews-trigger-global-turn-review";
+		setReviewButtonState(globalButton, "ready", "Review whole turn globally", "Review every commit in this assistant message together using the global CodeReviews reviewer");
+		globalButton.addEventListener("click", function (event) {
+			event.preventDefault();
+			event.stopPropagation();
+			triggerGlobalCodeReviewTurn(sourceSessionKey, sourceTurnKey, globalButton);
+		});
+		individualButton.insertAdjacentElement("afterend", globalButton);
+	}
+
 	function reviewStatusFromRecord(record) {
 		return text(record && record.Status).trim() || "NotReviewed";
 	}
@@ -205,6 +241,7 @@
 				triggerCodeReviewAgent(buildRequestFromAnchor(anchor), button);
 			});
 			anchor.insertAdjacentElement("afterend", button);
+			ensureGlobalTurnReviewButton(anchor, button);
 			loadReviewButtonStatus(anchor, button);
 		});
 	}
