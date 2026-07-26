@@ -12560,7 +12560,7 @@
       "PackageType": "WebModule",
       "Title": "Sessions",
       "Description": "Buffaly Web Module package for Sessions.",
-      "Version": "0.1.134",
+      "Version": "0.1.135",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/Sessions",
       "SourceUrl": "",
@@ -12587,19 +12587,19 @@
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "2136212cce6072c322d349790760e95c5c20194e20137956ff0447dc86f489cf"
+          "Sha256": "0fa78dae3c67d1078c8dd2bf8893e8b46b8ff899e1b84f19bb5751a65f82ffc6"
         },
         {
           "Path": "Buffaly.Agent.SemanticDatabase.DB.dll",
-          "Sha256": "ab7eccf18d0aa2760d202485ed830aa4cba8c3de777bdf22bdabd82eb557595d"
+          "Sha256": "a6d02aa80aa4c868de7474f45ef8db755e30c0e8cb537af926187a370450e63e"
         },
         {
           "Path": "Buffaly.Agent.Tools.Secrets.dll",
-          "Sha256": "1f7b4bce41dbd0335a840fea6221c5b4d59e931d26feb831140c2490cce64e37"
+          "Sha256": "641e2e3e8ac073f895f7d86cd6c69bc4480a0ad3f22f4a1e77fafe693d87687e"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "cc49bca874e75c0d8976c314b86615d889866fcd5d511f52f60e4fd180688e13"
+          "Sha256": "cebd6bfc95ec6c6b29cb5987aa2112efba70fd7331420586b06368fe3d15911f"
         },
         {
           "Path": "Buffaly.AIProviderAPI.dll",
@@ -12607,7 +12607,7 @@
         },
         {
           "Path": "Buffaly.Business.dll",
-          "Sha256": "0a7ca415280db1f258602a490595bc977e8a507f2f3651b7250fc2ecc23a9e40"
+          "Sha256": "46a456db0a2876c5d50202ca3f130ebd3067f60de08aa7f61232b86807c79457"
         },
         {
           "Path": "Buffaly.Common.dll",
@@ -12619,23 +12619,23 @@
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "a11ed0cc4f1233e916386082711b69bee8224a6c597019eec450a149f6fbd7af"
+          "Sha256": "957c63f3d590d5c38eb7955d8d86ca56bea2b70d24e8fd1f8b39edf90fe4ce9b"
         },
         {
           "Path": "Buffaly.DB.Hybrid.dll",
-          "Sha256": "4af88123a5a50cd41b3115ff8c4cba99b88b182a5fe87726640d6f5e1bdd0a9a"
+          "Sha256": "9ff088129821853871bb91d3d1ae26a40916ecc54eb872d03cbc857b457db181"
         },
         {
           "Path": "Buffaly.DB.Postgres.dll",
-          "Sha256": "407cc84da2366e2a23447c2fafb9f9655d03791a841455fdb12034812d70fb31"
+          "Sha256": "c83e971b1fcf09ef13fe2ff9fa5bbe7c0269826364e8ed903436448f59184585"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "5d6a31e9b7e8873452679c0e380f9d5f353f860ca8de77d1be3783e12324b52d"
+          "Sha256": "90289f0d44287086961a2f26e6e13b3179037b45b4a6423eccc132f5358a36fb"
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "b21a2a3fae080582c0f392a8ea4102e43f158300b048a249f05291f0491b63c0"
+          "Sha256": "94ae3a7a27e126bb5655a1ab4685bd9ccc61f223c7f79941bcc5a2855edc32eb"
         },
         {
           "Path": "Buffaly.Sessions.Web.deps.json",
@@ -12643,11 +12643,11 @@
         },
         {
           "Path": "Buffaly.Sessions.Web.dll",
-          "Sha256": "d8d0cdc50f1ec58ea93fd605ddc3b378e3313bd209698709a41faabbfc4ed30c"
+          "Sha256": "653829455b7f3ddb39d4f7af72614c3ddc1392da7335b56e6d7e39fd90270c62"
         },
         {
           "Path": "Buffaly.Sessions.Web.exe",
-          "Sha256": "4f4208614cab71cb83c9a2e8cdbec3364254b1e06d84c66fc4c26ddb69c34980"
+          "Sha256": "18b7ebb04e943eee26677a9fa236d273fc2169b697af3a198234ae26c10a67a0"
         },
         {
           "Path": "Buffaly.Sessions.Web.runtimeconfig.json",
@@ -12655,7 +12655,7 @@
         },
         {
           "Path": "Buffaly.SessionSemanticDatabase.dll",
-          "Sha256": "41a30ab752690303bec104b3bc32a945fac792ef3ccd957f8cea34eb7a371902"
+          "Sha256": "50d642fc395440db439b53044c7f7954db12c593abe378f742fa57edf0bfada2"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -14815,7 +14815,8 @@
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
       "RequiresRestart": true,
-      "RequiresPreStartInstall": true
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     },
     {
       "PackageId": "Buffaly.Agent.SkillManagement",
