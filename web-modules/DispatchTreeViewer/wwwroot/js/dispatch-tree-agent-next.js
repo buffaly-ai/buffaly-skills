@@ -18,19 +18,41 @@
     styleLoaded = true;
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.7.0";
+    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.7.4";
     document.head.appendChild(link);
   }
 
+  function errorMessage(error) {
+    if (!error) return "The Dispatch tree request failed without a diagnostic.";
+    return error.message || error.Error || error.error || (typeof error === "string" ? error : "The Dispatch tree request failed.");
+  }
+
+  function withTimeout(promise, operation) {
+    return Promise.race([
+      promise,
+      new Promise(function (_, reject) {
+        window.setTimeout(function () { reject(new Error(operation + " timed out after 20 seconds.")); }, 20000);
+      })
+    ]);
+  }
+
+  function sessionGuidance(message) {
+    return /HTTP 502|timed out|worker|session/i.test(message)
+      ? "This session's worker is unavailable. Send a message in the session to restart it, wait for initialization, then retry."
+      : "Confirm that this dispatcher session has a DispatchMemoryRoot and try again.";
+  }
+
+  ensureStyle();
+
   api.registerFileSource({
     id: "dispatch-tree-viewer",
-    label: "Ontology Tree",
+    label: "Dispatch Tree",
     priority: 50,
     placement: "special-files",
     load: function (context) {
       return [{
-        Name: "Ontology Tree",
-        Description: "Browse the live ontology from any root",
+        Name: "Dispatch Tree",
+        Description: "Open this session's live routing hierarchy",
         Icon: "bi-diagram-2",
         Url: "#dtv-ontology-open:" + encodeURIComponent(context.sessionKey || "")
       }];
@@ -43,13 +65,13 @@
 
  function readOntologyTree(rootName, after, sessionKey) {
    var args = JSON.stringify({ rootName: rootName, after: after || "" });
-   return BuffalyAgentService.RunProtoScriptMethodAsync(sessionKey || "", "buffaly-agent", "ToReadOntologyTree", "Execute", args)
+   return withTimeout(BuffalyAgentService.RunProtoScriptMethodAsync(sessionKey || "", "buffaly-agent", "ToReadOntologyTree", "Execute", args), "Loading the Dispatch tree")
      .then(function (resultText) { return JSON.parse(resultText); });
  }
 
  function readOntologyChildren(rootName, parentName, after, sessionKey) {
    var args = JSON.stringify({ rootName: rootName, parentName: parentName, after: after || "" });
-   return BuffalyAgentService.RunProtoScriptMethodAsync(sessionKey || "", "buffaly-agent", "ToReadOntologyChildren", "Execute", args)
+   return withTimeout(BuffalyAgentService.RunProtoScriptMethodAsync(sessionKey || "", "buffaly-agent", "ToReadOntologyChildren", "Execute", args), "Loading Dispatch tree children")
      .then(function (resultText) { return JSON.parse(resultText); });
  }
 
@@ -63,8 +85,8 @@
     var header = element("header", "dtv-header");
     var body = element("div", "dtv-body");
     panel.setAttribute("role", "dialog");
-    panel.setAttribute("aria-label", "Ontology Tree");
-    header.appendChild(element("h2", "dtv-title", "Ontology Tree"));
+    panel.setAttribute("aria-label", "Dispatch Tree");
+    header.appendChild(element("h2", "dtv-title", "Dispatch Tree"));
     var headerIcon = element("span", "dtv-title-icon");
     headerIcon.innerHTML = "&#128202;";
     header.insertBefore(headerIcon, header.firstChild);
@@ -129,7 +151,16 @@
         })
         .catch(function (err) {
           body.replaceChildren();
-          body.appendChild(element("p", "dtv-error", "Error: " + err.message));
+          var errorPanel = element("div", "dtv-error");
+          var message = errorMessage(err);
+          errorPanel.appendChild(element("strong", "dtv-error-title", "Dispatch tree unavailable"));
+          errorPanel.appendChild(element("p", "dtv-error-message", message));
+          errorPanel.appendChild(element("p", "dtv-error-guidance", sessionGuidance(message)));
+          var retry = element("button", "dtv-btn dtv-retry-btn", "Retry");
+          retry.type = "button";
+          retry.onclick = loadAndRender;
+          errorPanel.appendChild(retry);
+          body.appendChild(errorPanel);
         });
     }
 
@@ -166,7 +197,10 @@
                     resp.children.forEach(function (c) { ontologyState.loadedNodes.set(c.prototypeName, c); });
                     renderOntologyBody();
                   })
-                  .catch(function () { expandBtn.textContent = "!"; });
+                  .catch(function (err) {
+                    expandBtn.textContent = "!";
+                    expandBtn.title = errorMessage(err);
+                  });
                 return;
               }
             }
