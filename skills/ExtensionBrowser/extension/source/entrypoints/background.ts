@@ -14,7 +14,9 @@ async function startInstallationChannel(): Promise<void> {
 }
 
 function isTrustedExtensionPage(sender: chrome.runtime.MessageSender): boolean {
-  return sender.id === chrome.runtime.id && sender.tab === undefined;
+	if (sender.id !== chrome.runtime.id || !sender.url) return false;
+	const trustedOrigin = new URL(chrome.runtime.getURL('/')).origin;
+	return new URL(sender.url).origin === trustedOrigin;
 }
 
 // Export the CDP bridge hook at module evaluation time. WXT's lifecycle

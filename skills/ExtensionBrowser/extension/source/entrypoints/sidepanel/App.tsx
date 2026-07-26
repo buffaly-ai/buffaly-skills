@@ -7,6 +7,7 @@ async function callTool(tool: string, args: Record<string, unknown> = {}): Promi
 
 interface ActiveTab { tabId: number; url: string; title: string }
 interface ConversationBootstrap { Origin: string; ConversationSlotId: string; SessionBindingId: string; DisplayName: string; NavigationToken: string }
+interface WorkerResponse<T> { ok: boolean; data?: T; error?: string }
 type View = 'work' | 'activity';
 const originStorageKey = 'BuffalyOrigin';
 const defaultOrigin = 'http://127.0.0.1:5016';
@@ -61,12 +62,13 @@ export default function App() {
   const connect = useCallback(async () => {
     setBusy('connect'); setError('');
     try {
-      const authorization = await chrome.runtime.sendMessage({ type: 'authorize_buffaly_installation', origin });
-      if (!authorization.ok) throw new Error(authorization.error);
+      const authorization = await chrome.runtime.sendMessage({ type: 'authorize_buffaly_installation', origin }) as WorkerResponse<{ Origin: string }> | undefined;
+      if (!authorization) throw new Error('The ExtensionBrowser service worker did not answer. Reload the extension and reopen the side panel.');
+      if (!authorization.ok || !authorization.data) throw new Error(authorization.error || 'Buffaly authorization failed.');
       await chrome.storage.local.set({ [originStorageKey]: authorization.data.Origin });
       setConnected(true);
-      const created = await chrome.runtime.sendMessage({ type: 'create_buffaly_conversation', displayName: 'Chrome conversation' });
-      if (!created.ok) throw new Error(created.error);
+      const created = await chrome.runtime.sendMessage({ type: 'create_buffaly_conversation', displayName: 'Chrome conversation' }) as WorkerResponse<ConversationBootstrap> | undefined;
+      if (!created?.ok || !created.data) throw new Error(created?.error || 'The bound conversation could not be created.');
       setConversation(created.data as ConversationBootstrap);
     } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
     finally { setBusy(''); }

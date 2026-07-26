@@ -11,6 +11,8 @@ assert.match(connection, /if \(this\.connecting\) return this\.connecting/, 'cha
 assert.doesNotMatch(connection, /reconnectTimer[\s\S]{0,160}connecting\s*=\s*null/, 'reconnect callback must not clear an in-flight connection');
 assert.match(connection, /SessionBindingId: invocation\.SessionBindingId, InvocationId: invocation\.InvocationId/, 'completion must preserve composite correlation');
 assert.match(background, /new InstallationChannel\(connection, handleToolCall\)/, 'service worker must own the installation channel and tool dispatch');
+assert.match(background, /sender\.id !== chrome\.runtime\.id \|\| !sender\.url/, 'trusted extension messages must require this extension identity and URL');
+assert.doesNotMatch(background, /sender\.tab === undefined/, 'side-panel trust must not assume the sender has no associated tab');
 assert.match(background, /createConversation\(connection, 'CreateNew', crypto\.randomUUID\(\)/, 'service worker must create each new conversation slot');
 assert.match(background, /ACTIVE_CONVERSATION_STORAGE_KEY/, 'service worker must own the opaque active binding pointer');
 assert.match(background, /issueNavigationToken\(connection, binding\.SessionBindingId\)/, 'service worker must mint a fresh token when restoring a conversation');
@@ -19,5 +21,6 @@ assert.match(panel, /NavigationToken/, 'iframe navigation must carry the one-tim
 assert.doesNotMatch(panel, /buffaly-connection/, 'panel must not import the credential-bearing connection module');
 assert.doesNotMatch(panel, /loadConnection|authorizeInstallation|createConversation|issueNavigationToken|redeemNavigation/, 'panel must not call credentialed connection APIs');
 assert.doesNotMatch(panel, /InstallationCredential|ExtensionConnection|SessionKey|sessionKey/, 'panel state and navigation must contain no credential or durable session key');
+assert.match(panel, /service worker did not answer/, 'panel must report a missing worker response explicitly');
 assert.doesNotMatch(panel, /Session key<input/, 'manual session-key targeting must be removed');
 console.log('Extension-bound conversation lifecycle contract passed.');
