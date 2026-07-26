@@ -18,7 +18,7 @@
     styleLoaded = true;
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.7.5";
+    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.7.6";
     document.head.appendChild(link);
   }
 
@@ -27,11 +27,12 @@
     return error.message || error.Error || error.error || (typeof error === "string" ? error : "The Dispatch tree request failed.");
   }
 
-  function withTimeout(promise, operation) {
+  function withTimeout(promise, operation, timeoutMs) {
+    var duration = timeoutMs || 20000;
     return Promise.race([
       promise,
       new Promise(function (_, reject) {
-        window.setTimeout(function () { reject(new Error(operation + " timed out after 20 seconds.")); }, 20000);
+        window.setTimeout(function () { reject(new Error(operation + " timed out after " + Math.round(duration / 1000) + " seconds.")); }, duration);
       })
     ]);
   }
@@ -44,7 +45,7 @@
 
   function ensureSessionRuntime(sessionKey) {
     if (!sessionKey) return Promise.reject(new Error("A session key is required to load the Dispatch tree."));
-    return withTimeout(BuffalyAgentService.EnsureAgentAsync(sessionKey), "Starting the session runtime");
+    return withTimeout(BuffalyAgentService.EnsureAgentAsync(sessionKey), "Starting the session runtime", 90000);
   }
 
   ensureStyle();
@@ -145,7 +146,7 @@
 
     function loadAndRender() {
       body.replaceChildren();
-      body.appendChild(element("p", "dtv-loading", "Loading " + ontologyState.rootName + "..."));
+      body.appendChild(element("p", "dtv-loading", "Starting this session's runtime and loading " + ontologyState.rootName + "..."));
       readOntologyTree(ontologyState.rootName, null, ontologyState.sessionKey)
         .then(function (resp) {
           ontologyState.loadedNodes.set(resp.root.prototypeName, resp.root);
