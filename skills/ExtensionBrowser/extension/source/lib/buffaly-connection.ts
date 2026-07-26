@@ -120,6 +120,7 @@ export class InstallationChannel {
   private socket: WebSocket | null = null;
   private connecting: Promise<void> | null = null;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  private heartbeatTimer: ReturnType<typeof setInterval> | null = null;
   private stopped = false;
 
   constructor(private readonly connection: ExtensionConnection, private readonly invoke: (tool: string, args: Record<string, unknown>) => Promise<ToolResult>) {}
@@ -136,6 +137,7 @@ export class InstallationChannel {
     this.stopped = true;
     if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
     this.reconnectTimer = null;
+    this.stopHeartbeat();
     this.socket?.close();
     this.socket = null;
   }
@@ -145,9 +147,13 @@ export class InstallationChannel {
     channelUrl.protocol = channelUrl.protocol === 'https:' ? 'wss:' : 'ws:';
     const socket = new WebSocket(channelUrl);
     this.socket = socket;
-    socket.addEventListener('open', () => socket.send(JSON.stringify({ Type: 'extension_handshake', SchemaVersion: 1, InstallationRegistrationId: this.connection.InstallationRegistrationId, InstallationCredential: this.connection.InstallationCredential })));
+    socket.addEventListener('open', () => {
+      socket.send(JSON.stringify({ Type: 'extension_handshake', SchemaVersion: 1, InstallationRegistrationId: this.connection.InstallationRegistrationId, InstallationCredential: this.connection.InstallationCredential }));
+      this.startHeartbeat(socket);
+    });
     socket.addEventListener('message', (event) => void this.handleMessage(socket, event.data));
     socket.addEventListener('close', () => {
+      this.stopHeartbeat();
       if (this.socket === socket) this.socket = null;
       if (!this.stopped && !this.reconnectTimer) this.reconnectTimer = setTimeout(() => {
         this.reconnectTimer = null;
@@ -155,6 +161,20 @@ export class InstallationChannel {
       }, 2000);
     });
     socket.addEventListener('error', () => socket.close());
+  }
+
+  private startHeartbeat(socket: WebSocket): void {
+    this.stopHeartbeat();
+    this.heartbeatTimer = setInterval(() => {
+      if (this.socket === socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({ Type: 'channel_heartbeat', SchemaVersion: 1 }));
+      }
+    }, 20_000);
+  }
+
+  private stopHeartbeat(): void {
+    if (this.heartbeatTimer) clearInterval(this.heartbeatTimer);
+    this.heartbeatTimer = null;
   }
 
   private async handleMessage(socket: WebSocket, raw: unknown): Promise<void> {

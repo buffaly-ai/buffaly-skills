@@ -9,6 +9,9 @@ assert.match(connection, /chrome\.identity\.launchWebAuthFlow/, 'installation au
 assert.match(connection, /InstallationCredential/, 'credential must be retained by the connection owner');
 assert.match(connection, /if \(this\.connecting\) return this\.connecting/, 'channel connection attempts must be single-flight');
 assert.doesNotMatch(connection, /reconnectTimer[\s\S]{0,160}connecting\s*=\s*null/, 'reconnect callback must not clear an in-flight connection');
+assert.match(connection, /channel_heartbeat/, 'MV3 installation channel must send typed heartbeats');
+assert.match(connection, /setInterval[\s\S]{0,240}20_000/, 'channel heartbeat must keep the MV3 worker alive on a bounded interval');
+assert.match(connection, /stopHeartbeat\(\)/, 'channel heartbeat timer must be cleaned up');
 assert.match(connection, /SessionBindingId: invocation\.SessionBindingId, InvocationId: invocation\.InvocationId/, 'completion must preserve composite correlation');
 assert.match(background, /new InstallationChannel\(connection, handleToolCall\)/, 'service worker must own the installation channel and tool dispatch');
 assert.match(background, /sender\.id !== chrome\.runtime\.id \|\| !sender\.url/, 'trusted extension messages must require this extension identity and URL');

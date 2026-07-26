@@ -28,6 +28,7 @@ check(sidepanel.includes('presentation') && sidepanel.includes('sidepanel'), 'si
 check(sidepanel.includes('navigationToken'), 'side panel one-time navigation-token bootstrap is missing');
 check(!sidepanel.includes('sessionKey') && !sidepanel.includes('SessionKey'), 'side panel must not navigate with a durable session key');
 check(background.includes('extension_handshake'), 'installation WebSocket channel handshake is missing');
+check(background.includes('channel_heartbeat'), 'installation WebSocket channel heartbeat is missing');
 check(background.includes('tool_completion'), 'bound tool completion contract is missing');
 for (const size of [16, 48, 128]) {
   const file = path.join(root, `.output/chrome-mv3/icon/${size}.png`);
