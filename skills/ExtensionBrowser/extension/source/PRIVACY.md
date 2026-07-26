@@ -8,11 +8,11 @@ Depending on the requested tool, the extension can access the active page URL an
 
 ## Data handling
 
-The extension does not sell browser data, use it for advertising, or include analytics or tracking SDKs. It does not declare storage permission and does not persist browsing content in Chrome extension storage. Tool results are returned to the initiating local caller. The side panel keeps a bounded in-memory activity log for the current service-worker lifetime.
+The extension does not sell browser data, use it for advertising, or include analytics or tracking SDKs. Chrome extension storage contains only the user-configured Buffaly origin and session key; it does not contain browsing content, model responses, credentials, or page captures. Tool results are returned to the initiating local caller. The side panel keeps a bounded in-memory activity log for the current service-worker lifetime.
 
 ## Network behavior
 
-The extension itself does not send page content to a developer-operated analytics or advertising endpoint. When used with Buffaly, the separate Buffaly installation controls any subsequent model or service processing under that installation's configuration.
+The extension itself does not send page content to a developer-operated analytics or advertising endpoint. The side panel can embed the user-configured Buffaly installation's frame-enabled session shell. That iframe communicates directly with that Buffaly origin under its own authentication and data-processing configuration; it receives no direct Chrome extension API or debugger-consent access. When used with Buffaly, the separate Buffaly installation controls any subsequent model or service processing under that installation's configuration.
 
 ## Safety
 

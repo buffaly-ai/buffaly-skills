@@ -59,6 +59,18 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    chrome.storage.local.get(embedSettingsKey).then((stored) => {
+      const settings = stored[embedSettingsKey] as BuffalyEmbedSettings | undefined;
+      if (!settings) return;
+      getEmbedUrl(settings);
+      if (!settings.SessionKey.trim()) throw new Error('Stored Buffaly session key is empty.');
+      setEmbedSettings(settings);
+      setEmbedDraft(settings);
+      setEmbedConnected(true);
+    }).catch((error) => setEmbedError(error instanceof Error ? error.message : String(error)));
+  }, []);
+
+  useEffect(() => {
     refreshStatus();
     const runtimeListener = (msg: { type: string; entries?: ToolLogEntry[] }) => {
       if (msg.type === 'tool_log_update' && msg.entries) setToolLog(msg.entries);

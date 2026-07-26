@@ -45,8 +45,8 @@ Native quick action
   -> existing background typed router
   -> ToolResult + native activity stream
 
-Future embedded Buffaly session
-  -> configured HTTPS/local Buffaly embed URL + authenticated session
+Embedded Buffaly session
+  -> configured HTTP(S) Buffaly origin + explicit session key
   -> Buffaly session invokes typed ExtensionBrowser action
   -> local bridge -> existing background typed router
   -> result returns to Buffaly session
@@ -60,16 +60,15 @@ Iframe postMessage (future)
 - `entrypoints/sidepanel/App.tsx`: restructure into branded header, page-context card, control banner, Work/Activity views, outcome actions, transcript, and explicitly labeled quick-command fallback. Preserve existing tool routing and debugger consent mechanics.
 - `entrypoints/sidepanel/style.css`: replace generic gray/blue styling with Buffaly cream/ink/coral visual tokens, high-density responsive layout, accessible focus/disabled states, and motion-reduction support.
 - `wxt.config.ts`: later add `storage` only when a real host-configuration contract is implemented; no speculative permissions in this batch.
-- `lib/embedded-buffaly.ts` (future): own exact-origin validation, session bootstrap, connection state, and non-privileged context messages.
+- `entrypoints/sidepanel/App.tsx`: validates and persists one `BuffalyEmbedSettings` record, constructs the fixed Next-shell URL, and owns connect/disconnect lifecycle. No iframe-to-extension tool message channel exists.
 - `README.md` and `PRIVACY.md` (future embed batch): document configured host, authentication, iframe data flow, and retention boundaries before enabling it.
 
 ## 8. Representative Contract
-Future configuration (not implemented until host endpoint exists):
+Implemented extension configuration:
 ```ts
-interface BuffalyEmbedConfig {
-  origin: string;
-  sessionKey?: string;
-  mode: 'new-session' | 'resume-session';
+interface BuffalyEmbedSettings {
+  Origin: string;
+  SessionKey: string;
 }
 ```
 Allowed iframe messages should be a closed union such as `embed_ready`, `session_changed`, and `request_takeover`. Tool names, selectors, arbitrary URLs, debugger consent, and raw page content must not be accepted from `postMessage`.
