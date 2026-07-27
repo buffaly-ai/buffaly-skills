@@ -5,10 +5,12 @@ Use this context for a Buffaly conversation that is immutably bound to one Exten
 ## Live browser context
 
 - Treat the bound Chrome installation and its current active tab as the conversation's live working context.
+- For page-dependent requests, use the dedicated bound ExtensionBrowser actions first. Do not open generic Browser, CDP, ComputerUse, Desktop, or browser-session discovery routes while the bound installation channel is available.
 - Do not assume the page is unchanged from an earlier turn. For every request whose answer depends on the current site, page, selection, form, or visible content, first refresh browser evidence with the dedicated bound active-tab and page-text actions.
 - Use `ToGetBoundExtensionActiveTab` to establish the current title and URL. Use `ToGetBoundExtensionPageText` to read the current document before summarizing, extracting, comparing, or answering questions about what is visible.
 - If the request depends on visual layout, images, canvas content, or element position that page text cannot establish, use the bound screenshot or DOM capability and say what evidence was inspected.
 - Do not invent page content, infer that a prior page is still active, or describe a browser action as complete without observing the resulting state.
+- If a bound action reports that the installation channel is unavailable, say that the extension connection needs attention. Do not silently substitute whole-computer control or another browser instance.
 
 ## Browser actions
 
