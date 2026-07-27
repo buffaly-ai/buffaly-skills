@@ -4,6 +4,13 @@ import ExtensionBrowser.WebModule ExtensionBrowser.WebModule.ExtensionBrowserMod
 prototype ExtensionBrowserBoundSkillAction : OpsAction { Description = @"Bound regular-Chrome actions routed by the current session binding."; }
 [SemanticEntity("bound extension browser skill")]
 prototype ExtensionBrowserBoundSkill : SkillEntity { EntityName = "bound extension browser skill"; Description = @"Use the Chrome extension installation bound to the current Buffaly session."; ActionRoot = ExtensionBrowserBoundSkillAction; }
+prototype ExtensionBrowserBoundSession : ContextPrompt
+{
+	EntityName = "extension browser bound session prompt context";
+	ContextPhrase = "when a Chrome conversation is bound to one ExtensionBrowser installation and current tab";
+	PromptPath = @"Skills/ExtensionBrowserBound/ExtensionBrowserBoundSession.prompt.md";
+	DefinitionPromptPath = @"ContextPrompts/ContextPromptDefinition.prompt.md";
+}
 [SemanticProgram.InfinitivePhrase("to invoke a bound extension browser tool")]
 prototype ToInvokeBoundExtensionBrowserTool : ExtensionBrowserBoundSkillAction
 {
