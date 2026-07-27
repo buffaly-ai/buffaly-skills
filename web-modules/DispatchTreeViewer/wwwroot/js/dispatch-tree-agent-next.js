@@ -18,7 +18,7 @@
     styleLoaded = true;
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.7.10";
+    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.7.11";
     document.head.appendChild(link);
   }
 
@@ -69,11 +69,13 @@
 
   function loadDispatchTreeItems(context) {
     var sessionKey = context && context.sessionKey ? String(context.sessionKey).trim() : "";
-    if (!sessionKey || typeof BuffalyAgentService.GetAgentObjectAsync !== "function") return [];
-    return BuffalyAgentService.GetAgentObjectAsync({ sessionKey: sessionKey })
-      .then(function (status) {
-        var agentName = status && status.AgentName ? String(status.AgentName).trim() : "";
-        return /(^|[-_])dispatch(?:er)?(?:$|[-_])/i.test(agentName) ? [dispatchTreeItem(sessionKey)] : [];
+    var artifacts = window.BuffalySessionArtifacts;
+    if (!sessionKey || !artifacts || typeof artifacts.getSessionArtifactText !== "function") return [];
+    return artifacts.getSessionArtifactText(sessionKey, "artifacts/nl-memory/SessionMemory.pts", true)
+      .then(function (artifact) {
+        var content = artifact && artifact.Exists && artifact.Content ? String(artifact.Content) : "";
+        var hasDispatchRoot = /(^|\r?\n)\s*prototype\s+DispatchMemoryRoot(?:\s*:\s*[A-Za-z_][A-Za-z0-9_.]*|\s*)\s*[;{]/m.test(content);
+        return hasDispatchRoot ? [dispatchTreeItem(sessionKey)] : [];
       })
       .catch(function () { return []; });
   }
