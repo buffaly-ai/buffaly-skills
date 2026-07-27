@@ -1,24 +1,188 @@
 <!doctype html>
-<html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{{DOCUMENT_TITLE}}</title></head>
-<body style="margin:0;background:#f3f5f8;font-family:Segoe UI,Arial,sans-serif;color:#182334;line-height:1.55">
-<main style="max-width:760px;margin:28px auto;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 12px 34px rgba(20,34,55,.12)">
-<header style="padding:24px 32px 32px;background:#111d2f;color:#fff">
-<img src="{{LOGO_DATA_URI}}" width="190" alt="Intelligence Factory" style="display:block;width:190px;max-width:55%;height:auto;margin:0 0 28px">
-<p style="margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#a9c4ef">{{REPORT_LABEL}} · {{TIMEFRAME}}</p>
-<h1 style="margin:0 0 14px;font-size:30px;line-height:1.2;color:#fff">{{HEADLINE}}</h1>
-<p style="margin:0;color:#d9e3f2;font-size:16px">{{EXECUTIVE_SUMMARY}}</p>
-</header>
-<section style="padding:28px 32px">
-<h2 style="margin:0 0 10px;font-size:21px;color:#182334">What the data shows</h2>
-{{VISUALIZATIONS}}
-<h2 style="margin:0 0 10px;font-size:21px;color:#182334">Recommended actions</h2>
-{{ACTIONS}}
-<h2 style="margin:30px 0 6px;font-size:21px;color:#182334">Source analysis</h2>
-<p style="margin:0 0 18px;color:#64748b">The evidence behind the summary, organized by source.</p>
-{{SOURCE_DETAILS}}
-<footer style="margin-top:28px;padding-top:18px;border-top:1px solid #dce3ec;color:#66758a;font-size:12px">{{FOOTER}}</footer>
-</section>
-</main>
+<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<meta name="format-detection" content="telephone=no,date=no,address=no,email=no">
+<title>{{DOCUMENT_TITLE}}</title>
+<!--[if mso]>
+<xml><o:OfficeDocumentSettings><o:AllowPNG/><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml>
+<style type="text/css">
+body, table, td, p, h1, h2, h3, li, div { font-family: Arial, Helvetica, sans-serif !important; }
+table { border-collapse: collapse !important; }
+</style>
+<![endif]-->
+<style type="text/css">
+body, table, td, p, h1, h2, h3, li, div { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+img { border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
+table { border-collapse: collapse; }
+a { color: #1f5bb5; }
+svg { display: block; width: 100%; height: auto; }
+@media only screen and (max-width: 640px) {
+  .if-shell { width: 100% !important; max-width: 100% !important; }
+  .if-pad { padding-left: 20px !important; padding-right: 20px !important; }
+  .if-pad-top { padding-top: 26px !important; }
+  .if-pad-bottom { padding-bottom: 26px !important; }
+  .if-title { font-size: 26px !important; line-height: 1.22 !important; }
+  .if-summary { font-size: 16px !important; }
+  .if-logo { width: 148px !important; }
+  .if-frame { border-radius: 0 !important; }
+}
+</style>
+</head>
+<body style="margin:0;padding:0;background:#eef2f7;color:#182334;font-family:'Segoe UI',Segoe,Arial,Helvetica,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased">
+
+<!-- Outer canvas -->
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#eef2f7">
+<tr>
+<td align="center" style="padding:24px 12px 40px">
+
+<!--[if mso]><table role="presentation" border="0" cellpadding="0" cellspacing="0" width="680"><tr><td><![endif]-->
+
+<!-- Report shell -->
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="680" class="if-shell if-frame" style="width:680px;max-width:680px;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 14px 38px rgba(17,29,47,.14)">
+
+  <!-- Brand stripe -->
+  <tr>
+    <td style="font-size:0;line-height:0">
+      <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+          <td width="46%" height="5" style="height:5px;line-height:5px;font-size:0;background:#2766c7">&nbsp;</td>
+          <td width="30%" height="5" style="height:5px;line-height:5px;font-size:0;background:#ee6c3b">&nbsp;</td>
+          <td width="24%" height="5" style="height:5px;line-height:5px;font-size:0;background:#2a9d78">&nbsp;</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- Masthead -->
+  <tr>
+    <td class="if-pad" style="padding:30px 36px 34px;background:#0f1b2d">
+      <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+          <td style="padding:0 0 26px">
+            <img src="{{LOGO_DATA_URI}}" width="180" alt="Intelligence Factory" class="if-logo" style="display:block;width:180px;max-width:60%;height:auto;border:0">
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:0 0 12px;font-size:11px;line-height:1.4;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#8fb2e8;mso-line-height-rule:exactly">{{REPORT_LABEL}} &middot; {{TIMEFRAME}}</td>
+        </tr>
+        <tr>
+          <td class="if-title" style="padding:0 0 12px;font-size:31px;line-height:1.2;font-weight:700;color:#ffffff;letter-spacing:-.2px;mso-line-height-rule:exactly">{{HEADLINE}}</td>
+        </tr>
+        <tr>
+          <td style="font-size:16px;line-height:1.55;color:#c6d5ea">Traffic performance briefing</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- Executive summary: the top-line takeaway, given the most visual weight on the page -->
+  <tr>
+    <td class="if-pad if-pad-top" style="padding:28px 36px 6px;background:#ffffff">
+      <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#f3f7fd;border:1px solid #d5e2f5;border-left:5px solid #2766c7;border-radius:12px">
+        <tr>
+          <td style="padding:22px 24px 24px">
+            <p style="margin:0 0 10px;font-size:11px;line-height:1.4;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#2766c7">Executive summary</p>
+            <div class="if-summary" style="font-size:17px;line-height:1.6;color:#16233a;font-weight:500">{{EXECUTIVE_SUMMARY}}</div>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- Visualizations -->
+  <tr>
+    <td class="if-pad" style="padding:26px 36px 0;background:#ffffff">
+      <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+          <td style="padding:0 0 14px;border-top:1px solid #e4eaf2">
+            <p style="margin:16px 0 4px;font-size:11px;line-height:1.4;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#7c8ba1">Signals</p>
+            <h2 style="margin:0 0 6px;font-size:20px;line-height:1.3;font-weight:700;color:#16233a">What the data shows</h2>
+            <p style="margin:0;font-size:14px;line-height:1.55;color:#64748b">Comparable measures drawn from the sources analyzed below.</p>
+          </td>
+        </tr>
+        <tr>
+          <!-- Slot renders inline-SVG chart cards; keep this cell padding-free so charts span the full column -->
+          <td style="font-size:15px;line-height:1.6;color:#27364a">{{VISUALIZATIONS}}</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- Priority actions -->
+  <tr>
+    <td class="if-pad" style="padding:26px 36px 0;background:#ffffff">
+      <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+          <td style="padding:0 0 14px;border-top:1px solid #e4eaf2">
+            <p style="margin:16px 0 4px;font-size:11px;line-height:1.4;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#c2551f">Do next</p>
+            <h2 style="margin:0;font-size:20px;line-height:1.3;font-weight:700;color:#16233a">Priority actions</h2>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#fdf6f2;border:1px solid #f3d9c9;border-radius:12px">
+              <tr>
+                <td style="padding:20px 24px;font-size:15px;line-height:1.65;color:#27364a">{{ACTIONS}}</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- Source analysis: always visible, never collapsed -->
+  <tr>
+    <td class="if-pad if-pad-bottom" style="padding:26px 36px 32px;background:#ffffff">
+      <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+          <td style="padding:0 0 16px;border-top:1px solid #e4eaf2">
+            <p style="margin:16px 0 4px;font-size:11px;line-height:1.4;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#7c8ba1">Evidence</p>
+            <h2 style="margin:0 0 6px;font-size:20px;line-height:1.3;font-weight:700;color:#16233a">Source analysis</h2>
+            <p style="margin:0;font-size:14px;line-height:1.55;color:#64748b">The full evidence behind the summary, organized by source. Every source analyzed is listed here in full.</p>
+          </td>
+        </tr>
+        <tr>
+          <!-- Slot renders one visible, styled section per source -->
+          <td style="font-size:15px;line-height:1.65;color:#27364a">{{SOURCE_DETAILS}}</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- Footer -->
+  <tr>
+    <td class="if-pad" style="padding:22px 36px 26px;background:#f5f7fb;border-top:1px solid #e0e7f0">
+      <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+          <td style="padding:0 0 6px;font-size:12px;line-height:1.4;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#3d4d63">Intelligence Factory</td>
+        </tr>
+        <tr>
+          <td style="font-size:12px;line-height:1.6;color:#66758a">{{FOOTER}}</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+</table>
+<!-- /Report shell -->
+
+<!--[if mso]></td></tr></table><![endif]-->
+
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="680" class="if-shell" style="width:680px;max-width:680px">
+<tr>
+  <td align="center" style="padding:16px 12px 0;font-size:11px;line-height:1.5;color:#8b98ac">Generated automatically by Intelligence Factory.</td>
+</tr>
+</table>
+
+</td>
+</tr>
+</table>
+
 </body>
 </html>
