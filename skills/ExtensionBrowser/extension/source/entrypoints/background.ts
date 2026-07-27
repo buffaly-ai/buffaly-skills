@@ -22,7 +22,8 @@ async function invokeBoundTool(tool: string, args: Record<string, unknown>, iden
     }
     throw new Error('The ExtensionBrowser side panel did not persist a bound tool result.');
   })();
-  return Promise.race([portResult, durableResult]).finally(() => pendingBoundTools.delete(requestId));
+  const liveOrDurableResult = portResult.catch(() => durableResult);
+  return Promise.race([liveOrDurableResult, durableResult]).finally(() => pendingBoundTools.delete(requestId));
 }
 
 async function startInstallationChannel(): Promise<void> {
