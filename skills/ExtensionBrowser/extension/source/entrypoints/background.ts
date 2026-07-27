@@ -145,6 +145,26 @@ export default defineBackground(() => {
       return true;
     }
 
+    if (request.type === 'open_buffaly_conversation_tab') {
+      if (!isTrustedExtensionPage(sender)) {
+        sendResponse({ ok: false, error: 'Unauthorized: conversation pop-out can only originate from an extension page' });
+        return false;
+      }
+      Promise.all([loadConnection(), chrome.storage.local.get(ACTIVE_CONVERSATION_STORAGE_KEY)])
+        .then(async ([connection, stored]) => {
+          const binding = stored[ACTIVE_CONVERSATION_STORAGE_KEY] as ConversationBinding | undefined;
+          if (!connection || !binding) throw new Error('No active Buffaly conversation is available.');
+          const navigation = await issueNavigationToken(connection, binding.SessionBindingId);
+          const url = new URL('/web-modules/ExtensionBrowser/conversation', connection.Origin);
+          url.searchParams.set('navigationToken', navigation.NavigationToken);
+          await chrome.tabs.create({ url: url.toString(), active: true });
+          return { Opened: true };
+        })
+        .then((data) => sendResponse({ ok: true, data }))
+        .catch((err: Error) => sendResponse({ ok: false, error: err.message }));
+      return true;
+    }
+
     if (request.type === 'create_buffaly_conversation') {
       if (!isTrustedExtensionPage(sender)) {
         sendResponse({ ok: false, error: 'Unauthorized: conversations can only be created from an extension page' });

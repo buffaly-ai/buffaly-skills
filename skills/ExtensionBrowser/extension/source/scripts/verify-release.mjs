@@ -8,6 +8,8 @@ const manifest = JSON.parse(fs.readFileSync(path.join(root, '.output/chrome-mv3/
 const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
 const background = fs.readFileSync(path.join(root, '.output/chrome-mv3/background.js'), 'utf8');
 const sidepanel = fs.readFileSync(path.join(root, '.output/chrome-mv3/chunks', fs.readdirSync(path.join(root, '.output/chrome-mv3/chunks')).find((file) => file.startsWith('sidepanel-'))), 'utf8');
+const backgroundSource = fs.readFileSync(path.join(root, 'entrypoints/background.ts'), 'utf8');
+const sidepanelSource = fs.readFileSync(path.join(root, 'entrypoints/sidepanel/App.tsx'), 'utf8');
 const failures = [];
 const check = (condition, message) => { if (!condition) failures.push(message); };
 
@@ -26,6 +28,10 @@ check(!sidepanel.includes('BuffalyActiveConversation'), 'side panel must not per
 check(background.includes('BuffalyActiveConversationBinding'), 'service worker active binding pointer storage contract is missing');
 check(sidepanel.includes('presentation') && sidepanel.includes('sidepanel'), 'side panel compact presentation route is missing');
 check(sidepanel.includes('navigationToken'), 'side panel one-time navigation-token bootstrap is missing');
+check(sidepanelSource.includes('BuffalyPanelMode') && sidepanelSource.includes('mode-${panelMode}') && sidepanelSource.includes("type PanelMode = 'chat' | 'agent'"), 'persistent Chat and Agent presentation modes are missing');
+check(sidepanelSource.includes('open_buffaly_conversation_tab'), 'bound conversation full-tab pop-out control is missing');
+check(backgroundSource.includes('open_buffaly_conversation_tab') && backgroundSource.includes("chrome.tabs.create({ url: url.toString(), active: true })"), 'service-worker-owned bound conversation pop-out is missing');
+check(backgroundSource.includes("url.searchParams.set('navigationToken', navigation.NavigationToken)") && !backgroundSource.includes("url.searchParams.set('sessionKey'"), 'pop-out must use a fresh one-time navigation token instead of a session key');
 check(!sidepanel.includes('sessionKey') && !sidepanel.includes('SessionKey'), 'side panel must not navigate with a durable session key');
 check(background.includes('extension_handshake'), 'installation WebSocket channel handshake is missing');
 check(background.includes('channel_heartbeat'), 'installation WebSocket channel heartbeat is missing');

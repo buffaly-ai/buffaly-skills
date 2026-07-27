@@ -11,7 +11,9 @@ interface ActiveTab { tabId: number; url: string; title: string }
 interface ConversationBootstrap { Origin: string; ConversationSlotId: string; SessionBindingId: string; DisplayName: string; NavigationToken: string }
 interface WorkerResponse<T> { ok: boolean; data?: T; error?: string }
 type View = 'work' | 'activity';
+type PanelMode = 'chat' | 'agent';
 const originStorageKey = 'BuffalyOrigin';
+const panelModeStorageKey = 'BuffalyPanelMode';
 const defaultOrigin = 'http://127.0.0.1:5016';
 
 function conversationUrl(bootstrap: ConversationBootstrap): string {
@@ -28,6 +30,7 @@ export default function App() {
   const [debuggerAttached, setDebuggerAttached] = useState(false);
   const [activeTab, setActiveTab] = useState<ActiveTab | null>(null);
   const [view, setView] = useState<View>('work');
+  const [panelMode, setPanelMode] = useState<PanelMode>('chat');
   const [busy, setBusy] = useState('');
   const [connected, setConnected] = useState(false);
   const [conversation, setConversation] = useState<ConversationBootstrap | null>(null);
@@ -45,11 +48,12 @@ export default function App() {
     Promise.all([
       chrome.runtime.sendMessage({ type: 'get_buffaly_connection_status' }),
       chrome.runtime.sendMessage({ type: 'get_buffaly_conversation_bootstrap' }),
-      chrome.storage.local.get(originStorageKey),
+      chrome.storage.local.get([originStorageKey, panelModeStorageKey]),
     ]).then(([status, bootstrap, stored]) => {
       if (status.ok) setConnected(Boolean(status.data.Connected));
       if (bootstrap.ok && bootstrap.data) setConversation(bootstrap.data as ConversationBootstrap);
       if (stored[originStorageKey]) setOrigin(stored[originStorageKey] as string);
+      if (stored[panelModeStorageKey] === 'agent' || stored[panelModeStorageKey] === 'chat') setPanelMode(stored[panelModeStorageKey] as PanelMode);
     }).catch((reason) => setError(reason instanceof Error ? reason.message : String(reason)));
   }, []);
 
@@ -115,14 +119,29 @@ export default function App() {
     finally { setBusy(''); }
   }, [connected]);
 
+  const selectPanelMode = useCallback((mode: PanelMode) => {
+    setPanelMode(mode);
+    setView('work');
+    void chrome.storage.local.set({ [panelModeStorageKey]: mode });
+  }, []);
+
+  const openConversationTab = useCallback(async () => {
+    setBusy('popout'); setError('');
+    try {
+      const opened = await chrome.runtime.sendMessage({ type: 'open_buffaly_conversation_tab' }) as WorkerResponse<{ Opened: boolean }> | undefined;
+      if (!opened?.ok) throw new Error(opened?.error || 'The conversation could not be opened in a tab.');
+    } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
+    finally { setBusy(''); }
+  }, []);
+
   const enableControl = useCallback(async () => { setBusy('control'); chrome.runtime.sendMessage({ type: 'grant_debugger_consent' }); await callTool('attach_debugger'); setBusy(''); await refreshStatus(); }, [refreshStatus]);
   const pauseControl = useCallback(async () => { setBusy('control'); await callTool('detach_debugger'); chrome.runtime.sendMessage({ type: 'revoke_debugger_consent' }); setBusy(''); await refreshStatus(); }, [refreshStatus]);
 
-  return <main className="app">
-    <header className="topbar"><div className="brand"><img src={logo48Url} alt="" /><div><strong>Buffaly</strong><span>{conversation ? 'Connected conversation' : 'Browser workspace'}</span></div></div><span className={`live-state ${connected ? 'active' : ''}`}><i />{connected ? 'Connected' : 'Setup'}</span></header>
-    <section className="page-card" aria-label="Current page"><div className="page-icon">↗</div><div className="page-copy"><span>Working on</span><strong>{activeTab?.title || 'Current page'}</strong><small>{activeTab?.url || 'Open a web page to begin'}</small></div><button className="icon-button" onClick={refreshStatus} aria-label="Refresh page context">↻</button></section>
-    <section className={`control-card ${debuggerAttached ? 'enabled' : ''}`}><div><strong>{debuggerAttached ? 'Buffaly can act on this tab' : 'Page access is ready'}</strong><p>{debuggerAttached ? 'Trusted clicks and typing are enabled.' : 'Enable control when this conversation needs to click or type.'}</p></div><button onClick={debuggerAttached ? pauseControl : enableControl} disabled={busy === 'control'}>{debuggerAttached ? 'Pause' : 'Enable'}</button></section>
-    <nav className="tabs" aria-label="Workspace views"><button className={view === 'work' ? 'selected' : ''} onClick={() => setView('work')}>Chat</button><button className={view === 'activity' ? 'selected' : ''} onClick={() => setView('activity')}>Activity <span>{toolLog.length}</span></button>{conversation && <button className="new-conversation" onClick={newConversation} disabled={!!busy}>New</button>}</nav>
+  return <main className={`app mode-${panelMode}`}>
+    <header className="topbar"><div className="brand"><img src={logo48Url} alt="" /><div><strong>Buffaly</strong><span>{conversation ? 'Connected conversation' : 'Browser workspace'}</span></div></div><div className="topbar-actions"><div className="mode-switch" aria-label="Panel mode"><button className={panelMode === 'chat' ? 'selected' : ''} onClick={() => selectPanelMode('chat')}>Chat</button><button className={panelMode === 'agent' ? 'selected' : ''} onClick={() => selectPanelMode('agent')}>Agent</button></div><span className={`live-state ${connected ? 'active' : ''}`} title={connected ? 'Connected' : 'Setup'}><i /><b>{connected ? 'Connected' : 'Setup'}</b></span></div></header>
+    {panelMode === 'agent' && <><section className="page-card" aria-label="Current page"><div className="page-icon">↗</div><div className="page-copy"><span>Working on</span><strong>{activeTab?.title || 'Current page'}</strong><small>{activeTab?.url || 'Open a web page to begin'}</small></div><button className="icon-button" onClick={refreshStatus} aria-label="Refresh page context">↻</button></section>
+    <section className={`control-card ${debuggerAttached ? 'enabled' : ''}`}><div><strong>{debuggerAttached ? 'Buffaly can act on this tab' : 'Page access is ready'}</strong><p>{debuggerAttached ? 'Trusted clicks and typing are enabled.' : 'Enable control when this conversation needs to click or type.'}</p></div><button onClick={debuggerAttached ? pauseControl : enableControl} disabled={busy === 'control'}>{debuggerAttached ? 'Pause' : 'Enable'}</button></section></>}
+    <nav className="tabs" aria-label="Workspace views"><button className={view === 'work' ? 'selected' : ''} onClick={() => setView('work')}>Chat</button><button className={view === 'activity' ? 'selected' : ''} onClick={() => setView('activity')}>Activity <span>{toolLog.length}</span></button>{conversation && <><button className="new-conversation" onClick={newConversation} disabled={!!busy}>New</button><button className="popout-conversation" onClick={openConversationTab} disabled={!!busy} aria-label="Open conversation in a full tab" title="Open in full tab">↗</button></>}</nav>
     {view === 'work' ? <section className={`workspace ${conversation ? 'embedded' : ''}`}>{connected && conversation ? <div className="embed-shell"><iframe title="Buffaly session" src={conversationUrl(conversation)} allow="clipboard-read; clipboard-write; microphone" /></div> : <div className="welcome"><img src={logo128Url} alt="Buffaly" /><p className="eyebrow">BUFFALY + THIS PAGE</p><h1>Chat with this page</h1><p>Connect once. Buffaly will create a conversation automatically bound to this Chrome installation.</p><label className="origin-field">Buffaly origin<input value={origin} onChange={(event) => setOrigin(event.target.value)} /></label>{error && <div className="settings-error">{error}</div>}<button className="connect-button" onClick={connect} disabled={!!busy}>Authorize Buffaly <span>{busy ? 'Connecting…' : 'Open sign-in'}</span></button></div>}</section> : <section className="activity-panel">{toolLog.length === 0 ? <div className="activity-empty"><b>✓</b><h2>No browser activity yet</h2><p>Actions from this bound conversation will appear here.</p></div> : toolLog.slice().reverse().map((entry) => <article key={entry.id} className={`activity-row ${entry.status}`}><i>{entry.status === 'success' ? '✓' : entry.status === 'error' ? '!' : '·'}</i><div><strong>{entry.tool.replaceAll('_', ' ')}</strong><small>{new Date(entry.timestamp).toLocaleTimeString()} · {entry.status}</small></div></article>)}</section>}
   </main>;
 }
