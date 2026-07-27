@@ -25,6 +25,7 @@ export interface ConversationBootstrap extends ConversationBinding {
 export const ACTIVE_CONVERSATION_STORAGE_KEY = 'BuffalyActiveConversationBinding';
 const PENDING_COMPLETION_STORAGE_PREFIX = 'BuffalyPendingCompletion:';
 const PENDING_INVOCATION_STORAGE_PREFIX = 'BuffalyPendingInvocation:';
+export const BOUND_TOOL_RESULT_STORAGE_PREFIX = 'BuffalyBoundToolResult:';
 const PENDING_COMPLETION_LIFETIME_MS = 45_000;
 
 interface ToolInvocation {
@@ -52,6 +53,20 @@ interface PendingToolCompletion {
 interface PendingToolInvocation {
   CreatedAtUtc: string;
   Invocation: ToolInvocation;
+}
+
+export interface BoundToolInvocationIdentity {
+  SessionBindingId: string;
+  InvocationId: string;
+}
+
+interface PendingBoundToolResult {
+  CreatedAtUtc: string;
+  Result: ToolResult;
+}
+
+export function boundToolResultStorageKey(identity: BoundToolInvocationIdentity): string {
+  return BOUND_TOOL_RESULT_STORAGE_PREFIX + identity.SessionBindingId + ':' + identity.InvocationId;
 }
 
 interface NavigateArguments {
@@ -155,7 +170,7 @@ export class InstallationChannel {
   private resumingInvocations: Promise<void> | null = null;
   private stopped = false;
 
-  constructor(private readonly connection: ExtensionConnection, private readonly invoke: (tool: string, args: Record<string, unknown>) => Promise<ToolResult>) {}
+  constructor(private readonly connection: ExtensionConnection, private readonly invoke: (tool: string, args: Record<string, unknown>, identity: BoundToolInvocationIdentity) => Promise<ToolResult>) {}
 
   start(): Promise<void> {
     if (this.socket?.readyState === WebSocket.OPEN) return Promise.resolve();
@@ -246,8 +261,10 @@ export class InstallationChannel {
     if (invocation.Tool === 'navigate' || invocation.Tool === 'get_active_tab') {
       await chrome.storage.local.set({ [invocationStorageKey]: { CreatedAtUtc: new Date().toISOString(), Invocation: invocation } satisfies PendingToolInvocation });
     }
-    const result = await this.invoke(invocation.Tool, args);
+    const identity = { SessionBindingId: invocation.SessionBindingId, InvocationId: invocation.InvocationId };
+    const result = await this.invoke(invocation.Tool, args, identity);
     const pendingCompletion = await this.persistCompletion(invocation, result);
+    await chrome.storage.local.remove(boundToolResultStorageKey(identity));
     await chrome.storage.local.remove(invocationStorageKey);
     await this.deliverCompletion(pendingCompletion);
   }
@@ -293,10 +310,14 @@ export class InstallationChannel {
       let args: Record<string, unknown>;
       try { args = JSON.parse(item.Invocation.ArgumentsJson) as Record<string, unknown>; }
       catch { await chrome.storage.local.remove(key); continue; }
-      const result = item.Invocation.Tool === 'navigate'
+      const identity = { SessionBindingId: item.Invocation.SessionBindingId, InvocationId: item.Invocation.InvocationId };
+      const resultKey = boundToolResultStorageKey(identity);
+      const storedResult = (await chrome.storage.local.get(resultKey))[resultKey] as PendingBoundToolResult | undefined;
+      const result = storedResult?.Result ?? (item.Invocation.Tool === 'navigate'
         ? await this.resumeNavigation(args as unknown as NavigateArguments)
-        : await this.invoke(item.Invocation.Tool, args);
+        : await this.invoke(item.Invocation.Tool, args, identity));
       await this.persistCompletion(item.Invocation, result);
+      await chrome.storage.local.remove(resultKey);
       await chrome.storage.local.remove(key);
     }
     await this.flushPendingCompletions();

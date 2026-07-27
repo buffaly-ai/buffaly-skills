@@ -1,18 +1,18 @@
 import { handleToolCall, grantDebuggerConsent, revokeDebuggerConsent } from '../lib/tool-router';
 import { detachDebugger, isAttached } from '../lib/debugger-session';
 import { getLogEntries, getLogVersion } from '../lib/tool-log';
-import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, authorizeInstallation, createConversation, issueNavigationToken, loadConnection, type ConversationBinding } from '../lib/buffaly-connection';
+import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, authorizeInstallation, createConversation, issueNavigationToken, loadConnection, type BoundToolInvocationIdentity, type ConversationBinding } from '../lib/buffaly-connection';
 
 let installationChannel: InstallationChannel | null = null;
 let boundToolPort: chrome.runtime.Port | null = null;
 const pendingBoundTools = new Map<string, { resolve: (result: Awaited<ReturnType<typeof handleToolCall>>) => void; reject: (error: Error) => void }>();
 
-async function invokeBoundTool(tool: string, args: Record<string, unknown>): Promise<Awaited<ReturnType<typeof handleToolCall>>> {
+async function invokeBoundTool(tool: string, args: Record<string, unknown>, identity: BoundToolInvocationIdentity): Promise<Awaited<ReturnType<typeof handleToolCall>>> {
   if (!boundToolPort) throw new Error('The ExtensionBrowser side panel is not available to execute the bound tool.');
   const requestId = crypto.randomUUID();
   return new Promise((resolve, reject) => {
     pendingBoundTools.set(requestId, { resolve, reject });
-    boundToolPort!.postMessage({ type: 'execute_bound_tool', requestId, tool, args });
+    boundToolPort!.postMessage({ type: 'execute_bound_tool', requestId, tool, args, identity });
   });
 }
 

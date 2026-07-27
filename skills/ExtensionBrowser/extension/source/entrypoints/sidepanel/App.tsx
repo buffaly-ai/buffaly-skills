@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { ToolResult, ToolLogEntry } from '../../lib/types';
 import { handleToolCall } from '../../lib/tool-router';
+import { boundToolResultStorageKey, type BoundToolInvocationIdentity } from '../../lib/buffaly-connection';
 
 async function callTool(tool: string, args: Record<string, unknown> = {}): Promise<ToolResult> {
   return new Promise((resolve) => chrome.runtime.sendMessage({ type: 'tool_call', tool, args }, resolve));
@@ -61,10 +62,13 @@ export default function App() {
       if (disposed || boundToolPort) return;
       const port = chrome.runtime.connect({ name: 'bound-tool-executor' });
       boundToolPort = port;
-      port.onMessage.addListener((msg: { type: string; requestId: string; tool?: string; args?: Record<string, unknown> }) => {
-        if (msg.type !== 'execute_bound_tool' || !msg.tool) return;
+      port.onMessage.addListener((msg: { type: string; requestId: string; tool?: string; args?: Record<string, unknown>; identity?: BoundToolInvocationIdentity }) => {
+        if (msg.type !== 'execute_bound_tool' || !msg.tool || !msg.identity) return;
         handleToolCall(msg.tool, msg.args || {})
-          .then((result) => port.postMessage({ type: 'bound_tool_result', requestId: msg.requestId, result }))
+          .then(async (result) => {
+            await chrome.storage.local.set({ [boundToolResultStorageKey(msg.identity!)]: { CreatedAtUtc: new Date().toISOString(), Result: result } });
+            port.postMessage({ type: 'bound_tool_result', requestId: msg.requestId, result });
+          })
           .catch((reason: Error) => port.postMessage({ type: 'bound_tool_result', requestId: msg.requestId, error: reason.message }));
       });
       port.onDisconnect.addListener(() => {
