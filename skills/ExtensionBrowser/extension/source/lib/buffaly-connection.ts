@@ -224,15 +224,21 @@ export class InstallationChannel {
       await chrome.storage.local.set({ [invocationStorageKey]: { CreatedAtUtc: new Date().toISOString(), Invocation: invocation } satisfies PendingToolInvocation });
     }
     const result = await this.invoke(invocation.Tool, args);
-    await this.persistCompletion(invocation, result);
+    const pendingCompletion = await this.persistCompletion(invocation, result);
     await chrome.storage.local.remove(invocationStorageKey);
-    await this.flushPendingCompletions();
+    if (this.socket === socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify(pendingCompletion.Completion));
+      await chrome.storage.local.remove(pendingCompletion.StorageKey);
+    } else {
+      await this.flushPendingCompletions();
+    }
   }
 
-  private persistCompletion(invocation: ToolInvocation, result: ToolResult): Promise<void> {
+  private async persistCompletion(invocation: ToolInvocation, result: ToolResult): Promise<{ StorageKey: string; Completion: ToolCompletion }> {
     const completion = toCompletion(invocation, result);
     const storageKey = PENDING_COMPLETION_STORAGE_PREFIX + invocation.SessionBindingId + ':' + invocation.InvocationId;
-    return chrome.storage.local.set({ [storageKey]: { CreatedAtUtc: new Date().toISOString(), Completion: completion } satisfies PendingToolCompletion });
+    await chrome.storage.local.set({ [storageKey]: { CreatedAtUtc: new Date().toISOString(), Completion: completion } satisfies PendingToolCompletion });
+    return { StorageKey: storageKey, Completion: completion };
   }
 
   private resumePendingInvocations(): Promise<void> {
