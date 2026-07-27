@@ -168,6 +168,7 @@ export class InstallationChannel {
     const socket = new WebSocket(channelUrl);
     this.socket = socket;
     socket.addEventListener('close', () => this.handleClose(socket));
+    socket.addEventListener('message', (event) => void this.handleMessage(socket, event.data));
     await new Promise<void>((resolve, reject) => {
       socket.addEventListener('open', () => {
         socket.send(JSON.stringify({ Type: 'extension_handshake', SchemaVersion: 1, InstallationRegistrationId: this.connection.InstallationRegistrationId, InstallationCredential: this.connection.InstallationCredential }));
@@ -180,7 +181,6 @@ export class InstallationChannel {
         socket.close();
       }, { once: true });
     });
-    socket.addEventListener('message', (event) => void this.handleMessage(socket, event.data));
     socket.addEventListener('error', () => socket.close());
   }
 
@@ -299,7 +299,6 @@ export class InstallationChannel {
   }
 
   private async flushPendingCompletionsCore(): Promise<void> {
-    const endpoint = new URL('/web-modules/ExtensionBrowser/api/channel/completions', this.connection.Origin);
     for (let attempt = 0; attempt < 10; attempt++) {
       const stored = await chrome.storage.local.get(null);
       const pending = Object.entries(stored).filter(([key]) => key.startsWith(PENDING_COMPLETION_STORAGE_PREFIX)) as [string, PendingToolCompletion][];
@@ -309,14 +308,8 @@ export class InstallationChannel {
           await chrome.storage.local.remove(key);
           continue;
         }
-        if (this.socket?.readyState === WebSocket.OPEN) {
-          this.socket.send(JSON.stringify(item.Completion));
-          await chrome.storage.local.remove(key);
-          continue;
-        }
         try {
-          const response = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ InstallationRegistrationId: this.connection.InstallationRegistrationId, InstallationCredential: this.connection.InstallationCredential, Completion: item.Completion }) });
-          if (response.ok && (await response.json() as { Matched: boolean }).Matched) await chrome.storage.local.remove(key);
+          await this.deliverCompletion({ StorageKey: key, Completion: item.Completion });
         } catch {
           // Navigation can replace the worker before delivery. The persisted
           // completion is flushed by this or the replacement worker startup.

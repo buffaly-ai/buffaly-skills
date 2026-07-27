@@ -54,19 +54,31 @@ export default function App() {
 
   useEffect(() => {
     refreshStatus();
-    const boundToolPort = chrome.runtime.connect({ name: 'bound-tool-executor' });
-    boundToolPort.onMessage.addListener((msg: { type: string; requestId: string; tool?: string; args?: Record<string, unknown> }) => {
-      if (msg.type !== 'execute_bound_tool' || !msg.tool) return;
-      handleToolCall(msg.tool, msg.args || {})
-        .then((result) => boundToolPort.postMessage({ type: 'bound_tool_result', requestId: msg.requestId, result }))
-        .catch((reason: Error) => boundToolPort.postMessage({ type: 'bound_tool_result', requestId: msg.requestId, error: reason.message }));
-    });
+    let boundToolPort: chrome.runtime.Port | null = null;
+    let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+    let disposed = false;
+    const connectBoundToolPort = () => {
+      if (disposed || boundToolPort) return;
+      const port = chrome.runtime.connect({ name: 'bound-tool-executor' });
+      boundToolPort = port;
+      port.onMessage.addListener((msg: { type: string; requestId: string; tool?: string; args?: Record<string, unknown> }) => {
+        if (msg.type !== 'execute_bound_tool' || !msg.tool) return;
+        handleToolCall(msg.tool, msg.args || {})
+          .then((result) => port.postMessage({ type: 'bound_tool_result', requestId: msg.requestId, result }))
+          .catch((reason: Error) => port.postMessage({ type: 'bound_tool_result', requestId: msg.requestId, error: reason.message }));
+      });
+      port.onDisconnect.addListener(() => {
+        if (boundToolPort === port) boundToolPort = null;
+        if (!disposed && !reconnectTimer) reconnectTimer = setTimeout(() => { reconnectTimer = null; connectBoundToolPort(); }, 250);
+      });
+    };
+    connectBoundToolPort();
     const runtimeListener = (msg: { type: string; entries?: ToolLogEntry[] }) => {
       if (msg.type === 'tool_log_update' && msg.entries) setToolLog(msg.entries);
     };
     const tabListener = () => refreshStatus();
     chrome.runtime.onMessage.addListener(runtimeListener); chrome.tabs.onActivated.addListener(tabListener); chrome.tabs.onUpdated.addListener(tabListener);
-    return () => { boundToolPort.disconnect(); chrome.runtime.onMessage.removeListener(runtimeListener); chrome.tabs.onActivated.removeListener(tabListener); chrome.tabs.onUpdated.removeListener(tabListener); };
+    return () => { disposed = true; if (reconnectTimer) clearTimeout(reconnectTimer); boundToolPort?.disconnect(); chrome.runtime.onMessage.removeListener(runtimeListener); chrome.tabs.onActivated.removeListener(tabListener); chrome.tabs.onUpdated.removeListener(tabListener); };
   }, [refreshStatus]);
 
   const connect = useCallback(async () => {
