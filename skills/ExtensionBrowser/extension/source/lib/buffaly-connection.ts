@@ -59,6 +59,18 @@ interface NavigateArguments {
   tabId?: number;
 }
 
+function canonicalNavigationUrl(value: string): string | null {
+  try {
+    const url = new URL(value);
+    url.hash = '';
+    if ((url.protocol === 'http:' && url.port === '80') || (url.protocol === 'https:' && url.port === '443')) url.port = '';
+    if (!url.pathname) url.pathname = '/';
+    return url.toString();
+  } catch {
+    return null;
+  }
+}
+
 function requiredOrigin(value: string): string {
   const origin = new URL(value);
   if (!['http:', 'https:'].includes(origin.protocol) || origin.pathname !== '/' || origin.search || origin.hash) {
@@ -220,6 +232,17 @@ export class InstallationChannel {
     try { args = JSON.parse(invocation.ArgumentsJson) as Record<string, unknown>; }
     catch { throw new Error('Buffaly tool invocation arguments are invalid JSON.'); }
     const invocationStorageKey = PENDING_INVOCATION_STORAGE_PREFIX + invocation.SessionBindingId + ':' + invocation.InvocationId;
+    const completionStorageKey = PENDING_COMPLETION_STORAGE_PREFIX + invocation.SessionBindingId + ':' + invocation.InvocationId;
+    const existing = await chrome.storage.local.get([invocationStorageKey, completionStorageKey]);
+    const existingCompletion = existing[completionStorageKey] as PendingToolCompletion | undefined;
+    if (existingCompletion) {
+      await this.deliverCompletion({ StorageKey: completionStorageKey, Completion: existingCompletion.Completion });
+      return;
+    }
+    if (existing[invocationStorageKey]) {
+      await this.resumePendingInvocations();
+      return;
+    }
     if (invocation.Tool === 'navigate' || invocation.Tool === 'get_active_tab') {
       await chrome.storage.local.set({ [invocationStorageKey]: { CreatedAtUtc: new Date().toISOString(), Invocation: invocation } satisfies PendingToolInvocation });
     }
@@ -286,10 +309,12 @@ export class InstallationChannel {
     const tab = args.tabId === undefined
       ? (await chrome.tabs.query({ active: true, lastFocusedWindow: true }))[0]
       : await chrome.tabs.get(args.tabId);
-    if (tab?.id !== undefined && tab.url === args.url) {
+    const requestedUrl = canonicalNavigationUrl(args.url);
+    const currentUrl = tab?.url ? canonicalNavigationUrl(tab.url) : null;
+    if (tab?.id !== undefined && requestedUrl !== null && currentUrl === requestedUrl) {
       return { ok: true, data: { ok: true, requestedUrl: args.url, tabId: tab.id } };
     }
-    return this.invoke('navigate', args as unknown as Record<string, unknown>);
+    return { ok: false, error: 'Navigation was interrupted before its completion was recorded; the browser action was not repeated.', code: 'NavigationCompletionInterrupted' };
   }
 
   private flushPendingCompletions(): Promise<void> {
