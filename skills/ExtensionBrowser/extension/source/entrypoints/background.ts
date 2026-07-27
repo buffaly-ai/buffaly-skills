@@ -8,6 +8,9 @@ let boundToolPort: chrome.runtime.Port | null = null;
 const pendingBoundTools = new Map<string, { resolve: (result: Awaited<ReturnType<typeof handleToolCall>>) => void; reject: (error: Error) => void }>();
 
 async function invokeBoundTool(tool: string, args: Record<string, unknown>, identity: BoundToolInvocationIdentity): Promise<Awaited<ReturnType<typeof handleToolCall>>> {
+  // These operations are backed only by chrome.tabs and acknowledge before
+  // destination page lifecycle can tear down the side-panel execution context.
+  if (tool === 'navigate' || tool === 'get_active_tab') return handleToolCall(tool, args);
   if (!boundToolPort) throw new Error('The ExtensionBrowser side panel is not available to execute the bound tool.');
   const requestId = crypto.randomUUID();
   const portResult = new Promise<Awaited<ReturnType<typeof handleToolCall>>>((resolve, reject) => {
