@@ -57,11 +57,13 @@ export default function App() {
     refreshStatus();
     let boundToolPort: chrome.runtime.Port | null = null;
     let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+    let heartbeatTimer: ReturnType<typeof setInterval> | null = null;
     let disposed = false;
     const connectBoundToolPort = () => {
       if (disposed || boundToolPort) return;
       const port = chrome.runtime.connect({ name: 'bound-tool-executor' });
       boundToolPort = port;
+      heartbeatTimer = setInterval(() => port.postMessage({ type: 'bound_tool_executor_heartbeat' }), 20_000);
       port.onMessage.addListener((msg: { type: string; requestId: string; tool?: string; args?: Record<string, unknown>; identity?: BoundToolInvocationIdentity }) => {
         if (msg.type !== 'execute_bound_tool' || !msg.tool || !msg.identity) return;
         handleToolCall(msg.tool, msg.args || {})
@@ -73,6 +75,8 @@ export default function App() {
       });
       port.onDisconnect.addListener(() => {
         if (boundToolPort === port) boundToolPort = null;
+        if (heartbeatTimer) clearInterval(heartbeatTimer);
+        heartbeatTimer = null;
         if (!disposed && !reconnectTimer) reconnectTimer = setTimeout(() => { reconnectTimer = null; connectBoundToolPort(); }, 250);
       });
     };
@@ -82,7 +86,7 @@ export default function App() {
     };
     const tabListener = () => refreshStatus();
     chrome.runtime.onMessage.addListener(runtimeListener); chrome.tabs.onActivated.addListener(tabListener); chrome.tabs.onUpdated.addListener(tabListener);
-    return () => { disposed = true; if (reconnectTimer) clearTimeout(reconnectTimer); boundToolPort?.disconnect(); chrome.runtime.onMessage.removeListener(runtimeListener); chrome.tabs.onActivated.removeListener(tabListener); chrome.tabs.onUpdated.removeListener(tabListener); };
+    return () => { disposed = true; if (reconnectTimer) clearTimeout(reconnectTimer); if (heartbeatTimer) clearInterval(heartbeatTimer); boundToolPort?.disconnect(); chrome.runtime.onMessage.removeListener(runtimeListener); chrome.tabs.onActivated.removeListener(tabListener); chrome.tabs.onUpdated.removeListener(tabListener); };
   }, [refreshStatus]);
 
   const connect = useCallback(async () => {

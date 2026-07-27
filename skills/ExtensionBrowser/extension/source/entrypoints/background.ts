@@ -63,6 +63,7 @@ export default defineBackground(() => {
     boundToolPort?.disconnect();
     boundToolPort = port;
     port.onMessage.addListener((message: { type: string; requestId: string; result?: Awaited<ReturnType<typeof handleToolCall>>; error?: string }) => {
+      if (message.type === 'bound_tool_executor_heartbeat') return;
       if (message.type !== 'bound_tool_result') return;
       const pending = pendingBoundTools.get(message.requestId);
       if (!pending) return;

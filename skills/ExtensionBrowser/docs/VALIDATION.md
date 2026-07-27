@@ -1,6 +1,6 @@
-# Buffaly Browser Agent 0.2.33 / WebModule 0.1.23 validation
+# Buffaly Browser Agent 0.2.34 / WebModule 0.1.23 validation
 
-0.2.33 keeps reusable installation authorization, channel transport, completion persistence, and authenticated acknowledgement in the MV3 service worker. Bound browser tools execute through one dedicated long-lived port owned by the persistent side-panel extension page, which receives only correlated tool names, arguments, and results. The side panel persists a correlated browser result before returning it to the replaceable worker, so a navigation-triggered worker replacement can recover and deliver the authenticated completion without repeating the browser action. The React state and iframe never receive reusable channel authority.
+0.2.34 keeps reusable installation authorization, channel transport, completion persistence, and authenticated acknowledgement in the MV3 service worker. Bound browser tools execute through one dedicated long-lived port owned by the persistent side-panel extension page, which receives only correlated tool names, arguments, and results. The side panel persists a correlated browser result before returning it to the replaceable worker, so a navigation-triggered worker replacement can recover and deliver the authenticated completion without repeating the browser action. The React state and iframe never receive reusable channel authority.
 
 Validated 2026-07-26 on Windows Google Chrome:
 
@@ -27,3 +27,5 @@ Validated 2026-07-26 on Windows Google Chrome:
 The source gates above do not substitute for the required isolated staging WebModule deployment and regular-Chrome conversation acceptance.
 
 - Live WebSocket completions receive a typed correlation acknowledgement before durable outbox removal; authenticated HTTP remains the recovery path: PASS
+
+- Visible side-panel executor sends one 20-second port heartbeat, cleared on disconnect/unmount, to prevent MV3 suspension without reconnect fan-out: PASS
