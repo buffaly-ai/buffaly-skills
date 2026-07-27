@@ -9,13 +9,204 @@
     "Improve conversion paths on the AI Growth landing page.",
     "Reuse practical implementation themes across paid and organic channels."
   ],
+  "visualizations": [
+    {
+      "key": "traffic-composition",
+      "unit": "visits",
+      "title": "Traffic composition",
+      "items": [
+        {
+          "label": "Human sessions",
+          "displayValue": "706",
+          "value": 706
+        },
+        {
+          "label": "Search bots",
+          "displayValue": "63",
+          "value": 63
+        },
+        {
+          "label": "AI bots",
+          "displayValue": "51",
+          "value": 51
+        },
+        {
+          "label": "Generic bots",
+          "displayValue": "22",
+          "value": 22
+        }
+      ],
+      "description": "Sessions and identified bot traffic by visitor type."
+    },
+    {
+      "key": "acquisition-efficiency",
+      "unit": "USD",
+      "title": "Acquisition cost per conversion",
+      "items": [
+        {
+          "label": "Reddit Ads",
+          "displayValue": "$11.51",
+          "value": 11.51
+        },
+        {
+          "label": "Google Ads",
+          "displayValue": "$18.01",
+          "value": 18.01
+        }
+      ],
+      "description": "Lower cost indicates more efficient paid acquisition."
+    }
+  ],
   "sources": [
-    { "key": "traffic", "name": "Traffic Properties", "status": "sample", "summary": "Human traffic accounts for 84% of sessions. The AI Growth service page leads entrances, while AI bot visibility is measurable and growing.", "metrics": [{"label":"Sessions","value":"842"},{"label":"Human sessions","value":"706"},{"label":"AI bot visits","value":"51"},{"label":"Search bot visits","value":"63"}], "insights": ["The leading landing page is /services/ai-growth."], "diagnostic": "" },
-    { "key": "googleAds", "name": "Google Ads", "status": "sample", "summary": "Paid search produced 27 conversions at an $18.01 cost per conversion. AI Growth Search is the primary contributor.", "metrics": [{"label":"Spend","value":"$486.32"},{"label":"Clicks","value":"391"},{"label":"Conversions","value":"27"},{"label":"Cost per conversion","value":"$18.01"}], "insights": ["Conversion volume is concentrated in the AI Growth Search campaign."], "diagnostic": "" },
-    { "key": "linkedin", "name": "LinkedIn", "status": "sample", "summary": "LinkedIn reached 12,640 impressions and added 34 followers. Practical implementation content generated the strongest engagement.", "metrics": [{"label":"Impressions","value":"12,640"},{"label":"Engagements","value":"417"},{"label":"Clicks","value":"286"},{"label":"Followers gained","value":"34"}], "insights": ["Practical AI growth systems was the strongest post."], "diagnostic": "" },
-    { "key": "openAi", "name": "OpenAI Usage", "status": "sample", "summary": "OpenAI workloads issued 1,834 requests at an estimated $41.28 cost. Usage is concentrated in the primary reasoning model.", "metrics": [{"label":"Requests","value":"1,834"},{"label":"Input tokens","value":"2.84M"},{"label":"Output tokens","value":"492K"},{"label":"Estimated cost","value":"$41.28"}], "insights": ["GPT-5 is the most-used model."], "diagnostic": "" },
-    { "key": "reddit", "name": "Reddit Ads", "status": "sample", "summary": "Reddit Ads generated 19 conversions at an $11.51 cost per conversion, outperforming the sample paid-search acquisition cost.", "metrics": [{"label":"Spend","value":"$218.76"},{"label":"Impressions","value":"88,400"},{"label":"Clicks","value":"612"},{"label":"Conversions","value":"19"},{"label":"Cost per conversion","value":"$11.51"}], "insights": ["Small Business AI is the leading campaign."], "diagnostic": "" }
+    {
+      "key": "traffic",
+      "name": "Traffic Properties",
+      "status": "sample",
+      "summary": "Human traffic accounts for 84% of sessions. The AI Growth service page leads entrances, while AI bot visibility is measurable and growing.",
+      "metrics": [
+        {
+          "label": "Sessions",
+          "value": "842"
+        },
+        {
+          "label": "Human sessions",
+          "value": "706"
+        },
+        {
+          "label": "AI bot visits",
+          "value": "51"
+        },
+        {
+          "label": "Search bot visits",
+          "value": "63"
+        }
+      ],
+      "insights": [
+        "The leading landing page is /services/ai-growth."
+      ],
+      "diagnostic": ""
+    },
+    {
+      "key": "googleAds",
+      "name": "Google Ads",
+      "status": "sample",
+      "summary": "Paid search produced 27 conversions at an $18.01 cost per conversion. AI Growth Search is the primary contributor.",
+      "metrics": [
+        {
+          "label": "Spend",
+          "value": "$486.32"
+        },
+        {
+          "label": "Clicks",
+          "value": "391"
+        },
+        {
+          "label": "Conversions",
+          "value": "27"
+        },
+        {
+          "label": "Cost per conversion",
+          "value": "$18.01"
+        }
+      ],
+      "insights": [
+        "Conversion volume is concentrated in the AI Growth Search campaign."
+      ],
+      "diagnostic": ""
+    },
+    {
+      "key": "linkedin",
+      "name": "LinkedIn",
+      "status": "sample",
+      "summary": "LinkedIn reached 12,640 impressions and added 34 followers. Practical implementation content generated the strongest engagement.",
+      "metrics": [
+        {
+          "label": "Impressions",
+          "value": "12,640"
+        },
+        {
+          "label": "Engagements",
+          "value": "417"
+        },
+        {
+          "label": "Clicks",
+          "value": "286"
+        },
+        {
+          "label": "Followers gained",
+          "value": "34"
+        }
+      ],
+      "insights": [
+        "Practical AI growth systems was the strongest post."
+      ],
+      "diagnostic": ""
+    },
+    {
+      "key": "openAi",
+      "name": "OpenAI Usage",
+      "status": "sample",
+      "summary": "OpenAI workloads issued 1,834 requests at an estimated $41.28 cost. Usage is concentrated in the primary reasoning model.",
+      "metrics": [
+        {
+          "label": "Requests",
+          "value": "1,834"
+        },
+        {
+          "label": "Input tokens",
+          "value": "2.84M"
+        },
+        {
+          "label": "Output tokens",
+          "value": "492K"
+        },
+        {
+          "label": "Estimated cost",
+          "value": "$41.28"
+        }
+      ],
+      "insights": [
+        "GPT-5 is the most-used model."
+      ],
+      "diagnostic": ""
+    },
+    {
+      "key": "reddit",
+      "name": "Reddit Ads",
+      "status": "sample",
+      "summary": "Reddit Ads generated 19 conversions at an $11.51 cost per conversion, outperforming the sample paid-search acquisition cost.",
+      "metrics": [
+        {
+          "label": "Spend",
+          "value": "$218.76"
+        },
+        {
+          "label": "Impressions",
+          "value": "88,400"
+        },
+        {
+          "label": "Clicks",
+          "value": "612"
+        },
+        {
+          "label": "Conversions",
+          "value": "19"
+        },
+        {
+          "label": "Cost per conversion",
+          "value": "$11.51"
+        }
+      ],
+      "insights": [
+        "Small Business AI is the leading campaign."
+      ],
+      "diagnostic": ""
+    }
   ],
   "footer": "Demonstration data from Traffic Properties, Google Ads, LinkedIn, OpenAI Usage, and Reddit Ads. Not live production data.",
-  "promptProvenance": { "promptFile": "aggregator.prompt.md", "promptText": "Combine every available source into the versioned TrafficAnalysis email report view model.", "promptHash": "sample" }
+  "promptProvenance": {
+    "promptFile": "aggregator.prompt.md",
+    "promptText": "Combine every available source into the versioned TrafficAnalysis email report view model.",
+    "promptHash": "sample"
+  }
 }
