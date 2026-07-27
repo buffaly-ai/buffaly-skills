@@ -4,4 +4,4 @@
 
 Added the Provisioning-owned executable `ToDeployOneBuffalyExtensionToStagingSkill`. The action accepts one registered `SourceId`, `PackageType`, and `PackageId`, delegates to the external ReleaseOps coordinator client, and deliberately provides no installer-build or update-all fallback.
 
-Corrected the client reference to the required assembly-name form so extension repository validation can resolve the packaged DLL without a forbidden package-relative path.
+Changed the client reference to assembly-name form so synchronized extension candidates satisfy repository validation while still resolving the package-owned DLL.
