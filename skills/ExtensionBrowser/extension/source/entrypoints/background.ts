@@ -1,7 +1,7 @@
 import { handleToolCall, grantDebuggerConsent, revokeDebuggerConsent } from '../lib/tool-router';
 import { detachDebugger, isAttached } from '../lib/debugger-session';
 import { getLogEntries, getLogVersion } from '../lib/tool-log';
-import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, authorizeInstallation, createConversation, issueNavigationToken, loadBoundToolResult, loadConnection, type BoundToolInvocationIdentity, type ConversationBinding } from '../lib/buffaly-connection';
+import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, PROMPT_POLICY_REVISION, authorizeInstallation, createConversation, issueNavigationToken, loadBoundToolResult, loadConnection, type BoundToolInvocationIdentity, type ConversationBinding } from '../lib/buffaly-connection';
 
 let installationChannel: InstallationChannel | null = null;
 let boundToolPort: chrome.runtime.Port | null = null;
@@ -135,8 +135,13 @@ export default defineBackground(() => {
       }
       Promise.all([loadConnection(), chrome.storage.local.get(ACTIVE_CONVERSATION_STORAGE_KEY)])
         .then(async ([connection, stored]) => {
-          const binding = stored[ACTIVE_CONVERSATION_STORAGE_KEY] as ConversationBinding | undefined;
+          let binding = stored[ACTIVE_CONVERSATION_STORAGE_KEY] as ConversationBinding | undefined;
           if (!connection || !binding) return null;
+          if ((binding.PromptPolicyRevision || 0) < PROMPT_POLICY_REVISION) {
+            const replacement = await createConversation(connection, 'CreateNew', crypto.randomUUID(), binding.DisplayName || 'Chrome conversation');
+            binding = { ConversationSlotId: replacement.ConversationSlotId, SessionBindingId: replacement.SessionBindingId, DisplayName: replacement.DisplayName, PromptPolicyRevision: replacement.PromptPolicyRevision };
+            await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: binding });
+          }
           const navigation = await issueNavigationToken(connection, binding.SessionBindingId);
           return { Origin: connection.Origin, ...binding, NavigationToken: navigation.NavigationToken };
         })
@@ -177,7 +182,7 @@ export default defineBackground(() => {
           return createConversation(connection, 'CreateNew', crypto.randomUUID(), request.displayName || 'Chrome conversation');
         })
         .then(async (bootstrap) => {
-          const binding: ConversationBinding = { ConversationSlotId: bootstrap.ConversationSlotId, SessionBindingId: bootstrap.SessionBindingId, DisplayName: bootstrap.DisplayName };
+          const binding: ConversationBinding = { ConversationSlotId: bootstrap.ConversationSlotId, SessionBindingId: bootstrap.SessionBindingId, DisplayName: bootstrap.DisplayName, PromptPolicyRevision: bootstrap.PromptPolicyRevision };
           await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: binding });
           sendResponse({ ok: true, data: bootstrap });
         })

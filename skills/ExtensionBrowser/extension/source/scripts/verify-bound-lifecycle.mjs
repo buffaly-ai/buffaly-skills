@@ -32,6 +32,8 @@ for (const messageType of ['tool_call', 'buffaly_connection_changed', 'grant_deb
   assert.match(background, new RegExp(`request\\.type === '${messageType}'[\\s\\S]{0,180}!isTrustedExtensionPage\\(sender\\)`), `${messageType} must use exact extension-origin trust`);
 }
 assert.match(background, /createConversation\(connection, 'CreateNew', crypto\.randomUUID\(\)/, 'service worker must create each new conversation slot');
+assert.match(connection, /PROMPT_POLICY_REVISION/, 'extension must version its bound-conversation prompt policy');
+assert.match(background, /binding\.PromptPolicyRevision[\s\S]{0,180}< PROMPT_POLICY_REVISION[\s\S]{0,260}createConversation\(connection, 'CreateNew'/, 'service worker must replace a stored conversation created under an obsolete prompt policy');
 assert.match(background, /ACTIVE_CONVERSATION_STORAGE_KEY/, 'service worker must own the opaque active binding pointer');
 assert.match(background, /issueNavigationToken\(connection, binding\.SessionBindingId\)/, 'service worker must mint a fresh token when restoring a conversation');
 assert.match(panel, /web-modules\/ExtensionBrowser\/conversation/, 'iframe must use the package-owned token bootstrap route');

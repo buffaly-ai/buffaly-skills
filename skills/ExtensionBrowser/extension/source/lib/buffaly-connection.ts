@@ -3,6 +3,7 @@ import type { ToolResult } from './types';
 export const CONNECTION_STORAGE_KEY = 'BuffalyExtensionConnection';
 export const CONVERSATIONS_STORAGE_KEY = 'BuffalyExtensionConversations';
 export const TOOL_SCHEMA_VERSION = 1;
+export const PROMPT_POLICY_REVISION = 1;
 
 export interface ExtensionConnection {
   Origin: string;
@@ -15,6 +16,7 @@ export interface ConversationBinding {
   ConversationSlotId: string;
   SessionBindingId: string;
   DisplayName: string;
+  PromptPolicyRevision: number;
 }
 
 export interface ConversationBootstrap extends ConversationBinding {
@@ -151,12 +153,12 @@ export async function loadConnection(): Promise<ExtensionConnection | null> {
 }
 
 export async function createConversation(connection: ExtensionConnection, mode: 'ReuseCurrent' | 'CreateNew', slotId: string, displayName: string): Promise<ConversationBootstrap> {
-  const binding = await readJson<{ SessionBindingId: string; SessionKey: string }>(await fetch(new URL('/web-modules/ExtensionBrowser/api/session-bindings', connection.Origin), {
+  const binding = await readJson<{ SessionBindingId: string; SessionKey: string; PromptPolicyRevision: number }>(await fetch(new URL('/web-modules/ExtensionBrowser/api/session-bindings', connection.Origin), {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential, ConversationSlotId: slotId, Mode: mode, DisplayName: displayName }),
   }));
   const navigation = await issueNavigationToken(connection, binding.SessionBindingId);
-  return { Origin: connection.Origin, ConversationSlotId: slotId, SessionBindingId: binding.SessionBindingId, DisplayName: displayName, NavigationToken: navigation.NavigationToken };
+  return { Origin: connection.Origin, ConversationSlotId: slotId, SessionBindingId: binding.SessionBindingId, DisplayName: displayName, PromptPolicyRevision: binding.PromptPolicyRevision, NavigationToken: navigation.NavigationToken };
 }
 
 export async function issueNavigationToken(connection: ExtensionConnection, sessionBindingId: string): Promise<{ NavigationToken: string }> {

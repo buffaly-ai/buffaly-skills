@@ -8,7 +8,7 @@ async function callTool(tool: string, args: Record<string, unknown> = {}): Promi
 }
 
 interface ActiveTab { tabId: number; url: string; title: string }
-interface ConversationBootstrap { Origin: string; ConversationSlotId: string; SessionBindingId: string; DisplayName: string; NavigationToken: string }
+interface ConversationBootstrap { Origin: string; ConversationSlotId: string; SessionBindingId: string; DisplayName: string; PromptPolicyRevision: number; NavigationToken: string }
 interface WorkerResponse<T> { ok: boolean; data?: T; error?: string }
 type PanelMode = 'chat' | 'agent';
 const originStorageKey = 'BuffalyOrigin';
