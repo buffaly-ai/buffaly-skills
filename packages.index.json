@@ -17114,7 +17114,7 @@
       "PackageType": "WebModule",
       "Title": "Extension Browser Web Module",
       "Description": "Buffaly Web Module package for Extension Browser Web Module.",
-      "Version": "0.1.31",
+      "Version": "0.1.32",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/ExtensionBrowser",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/ExtensionBrowser",
@@ -17129,15 +17129,15 @@
         },
         {
           "Path": "ExtensionBrowser.WebModule.dll",
-          "Sha256": "0f9e335230712e241c5ba1e4e39df97093f676e38cdc999599a12aa5fb6f9787"
+          "Sha256": "cac505ebf4fe28f4dbef966f6f2e89a4040a18c264bf00e06613f931c5ee42cc"
         },
         {
-          "Path": "ProjectArtifacts/Skills/ExtensionBrowserBound/ExtensionBrowserBoundSession.prompt.md",
+          "Path": "ProjectArtifacts/ContextPrompts/ExtensionBrowserBoundSession.prompt.md",
           "Sha256": "c80716e38131cf7ca911accbb33e6b0e1f6fa0a141107a0e09a4a663e4af54a7"
         },
         {
           "Path": "ProjectArtifacts/Skills/ExtensionBrowserBound/index.pts",
-          "Sha256": "af581cb2760eac73d760fa28389678a6927c9bf7b07b203b659d12cf8a3bff6f"
+          "Sha256": "6c293df133471f18beaf459e708f5b5fc8abec547f1e33cd00d7a8ef6f49af81"
         },
         {
           "Path": "ProjectArtifacts/Skills/ExtensionBrowserBound/SKILL.md",
@@ -17145,13 +17145,17 @@
         },
         {
           "Path": "web-module.json",
-          "Sha256": "dabd07a690716ff1a796983405d915fc11457994874e6ebd605bf8253c4bc371"
+          "Sha256": "61920c27f9af1ff7cb88a00a7f02aaed45f764ec786ff5e61c741c7a95c0799f"
         }
       ],
       "ProjectArtifacts": [
         {
           "ProjectName": "Skills/ExtensionBrowserBound",
           "SourcePath": "ProjectArtifacts/Skills/ExtensionBrowserBound/"
+        },
+        {
+          "ProjectName": "ContextPrompts",
+          "SourcePath": "ProjectArtifacts/ContextPrompts/"
         }
       ],
       "Dependencies": [],

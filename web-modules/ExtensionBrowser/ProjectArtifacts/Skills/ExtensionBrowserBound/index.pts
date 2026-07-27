@@ -8,7 +8,7 @@ prototype ExtensionBrowserBoundSession : ContextPrompt
 {
 	EntityName = "extension browser bound session prompt context";
 	ContextPhrase = "when a Chrome conversation is bound to one ExtensionBrowser installation and current tab";
-	PromptPath = @"Skills/ExtensionBrowserBound/ExtensionBrowserBoundSession.prompt.md";
+	PromptPath = @"ContextPrompts/ExtensionBrowserBoundSession.prompt.md";
 	DefinitionPromptPath = @"ContextPrompts/ContextPromptDefinition.prompt.md";
 }
 [SemanticProgram.InfinitivePhrase("to invoke a bound extension browser tool")]
