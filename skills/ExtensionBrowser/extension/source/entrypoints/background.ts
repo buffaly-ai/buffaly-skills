@@ -26,7 +26,7 @@ function isTrustedExtensionPage(sender: chrome.runtime.MessageSender): boolean {
   handleToolCall(tool, args);
 
 export default defineBackground(() => {
-	void startInstallationChannel();
+	void startInstallationChannel().catch((error) => console.error('Failed to start Buffaly installation channel:', error));
   // ─── Side Panel: Enable open-on-toolbar-click ───
   // CRITICAL: The manifest side_panel.default_path alone does NOT make the
   // toolbar icon open the side panel. This call is required.

@@ -23,6 +23,9 @@ export interface ConversationBootstrap extends ConversationBinding {
 }
 
 export const ACTIVE_CONVERSATION_STORAGE_KEY = 'BuffalyActiveConversationBinding';
+const PENDING_COMPLETION_STORAGE_PREFIX = 'BuffalyPendingCompletion:';
+const PENDING_INVOCATION_STORAGE_PREFIX = 'BuffalyPendingInvocation:';
+const PENDING_COMPLETION_LIFETIME_MS = 45_000;
 
 interface ToolInvocation {
   Type: 'tool_invocation';
@@ -39,6 +42,21 @@ interface ToolCompletion {
   SessionBindingId: string;
   InvocationId: string;
   Result: { Ok: boolean; DataJson: string; Error: string; Code: string };
+}
+
+interface PendingToolCompletion {
+  CreatedAtUtc: string;
+  Completion: ToolCompletion;
+}
+
+interface PendingToolInvocation {
+  CreatedAtUtc: string;
+  Invocation: ToolInvocation;
+}
+
+interface NavigateArguments {
+  url: string;
+  tabId?: number;
 }
 
 function requiredOrigin(value: string): string {
@@ -121,6 +139,8 @@ export class InstallationChannel {
   private connecting: Promise<void> | null = null;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
   private heartbeatTimer: ReturnType<typeof setInterval> | null = null;
+  private flushingCompletions: Promise<void> | null = null;
+  private resumingInvocations: Promise<void> | null = null;
   private stopped = false;
 
   constructor(private readonly connection: ExtensionConnection, private readonly invoke: (tool: string, args: Record<string, unknown>) => Promise<ToolResult>) {}
@@ -147,24 +167,35 @@ export class InstallationChannel {
     channelUrl.protocol = channelUrl.protocol === 'https:' ? 'wss:' : 'ws:';
     const socket = new WebSocket(channelUrl);
     this.socket = socket;
+    socket.addEventListener('close', () => this.handleClose(socket));
     await new Promise<void>((resolve, reject) => {
       socket.addEventListener('open', () => {
         socket.send(JSON.stringify({ Type: 'extension_handshake', SchemaVersion: 1, InstallationRegistrationId: this.connection.InstallationRegistrationId, InstallationCredential: this.connection.InstallationCredential }));
         this.startHeartbeat(socket);
+        void this.resumePendingInvocations();
         resolve();
       }, { once: true });
-      socket.addEventListener('error', () => reject(new Error('Buffaly channel connection failed.')), { once: true });
+      socket.addEventListener('error', () => {
+        reject(new Error('Buffaly channel connection failed.'));
+        socket.close();
+      }, { once: true });
     });
     socket.addEventListener('message', (event) => void this.handleMessage(socket, event.data));
-    socket.addEventListener('close', () => {
-      this.stopHeartbeat();
-      if (this.socket === socket) this.socket = null;
-      if (!this.stopped && !this.reconnectTimer) this.reconnectTimer = setTimeout(() => {
-        this.reconnectTimer = null;
-        void this.start();
-      }, 2000);
-    });
     socket.addEventListener('error', () => socket.close());
+  }
+
+  private handleClose(socket: WebSocket): void {
+    this.stopHeartbeat();
+    if (this.socket === socket) this.socket = null;
+    this.scheduleReconnect();
+  }
+
+  private scheduleReconnect(): void {
+    if (this.stopped || this.reconnectTimer) return;
+    this.reconnectTimer = setTimeout(() => {
+      this.reconnectTimer = null;
+      void this.start().catch(() => this.scheduleReconnect());
+    }, 2000);
   }
 
   private startHeartbeat(socket: WebSocket): void {
@@ -188,18 +219,87 @@ export class InstallationChannel {
     let args: Record<string, unknown>;
     try { args = JSON.parse(invocation.ArgumentsJson) as Record<string, unknown>; }
     catch { throw new Error('Buffaly tool invocation arguments are invalid JSON.'); }
-    const result = await this.invoke(invocation.Tool, args);
-    const completion = JSON.stringify(toCompletion(invocation, result));
-    const current = this.socket;
-    if (current?.readyState === WebSocket.OPEN) {
-      current.send(completion);
-      return;
+    const invocationStorageKey = PENDING_INVOCATION_STORAGE_PREFIX + invocation.SessionBindingId + ':' + invocation.InvocationId;
+    if (invocation.Tool === 'navigate' || invocation.Tool === 'get_active_tab') {
+      await chrome.storage.local.set({ [invocationStorageKey]: { CreatedAtUtc: new Date().toISOString(), Invocation: invocation } satisfies PendingToolInvocation });
     }
-    // Navigation can recycle the MV3 channel while Chrome is still executing
-    // the invocation. Reconnect once and deliver the correlated completion on
-    // the current installation channel instead of silently dropping it.
-    await this.start();
-    if (this.socket?.readyState !== WebSocket.OPEN) throw new Error('Buffaly channel did not reconnect for tool completion.');
-    this.socket.send(completion);
+    const result = await this.invoke(invocation.Tool, args);
+    await this.persistCompletion(invocation, result);
+    await chrome.storage.local.remove(invocationStorageKey);
+    await this.flushPendingCompletions();
+  }
+
+  private persistCompletion(invocation: ToolInvocation, result: ToolResult): Promise<void> {
+    const completion = toCompletion(invocation, result);
+    const storageKey = PENDING_COMPLETION_STORAGE_PREFIX + invocation.SessionBindingId + ':' + invocation.InvocationId;
+    return chrome.storage.local.set({ [storageKey]: { CreatedAtUtc: new Date().toISOString(), Completion: completion } satisfies PendingToolCompletion });
+  }
+
+  private resumePendingInvocations(): Promise<void> {
+    if (this.resumingInvocations) return this.resumingInvocations;
+    this.resumingInvocations = this.resumePendingInvocationsCore().finally(() => { this.resumingInvocations = null; });
+    return this.resumingInvocations;
+  }
+
+  private async resumePendingInvocationsCore(): Promise<void> {
+    const stored = await chrome.storage.local.get(null);
+    const pending = Object.entries(stored).filter(([key]) => key.startsWith(PENDING_INVOCATION_STORAGE_PREFIX)) as [string, PendingToolInvocation][];
+    for (const [key, item] of pending) {
+      if (Date.now() - Date.parse(item.CreatedAtUtc) >= PENDING_COMPLETION_LIFETIME_MS) {
+        await chrome.storage.local.remove(key);
+        continue;
+      }
+      let args: Record<string, unknown>;
+      try { args = JSON.parse(item.Invocation.ArgumentsJson) as Record<string, unknown>; }
+      catch { await chrome.storage.local.remove(key); continue; }
+      const result = item.Invocation.Tool === 'navigate'
+        ? await this.resumeNavigation(args as unknown as NavigateArguments)
+        : await this.invoke(item.Invocation.Tool, args);
+      await this.persistCompletion(item.Invocation, result);
+      await chrome.storage.local.remove(key);
+    }
+    await this.flushPendingCompletions();
+  }
+
+  private async resumeNavigation(args: NavigateArguments): Promise<ToolResult> {
+    if (!args || typeof args.url !== 'string' || !args.url) {
+      return { ok: false, error: 'A valid navigation URL is required.' };
+    }
+    const tab = args.tabId === undefined
+      ? (await chrome.tabs.query({ active: true, lastFocusedWindow: true }))[0]
+      : await chrome.tabs.get(args.tabId);
+    if (tab?.id !== undefined && tab.url === args.url) {
+      return { ok: true, data: { ok: true, requestedUrl: args.url, tabId: tab.id } };
+    }
+    return this.invoke('navigate', args as unknown as Record<string, unknown>);
+  }
+
+  private flushPendingCompletions(): Promise<void> {
+    if (this.flushingCompletions) return this.flushingCompletions;
+    this.flushingCompletions = this.flushPendingCompletionsCore().finally(() => { this.flushingCompletions = null; });
+    return this.flushingCompletions;
+  }
+
+  private async flushPendingCompletionsCore(): Promise<void> {
+    const endpoint = new URL('/web-modules/ExtensionBrowser/api/channel/completions', this.connection.Origin);
+    for (let attempt = 0; attempt < 10; attempt++) {
+      const stored = await chrome.storage.local.get(null);
+      const pending = Object.entries(stored).filter(([key]) => key.startsWith(PENDING_COMPLETION_STORAGE_PREFIX)) as [string, PendingToolCompletion][];
+      if (pending.length === 0) return;
+      for (const [key, item] of pending) {
+        if (Date.now() - Date.parse(item.CreatedAtUtc) >= PENDING_COMPLETION_LIFETIME_MS) {
+          await chrome.storage.local.remove(key);
+          continue;
+        }
+        try {
+          const response = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ InstallationRegistrationId: this.connection.InstallationRegistrationId, InstallationCredential: this.connection.InstallationCredential, Completion: item.Completion }) });
+          if (response.ok && (await response.json() as { Matched: boolean }).Matched) await chrome.storage.local.remove(key);
+        } catch {
+          // Navigation can replace the worker before delivery. The persisted
+          // completion is flushed by this or the replacement worker startup.
+        }
+      }
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
   }
 }

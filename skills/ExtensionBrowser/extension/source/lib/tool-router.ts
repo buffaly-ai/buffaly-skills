@@ -238,21 +238,10 @@ async function handleNavigate(args: NavigateArgs): Promise<ToolResult> {
 
   await chrome.tabs.update(tabId, { url: args.url });
 
-  // Wait for tab to finish loading
-  await new Promise<void>((resolve) => {
-    const timeout = setTimeout(resolve, 15000);
-    const listener = (tabId2: number, info: chrome.tabs.OnUpdatedInfo) => {
-      if (tabId2 === tabId && info.status === 'complete') {
-        clearTimeout(timeout);
-        chrome.tabs.onUpdated.removeListener(listener);
-        resolve();
-      }
-    };
-    chrome.tabs.onUpdated.addListener(listener);
-  });
-
-  const tab = await chrome.tabs.get(tabId);
-  return { ok: true, data: { ok: true, finalUrl: tab.url ?? args.url, title: tab.title ?? '', tabId } };
+  // A tab navigation can recycle the MV3 channel. Acknowledge Chrome accepting
+  // the update immediately; callers use get_active_tab separately after load
+  // when they need the final URL and title.
+  return { ok: true, data: { ok: true, requestedUrl: args.url, tabId } };
 }
 
 async function handleClick(args: ClickArgs): Promise<ToolResult> {
