@@ -18,7 +18,7 @@
     styleLoaded = true;
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.7.11";
+    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.7.12";
     document.head.appendChild(link);
   }
 
@@ -67,6 +67,39 @@
     };
   }
 
+  function stripProtoScriptComments(source) {
+    var output = "";
+    var state = "code";
+    for (var i = 0; i < source.length; i += 1) {
+      var current = source[i];
+      var next = i + 1 < source.length ? source[i + 1] : "";
+      if (state === "line-comment") {
+        if (current === "\r" || current === "\n") { output += current; state = "code"; }
+        else output += " ";
+      } else if (state === "block-comment") {
+        if (current === "*" && next === "/") { output += "  "; i += 1; state = "code"; }
+        else output += current === "\r" || current === "\n" ? current : " ";
+      } else if (state === "string") {
+        output += current;
+        if (current === "\\" && next) { output += next; i += 1; }
+        else if (current === "\"") state = "code";
+      } else if (current === "/" && next === "/") {
+        output += "  "; i += 1; state = "line-comment";
+      } else if (current === "/" && next === "*") {
+        output += "  "; i += 1; state = "block-comment";
+      } else {
+        output += current;
+        if (current === "\"") state = "string";
+      }
+    }
+    return state === "block-comment" ? null : output;
+  }
+
+  function hasDispatchMemoryRootDeclaration(source) {
+    var uncommented = stripProtoScriptComments(source);
+    return uncommented !== null && /(^|\r?\n)\s*prototype\s+DispatchMemoryRoot(?:\s*:\s*[A-Za-z_][A-Za-z0-9_.]*|\s*)\s*[;{]/m.test(uncommented);
+  }
+
   function loadDispatchTreeItems(context) {
     var sessionKey = context && context.sessionKey ? String(context.sessionKey).trim() : "";
     var artifacts = window.BuffalySessionArtifacts;
@@ -74,7 +107,7 @@
     return artifacts.getSessionArtifactText(sessionKey, "artifacts/nl-memory/SessionMemory.pts", true)
       .then(function (artifact) {
         var content = artifact && artifact.Exists && artifact.Content ? String(artifact.Content) : "";
-        var hasDispatchRoot = /(^|\r?\n)\s*prototype\s+DispatchMemoryRoot(?:\s*:\s*[A-Za-z_][A-Za-z0-9_.]*|\s*)\s*[;{]/m.test(content);
+        var hasDispatchRoot = hasDispatchMemoryRootDeclaration(content);
         return hasDispatchRoot ? [dispatchTreeItem(sessionKey)] : [];
       })
       .catch(function () { return []; });
