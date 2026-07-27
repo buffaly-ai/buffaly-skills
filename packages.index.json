@@ -16925,10 +16925,10 @@
       "PackageType": "WebModule",
       "Title": "Traffic Analysis",
       "Description": "Buffaly Web Module package for Traffic Analysis.",
-      "Version": "0.1.21",
+      "Version": "0.1.22",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/TrafficAnalysis",
-      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/TrafficAnalysis",
+      "SourceUrl": "",
       "Phrases": [
         "Traffic Analysis",
         "TrafficAnalysis"
@@ -16943,12 +16943,16 @@
           "Sha256": "af18f20be25b2895c912f3ba0a9f2901a82dda823edcad76e6a19eac9886a40f"
         },
         {
+          "Path": "Brand/intelligence-factory-logo.png",
+          "Sha256": "f4af4ff600cb1f28bf5d338322523816932292cbd6b05e5c5645b39243830c2f"
+        },
+        {
           "Path": "FeedingFrenzy.TrafficAnalysis.Web.deps.json",
           "Sha256": "2dd290df9f4bd49f612dfb4004aa8519d290c76982f61bea547f3f4098b23249"
         },
         {
           "Path": "FeedingFrenzy.TrafficAnalysis.Web.dll",
-          "Sha256": "9f2a62a83f0d37bd52a3cf46e27b0e68a16c0e6db5f62c49b7ad6edde7b419fe"
+          "Sha256": "bb48e22daf1ae658909b471c442a5e989ae026eb71217c4e1375fab83ed6d7cc"
         },
         {
           "Path": "Npgsql.dll",
@@ -16971,12 +16975,8 @@
           "Sha256": "37e0cb22fbf0f1406884ae7cf2fe1a05c0ef3376badb9930638f6143f6508d2c"
         },
         {
-          "Path": "Samples/traffic-summary-email.html",
-          "Sha256": "e8368765fd2c5e396d14f35665d39da89b742343bc8088e307b89b4473a4cddc"
-        },
-        {
           "Path": "Samples/traffic-summary.json",
-          "Sha256": "f5578e4fd98192024d4086a6481cf68aebeee7594145678b88910247d8fdce00"
+          "Sha256": "2586c78bfbfc021a362a953dd9767c55a522600acf0aa89902fc68f9739cccaf"
         },
         {
           "Path": "Samples/traffic.json",
@@ -17000,19 +17000,19 @@
         },
         {
           "Path": "Skills/TrafficAnalysis/index.pts",
-          "Sha256": "3f3c7dd0cc6e7c5bad5c5275ba757b340138ab09b8bc39525551914aa900524f"
+          "Sha256": "a40ccc27a05eb789865a3fc1909648d325238b15f846b1f95b7d1b0f115bc8d9"
         },
         {
           "Path": "Skills/TrafficAnalysis/index.pts.md",
-          "Sha256": "f73c46e68bd9f1de273cf6f4a9ac0027aee201526b56165f2bf2a8700bc42537"
+          "Sha256": "4502ae1d9348f0a3a29b2fc63998670eb52a9d12fefb3bf323d312d775b7b75c"
         },
         {
           "Path": "Skills/TrafficAnalysis/Prompts/aggregator.prompt.md",
-          "Sha256": "9f111e187df847267a1c5c0e99e7e9e878acabc1827b00133f8aa3a7a5b6d753"
+          "Sha256": "848df33f5235712d7deeb1d3a497467505886935b0e9347b50511f0c67d35d99"
         },
         {
           "Path": "Skills/TrafficAnalysis/Prompts/aggregator.validation.prompt.md",
-          "Sha256": "0c92cbb1c126b31da52af998886513b4232a37ba3239919999e978a36a19d41b"
+          "Sha256": "a87a3c8c896699148d7b8c34863bb4312113cb3adf81a2201e1cb45a77d5351b"
         },
         {
           "Path": "Skills/TrafficAnalysis/Prompts/collector.validation.prompt.md",
@@ -17040,7 +17040,11 @@
         },
         {
           "Path": "Skills/TrafficAnalysis/SKILL.md",
-          "Sha256": "ec91d6e93c072e6ddbe6c4341536b4bd38278d2d3c15cd203e837cd9b7b1068f"
+          "Sha256": "6f53137b34f357275436deee5fded2b09b23f29882f937380d305d461a056a3c"
+        },
+        {
+          "Path": "Templates/intelligence-factory-traffic-email.v1.html",
+          "Sha256": "25921149816223b937ef2d5953cb0fe151c7b9baf2cb9476546cbe2f7efa00c7"
         },
         {
           "Path": "web-module.json",

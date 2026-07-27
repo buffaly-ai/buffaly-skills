@@ -61,12 +61,12 @@ prototype ToCollectRedditAdsData : ValidatedPromptAction, TrafficAnalysisSkillAc
 	Description = @"Use the existing Reddit Ads account and reporting actions to save artifacts/data-stream/reddit-ads.json with spend-efficiency analysis and exact prompt provenance.";
 }
 
-[SemanticProgram.InfinitivePhrase("to aggregate traffic analysis and build email")]
+[SemanticProgram.InfinitivePhrase("to aggregate traffic analysis for email rendering")]
 prototype ToAggregateTrafficAnalysis : ValidatedPromptAction, TrafficAnalysisSkillAction
 {
 	IsPromptAction = true; SkillKind = "validated-prompt"; SkillVersion = "1.0.0"; ChildSessionScope = "per-action";
 	PromptPath = @"Skills/TrafficAnalysis/Prompts/aggregator.prompt.md";
 	WorkPromptPath = @"Skills/TrafficAnalysis/Prompts/aggregator.prompt.md";
 	ValidationPromptPath = @"Skills/TrafficAnalysis/Prompts/aggregator.validation.prompt.md";
-	Description = @"Aggregate all available traffic collector envelopes, tolerate failed or missing inputs, and save an inline-SVG HTML email plus aggregator JSON with exact prompt provenance.";
+	Description = @"Aggregate all available traffic collector envelopes into the versioned Intelligence Factory email report view model, tolerate failed or missing inputs, and save presentation-neutral JSON with exact prompt provenance for deterministic module rendering.";
 }

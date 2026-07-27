@@ -1,25 +1,21 @@
 {
+  "templateVersion": "intelligence-factory-traffic-email.v1",
+  "reportLabel": "Traffic analysis",
   "timeframe": "{{timeframe}}",
-  "status": "sample",
-  "promptProvenance": {
-    "promptFile": "aggregator.prompt.md",
-    "promptText": "Combine every available source into a concise executive report with prioritized actions.",
-    "promptHash": "sample"
-  },
-  "synthesis": {
-    "actions": [
-      "Scale the Reddit Small Business AI campaign cautiously",
-      "Improve conversion paths on the AI Growth landing page",
-      "Reuse practical AI implementation themes across channels"
-    ],
-    "executiveSummary": "Traffic is healthy, Reddit has the strongest sample acquisition efficiency, and implementation-focused content is driving engagement."
-  },
-  "source": "Traffic Analysis Aggregator",
-  "inputs": [
-    "traffic",
-    "googleAds",
-    "linkedin",
-    "openAi",
-    "reddit"
-  ]
+  "headline": "Traffic is healthy; Reddit leads acquisition efficiency",
+  "executiveSummary": "Human visits represent 84% of traffic. Google Ads produced 27 conversions at $18.01 each, while Reddit produced 19 at $11.51 each. LinkedIn engagement is strongest for practical AI implementation content. OpenAI usage cost is estimated at $41.28.",
+  "actions": [
+    "Scale the Reddit Small Business AI campaign cautiously.",
+    "Improve conversion paths on the AI Growth landing page.",
+    "Reuse practical implementation themes across paid and organic channels."
+  ],
+  "sources": [
+    { "key": "traffic", "name": "Traffic Properties", "status": "sample", "summary": "Human traffic accounts for 84% of sessions. The AI Growth service page leads entrances, while AI bot visibility is measurable and growing.", "metrics": [{"label":"Sessions","value":"842"},{"label":"Human sessions","value":"706"},{"label":"AI bot visits","value":"51"},{"label":"Search bot visits","value":"63"}], "insights": ["The leading landing page is /services/ai-growth."], "diagnostic": "" },
+    { "key": "googleAds", "name": "Google Ads", "status": "sample", "summary": "Paid search produced 27 conversions at an $18.01 cost per conversion. AI Growth Search is the primary contributor.", "metrics": [{"label":"Spend","value":"$486.32"},{"label":"Clicks","value":"391"},{"label":"Conversions","value":"27"},{"label":"Cost per conversion","value":"$18.01"}], "insights": ["Conversion volume is concentrated in the AI Growth Search campaign."], "diagnostic": "" },
+    { "key": "linkedin", "name": "LinkedIn", "status": "sample", "summary": "LinkedIn reached 12,640 impressions and added 34 followers. Practical implementation content generated the strongest engagement.", "metrics": [{"label":"Impressions","value":"12,640"},{"label":"Engagements","value":"417"},{"label":"Clicks","value":"286"},{"label":"Followers gained","value":"34"}], "insights": ["Practical AI growth systems was the strongest post."], "diagnostic": "" },
+    { "key": "openAi", "name": "OpenAI Usage", "status": "sample", "summary": "OpenAI workloads issued 1,834 requests at an estimated $41.28 cost. Usage is concentrated in the primary reasoning model.", "metrics": [{"label":"Requests","value":"1,834"},{"label":"Input tokens","value":"2.84M"},{"label":"Output tokens","value":"492K"},{"label":"Estimated cost","value":"$41.28"}], "insights": ["GPT-5 is the most-used model."], "diagnostic": "" },
+    { "key": "reddit", "name": "Reddit Ads", "status": "sample", "summary": "Reddit Ads generated 19 conversions at an $11.51 cost per conversion, outperforming the sample paid-search acquisition cost.", "metrics": [{"label":"Spend","value":"$218.76"},{"label":"Impressions","value":"88,400"},{"label":"Clicks","value":"612"},{"label":"Conversions","value":"19"},{"label":"Cost per conversion","value":"$11.51"}], "insights": ["Small Business AI is the leading campaign."], "diagnostic": "" }
+  ],
+  "footer": "Demonstration data from Traffic Properties, Google Ads, LinkedIn, OpenAI Usage, and Reddit Ads. Not live production data.",
+  "promptProvenance": { "promptFile": "aggregator.prompt.md", "promptText": "Combine every available source into the versioned TrafficAnalysis email report view model.", "promptHash": "sample" }
 }
