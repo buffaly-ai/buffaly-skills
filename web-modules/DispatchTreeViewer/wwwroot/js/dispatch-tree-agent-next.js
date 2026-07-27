@@ -18,7 +18,7 @@
     styleLoaded = true;
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.7.8";
+    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.7.9";
     document.head.appendChild(link);
   }
 
@@ -186,18 +186,20 @@
 
       function buildNode(node, depth) {
         var li = element("li", "dtv-leaf");
+        var nodeRow = element("div", "dtv-tree-row");
         var row = element("button", "dtv-node" + (node.prototypeName === ontologyState.selectedNode ? " is-selected" : ""));
         row.type = "button";
         if (node.hasChildren) row.classList.add("dtv-node-branch");
         row.textContent = node.label;
         row.onclick = function () { ontologyState.selectedNode = node.prototypeName; renderOntologyBody(); };
-        li.appendChild(row);
 
         if (node.hasChildren) {
           var expandBtn = element("button", "dtv-expand-btn");
           expandBtn.type = "button";
           var isExpanded = ontologyState.expandedNodes.has(node.prototypeName);
           expandBtn.textContent = isExpanded ? "\u25BC" : "\u25B6";
+          expandBtn.setAttribute("aria-label", (isExpanded ? "Collapse " : "Expand ") + node.label);
+          expandBtn.setAttribute("aria-expanded", isExpanded ? "true" : "false");
           expandBtn.onclick = function (e) {
             e.stopPropagation();
             if (isExpanded) {
@@ -221,8 +223,14 @@
             }
             renderOntologyBody();
           };
-          li.insertBefore(expandBtn, row);
+          nodeRow.appendChild(expandBtn);
+        } else {
+          var expandSpacer = element("span", "dtv-expand-spacer");
+          expandSpacer.setAttribute("aria-hidden", "true");
+          nodeRow.appendChild(expandSpacer);
         }
+        nodeRow.appendChild(row);
+        li.appendChild(nodeRow);
 
         if (isExpanded && ontologyState.childrenCache.has(node.prototypeName)) {
           var cached = ontologyState.childrenCache.get(node.prototypeName);
