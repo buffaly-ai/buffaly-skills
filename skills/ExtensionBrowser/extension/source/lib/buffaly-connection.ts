@@ -147,9 +147,13 @@ export class InstallationChannel {
     channelUrl.protocol = channelUrl.protocol === 'https:' ? 'wss:' : 'ws:';
     const socket = new WebSocket(channelUrl);
     this.socket = socket;
-    socket.addEventListener('open', () => {
-      socket.send(JSON.stringify({ Type: 'extension_handshake', SchemaVersion: 1, InstallationRegistrationId: this.connection.InstallationRegistrationId, InstallationCredential: this.connection.InstallationCredential }));
-      this.startHeartbeat(socket);
+    await new Promise<void>((resolve, reject) => {
+      socket.addEventListener('open', () => {
+        socket.send(JSON.stringify({ Type: 'extension_handshake', SchemaVersion: 1, InstallationRegistrationId: this.connection.InstallationRegistrationId, InstallationCredential: this.connection.InstallationCredential }));
+        this.startHeartbeat(socket);
+        resolve();
+      }, { once: true });
+      socket.addEventListener('error', () => reject(new Error('Buffaly channel connection failed.')), { once: true });
     });
     socket.addEventListener('message', (event) => void this.handleMessage(socket, event.data));
     socket.addEventListener('close', () => {
