@@ -145,7 +145,7 @@ prototype ToAddDispatchChild : DispatchTreeSkillAction, DispatchContext
 [SemanticProgram.InfinitivePhrase("to seed the local dispatch memory root")]
 prototype EnsureDispatchMemoryRoot : DispatchTreeSkillAction, DispatchContext
 {
-	Description = @"Persist the canonical minimal untagged DispatchMemoryRoot schema into this session's NLMemory artifact and apply it live. Idempotent; it never creates sessions, routes, or semantic tags on the root. Atomic batch authoring does not perform implicit entity binding.";
+	Description = @"Persist the canonical minimal untagged DispatchMemoryRoot schema into this session's NLMemory artifact and apply it live. Idempotent; it never creates sessions, routes, or semantic tags on the root.";
 
 	function Execute() : string
 	{
