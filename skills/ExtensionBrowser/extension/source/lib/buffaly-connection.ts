@@ -291,6 +291,11 @@ export class InstallationChannel {
           await chrome.storage.local.remove(key);
           continue;
         }
+        if (this.socket?.readyState === WebSocket.OPEN) {
+          this.socket.send(JSON.stringify(item.Completion));
+          await chrome.storage.local.remove(key);
+          continue;
+        }
         try {
           const response = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ InstallationRegistrationId: this.connection.InstallationRegistrationId, InstallationCredential: this.connection.InstallationCredential, Completion: item.Completion }) });
           if (response.ok && (await response.json() as { Matched: boolean }).Matched) await chrome.storage.local.remove(key);
