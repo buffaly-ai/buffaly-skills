@@ -13,6 +13,9 @@ assert.match(connection, /channel_heartbeat/, 'MV3 installation channel must sen
 assert.match(connection, /setInterval[\s\S]{0,240}20_000/, 'channel heartbeat must keep the MV3 worker alive on a bounded interval');
 assert.match(connection, /stopHeartbeat\(\)/, 'channel heartbeat timer must be cleaned up');
 assert.match(connection, /SessionBindingId: invocation\.SessionBindingId, InvocationId: invocation\.InvocationId/, 'completion must preserve composite correlation');
+assert.match(connection, /await this\.deliverCompletion\(pendingCompletion\)/, 'live completions must use acknowledged delivery');
+assert.match(connection, /if \(!result\.Matched\) throw new Error/, 'completion outbox entries must require server correlation before deletion');
+assert.doesNotMatch(connection, /socket\.send\(JSON\.stringify\(pendingCompletion\.Completion\)\)/, 'live completion delivery must not delete after an unacknowledged WebSocket send');
 assert.match(background, /new InstallationChannel\(connection, handleToolCall\)/, 'service worker must own the installation channel and tool dispatch');
 assert.match(background, /sender\.id !== chrome\.runtime\.id \|\| !sender\.url/, 'trusted extension messages must require this extension identity and URL');
 assert.doesNotMatch(background, /sender\.tab === undefined/, 'side-panel trust must not assume the sender has no associated tab');

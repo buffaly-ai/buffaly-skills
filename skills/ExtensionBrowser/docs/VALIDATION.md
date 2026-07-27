@@ -1,6 +1,6 @@
-# Buffaly Browser Agent 0.2.23 / WebModule 0.1.20 validation
+# Buffaly Browser Agent 0.2.24 / WebModule 0.1.20 validation
 
-0.2.23 keeps reusable installation authorization in the MV3 service worker, keeps the package-owned channel alive with typed heartbeats and single-timer recovery after initial connection failures, persists non-secret correlated completions, and journals only idempotent `navigate` / `get_active_tab` invocations through navigation worker replacement. A resumed navigation acknowledges an already reached target without navigating again. A live invocation sends its persisted completion directly over the exact authenticated socket that delivered it instead of joining a stale recovery flush; credentialed HTTP remains the disconnected fallback. The iframe and stored records never receive reusable authority.
+0.2.24 keeps reusable installation authorization in the MV3 service worker, keeps the package-owned channel alive with typed heartbeats and single-timer recovery after initial connection failures, persists non-secret correlated completions, and journals only idempotent `navigate` / `get_active_tab` invocations through navigation worker replacement. A resumed navigation acknowledges an already reached target without navigating again. Every completion uses the authenticated package endpoint and remains in the durable outbox until the WebModule confirms that it matched the pending invocation, preventing MV3 suspension from dropping an unacknowledged WebSocket frame. The iframe and stored records never receive reusable authority.
 
 Validated 2026-07-26 on Windows Google Chrome:
 

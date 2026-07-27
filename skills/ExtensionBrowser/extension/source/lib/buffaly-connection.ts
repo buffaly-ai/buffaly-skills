@@ -226,12 +226,7 @@ export class InstallationChannel {
     const result = await this.invoke(invocation.Tool, args);
     const pendingCompletion = await this.persistCompletion(invocation, result);
     await chrome.storage.local.remove(invocationStorageKey);
-    if (this.socket === socket && socket.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify(pendingCompletion.Completion));
-      await chrome.storage.local.remove(pendingCompletion.StorageKey);
-    } else {
-      await this.flushPendingCompletions();
-    }
+    await this.deliverCompletion(pendingCompletion);
   }
 
   private async persistCompletion(invocation: ToolInvocation, result: ToolResult): Promise<{ StorageKey: string; Completion: ToolCompletion }> {
@@ -239,6 +234,23 @@ export class InstallationChannel {
     const storageKey = PENDING_COMPLETION_STORAGE_PREFIX + invocation.SessionBindingId + ':' + invocation.InvocationId;
     await chrome.storage.local.set({ [storageKey]: { CreatedAtUtc: new Date().toISOString(), Completion: completion } satisfies PendingToolCompletion });
     return { StorageKey: storageKey, Completion: completion };
+  }
+
+  private async deliverCompletion(pending: { StorageKey: string; Completion: ToolCompletion }): Promise<void> {
+    const endpoint = new URL('/web-modules/ExtensionBrowser/api/channel/completions', this.connection.Origin);
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        InstallationRegistrationId: this.connection.InstallationRegistrationId,
+        InstallationCredential: this.connection.InstallationCredential,
+        Completion: pending.Completion,
+      }),
+    });
+    if (!response.ok) throw new Error(`Buffaly completion delivery failed (${response.status}).`);
+    const result = await response.json() as { Matched: boolean };
+    if (!result.Matched) throw new Error('Buffaly completion did not match its pending invocation.');
+    await chrome.storage.local.remove(pending.StorageKey);
   }
 
   private resumePendingInvocations(): Promise<void> {
