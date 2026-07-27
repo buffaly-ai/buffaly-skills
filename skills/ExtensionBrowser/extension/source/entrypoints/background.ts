@@ -5,11 +5,17 @@ import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, authorizeInstalla
 
 let installationChannel: InstallationChannel | null = null;
 
+async function invokeBoundTool(tool: string, args: Record<string, unknown>): Promise<Awaited<ReturnType<typeof handleToolCall>>> {
+  const response = await chrome.runtime.sendMessage({ type: 'execute_bound_tool', tool, args }) as Awaited<ReturnType<typeof handleToolCall>> | undefined;
+  if (!response) throw new Error('The ExtensionBrowser side panel is not available to execute the bound tool.');
+  return response;
+}
+
 async function startInstallationChannel(): Promise<void> {
   const connection = await loadConnection();
   if (!connection) return;
   installationChannel?.stop();
-  installationChannel = new InstallationChannel(connection, handleToolCall);
+  installationChannel = new InstallationChannel(connection, invokeBoundTool);
   await installationChannel.start();
 }
 

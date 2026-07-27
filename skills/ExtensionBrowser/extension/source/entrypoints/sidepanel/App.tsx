@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { ToolResult, ToolLogEntry } from '../../lib/types';
+import { handleToolCall } from '../../lib/tool-router';
 
 async function callTool(tool: string, args: Record<string, unknown> = {}): Promise<ToolResult> {
   return new Promise((resolve) => chrome.runtime.sendMessage({ type: 'tool_call', tool, args }, resolve));
@@ -53,7 +54,16 @@ export default function App() {
 
   useEffect(() => {
     refreshStatus();
-    const runtimeListener = (msg: { type: string; entries?: ToolLogEntry[] }) => { if (msg.type === 'tool_log_update' && msg.entries) setToolLog(msg.entries); };
+    const runtimeListener = (msg: { type: string; entries?: ToolLogEntry[]; tool?: string; args?: Record<string, unknown> }, _sender: chrome.runtime.MessageSender, sendResponse: (response: ToolResult) => void) => {
+      if (msg.type === 'tool_log_update' && msg.entries) setToolLog(msg.entries);
+      if (msg.type === 'execute_bound_tool' && msg.tool) {
+        handleToolCall(msg.tool, msg.args || {})
+          .then(sendResponse)
+          .catch((reason: Error) => sendResponse({ ok: false, error: reason.message }));
+        return true;
+      }
+      return false;
+    };
     const tabListener = () => refreshStatus();
     chrome.runtime.onMessage.addListener(runtimeListener); chrome.tabs.onActivated.addListener(tabListener); chrome.tabs.onUpdated.addListener(tabListener);
     return () => { chrome.runtime.onMessage.removeListener(runtimeListener); chrome.tabs.onActivated.removeListener(tabListener); chrome.tabs.onUpdated.removeListener(tabListener); };

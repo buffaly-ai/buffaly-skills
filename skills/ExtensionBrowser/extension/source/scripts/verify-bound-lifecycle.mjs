@@ -16,7 +16,9 @@ assert.match(connection, /SessionBindingId: invocation\.SessionBindingId, Invoca
 assert.match(connection, /await this\.deliverCompletion\(pendingCompletion\)/, 'live completions must use acknowledged delivery');
 assert.match(connection, /if \(!result\.Matched\) throw new Error/, 'completion outbox entries must require server correlation before deletion');
 assert.doesNotMatch(connection, /socket\.send\(JSON\.stringify\(pendingCompletion\.Completion\)\)/, 'live completion delivery must not delete after an unacknowledged WebSocket send');
-assert.match(background, /new InstallationChannel\(connection, handleToolCall\)/, 'service worker must own the installation channel and tool dispatch');
+assert.match(background, /new InstallationChannel\(connection, invokeBoundTool\)/, 'service worker must own the installation channel while delegating execution to the persistent side panel');
+assert.match(background, /type: 'execute_bound_tool'/, 'service worker must dispatch bound tools to the persistent side panel');
+assert.match(panel, /msg\.type === 'execute_bound_tool'/, 'side panel must execute bound tools without receiving channel credentials');
 assert.match(background, /sender\.id !== chrome\.runtime\.id \|\| !sender\.url/, 'trusted extension messages must require this extension identity and URL');
 assert.doesNotMatch(background, /sender\.tab === undefined/, 'side-panel trust must not assume the sender has no associated tab');
 assert.doesNotMatch(background, /sender\.tab !== undefined/, 'privileged side-panel paths must not reject a legitimate tab-associated sender');
