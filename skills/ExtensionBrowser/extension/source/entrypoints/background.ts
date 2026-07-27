@@ -1,7 +1,7 @@
 import { handleToolCall, grantDebuggerConsent, revokeDebuggerConsent } from '../lib/tool-router';
 import { detachDebugger, isAttached } from '../lib/debugger-session';
 import { getLogEntries, getLogVersion } from '../lib/tool-log';
-import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, authorizeInstallation, createConversation, issueNavigationToken, loadConnection, type BoundToolInvocationIdentity, type ConversationBinding } from '../lib/buffaly-connection';
+import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, authorizeInstallation, createConversation, issueNavigationToken, loadBoundToolResult, loadConnection, type BoundToolInvocationIdentity, type ConversationBinding } from '../lib/buffaly-connection';
 
 let installationChannel: InstallationChannel | null = null;
 let boundToolPort: chrome.runtime.Port | null = null;
@@ -10,10 +10,19 @@ const pendingBoundTools = new Map<string, { resolve: (result: Awaited<ReturnType
 async function invokeBoundTool(tool: string, args: Record<string, unknown>, identity: BoundToolInvocationIdentity): Promise<Awaited<ReturnType<typeof handleToolCall>>> {
   if (!boundToolPort) throw new Error('The ExtensionBrowser side panel is not available to execute the bound tool.');
   const requestId = crypto.randomUUID();
-  return new Promise((resolve, reject) => {
+  const portResult = new Promise<Awaited<ReturnType<typeof handleToolCall>>>((resolve, reject) => {
     pendingBoundTools.set(requestId, { resolve, reject });
     boundToolPort!.postMessage({ type: 'execute_bound_tool', requestId, tool, args, identity });
   });
+  const durableResult = (async () => {
+    for (let attempt = 0; attempt < 80; attempt++) {
+      const result = await loadBoundToolResult(identity);
+      if (result) return result;
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    throw new Error('The ExtensionBrowser side panel did not persist a bound tool result.');
+  })();
+  return Promise.race([portResult, durableResult]).finally(() => pendingBoundTools.delete(requestId));
 }
 
 async function startInstallationChannel(): Promise<void> {

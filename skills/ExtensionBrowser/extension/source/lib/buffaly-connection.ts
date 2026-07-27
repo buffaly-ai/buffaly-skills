@@ -69,6 +69,12 @@ export function boundToolResultStorageKey(identity: BoundToolInvocationIdentity)
   return BOUND_TOOL_RESULT_STORAGE_PREFIX + identity.SessionBindingId + ':' + identity.InvocationId;
 }
 
+export async function loadBoundToolResult(identity: BoundToolInvocationIdentity): Promise<ToolResult | null> {
+  const key = boundToolResultStorageKey(identity);
+  const stored = (await chrome.storage.local.get(key))[key] as PendingBoundToolResult | undefined;
+  return stored?.Result ?? null;
+}
+
 interface NavigateArguments {
   url: string;
   tabId?: number;
@@ -312,8 +318,8 @@ export class InstallationChannel {
       catch { await chrome.storage.local.remove(key); continue; }
       const identity = { SessionBindingId: item.Invocation.SessionBindingId, InvocationId: item.Invocation.InvocationId };
       const resultKey = boundToolResultStorageKey(identity);
-      const storedResult = (await chrome.storage.local.get(resultKey))[resultKey] as PendingBoundToolResult | undefined;
-      const result = storedResult?.Result ?? (item.Invocation.Tool === 'navigate'
+      const storedResult = await loadBoundToolResult(identity);
+      const result = storedResult ?? (item.Invocation.Tool === 'navigate'
         ? await this.resumeNavigation(args as unknown as NavigateArguments)
         : await this.invoke(item.Invocation.Tool, args, identity));
       await this.persistCompletion(item.Invocation, result);
