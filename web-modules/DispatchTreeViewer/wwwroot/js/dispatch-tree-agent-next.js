@@ -18,7 +18,7 @@
     styleLoaded = true;
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.7.12";
+    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.7.13";
     document.head.appendChild(link);
   }
 
@@ -92,7 +92,7 @@
         if (current === "\"") state = "string";
       }
     }
-    return state === "block-comment" ? null : output;
+    return state === "code" || state === "line-comment" ? output : null;
   }
 
   function hasDispatchMemoryRootDeclaration(source) {
