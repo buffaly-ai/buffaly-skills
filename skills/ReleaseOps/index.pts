@@ -1,0 +1,28 @@
+reference "lib/Buffaly.ReleaseOps.Client.dll" Buffaly.ReleaseOps.Client;
+import Buffaly.ReleaseOps.Client Buffaly.ReleaseOps.Client.ReleaseOpsExtensionFacade ReleaseOpsExtensionFacade;
+
+prototype ReleaseOpsSkillAction : OpsAction
+{
+    Description = @"Base action type for Provisioning-owned ReleaseOps coordinator tools.";
+}
+
+[SemanticEntity("release ops skill")]
+prototype ReleaseOpsSkill : SkillEntity
+{
+    Description = "External ReleaseOps coordinator actions available independently of package-managed extensions.";
+    ActionRoot = ReleaseOpsSkillAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to deploy one web module to staging")]
+[SemanticProgram.InfinitivePhrase("to update a web module on staging")]
+[SemanticProgram.InfinitivePhrase("to activate one extension on staging")]
+[SemanticProgram.InfinitivePhrase("to install one package on staging")]
+prototype ToDeployOneBuffalyExtensionToStagingSkill : ReleaseOpsSkillAction
+{
+    Description = @"Submits one registered WebModule or ProviderModule identity to the persisted ReleaseOps extension-operation coordinator and waits for its exact operation to finish. Never allocates an installer Build ID and never invokes update-all.";
+
+    function Execute(string sourceId, string packageType, string packageId, int timeoutSeconds = 1800) : string
+    {
+        return ReleaseOpsExtensionFacade.DeployExactExtension(sourceId, packageType, packageId, timeoutSeconds);
+    }
+}

@@ -2783,6 +2783,35 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": []
+    },
+    {
+      "SkillName": "ReleaseOps",
+      "Title": "ReleaseOps",
+      "Description": "Buffaly skill package for ReleaseOps.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "ReleaseOps",
+        "ReleaseOps"
+      ],
+      "Path": "skills/ReleaseOps",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "70419bfe7a53b694bc9d761e02858a1b56ad55b9a1dccd58d71c2aa89163a43a"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "10a75efcad15a0e95f1b2d3b2a5da4e3e6db775091aacc6f3aaff13477afafa9"
+        },
+        {
+          "Path": "lib/Buffaly.ReleaseOps.Client.dll",
+          "Sha256": "2b2a2d2df4a5d2d9ccced11cb6f7daa1658e36be6031159083b4fe277ee06ec6"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
     }
   ]
 }
