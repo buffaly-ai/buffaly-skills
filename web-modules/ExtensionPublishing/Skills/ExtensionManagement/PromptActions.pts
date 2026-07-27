@@ -38,19 +38,6 @@ prototype ToInstallOrUpdateBuffalyExtensionSkill : PromptAction, ExtensionManage
 	Description = "Install or update packages through Skill Management/package CLI with explicit immediate-versus-pending activation and controlled pre-start handling.";
 }
 
-[SemanticProgram.InfinitivePhrase("to deploy one web module to staging")]
-[SemanticProgram.InfinitivePhrase("to update a web module on staging")]
-[SemanticProgram.InfinitivePhrase("to activate one extension on staging")]
-[SemanticProgram.InfinitivePhrase("to install one package on staging")]
-prototype ToDeployOneBuffalyExtensionToStagingSkill : PromptAction, ExtensionManagementSkillAction
-{
-	IsPromptAction = true;
-	SkillKind = "prompt";
-	SkillVersion = "1.0.0";
-	PromptPath = @"Skills/ExtensionManagement/Prompts/InstallOrUpdateExtension.prompt.md";
-	Description = "Deploy exactly one WebModule or ProviderModule to staging through the strict package selector without building or applying a complete installer package.";
-}
-
 [SemanticProgram.InfinitivePhrase("to diagnose extension package state")]
 [SemanticProgram.InfinitivePhrase("to repair a Buffaly extension")]
 [SemanticProgram.InfinitivePhrase("to fix an extension hash mismatch")]
