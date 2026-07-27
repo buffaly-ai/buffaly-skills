@@ -185,6 +185,17 @@ export class InstallationChannel {
     try { args = JSON.parse(invocation.ArgumentsJson) as Record<string, unknown>; }
     catch { throw new Error('Buffaly tool invocation arguments are invalid JSON.'); }
     const result = await this.invoke(invocation.Tool, args);
-    if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify(toCompletion(invocation, result)));
+    const completion = JSON.stringify(toCompletion(invocation, result));
+    const current = this.socket;
+    if (current?.readyState === WebSocket.OPEN) {
+      current.send(completion);
+      return;
+    }
+    // Navigation can recycle the MV3 channel while Chrome is still executing
+    // the invocation. Reconnect once and deliver the correlated completion on
+    // the current installation channel instead of silently dropping it.
+    await this.start();
+    if (this.socket?.readyState !== WebSocket.OPEN) throw new Error('Buffaly channel did not reconnect for tool completion.');
+    this.socket.send(completion);
   }
 }
