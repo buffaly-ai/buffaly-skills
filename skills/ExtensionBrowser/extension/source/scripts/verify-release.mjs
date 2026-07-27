@@ -29,6 +29,8 @@ check(background.includes('BuffalyActiveConversationBinding'), 'service worker a
 check(sidepanel.includes('presentation') && sidepanel.includes('sidepanel'), 'side panel compact presentation route is missing');
 check(sidepanel.includes('navigationToken'), 'side panel one-time navigation-token bootstrap is missing');
 check(sidepanelSource.includes('BuffalyPanelMode') && sidepanelSource.includes('mode-${panelMode}') && sidepanelSource.includes("type PanelMode = 'chat' | 'agent'"), 'persistent Chat and Agent presentation modes are missing');
+check(sidepanelSource.includes('aria-label="Side panel views"') && sidepanelSource.includes("panelMode === 'chat' ? <section") && sidepanelSource.includes(': <section className="agent-panel">'), 'Chat and Agent must render as mutually exclusive full-panel tabs');
+check(!sidepanelSource.includes('aria-label="Workspace views"') && !sidepanelSource.includes("type View = 'work' | 'activity'"), 'nested Chat and Activity split navigation must not return');
 check(sidepanelSource.includes('open_buffaly_conversation_tab'), 'bound conversation full-tab pop-out control is missing');
 check(backgroundSource.includes('open_buffaly_conversation_tab') && backgroundSource.includes("chrome.tabs.create({ url: url.toString(), active: true })"), 'service-worker-owned bound conversation pop-out is missing');
 check(backgroundSource.includes("url.searchParams.set('presentation', 'standard')"), 'full-tab pop-out must explicitly request the standard conversation presentation');
