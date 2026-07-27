@@ -156,6 +156,7 @@ export default defineBackground(() => {
           if (!connection || !binding) throw new Error('No active Buffaly conversation is available.');
           const navigation = await issueNavigationToken(connection, binding.SessionBindingId);
           const url = new URL('/web-modules/ExtensionBrowser/conversation', connection.Origin);
+          url.searchParams.set('presentation', 'standard');
           url.searchParams.set('navigationToken', navigation.NavigationToken);
           await chrome.tabs.create({ url: url.toString(), active: true });
           return { Opened: true };
