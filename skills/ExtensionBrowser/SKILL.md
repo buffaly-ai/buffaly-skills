@@ -10,7 +10,7 @@ Extension Browser is the Buffaly skill package for the **Buffaly Browser Agent**
 - `lib/bridge.js`: persistent bridge with bounded extension-worker recovery.
 - `lib/extension_helper.js`: direct helper used by raw and diagnostic actions.
 - `extension/source`: reproducible Buffaly Browser Agent source maintained with this skill.
-- `extension/release/Buffaly-Browser-Agent-0.2.25-chrome.zip`: Chrome Web Store upload artifact produced by `npm run release:check`.
+- `extension/release/Buffaly-Browser-Agent-0.2.26-chrome.zip`: Chrome Web Store upload artifact produced by `npm run release:check`.
 - `docs/VALIDATION.md`: executed publication-gate evidence and remaining store-hosting requirements.
 
 ## Runtime requirements
@@ -33,4 +33,4 @@ npm ci
 npm run release:check
 ```
 
-The generated archive must match version 0.2.25 and pass `scripts/verify-release.mjs` before staging the indexed release artifact.
+The generated archive must match version 0.2.26 and pass `scripts/verify-release.mjs` before staging the indexed release artifact.

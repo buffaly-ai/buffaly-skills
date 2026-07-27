@@ -17,8 +17,10 @@ assert.match(connection, /await this\.deliverCompletion\(pendingCompletion\)/, '
 assert.match(connection, /if \(!result\.Matched\) throw new Error/, 'completion outbox entries must require server correlation before deletion');
 assert.doesNotMatch(connection, /socket\.send\(JSON\.stringify\(pendingCompletion\.Completion\)\)/, 'live completion delivery must not delete after an unacknowledged WebSocket send');
 assert.match(background, /new InstallationChannel\(connection, invokeBoundTool\)/, 'service worker must own the installation channel while delegating execution to the persistent side panel');
-assert.match(background, /type: 'execute_bound_tool'/, 'service worker must dispatch bound tools to the persistent side panel');
-assert.match(panel, /msg\.type === 'execute_bound_tool'/, 'side panel must execute bound tools without receiving channel credentials');
+assert.match(background, /port\.name !== 'bound-tool-executor'/, 'service worker must accept only the dedicated side-panel executor port');
+assert.match(background, /boundToolPort!\.postMessage\(\{ type: 'execute_bound_tool'/, 'service worker must dispatch bound tools through the dedicated port');
+assert.match(panel, /chrome\.runtime\.connect\(\{ name: 'bound-tool-executor' \}\)/, 'side panel must own the persistent executor port');
+assert.match(panel, /msg\.type !== 'execute_bound_tool'/, 'side panel must execute bound tools without receiving channel credentials');
 assert.match(background, /sender\.id !== chrome\.runtime\.id \|\| !sender\.url/, 'trusted extension messages must require this extension identity and URL');
 assert.doesNotMatch(background, /sender\.tab === undefined/, 'side-panel trust must not assume the sender has no associated tab');
 assert.doesNotMatch(background, /sender\.tab !== undefined/, 'privileged side-panel paths must not reject a legitimate tab-associated sender');

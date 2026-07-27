@@ -54,19 +54,19 @@ export default function App() {
 
   useEffect(() => {
     refreshStatus();
-    const runtimeListener = (msg: { type: string; entries?: ToolLogEntry[]; tool?: string; args?: Record<string, unknown> }, _sender: chrome.runtime.MessageSender, sendResponse: (response: ToolResult) => void) => {
+    const boundToolPort = chrome.runtime.connect({ name: 'bound-tool-executor' });
+    boundToolPort.onMessage.addListener((msg: { type: string; requestId: string; tool?: string; args?: Record<string, unknown> }) => {
+      if (msg.type !== 'execute_bound_tool' || !msg.tool) return;
+      handleToolCall(msg.tool, msg.args || {})
+        .then((result) => boundToolPort.postMessage({ type: 'bound_tool_result', requestId: msg.requestId, result }))
+        .catch((reason: Error) => boundToolPort.postMessage({ type: 'bound_tool_result', requestId: msg.requestId, error: reason.message }));
+    });
+    const runtimeListener = (msg: { type: string; entries?: ToolLogEntry[] }) => {
       if (msg.type === 'tool_log_update' && msg.entries) setToolLog(msg.entries);
-      if (msg.type === 'execute_bound_tool' && msg.tool) {
-        handleToolCall(msg.tool, msg.args || {})
-          .then(sendResponse)
-          .catch((reason: Error) => sendResponse({ ok: false, error: reason.message }));
-        return true;
-      }
-      return false;
     };
     const tabListener = () => refreshStatus();
     chrome.runtime.onMessage.addListener(runtimeListener); chrome.tabs.onActivated.addListener(tabListener); chrome.tabs.onUpdated.addListener(tabListener);
-    return () => { chrome.runtime.onMessage.removeListener(runtimeListener); chrome.tabs.onActivated.removeListener(tabListener); chrome.tabs.onUpdated.removeListener(tabListener); };
+    return () => { boundToolPort.disconnect(); chrome.runtime.onMessage.removeListener(runtimeListener); chrome.tabs.onActivated.removeListener(tabListener); chrome.tabs.onUpdated.removeListener(tabListener); };
   }, [refreshStatus]);
 
   const connect = useCallback(async () => {

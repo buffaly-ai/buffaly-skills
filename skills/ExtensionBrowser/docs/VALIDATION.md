@@ -1,6 +1,6 @@
-# Buffaly Browser Agent 0.2.25 / WebModule 0.1.20 validation
+# Buffaly Browser Agent 0.2.26 / WebModule 0.1.20 validation
 
-0.2.25 keeps reusable installation authorization, channel transport, completion persistence, and authenticated acknowledgement in the MV3 service worker. Bound browser tools execute in the persistent side-panel extension page, which receives only tool names, arguments, and results; navigation can no longer terminate the executor before it reports completion. Every completion remains in the durable outbox until the WebModule confirms that it matched the pending invocation. The React state and iframe never receive reusable channel authority.
+0.2.26 keeps reusable installation authorization, channel transport, completion persistence, and authenticated acknowledgement in the MV3 service worker. Bound browser tools execute through one dedicated long-lived port owned by the persistent side-panel extension page, which receives only correlated tool names, arguments, and results; broadcast messaging cannot be consumed by the worker's own listener, and the port keeps the worker alive while an invocation is pending. Every completion remains in the durable outbox until the WebModule confirms that it matched the pending invocation. The React state and iframe never receive reusable channel authority.
 
 Validated 2026-07-26 on Windows Google Chrome:
 

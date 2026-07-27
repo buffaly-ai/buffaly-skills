@@ -4,11 +4,16 @@ import { getLogEntries, getLogVersion } from '../lib/tool-log';
 import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, authorizeInstallation, createConversation, issueNavigationToken, loadConnection, type ConversationBinding } from '../lib/buffaly-connection';
 
 let installationChannel: InstallationChannel | null = null;
+let boundToolPort: chrome.runtime.Port | null = null;
+const pendingBoundTools = new Map<string, { resolve: (result: Awaited<ReturnType<typeof handleToolCall>>) => void; reject: (error: Error) => void }>();
 
 async function invokeBoundTool(tool: string, args: Record<string, unknown>): Promise<Awaited<ReturnType<typeof handleToolCall>>> {
-  const response = await chrome.runtime.sendMessage({ type: 'execute_bound_tool', tool, args }) as Awaited<ReturnType<typeof handleToolCall>> | undefined;
-  if (!response) throw new Error('The ExtensionBrowser side panel is not available to execute the bound tool.');
-  return response;
+  if (!boundToolPort) throw new Error('The ExtensionBrowser side panel is not available to execute the bound tool.');
+  const requestId = crypto.randomUUID();
+  return new Promise((resolve, reject) => {
+    pendingBoundTools.set(requestId, { resolve, reject });
+    boundToolPort!.postMessage({ type: 'execute_bound_tool', requestId, tool, args });
+  });
 }
 
 async function startInstallationChannel(): Promise<void> {
@@ -39,6 +44,25 @@ export default defineBackground(() => {
   chrome.sidePanel
     .setPanelBehavior({ openPanelOnActionClick: true })
     .catch((err) => console.error('Failed to set side panel behavior:', err));
+
+  chrome.runtime.onConnect.addListener((port) => {
+    if (port.name !== 'bound-tool-executor' || !port.sender || !isTrustedExtensionPage(port.sender)) return;
+    boundToolPort?.disconnect();
+    boundToolPort = port;
+    port.onMessage.addListener((message: { type: string; requestId: string; result?: Awaited<ReturnType<typeof handleToolCall>>; error?: string }) => {
+      if (message.type !== 'bound_tool_result') return;
+      const pending = pendingBoundTools.get(message.requestId);
+      if (!pending) return;
+      pendingBoundTools.delete(message.requestId);
+      if (message.result) pending.resolve(message.result);
+      else pending.reject(new Error(message.error || 'The side panel did not return a tool result.'));
+    });
+    port.onDisconnect.addListener(() => {
+      if (boundToolPort === port) boundToolPort = null;
+      for (const pending of pendingBoundTools.values()) pending.reject(new Error('The ExtensionBrowser side panel disconnected during tool execution.'));
+      pendingBoundTools.clear();
+    });
+  });
 
   // ─── Message Handler: Tool Calls from Side Panel ───
 
