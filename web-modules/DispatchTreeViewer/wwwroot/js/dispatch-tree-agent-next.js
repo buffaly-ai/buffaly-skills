@@ -18,7 +18,7 @@
     styleLoaded = true;
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.7.9";
+    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.7.10";
     document.head.appendChild(link);
   }
 
@@ -58,19 +58,32 @@
 
   ensureStyle();
 
+  function dispatchTreeItem(sessionKey) {
+    return {
+      Name: "Dispatch Tree",
+      Description: "Open this session's live routing hierarchy",
+      Icon: "bi-diagram-2",
+      Url: "#dtv-ontology-open:" + encodeURIComponent(sessionKey)
+    };
+  }
+
+  function loadDispatchTreeItems(context) {
+    var sessionKey = context && context.sessionKey ? String(context.sessionKey).trim() : "";
+    if (!sessionKey || typeof BuffalyAgentService.GetAgentObjectAsync !== "function") return [];
+    return BuffalyAgentService.GetAgentObjectAsync({ sessionKey: sessionKey })
+      .then(function (status) {
+        var agentName = status && status.AgentName ? String(status.AgentName).trim() : "";
+        return /(^|[-_])dispatch(?:er)?(?:$|[-_])/i.test(agentName) ? [dispatchTreeItem(sessionKey)] : [];
+      })
+      .catch(function () { return []; });
+  }
+
   api.registerFileSource({
     id: "dispatch-tree-viewer",
     label: "Dispatch Tree",
     priority: 50,
     placement: "special-files",
-    load: function (context) {
-      return [{
-        Name: "Dispatch Tree",
-        Description: "Open this session's live routing hierarchy",
-        Icon: "bi-diagram-2",
-        Url: "#dtv-ontology-open:" + encodeURIComponent(context.sessionKey || "")
-      }];
-    }
+    load: loadDispatchTreeItems
   });
 
   // ── Ontology Tree Viewer (general ontology, lazy-loaded, paginated) ──
