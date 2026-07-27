@@ -45,6 +45,14 @@ interface ToolCompletion {
   Result: { Ok: boolean; DataJson: string; Error: string; Code: string };
 }
 
+interface ToolCompletionAcknowledgement {
+  Type: 'tool_completion_ack';
+  SchemaVersion: 1;
+  SessionBindingId: string;
+  InvocationId: string;
+  Matched: boolean;
+}
+
 interface PendingToolCompletion {
   CreatedAtUtc: string;
   Completion: ToolCompletion;
@@ -247,7 +255,16 @@ export class InstallationChannel {
 
   private async handleMessage(socket: WebSocket, raw: unknown): Promise<void> {
     if (typeof raw !== 'string') throw new Error('Buffaly channel requires text messages.');
-    const invocation = JSON.parse(raw) as ToolInvocation;
+    const frame = JSON.parse(raw) as ToolInvocation | ToolCompletionAcknowledgement;
+    if (frame.Type === 'tool_completion_ack') {
+      if (frame.SchemaVersion !== 1 || !frame.Matched) throw new Error('Buffaly completion acknowledgement is invalid.');
+      await chrome.storage.local.remove([
+        PENDING_COMPLETION_STORAGE_PREFIX + frame.SessionBindingId + ':' + frame.InvocationId,
+        PENDING_INVOCATION_STORAGE_PREFIX + frame.SessionBindingId + ':' + frame.InvocationId,
+      ]);
+      return;
+    }
+    const invocation = frame;
     if (invocation.Type !== 'tool_invocation' || invocation.SchemaVersion !== 1) throw new Error('Buffaly tool invocation contract is invalid.');
     let args: Record<string, unknown>;
     try { args = JSON.parse(invocation.ArgumentsJson) as Record<string, unknown>; }
@@ -272,7 +289,12 @@ export class InstallationChannel {
     const pendingCompletion = await this.persistCompletion(invocation, result);
     await chrome.storage.local.remove(boundToolResultStorageKey(identity));
     await chrome.storage.local.remove(invocationStorageKey);
-    await this.deliverCompletion(pendingCompletion);
+    if (this.socket === socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify(pendingCompletion.Completion));
+      setTimeout(() => { void this.flushPendingCompletions(); }, 1000);
+    } else {
+      await this.deliverCompletion(pendingCompletion);
+    }
   }
 
   private async persistCompletion(invocation: ToolInvocation, result: ToolResult): Promise<{ StorageKey: string; Completion: ToolCompletion }> {
