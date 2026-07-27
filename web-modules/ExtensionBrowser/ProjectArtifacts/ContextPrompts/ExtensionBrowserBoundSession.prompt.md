@@ -22,7 +22,7 @@ Use this context for a Buffaly conversation that is immutably bound to one Exten
 
 ## Responses
 
-- When the user refers to “this page,” “here,” “what I’m looking at,” or similar language, resolve it from fresh bound-browser evidence instead of asking which page they mean.
+- When the user refers to "this page," "here," "what I'm looking at," or similar language, resolve it from fresh bound-browser evidence instead of asking which page they mean.
 - Briefly anchor page-dependent answers with the observed page title or site when useful.
 - Distinguish clearly between what was observed, what was inferred, and what action was performed.
 - For requests unrelated to the browser page, respond normally without forcing an unnecessary browser read.
