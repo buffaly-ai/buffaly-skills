@@ -24,7 +24,7 @@ for (const permission of ['sidePanel', 'storage', 'identity', 'tabs', 'scripting
   check(manifest.permissions.includes(permission), `required permission is missing: ${permission}`);
 }
 check(!manifest.permissions.includes('audioCapture'), 'invalid extension permission must not be present: audioCapture');
-check(backgroundSource.includes('chrome.contentSettings.microphone.set') && backgroundSource.includes('primaryPattern'), 'embedded Buffaly microphone permission grant is missing');
+check(backgroundSource.includes("new URL('/web-modules/ExtensionBrowser/microphone'") && backgroundSource.includes('chrome.tabs.create({ url: permissionUrl.toString(), active: true })'), 'top-level Buffaly microphone setup flow is missing');
 check(!backgroundSource.includes("secondaryPattern: `${chrome.runtime.getURL('/')}*`"), 'microphone grant must not use an invalid chrome-extension secondary pattern');
 check(sidepanelSource.includes('allow="clipboard-read; clipboard-write; microphone"'), 'conversation iframe must delegate microphone capture');
 check(sidepanelSource.includes('TabId: page.tabId'), 'current-page UserState snapshot must preserve the active tab ID');

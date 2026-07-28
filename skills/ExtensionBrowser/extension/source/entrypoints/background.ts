@@ -198,11 +198,9 @@ export default defineBackground(() => {
 		if (!isTrustedExtensionPage(sender)) { sendResponse({ ok: false, error: 'Unauthorized: microphone access can only be granted from an extension page' }); return false; }
 		getActiveServer().then(async (server) => {
 			if (!server) throw new Error('Select a Buffaly server first.');
-			// Chrome does not accept chrome-extension:// patterns as secondaryPattern values.
-			// Omitting it applies the selected Buffaly origin's microphone setting to all embeddings,
-			// including this extension's delegated conversation iframe.
-			await chrome.contentSettings.microphone.set({ primaryPattern: `${server.Origin}/*`, setting: 'allow' });
-			sendResponse({ ok: true, data: { Origin: server.Origin } });
+			const permissionUrl = new URL('/web-modules/ExtensionBrowser/microphone', server.Origin);
+			await chrome.tabs.create({ url: permissionUrl.toString(), active: true });
+			sendResponse({ ok: true, data: { Origin: server.Origin, Opened: true } });
 		}).catch((err: Error) => sendResponse({ ok: false, error: err.message }));
 		return true;
 	  }
