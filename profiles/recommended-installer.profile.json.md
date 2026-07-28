@@ -1,6 +1,6 @@
 # Recommended installer profile
 
-`recommended-installer.profile.json` defines the approved expanded installer composition. It contains the recommended skills, web modules, and provider modules. `VoiceAgentDispatch` is included because the bundled realtime `voice-agent` profile uses `VoiceAgentAction` as its required semantic action root. `ComputerUse` and its Windows-only skill plus `DesktopViewer` are included so a new Windows install has the supported desktop interaction surface.
+`recommended-installer.profile.json` defines the approved expanded installer composition. It contains the recommended skills, web modules, and provider modules. `VoiceAgentDispatch` is included because the bundled realtime `voice-agent` profile uses `VoiceAgentAction` as its required semantic action root. `ComputerUse` and its Windows-only skill plus `DesktopViewer` are included so a new Windows install has the supported desktop interaction surface. `ExtensionBrowser` is included so normal installer-backed updates restore the package-owned Chrome binding WebModule, its bound-session skill, and its context prompt instead of leaving a focused staging activation transient.
 
 `Desktop` is Windows-only. Every other member targets Windows, Linux, and Mac because the distribution indexes contain no stricter platform evidence.
 
