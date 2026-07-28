@@ -1,4 +1,6 @@
-# Buffaly Browser Agent 0.2.39 / WebModule 0.1.28 validation
+# Buffaly Browser Agent 0.2.40 / WebModule 0.1.34 validation
+
+0.2.40 retains explicit `microphone` delegation on the cross-origin Buffaly conversation iframe. Chrome microphone access is a page-origin permission requested by the embedded Buffaly composer; `audioCapture` is a DevTools automation permission name, not a valid Chrome extension manifest permission, so it must not be added to the extension authority set.
 
 0.2.39 keeps reusable installation authorization, channel transport, completion persistence, and authenticated acknowledgement in the MV3 service worker. Bound browser tools execute through one dedicated long-lived port owned by the persistent side-panel extension page, which receives only correlated tool names, arguments, and results. The side panel persists a correlated browser result before returning it to the replaceable worker, so a navigation-triggered worker replacement can recover and deliver the authenticated completion without repeating the browser action. The React state and iframe never receive reusable channel authority.
 
