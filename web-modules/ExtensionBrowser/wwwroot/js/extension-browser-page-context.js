@@ -8,6 +8,8 @@
   const REQUEST_TYPE = 'extension_browser_current_page_request';
   const USER_STATE_KEY = 'ExtensionBrowser.CurrentPage';
   const pending = new Map();
+  let evaluateWrapper = null;
+  let steerWrapper = null;
 
   function installMicrophoneDiagnostics() {
     if (typeof navigator === 'undefined' || !navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function') return;
@@ -63,8 +65,9 @@
 
   function installEvaluateInterceptor() {
     if (!window.JsonMethod || typeof window.JsonMethod.callWithInitializer !== 'function') return false;
+    if (window.JsonMethod.callWithInitializer === evaluateWrapper) return true;
     const original = window.JsonMethod.callWithInitializer.bind(window.JsonMethod);
-    window.JsonMethod.callWithInitializer = function (initializer) {
+    evaluateWrapper = function (initializer) {
       const isEvaluate = initializer && initializer.Method === 'EvaluateWithInput'
         && initializer.Params && initializer.Params.Input;
       if (!isEvaluate) return original(initializer);
@@ -73,17 +76,20 @@
         original(initializer);
       }).catch((error) => reportFailure(initializer, error));
     };
+    window.JsonMethod.callWithInitializer = evaluateWrapper;
     return true;
   }
 
   function installSteerInterceptor() {
     if (!window.BuffalyAgentService || typeof window.BuffalyAgentService.SteerInputObjectAsync !== 'function') return false;
+    if (window.BuffalyAgentService.SteerInputObjectAsync === steerWrapper) return true;
     const original = window.BuffalyAgentService.SteerInputObjectAsync.bind(window.BuffalyAgentService);
-    window.BuffalyAgentService.SteerInputObjectAsync = async function (request) {
+    steerWrapper = async function (request) {
       const page = await requestCurrentPage();
       injectPage(request.input, page);
       return original(request);
     };
+    window.BuffalyAgentService.SteerInputObjectAsync = steerWrapper;
     return true;
   }
 
@@ -94,8 +100,8 @@
   let evaluateInstalled = false;
   let steerInstalled = false;
   function installAvailableInterceptors() {
-    if (!evaluateInstalled) evaluateInstalled = installEvaluateInterceptor();
-    if (!steerInstalled) steerInstalled = installSteerInterceptor();
+    evaluateInstalled = installEvaluateInterceptor();
+    steerInstalled = installSteerInterceptor();
     installStatus.evaluateInstalled = evaluateInstalled;
     installStatus.steerInstalled = steerInstalled;
     return evaluateInstalled && steerInstalled;
