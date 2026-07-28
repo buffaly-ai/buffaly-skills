@@ -1,0 +1,12 @@
+{
+  "Module": {
+    "Enabled": true,
+    "Name": "CallObserver",
+    "DisplayName": "Call Observer",
+    "Description": "Monitor and control Feeding Frenzy observation calls.",
+    "AssemblyPath": "CallObserver/Buffaly.CallObserver.dll",
+    "TypeName": "Buffaly.CallObserver.CallObserverWebModule",
+    "LoadOrder": 320,
+    "Pages": [{ "Name": "Dashboard", "DisplayName": "Call Observer", "Path": "/web-modules/CallObserver/" }]
+  }
+}
