@@ -9,6 +9,23 @@
   const USER_STATE_KEY = 'ExtensionBrowser.CurrentPage';
   const pending = new Map();
 
+  function installMicrophoneDiagnostics() {
+    if (typeof navigator === 'undefined' || !navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function') return;
+    const original = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+    navigator.mediaDevices.getUserMedia = async function (constraints) {
+      try {
+        return await original(constraints);
+      } catch (error) {
+        if (constraints && constraints.audio) {
+          const name = error && error.name ? String(error.name) : 'MicrophoneError';
+          const message = error && error.message ? String(error.message) : 'Chrome did not grant microphone access.';
+          window.parent.postMessage({ type: 'extension_browser_microphone_error', name, message }, '*');
+        }
+        throw error;
+      }
+    };
+  }
+
   function requestCurrentPage() {
     return new Promise((resolve, reject) => {
       const requestId = crypto.randomUUID();
@@ -72,6 +89,7 @@
 
   let evaluateInstalled = installEvaluateInterceptor();
   let steerInstalled = installSteerInterceptor();
+  installMicrophoneDiagnostics();
   if (!evaluateInstalled || !steerInstalled) {
     const timer = window.setInterval(() => {
       if (!evaluateInstalled) evaluateInstalled = installEvaluateInterceptor();
