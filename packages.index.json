@@ -7771,10 +7771,10 @@
       "PackageType": "WebModule",
       "Title": "Google Workspace",
       "Description": "Buffaly Web Module package for Google Workspace.",
-      "Version": "0.1.133",
+      "Version": "0.1.134",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/GoogleWorkspace",
-      "SourceUrl": "",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/GoogleWorkspace",
       "Phrases": [
         "Google Workspace",
         "GoogleWorkspace"
@@ -7810,7 +7810,7 @@
         },
         {
           "Path": "Buffaly.GoogleWorkspace.dll",
-          "Sha256": "8e584671ef7d136b2befdcadb9809d6308c8e7415a4b3da2341b3da472897bcc"
+          "Sha256": "7efff7bdd18b29659b72a3674246e5deba2f7c2c9d808ac523bc1071205b3c93"
         },
         {
           "Path": "Buffaly.GoogleWorkspace.WebModule.deps.json",
@@ -7818,11 +7818,11 @@
         },
         {
           "Path": "Buffaly.GoogleWorkspace.WebModule.dll",
-          "Sha256": "6269909df6f5a22f832a8994bd6fb12d7f9b37f453abf12057ced76dc12f9bb0"
+          "Sha256": "354bb4c8b1552127fd0f281021cff2df5450e69d47af78d275df78936d12aa05"
         },
         {
           "Path": "Buffaly.GoogleWorkspace.WebModule.exe",
-          "Sha256": "62b29b9221f7aca1d168624cd8044daf96be0babc0405dfdd51b64b68b046b13"
+          "Sha256": "2c05175b07760ffcd35a1088abbb48ac1c7b5f40713c4fa8b10d9333f1d9e95a"
         },
         {
           "Path": "Buffaly.GoogleWorkspace.WebModule.runtimeconfig.json",
@@ -8323,7 +8323,8 @@
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
       "RequiresRestart": true,
-      "RequiresPreStartInstall": true
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     },
     {
       "PackageId": "Buffaly.Agent.Heartbeat",
