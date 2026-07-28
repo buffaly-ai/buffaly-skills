@@ -7,6 +7,9 @@
     "AssemblyPath": "ExtensionBrowser/ExtensionBrowser.WebModule.dll",
     "TypeName": "ExtensionBrowser.WebModule.ExtensionBrowserWebModule",
     "LoadOrder": 1340,
+    "AgentScripts": [
+      "/web-modules/ExtensionBrowser/js/extension-browser-page-context.js?v=20260728.1"
+    ],
     "Pages": [{"Name":"extension-browser-health","DisplayName":"Extension Browser Health","Path":"/web-modules/ExtensionBrowser/health","Description":"Inspect secret-free ExtensionBrowser module health."}],
     "ProjectArtifacts": [
       {"ProjectName":"Skills/ExtensionBrowserBound","SourcePath":"ProjectArtifacts/Skills/ExtensionBrowserBound/"},
