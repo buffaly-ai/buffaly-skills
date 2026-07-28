@@ -172,8 +172,8 @@ export default defineBackground(() => {
 			const sameOrigin = existing?.Origin === origin;
 			const saved = { ServerId: existing?.ServerId || crypto.randomUUID(), Name: String(request.name || new URL(origin).hostname).trim(), Origin: origin, Connection: sameOrigin ? existing?.Connection || null : null, ActiveConversation: sameOrigin ? existing?.ActiveConversation || null : null, LastConnectedUtc: sameOrigin ? existing?.LastConnectedUtc || '' : '' };
 			await saveServer(saved, true);
-			await startInstallationChannel();
 			sendResponse({ ok: true, data: { Server: { ServerId: saved.ServerId, Name: saved.Name, Origin: saved.Origin, Authorized: Boolean(saved.Connection), Active: true, LastConnectedUtc: saved.LastConnectedUtc } } });
+			void startInstallationChannel().catch((error) => console.error('Failed to restart Buffaly installation channel after saving the server:', error));
 		}).catch((err: Error) => sendResponse({ ok: false, error: err.message }));
 		return true;
 	  }

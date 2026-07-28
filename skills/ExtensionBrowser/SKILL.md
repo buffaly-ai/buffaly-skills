@@ -10,7 +10,7 @@ Extension Browser is the Buffaly skill package for the **Buffaly Browser Agent**
 - `lib/bridge.js`: persistent bridge with bounded extension-worker recovery.
 - `lib/extension_helper.js`: direct helper used by raw and diagnostic actions.
 - `extension/source`: reproducible Buffaly Browser Agent source maintained with this skill.
-- `extension/release/Buffaly-Browser-Agent-0.2.45-chrome.zip`: Chrome Web Store upload artifact produced by `npm run release:check`.
+- `extension/release/Buffaly-Browser-Agent-0.2.46-chrome.zip`: Chrome Web Store upload artifact produced by `npm run release:check`.
 - `docs/VALIDATION.md`: executed publication-gate evidence and remaining store-hosting requirements.
 
 ## Runtime requirements
@@ -33,4 +33,4 @@ npm ci
 npm run release:check
 ```
 
-The generated archive must match version 0.2.45 and pass `scripts/verify-release.mjs` before staging the indexed release artifact. Saved servers have an explicit settings surface for viewing state/version/authorization, renaming, changing origins, and removal. Changing an origin never transfers the old server credential or conversation authority. Save server validates origins inside the service worker's asynchronous response path and completes persistence without waiting for server health, so malformed input reports an error and offline servers remain selectable. Every Send and Steer page-context snapshot includes URL, title, active tab ID, and capture timestamp. The conversation iframe explicitly delegates `microphone` to the selected Buffaly origin. When Chrome dismisses the embedded prompt, the extension can grant microphone content access only to the selected saved Buffaly origin; it never receives extension-level audio capture authority.
+The generated archive must match version 0.2.46 and pass `scripts/verify-release.mjs` before staging the indexed release artifact. Saved servers have an explicit settings surface for viewing state/version/authorization, renaming, changing origins, and removal. Changing an origin never transfers the old server credential or conversation authority. Save server validates origins inside the service worker's asynchronous response path and acknowledges persisted state before health or channel work, so malformed input reports an error while authorized-but-offline servers remain editable. Every Send and Steer page-context snapshot includes URL, title, active tab ID, and capture timestamp. The conversation iframe explicitly delegates `microphone` to the selected Buffaly origin. When Chrome dismisses the embedded prompt, the extension can grant microphone content access only to the selected saved Buffaly origin; it never receives extension-level audio capture authority.

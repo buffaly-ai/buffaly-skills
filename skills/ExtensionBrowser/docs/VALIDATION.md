@@ -1,4 +1,6 @@
-# Buffaly Browser Agent 0.2.45 / WebModule 0.1.29 validation
+# Buffaly Browser Agent 0.2.46 / WebModule 0.1.29 validation
+
+0.2.46 acknowledges a persisted saved-server edit before attempting to restart its authorized installation channel. Same-origin renames therefore complete even when the authorized server is offline; channel restart is separately observed and reports only to extension diagnostics. The release gate enforces reply-before-restart ordering.
 
 0.2.45 adds a server settings dialog for the selected saved server. It exposes the friendly name, exact origin, connection state, detected WebModule version, and authorization state; supports rename/origin updates and guarded removal; and preserves credentials/conversations only for same-origin edits. Changing an origin resets that server's authorization and active conversation instead of transferring authority across origins.
 
