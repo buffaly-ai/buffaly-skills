@@ -2,7 +2,7 @@ import { handleToolCall, grantDebuggerConsent, revokeDebuggerConsent } from '../
 import { detachDebugger, isAttached } from '../lib/debugger-session';
 import { getLogEntries, getLogVersion } from '../lib/tool-log';
 import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, PROMPT_POLICY_REVISION, authorizeInstallation, createConversation, issueNavigationToken, loadBoundToolResult, loadConnection, type BoundToolInvocationIdentity, type ConversationBinding } from '../lib/buffaly-connection';
-import { activateServer, canonicalServerOrigin, getActiveServer, loadServers, saveServer, summarizeServers, updateActiveServer, type SavedBuffalyServer, type ServerState } from '../lib/buffaly-servers';
+import { activateServer, canonicalServerOrigin, getActiveServer, loadServers, removeServer, saveServer, summarizeServers, updateActiveServer, type SavedBuffalyServer, type ServerState } from '../lib/buffaly-servers';
 
 let installationChannel: InstallationChannel | null = null;
 let boundToolPort: chrome.runtime.Port | null = null;
@@ -168,8 +168,9 @@ export default defineBackground(() => {
 		Promise.resolve().then(async () => {
 			const origin = canonicalServerOrigin(String(request.origin || '').trim());
 			const state = await loadServers();
-			const existing = state.servers.find((server) => server.Origin === origin);
-			const saved = { ServerId: existing?.ServerId || crypto.randomUUID(), Name: String(request.name || new URL(origin).hostname).trim(), Origin: origin, Connection: existing?.Connection || null, ActiveConversation: existing?.ActiveConversation || null, LastConnectedUtc: existing?.LastConnectedUtc || '' };
+			const existing = state.servers.find((server) => server.ServerId === request.serverId) || state.servers.find((server) => server.Origin === origin);
+			const sameOrigin = existing?.Origin === origin;
+			const saved = { ServerId: existing?.ServerId || crypto.randomUUID(), Name: String(request.name || new URL(origin).hostname).trim(), Origin: origin, Connection: sameOrigin ? existing?.Connection || null : null, ActiveConversation: sameOrigin ? existing?.ActiveConversation || null : null, LastConnectedUtc: sameOrigin ? existing?.LastConnectedUtc || '' : '' };
 			await saveServer(saved, true);
 			await startInstallationChannel();
 			sendResponse({ ok: true, data: { Server: { ServerId: saved.ServerId, Name: saved.Name, Origin: saved.Origin, Authorized: Boolean(saved.Connection), Active: true, LastConnectedUtc: saved.LastConnectedUtc } } });
@@ -180,6 +181,14 @@ export default defineBackground(() => {
 	  if (request.type === 'select_buffaly_server') {
 		if (!isTrustedExtensionPage(sender)) { sendResponse({ ok: false, error: 'Unauthorized: servers can only be selected from an extension page' }); return false; }
 		activateServer(request.serverId).then(async () => {
+			await startInstallationChannel(); sendResponse({ ok: true });
+		}).catch((err: Error) => sendResponse({ ok: false, error: err.message }));
+		return true;
+	  }
+
+	  if (request.type === 'remove_buffaly_server') {
+		if (!isTrustedExtensionPage(sender)) { sendResponse({ ok: false, error: 'Unauthorized: servers can only be removed from an extension page' }); return false; }
+		removeServer(String(request.serverId || '')).then(async () => {
 			await startInstallationChannel(); sendResponse({ ok: true });
 		}).catch((err: Error) => sendResponse({ ok: false, error: err.message }));
 		return true;

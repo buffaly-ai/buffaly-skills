@@ -37,6 +37,7 @@ export default function App() {
   const [conversation, setConversation] = useState<ConversationBootstrap | null>(null);
   const [serversStatus, setServersStatus] = useState<ServersStatus>({ Servers: [], ActiveServer: null, State: 'Unavailable', Version: '' });
   const [showAddServer, setShowAddServer] = useState(false);
+  const [showServerSettings, setShowServerSettings] = useState(false);
   const [serverName, setServerName] = useState('Local Buffaly');
   const [origin, setOrigin] = useState(defaultOrigin);
   const [microphoneError, setMicrophoneError] = useState('');
@@ -136,15 +137,15 @@ export default function App() {
   const saveNewServer = useCallback(async () => {
     setBusy('save-server'); setError('');
     try {
-      const response = await chrome.runtime.sendMessage({ type: 'save_buffaly_server', name: serverName, origin }) as WorkerResponse<{ Server: ServerSummary }> | undefined;
+      const response = await chrome.runtime.sendMessage({ type: 'save_buffaly_server', serverId: showServerSettings ? serversStatus.ActiveServer?.ServerId : '', name: serverName, origin }) as WorkerResponse<{ Server: ServerSummary }> | undefined;
       if (!response?.ok || !response.data) throw new Error(response?.error || 'The Buffaly server could not be saved.');
        const saved = response.data.Server;
        setServersStatus((current) => ({ ...current, Servers: current.Servers.filter((server) => server.ServerId !== saved.ServerId && server.Origin !== saved.Origin).map((server) => ({ ...server, Active: false })).concat(saved), ActiveServer: { ServerId: saved.ServerId, Name: saved.Name, Origin: saved.Origin }, State: 'Unavailable', Version: '' }));
-       setOrigin(saved.Origin); setConnected(false); setConversation(null); setShowAddServer(false);
+       setOrigin(saved.Origin); setConnected(false); setConversation(null); setShowAddServer(false); setShowServerSettings(false);
        void refreshServers().catch((reason) => setError(reason instanceof Error ? reason.message : String(reason)));
     } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
     finally { setBusy(''); }
-  }, [origin, refreshServers, serverName]);
+  }, [origin, refreshServers, serverName, serversStatus.ActiveServer?.ServerId, showServerSettings]);
 
   const selectServer = useCallback(async (serverId: string) => {
     setBusy('select-server'); setError(''); setConversation(null);
@@ -159,6 +160,23 @@ export default function App() {
     } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
     finally { setBusy(''); }
   }, [refreshServers]);
+
+  const openServerSettings = useCallback(() => {
+    if (!serversStatus.ActiveServer) return;
+    setServerName(serversStatus.ActiveServer.Name); setOrigin(serversStatus.ActiveServer.Origin); setShowAddServer(false); setShowServerSettings(true); setError('');
+  }, [serversStatus.ActiveServer]);
+
+  const removeActiveServer = useCallback(async () => {
+    const server = serversStatus.ActiveServer;
+    if (!server || !window.confirm(`Remove ${server.Name} from this Chrome installation?`)) return;
+    setBusy('remove-server'); setError('');
+    try {
+      const response = await chrome.runtime.sendMessage({ type: 'remove_buffaly_server', serverId: server.ServerId }) as WorkerResponse<unknown> | undefined;
+      if (!response?.ok) throw new Error(response?.error || 'The Buffaly server could not be removed.');
+      setShowServerSettings(false); setConversation(null); await refreshServers();
+    } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
+    finally { setBusy(''); }
+  }, [refreshServers, serversStatus.ActiveServer]);
 
   const connect = useCallback(async () => {
     setBusy('connect'); setError('');
@@ -216,8 +234,9 @@ export default function App() {
   const stateLabel = serversStatus.State === 'Ready' ? 'Ready' : serversStatus.State === 'SignInRequired' ? 'Sign-in required' : serversStatus.State === 'WebModuleMissing' ? 'ExtensionBrowser not installed' : 'Unavailable';
   return <main className={`app mode-${panelMode}`}>
     <header className="topbar"><div className="brand"><img src={logo48Url} alt="" /><div><strong>{serversStatus.ActiveServer?.Name || 'Buffaly'}</strong><span>{serversStatus.ActiveServer?.Origin || 'Choose a server'}</span></div></div><span className={`live-state ${serversStatus.State === 'Ready' ? 'active' : ''}`} title={stateLabel}><i /><b>{stateLabel}</b></span></header>
-    <section className="server-bar" aria-label="Buffaly server"><select aria-label="Saved Buffaly server" value={serversStatus.ActiveServer?.ServerId || ''} onChange={(event) => void selectServer(event.target.value)} disabled={!!busy}><option value="" disabled>Choose a Buffaly server</option>{serversStatus.Servers.map((server) => <option key={server.ServerId} value={server.ServerId}>{server.Name}</option>)}</select><button onClick={() => setShowAddServer((visible) => !visible)} aria-expanded={showAddServer}>Add</button>{serversStatus.ActiveServer && <button onClick={() => void refreshServers()} aria-label="Check selected server">↻</button>}</section>
+    <section className="server-bar" aria-label="Buffaly server"><select aria-label="Saved Buffaly server" value={serversStatus.ActiveServer?.ServerId || ''} onChange={(event) => void selectServer(event.target.value)} disabled={!!busy}><option value="" disabled>Choose a Buffaly server</option>{serversStatus.Servers.map((server) => <option key={server.ServerId} value={server.ServerId}>{server.Name}</option>)}</select><button onClick={() => setShowAddServer((visible) => !visible)} aria-expanded={showAddServer}>Add</button>{serversStatus.ActiveServer && <><button onClick={openServerSettings} aria-label="Manage selected server" title="Server settings">⚙</button><button onClick={() => void refreshServers()} aria-label="Check selected server">↻</button></>}</section>
     {showAddServer && <section className="add-server"><label>Name<input value={serverName} onChange={(event) => setServerName(event.target.value)} /></label><label>Origin<input value={origin} onChange={(event) => setOrigin(event.target.value)} placeholder="https://buffaly.example.com" /></label><button onClick={saveNewServer} disabled={!!busy || !serverName.trim() || !origin.trim()}>Save server</button></section>}
+    {showServerSettings && serversStatus.ActiveServer && <div className="modal-backdrop"><section className="settings-modal" role="dialog" aria-modal="true" aria-label="Buffaly server settings"><img src={logo48Url} alt="" /><h2>Server settings</h2><p>View or update this Chrome installation's saved Buffaly server. Authorization and conversations remain isolated per origin.</p><label>Name<input value={serverName} onChange={(event) => setServerName(event.target.value)} /></label><label>Origin<input value={origin} onChange={(event) => setOrigin(event.target.value)} /></label><div className="server-details"><span>State <b>{stateLabel}</b></span><span>WebModule <b>{serversStatus.Version || 'Not detected'}</b></span><span>Authorized <b>{serversStatus.Servers.find((server) => server.ServerId === serversStatus.ActiveServer?.ServerId)?.Authorized ? 'Yes' : 'No'}</b></span></div>{error && <div className="settings-error">{error}</div>}<div className="modal-actions"><button className="disconnect" onClick={removeActiveServer} disabled={!!busy}>Remove</button><span /><button className="secondary" onClick={() => setShowServerSettings(false)}>Cancel</button><button className="primary" onClick={saveNewServer} disabled={!!busy || !serverName.trim() || !origin.trim()}>Save changes</button></div></section></div>}
     <nav className="primary-tabs" aria-label="Side panel views"><button className={panelMode === 'chat' ? 'selected' : ''} onClick={() => selectPanelMode('chat')} aria-current={panelMode === 'chat' ? 'page' : undefined}>Chat</button><button className={panelMode === 'agent' ? 'selected' : ''} onClick={() => selectPanelMode('agent')} aria-current={panelMode === 'agent' ? 'page' : undefined}>Agent <span>{toolLog.length}</span></button>{panelMode === 'chat' && conversation && <><button className="new-conversation" onClick={newConversation} disabled={!!busy}>New</button><button className="popout-conversation" onClick={openConversationTab} disabled={!!busy} aria-label="Open conversation in a full tab" title="Open in full tab">↗</button></>}</nav>
     <section className={`workspace ${conversation ? 'embedded' : ''}`} hidden={panelMode !== 'chat'} inert={panelMode !== 'chat' ? true : undefined}>{connected && conversation ? <div className="embed-shell">{microphoneError && <div className="microphone-help"><strong>Microphone access is not enabled for {serversStatus.ActiveServer?.Name || 'this Buffaly server'}.</strong><span>Enable microphone access for this Buffaly server, then retry the composer microphone.</span><button onClick={openMicrophonePermission} disabled={busy === 'microphone'}>{busy === 'microphone' ? 'Enabling…' : 'Enable microphone'}</button><button className="dismiss" onClick={() => setMicrophoneError('')}>Dismiss</button></div>}<iframe ref={conversationFrame} title="Buffaly session" src={conversationUrl(conversation)} allow="clipboard-read; clipboard-write; microphone" /></div> : <div className="welcome"><img src={logo128Url} alt="Buffaly" /><p className="eyebrow">BUFFALY + THIS PAGE</p><h1>{serversStatus.ActiveServer ? serversStatus.ActiveServer.Name : 'Add a Buffaly server'}</h1><p>{serversStatus.State === 'Ready' ? 'This Chrome is authorized. Start a bound conversation for the current page.' : serversStatus.State === 'SignInRequired' ? 'This server is reachable. Sign in once to authorize this Chrome installation.' : serversStatus.State === 'WebModuleMissing' ? 'This Buffaly server does not have the ExtensionBrowser WebModule installed.' : 'Choose or add a reachable Buffaly server. Remote and Tailscale servers must use HTTPS.'}</p>{error && <div className="settings-error">{error}</div>}{serversStatus.State === 'SignInRequired' && <button className="connect-button" onClick={connect} disabled={!!busy}>Sign in and authorize this Chrome <span>{busy ? 'Connecting…' : 'Open sign-in'}</span></button>}{serversStatus.State === 'Ready' && <button className="connect-button" onClick={newConversation} disabled={!!busy}>New conversation <span>Bound to Chrome</span></button>}</div>}</section>
     <section className="agent-panel" hidden={panelMode !== 'agent'} inert={panelMode !== 'agent' ? true : undefined}><section className="page-card" aria-label="Current page"><div className="page-icon">↗</div><div className="page-copy"><span>Working on</span><strong>{activeTab?.title || 'Current page'}</strong><small>{activeTab?.url || 'Open a web page to begin'}</small></div><button className="icon-button" onClick={refreshStatus} aria-label="Refresh page context">↻</button></section><section className={`control-card ${debuggerAttached ? 'enabled' : ''}`}><div><strong>{debuggerAttached ? 'Buffaly can act on this tab' : 'Page access is ready'}</strong><p>{debuggerAttached ? 'Trusted clicks and typing are enabled.' : 'Enable control when this conversation needs to click or type.'}</p></div><button onClick={debuggerAttached ? pauseControl : enableControl} disabled={busy === 'control'}>{debuggerAttached ? 'Pause' : 'Enable'}</button></section><div className="activity-heading"><div><span>Browser activity</span><small>Actions from this conversation</small></div><b>{toolLog.length}</b></div><div className="activity-panel">{toolLog.length === 0 ? <div className="activity-empty"><b>✓</b><h2>No browser activity yet</h2><p>Actions from this bound conversation will appear here.</p></div> : toolLog.slice().reverse().map((entry) => <article key={entry.id} className={`activity-row ${entry.status}`}><i>{entry.status === 'success' ? '✓' : entry.status === 'error' ? '!' : '·'}</i><div><strong>{entry.tool.replaceAll('_', ' ')}</strong><small>{new Date(entry.timestamp).toLocaleTimeString()} · {entry.status}</small></div></article>)}</div></section>

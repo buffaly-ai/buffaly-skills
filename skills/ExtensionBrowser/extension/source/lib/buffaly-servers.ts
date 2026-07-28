@@ -58,6 +58,20 @@ export async function saveServer(server: SavedBuffalyServer, makeActive = true):
   });
 }
 
+export async function removeServer(serverId: string): Promise<SavedBuffalyServer | null> {
+  const state = await loadServers();
+  const servers = state.servers.filter((server) => server.ServerId !== serverId);
+  if (servers.length === state.servers.length) throw new Error('The Buffaly server to remove was not found.');
+  const active = state.activeServerId === serverId ? (servers[0] || null) : (servers.find((server) => server.ServerId === state.activeServerId) || null);
+  await chrome.storage.local.set({
+    [SERVERS_STORAGE_KEY]: servers,
+    [ACTIVE_SERVER_STORAGE_KEY]: active?.ServerId || '',
+    [LEGACY_CONNECTION_STORAGE_KEY]: active?.Connection || null,
+    [LEGACY_CONVERSATION_STORAGE_KEY]: active?.ActiveConversation || null,
+  });
+  return active;
+}
+
 export async function activateServer(serverId: string): Promise<SavedBuffalyServer> {
   const state = await loadServers();
   const server = state.servers.find((item) => item.ServerId === serverId);

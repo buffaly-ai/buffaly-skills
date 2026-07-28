@@ -31,6 +31,8 @@ check(sidepanelSource.includes('TabId: page.tabId'), 'current-page UserState sna
 check(backgroundSource.includes("canonicalServerOrigin(String(request.origin || '').trim())") && backgroundSource.includes("Promise.resolve().then(async () =>"), 'Save server must validate input inside its asynchronous response path');
 check(sidepanelSource.includes("void refreshServers().catch"), 'Save server completion must not block on server health inspection');
 check(backgroundSource.includes("data: { Server:") && sidepanelSource.includes("setServersStatus((current) =>"), 'Save server must update the selector immediately from its persisted summary');
+check(backgroundSource.includes("request.type === 'remove_buffaly_server'") && sidepanelSource.includes('Manage selected server') && sidepanelSource.includes('Server settings') && sidepanelSource.includes('Save changes'), 'saved-server management UI and worker contract are missing');
+check(backgroundSource.includes('const sameOrigin = existing?.Origin === origin') && backgroundSource.includes('Connection: sameOrigin ?'), 'changing a saved server origin must not transfer its credential or conversation authority');
 check(!sidepanel.includes('BuffalyExtensionConnection'), 'side panel must not receive the credential-bearing installation connection');
 check(!sidepanel.includes('BuffalyActiveConversation'), 'side panel must not persist conversation or navigation authority');
 check(background.includes('BuffalyActiveConversationBinding'), 'service worker active binding pointer storage contract is missing');
