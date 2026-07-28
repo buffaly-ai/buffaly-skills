@@ -1,4 +1,6 @@
-# Buffaly Browser Agent 0.2.42 / WebModule 0.1.29 validation
+# Buffaly Browser Agent 0.2.43 / WebModule 0.1.29 validation
+
+0.2.43 preserves the active Chrome tab ID in every per-dispatch `ExtensionBrowser.CurrentPage` UserState snapshot. Deterministic Send and Steer tests assert URL, title, different tab IDs across the two snapshots, and capture timestamps so navigation between tab identities cannot regress silently.
 
 0.2.42 makes the embedded composer microphone recoverable in Chrome's extension-hosted iframe. The service worker grants microphone content access only for the selected saved Buffaly origin through `chrome.contentSettings`; the iframe still delegates `microphone`, and the extension still rejects the invalid `audioCapture` manifest permission. Regular Chrome acceptance changed the selected staging origin from `ask` to `allow`, started the actual bound-session composer recorder, observed `Recording...`, and stopped it.
 

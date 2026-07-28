@@ -27,6 +27,7 @@ check(!manifest.permissions.includes('audioCapture'), 'invalid extension permiss
 check(backgroundSource.includes('chrome.contentSettings.microphone.set') && backgroundSource.includes('primaryPattern'), 'embedded Buffaly microphone permission grant is missing');
 check(!backgroundSource.includes("secondaryPattern: `${chrome.runtime.getURL('/')}*`"), 'microphone grant must not use an invalid chrome-extension secondary pattern');
 check(sidepanelSource.includes('allow="clipboard-read; clipboard-write; microphone"'), 'conversation iframe must delegate microphone capture');
+check(sidepanelSource.includes('TabId: page.tabId'), 'current-page UserState snapshot must preserve the active tab ID');
 check(!sidepanel.includes('BuffalyExtensionConnection'), 'side panel must not receive the credential-bearing installation connection');
 check(!sidepanel.includes('BuffalyActiveConversation'), 'side panel must not persist conversation or navigation authority');
 check(background.includes('BuffalyActiveConversationBinding'), 'service worker active binding pointer storage contract is missing');

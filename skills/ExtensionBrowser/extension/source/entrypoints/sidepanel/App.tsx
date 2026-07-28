@@ -113,7 +113,7 @@ export default function App() {
       callTool('get_active_tab').then((result) => {
         if (!result.ok) throw new Error(result.error || 'Chrome did not return the active page.');
         const page = result.data as ActiveTab;
-        event.source?.postMessage({ type: 'extension_browser_current_page_response', requestId: request.requestId, page: { Url: page.url, Title: page.title, CapturedUtc: new Date().toISOString() } }, { targetOrigin: event.origin });
+        event.source?.postMessage({ type: 'extension_browser_current_page_response', requestId: request.requestId, page: { Url: page.url, Title: page.title, TabId: page.tabId, CapturedUtc: new Date().toISOString() } }, { targetOrigin: event.origin });
       }).catch((reason) => {
         event.source?.postMessage({ type: 'extension_browser_current_page_response', requestId: request.requestId, error: reason instanceof Error ? reason.message : String(reason) }, { targetOrigin: event.origin });
       });
