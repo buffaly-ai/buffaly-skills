@@ -3,7 +3,7 @@ import Buffaly.Agent.Tools.SemanticDatabase Buffaly.Agent.Tools.SemanticDatabase
 reference Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer;
 import Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer.RuntimeDispatchTreeFacade RuntimeDispatchTreeFacade;
 import Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer.DispatchNodeSummary DispatchNodeSummary;
-import Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer.DispatchAttachment DispatchAttachment;
+import Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer.DispatchAttachment DispatchAttachmentContract;
 import Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer.OntologyTreeRuntimeReader OntologyTreeRuntimeReader;
 
 prototype DispatchAgentActionRoot : OpsAction
@@ -199,7 +199,7 @@ prototype ToGetDispatchAttachment : DispatchTreeSkillAction, DispatchContext
 {
 	Description = @"prototypeName - exact Dispatch node. attachmentName - exact attachment name. Returns one minimal DispatchAttachment(Name, Value). Reads legacy SessionKey only for explicit migration compatibility; new writes use Attachments only. It never mutates memory, creates sessions, queues, or delivers.";
 
-	function Execute(string prototypeName, string attachmentName) : DispatchAttachment
+	function Execute(string prototypeName, string attachmentName) : DispatchAttachmentContract
 	{
 		return RuntimeDispatchTreeFacade.GetAttachment(_runtime, prototypeName, attachmentName);
 	}
