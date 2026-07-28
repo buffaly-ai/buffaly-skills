@@ -1,0 +1,171 @@
+import Buffaly.Agent.Tools.Http Buffaly.Agent.Tools.Http.JsonWsHelper JsonWsHelper;
+import BasicUtilities BasicUtilities.JsonObject JsonObject;
+import BasicUtilities BasicUtilities.StringUtil StringUtil;
+
+// ── Skill definition ───────────────────────────────────────────────
+
+prototype FeedingFrenzySmsSkillAction : OpsAction
+{
+	Description = @"Base action type for Feeding Frenzy SMS transport adapter tools.";
+}
+
+[SemanticEntity("feeding frenzy sms skill")]
+prototype FeedingFrenzySmsSkill : SkillEntity
+{
+	Description = @"Feeding Frenzy SMS transport adapter skill. Sends outbound SMS through Twilio Messaging Service via Feeding Frenzy JSON WS routes, queries delivery status, checks compliance, and resolves conversations.";
+	ActionRoot = FeedingFrenzySmsSkillAction;
+}
+
+// ── Service binding ────────────────────────────────────────────────
+// Implements the channel adapter plugin interface directly.
+// Uses the same JsonWsHelper.CallJsonRouteSecure pattern as
+// FeedingFrenzyJsonWsService, with a dedicated SMS API prefix.
+
+prototype FeedingFrenzySmsService : Service
+{
+	String BaseUrl = new String();
+	String SmsApiPrefix = "api/feedingfrenzy.admin.sms";
+	String TokenKey = "FeedingFrenzy.ApiKey";
+
+	ServiceName = "FeedingFrenzySmsService";
+	Scope = "per-binding";
+	AutoInitialize = true;
+	Description = @"Feeding Frenzy SMS transport adapter service. Calls FairPath SMS JSON WS routes through the existing JsonWsHelper secure route pattern.";
+
+	function Initialize() : string
+	{
+		if (StringUtil.IsEmpty(this.BaseUrl))
+			return "Error: FeedingFrenzySmsService.BaseUrl must be set on the binding.";
+		return "FeedingFrenzySmsService initialized (BaseUrl = " + this.BaseUrl + ").";
+	}
+
+	function CallSmsRoute(string routePath, JsonObject args) : string
+	{
+		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
+		return JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.SmsApiPrefix, routePath, this.TokenKey, normalizedArgs);
+	}
+}
+
+[SemanticEntity("feeding frenzy remote sms service")]
+[SemanticEntity("remote feeding frenzy sms")]
+partial prototype FeedingFrenzySmsService#Remote : FeedingFrenzySmsService
+{
+	BaseUrl = "https://ff.medek.ai";
+	TokenKey = "FeedingFrenzy.ApiKey";
+	Description = "Remote Feeding Frenzy SMS service binding.";
+}
+
+[SemanticEntity("feeding frenzy local sms service")]
+[SemanticEntity("local feeding frenzy sms")]
+partial prototype FeedingFrenzySmsService#Local : FeedingFrenzySmsService
+{
+	BaseUrl = "http://feedingfrenzy.local";
+	TokenKey = "FeedingFrenzy.Local.ApiKey";
+	Description = "Local Feeding Frenzy SMS service binding.";
+}
+
+// ── Channel adapter plugin interface actions ───────────────────────
+// Each action implements one method of the channel adapter plugin
+// interface.  The SMS Agent and conversation state machine call these
+// to interact with the transport layer.
+
+[SemanticProgram.InfinitivePhrase("to send an sms message through feeding frenzy")]
+prototype ToSendSmsViaFeedingFrenzy : FeedingFrenzySmsSkillAction
+{
+	Description = @"service - required FeedingFrenzySmsService binding. to - recipient phone number in E.164 format. body - message text. idempotencyKey - unique key for deduplication; a duplicate key returns the original result instead of sending again. Returns JSON with success, platformMessageId, status, and idempotencyKey.";
+	function Execute(FeedingFrenzySmsService service, string to, string body, string idempotencyKey) : string
+	{
+		if (service == null) return "Error: FeedingFrenzySmsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["to"] = to;
+		args["body"] = body;
+		args["idempotencyKey"] = idempotencyKey;
+		return service.CallSmsRoute("send-outbound", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get sms delivery status from feeding frenzy")]
+prototype ToGetSmsDeliveryStatusFromFeedingFrenzy : FeedingFrenzySmsSkillAction
+{
+	Description = @"service - required FeedingFrenzySmsService binding. platformMessageId - Twilio MessageSid returned from a previous send. Returns JSON with success, status, errorCode, and errorMessage.";
+	function Execute(FeedingFrenzySmsService service, string platformMessageId) : string
+	{
+		if (service == null) return "Error: FeedingFrenzySmsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["platformMessageId"] = platformMessageId;
+		return service.CallSmsRoute("get-delivery-status", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to check sms compliance through feeding frenzy")]
+prototype ToCheckSmsComplianceViaFeedingFrenzy : FeedingFrenzySmsSkillAction
+{
+	Description = @"service - required FeedingFrenzySmsService binding. conversationKey - opaque conversation identifier or phone number. Returns JSON with allowed (bool) and reason (string).";
+	function Execute(FeedingFrenzySmsService service, string conversationKey) : string
+	{
+		if (service == null) return "Error: FeedingFrenzySmsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["conversationKey"] = conversationKey;
+		return service.CallSmsRoute("check-compliance", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to resolve an sms conversation through feeding frenzy")]
+prototype ToResolveSmsConversationViaFeedingFrenzy : FeedingFrenzySmsSkillAction
+{
+	Description = @"service - required FeedingFrenzySmsService binding. fromNumber - sender phone number. toNumber - receiving phone number. Returns JSON with conversationKey, isNew, and optionally patientID and patientName.";
+	function Execute(FeedingFrenzySmsService service, string fromNumber, string toNumber) : string
+	{
+		if (service == null) return "Error: FeedingFrenzySmsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["fromNumber"] = fromNumber;
+		args["toNumber"] = toNumber;
+		return service.CallSmsRoute("resolve-conversation", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to receive an inbound sms through feeding frenzy")]
+prototype ToReceiveInboundSmsViaFeedingFrenzy : FeedingFrenzySmsSkillAction
+{
+	Description = @"service - required FeedingFrenzySmsService binding. messageSid - Twilio MessageSid for deduplication. from - sender phone number. to - receiving phone number. body - message text. mediaData - optional JSON object with media URLs and metadata. Returns JSON with success, isDuplicate, messageId, conversationKey, and isNewConversation.";
+	function Execute(FeedingFrenzySmsService service, string messageSid, string from, string to, string body, JsonObject mediaData) : string
+	{
+		if (service == null) return "Error: FeedingFrenzySmsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["messageSid"] = messageSid;
+		args["from"] = from;
+		args["to"] = to;
+		args["body"] = body;
+		if (mediaData != null)
+		{
+			args["mediaData"] = mediaData;
+		}
+		return service.CallSmsRoute("receive-inbound", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to mark an sms phone number as opted out")]
+prototype ToMarkSmsOptOutViaFeedingFrenzy : FeedingFrenzySmsSkillAction
+{
+	Description = @"service - required FeedingFrenzySmsService binding. phoneNumber - phone number to mark as opted out (STOP). Future compliance checks will block outbound messages to this number.";
+	function Execute(FeedingFrenzySmsService service, string phoneNumber) : string
+	{
+		if (service == null) return "Error: FeedingFrenzySmsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["phoneNumber"] = phoneNumber;
+		return service.CallSmsRoute("mark-opt-out", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to clear an sms opt-out status")]
+prototype ToClearSmsOptOutViaFeedingFrenzy : FeedingFrenzySmsSkillAction
+{
+	Description = @"service - required FeedingFrenzySmsService binding. phoneNumber - phone number to clear opt-out status (START/UNSTOP). Future compliance checks will allow outbound messages to this number.";
+	function Execute(FeedingFrenzySmsService service, string phoneNumber) : string
+	{
+		if (service == null) return "Error: FeedingFrenzySmsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["phoneNumber"] = phoneNumber;
+		return service.CallSmsRoute("clear-opt-out", args);
+	}
+}
