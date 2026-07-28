@@ -8,7 +8,7 @@ Provides bounded routing evidence and guarded local-tree writes for a normal Buf
 
 ## Contracts
 
-- `DispatchAgentActionRoot` and `DispatchTreeSkillAction` define the public bounded lookup/builder Skill discovery surface without defining the normal Dispatch agent profile.
+- `DispatchAgentActionRoot` and `DispatchTreeSkillAction` define the public bounded lookup/builder Skill discovery surface. `DispatchAgentCuratedActionRoot` and `DispatchAgentCuratedEntityRoot` are package-owned operational profile roots so installed `dispatch-agent` profiles retain session lifecycle/search, capability discovery, Scratch, and prototype inspection without depending on unmanaged project-local ProtoScript.
 - Each bounded action directly inherits both `DispatchTreeSkillAction` and `DispatchContext`. The host registers only immediate descendants of a supplemental PromptContext action root, so this direct inheritance makes the bounded actions callable from the first Dispatch turn while preserving the public Skill discovery surface. Do not insert an intermediate context-action prototype.
 - `ToSearchDispatchMemories` accepts one concise meaning phrase, a required bounded candidate window of 10 through 20 (default 12), and an optional exact subtree root. It searches only `Dispatch Memory` tags in `session:<currentSessionKey>` and returns typed compact semantic anchors with similarity preserved. Anchors must be placed and refined through the local graph before reuse.
 - `ToGetDispatchChildren` returns only one immediate child level. `ToGetDispatchPath` returns only one root-to-candidate path. Both hide historical examples and exact destination values.

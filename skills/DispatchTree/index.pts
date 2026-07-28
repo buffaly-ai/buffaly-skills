@@ -17,6 +17,32 @@ prototype DispatchAgentEntityRoot : SemanticEntityBase
 	Description = @"Entity root for one dispatch agent's session-local hidden-context routing tree.";
 }
 
+// Curated operational profile roots live in the package so installed dispatch-agent profiles
+// do not depend on an unmanaged project-local include.
+prototype DispatchAgentCuratedActionRoot : DispatchAgentActionRoot, SessionManagementSkillAction, BuffalyCapabilityInspectionSkillAction
+{
+	Description = @"Curated default action root for dispatch-agent sessions. It intentionally excludes Plan, Task, coding, shell, build, Git, SQL, file-editing, and deployment surfaces.";
+}
+
+prototype DispatchAgentCuratedEntityRoot : DispatchAgentEntityRoot, SessionManagementSkill, BuffalyCapabilityInspectionSkill
+{
+	EntityName = "dispatch agent curated entity root";
+	Description = @"Curated entity root for dispatch-agent sessions. It preserves dispatch, session, and capability ontology without exposing coding, build, Git, SQL, or task-management entity surfaces.";
+}
+
+partial prototype ToListSkills : DispatchAgentCuratedActionRoot;
+partial prototype ToListSkillActions : DispatchAgentCuratedActionRoot;
+partial prototype ToSearchCandidateActions : DispatchAgentCuratedActionRoot;
+partial prototype ToSearchCandidateEntities : DispatchAgentCuratedActionRoot;
+partial prototype ToLoadProtoScriptActionTool : DispatchAgentCuratedActionRoot;
+partial prototype ToListLoadedProtoScriptActionTools : DispatchAgentCuratedActionRoot;
+partial prototype ToGetSessionScratch : DispatchAgentCuratedActionRoot;
+partial prototype ToGetRecentSessionScratch : DispatchAgentCuratedActionRoot;
+partial prototype ToAppendSessionScratch : DispatchAgentCuratedActionRoot;
+partial prototype ToGetPrototypeDetails : DispatchAgentCuratedActionRoot;
+partial prototype ToGetPrototypePropertySchema : DispatchAgentCuratedActionRoot;
+partial prototype ToListPrototypeFirstLevelDescendants : DispatchAgentCuratedActionRoot;
+
 prototype DispatchTreeSkillAction : DispatchAgentActionRoot
 {
 	Description = @"Base action type for bounded session-local dispatch tree lookup and guarded building.";
