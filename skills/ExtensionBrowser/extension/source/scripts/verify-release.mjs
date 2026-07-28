@@ -20,10 +20,12 @@ check(manifest.background?.service_worker === 'background.js', 'background servi
 check(background.includes('__callTool'), 'background service worker bridge hook is missing');
 check(manifest.side_panel?.default_path === 'sidepanel.html', 'side panel is missing');
 check(manifest.content_scripts?.length === 1, 'content script declaration is missing');
-for (const permission of ['sidePanel', 'storage', 'identity', 'tabs', 'scripting', 'activeTab', 'debugger']) {
+for (const permission of ['sidePanel', 'storage', 'identity', 'tabs', 'scripting', 'activeTab', 'debugger', 'contentSettings']) {
   check(manifest.permissions.includes(permission), `required permission is missing: ${permission}`);
 }
 check(!manifest.permissions.includes('audioCapture'), 'invalid extension permission must not be present: audioCapture');
+check(backgroundSource.includes('chrome.contentSettings.microphone.set') && backgroundSource.includes('primaryPattern'), 'embedded Buffaly microphone permission grant is missing');
+check(!backgroundSource.includes("secondaryPattern: `${chrome.runtime.getURL('/')}*`"), 'microphone grant must not use an invalid chrome-extension secondary pattern');
 check(sidepanelSource.includes('allow="clipboard-read; clipboard-write; microphone"'), 'conversation iframe must delegate microphone capture');
 check(!sidepanel.includes('BuffalyExtensionConnection'), 'side panel must not receive the credential-bearing installation connection');
 check(!sidepanel.includes('BuffalyActiveConversation'), 'side panel must not persist conversation or navigation authority');

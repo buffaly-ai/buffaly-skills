@@ -1,4 +1,6 @@
-# Buffaly Browser Agent 0.2.41 / WebModule 0.1.29 validation
+# Buffaly Browser Agent 0.2.42 / WebModule 0.1.29 validation
+
+0.2.42 makes the embedded composer microphone recoverable in Chrome's extension-hosted iframe. The service worker grants microphone content access only for the selected saved Buffaly origin through `chrome.contentSettings`; the iframe still delegates `microphone`, and the extension still rejects the invalid `audioCapture` manifest permission. Regular Chrome acceptance changed the selected staging origin from `ask` to `allow`, started the actual bound-session composer recorder, observed `Recording...`, and stopped it.
 
 0.2.41 replaces the single-origin setup with saved server records whose authorization, active conversation, and last connection are isolated per origin. Selecting a server atomically switches the service-worker-owned compatibility pointers. The panel reports Ready only after health, credential authentication, and a live installation channel all succeed; stale credentials require sign-in and authorized-but-offline channels report Unavailable. Send and Steer each wait for a fresh active-tab URL/title snapshot and inject it through the existing UserState contract. Microphone failures from the embedded composer preserve the browser exception and display origin-specific permission recovery without adding extension-level capture authority.
 

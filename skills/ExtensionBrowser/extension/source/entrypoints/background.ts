@@ -157,7 +157,7 @@ export default defineBackground(() => {
 		if (!isTrustedExtensionPage(sender)) { sendResponse({ ok: false, error: 'Unauthorized: servers can only be read from an extension page' }); return false; }
 		loadServers().then(async (state) => {
 			const active = state.servers.find((server) => server.ServerId === state.activeServerId) || null;
-			const status = active ? await inspectServer(active.Origin, active.Connection) : { State: 'SignInRequired' as ServerState, Version: '' };
+			const status = active ? await inspectServer(active.Origin, active.Connection) : { State: 'Unavailable' as ServerState, Version: '' };
 			sendResponse({ ok: true, data: { Servers: summarizeServers(state.servers, state.activeServerId), ActiveServer: active ? { ServerId: active.ServerId, Name: active.Name, Origin: active.Origin } : null, ...status } });
 		}).catch((err: Error) => sendResponse({ ok: false, error: err.message }));
 		return true;
@@ -178,6 +178,19 @@ export default defineBackground(() => {
 		if (!isTrustedExtensionPage(sender)) { sendResponse({ ok: false, error: 'Unauthorized: servers can only be selected from an extension page' }); return false; }
 		activateServer(request.serverId).then(async () => {
 			await startInstallationChannel(); sendResponse({ ok: true });
+		}).catch((err: Error) => sendResponse({ ok: false, error: err.message }));
+		return true;
+	  }
+
+	  if (request.type === 'grant_buffaly_microphone') {
+		if (!isTrustedExtensionPage(sender)) { sendResponse({ ok: false, error: 'Unauthorized: microphone access can only be granted from an extension page' }); return false; }
+		getActiveServer().then(async (server) => {
+			if (!server) throw new Error('Select a Buffaly server first.');
+			// Chrome does not accept chrome-extension:// patterns as secondaryPattern values.
+			// Omitting it applies the selected Buffaly origin's microphone setting to all embeddings,
+			// including this extension's delegated conversation iframe.
+			await chrome.contentSettings.microphone.set({ primaryPattern: `${server.Origin}/*`, setting: 'allow' });
+			sendResponse({ ok: true, data: { Origin: server.Origin } });
 		}).catch((err: Error) => sendResponse({ ok: false, error: err.message }));
 		return true;
 	  }
