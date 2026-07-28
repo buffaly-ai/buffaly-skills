@@ -8,6 +8,7 @@
   const REQUEST_TYPE = 'extension_browser_current_page_request';
   const USER_STATE_KEY = 'ExtensionBrowser.CurrentPage';
   const pending = new Map();
+  const freshlyEnrichedInputs = new WeakSet();
   let evaluateWrapper = null;
   let steerWrapper = null;
   let composerFactoryWrapper = null;
@@ -71,7 +72,8 @@
     evaluateWrapper = function (initializer) {
       const isEvaluate = initializer && initializer.Method === 'EvaluateWithInput'
         && initializer.Params && initializer.Params.Input;
-      if (!isEvaluate || (initializer.Params.Input.UserState && initializer.Params.Input.UserState[USER_STATE_KEY])) return original(initializer);
+      if (!isEvaluate) return original(initializer);
+      if (freshlyEnrichedInputs.delete(initializer.Params.Input)) return original(initializer);
       requestCurrentPage().then((page) => {
         injectPage(initializer.Params.Input, page);
         original(initializer);
@@ -86,7 +88,7 @@
     if (window.BuffalyAgentService.SteerInputObjectAsync === steerWrapper) return true;
     const original = window.BuffalyAgentService.SteerInputObjectAsync.bind(window.BuffalyAgentService);
     steerWrapper = async function (request) {
-      if (request && request.input && request.input.UserState && request.input.UserState[USER_STATE_KEY]) return original(request);
+      if (request && request.input && freshlyEnrichedInputs.delete(request.input)) return original(request);
       const page = await requestCurrentPage();
       injectPage(request.input, page);
       return original(request);
@@ -111,6 +113,7 @@
           if (!input) return originalInvoke(methodKebabName, methodName, params, callback, onError);
           requestCurrentPage().then((page) => {
             injectPage(input, page);
+            freshlyEnrichedInputs.add(input);
             originalInvoke(methodKebabName, methodName, params, callback, onError);
           }).catch((error) => {
             if (typeof onError === 'function') onError({ Error: error.message });
