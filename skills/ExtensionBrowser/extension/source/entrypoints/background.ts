@@ -169,9 +169,10 @@ export default defineBackground(() => {
 			const origin = canonicalServerOrigin(String(request.origin || '').trim());
 			const state = await loadServers();
 			const existing = state.servers.find((server) => server.Origin === origin);
-			await saveServer({ ServerId: existing?.ServerId || crypto.randomUUID(), Name: String(request.name || new URL(origin).hostname).trim(), Origin: origin, Connection: existing?.Connection || null, ActiveConversation: existing?.ActiveConversation || null, LastConnectedUtc: existing?.LastConnectedUtc || '' }, true);
+			const saved = { ServerId: existing?.ServerId || crypto.randomUUID(), Name: String(request.name || new URL(origin).hostname).trim(), Origin: origin, Connection: existing?.Connection || null, ActiveConversation: existing?.ActiveConversation || null, LastConnectedUtc: existing?.LastConnectedUtc || '' };
+			await saveServer(saved, true);
 			await startInstallationChannel();
-			sendResponse({ ok: true });
+			sendResponse({ ok: true, data: { Server: { ServerId: saved.ServerId, Name: saved.Name, Origin: saved.Origin, Authorized: Boolean(saved.Connection), Active: true, LastConnectedUtc: saved.LastConnectedUtc } } });
 		}).catch((err: Error) => sendResponse({ ok: false, error: err.message }));
 		return true;
 	  }

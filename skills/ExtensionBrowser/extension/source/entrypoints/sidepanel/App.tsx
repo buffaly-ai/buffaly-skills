@@ -136,9 +136,11 @@ export default function App() {
   const saveNewServer = useCallback(async () => {
     setBusy('save-server'); setError('');
     try {
-      const response = await chrome.runtime.sendMessage({ type: 'save_buffaly_server', name: serverName, origin }) as WorkerResponse<unknown> | undefined;
-      if (!response?.ok) throw new Error(response?.error || 'The Buffaly server could not be saved.');
-       setConversation(null); setShowAddServer(false);
+      const response = await chrome.runtime.sendMessage({ type: 'save_buffaly_server', name: serverName, origin }) as WorkerResponse<{ Server: ServerSummary }> | undefined;
+      if (!response?.ok || !response.data) throw new Error(response?.error || 'The Buffaly server could not be saved.');
+       const saved = response.data.Server;
+       setServersStatus((current) => ({ ...current, Servers: current.Servers.filter((server) => server.ServerId !== saved.ServerId && server.Origin !== saved.Origin).map((server) => ({ ...server, Active: false })).concat(saved), ActiveServer: { ServerId: saved.ServerId, Name: saved.Name, Origin: saved.Origin }, State: 'Unavailable', Version: '' }));
+       setOrigin(saved.Origin); setConnected(false); setConversation(null); setShowAddServer(false);
        void refreshServers().catch((reason) => setError(reason instanceof Error ? reason.message : String(reason)));
     } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
     finally { setBusy(''); }
