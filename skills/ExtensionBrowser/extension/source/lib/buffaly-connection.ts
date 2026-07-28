@@ -102,7 +102,7 @@ function canonicalNavigationUrl(value: string): string | null {
   }
 }
 
-function requiredOrigin(value: string): string {
+export function requiredOrigin(value: string): string {
   const origin = new URL(value);
   if (!['http:', 'https:'].includes(origin.protocol) || origin.pathname !== '/' || origin.search || origin.hash) {
     throw new Error('Buffaly origin must be an http or https origin without a path or query.');
@@ -116,11 +116,9 @@ async function readJson<T>(response: Response): Promise<T> {
   return value as T;
 }
 
-export async function authorizeInstallation(originInput: string): Promise<ExtensionConnection> {
-  const Origin = requiredOrigin(originInput);
-  const stored = await chrome.storage.local.get(CONNECTION_STORAGE_KEY);
-  const existing = stored[CONNECTION_STORAGE_KEY] as ExtensionConnection | undefined;
-  const InstallationId = existing?.InstallationId || crypto.randomUUID();
+export async function authorizeInstallation(originInput: string, existingConnection?: ExtensionConnection | null): Promise<ExtensionConnection> {
+	const Origin = requiredOrigin(originInput);
+	const InstallationId = existingConnection?.InstallationId || crypto.randomUUID();
   const redirectUri = chrome.identity.getRedirectURL();
   const state = crypto.randomUUID();
   const authorizeUrl = new URL('/web-modules/ExtensionBrowser/api/installations/authorize', Origin);
@@ -142,9 +140,8 @@ export async function authorizeInstallation(originInput: string): Promise<Extens
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ InstallationRegistrationId, AuthorizationCode }),
   }));
-  const connection = { Origin, InstallationId, InstallationRegistrationId: exchange.InstallationRegistrationId, InstallationCredential: exchange.InstallationCredential };
-  await chrome.storage.local.set({ [CONNECTION_STORAGE_KEY]: connection });
-  return connection;
+	const connection = { Origin, InstallationId, InstallationRegistrationId: exchange.InstallationRegistrationId, InstallationCredential: exchange.InstallationCredential };
+	return connection;
 }
 
 export async function loadConnection(): Promise<ExtensionConnection | null> {

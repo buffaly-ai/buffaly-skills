@@ -1,14 +1,15 @@
 {
   "name": "buffaly-browser-agent",
-  "version": "0.2.40",
+  "version": "0.2.41",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "wxt",
     "typecheck": "wxt prepare && tsc --noEmit",
+    "test:page-context": "node ../../scripts/verify-page-context.mjs",
     "build": "wxt build",
     "zip": "wxt zip",
-    "release:check": "npm run typecheck && npm run build && npm run zip && node scripts/verify-release.mjs && npm audit --omit=dev",
+    "release:check": "npm run typecheck && npm run test:page-context && npm run build && npm run zip && node scripts/verify-release.mjs && npm audit --omit=dev",
     "postinstall": "wxt prepare"
   },
   "devDependencies": {

@@ -2,6 +2,7 @@ import { handleToolCall, grantDebuggerConsent, revokeDebuggerConsent } from '../
 import { detachDebugger, isAttached } from '../lib/debugger-session';
 import { getLogEntries, getLogVersion } from '../lib/tool-log';
 import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, PROMPT_POLICY_REVISION, authorizeInstallation, createConversation, issueNavigationToken, loadBoundToolResult, loadConnection, type BoundToolInvocationIdentity, type ConversationBinding } from '../lib/buffaly-connection';
+import { activateServer, getActiveServer, loadServers, saveServer, summarizeServers, updateActiveServer, type SavedBuffalyServer, type ServerState } from '../lib/buffaly-servers';
 
 let installationChannel: InstallationChannel | null = null;
 let boundToolPort: chrome.runtime.Port | null = null;
@@ -30,11 +31,31 @@ async function invokeBoundTool(tool: string, args: Record<string, unknown>, iden
 }
 
 async function startInstallationChannel(): Promise<void> {
-  const connection = await loadConnection();
-  if (!connection) return;
+	const connection = (await getActiveServer())?.Connection || null;
   installationChannel?.stop();
+	installationChannel = null;
+	if (!connection) return;
   installationChannel = new InstallationChannel(connection, invokeBoundTool);
-  await installationChannel.start();
+	await installationChannel.start();
+}
+
+async function inspectServer(origin: string, connection: SavedBuffalyServer['Connection']): Promise<{ State: ServerState; Version: string }> {
+	try {
+		const response = await fetch(new URL('/web-modules/ExtensionBrowser/health', origin), { cache: 'no-store' });
+		if (response.status === 404) return { State: 'WebModuleMissing', Version: '' };
+		if (!response.ok) return { State: 'Unavailable', Version: '' };
+		const health = await response.json() as { Version?: string };
+		if (!connection) return { State: 'SignInRequired', Version: health.Version || '' };
+		const status = await fetch(new URL('/web-modules/ExtensionBrowser/api/installations/status', origin), {
+			method: 'POST', headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential }),
+		});
+		if (!status.ok) return { State: 'SignInRequired', Version: health.Version || '' };
+		const installation = await status.json() as { ChannelConnected?: boolean };
+		return { State: installation.ChannelConnected ? 'Ready' : 'Unavailable', Version: health.Version || '' };
+	} catch {
+		return { State: 'Unavailable', Version: '' };
+	}
 }
 
 function isTrustedExtensionPage(sender: chrome.runtime.MessageSender): boolean {
@@ -108,9 +129,13 @@ export default defineBackground(() => {
         sendResponse({ ok: false, error: 'Unauthorized: installation authorization can only originate from an extension page' });
         return false;
       }
-      authorizeInstallation(request.origin)
-        .then(async (connection) => {
-          await startInstallationChannel();
+		getActiveServer().then((server) => authorizeInstallation(request.origin, server?.Origin === new URL(request.origin).origin ? server.Connection : null))
+		  .then(async (connection) => {
+			const current = await getActiveServer();
+			const matchingCurrent = current?.Origin === connection.Origin ? current : null;
+			await saveServer({ ServerId: matchingCurrent?.ServerId || crypto.randomUUID(), Name: request.name || matchingCurrent?.Name || new URL(connection.Origin).hostname, Origin: connection.Origin, Connection: connection, ActiveConversation: matchingCurrent?.ActiveConversation || null, LastConnectedUtc: new Date().toISOString() }, true);
+			await chrome.storage.local.set({ BuffalyExtensionConnection: connection });
+			await startInstallationChannel();
           sendResponse({ ok: true, data: { Origin: connection.Origin } });
         })
         .catch((err: Error) => sendResponse({ ok: false, error: err.message }));
@@ -128,7 +153,36 @@ export default defineBackground(() => {
       return true;
     }
 
-    if (request.type === 'get_buffaly_conversation_bootstrap') {
+	  if (request.type === 'get_buffaly_servers') {
+		if (!isTrustedExtensionPage(sender)) { sendResponse({ ok: false, error: 'Unauthorized: servers can only be read from an extension page' }); return false; }
+		loadServers().then(async (state) => {
+			const active = state.servers.find((server) => server.ServerId === state.activeServerId) || null;
+			const status = active ? await inspectServer(active.Origin, active.Connection) : { State: 'SignInRequired' as ServerState, Version: '' };
+			sendResponse({ ok: true, data: { Servers: summarizeServers(state.servers, state.activeServerId), ActiveServer: active ? { ServerId: active.ServerId, Name: active.Name, Origin: active.Origin } : null, ...status } });
+		}).catch((err: Error) => sendResponse({ ok: false, error: err.message }));
+		return true;
+	  }
+
+	  if (request.type === 'save_buffaly_server') {
+		if (!isTrustedExtensionPage(sender)) { sendResponse({ ok: false, error: 'Unauthorized: servers can only be saved from an extension page' }); return false; }
+		const origin = new URL(request.origin).origin;
+		loadServers().then(async (state) => {
+			const existing = state.servers.find((server) => server.Origin === origin);
+			await saveServer({ ServerId: existing?.ServerId || crypto.randomUUID(), Name: String(request.name || new URL(origin).hostname).trim(), Origin: origin, Connection: existing?.Connection || null, ActiveConversation: existing?.ActiveConversation || null, LastConnectedUtc: existing?.LastConnectedUtc || '' }, true);
+			await startInstallationChannel(); sendResponse({ ok: true });
+		}).catch((err: Error) => sendResponse({ ok: false, error: err.message }));
+		return true;
+	  }
+
+	  if (request.type === 'select_buffaly_server') {
+		if (!isTrustedExtensionPage(sender)) { sendResponse({ ok: false, error: 'Unauthorized: servers can only be selected from an extension page' }); return false; }
+		activateServer(request.serverId).then(async () => {
+			await startInstallationChannel(); sendResponse({ ok: true });
+		}).catch((err: Error) => sendResponse({ ok: false, error: err.message }));
+		return true;
+	  }
+
+	  if (request.type === 'get_buffaly_conversation_bootstrap') {
       if (!isTrustedExtensionPage(sender)) {
         sendResponse({ ok: false, error: 'Unauthorized: conversation bootstrap can only be read from an extension page' });
         return false;
@@ -181,10 +235,11 @@ export default defineBackground(() => {
           if (!connection) throw new Error('Buffaly installation is not authorized.');
           return createConversation(connection, 'CreateNew', crypto.randomUUID(), request.displayName || 'Chrome conversation');
         })
-        .then(async (bootstrap) => {
-          const binding: ConversationBinding = { ConversationSlotId: bootstrap.ConversationSlotId, SessionBindingId: bootstrap.SessionBindingId, DisplayName: bootstrap.DisplayName, PromptPolicyRevision: bootstrap.PromptPolicyRevision };
-          await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: binding });
-          sendResponse({ ok: true, data: bootstrap });
+		  .then(async (bootstrap) => {
+			const binding: ConversationBinding = { ConversationSlotId: bootstrap.ConversationSlotId, SessionBindingId: bootstrap.SessionBindingId, DisplayName: bootstrap.DisplayName, PromptPolicyRevision: bootstrap.PromptPolicyRevision };
+			await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: binding });
+			await updateActiveServer({ ActiveConversation: binding });
+			sendResponse({ ok: true, data: bootstrap });
         })
         .catch((err: Error) => sendResponse({ ok: false, error: err.message }));
       return true;
