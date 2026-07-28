@@ -34,6 +34,9 @@ for (const messageType of ['tool_call', 'buffaly_connection_changed', 'grant_deb
 assert.match(background, /createConversation\(connection, 'CreateNew', crypto\.randomUUID\(\)/, 'service worker must create each new conversation slot');
 assert.match(connection, /PROMPT_POLICY_REVISION/, 'extension must version its bound-conversation prompt policy');
 assert.match(background, /binding\.PromptPolicyRevision[\s\S]{0,180}< PROMPT_POLICY_REVISION[\s\S]{0,260}createConversation\(connection, 'CreateNew'/, 'service worker must replace a stored conversation created under an obsolete prompt policy');
+assert.match(connection, /interface ConversationBinding[\s\S]{0,180}InstallationRegistrationId: string/, 'stored conversation pointers must identify their owning installation registration');
+assert.match(background, /binding\.InstallationRegistrationId !== connection\.InstallationRegistrationId[\s\S]{0,360}createConversation\(connection, 'CreateNew'/, 'service worker must replace a conversation owned by another installation registration');
+assert.match(background, /InstallationRegistrationId: connection\.InstallationRegistrationId/, 'new active conversation pointers must retain their non-secret installation owner');
 assert.match(background, /ACTIVE_CONVERSATION_STORAGE_KEY/, 'service worker must own the opaque active binding pointer');
 assert.match(background, /issueNavigationToken\(connection, binding\.SessionBindingId\)/, 'service worker must mint a fresh token when restoring a conversation');
 assert.match(panel, /web-modules\/ExtensionBrowser\/conversation/, 'iframe must use the package-owned token bootstrap route');

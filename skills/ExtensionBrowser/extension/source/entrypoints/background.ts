@@ -216,10 +216,11 @@ export default defineBackground(() => {
         .then(async ([connection, stored]) => {
           let binding = stored[ACTIVE_CONVERSATION_STORAGE_KEY] as ConversationBinding | undefined;
           if (!connection || !binding) return null;
-          if ((binding.PromptPolicyRevision || 0) < PROMPT_POLICY_REVISION) {
+          if (binding.InstallationRegistrationId !== connection.InstallationRegistrationId || (binding.PromptPolicyRevision || 0) < PROMPT_POLICY_REVISION) {
             const replacement = await createConversation(connection, 'CreateNew', crypto.randomUUID(), binding.DisplayName || 'Chrome conversation');
-            binding = { ConversationSlotId: replacement.ConversationSlotId, SessionBindingId: replacement.SessionBindingId, DisplayName: replacement.DisplayName, PromptPolicyRevision: replacement.PromptPolicyRevision };
+            binding = { ConversationSlotId: replacement.ConversationSlotId, SessionBindingId: replacement.SessionBindingId, InstallationRegistrationId: connection.InstallationRegistrationId, DisplayName: replacement.DisplayName, PromptPolicyRevision: replacement.PromptPolicyRevision };
             await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: binding });
+            await updateActiveServer({ ActiveConversation: binding });
           }
           const navigation = await issueNavigationToken(connection, binding.SessionBindingId);
           return { Origin: connection.Origin, ...binding, NavigationToken: navigation.NavigationToken };
@@ -261,7 +262,9 @@ export default defineBackground(() => {
           return createConversation(connection, 'CreateNew', crypto.randomUUID(), request.displayName || 'Chrome conversation');
         })
 		  .then(async (bootstrap) => {
-			const binding: ConversationBinding = { ConversationSlotId: bootstrap.ConversationSlotId, SessionBindingId: bootstrap.SessionBindingId, DisplayName: bootstrap.DisplayName, PromptPolicyRevision: bootstrap.PromptPolicyRevision };
+			const connection = await loadConnection();
+			if (!connection) throw new Error('Buffaly installation is not authorized.');
+			const binding: ConversationBinding = { ConversationSlotId: bootstrap.ConversationSlotId, SessionBindingId: bootstrap.SessionBindingId, InstallationRegistrationId: connection.InstallationRegistrationId, DisplayName: bootstrap.DisplayName, PromptPolicyRevision: bootstrap.PromptPolicyRevision };
 			await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: binding });
 			await updateActiveServer({ ActiveConversation: binding });
 			sendResponse({ ok: true, data: bootstrap });

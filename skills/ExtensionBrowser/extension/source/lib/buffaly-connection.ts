@@ -15,6 +15,7 @@ export interface ExtensionConnection {
 export interface ConversationBinding {
   ConversationSlotId: string;
   SessionBindingId: string;
+  InstallationRegistrationId: string;
   DisplayName: string;
   PromptPolicyRevision: number;
 }
@@ -155,7 +156,7 @@ export async function createConversation(connection: ExtensionConnection, mode: 
     body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential, ConversationSlotId: slotId, Mode: mode, DisplayName: displayName }),
   }));
   const navigation = await issueNavigationToken(connection, binding.SessionBindingId);
-  return { Origin: connection.Origin, ConversationSlotId: slotId, SessionBindingId: binding.SessionBindingId, DisplayName: displayName, PromptPolicyRevision: binding.PromptPolicyRevision, NavigationToken: navigation.NavigationToken };
+  return { Origin: connection.Origin, ConversationSlotId: slotId, SessionBindingId: binding.SessionBindingId, InstallationRegistrationId: connection.InstallationRegistrationId, DisplayName: displayName, PromptPolicyRevision: binding.PromptPolicyRevision, NavigationToken: navigation.NavigationToken };
 }
 
 export async function issueNavigationToken(connection: ExtensionConnection, sessionBindingId: string): Promise<{ NavigationToken: string }> {
