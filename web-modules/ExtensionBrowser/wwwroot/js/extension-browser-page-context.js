@@ -87,15 +87,25 @@
     return true;
   }
 
-  let evaluateInstalled = installEvaluateInterceptor();
-  let steerInstalled = installSteerInterceptor();
-  installMicrophoneDiagnostics();
-  if (!evaluateInstalled || !steerInstalled) {
-    const timer = window.setInterval(() => {
-      if (!evaluateInstalled) evaluateInstalled = installEvaluateInterceptor();
-      if (!steerInstalled) steerInstalled = installSteerInterceptor();
-      if (evaluateInstalled && steerInstalled) window.clearInterval(timer);
-    }, 25);
-    window.setTimeout(() => window.clearInterval(timer), 10000);
+  const installStatus = window.ExtensionBrowserPageContext = {
+    evaluateInstalled: false,
+    steerInstalled: false
+  };
+  let evaluateInstalled = false;
+  let steerInstalled = false;
+  function installAvailableInterceptors() {
+    if (!evaluateInstalled) evaluateInstalled = installEvaluateInterceptor();
+    if (!steerInstalled) steerInstalled = installSteerInterceptor();
+    installStatus.evaluateInstalled = evaluateInstalled;
+    installStatus.steerInstalled = steerInstalled;
+    return evaluateInstalled && steerInstalled;
   }
+
+  installMicrophoneDiagnostics();
+  installAvailableInterceptors();
+  window.addEventListener('load', installAvailableInterceptors, { once: true });
+  const timer = window.setInterval(() => {
+    if (installAvailableInterceptors()) window.clearInterval(timer);
+  }, 25);
+  window.setTimeout(() => window.clearInterval(timer), 10000);
 }());
