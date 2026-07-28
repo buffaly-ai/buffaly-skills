@@ -1,4 +1,6 @@
-# Buffaly Browser Agent 0.2.46 / WebModule 0.1.29 validation
+# Buffaly Browser Agent 0.2.46 / WebModule 0.1.30 validation
+
+WebModule 0.1.30 repairs per-message page UserState injection in `buffaly-agent-next.html`. The package AgentScript wraps `BuffalyAgentComposer.createComposerController` during the bounded shell bootstrap and supplies an enriched composer configuration whose captured `invokeOpsService` waits for a fresh current-page response before both Send and Steer. This is the public composer boundary used by the Next shell and does not depend on replacing a lower transport after the controller has already captured it. Deterministic composer Send/Steer, delayed-service, and replaced-service regressions prove injection of URL, title, tab ID, and capture timestamp. The script also exposes only secret-free interceptor status for direct browser diagnosis. Its AgentScripts cache identity is the first 16 lowercase hexadecimal characters of the final packaged injector's SHA-256 hash. The build canonicalizes text to LF before deriving the token, validates the materialized package after publish, and publication acceptance must compare the canonical catalog index hash to that token.
 
 0.2.46 acknowledges a persisted saved-server edit before attempting to restart its authorized installation channel. Same-origin renames therefore complete even when the authorized server is offline; channel restart is separately observed and reports only to extension diagnostics. The release gate enforces reply-before-restart ordering.
 

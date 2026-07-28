@@ -111,7 +111,7 @@ export default function App() {
       if (!conversation || event.source !== conversationFrame.current?.contentWindow || event.origin !== new URL(conversation.Origin).origin) return;
       const request = event.data as { type?: string; requestId?: string } | null;
       if (!request || request.type !== 'extension_browser_current_page_request' || !request.requestId) return;
-      callTool('get_active_tab').then((result) => {
+      handleToolCall('get_active_tab', {}).then((result) => {
         if (!result.ok) throw new Error(result.error || 'Chrome did not return the active page.');
         const page = result.data as ActiveTab;
         event.source?.postMessage({ type: 'extension_browser_current_page_response', requestId: request.requestId, page: { Url: page.url, Title: page.title, TabId: page.tabId, CapturedUtc: new Date().toISOString() } }, { targetOrigin: event.origin });
