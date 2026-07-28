@@ -3,11 +3,12 @@ import Buffaly.Agent.Tools.SemanticDatabase Buffaly.Agent.Tools.SemanticDatabase
 reference Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer;
 import Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer.RuntimeDispatchTreeFacade RuntimeDispatchTreeFacade;
 import Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer.DispatchNodeSummary DispatchNodeSummary;
+import Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer.DispatchAttachment DispatchAttachment;
 import Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer.OntologyTreeRuntimeReader OntologyTreeRuntimeReader;
 
 prototype DispatchAgentActionRoot : OpsAction
 {
-	Description = @"Action root for bounded session-local dispatch tree lookup and guarded building. Delivery remains outside this skill and belongs to the normal Buffaly agent.";
+	Description = @"Curated action root for bounded session-local dispatch tree lookup, guarded graph growth, local evidence recording, and Dispatch attachment tools. Delivery, session creation, queueing, and external entity tooling remain outside this skill and belong to existing core Buffaly tools.";
 }
 
 prototype DispatchAgentEntityRoot : SemanticEntityBase
@@ -65,7 +66,7 @@ prototype ToGetDispatchTree : DispatchTreeSkillAction, DispatchAgentActionRoot
 [SemanticProgram.InfinitivePhrase("to read one dispatch node's routing evidence")]
 prototype ToGetDispatchNode : DispatchTreeSkillAction, DispatchContext
 {
-	Description = @"prototypeName - exact prototype name selected at or beneath DispatchMemoryRoot, including DispatchMemoryRoot itself. Read one exact node with its assigned semantic identity, context summary, historical dispatch examples, status, and exact destination session key. Use only after narrowing to verify a semantic anchor or final leaf. This action never decides a route, sends, or mutates memory.";
+	Description = @"prototypeName - exact prototype name selected at or beneath DispatchMemoryRoot, including DispatchMemoryRoot itself. Read one exact node with its assigned semantic identity, context summary, historical dispatch examples, status, and exact Dispatch attachments. Use only after narrowing to verify a semantic anchor or final leaf. This action never decides a route, sends, or mutates memory.";
 
 	function Execute(string prototypeName) : Prototype
 	{
@@ -132,7 +133,7 @@ prototype ToGetDispatchNodesForEntity : DispatchTreeSkillAction, DispatchContext
 [SemanticProgram.InfinitivePhrase("to create the next dispatch routing node")]
 prototype ToAddDispatchChild : DispatchTreeSkillAction, DispatchContext
 {
-	Description = @"parentPrototypeName - exact existing Dispatch node. childPrototypeName - new ProtoScript identifier. entityName - concise display label. semanticTerms - one or more grounded Dispatch Memory phrases separated by |. contextSummary - short factual routing meaning. Creates exactly one direct child through canonical NLMemory validation and persistence with Entity = null, Value = 0, and an empty HistoricalDispatches collection. It never creates a canonical entity, session, route decision, or delivery.";
+	Description = @"parentPrototypeName - exact existing Dispatch node. childPrototypeName - new ProtoScript identifier. entityName - concise display label. semanticTerms - one or more grounded Dispatch Memory phrases separated by |. contextSummary - short factual routing meaning. Creates exactly one direct child through canonical NLMemory validation and persistence with Entity = null, Value = 0, an empty Attachments collection, and an empty HistoricalDispatches collection. It never creates a canonical entity, session, route decision, or delivery.";
 
 	function Execute(string parentPrototypeName, string childPrototypeName, string entityName, string semanticTerms, string contextSummary) : string
 	{
@@ -157,7 +158,7 @@ prototype EnsureDispatchMemoryRoot : DispatchTreeSkillAction, DispatchContext
 [SemanticProgram.InfinitivePhrase("to group dispatch children under a new parent")]
 prototype ToAddDispatchCommonParent : DispatchTreeSkillAction, DispatchContext
 {
-	Description = @"existingParentPrototypeName - exact current Dispatch parent. commonParentPrototypeName - new ProtoScript identifier for the grouping parent. commonParentEntityName/commonParentSemanticTerms/commonParentContextSummary - compact routing evidence for the new parent. newChildPrototypeName/newChildEntityName/newChildSemanticTerms/newChildContextSummary - one new child beneath that parent. selectedExistingChildPrototypeNames - | separated existing immediate children whose current parent is replaced by the new common parent through complete ProtoScript upserts. Preserves unrelated additional parents plus each moved node's Entity, Value, SessionKey, context, and history; rejects invalid relationships and cycles; persists through NLMemory artifacts; and applies live.";
+	Description = @"existingParentPrototypeName - exact current Dispatch parent. commonParentPrototypeName - new ProtoScript identifier for the grouping parent. commonParentEntityName/commonParentSemanticTerms/commonParentContextSummary - compact routing evidence for the new parent. newChildPrototypeName/newChildEntityName/newChildSemanticTerms/newChildContextSummary - one new child beneath that parent. selectedExistingChildPrototypeNames - | separated existing immediate children whose current parent is replaced by the new common parent through complete ProtoScript upserts. Preserves unrelated additional parents plus each moved node's Entity, Value, differently named Attachments, context, and history; rejects invalid relationships and cycles; persists through NLMemory artifacts; and applies live.";
 
 	function Execute(string existingParentPrototypeName, string commonParentPrototypeName, string commonParentEntityName, string commonParentSemanticTerms, string commonParentContextSummary, string newChildPrototypeName, string newChildEntityName, string newChildSemanticTerms, string newChildContextSummary, string selectedExistingChildPrototypeNames) : string
 	{
@@ -165,11 +166,59 @@ prototype ToAddDispatchCommonParent : DispatchTreeSkillAction, DispatchContext
 	}
 }
 
+
+[SemanticProgram.InfinitivePhrase("to get a dispatch attachment")]
+[SemanticProgram.InfinitivePhrase("to read one dispatch node attachment")]
+prototype ToGetDispatchAttachment : DispatchTreeSkillAction, DispatchContext
+{
+	Description = @"prototypeName - exact Dispatch node. attachmentName - exact attachment name. Returns one minimal DispatchAttachment(Name, Value). Reads legacy SessionKey only for explicit migration compatibility; new writes use Attachments only. It never mutates memory, creates sessions, queues, or delivers.";
+
+	function Execute(string prototypeName, string attachmentName) : DispatchAttachment
+	{
+		return RuntimeDispatchTreeFacade.GetAttachment(_runtime, prototypeName, attachmentName);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set a dispatch attachment")]
+[SemanticProgram.InfinitivePhrase("to replace one dispatch node attachment")]
+prototype ToSetDispatchAttachment : DispatchTreeSkillAction, DispatchContext
+{
+	Description = @"prototypeName - exact Dispatch node. attachmentName/value - exact replacement attachment. evaluationScope - Live or BuildOnly. Replaces only the named attachment and preserves differently named attachments. In BuildOnly, mutation is allowed only for isolated build-only session keys and real-session attachment mutation fails closed. It never creates sessions, queues, or delivers.";
+
+	function Execute(string prototypeName, string attachmentName, string value, string evaluationScope = "Live") : string
+	{
+		return RuntimeDispatchTreeFacade.SetAttachment(_runtime, _opsAgent, prototypeName, attachmentName, value, evaluationScope);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to clear a dispatch attachment")]
+[SemanticProgram.InfinitivePhrase("to remove one dispatch node attachment")]
+prototype ToClearDispatchAttachment : DispatchTreeSkillAction, DispatchContext
+{
+	Description = @"prototypeName - exact Dispatch node. attachmentName - exact attachment to remove. evaluationScope - Live or BuildOnly. Removes only the named attachment and preserves differently named attachments. In BuildOnly, mutation is allowed only for isolated build-only session keys and real-session attachment mutation fails closed. It never creates sessions, queues, or delivers.";
+
+	function Execute(string prototypeName, string attachmentName, string evaluationScope = "Live") : string
+	{
+		return RuntimeDispatchTreeFacade.ClearAttachment(_runtime, _opsAgent, prototypeName, attachmentName, evaluationScope);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get the dispatch build only guard")]
+prototype ToGetDispatchBuildOnlyGuard : DispatchTreeSkillAction, DispatchContext
+{
+	Description = @"evaluationScope - Live or BuildOnly. Returns the fail-closed BuildOnly guard receipt: isolated root/node/history mutation is allowed, but real-session attachment mutation, session creation, queueing, and delivery are unavailable. This action only reports the guard contract.";
+
+	function Execute(string evaluationScope = "BuildOnly") : string
+	{
+		return RuntimeDispatchTreeFacade.GetBuildOnlyGuardReceipt(_opsAgent, evaluationScope);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to record a historical dispatch on a routing node")]
 [SemanticProgram.InfinitivePhrase("to save a verified dispatch example")]
 prototype ToRecordHistoricalDispatch : DispatchTreeSkillAction, DispatchContext
 {
-	Description = @"prototypeName - exact verified terminal Dispatch node. historicalDispatch - one compact grounded natural-language record containing the object, action, material distinctions, and source or historical destination only when available. Appends once to HistoricalDispatches after successful terminal verification. It does not choose a route, authorize delivery, change SessionKey, create an entity, or modify graph structure.";
+	Description = @"prototypeName - exact verified terminal Dispatch node. historicalDispatch - one compact grounded natural-language record containing the object, action, material distinctions, and source or historical destination only when available. Appends once to HistoricalDispatches after successful terminal verification. It does not choose a route, authorize delivery, change attachments, create an entity, or modify graph structure.";
 
 	function Execute(string prototypeName, string historicalDispatch) : string
 	{
