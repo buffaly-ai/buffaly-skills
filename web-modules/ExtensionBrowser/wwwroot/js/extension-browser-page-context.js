@@ -12,6 +12,7 @@
   let evaluateWrapper = null;
   let steerWrapper = null;
   let composerFactoryWrapper = null;
+  let composerAssignmentTrapInstalled = false;
 
   function installMicrophoneDiagnostics() {
     if (typeof navigator === 'undefined' || !navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function') return;
@@ -97,8 +98,7 @@
     return true;
   }
 
-  function installComposerInterceptor() {
-    const composer = window.BuffalyAgentComposer;
+  function wrapComposerFactory(composer) {
     if (!composer || typeof composer.createComposerController !== 'function') return false;
     if (composer.createComposerController === composerFactoryWrapper) return true;
     const originalFactory = composer.createComposerController.bind(composer);
@@ -125,6 +125,26 @@
     };
     composer.createComposerController = composerFactoryWrapper;
     return true;
+  }
+
+  function installComposerInterceptor() {
+    if (wrapComposerFactory(window.BuffalyAgentComposer)) return true;
+    if (composerAssignmentTrapInstalled) return false;
+    const descriptor = Object.getOwnPropertyDescriptor(window, 'BuffalyAgentComposer');
+    if (descriptor && descriptor.configurable === false) return false;
+    let composerValue = descriptor && descriptor.get ? descriptor.get.call(window) : descriptor ? descriptor.value : undefined;
+    Object.defineProperty(window, 'BuffalyAgentComposer', {
+      configurable: true,
+      enumerable: descriptor ? descriptor.enumerable : true,
+      get() { return composerValue; },
+      set(value) {
+        composerValue = value;
+        wrapComposerFactory(value);
+      }
+    });
+    composerAssignmentTrapInstalled = true;
+    if (composerValue) wrapComposerFactory(composerValue);
+    return false;
   }
 
   const installStatus = window.ExtensionBrowserPageContext = {
