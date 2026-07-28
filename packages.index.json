@@ -2205,7 +2205,7 @@
       "PackageType": "ProviderModule",
       "Title": "xAI Provider",
       "Description": "Buffaly Provider Module package for xAI Provider.",
-      "Version": "0.1.2",
+      "Version": "0.1.3",
       "PackageKind": "BuffalyProviderModule",
       "SourcePath": "provider-modules/Buffaly.Provider.Xai",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/provider-modules/Buffaly.Provider.Xai",
@@ -2224,11 +2224,11 @@
         },
         {
           "Path": "BasicUtilities.dll",
-          "Sha256": "4938647f139a04550321bbf8b9a31315583c6b57eebac906ffd0c1fc48c57c17"
+          "Sha256": "e9fb1a3676dfd29043ab1b6ab7c6572807f6d835510277cbbe162078506952be"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "efd821fac26a59f968662d165da64a992df2599df9a8efac82b3a016c51d1102"
+          "Sha256": "1c995a80e6d88159356bc839d4deabac0ff948c6dc211e8e73f2ff195973389a"
         },
         {
           "Path": "Buffaly.Provider.Xai.deps.json",
@@ -2236,11 +2236,11 @@
         },
         {
           "Path": "Buffaly.Provider.Xai.dll",
-          "Sha256": "4c398950cffd43271882e16d6be6427f6f486d757bb97b4d4289fb4a489fbd2a"
+          "Sha256": "c35c4aff74c615b4e76faa36f26e377e714b77c5fc89648c16453ef28d661ae7"
         },
         {
           "Path": "Buffaly.ProviderContracts.dll",
-          "Sha256": "77449f97d2e94cc9742b032028fcadc0b975f1f17bd66225ffc86cde4ff8ab2b"
+          "Sha256": "0179c69d1f5879f0bd9cf2d045d4605851b98bf876a3b7eadddbc2a0c7303094"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -2432,7 +2432,8 @@
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
       "RequiresRestart": true,
-      "RequiresPreStartInstall": true
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     },
     {
       "PackageId": "ActionLearningCoordinator",
