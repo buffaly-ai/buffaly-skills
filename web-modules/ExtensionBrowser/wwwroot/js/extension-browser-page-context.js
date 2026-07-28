@@ -13,6 +13,15 @@
   let steerWrapper = null;
   let composerFactoryWrapper = null;
   let composerAssignmentTrapInstalled = false;
+  let replayingComposerDispatch = false;
+
+  function publishFreshUserState(page) {
+    window.BuffalyAgentNativeUserState = {
+      getFreshUserState() {
+        return { [USER_STATE_KEY]: page };
+      }
+    };
+  }
 
   function installMicrophoneDiagnostics() {
     if (typeof navigator === 'undefined' || !navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function') return;
@@ -163,15 +172,35 @@
     return installStatus.composerInstalled && evaluateInstalled && steerInstalled;
   }
 
-  // Recheck on the user gesture that can dispatch a prompt, before the composer's bubble-phase
-  // handler runs. This covers a transport service replaced after the bounded shell bootstrap.
+  // Gate the actual user gesture so an already-mounted composer reads the new page through its
+  // generic synchronous UserState provider. Replaying the button preserves Send versus Steer.
   function installBeforeComposerDispatch(event) {
+    if (replayingComposerDispatch) return;
     const target = event && event.target;
-    const isSendClick = event.type === 'click' && target && typeof target.closest === 'function'
-      && target.closest('#btnOpsV2Send');
+    const sendButton = target && typeof target.closest === 'function'
+      ? target.closest('#btnOpsV2Send')
+      : null;
+    const isSendClick = event.type === 'click' && sendButton;
     const isEnterSubmit = event.type === 'keydown' && event.key === 'Enter' && !event.shiftKey
       && target && target.id === 'txtOpsV2Prompt';
-    if (isSendClick || isEnterSubmit) installAvailableInterceptors();
+    if (!isSendClick && !isEnterSubmit) return;
+
+    const replayButton = sendButton || document.getElementById('btnOpsV2Send');
+    if (!replayButton || replayButton.disabled) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    installAvailableInterceptors();
+    requestCurrentPage().then((page) => {
+      publishFreshUserState(page);
+      replayingComposerDispatch = true;
+      try {
+        replayButton.click();
+      } finally {
+        replayingComposerDispatch = false;
+      }
+    }).catch((error) => {
+      window.dispatchEvent(new CustomEvent('buffaly:extension-browser-context-error', { detail: { message: error.message } }));
+    });
   }
 
   installMicrophoneDiagnostics();
