@@ -1,4 +1,6 @@
-# Buffaly Browser Agent 0.2.43 / WebModule 0.1.29 validation
+# Buffaly Browser Agent 0.2.44 / WebModule 0.1.29 validation
+
+0.2.44 repairs Save server completion. Origin parsing and canonical validation run inside the service worker's asynchronous reply chain, so invalid values return a visible error instead of dropping the message response. Once storage succeeds, the panel closes the add form immediately and refreshes health in the background; an unavailable LAN, Tailscale, or remote server no longer leaves Save spinning.
 
 0.2.43 preserves the active Chrome tab ID in every per-dispatch `ExtensionBrowser.CurrentPage` UserState snapshot. Deterministic Send and Steer tests assert URL, title, different tab IDs across the two snapshots, and capture timestamps so navigation between tab identities cannot regress silently.
 

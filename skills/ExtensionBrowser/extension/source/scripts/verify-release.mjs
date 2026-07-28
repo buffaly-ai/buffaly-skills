@@ -28,6 +28,8 @@ check(backgroundSource.includes('chrome.contentSettings.microphone.set') && back
 check(!backgroundSource.includes("secondaryPattern: `${chrome.runtime.getURL('/')}*`"), 'microphone grant must not use an invalid chrome-extension secondary pattern');
 check(sidepanelSource.includes('allow="clipboard-read; clipboard-write; microphone"'), 'conversation iframe must delegate microphone capture');
 check(sidepanelSource.includes('TabId: page.tabId'), 'current-page UserState snapshot must preserve the active tab ID');
+check(backgroundSource.includes("canonicalServerOrigin(String(request.origin || '').trim())") && backgroundSource.includes("Promise.resolve().then(async () =>"), 'Save server must validate input inside its asynchronous response path');
+check(sidepanelSource.includes("void refreshServers().catch"), 'Save server completion must not block on server health inspection');
 check(!sidepanel.includes('BuffalyExtensionConnection'), 'side panel must not receive the credential-bearing installation connection');
 check(!sidepanel.includes('BuffalyActiveConversation'), 'side panel must not persist conversation or navigation authority');
 check(background.includes('BuffalyActiveConversationBinding'), 'service worker active binding pointer storage contract is missing');

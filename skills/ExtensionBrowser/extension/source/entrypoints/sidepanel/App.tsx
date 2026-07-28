@@ -138,7 +138,8 @@ export default function App() {
     try {
       const response = await chrome.runtime.sendMessage({ type: 'save_buffaly_server', name: serverName, origin }) as WorkerResponse<unknown> | undefined;
       if (!response?.ok) throw new Error(response?.error || 'The Buffaly server could not be saved.');
-      setConversation(null); setShowAddServer(false); await refreshServers();
+       setConversation(null); setShowAddServer(false);
+       void refreshServers().catch((reason) => setError(reason instanceof Error ? reason.message : String(reason)));
     } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
     finally { setBusy(''); }
   }, [origin, refreshServers, serverName]);
