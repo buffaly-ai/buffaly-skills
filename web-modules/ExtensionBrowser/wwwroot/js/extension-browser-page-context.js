@@ -10,6 +10,7 @@
   const pending = new Map();
   let evaluateWrapper = null;
   let steerWrapper = null;
+  let composerFactoryWrapper = null;
 
   function installMicrophoneDiagnostics() {
     if (typeof navigator === 'undefined' || !navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function') return;
@@ -70,7 +71,7 @@
     evaluateWrapper = function (initializer) {
       const isEvaluate = initializer && initializer.Method === 'EvaluateWithInput'
         && initializer.Params && initializer.Params.Input;
-      if (!isEvaluate) return original(initializer);
+      if (!isEvaluate || (initializer.Params.Input.UserState && initializer.Params.Input.UserState[USER_STATE_KEY])) return original(initializer);
       requestCurrentPage().then((page) => {
         injectPage(initializer.Params.Input, page);
         original(initializer);
@@ -85,6 +86,7 @@
     if (window.BuffalyAgentService.SteerInputObjectAsync === steerWrapper) return true;
     const original = window.BuffalyAgentService.SteerInputObjectAsync.bind(window.BuffalyAgentService);
     steerWrapper = async function (request) {
+      if (request && request.input && request.input.UserState && request.input.UserState[USER_STATE_KEY]) return original(request);
       const page = await requestCurrentPage();
       injectPage(request.input, page);
       return original(request);
@@ -93,22 +95,66 @@
     return true;
   }
 
+  function installComposerInterceptor() {
+    const composer = window.BuffalyAgentComposer;
+    if (!composer || typeof composer.createComposerController !== 'function') return false;
+    if (composer.createComposerController === composerFactoryWrapper) return true;
+    const originalFactory = composer.createComposerController.bind(composer);
+    composerFactoryWrapper = function (config) {
+      if (!config || typeof config.invokeOpsService !== 'function') return originalFactory(config);
+      const originalInvoke = config.invokeOpsService;
+      const enrichedConfig = Object.assign({}, config, {
+        invokeOpsService(methodKebabName, methodName, params, callback, onError) {
+          const input = methodName === 'EvaluateWithInput' && params ? params.Input
+            : methodName === 'SteerInput' && params ? params.input
+              : null;
+          if (!input) return originalInvoke(methodKebabName, methodName, params, callback, onError);
+          requestCurrentPage().then((page) => {
+            injectPage(input, page);
+            originalInvoke(methodKebabName, methodName, params, callback, onError);
+          }).catch((error) => {
+            if (typeof onError === 'function') onError({ Error: error.message });
+            else window.dispatchEvent(new CustomEvent('buffaly:extension-browser-context-error', { detail: { message: error.message } }));
+          });
+        }
+      });
+      return originalFactory(enrichedConfig);
+    };
+    composer.createComposerController = composerFactoryWrapper;
+    return true;
+  }
+
   const installStatus = window.ExtensionBrowserPageContext = {
     evaluateInstalled: false,
-    steerInstalled: false
+    steerInstalled: false,
+    composerInstalled: false
   };
   let evaluateInstalled = false;
   let steerInstalled = false;
   function installAvailableInterceptors() {
+    installStatus.composerInstalled = installComposerInterceptor();
     evaluateInstalled = installEvaluateInterceptor();
     steerInstalled = installSteerInterceptor();
     installStatus.evaluateInstalled = evaluateInstalled;
     installStatus.steerInstalled = steerInstalled;
-    return evaluateInstalled && steerInstalled;
+    return installStatus.composerInstalled && evaluateInstalled && steerInstalled;
+  }
+
+  // Recheck on the user gesture that can dispatch a prompt, before the composer's bubble-phase
+  // handler runs. This covers a transport service replaced after the bounded shell bootstrap.
+  function installBeforeComposerDispatch(event) {
+    const target = event && event.target;
+    const isSendClick = event.type === 'click' && target && typeof target.closest === 'function'
+      && target.closest('#btnOpsV2Send');
+    const isEnterSubmit = event.type === 'keydown' && event.key === 'Enter' && !event.shiftKey
+      && target && target.id === 'txtOpsV2Prompt';
+    if (isSendClick || isEnterSubmit) installAvailableInterceptors();
   }
 
   installMicrophoneDiagnostics();
   installAvailableInterceptors();
+  document.addEventListener('click', installBeforeComposerDispatch, true);
+  document.addEventListener('keydown', installBeforeComposerDispatch, true);
   window.addEventListener('load', installAvailableInterceptors, { once: true });
   const timer = window.setInterval(() => {
     installAvailableInterceptors();
