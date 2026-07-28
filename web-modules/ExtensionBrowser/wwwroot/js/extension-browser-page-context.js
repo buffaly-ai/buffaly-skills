@@ -111,7 +111,7 @@
   installAvailableInterceptors();
   window.addEventListener('load', installAvailableInterceptors, { once: true });
   const timer = window.setInterval(() => {
-    if (installAvailableInterceptors()) window.clearInterval(timer);
-  }, 25);
-  window.setTimeout(() => window.clearInterval(timer), 10000);
+    installAvailableInterceptors();
+  }, 100);
+  window.setTimeout(() => window.clearInterval(timer), 5000);
 }());
