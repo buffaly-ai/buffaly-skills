@@ -26,3 +26,16 @@ prototype ToDeployOneBuffalyExtensionToStagingSkill : ReleaseOpsSkillAction
         return ReleaseOpsExtensionFacade.DeployExactExtension(sourceId, packageType, packageId, timeoutSeconds);
     }
 }
+
+[SemanticProgram.InfinitivePhrase("to start a full Buffaly installer build")]
+[SemanticProgram.InfinitivePhrase("to request a canonical installer build")]
+[SemanticProgram.InfinitivePhrase("to queue a full installer build")]
+prototype ToRequestFullBuffalyInstallerBuildSkill : ReleaseOpsSkillAction
+{
+    Description = @"Submits one canonical full installer build to the external ReleaseOps coordinator and immediately returns its immutable Build ID, queue disposition, and polling URL. The build process is owned by ReleaseOps, not by the requesting agent session.";
+
+    function Execute(string buildReason) : string
+    {
+        return ReleaseOpsExtensionFacade.RequestFullInstallerBuild(buildReason);
+    }
+}
