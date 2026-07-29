@@ -208,9 +208,29 @@ function ToClaudePtTurnsFile() : string
 	return "claude_pt_turns.txt";
 }
 
+function ToClaudePtStateScope() : string
+{
+	string sessionKey = _opsAgent.GetSessionKeyOrEmpty();
+	if (StringUtil.IsEmpty(sessionKey))
+		sessionKey = "default";
+
+	string script = "$value='" + ToClaudeEscapePowerShellSingleQuoted(sessionKey) + "'; $safe=[regex]::Replace($value,'[^A-Za-z0-9_.-]','_'); if([string]::IsNullOrWhiteSpace($safe)){ $safe='default' }; Write-Output $safe";
+	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 10, _opsAgent, "", "Claude PT State Scope");
+	string scope = ToClaudeCleanOutput(result);
+	if (StringUtil.IsEmpty(scope))
+		scope = "default";
+	return scope;
+}
+
+function ToClaudePtScopedFile(string filePath) : string
+{
+	return "claude_pt_state/" + ToClaudePtStateScope() + "/" + filePath;
+}
+
 function ToClaudePtReadState(string filePath) : string
 {
-	string script = "$f=Join-Path ([System.IO.Path]::GetTempPath()) '" + ToClaudeEscapePowerShellSingleQuoted(filePath) + "'; if(Test-Path -LiteralPath $f){ Get-Content -LiteralPath $f -Raw -ErrorAction SilentlyContinue } else { '' }";
+	string scopedFilePath = ToClaudePtScopedFile(filePath);
+	string script = "$f=Join-Path ([System.IO.Path]::GetTempPath()) '" + ToClaudeEscapePowerShellSingleQuoted(scopedFilePath) + "'; if(Test-Path -LiteralPath $f){ Get-Content -LiteralPath $f -Raw -ErrorAction SilentlyContinue } else { '' }";
 	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 10, _opsAgent, "", "Claude PT State Read");
 	return ToClaudeCleanOutput(result);
 }
@@ -220,12 +240,13 @@ function ToClaudePtWriteState(string filePath, string value) : string
 	// Validate path is not root-level (would indicate temp resolution failed)
 	if (StringUtil.IsEmpty(filePath) || filePath.StartsWith("/claude_") || filePath.StartsWith("\\claude_"))
 		return "Error: invalid state file path (temp resolution likely failed): " + filePath;
+	string scopedFilePath = ToClaudePtScopedFile(filePath);
 	// Ensure parent directory exists, write value, and verify write succeeded
-	string script = "$ErrorActionPreference='Continue'; $f=Join-Path ([System.IO.Path]::GetTempPath()) '" + ToClaudeEscapePowerShellSingleQuoted(filePath) + "'; $p=Split-Path -Parent $f; if(-not (Test-Path -LiteralPath $p)){ New-Item -Path $p -ItemType Directory -Force | Out-Null }; Set-Content -LiteralPath $f -Value '" + ToClaudeEscapePowerShellSingleQuoted(value) + "' -Encoding utf8 -NoNewline; if(Test-Path -LiteralPath $f){ 'WROTE_OK' } else { 'WROTE_FAIL' }";
+	string script = "$ErrorActionPreference='Continue'; $f=Join-Path ([System.IO.Path]::GetTempPath()) '" + ToClaudeEscapePowerShellSingleQuoted(scopedFilePath) + "'; $p=Split-Path -Parent $f; if(-not (Test-Path -LiteralPath $p)){ New-Item -Path $p -ItemType Directory -Force | Out-Null }; Set-Content -LiteralPath $f -Value '" + ToClaudeEscapePowerShellSingleQuoted(value) + "' -Encoding utf8 -NoNewline; if(Test-Path -LiteralPath $f){ 'WROTE_OK' } else { 'WROTE_FAIL' }";
 	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 10, _opsAgent, "", "Claude PT State Write");
 	string cleanResult = ToClaudeCleanOutput(result);
 	if (!cleanResult.Contains("WROTE_OK"))
-		return "Error: state write verification failed for " + filePath + " — output: " + cleanResult;
+		return "Error: state write verification failed for " + scopedFilePath + " — output: " + cleanResult;
 	return "";
 }
 

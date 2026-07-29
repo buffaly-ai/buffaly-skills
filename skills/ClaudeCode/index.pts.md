@@ -11,3 +11,4 @@ Canonical Claude Code CLI Skill for subscription-backed authentication, one-shot
 
 - Added `ToTalkToClaude` caller guidance that forbids repeating the same file-generating Claude job until the caller inspects expected filesystem outputs from the prior run.
 - Documented recovery-first handling for stale, unrelated, empty, rate-limited, or overloaded Claude output: validate durable side effects before retrying.
+- Scoped Claude pass-through state files by current Buffaly session key under `claude_pt_state/<sanitized-session-key>/` to prevent concurrent sessions from overwriting each other's model, working-directory, and conversation state.

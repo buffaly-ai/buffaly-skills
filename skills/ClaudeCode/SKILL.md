@@ -23,6 +23,8 @@ Official `claude` (Claude Code) wrappers plus a transparent pass-through layer. 
 - Treat a wrapper-visible failure separately from durable side effects: a failed pass-through can still leave usable files in the configured working directory.
 
 ## Pass-through state files
+Pass-through state is scoped by the current Buffaly session key under `claude_pt_state/<sanitized-session-key>/` in the process temp directory so concurrent sessions do not overwrite each other's Claude conversation settings.
+
 - `claude_pt_conv_id.txt` — current conversation ID
 - `claude_pt_model.txt` — current model
 - `claude_pt_workdir.txt` — working directory
