@@ -20,13 +20,16 @@ check(manifest.background?.service_worker === 'background.js', 'background servi
 check(background.includes('__callTool'), 'background service worker bridge hook is missing');
 check(manifest.side_panel?.default_path === 'sidepanel.html', 'side panel is missing');
 check(manifest.content_scripts?.length === 1, 'content script declaration is missing');
-for (const permission of ['sidePanel', 'storage', 'identity', 'tabs', 'scripting', 'activeTab', 'debugger', 'contentSettings']) {
+for (const permission of ['sidePanel', 'storage', 'identity', 'tabs', 'scripting', 'activeTab', 'debugger']) {
   check(manifest.permissions.includes(permission), `required permission is missing: ${permission}`);
 }
 check(!manifest.permissions.includes('audioCapture'), 'invalid extension permission must not be present: audioCapture');
-check(backgroundSource.includes("new URL('/web-modules/ExtensionBrowser/microphone'") && backgroundSource.includes('chrome.tabs.create({ url: permissionUrl.toString(), active: true })'), 'top-level Buffaly microphone setup flow is missing');
+check(!manifest.permissions.includes('contentSettings'), 'obsolete microphone-recovery permission must not be present: contentSettings');
+check(!backgroundSource.includes("new URL('/web-modules/ExtensionBrowser/microphone'"), 'ineffective server-origin microphone setup flow must not return');
 check(!backgroundSource.includes("secondaryPattern: `${chrome.runtime.getURL('/')}*`"), 'microphone grant must not use an invalid chrome-extension secondary pattern');
-check(sidepanelSource.includes('allow="clipboard-read; clipboard-write; microphone"'), 'conversation iframe must delegate microphone capture');
+check(sidepanelSource.includes("navigator.mediaDevices.getUserMedia({ audio: true })") && sidepanelSource.includes("type: 'extension_browser_microphone_offer'") && sidepanelSource.includes("message.type === 'extension_browser_microphone_answer'"), 'extension-owned microphone bridge is missing');
+check(sidepanelSource.includes('event.source !== conversationFrame.current?.contentWindow') && sidepanelSource.includes('event.origin !== new URL(conversation.Origin).origin'), 'microphone bridge must remain restricted to the selected trusted conversation iframe');
+check(sidepanelSource.includes('allow="clipboard-read; clipboard-write"') && !sidepanelSource.includes('clipboard-write; microphone'), 'conversation iframe must not request direct microphone authority');
 check(sidepanelSource.includes('TabId: page.tabId'), 'current-page UserState snapshot must preserve the active tab ID');
 check(backgroundSource.includes("canonicalServerOrigin(String(request.origin || '').trim())") && backgroundSource.includes("Promise.resolve().then(async () =>"), 'Save server must validate input inside its asynchronous response path');
 check(sidepanelSource.includes("void refreshServers().catch"), 'Save server completion must not block on server health inspection');

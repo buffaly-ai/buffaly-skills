@@ -194,17 +194,6 @@ export default defineBackground(() => {
 		return true;
 	  }
 
-	  if (request.type === 'grant_buffaly_microphone') {
-		if (!isTrustedExtensionPage(sender)) { sendResponse({ ok: false, error: 'Unauthorized: microphone access can only be granted from an extension page' }); return false; }
-		getActiveServer().then(async (server) => {
-			if (!server) throw new Error('Select a Buffaly server first.');
-			const permissionUrl = new URL('/web-modules/ExtensionBrowser/microphone', server.Origin);
-			await chrome.tabs.create({ url: permissionUrl.toString(), active: true });
-			sendResponse({ ok: true, data: { Origin: server.Origin, Opened: true } });
-		}).catch((err: Error) => sendResponse({ ok: false, error: err.message }));
-		return true;
-	  }
-
 	  if (request.type === 'get_buffaly_conversation_bootstrap') {
       if (!isTrustedExtensionPage(sender)) {
         sendResponse({ ok: false, error: 'Unauthorized: conversation bootstrap can only be read from an extension page' });

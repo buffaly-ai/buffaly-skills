@@ -26,6 +26,7 @@ function conversationUrl(bootstrap: ConversationBootstrap): string {
 
 export default function App() {
   const conversationFrame = useRef<HTMLIFrameElement | null>(null);
+  const microphonePeers = useRef(new Map<string, { peer: RTCPeerConnection; stream: MediaStream }>());
   const logo48Url = chrome.runtime.getURL('icon/48.png');
   const logo128Url = chrome.runtime.getURL('icon/128.png');
   const [toolLog, setToolLog] = useState<ToolLogEntry[]>([]);
@@ -124,14 +125,66 @@ export default function App() {
   }, [conversation]);
 
   useEffect(() => {
-    const onMicrophoneError = (event: MessageEvent) => {
-      if (!conversation || event.source !== conversationFrame.current?.contentWindow || event.origin !== new URL(conversation.Origin).origin) return;
-      const message = event.data as { type?: string; name?: string; message?: string } | null;
-	  if (message?.type !== 'extension_browser_microphone_error') return;
-	  setMicrophoneError({ name: message.name || 'MicrophoneError', message: message.message || 'Chrome did not grant microphone access to this Buffaly server.' });
+    const disposeMicrophone = (requestId: string) => {
+      const active = microphonePeers.current.get(requestId);
+      if (!active) return;
+      microphonePeers.current.delete(requestId);
+      active.stream.getTracks().forEach((track) => track.stop());
+      active.peer.close();
     };
-    window.addEventListener('message', onMicrophoneError);
-    return () => window.removeEventListener('message', onMicrophoneError);
+    const waitForIceGathering = (peer: RTCPeerConnection) => peer.iceGatheringState === 'complete'
+      ? Promise.resolve()
+      : new Promise<void>((resolve) => peer.addEventListener('icegatheringstatechange', function changed() {
+          if (peer.iceGatheringState !== 'complete') return;
+          peer.removeEventListener('icegatheringstatechange', changed);
+          resolve();
+        }));
+    const onMicrophoneMessage = (event: MessageEvent) => {
+      if (!conversation || event.source !== conversationFrame.current?.contentWindow || event.origin !== new URL(conversation.Origin).origin) return;
+      const message = event.data as { type?: string; requestId?: string; answer?: RTCSessionDescriptionInit; name?: string; message?: string } | null;
+      if (!message) return;
+      if (message.type === 'extension_browser_microphone_error') {
+        setMicrophoneError({ name: message.name || 'MicrophoneError', message: message.message || 'Chrome did not grant microphone access to the Buffaly extension.' });
+        return;
+      }
+      if (!message.requestId) return;
+      if (message.type === 'extension_browser_microphone_release') {
+        disposeMicrophone(message.requestId);
+        return;
+      }
+      if (message.type === 'extension_browser_microphone_answer' && message.answer) {
+        const active = microphonePeers.current.get(message.requestId);
+        if (active) void active.peer.setRemoteDescription(message.answer).catch((reason) => {
+          disposeMicrophone(message.requestId!);
+          setMicrophoneError({ name: reason?.name || 'MicrophoneError', message: reason?.message || String(reason) });
+        });
+        return;
+      }
+      if (message.type !== 'extension_browser_microphone_request') return;
+      const requestId = message.requestId;
+      setMicrophoneError(null);
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(async (stream) => {
+        const peer = new RTCPeerConnection();
+        microphonePeers.current.set(requestId, { peer, stream });
+        stream.getTracks().forEach((track) => peer.addTrack(track, stream));
+        peer.addEventListener('connectionstatechange', () => {
+          if (peer.connectionState === 'failed' || peer.connectionState === 'closed') disposeMicrophone(requestId);
+        });
+        await peer.setLocalDescription(await peer.createOffer());
+        await waitForIceGathering(peer);
+        event.source?.postMessage({ type: 'extension_browser_microphone_offer', requestId, offer: peer.localDescription }, { targetOrigin: event.origin });
+      }).catch((reason) => {
+        const name = reason?.name || 'MicrophoneError';
+        const detail = reason?.message || String(reason);
+        setMicrophoneError({ name, message: detail });
+        event.source?.postMessage({ type: 'extension_browser_microphone_failure', requestId, name, message: detail }, { targetOrigin: event.origin });
+      });
+    };
+    window.addEventListener('message', onMicrophoneMessage);
+    return () => {
+      window.removeEventListener('message', onMicrophoneMessage);
+      for (const requestId of microphonePeers.current.keys()) disposeMicrophone(requestId);
+    };
   }, [conversation]);
 
   const saveNewServer = useCallback(async () => {
@@ -195,10 +248,13 @@ export default function App() {
   const openMicrophonePermission = useCallback(async () => {
     setBusy('microphone'); setError('');
     try {
-      const granted = await chrome.runtime.sendMessage({ type: 'grant_buffaly_microphone' }) as WorkerResponse<{ Origin: string }> | undefined;
-      if (!granted?.ok) throw new Error(granted?.error || 'Microphone access could not be enabled.');
-	  setMicrophoneError(null);
-    } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach((track) => track.stop());
+      setMicrophoneError(null);
+    } catch (reason) {
+      const failure = reason as DOMException;
+      setMicrophoneError({ name: failure.name || 'MicrophoneError', message: failure.message || String(reason) });
+    }
     finally { setBusy(''); }
   }, []);
 
@@ -237,7 +293,7 @@ export default function App() {
     {showAddServer && <section className="add-server"><label>Name<input value={serverName} onChange={(event) => setServerName(event.target.value)} /></label><label>Origin<input value={origin} onChange={(event) => setOrigin(event.target.value)} placeholder="https://buffaly.example.com" /></label><button onClick={saveNewServer} disabled={!!busy || !serverName.trim() || !origin.trim()}>Save server</button></section>}
     {showServerSettings && serversStatus.ActiveServer && <div className="modal-backdrop"><section className="settings-modal" role="dialog" aria-modal="true" aria-label="Buffaly server settings"><img src={logo48Url} alt="" /><h2>Server settings</h2><p>View or update this Chrome installation's saved Buffaly server. Authorization and conversations remain isolated per origin.</p><label>Name<input value={serverName} onChange={(event) => setServerName(event.target.value)} /></label><label>Origin<input value={origin} onChange={(event) => setOrigin(event.target.value)} /></label><div className="server-details"><span>State <b>{stateLabel}</b></span><span>WebModule <b>{serversStatus.Version || 'Not detected'}</b></span><span>Authorized <b>{serversStatus.Servers.find((server) => server.ServerId === serversStatus.ActiveServer?.ServerId)?.Authorized ? 'Yes' : 'No'}</b></span></div>{error && <div className="settings-error">{error}</div>}<div className="modal-actions"><button className="disconnect" onClick={removeActiveServer} disabled={!!busy}>Remove</button><span /><button className="secondary" onClick={() => setShowServerSettings(false)}>Cancel</button><button className="primary" onClick={saveNewServer} disabled={!!busy || !serverName.trim() || !origin.trim()}>Save changes</button></div></section></div>}
     <nav className="primary-tabs" aria-label="Side panel views"><button className={panelMode === 'chat' ? 'selected' : ''} onClick={() => selectPanelMode('chat')} aria-current={panelMode === 'chat' ? 'page' : undefined}>Chat</button><button className={panelMode === 'agent' ? 'selected' : ''} onClick={() => selectPanelMode('agent')} aria-current={panelMode === 'agent' ? 'page' : undefined}>Agent <span>{toolLog.length}</span></button>{panelMode === 'chat' && conversation && <><button className="new-conversation" onClick={newConversation} disabled={!!busy}>New</button><button className="popout-conversation" onClick={openConversationTab} disabled={!!busy} aria-label="Open conversation in a full tab" title="Open in full tab">↗</button></>}</nav>
-    <section className={`workspace ${conversation ? 'embedded' : ''}`} hidden={panelMode !== 'chat'} inert={panelMode !== 'chat' ? true : undefined}>{connected && conversation ? <div className="embed-shell">{microphoneError && <div className="microphone-help"><strong>Microphone access failed for {serversStatus.ActiveServer?.Name || 'this Buffaly server'}.</strong><span>{microphoneError.name}: {microphoneError.message}</span><button onClick={openMicrophonePermission} disabled={busy === 'microphone'}>{busy === 'microphone' ? 'Opening…' : 'Open microphone setup'}</button><button className="dismiss" onClick={() => setMicrophoneError(null)}>Dismiss</button></div>}<iframe ref={conversationFrame} title="Buffaly session" src={conversationUrl(conversation)} allow="clipboard-read; clipboard-write; microphone" /></div> : <div className="welcome"><img src={logo128Url} alt="Buffaly" /><p className="eyebrow">BUFFALY + THIS PAGE</p><h1>{serversStatus.ActiveServer ? serversStatus.ActiveServer.Name : 'Add a Buffaly server'}</h1><p>{serversStatus.State === 'Ready' ? 'This Chrome is authorized. Start a bound conversation for the current page.' : serversStatus.State === 'SignInRequired' ? 'This server is reachable. Sign in once to authorize this Chrome installation.' : serversStatus.State === 'WebModuleMissing' ? 'This Buffaly server does not have the ExtensionBrowser WebModule installed.' : 'Choose or add a reachable Buffaly server. Remote and Tailscale servers must use HTTPS.'}</p>{error && <div className="settings-error">{error}</div>}{serversStatus.State === 'SignInRequired' && <button className="connect-button" onClick={connect} disabled={!!busy}>Sign in and authorize this Chrome <span>{busy ? 'Connecting…' : 'Open sign-in'}</span></button>}{serversStatus.State === 'Ready' && <button className="connect-button" onClick={newConversation} disabled={!!busy}>New conversation <span>Bound to Chrome</span></button>}</div>}</section>
+    <section className={`workspace ${conversation ? 'embedded' : ''}`} hidden={panelMode !== 'chat'} inert={panelMode !== 'chat' ? true : undefined}>{connected && conversation ? <div className="embed-shell">{microphoneError && <div className="microphone-help"><strong>Microphone access failed for the Buffaly extension.</strong><span>{microphoneError.name}: {microphoneError.message}</span><button onClick={openMicrophonePermission} disabled={busy === 'microphone'}>{busy === 'microphone' ? 'Requesting…' : 'Enable microphone'}</button><button className="dismiss" onClick={() => setMicrophoneError(null)}>Dismiss</button></div>}<iframe ref={conversationFrame} title="Buffaly session" src={conversationUrl(conversation)} allow="clipboard-read; clipboard-write" /></div> : <div className="welcome"><img src={logo128Url} alt="Buffaly" /><p className="eyebrow">BUFFALY + THIS PAGE</p><h1>{serversStatus.ActiveServer ? serversStatus.ActiveServer.Name : 'Add a Buffaly server'}</h1><p>{serversStatus.State === 'Ready' ? 'This Chrome is authorized. Start a bound conversation for the current page.' : serversStatus.State === 'SignInRequired' ? 'This server is reachable. Sign in once to authorize this Chrome installation.' : serversStatus.State === 'WebModuleMissing' ? 'This Buffaly server does not have the ExtensionBrowser WebModule installed.' : 'Choose or add a reachable Buffaly server. Remote and Tailscale servers must use HTTPS.'}</p>{error && <div className="settings-error">{error}</div>}{serversStatus.State === 'SignInRequired' && <button className="connect-button" onClick={connect} disabled={!!busy}>Sign in and authorize this Chrome <span>{busy ? 'Connecting…' : 'Open sign-in'}</span></button>}{serversStatus.State === 'Ready' && <button className="connect-button" onClick={newConversation} disabled={!!busy}>New conversation <span>Bound to Chrome</span></button>}</div>}</section>
     <section className="agent-panel" hidden={panelMode !== 'agent'} inert={panelMode !== 'agent' ? true : undefined}><section className="page-card" aria-label="Current page"><div className="page-icon">↗</div><div className="page-copy"><span>Working on</span><strong>{activeTab?.title || 'Current page'}</strong><small>{activeTab?.url || 'Open a web page to begin'}</small></div><button className="icon-button" onClick={refreshStatus} aria-label="Refresh page context">↻</button></section><section className={`control-card ${debuggerAttached ? 'enabled' : ''}`}><div><strong>{debuggerAttached ? 'Buffaly can act on this tab' : 'Page access is ready'}</strong><p>{debuggerAttached ? 'Trusted clicks and typing are enabled.' : 'Enable control when this conversation needs to click or type.'}</p></div><button onClick={debuggerAttached ? pauseControl : enableControl} disabled={busy === 'control'}>{debuggerAttached ? 'Pause' : 'Enable'}</button></section><div className="activity-heading"><div><span>Browser activity</span><small>Actions from this conversation</small></div><b>{toolLog.length}</b></div><div className="activity-panel">{toolLog.length === 0 ? <div className="activity-empty"><b>✓</b><h2>No browser activity yet</h2><p>Actions from this bound conversation will appear here.</p></div> : toolLog.slice().reverse().map((entry) => <article key={entry.id} className={`activity-row ${entry.status}`}><i>{entry.status === 'success' ? '✓' : entry.status === 'error' ? '!' : '·'}</i><div><strong>{entry.tool.replaceAll('_', ' ')}</strong><small>{new Date(entry.timestamp).toLocaleTimeString()} · {entry.status}</small></div></article>)}</div></section>
   </main>;
 }
