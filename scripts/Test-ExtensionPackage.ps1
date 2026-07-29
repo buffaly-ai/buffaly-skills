@@ -264,6 +264,10 @@ function Read-JsonFile([string]$path) {
             }
         }
 
+        if ([string]::IsNullOrWhiteSpace($ClaudeCodeRuntimeRegressionCommand)) {
+            $ClaudeCodeRuntimeRegressionCommand = [string]$env:BUFFALY_CLAUDECODE_RUNTIME_REGRESSION_COMMAND
+        }
+
         if (-not [string]::IsNullOrWhiteSpace($ClaudeCodeRuntimeRegressionCommand)) {
             $runtimeCommandPath = Join-Path ([System.IO.Path]::GetTempPath()) ("claude-code-runtime-regression-" + [System.Guid]::NewGuid().ToString("N") + ".ps1")
             Set-Content -LiteralPath $runtimeCommandPath -Value $ClaudeCodeRuntimeRegressionCommand -Encoding UTF8
@@ -278,7 +282,7 @@ function Read-JsonFile([string]$path) {
                 $warnings.Add("ClaudeCode runtime regression action passed: " + (($runtimeText -split "`r?`n")[0]))
             }
         } else {
-            $warnings.Add("ClaudeCode runtime regression action was not invoked. Pass -ClaudeCodeRuntimeRegressionCommand to execute ToRunClaudeCodeStateScopingRegression in a live runtime.")
+            $errors.Add("ClaudeCode runtime regression action was not invoked. Pass -ClaudeCodeRuntimeRegressionCommand or set BUFFALY_CLAUDECODE_RUNTIME_REGRESSION_COMMAND so ordinary package validation executes ToRunClaudeCodeStateScopingRegression in a live runtime.")
         }
     }
 
