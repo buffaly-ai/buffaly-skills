@@ -125,6 +125,7 @@ function ToClaudeBuildRunScript(string exePath, string argumentLine, string stdo
 	script = script + "$stdoutFile='" + ToClaudeEscapePowerShellSingleQuoted(stdoutFile) + "';";
 	script = script + "$stderrFile='" + ToClaudeEscapePowerShellSingleQuoted(stderrFile) + "';";
 	script = script + "$outputDirectory=Split-Path -Parent $stdoutFile; [System.IO.Directory]::CreateDirectory($outputDirectory) | Out-Null;";
+	script = script + "Write-Output ('workingDirectory=' + (Get-Location).Path);";
 	script = script + "if(-not (Test-Path -LiteralPath $exe)){ Write-Output ('Error: claude not found at ' + $exe); exit 2 };";
 	script = script + "$psi=New-Object System.Diagnostics.ProcessStartInfo;";
 	script = script + "$psi.FileName=$exe;";
@@ -240,7 +241,12 @@ function ToClaudePtStateScope(string stateScope) : string
 	scope = scope.Trim();
 	if (StringUtil.IsEmpty(scope))
 		scope = "default";
-	return scope;
+	string hashScript = "$value='" + ToClaudeEscapePowerShellSingleQuoted(sessionKey) + "'; $bytes=[System.Text.UTF8Encoding]::new($false).GetBytes($value); $sha=[System.Security.Cryptography.SHA256]::Create(); try { ([BitConverter]::ToString($sha.ComputeHash($bytes)).Replace('-','').ToLowerInvariant()).Substring(0,16) } finally { $sha.Dispose() }";
+	string hashResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(hashScript, "", 10, _opsAgent, "", "Claude PT State Scope Hash");
+	string hash = ToClaudeCleanOutput(hashResult);
+	if (StringUtil.IsEmpty(hash))
+		hash = "nohash";
+	return scope + "-" + hash;
 }
 
 function ToClaudePtScopedFile(string filePath, string stateScope) : string
@@ -467,6 +473,57 @@ Runs official claude -p with --output-format text --permission-mode bypassPermis
 		}
 
 		return result;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to start a new scoped claude conversation")]
+[SemanticProgram.InfinitivePhrase("to reset scoped claude conversation")]
+[SemanticProgram.InfinitivePhrase("to start fresh scoped claude")]
+prototype ToStartScopedClaudeConversation : ClaudeCodeSkillAction
+{
+	Description = @"stateScope - required caller-owned scope such as a Buffaly session key. model - optional model for the scoped conversation. Clears conversation and turn state for that explicit scope.";
+
+	function Execute(string stateScope, string model) : string
+	{
+		if (StringUtil.IsEmpty(stateScope))
+			return "Error: stateScope is required for scoped Claude state.";
+
+		ToClaudePtWriteState(ToClaudePtConvIdFile(), "none", stateScope);
+		ToClaudePtWriteState(ToClaudePtTurnsFile(), "0", stateScope);
+		if (!StringUtil.IsEmpty(model))
+			ToClaudePtWriteState(ToClaudePtModelFile(), model, stateScope);
+
+		string result = "New scoped claude conversation started.`nStateScope=" + ToClaudePtStateScope(stateScope) + "`nTurn=0";
+		if (!StringUtil.IsEmpty(model))
+			result = result + "`nModel=" + model;
+		return result;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set scoped claude working directory")]
+[SemanticProgram.InfinitivePhrase("to change scoped claude working directory")]
+prototype ToSetScopedClaudeWorkingDirectory : ClaudeCodeSkillAction
+{
+	Description = @"stateScope - required caller-owned scope such as a Buffaly session key. workingDirectory - directory for subsequent ToTalkToClaude calls using that scope, or none/empty to reset.";
+
+	function Execute(string stateScope, string workingDirectory) : string
+	{
+		if (StringUtil.IsEmpty(stateScope))
+			return "Error: stateScope is required for scoped Claude state.";
+
+		if (StringUtil.IsEmpty(workingDirectory) || workingDirectory == "none")
+		{
+			ToClaudePtWriteState(ToClaudePtWorkDirFile(), "none", stateScope);
+			return "Scoped Claude working directory reset.`nStateScope=" + ToClaudePtStateScope(stateScope);
+		}
+
+		string checkScript = "if(Test-Path -LiteralPath '" + ToClaudeEscapePowerShellSingleQuoted(workingDirectory) + "'){ 'EXISTS' } else { 'MISSING' }";
+		string checkResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(checkScript, "", 10, _opsAgent, "", "Claude PT Scoped WorkDir Check");
+		if (checkResult.Contains("MISSING"))
+			return "Error: directory does not exist: " + workingDirectory;
+
+		ToClaudePtWriteState(ToClaudePtWorkDirFile(), workingDirectory, stateScope);
+		return "Scoped Claude working directory set.`nStateScope=" + ToClaudePtStateScope(stateScope) + "`nWorkingDirectory=" + workingDirectory;
 	}
 }
 

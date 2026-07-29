@@ -8,6 +8,8 @@ Canonical Claude Code CLI Skill for subscription-backed authentication, one-shot
 - Fixed output cleanup recursion, removed a stray declaration outside the auth action, returned the resolved executable path in auth status, and restored the interactive login executable/stderr setup.
 - Scoped pass-through state paths under `claude_pt_state/<sanitized-scope>/`; added explicit scoped model/state actions for callers that need concurrency-safe state when ambient session identity is unavailable.
 - Updated the main `ToTalkToClaude` contract to require a caller-owned `stateScope` and use it for model, working-directory, and turn-count state so the primary pass-through path cannot silently share `default` state.
+- Added a stable hash suffix to scoped state directory names so distinct scopes that sanitize to the same path prefix cannot collide.
+- Added scoped conversation reset and scoped working-directory actions so callers can configure the same explicit scope consumed by `ToTalkToClaude`.
 
 ## 2026-07-27
 

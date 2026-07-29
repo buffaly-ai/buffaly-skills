@@ -18,9 +18,11 @@ Official `claude` (Claude Code) wrappers plus a transparent pass-through layer. 
 - `ToSetClaudeWorkingDirectory` — changes where claude reads/writes files.
 - `ToSetScopedClaudeModel` — writes model state under an explicit caller-owned scope such as a Buffaly session key.
 - `ToGetScopedClaudeConversationState` — reads pass-through state for an explicit caller-owned scope.
+- `ToStartScopedClaudeConversation` — clears conversation/turn state for an explicit caller-owned scope.
+- `ToSetScopedClaudeWorkingDirectory` — writes working-directory state for an explicit caller-owned scope.
 
 ## Pass-through state files
-- Pass-through state uses `claude_pt_state/<sanitized-scope>/` in the process temp directory. `ToTalkToClaude` requires a stable caller-owned `stateScope` so the main pass-through path cannot silently share default state across concurrent sessions.
+- Pass-through state uses `claude_pt_state/<sanitized-scope>-<scope-hash>/` in the process temp directory. `ToTalkToClaude` requires a stable caller-owned `stateScope` so the main pass-through path cannot silently share default state across concurrent sessions.
 - `claude_pt_conv_id.txt` — current conversation ID
 - `claude_pt_model.txt` — current model
 - `claude_pt_workdir.txt` — working directory
