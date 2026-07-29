@@ -16,6 +16,10 @@
 ## Add Phase 2 Static Interactive Site Test (2026-06-14)
 - Added ToRunErrorLogDiagnosisStaticInteractiveSiteTest to load module-owned site assets, launch them through _opsAgent.LaunchInteractiveSite, and wait for browser exit.
 
+## Remove Obsolete Static Interactive Site Test Tool (2026-07-29)
+- Removed `ToRunErrorLogDiagnosisStaticInteractiveSiteTest` and its semantic phrases from the bundled skill, so it is no longer registered or offered to agents.
+- The Error Log Diagnosis memory-search and taxonomy-validation actions remain available.
+
 ## Load Interactive Site Assets From Skill Folder (2026-06-14)
 - Moved the Error Log Diagnosis static interactive-site assets under the ErrorLogDiagnosis skill folder and changed the ProtoScript loader to read from `Skills/ErrorLogDiagnosis/interactive-sites/error-log-diagnosis-settings` relative to the current project directory.
 
