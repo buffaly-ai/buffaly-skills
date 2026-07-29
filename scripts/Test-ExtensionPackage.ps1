@@ -3,6 +3,8 @@ param(
     [string]$PackageName,
     [Parameter(Mandatory = $false)]
     [string]$RepoRoot = (Split-Path $PSScriptRoot -Parent),
+    [Parameter(Mandatory = $false)]
+    [string]$ClaudeCodeRuntimeRegressionCommand = "",
     [switch]$JsonOutput
 )
 
@@ -33,7 +35,8 @@ function Read-JsonFile([string]$path) {
         [string]$PackageType = "",
         [string]$RepoRoot,
         $SkillIndex,
-        $PackageIndex
+        $PackageIndex,
+        [string]$ClaudeCodeRuntimeRegressionCommand = ""
     )
 
     $errors = [System.Collections.Generic.List[string]]::new()
@@ -242,6 +245,43 @@ function Read-JsonFile([string]$path) {
         }
     }
 
+    # --- Package-specific regression hooks ---
+    if ($packageId -eq "ClaudeCode" -and $packageType -eq "Skill") {
+        $regressionScript = Join-Path $packageRoot "Test-ClaudeCodeStateScoping.ps1"
+        if (-not (Test-Path $regressionScript -PathType Leaf)) {
+            $errors.Add("ClaudeCode regression script is missing: Test-ClaudeCodeStateScoping.ps1")
+        } else {
+            $regressionOutput = & powershell -ExecutionPolicy Bypass -File $regressionScript -PackageRoot $packageRoot 2>&1
+            if ($LASTEXITCODE -ne 0) {
+                $errors.Add("ClaudeCode state scoping regression script failed: " + (($regressionOutput | Out-String).Trim()))
+            } else {
+                $regressionText = ($regressionOutput | Out-String).Trim()
+                if ($regressionText -notmatch '"ProductionRegressionAction"\s*:\s*"ToRunClaudeCodeStateScopingRegression"') {
+                    $errors.Add("ClaudeCode state scoping regression did not verify ToRunClaudeCodeStateScopingRegression. Output: " + $regressionText)
+                } else {
+                    $warnings.Add("ClaudeCode state scoping package regression hook passed: ToRunClaudeCodeStateScopingRegression wiring verified.")
+                }
+            }
+        }
+
+        if (-not [string]::IsNullOrWhiteSpace($ClaudeCodeRuntimeRegressionCommand)) {
+            $runtimeCommandPath = Join-Path ([System.IO.Path]::GetTempPath()) ("claude-code-runtime-regression-" + [System.Guid]::NewGuid().ToString("N") + ".ps1")
+            Set-Content -LiteralPath $runtimeCommandPath -Value $ClaudeCodeRuntimeRegressionCommand -Encoding UTF8
+            $runtimeOutput = & powershell -NoProfile -ExecutionPolicy Bypass -File $runtimeCommandPath 2>&1
+            Remove-Item -LiteralPath $runtimeCommandPath -Force -ErrorAction SilentlyContinue
+            $runtimeText = ($runtimeOutput | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0) {
+                $errors.Add("ClaudeCode runtime regression command failed with exit code $LASTEXITCODE`: " + $runtimeText)
+            } elseif ($runtimeText -notmatch '^PASS: ClaudeCode state scoping regression') {
+                $errors.Add("ClaudeCode runtime regression command did not return PASS. Output: " + $runtimeText)
+            } else {
+                $warnings.Add("ClaudeCode runtime regression action passed: " + (($runtimeText -split "`r?`n")[0]))
+            }
+        } else {
+            $warnings.Add("ClaudeCode runtime regression action was not invoked. Pass -ClaudeCodeRuntimeRegressionCommand to execute ToRunClaudeCodeStateScopingRegression in a live runtime.")
+        }
+    }
+
     return [PSCustomObject]@{
         PackageId   = $packageId
         PackageType = $packageType
@@ -262,7 +302,7 @@ if ($MyInvocation.InvocationName -ne '.') {
     $skillIndex = Read-JsonFile (Join-Path $RepoRoot "skills.index.json")
     $packageIndex = Read-JsonFile (Join-Path $RepoRoot "packages.index.json")
 
-    $result = Test-ExtensionPackageInternal -PackageName $PackageName -RepoRoot $RepoRoot -SkillIndex $skillIndex -PackageIndex $packageIndex
+    $result = Test-ExtensionPackageInternal -PackageName $PackageName -RepoRoot $RepoRoot -SkillIndex $skillIndex -PackageIndex $packageIndex -ClaudeCodeRuntimeRegressionCommand $ClaudeCodeRuntimeRegressionCommand
 
     if ($JsonOutput) {
         [PSCustomObject]@{
