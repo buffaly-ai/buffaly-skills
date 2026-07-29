@@ -27,13 +27,32 @@
     if (typeof navigator === 'undefined' || !navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function') return;
     const original = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
     navigator.mediaDevices.getUserMedia = async function (constraints) {
+      const isMicrophoneRequest = Boolean(constraints && constraints.audio);
+      const diagnostic = isMicrophoneRequest ? {
+        origin: window.location.origin,
+        policyAllowsMicrophone: document.permissionsPolicy
+          ? document.permissionsPolicy.allowsFeature('microphone')
+          : null,
+        permissionState: 'unsupported'
+      } : null;
+      if (diagnostic && navigator.permissions && typeof navigator.permissions.query === 'function') {
+        try {
+          diagnostic.permissionState = (await navigator.permissions.query({ name: 'microphone' })).state;
+        } catch (error) {
+          diagnostic.permissionState = 'query-error';
+        }
+      }
       try {
-        return await original(constraints);
+        const stream = await original(constraints);
+        if (diagnostic) {
+          window.parent.postMessage({ type: 'extension_browser_microphone_diagnostic', ...diagnostic, result: 'granted' }, '*');
+        }
+        return stream;
       } catch (error) {
-        if (constraints && constraints.audio) {
+        if (diagnostic) {
           const name = error && error.name ? String(error.name) : 'MicrophoneError';
           const message = error && error.message ? String(error.message) : 'Chrome did not grant microphone access.';
-          window.parent.postMessage({ type: 'extension_browser_microphone_error', name, message }, '*');
+          window.parent.postMessage({ type: 'extension_browser_microphone_diagnostic', ...diagnostic, result: 'rejected', name, message }, '*');
         }
         throw error;
       }
