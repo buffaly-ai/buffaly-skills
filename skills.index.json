@@ -425,7 +425,7 @@
       "SkillName": "ClaudeCode",
       "Title": "Claude Code",
       "Description": "Buffaly skill package for Claude Code.",
-      "Version": "0.1.9",
+      "Version": "0.1.10",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Claude Code",
@@ -444,6 +444,10 @@
         {
           "Path": "SKILL.md",
           "Sha256": "a6abb5d0e7f4ba38488c8beacdcf6d65ebfe8fdb3a022607cf043fb52856e1e3"
+        },
+        {
+          "Path": "Test-ClaudeCodeStateScoping.ps1",
+          "Sha256": "133b1a61f06230d23ac7fcb4e1151c5996b30e090074bce875daeeefbd90da2b"
         }
       ],
       "EntryPoint": "index.pts",
