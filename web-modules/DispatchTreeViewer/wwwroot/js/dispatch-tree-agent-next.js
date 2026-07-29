@@ -43,17 +43,14 @@
       : "Confirm that this dispatcher session has a DispatchMemoryRoot and try again.";
   }
 
-  function ensureSessionRuntime(sessionKey) {
-    if (!sessionKey) return Promise.reject(new Error("A session key is required to load the Dispatch tree."));
-    // A cold session compiles the complete project and initializes services. Staging can
-    // legitimately take several minutes. The host bridge can time out while the worker
-    // continues starting, so retry only those transient transport failures.
-    return BuffalyAgentService.EnsureAgentAsync(sessionKey).catch(function (error) {
-      var message = errorMessage(error);
-      if (!/JsonWs request timed out|HTTP 502/i.test(message)) throw error;
-      return new Promise(function (resolve) { window.setTimeout(resolve, 3000); })
-        .then(function () { return ensureSessionRuntime(sessionKey); });
-    });
+  function readJson(url, operation) {
+    return withTimeout(window.fetch(url, { credentials: "same-origin" }), operation)
+      .then(function (response) {
+        return response.json().catch(function () { return {}; }).then(function (payload) {
+          if (!response.ok) throw new Error(payload.Error || payload.error || (operation + " failed with HTTP " + response.status + "."));
+          return payload;
+        });
+      });
   }
 
   ensureStyle();
@@ -126,16 +123,15 @@
   var ontologyState = { rootName: "", loadedNodes: new Map(), expandedNodes: new Set(), childrenCache: new Map(), selectedNode: null, filterText: "" };
 
  function readOntologyTree(rootName, after, sessionKey) {
-   var args = JSON.stringify({ rootName: rootName, after: after || "" });
-   return ensureSessionRuntime(sessionKey || "")
-     .then(function () { return withTimeout(BuffalyAgentService.RunProtoScriptMethodAsync(sessionKey || "", "buffaly-agent", "ToReadOntologyTree", "Execute", args), "Loading the Dispatch tree"); })
-     .then(function (resultText) { return JSON.parse(resultText); });
+    if (rootName !== "DispatchMemoryRoot") return Promise.reject(new Error("The Dispatch viewer supports only DispatchMemoryRoot."));
+    var query = new URLSearchParams({ sessionKey: sessionKey || "", after: after || "" });
+    return readJson("/api/web-modules/DispatchTreeViewer/dispatch-tree?" + query.toString(), "Loading the Dispatch tree");
  }
 
  function readOntologyChildren(rootName, parentName, after, sessionKey) {
-   var args = JSON.stringify({ rootName: rootName, parentName: parentName, after: after || "" });
-   return withTimeout(BuffalyAgentService.RunProtoScriptMethodAsync(sessionKey || "", "buffaly-agent", "ToReadOntologyChildren", "Execute", args), "Loading Dispatch tree children")
-     .then(function (resultText) { return JSON.parse(resultText); });
+    if (rootName !== "DispatchMemoryRoot") return Promise.reject(new Error("The Dispatch viewer supports only DispatchMemoryRoot."));
+    var query = new URLSearchParams({ sessionKey: sessionKey || "", parent: parentName, after: after || "" });
+    return readJson("/api/web-modules/DispatchTreeViewer/dispatch-tree/children?" + query.toString(), "Loading Dispatch tree children");
  }
 
   function openOntologyViewer(initialRoot, sessionKey) {
@@ -202,7 +198,7 @@
 
     function loadAndRender() {
       body.replaceChildren();
-      body.appendChild(element("p", "dtv-loading", "Starting this session's runtime and loading " + ontologyState.rootName + "..."));
+      body.appendChild(element("p", "dtv-loading", "Loading " + ontologyState.rootName + "..."));
       readOntologyTree(ontologyState.rootName, null, ontologyState.sessionKey)
         .then(function (resp) {
           ontologyState.loadedNodes.set(resp.root.prototypeName, resp.root);
