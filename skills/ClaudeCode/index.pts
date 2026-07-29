@@ -37,6 +37,8 @@ function ToClaudeTempPath() : string
 function ToClaudeCleanOutput(string result) : string
 {
 	// RunPowerShellStreamingToRuntimeUi appends "Exit code: N" to output. Strip it.
+	if (result.Contains("Output:"))
+		return StringUtil.RightOfLast(result, "Output:").Trim();
 	int exitCodeIdx = result.IndexOf("Exit code: ");
 	if (exitCodeIdx >= 0)
 		return result.Substring(0, exitCodeIdx).Trim();
