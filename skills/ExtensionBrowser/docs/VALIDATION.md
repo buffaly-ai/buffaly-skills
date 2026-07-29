@@ -1,4 +1,6 @@
-# Buffaly Browser Agent 0.2.49 / WebModule 0.1.32 validation
+# Buffaly Browser Agent 0.2.51 / WebModule 0.1.33 validation
+
+0.2.51 / WebModule 0.1.33 supersede the unsuccessful extension-origin capture and WebRTC relay introduced in 0.2.49-0.2.50. Native Chrome proved that an extension-origin grant did not authorize the cross-origin Buffaly composer. The corrected contract delegates `microphone` directly on the trusted conversation iframe so the composer requests and uses media under its own Buffaly server origin. Release and WebModule regressions reject the removed relay and retain the invalid-`audioCapture` prohibition.
 
 0.2.49 / WebModule 0.1.32 correct the cross-origin microphone authority boundary proven by native Chrome acceptance. The trusted extension side panel now owns `getUserMedia({audio:true})`; the package AgentScript delegates the embedded composer's audio-only request to that parent and receives a short-lived live track through an in-memory WebRTC bridge. Requests and answers are accepted only from the exact selected conversation iframe and origin. Stopping the recording or closing/replacing the conversation stops the source track and closes both peers. The ineffective server-origin setup-tab route and direct iframe microphone delegation are removed, while the release gate continues to reject the invalid `audioCapture` manifest permission.
 

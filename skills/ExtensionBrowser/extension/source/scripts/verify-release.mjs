@@ -27,9 +27,7 @@ check(!manifest.permissions.includes('audioCapture'), 'invalid extension permiss
 check(!manifest.permissions.includes('contentSettings'), 'obsolete microphone-recovery permission must not be present: contentSettings');
 check(!backgroundSource.includes("new URL('/web-modules/ExtensionBrowser/microphone'"), 'ineffective server-origin microphone setup flow must not return');
 check(!backgroundSource.includes("secondaryPattern: `${chrome.runtime.getURL('/')}*`"), 'microphone grant must not use an invalid chrome-extension secondary pattern');
-check(sidepanelSource.includes("navigator.mediaDevices.getUserMedia({ audio: true })") && sidepanelSource.includes("type: 'extension_browser_microphone_offer'") && sidepanelSource.includes("message.type === 'extension_browser_microphone_answer'"), 'extension-owned microphone bridge is missing');
-check(sidepanelSource.includes('event.source !== conversationFrame.current?.contentWindow') && sidepanelSource.includes('event.origin !== new URL(conversation.Origin).origin'), 'microphone bridge must remain restricted to the selected trusted conversation iframe');
-check(sidepanelSource.includes('allow="clipboard-read; clipboard-write"') && !sidepanelSource.includes('clipboard-write; microphone'), 'conversation iframe must not request direct microphone authority');
+check(sidepanelSource.includes('allow="clipboard-read; clipboard-write; microphone"'), 'trusted conversation iframe must delegate microphone permission to the Buffaly server origin');
 check(sidepanelSource.includes('TabId: page.tabId'), 'current-page UserState snapshot must preserve the active tab ID');
 check(backgroundSource.includes("canonicalServerOrigin(String(request.origin || '').trim())") && backgroundSource.includes("Promise.resolve().then(async () =>"), 'Save server must validate input inside its asynchronous response path');
 check(sidepanelSource.includes("void refreshServers().catch"), 'Save server completion must not block on server health inspection');
