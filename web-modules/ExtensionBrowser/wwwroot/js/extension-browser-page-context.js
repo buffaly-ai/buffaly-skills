@@ -8,6 +8,7 @@
   const REQUEST_TYPE = 'extension_browser_current_page_request';
   const USER_STATE_KEY = 'ExtensionBrowser.CurrentPage';
   const pending = new Map();
+  const pendingMicrophones = new Map();
   const freshlyEnrichedInputs = new WeakSet();
   let evaluateWrapper = null;
   let steerWrapper = null;
@@ -27,6 +28,7 @@
     if (typeof navigator === 'undefined' || !navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function') return;
     const original = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
     navigator.mediaDevices.getUserMedia = async function (constraints) {
+      if (constraints && constraints.audio && !constraints.video) return requestBrokeredMicrophone();
       const isMicrophoneRequest = Boolean(constraints && constraints.audio);
       const diagnostic = isMicrophoneRequest ? {
         origin: window.location.origin,
@@ -59,6 +61,61 @@
     };
   }
 
+  function waitForIceGathering(peer) {
+    if (peer.iceGatheringState === 'complete') return Promise.resolve();
+    return new Promise(resolve => peer.addEventListener('icegatheringstatechange', function changed() {
+      if (peer.iceGatheringState !== 'complete') return;
+      peer.removeEventListener('icegatheringstatechange', changed);
+      resolve();
+    }));
+  }
+
+  function requestBrokeredMicrophone() {
+    return new Promise((resolve, reject) => {
+      const requestId = crypto.randomUUID();
+      const peer = new RTCPeerConnection();
+      const stream = new MediaStream();
+      const brokerUrl = `/web-modules/ExtensionBrowser/microphone?requestId=${encodeURIComponent(requestId)}`;
+      const broker = window.open(brokerUrl, `buffaly-microphone-${requestId}`, 'popup,width=520,height=560');
+      if (!broker) {
+        reject(new DOMException('Chrome blocked the Buffaly microphone window.', 'NotAllowedError'));
+        return;
+      }
+      const timer = window.setTimeout(() => finishBrokeredMicrophone(requestId, new Error('Buffaly microphone capture did not respond within 30 seconds.')), 30000);
+      pendingMicrophones.set(requestId, { resolve, reject, peer, stream, broker, timer });
+      peer.ontrack = event => {
+        const track = event.track;
+        const stop = track.stop.bind(track);
+        track.stop = () => { stop(); releaseBrokeredMicrophone(requestId); };
+        stream.addTrack(track);
+        track.addEventListener('ended', () => releaseBrokeredMicrophone(requestId), { once: true });
+        finishBrokeredMicrophone(requestId, null);
+      };
+    });
+  }
+
+  function releaseBrokeredMicrophone(requestId) {
+    const request = pendingMicrophones.get(requestId);
+    if (!request) return;
+    pendingMicrophones.delete(requestId);
+    window.clearTimeout(request.timer);
+    request.peer.close();
+    if (!request.broker.closed) request.broker.postMessage({ type: 'extension_browser_microphone_release', requestId }, window.location.origin);
+  }
+
+  function finishBrokeredMicrophone(requestId, error) {
+    const request = pendingMicrophones.get(requestId);
+    if (!request) return;
+    if (error) {
+      releaseBrokeredMicrophone(requestId);
+      request.reject(error);
+      window.parent.postMessage({ type: 'extension_browser_microphone_diagnostic', origin: window.location.origin, policyAllowsMicrophone: null, permissionState: 'broker', result: 'rejected', name: error.name || 'MicrophoneError', message: error.message || String(error) }, '*');
+      return;
+    }
+    window.clearTimeout(request.timer);
+    request.resolve(request.stream);
+  }
+
   function requestCurrentPage() {
     return new Promise((resolve, reject) => {
       const requestId = crypto.randomUUID();
@@ -72,7 +129,24 @@
   }
 
   window.addEventListener('message', (event) => {
-    if (event.source !== window.parent || !event.data) return;
+    if (!event.data) return;
+    const microphone = pendingMicrophones.get(event.data.requestId);
+    if (microphone && event.source === microphone.broker && event.origin === window.location.origin) {
+      if (event.data.type === 'extension_browser_microphone_offer') {
+        microphone.peer.setRemoteDescription(event.data.offer)
+          .then(() => microphone.peer.createAnswer())
+          .then(answer => microphone.peer.setLocalDescription(answer))
+          .then(() => waitForIceGathering(microphone.peer))
+          .then(() => microphone.broker.postMessage({ type: 'extension_browser_microphone_answer', requestId: event.data.requestId, answer: microphone.peer.localDescription }, window.location.origin))
+          .catch(error => finishBrokeredMicrophone(event.data.requestId, error));
+      } else if (event.data.type === 'extension_browser_microphone_failure') {
+        const error = new Error(String(event.data.message || 'Chrome did not grant microphone access.'));
+        error.name = String(event.data.name || 'MicrophoneError');
+        finishBrokeredMicrophone(event.data.requestId, error);
+      }
+      return;
+    }
+    if (event.source !== window.parent) return;
     if (event.data.type !== RESPONSE_TYPE) return;
     const request = pending.get(event.data.requestId);
     if (!request) return;
