@@ -70,6 +70,10 @@
     }));
   }
 
+  function serializableSessionDescription(description) {
+    return { type: description.type, sdp: description.sdp };
+  }
+
   function requestBrokeredMicrophone() {
     return new Promise((resolve, reject) => {
       const requestId = crypto.randomUUID();
@@ -137,7 +141,7 @@
           .then(() => microphone.peer.createAnswer())
           .then(answer => microphone.peer.setLocalDescription(answer))
           .then(() => waitForIceGathering(microphone.peer))
-          .then(() => microphone.broker.postMessage({ type: 'extension_browser_microphone_answer', requestId: event.data.requestId, answer: microphone.peer.localDescription }, window.location.origin))
+          .then(() => microphone.broker.postMessage({ type: 'extension_browser_microphone_answer', requestId: event.data.requestId, answer: serializableSessionDescription(microphone.peer.localDescription) }, window.location.origin))
           .catch(error => finishBrokeredMicrophone(event.data.requestId, error));
       } else if (event.data.type === 'extension_browser_microphone_failure') {
         const error = new Error(String(event.data.message || 'Chrome did not grant microphone access.'));
