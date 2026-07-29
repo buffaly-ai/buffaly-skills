@@ -527,6 +527,57 @@ prototype ToSetScopedClaudeWorkingDirectory : ClaudeCodeSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to run claude state scoping regression")]
+[SemanticProgram.InfinitivePhrase("to test claude state scoping")]
+prototype ToRunClaudeCodeStateScopingRegression : ClaudeCodeSkillAction
+{
+	Description = @"Runs the production ClaudeCode state-scoping regression without calling external Claude. It exercises the real scoped state helpers, collision-resistant state-scope mapper, scoped working-directory setter state, and wrapper working-directory seam.";
+
+	function Execute() : string
+	{
+		string scopeA = "collision/a";
+		string scopeB = "collision\\a";
+		string mappedA = ToClaudePtStateScope(scopeA);
+		string mappedB = ToClaudePtStateScope(scopeB);
+		if (mappedA == mappedB)
+			return "FAIL: colliding scopes mapped to the same state directory: " + mappedA;
+		if (!mappedA.StartsWith("collision_a-") || !mappedB.StartsWith("collision_a-"))
+			return "FAIL: expected shared sanitized prefix with distinct hash suffixes, got " + mappedA + " and " + mappedB;
+
+		ToClaudePtWriteState(ToClaudePtModelFile(), "haiku", scopeA);
+		ToClaudePtWriteState(ToClaudePtModelFile(), "opus", scopeB);
+		string modelA = ToClaudePtReadState(ToClaudePtModelFile(), scopeA).Trim();
+		string modelB = ToClaudePtReadState(ToClaudePtModelFile(), scopeB).Trim();
+		if (!modelA.Contains("haiku"))
+			return "FAIL: expected haiku for " + scopeA + ", got " + modelA;
+		if (!modelB.Contains("opus"))
+			return "FAIL: expected opus for " + scopeB + ", got " + modelB;
+
+		string workScope = "workdir-scope-regression";
+		string workDir = Path.Combine(ToClaudeTempPath(), "claude-code-scope-regression-workdir");
+		string makeDirScript = "$dir='" + ToClaudeEscapePowerShellSingleQuoted(workDir) + "'; New-Item -ItemType Directory -Force -Path $dir | Out-Null; Write-Output $dir";
+		string createdWorkDir = ToClaudeCleanOutput(SystemOperations.RunPowerShellStreamingToRuntimeUi(makeDirScript, "", 10, _opsAgent, "", "Claude Regression WorkDir Create"));
+		if (!StringUtil.IsEmpty(createdWorkDir))
+			workDir = createdWorkDir;
+		string resolveDirScript = "$dir='" + ToClaudeEscapePowerShellSingleQuoted(workDir) + "'; Write-Output ((Get-Item -LiteralPath $dir).FullName)";
+		string resolvedWorkDir = ToClaudeCleanOutput(SystemOperations.RunPowerShellStreamingToRuntimeUi(resolveDirScript, "", 10, _opsAgent, "", "Claude Regression WorkDir Resolve"));
+		if (!StringUtil.IsEmpty(resolvedWorkDir))
+			workDir = resolvedWorkDir;
+		ToClaudePtWriteState(ToClaudePtWorkDirFile(), workDir, workScope);
+		string configuredWorkDir = ToClaudePtReadState(ToClaudePtWorkDirFile(), workScope).Trim();
+		if (!configuredWorkDir.Contains(workDir))
+			return "FAIL: scoped workdir readback mismatch: " + configuredWorkDir;
+
+		string probeScript = "$ErrorActionPreference='Stop'; if(Test-Path -LiteralPath '" + ToClaudeEscapePowerShellSingleQuoted(configuredWorkDir) + "'){ Set-Location -LiteralPath '" + ToClaudeEscapePowerShellSingleQuoted(configuredWorkDir) + "' }; Write-Output ('workingDirectory=' + (Get-Location).Path)";
+		string probeResult = ToClaudeCleanOutput(SystemOperations.RunPowerShellStreamingToRuntimeUi(probeScript, "", 10, _opsAgent, "", "Claude Regression WorkDir Probe"));
+		string expectedProbe = "workingDirectory=" + workDir;
+		if (probeResult != expectedProbe)
+			return "FAIL: wrapper working-directory probe expected " + expectedProbe + " but got " + probeResult;
+
+		return "PASS: ClaudeCode state scoping regression`nCollisionScopeA=" + mappedA + "`nCollisionScopeB=" + mappedB + "`nModelA=" + modelA + "`nModelB=" + modelB + "`nWorkdirScope=" + ToClaudePtStateScope(workScope) + "`nWrapperProbe=" + probeResult;
+	}
+}
+
 // ===== Pass-Through Actions =====
 
 [SemanticProgram.InfinitivePhrase("to talk to claude")]

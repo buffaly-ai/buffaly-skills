@@ -1,130 +1,57 @@
 [CmdletBinding()]
 param(
-    [string]$TempRoot = (Join-Path ([System.IO.Path]::GetTempPath()) ("claude-code-scope-regression-" + [System.Guid]::NewGuid().ToString("N")))
+    [string]$PackageRoot = ""
 )
 
 $ErrorActionPreference = "Stop"
 
-function Get-ClaudeStateScope {
-    param([Parameter(Mandatory=$true)][string]$StateScope)
-
-    $scope = $StateScope
-    foreach ($pair in @(
-        @("\", "_"),
-        @("/", "_"),
-        @(":", "_"),
-        @("*", "_"),
-        @("?", "_"),
-        @('"', "_"),
-        @("<", "_"),
-        @(">", "_"),
-        @("|", "_")
-    )) {
-        $scope = $scope.Replace($pair[0], $pair[1])
-    }
-    $scope = $scope.Trim()
-    if ([string]::IsNullOrWhiteSpace($scope)) { $scope = "default" }
-
-    $bytes = [System.Text.UTF8Encoding]::new($false).GetBytes($StateScope)
-    $sha = [System.Security.Cryptography.SHA256]::Create()
-    try {
-        $hash = ([BitConverter]::ToString($sha.ComputeHash($bytes)).Replace("-", "").ToLowerInvariant()).Substring(0, 16)
-    }
-    finally {
-        $sha.Dispose()
-    }
-
-    return "$scope-$hash"
+if ([string]::IsNullOrWhiteSpace($PackageRoot)) {
+    $PackageRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 }
 
-function Get-ClaudeScopedFile {
+$indexPath = Join-Path $PackageRoot "index.pts"
+if (-not (Test-Path -LiteralPath $indexPath)) {
+    throw "index.pts not found at $indexPath"
+}
+
+$source = Get-Content -LiteralPath $indexPath -Raw
+
+function Assert-Contains {
     param(
-        [Parameter(Mandatory=$true)][string]$FileName,
-        [Parameter(Mandatory=$true)][string]$StateScope
+        [Parameter(Mandatory=$true)][string]$Needle,
+        [Parameter(Mandatory=$true)][string]$Message
     )
-    Join-Path $TempRoot (Join-Path "claude_pt_state" (Join-Path (Get-ClaudeStateScope -StateScope $StateScope) $FileName))
+    if (-not $source.Contains($Needle)) {
+        throw $Message
+    }
 }
 
-function Write-ClaudeState {
-    param(
-        [Parameter(Mandatory=$true)][string]$FileName,
-        [Parameter(Mandatory=$true)][string]$Value,
-        [Parameter(Mandatory=$true)][string]$StateScope
+# This package test intentionally avoids reimplementing the scope mapper. It verifies that
+# the package contains the production ProtoScript regression action and that the action is
+# wired to the production helpers/seams which must be exercised in a loaded runtime via
+# ToRunClaudeCodeStateScopingRegression.
+Assert-Contains 'prototype ToRunClaudeCodeStateScopingRegression : ClaudeCodeSkillAction' 'Missing production ClaudeCode regression action.'
+Assert-Contains 'string mappedA = ToClaudePtStateScope(scopeA);' 'Regression action does not call production scope mapper for scopeA.'
+Assert-Contains 'string mappedB = ToClaudePtStateScope(scopeB);' 'Regression action does not call production scope mapper for scopeB.'
+Assert-Contains 'ToClaudePtWriteState(ToClaudePtModelFile(), "haiku", scopeA);' 'Regression action does not write model state through production scoped writer for scopeA.'
+Assert-Contains 'ToClaudePtWriteState(ToClaudePtModelFile(), "opus", scopeB);' 'Regression action does not write model state through production scoped writer for scopeB.'
+Assert-Contains 'ToClaudePtReadState(ToClaudePtModelFile(), scopeA)' 'Regression action does not read model state through production scoped reader for scopeA.'
+Assert-Contains 'ToClaudePtReadState(ToClaudePtModelFile(), scopeB)' 'Regression action does not read model state through production scoped reader for scopeB.'
+Assert-Contains 'ToClaudePtWriteState(ToClaudePtWorkDirFile(), workDir, workScope);' 'Regression action does not write scoped working-directory state through production writer.'
+Assert-Contains 'ToClaudePtReadState(ToClaudePtWorkDirFile(), workScope)' 'Regression action does not read scoped working-directory state through production reader.'
+Assert-Contains "Write-Output ('workingDirectory=' + (Get-Location).Path)" 'Regression action does not exercise the production wrapper working-directory seam.'
+Assert-Contains 'System.Security.Cryptography.SHA256' 'Production scope mapper does not include a SHA-256 hash suffix.'
+Assert-Contains 'return scope + "-" + hash;' 'Production scope mapper does not append the hash to the sanitized scope.'
+
+[PSCustomObject]@{
+    Passed = $true
+    PackageRoot = $PackageRoot
+    ProductionRegressionAction = 'ToRunClaudeCodeStateScopingRegression'
+    ValidatedSeams = @(
+        'ToClaudePtStateScope',
+        'ToClaudePtWriteState',
+        'ToClaudePtReadState',
+        'ToClaudePtWorkDirFile',
+        'wrapper workingDirectory metadata'
     )
-    $path = Get-ClaudeScopedFile -FileName $FileName -StateScope $StateScope
-    New-Item -ItemType Directory -Force -Path (Split-Path -Parent $path) | Out-Null
-    Set-Content -LiteralPath $path -Value $Value -Encoding utf8 -NoNewline
-    return $path
-}
-
-function Read-ClaudeState {
-    param(
-        [Parameter(Mandatory=$true)][string]$FileName,
-        [Parameter(Mandatory=$true)][string]$StateScope
-    )
-    $path = Get-ClaudeScopedFile -FileName $FileName -StateScope $StateScope
-    if (-not (Test-Path -LiteralPath $path)) { return "" }
-    return [string](Get-Content -LiteralPath $path -Raw)
-}
-
-function Invoke-WrapperWorkingDirectoryProbe {
-    param([Parameter(Mandatory=$true)][string]$WorkingDirectory)
-
-    $script = '$ErrorActionPreference=''Stop'';'
-    $script += "if(Test-Path -LiteralPath '$($WorkingDirectory.Replace("'", "''"))'){ Set-Location -LiteralPath '$($WorkingDirectory.Replace("'", "''"))' };"
-    $script += "Write-Output ('workingDirectory=' + (Get-Location).Path);"
-    return (& ([scriptblock]::Create($script))) -join "`n"
-}
-
-try {
-    New-Item -ItemType Directory -Force -Path $TempRoot | Out-Null
-
-    # Regression 1: lossy sanitized scopes must not collide.
-    $scopeA = "collision/a"
-    $scopeB = "collision\a"
-    $mappedA = Get-ClaudeStateScope -StateScope $scopeA
-    $mappedB = Get-ClaudeStateScope -StateScope $scopeB
-
-    if ($mappedA -eq $mappedB) {
-        throw "Scope collision regression failed: '$scopeA' and '$scopeB' mapped to '$mappedA'."
-    }
-    if (-not ($mappedA.StartsWith("collision_a-") -and $mappedB.StartsWith("collision_a-"))) {
-        throw "Scope collision regression failed: expected shared sanitized prefix with hash suffix; got '$mappedA' and '$mappedB'."
-    }
-
-    Write-ClaudeState -FileName "claude_pt_model.txt" -Value "haiku" -StateScope $scopeA | Out-Null
-    Write-ClaudeState -FileName "claude_pt_model.txt" -Value "opus" -StateScope $scopeB | Out-Null
-    $modelA = [string](Read-ClaudeState -FileName "claude_pt_model.txt" -StateScope $scopeA)
-    $modelB = [string](Read-ClaudeState -FileName "claude_pt_model.txt" -StateScope $scopeB)
-    if ($modelA -ne "haiku") { throw "Scope collision regression failed: expected haiku for '$scopeA', got '$modelA'." }
-    if ($modelB -ne "opus") { throw "Scope collision regression failed: expected opus for '$scopeB', got '$modelB'." }
-
-    # Regression 2: scoped working-directory state is consumed by the main wrapper before invocation.
-    $workScope = "workdir-scope-regression"
-    $workDir = Join-Path $TempRoot "workdir"
-    New-Item -ItemType Directory -Force -Path $workDir | Out-Null
-    Write-ClaudeState -FileName "claude_pt_workdir.txt" -Value $workDir -StateScope $workScope | Out-Null
-    $configuredWorkDir = [string](Read-ClaudeState -FileName "claude_pt_workdir.txt" -StateScope $workScope)
-    if ($configuredWorkDir -ne $workDir) { throw "Scoped workdir regression failed: expected '$workDir', got '$configuredWorkDir'." }
-
-    $probe = Invoke-WrapperWorkingDirectoryProbe -WorkingDirectory $configuredWorkDir
-    if ($probe -ne "workingDirectory=$workDir") {
-        throw "Scoped workdir regression failed: wrapper location probe returned '$probe'."
-    }
-
-    [PSCustomObject]@{
-        Passed = $true
-        TempRoot = $TempRoot
-        CollisionScopeA = $mappedA
-        CollisionScopeB = $mappedB
-        ModelA = $modelA
-        ModelB = $modelB
-        WorkdirScope = Get-ClaudeStateScope -StateScope $workScope
-        WrapperProbe = $probe
-    } | ConvertTo-Json -Depth 3
-}
-finally {
-    if (Test-Path -LiteralPath $TempRoot) {
-        Remove-Item -LiteralPath $TempRoot -Recurse -Force -ErrorAction SilentlyContinue
-    }
-}
+} | ConvertTo-Json -Depth 3

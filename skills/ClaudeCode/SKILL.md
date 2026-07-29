@@ -20,6 +20,7 @@ Official `claude` (Claude Code) wrappers plus a transparent pass-through layer. 
 - `ToGetScopedClaudeConversationState` — reads pass-through state for an explicit caller-owned scope.
 - `ToStartScopedClaudeConversation` — clears conversation/turn state for an explicit caller-owned scope.
 - `ToSetScopedClaudeWorkingDirectory` — writes working-directory state for an explicit caller-owned scope.
+- `ToRunClaudeCodeStateScopingRegression` — production regression action for collision-resistant scoped state and scoped working-directory wrapper behavior.
 
 ## Pass-through state files
 - Pass-through state uses `claude_pt_state/<sanitized-scope>-<scope-hash>/` in the process temp directory. `ToTalkToClaude` requires a stable caller-owned `stateScope` so the main pass-through path cannot silently share default state across concurrent sessions.

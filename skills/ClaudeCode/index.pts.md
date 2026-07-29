@@ -10,6 +10,7 @@ Canonical Claude Code CLI Skill for subscription-backed authentication, one-shot
 - Updated the main `ToTalkToClaude` contract to require a caller-owned `stateScope` and use it for model, working-directory, and turn-count state so the primary pass-through path cannot silently share `default` state.
 - Added a stable hash suffix to scoped state directory names so distinct scopes that sanitize to the same path prefix cannot collide.
 - Added scoped conversation reset and scoped working-directory actions so callers can configure the same explicit scope consumed by `ToTalkToClaude`.
+- Added `ToRunClaudeCodeStateScopingRegression`, a production ProtoScript regression action that exercises the actual scope mapper, scoped state read/write helpers, and working-directory wrapper seam.
 
 ## 2026-07-27
 
