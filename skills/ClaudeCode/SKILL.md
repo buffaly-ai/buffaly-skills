@@ -17,6 +17,11 @@ Official `claude` (Claude Code) wrappers plus a transparent pass-through layer. 
 - `ToSetClaudeModel` — switches Claude model for subsequent pass-through calls (sonnet, opus, haiku, fable, or full names).
 - `ToSetClaudeWorkingDirectory` — changes where claude reads/writes files.
 
+## Retry guard for file-generating work
+- Do not call `ToTalkToClaude` more than once for the same file-generating job until the caller has inspected the working directory and expected output paths for files created or modified by the prior call.
+- If Claude output is stale, unrelated, empty, or reports 429/529/rate-limit/overloaded, stop and recover/validate filesystem side effects before retrying.
+- Treat a wrapper-visible failure separately from durable side effects: a failed pass-through can still leave usable files in the configured working directory.
+
 ## Pass-through state files
 - `claude_pt_conv_id.txt` — current conversation ID
 - `claude_pt_model.txt` — current model

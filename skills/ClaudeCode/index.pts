@@ -445,7 +445,8 @@ prototype ToTalkToClaude : ClaudeCodeSkillAction
 model - optional model override. Defaults to last used model or sonnet.
 system - optional system prompt override.
 timeoutSeconds - No timeout - Claude runs until it finishes.
-This is the main pass-through action. It automatically manages model selection, timeout, and long-prompt file handling. The user just talks and Claude responds.";
+This is the main pass-through action. It automatically manages model selection, timeout, and long-prompt file handling. The user just talks and Claude responds.
+Do not call this action more than once for the same file-generating job until you have inspected the working directory and expected output paths for files created or modified by the prior call. If output is stale, unrelated, empty, or the service returns 429/529/rate-limit/overloaded, stop and recover/validate filesystem side effects before retrying.";
 
 	function Execute(string prompt, string model, string system, int timeoutSeconds) : string
 	{
