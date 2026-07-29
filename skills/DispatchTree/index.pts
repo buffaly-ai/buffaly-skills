@@ -90,7 +90,7 @@ prototype ToGetDispatchTree : DispatchTreeSkillAction, DispatchAgentActionRoot
 [SemanticProgram.InfinitivePhrase("to inspect a dispatch node and its saved examples")]
 [SemanticProgram.InfinitivePhrase("to verify one exact dispatch leaf")]
 [SemanticProgram.InfinitivePhrase("to read one dispatch node's routing evidence")]
-prototype ToGetDispatchNode : DispatchTreeSkillAction, DispatchContext
+prototype ToGetDispatchNode : DispatchTreeSkillAction, DispatchContext, ErrorLogHandlerContextPrompt, EmailSummaryHandlerContextPrompt
 {
 	Description = @"prototypeName - exact prototype name selected at or beneath DispatchMemoryRoot, including DispatchMemoryRoot itself. Read one exact node with its assigned semantic identity, context summary, historical dispatch examples, status, and exact Dispatch attachments. Use only after narrowing to verify a semantic anchor or final leaf. This action never decides a route, sends, or mutates memory.";
 
@@ -115,7 +115,7 @@ prototype ToGetDispatchNode : DispatchTreeSkillAction, DispatchContext
 [SemanticProgram.InfinitivePhrase("to find dispatch nodes by semantic meaning")]
 [SemanticProgram.InfinitivePhrase("to search dispatch memory for matching work")]
 [SemanticProgram.InfinitivePhrase("to find routing-tree anchors for a task")]
-prototype ToSearchDispatchMemories : DispatchTreeSkillAction, DispatchContext
+prototype ToSearchDispatchMemories : DispatchTreeSkillAction, DispatchContext, ErrorLogHandlerContextPrompt, EmailSummaryHandlerContextPrompt
 {
 	Description = @"query - one concise phrase containing distinctive identity, topic, operation, artifact, or constraint terms, not generic dispatch language. maxResults - candidate window from 10 through 20, defaulting to 12. subtreeRootPrototypeName - DispatchMemoryRoot or one exact descendant used to scope a local tie-breaker. Searches only current-session Dispatch Memory tags. Results are compact semantic anchors, never final routes; locate candidates in the graph, traverse immediate children, and verify context and saved examples before reuse.";
 
@@ -143,7 +143,7 @@ prototype ToSearchDispatchMemories : DispatchTreeSkillAction, DispatchContext
 
 [SemanticProgram.InfinitivePhrase("to get dispatch nodes linked to an entity")]
 [SemanticProgram.InfinitivePhrase("to find dispatch nodes for a canonical entity")]
-prototype ToGetDispatchNodesForEntity : DispatchTreeSkillAction, DispatchContext
+prototype ToGetDispatchNodesForEntity : DispatchTreeSkillAction, DispatchContext, ErrorLogHandlerContextPrompt, EmailSummaryHandlerContextPrompt
 {
 	Description = @"entity - one unambiguous canonical prototype returned by entity resolution. Return compact Dispatch nodes whose directly assigned Entity property exactly equals that typed prototype. Zero or multiple linked nodes are valid candidate-neighborhood results. This action does not accept a prototype-name string, perform semantic search, choose a route, create or bind entities, mutate memory, or send work.";
 
@@ -157,7 +157,7 @@ prototype ToGetDispatchNodesForEntity : DispatchTreeSkillAction, DispatchContext
 
 [SemanticProgram.InfinitivePhrase("to add a child to the local dispatch tree")]
 [SemanticProgram.InfinitivePhrase("to create the next dispatch routing node")]
-prototype ToAddDispatchChild : DispatchTreeSkillAction, DispatchContext
+prototype ToAddDispatchChild : DispatchTreeSkillAction, DispatchContext, ErrorLogHandlerContextPrompt, EmailSummaryHandlerContextPrompt
 {
 	Description = @"parentPrototypeName - exact existing Dispatch node. childPrototypeName - new ProtoScript identifier. entityName - concise display label. semanticTerms - one or more grounded Dispatch Memory phrases separated by |. contextSummary - short factual routing meaning. Creates exactly one direct child through canonical NLMemory validation and persistence with Entity = null, Value = 0, an empty Attachments collection, and an empty HistoricalDispatches collection. It never creates a canonical entity, session, route decision, or delivery.";
 
@@ -170,7 +170,7 @@ prototype ToAddDispatchChild : DispatchTreeSkillAction, DispatchContext
 
 [SemanticProgram.InfinitivePhrase("to ensure dispatch memory root")]
 [SemanticProgram.InfinitivePhrase("to seed the local dispatch memory root")]
-prototype EnsureDispatchMemoryRoot : DispatchTreeSkillAction, DispatchContext
+prototype EnsureDispatchMemoryRoot : DispatchTreeSkillAction, DispatchContext, ErrorLogHandlerContextPrompt, EmailSummaryHandlerContextPrompt
 {
 	Description = @"Persist the canonical minimal untagged DispatchMemoryRoot schema into this session's NLMemory artifact and apply it live. Idempotent; it never creates sessions, routes, or semantic tags on the root.";
 
@@ -182,7 +182,7 @@ prototype EnsureDispatchMemoryRoot : DispatchTreeSkillAction, DispatchContext
 
 [SemanticProgram.InfinitivePhrase("to add a dispatch common parent")]
 [SemanticProgram.InfinitivePhrase("to group dispatch children under a new parent")]
-prototype ToAddDispatchCommonParent : DispatchTreeSkillAction, DispatchContext
+prototype ToAddDispatchCommonParent : DispatchTreeSkillAction, DispatchContext, ErrorLogHandlerContextPrompt, EmailSummaryHandlerContextPrompt
 {
 	Description = @"existingParentPrototypeName - exact current Dispatch parent. commonParentPrototypeName - new ProtoScript identifier for the grouping parent. commonParentEntityName/commonParentSemanticTerms/commonParentContextSummary - compact routing evidence for the new parent. newChildPrototypeName/newChildEntityName/newChildSemanticTerms/newChildContextSummary - one new child beneath that parent. selectedExistingChildPrototypeNames - | separated existing immediate children whose current parent is replaced by the new common parent through complete ProtoScript upserts. Preserves unrelated additional parents plus each moved node's Entity, Value, differently named Attachments, context, and history; rejects invalid relationships and cycles; persists through NLMemory artifacts; and applies live.";
 
@@ -195,7 +195,7 @@ prototype ToAddDispatchCommonParent : DispatchTreeSkillAction, DispatchContext
 
 [SemanticProgram.InfinitivePhrase("to get a dispatch attachment")]
 [SemanticProgram.InfinitivePhrase("to read one dispatch node attachment")]
-prototype ToGetDispatchAttachment : DispatchTreeSkillAction, DispatchContext
+prototype ToGetDispatchAttachment : DispatchTreeSkillAction, DispatchContext, ErrorLogHandlerContextPrompt, EmailSummaryHandlerContextPrompt
 {
 	Description = @"prototypeName - exact Dispatch node. attachmentName - exact attachment name. Returns one minimal DispatchAttachment(Name, Value). Reads legacy SessionKey only for explicit migration compatibility; new writes use Attachments only. It never mutates memory, creates sessions, queues, or delivers.";
 
@@ -207,7 +207,7 @@ prototype ToGetDispatchAttachment : DispatchTreeSkillAction, DispatchContext
 
 [SemanticProgram.InfinitivePhrase("to set a dispatch attachment")]
 [SemanticProgram.InfinitivePhrase("to replace one dispatch node attachment")]
-prototype ToSetDispatchAttachment : DispatchTreeSkillAction, DispatchContext
+prototype ToSetDispatchAttachment : DispatchTreeSkillAction, DispatchContext, ErrorLogHandlerContextPrompt, EmailSummaryHandlerContextPrompt
 {
 	Description = @"prototypeName - exact Dispatch node. attachmentName/value - exact replacement attachment. evaluationScope - Live or BuildOnly. Replaces only the named attachment and preserves differently named attachments. In BuildOnly, mutation is allowed only for isolated build-only session keys and real-session attachment mutation fails closed. It never creates sessions, queues, or delivers.";
 
@@ -219,7 +219,7 @@ prototype ToSetDispatchAttachment : DispatchTreeSkillAction, DispatchContext
 
 [SemanticProgram.InfinitivePhrase("to clear a dispatch attachment")]
 [SemanticProgram.InfinitivePhrase("to remove one dispatch node attachment")]
-prototype ToClearDispatchAttachment : DispatchTreeSkillAction, DispatchContext
+prototype ToClearDispatchAttachment : DispatchTreeSkillAction, DispatchContext, ErrorLogHandlerContextPrompt, EmailSummaryHandlerContextPrompt
 {
 	Description = @"prototypeName - exact Dispatch node. attachmentName - exact attachment to remove. evaluationScope - Live or BuildOnly. Removes only the named attachment and preserves differently named attachments. In BuildOnly, mutation is allowed only for isolated build-only session keys and real-session attachment mutation fails closed. It never creates sessions, queues, or delivers.";
 
@@ -230,7 +230,7 @@ prototype ToClearDispatchAttachment : DispatchTreeSkillAction, DispatchContext
 }
 
 [SemanticProgram.InfinitivePhrase("to get the dispatch build only guard")]
-prototype ToGetDispatchBuildOnlyGuard : DispatchTreeSkillAction, DispatchContext
+prototype ToGetDispatchBuildOnlyGuard : DispatchTreeSkillAction, DispatchContext, ErrorLogHandlerContextPrompt, EmailSummaryHandlerContextPrompt
 {
 	Description = @"evaluationScope - Live or BuildOnly. Returns the fail-closed BuildOnly guard receipt: isolated root/node/history mutation is allowed, but real-session attachment mutation, session creation, queueing, and delivery are unavailable. This action only reports the guard contract.";
 
@@ -242,7 +242,7 @@ prototype ToGetDispatchBuildOnlyGuard : DispatchTreeSkillAction, DispatchContext
 
 [SemanticProgram.InfinitivePhrase("to record a historical dispatch on a routing node")]
 [SemanticProgram.InfinitivePhrase("to save a verified dispatch example")]
-prototype ToRecordHistoricalDispatch : DispatchTreeSkillAction, DispatchContext
+prototype ToRecordHistoricalDispatch : DispatchTreeSkillAction, DispatchContext, ErrorLogHandlerContextPrompt, EmailSummaryHandlerContextPrompt
 {
 	Description = @"prototypeName - exact verified terminal Dispatch node. historicalDispatch - one compact grounded natural-language record containing the object, action, material distinctions, and source or historical destination only when available. Appends once to HistoricalDispatches after successful terminal verification. It does not choose a route, authorize delivery, change attachments, create an entity, or modify graph structure.";
 
@@ -255,7 +255,7 @@ prototype ToRecordHistoricalDispatch : DispatchTreeSkillAction, DispatchContext
 [SemanticProgram.InfinitivePhrase("to list immediate dispatch child nodes")]
 [SemanticProgram.InfinitivePhrase("to compare the next dispatch branches")]
 [SemanticProgram.InfinitivePhrase("to read one level of the dispatch tree")]
-prototype ToGetDispatchChildren : DispatchTreeSkillAction, DispatchContext
+prototype ToGetDispatchChildren : DispatchTreeSkillAction, DispatchContext, ErrorLogHandlerContextPrompt, EmailSummaryHandlerContextPrompt
 {
 	Description = @"parentPrototypeName - exact DispatchMemoryRoot node, defaulting to the root. maxResults - bounded child count. Read only the immediate children of one verified node for a top-down traversal step. Returns compact assigned routing evidence, never grandchildren, historical examples, or destination values, and never chooses a branch.";
 
@@ -267,7 +267,7 @@ prototype ToGetDispatchChildren : DispatchTreeSkillAction, DispatchContext
 
 [SemanticProgram.InfinitivePhrase("to get the direct parents of a dispatch node")]
 [SemanticProgram.InfinitivePhrase("to inspect a dispatch node's immediate categories")]
-prototype ToGetDispatchParents : DispatchTreeSkillAction, DispatchContext
+prototype ToGetDispatchParents : DispatchTreeSkillAction, DispatchContext, ErrorLogHandlerContextPrompt, EmailSummaryHandlerContextPrompt
 {
 	Description = @"prototypeName - exact Dispatch node. Return only its directly assigned parents beneath DispatchMemoryRoot by using the runtime prototype's existing direct TypeOf relationships. Use only when immediate categorization needs clarification. This action does not enumerate complete paths, choose a route, mutate the graph, or dispatch work.";
 
@@ -280,7 +280,7 @@ prototype ToGetDispatchParents : DispatchTreeSkillAction, DispatchContext
 [SemanticProgram.InfinitivePhrase("to locate a dispatch node in the routing hierarchy")]
 [SemanticProgram.InfinitivePhrase("to read the ancestor path for a dispatch node")]
 [SemanticProgram.InfinitivePhrase("to place a semantic dispatch match in its tree branch")]
-prototype ToGetDispatchPath : DispatchTreeSkillAction, DispatchContext
+prototype ToGetDispatchPath : DispatchTreeSkillAction, DispatchContext, ErrorLogHandlerContextPrompt, EmailSummaryHandlerContextPrompt
 {
 	Description = @"prototypeName - exact semantic candidate beneath DispatchMemoryRoot. Return its compact root-to-node path with direct parent names and assigned context summaries. Use after semantic search only to establish the candidate's lineage. Verify a useful leaf directly; for a useful internal anchor, traverse downward through ToGetDispatchChildren. Do not automatically move upward to compare the anchor's parent or siblings. It never returns examples or destination values and never selects or dispatches a route.";
 
