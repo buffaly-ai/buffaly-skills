@@ -29,79 +29,18 @@ function ToClaudeDefaultExePath() : string
 
 function ToClaudeTempPath() : string
 {
-	string script = "Write-Output ([System.IO.Path]::GetTempPath().TrimEnd([System.IO.Path]::DirectorySeparatorChar))";
+	string script = "Write-Output $env:TEMP";
 	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 5, _opsAgent, "", "Claude Temp Path");
-	string tempPath = ToClaudeCleanOutput(result);
-
-	// Fail-safe: never return empty or root "/"
-	if (StringUtil.IsEmpty(tempPath) || tempPath == "/")
-	{
-		string fallbackScript = "if($env:TMPDIR){ Write-Output ($env:TMPDIR.TrimEnd([System.IO.Path]::DirectorySeparatorChar)) } elseif($env:TEMP){ Write-Output ($env:TEMP.TrimEnd([System.IO.Path]::DirectorySeparatorChar)) } else { Write-Output '/tmp' }";
-		string fallbackResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(fallbackScript, "", 5, _opsAgent, "", "Claude Temp Path Fallback");
-		tempPath = ToClaudeCleanOutput(fallbackResult);
-	}
-
-	if (StringUtil.IsEmpty(tempPath) || tempPath == "/")
-		tempPath = "/tmp";
-
-	return tempPath;
+	return ToClaudeCleanOutput(result);
 }
 
 function ToClaudeCleanOutput(string result) : string
 {
-	// RunPowerShellStreamingToRuntimeUi output format:
-	//   Exit code: 0
-	//   Output:
-	//   <stdout content>
-	//   Error:
-	//   <stderr content>
-	// Or legacy format:
-	//   <stdout content>
-	//   Exit code: 0
-
-	string content = result;
-
-	// If "Output:\n" is present, use current format
-	int outputIdx = content.IndexOf("Output:\n");
-	if (outputIdx >= 0)
-	{
-		// Remove the "Output:\n" marker (safe: it only appears once as a wrapper delimiter)
-		content = content.Replace("Output:\n", "");
-
-		// Remove "Exit code: N\n" prefix if it is now at the start
-		int exitIdx = content.IndexOf("Exit code: ");
-		if (exitIdx == 0)
-		{
-			int nlIdx = content.IndexOf("\n");
-			if (nlIdx >= 0)
-			{
-				string exitPrefix = content.Substring(0, nlIdx);
-				content = content.Replace(exitPrefix + "\n", "");
-			}
-			else
-			{
-				content = "";
-			}
-		}
-
-		// Cut before "Error:" if present
-		int errorIdx = content.IndexOf("\nError:");
-		if (errorIdx >= 0)
-			content = content.Substring(0, errorIdx);
-
-		return content.Trim();
-	}
-
-	// Legacy format: "Exit code: N" appended after stdout
-	int exitCodeIdx = content.IndexOf("Exit code: ");
-	if (exitCodeIdx > 0)
-		return content.Substring(0, exitCodeIdx).Trim();
-
-	// Just "Exit code: N" with no real content
-	if (exitCodeIdx == 0)
-		return "";
-
-	return content.Trim();
+	// RunPowerShellStreamingToRuntimeUi appends "Exit code: N" to output. Strip it.
+	int exitCodeIdx = result.IndexOf("Exit code: ");
+	if (exitCodeIdx >= 0)
+		return result.Substring(0, exitCodeIdx).Trim();
+	return result.Trim();
 }
 
 function ToClaudePromptsDir() : string
@@ -121,12 +60,69 @@ function ToClaudeEscapePowerShellSingleQuoted(string value) : string
 	return value.Replace("'", "''");
 }
 
-function ToClaudeBuildRunScript(string exePath, string argumentLine) : string
+function ToClaudeBuildArtifactRetentionScript(string outputRoot) : string
 {
-	// Uses ProcessStartInfo with Arguments property to avoid Start-Process space-splitting issues.
+	string script = "$root='" + ToClaudeEscapePowerShellSingleQuoted(outputRoot) + "';";
+	script = script + "[System.IO.Directory]::CreateDirectory($root) | Out-Null;";
+	// Active leases protect running calls and callers that have not read their response yet. Abandoned
+	// leases become eligible after one day so a killed host cannot retain artifacts forever.
+	script = script + "$now=[DateTime]::UtcNow; Get-ChildItem -LiteralPath $root -Directory -ErrorAction SilentlyContinue | ForEach-Object { $lease=Join-Path $_.FullName '.active'; if((Test-Path -LiteralPath $lease) -and (($now-(Get-Item -LiteralPath $lease).LastWriteTimeUtc).TotalDays -ge 1)){ Remove-Item -LiteralPath $lease -Force -ErrorAction SilentlyContinue } };";
+	script = script + "$completed=@(Get-ChildItem -LiteralPath $root -Directory -ErrorAction SilentlyContinue | Where-Object { -not (Test-Path -LiteralPath (Join-Path $_.FullName '.active')) } | Sort-Object LastWriteTimeUtc -Descending);";
+	// Retain completed calls for at most seven days, twenty invocations, and 256 MiB total.
+	script = script + "$kept=0L; $bytes=0L; foreach($dir in $completed){ $size=0L; Get-ChildItem -LiteralPath $dir.FullName -File -Recurse -ErrorAction SilentlyContinue | ForEach-Object { $size+=$_.Length }; $age=($now-$dir.LastWriteTimeUtc).TotalDays; if(($age -ge 7) -or ($kept -ge 20) -or (($bytes+$size) -gt 268435456L)){ Remove-Item -LiteralPath $dir.FullName -Recurse -Force -ErrorAction SilentlyContinue } else { $kept++; $bytes+=$size } };";
+	return script;
+}
+
+function ToClaudePrepareInvocationDirectory() : string
+{
+	string outputDirectory = Path.Combine(ToClaudeTempPath(), "buffaly-claude-output", Path.GetRandomFileName());
+	string outputRoot = Path.GetDirectoryName(outputDirectory);
+	string script = "$ErrorActionPreference='Stop';";
+	script = script + "$current='" + ToClaudeEscapePowerShellSingleQuoted(outputDirectory) + "';";
+	script = script + ToClaudeBuildArtifactRetentionScript(outputRoot);
+	script = script + "[System.IO.Directory]::CreateDirectory($current) | Out-Null; [System.IO.File]::WriteAllText((Join-Path $current '.active'), [DateTime]::UtcNow.ToString('O')); Write-Output $current;";
+	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 30, _opsAgent, "", "Claude Artifact Retention");
+	return ToClaudeCleanOutput(result);
+}
+
+function ToClaudeFinalizeInvocationDirectory(string outputDirectory) : string
+{
+	string outputRoot = Path.GetDirectoryName(outputDirectory);
+	string script = "$ErrorActionPreference='Stop'; $current='" + ToClaudeEscapePowerShellSingleQuoted(outputDirectory) + "'; $lease=Join-Path $current '.active'; if(Test-Path -LiteralPath $lease){ Remove-Item -LiteralPath $lease -Force }; if(Test-Path -LiteralPath $current){ (Get-Item -LiteralPath $current).LastWriteTimeUtc=[DateTime]::UtcNow };";
+	// Callers materialize stdout/stderr before finalization. Reapply retention afterward so the newly
+	// completed invocation is included in the documented count, age, and aggregate-size bounds.
+	script = script + ToClaudeBuildArtifactRetentionScript(outputRoot);
+	script = script + "Write-Output 'FinalizedArtifactDirectory=" + ToClaudeEscapePowerShellSingleQuoted(outputDirectory) + "';";
+	return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 30, _opsAgent, "", "Claude Artifact Finalize");
+}
+
+function ToClaudeReadRunResult(string processResult, string stdoutFile, string stderrFile) : string
+{
+	string outputDirectory = Path.GetDirectoryName(stdoutFile);
+	string artifactErrorFile = Path.Combine(outputDirectory, "artifact-error.txt");
+	if (File.Exists(artifactErrorFile))
+		return "Error: Claude response artifact contract failed.`nArtifactDirectory=" + outputDirectory + "`n" + processResult + "`n" + File.ReadAllText(artifactErrorFile);
+	if (!File.Exists(stdoutFile))
+		return "Error: Claude stdout artifact was not created.`nArtifactDirectory=" + outputDirectory + "`n" + processResult + "`nExpectedOutputFile=" + stdoutFile;
+
+	string result = processResult + "`nArtifactDirectory=" + outputDirectory + "`n--- stdout ---`n" + File.ReadAllText(stdoutFile);
+	result = result + "`n--- stderr ---`n";
+	if (File.Exists(stderrFile))
+		result = result + File.ReadAllText(stderrFile);
+	return result;
+}
+
+function ToClaudeBuildRunScript(string exePath, string argumentLine, string stdoutFile, string stderrFile) : string
+{
+	// Copy both redirected byte streams directly to files to prevent child-process deadlocks without
+	// retaining a second unbounded response in memory. The outer process collector receives metadata
+	// only; callers read the completed files directly.
 	string script = "$ErrorActionPreference='Continue';";
-	script = script + "$exe=(Get-Command claude -ErrorAction SilentlyContinue).Source; if(-not $exe){ if($IsWindows){ $exe=(Get-Command claude.cmd -ErrorAction SilentlyContinue).Source; if(-not $exe){ $exe=Join-Path $env:APPDATA 'npm\\claude.cmd' } } else { $npmGlobal=Join-Path $env:HOME '.npm-global/bin/claude'; if(Test-Path $npmGlobal){ $exe=$npmGlobal } } };";
+	script = script + "$exe=(Get-Command claude.cmd -ErrorAction SilentlyContinue).Source; if(-not $exe){ $exe=Join-Path $env:APPDATA 'npm\\claude.cmd' };";
 	script = script + "$argsLine='" + ToClaudeEscapePowerShellSingleQuoted(argumentLine) + "';";
+	script = script + "$stdoutFile='" + ToClaudeEscapePowerShellSingleQuoted(stdoutFile) + "';";
+	script = script + "$stderrFile='" + ToClaudeEscapePowerShellSingleQuoted(stderrFile) + "';";
+	script = script + "$outputDirectory=Split-Path -Parent $stdoutFile; [System.IO.Directory]::CreateDirectory($outputDirectory) | Out-Null;";
 	script = script + "if(-not (Test-Path -LiteralPath $exe)){ Write-Output ('Error: claude not found at ' + $exe); exit 2 };";
 	script = script + "$psi=New-Object System.Diagnostics.ProcessStartInfo;";
 	script = script + "$psi.FileName=$exe;";
@@ -135,15 +131,20 @@ function ToClaudeBuildRunScript(string exePath, string argumentLine) : string
 	script = script + "$psi.RedirectStandardError=$true;";
 	script = script + "$psi.UseShellExecute=$false;";
 	script = script + "$psi.CreateNoWindow=$true;";
+	script = script + "$stdoutStream=[System.IO.File]::Create($stdoutFile); $stderrStream=[System.IO.File]::Create($stderrFile);";
 	script = script + "$p=[System.Diagnostics.Process]::Start($psi);";
-	script = script + "$stdoutTask=$p.StandardOutput.ReadToEndAsync();";
-	script = script + "$stderrTask=$p.StandardError.ReadToEndAsync();";
-	script = script + "$p.WaitForExit();";
-	script = script + "Write-Output ('exitCode=' + $p.ExitCode);";
-	script = script + "Write-Output '--- stdout ---';";
-	script = script + "  Write-Output $stdoutTask.Result;";
-	script = script + "  $err=$stderrTask.Result; if($err){ Write-Output '--- stderr ---'; Write-Output $err } else { Write-Output '--- stderr ---' };";
-	script = script + "exit $p.ExitCode;";
+	script = script + "$stdoutTask=$p.StandardOutput.BaseStream.CopyToAsync($stdoutStream);";
+	script = script + "$stderrTask=$p.StandardError.BaseStream.CopyToAsync($stderrStream);";
+	script = script + "$limitExceeded=$false; while(-not $p.HasExited){ if(($stdoutStream.Length+$stderrStream.Length) -gt 67108864L){ $limitExceeded=$true; $p.Kill() } else { Start-Sleep -Milliseconds 100 } };";
+	script = script + "$p.WaitForExit(); $stdoutTask.GetAwaiter().GetResult(); $stderrTask.GetAwaiter().GetResult(); $stdoutStream.Flush(); $stderrStream.Flush(); $outputBytes=$stdoutStream.Length+$stderrStream.Length; $stdoutStream.Dispose(); $stderrStream.Dispose();";
+	script = script + "$utf8=New-Object System.Text.UTF8Encoding($false);";
+	// Fail closed and remove oversized partial content. The diagnostic remains discoverable.
+	script = script + "$wrapperExitCode=$p.ExitCode; if($limitExceeded -or $outputBytes -gt 67108864L){ Remove-Item -LiteralPath $stdoutFile,$stderrFile -Force -ErrorAction SilentlyContinue; [System.IO.File]::WriteAllText((Join-Path $outputDirectory 'artifact-error.txt'), ('Claude stdout/stderr exceeded the 64 MiB invocation limit. OutputBytes=' + $outputBytes), $utf8); $wrapperExitCode=3 };";
+	script = script + "Write-Output ('exitCode=' + $wrapperExitCode);";
+	script = script + "Write-Output ('artifactDirectory=' + $outputDirectory);";
+	script = script + "Write-Output ('stdoutFile=' + $stdoutFile);";
+	script = script + "Write-Output ('stderrFile=' + $stderrFile);";
+	script = script + "exit $wrapperExitCode;";
 	return script;
 }
 
@@ -152,8 +153,14 @@ function ToClaudeRun(string argumentLine, int timeoutSeconds) : string
 	if (timeoutSeconds <= 0)
 		timeoutSeconds = 3600;
 	string exe = ToClaudeDefaultExePath();
-	string script = ToClaudeBuildRunScript(exe, argumentLine);
-	return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, "", "Claude CLI");
+	string outputDirectory = ToClaudePrepareInvocationDirectory();
+	string stdoutFile = Path.Combine(outputDirectory, "stdout.txt");
+	string stderrFile = Path.Combine(Path.GetDirectoryName(stdoutFile), "stderr.txt");
+	string script = ToClaudeBuildRunScript(exe, argumentLine, stdoutFile, stderrFile);
+	string processResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, "", "Claude CLI");
+	string result = ToClaudeReadRunResult(processResult, stdoutFile, stderrFile);
+	ToClaudeFinalizeInvocationDirectory(outputDirectory);
+	return result;
 }
 
 function ToClaudeRunVisible(string script, int timeoutSeconds, string commandLabel, string displayTitle, string displayMessage) : string
@@ -208,45 +215,52 @@ function ToClaudePtTurnsFile() : string
 	return "claude_pt_turns.txt";
 }
 
-function ToClaudePtStateScope() : string
+function ToClaudePtStateScope(string stateScope) : string
 {
-	string sessionKey = _opsAgent.GetSessionKeyOrEmpty();
+	string sessionKey = stateScope;
+	if (StringUtil.IsEmpty(sessionKey))
+		sessionKey = _opsAgent.GetSessionKeyOrEmpty();
+	if (StringUtil.IsEmpty(sessionKey))
+		sessionKey = _opsAgent.GetCurrentSessionDirectory();
 	if (StringUtil.IsEmpty(sessionKey))
 		sessionKey = "default";
 
-	string script = "$value='" + ToClaudeEscapePowerShellSingleQuoted(sessionKey) + "'; $safe=[regex]::Replace($value,'[^A-Za-z0-9_.-]','_'); if([string]::IsNullOrWhiteSpace($safe)){ $safe='default' }; Write-Output $safe";
-	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 10, _opsAgent, "", "Claude PT State Scope");
-	string scope = ToClaudeCleanOutput(result);
+	string scope = sessionKey;
+	scope = scope.Replace("\\", "_");
+	scope = scope.Replace("/", "_");
+	scope = scope.Replace(":", "_");
+	scope = scope.Replace("*", "_");
+	scope = scope.Replace("?", "_");
+	scope = scope.Replace("\"", "_");
+	scope = scope.Replace("<", "_");
+	scope = scope.Replace(">", "_");
+	scope = scope.Replace("|", "_");
+	scope = scope.Trim();
 	if (StringUtil.IsEmpty(scope))
 		scope = "default";
 	return scope;
 }
 
-function ToClaudePtScopedFile(string filePath) : string
+function ToClaudePtScopedFile(string filePath, string stateScope) : string
 {
-	return "claude_pt_state/" + ToClaudePtStateScope() + "/" + filePath;
+	return "claude_pt_state/" + ToClaudePtStateScope(stateScope) + "/" + filePath;
 }
 
-function ToClaudePtReadState(string filePath) : string
+function ToClaudePtReadState(string filePath, string stateScope) : string
 {
-	string scopedFilePath = ToClaudePtScopedFile(filePath);
-	string script = "$f=Join-Path ([System.IO.Path]::GetTempPath()) '" + ToClaudeEscapePowerShellSingleQuoted(scopedFilePath) + "'; if(Test-Path -LiteralPath $f){ Get-Content -LiteralPath $f -Raw -ErrorAction SilentlyContinue } else { '' }";
+	string scopedFilePath = ToClaudePtScopedFile(filePath, stateScope);
+	string script = "$f=Join-Path $env:TEMP '" + ToClaudeEscapePowerShellSingleQuoted(scopedFilePath) + "'; Write-Output 'BUFFALY_CLAUDE_STATE_BEGIN'; if(Test-Path -LiteralPath $f){ Get-Content -LiteralPath $f -Raw -ErrorAction SilentlyContinue } else { '' }";
 	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 10, _opsAgent, "", "Claude PT State Read");
+	if (result.Contains("BUFFALY_CLAUDE_STATE_BEGIN"))
+		return StringUtil.RightOfLast(result, "BUFFALY_CLAUDE_STATE_BEGIN").Trim();
 	return ToClaudeCleanOutput(result);
 }
 
-function ToClaudePtWriteState(string filePath, string value) : string
+function ToClaudePtWriteState(string filePath, string value, string stateScope) : string
 {
-	// Validate path is not root-level (would indicate temp resolution failed)
-	if (StringUtil.IsEmpty(filePath) || filePath.StartsWith("/claude_") || filePath.StartsWith("\\claude_"))
-		return "Error: invalid state file path (temp resolution likely failed): " + filePath;
-	string scopedFilePath = ToClaudePtScopedFile(filePath);
-	// Ensure parent directory exists, write value, and verify write succeeded
-	string script = "$ErrorActionPreference='Continue'; $f=Join-Path ([System.IO.Path]::GetTempPath()) '" + ToClaudeEscapePowerShellSingleQuoted(scopedFilePath) + "'; $p=Split-Path -Parent $f; if(-not (Test-Path -LiteralPath $p)){ New-Item -Path $p -ItemType Directory -Force | Out-Null }; Set-Content -LiteralPath $f -Value '" + ToClaudeEscapePowerShellSingleQuoted(value) + "' -Encoding utf8 -NoNewline; if(Test-Path -LiteralPath $f){ 'WROTE_OK' } else { 'WROTE_FAIL' }";
-	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 10, _opsAgent, "", "Claude PT State Write");
-	string cleanResult = ToClaudeCleanOutput(result);
-	if (!cleanResult.Contains("WROTE_OK"))
-		return "Error: state write verification failed for " + scopedFilePath + " — output: " + cleanResult;
+	string scopedFilePath = ToClaudePtScopedFile(filePath, stateScope);
+	string script = "$f=Join-Path $env:TEMP '" + ToClaudeEscapePowerShellSingleQuoted(scopedFilePath) + "'; $p=Split-Path -Parent $f; if(-not (Test-Path -LiteralPath $p)){ New-Item -Path $p -ItemType Directory -Force | Out-Null }; Set-Content -LiteralPath $f -Value '" + ToClaudeEscapePowerShellSingleQuoted(value) + "' -Encoding utf8 -NoNewline";
+	SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 10, _opsAgent, "", "Claude PT State Write");
 	return "";
 }
 
@@ -273,7 +287,7 @@ prototype ToGetClaudeAuthStatus : ClaudeCodeSkillAction
 
 	function Execute() : string
 	{
-		string existsScript = "$exe=(Get-Command claude -ErrorAction SilentlyContinue).Source; if(-not $exe){ if($IsWindows){ $exe=(Get-Command claude.cmd -ErrorAction SilentlyContinue).Source; if(-not $exe){ $exe=Join-Path $env:APPDATA 'npm\\claude.cmd' } } else { $npmGlobal=Join-Path $env:HOME '.npm-global/bin/claude'; if(Test-Path $npmGlobal){ $exe=$npmGlobal } } }; if($exe -and (Test-Path -LiteralPath $exe)){ $exe } else { 'MISSING' }";
+		string existsScript = "$exe=(Get-Command claude.cmd -ErrorAction SilentlyContinue).Source; if(-not $exe){ $exe=Join-Path $env:APPDATA 'npm\\claude.cmd' }; if($exe -and (Test-Path -LiteralPath $exe)){ $exe } else { 'MISSING' }";
 		string existsResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(existsScript, "", 15, _opsAgent, "", "Claude Exists");
 		string exe = ToClaudeCleanOutput(existsResult);
 		if (existsResult.Contains("MISSING"))
@@ -339,7 +353,7 @@ prototype ToBeginClaudeLogin : ClaudeCodeSkillAction
 
 		// claude auth login --claudeai opens browser for subscription login
 		string script = "$ErrorActionPreference='Continue';";
-		script = script + "$exe=(Get-Command claude -ErrorAction SilentlyContinue).Source; if(-not $exe){ if($IsWindows){ $exe=(Get-Command claude.cmd -ErrorAction SilentlyContinue).Source; if(-not $exe){ $exe=Join-Path $env:APPDATA 'npm\\claude.cmd' } } else { $npmGlobal=Join-Path $env:HOME '.npm-global/bin/claude'; if(Test-Path $npmGlobal){ $exe=$npmGlobal } } };";
+		script = script + "$exe=(Get-Command claude.cmd -ErrorAction SilentlyContinue).Source; if(-not $exe){ $exe=Join-Path $env:APPDATA 'npm\\claude.cmd' };";
 		script = script + "if(-not (Test-Path -LiteralPath $exe)){ Write-Output ('Error: claude not found at ' + $exe); exit 2 };";
 		script = script + "$psi=New-Object System.Diagnostics.ProcessStartInfo;";
 		script = script + "$psi.FileName=$exe;";
@@ -378,8 +392,8 @@ prototype ToLogoutClaudeAccount : ClaudeCodeSkillAction
 	{
 		string result = ToClaudeRun("auth logout", 30);
 		// Clear pass-through state
-		ToClaudePtWriteState(ToClaudePtConvIdFile(), "none");
-		ToClaudePtWriteState(ToClaudePtTurnsFile(), "0");
+		ToClaudePtWriteState(ToClaudePtConvIdFile(), "none", "");
+		ToClaudePtWriteState(ToClaudePtTurnsFile(), "0", "");
 		return "Claude logout completed.`n`n" + result;
 	}
 }
@@ -413,13 +427,15 @@ Runs official claude -p with --output-format text --permission-mode bypassPermis
 
 		string exe = ToClaudeDefaultExePath();
 
-		// For long prompts, write to a file and tell claude to read it
+		string outputDirectory = ToClaudePrepareInvocationDirectory();
+
+		// For long prompts, write to the same retained invocation directory as the response.
 		string actualPrompt = prompt;
 		if (prompt.Length > 500)
 		{
-		string promptsDir = ToClaudeTempPath();
-		string promptFile = promptsDir + "/claude_prompt.txt";
-		string writeScript = "$ErrorActionPreference='Continue'; $dir='" + ToClaudeEscapePowerShellSingleQuoted(promptsDir) + "'; if(-not (Test-Path -LiteralPath $dir)){ New-Item -Path $dir -ItemType Directory -Force | Out-Null }; Set-Content -LiteralPath '" + ToClaudeEscapePowerShellSingleQuoted(promptFile) + "' -Value '" + ToClaudeEscapePowerShellSingleQuoted(prompt) + "' -Encoding utf8;";
+			string promptFile = Path.Combine(outputDirectory, "prompt.txt");
+			string promptsDir = Path.GetDirectoryName(promptFile);
+			string writeScript = "$ErrorActionPreference='Continue'; $dir='" + ToClaudeEscapePowerShellSingleQuoted(promptsDir) + "'; if(-not (Test-Path -LiteralPath $dir)){ New-Item -Path $dir -ItemType Directory -Force | Out-Null }; Set-Content -LiteralPath '" + ToClaudeEscapePowerShellSingleQuoted(promptFile) + "' -Value '" + ToClaudeEscapePowerShellSingleQuoted(prompt) + "' -Encoding utf8;";
 			SystemOperations.RunPowerShellStreamingToRuntimeUi(writeScript, "", 15, _opsAgent, "", "Claude Prompt File");
 			actualPrompt = "Read the file at " + promptFile + " and follow the instructions in it. Do not modify any files.";
 		}
@@ -434,8 +450,12 @@ Runs official claude -p with --output-format text --permission-mode bypassPermis
 		{
 			script = script + "if(Test-Path -LiteralPath '" + ToClaudeEscapePowerShellSingleQuoted(workingDirectory) + "'){ Set-Location -LiteralPath '" + ToClaudeEscapePowerShellSingleQuoted(workingDirectory) + "' };";
 		}
-		script = script + ToClaudeBuildRunScript(exe, args);
-		string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, "", "Claude Prompt");
+		string stdoutFile = Path.Combine(outputDirectory, "stdout.txt");
+		string stderrFile = Path.Combine(Path.GetDirectoryName(stdoutFile), "stderr.txt");
+		script = script + ToClaudeBuildRunScript(exe, args, stdoutFile, stderrFile);
+		string processResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, "", "Claude Prompt");
+		string result = ToClaudeReadRunResult(processResult, stdoutFile, stderrFile);
+		ToClaudeFinalizeInvocationDirectory(outputDirectory);
 
 		// Check for errors
 		string errorType = ToClaudeCheckAuthErrors(result);
@@ -463,20 +483,22 @@ Runs official claude -p with --output-format text --permission-mode bypassPermis
 prototype ToTalkToClaude : ClaudeCodeSkillAction
 {
 	Description = @"prompt - the user's message to forward to claude (Claude).
+stateScope - required caller-owned scope such as a Buffaly session key. This prevents concurrent sessions from sharing Claude state.
 model - optional model override. Defaults to last used model or sonnet.
 system - optional system prompt override.
 timeoutSeconds - No timeout - Claude runs until it finishes.
-This is the main pass-through action. It automatically manages model selection, timeout, and long-prompt file handling. The user just talks and Claude responds.
-Do not call this action more than once for the same file-generating job until you have inspected the working directory and expected output paths for files created or modified by the prior call. If output is stale, unrelated, empty, or the service returns 429/529/rate-limit/overloaded, stop and recover/validate filesystem side effects before retrying.";
+This is the main pass-through action. It automatically manages model selection, timeout, and long-prompt file handling. Callers must pass a stable stateScope; do not use shared/default state for file-generating or concurrent work.";
 
-	function Execute(string prompt, string model, string system, int timeoutSeconds) : string
+	function Execute(string prompt, string stateScope, string model, string system, int timeoutSeconds) : string
 	{
 		if (StringUtil.IsEmpty(prompt))
 			return "Error: prompt is required.";
+		if (StringUtil.IsEmpty(stateScope))
+			return "Error: stateScope is required. Pass the Buffaly source session key or another stable caller-owned scope before using ToTalkToClaude.";
 
 		// Read current state
-		string currentModel = ToClaudePtReadState(ToClaudePtModelFile());
-		string currentWorkDir = ToClaudePtReadState(ToClaudePtWorkDirFile());
+		string currentModel = ToClaudePtReadState(ToClaudePtModelFile(), stateScope);
+		string currentWorkDir = ToClaudePtReadState(ToClaudePtWorkDirFile(), stateScope);
 
 		// Resolve model
 		if (StringUtil.IsEmpty(model))
@@ -491,13 +513,15 @@ Do not call this action more than once for the same file-generating job until yo
 		if (timeoutSeconds <= 0)
 			timeoutSeconds = 3600;
 
-		// For long prompts, write to file
+		string outputDirectory = ToClaudePrepareInvocationDirectory();
+
+		// For long prompts, write to the same retained invocation directory as the response.
 		string actualPrompt = prompt;
 		if (prompt.Length > 500)
 		{
-		string promptsDir = ToClaudeTempPath();
-		string promptFile = promptsDir + "/claude_pt_prompt.txt";
-		string writeScript = "$ErrorActionPreference='Continue'; $dir='" + ToClaudeEscapePowerShellSingleQuoted(promptsDir) + "'; if(-not (Test-Path -LiteralPath $dir)){ New-Item -Path $dir -ItemType Directory -Force | Out-Null }; Set-Content -LiteralPath '" + ToClaudeEscapePowerShellSingleQuoted(promptFile) + "' -Value '" + ToClaudeEscapePowerShellSingleQuoted(prompt) + "' -Encoding utf8;";
+			string promptFile = Path.Combine(outputDirectory, "prompt.txt");
+			string promptsDir = Path.GetDirectoryName(promptFile);
+			string writeScript = "$ErrorActionPreference='Continue'; $dir='" + ToClaudeEscapePowerShellSingleQuoted(promptsDir) + "'; if(-not (Test-Path -LiteralPath $dir)){ New-Item -Path $dir -ItemType Directory -Force | Out-Null }; Set-Content -LiteralPath '" + ToClaudeEscapePowerShellSingleQuoted(promptFile) + "' -Value '" + ToClaudeEscapePowerShellSingleQuoted(prompt) + "' -Encoding utf8;";
 			SystemOperations.RunPowerShellStreamingToRuntimeUi(writeScript, "", 15, _opsAgent, "", "Claude PT Prompt File");
 			actualPrompt = "Read the file at " + promptFile + " and follow the instructions in it. Do not modify any files.";
 		}
@@ -514,8 +538,12 @@ Do not call this action more than once for the same file-generating job until yo
 		{
 			script = script + "if(Test-Path -LiteralPath '" + ToClaudeEscapePowerShellSingleQuoted(currentWorkDir) + "'){ Set-Location -LiteralPath '" + ToClaudeEscapePowerShellSingleQuoted(currentWorkDir) + "' };";
 		}
-		script = script + ToClaudeBuildRunScript(exe, args);
-		string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, "", "Claude Pass-Through");
+		string stdoutFile = Path.Combine(outputDirectory, "stdout.txt");
+		string stderrFile = Path.Combine(Path.GetDirectoryName(stdoutFile), "stderr.txt");
+		script = script + ToClaudeBuildRunScript(exe, args, stdoutFile, stderrFile);
+		string processResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, "", "Claude Pass-Through");
+		string result = ToClaudeReadRunResult(processResult, stdoutFile, stderrFile);
+		ToClaudeFinalizeInvocationDirectory(outputDirectory);
 
 		// Check for errors
 		string errorType = ToClaudeCheckAuthErrors(result);
@@ -525,16 +553,17 @@ Do not call this action more than once for the same file-generating job until yo
 		}
 
 		// Store model
-		ToClaudePtWriteState(ToClaudePtModelFile(), model);
+		ToClaudePtWriteState(ToClaudePtModelFile(), model, stateScope);
 
 		// Increment turn count
-		string turnScript = "$f=Join-Path ([System.IO.Path]::GetTempPath()) '" + ToClaudeEscapePowerShellSingleQuoted(ToClaudePtTurnsFile()) + "'; $cur=0; if(Test-Path -LiteralPath $f){ $v=(Get-Content -LiteralPath $f -Raw -ErrorAction SilentlyContinue); if($v){ $cur=[int]$v.Trim() } }; $cur=$cur+1; Set-Content -LiteralPath $f -Value $cur -Encoding utf8 -NoNewline; Write-Output $cur";
-	string turnResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(turnScript, "", 10, _opsAgent, "", "Claude PT Turn Count");
-	string turnCount = ToClaudeCleanOutput(turnResult);
+		string turnScript = "$f=Join-Path $env:TEMP '" + ToClaudeEscapePowerShellSingleQuoted(ToClaudePtScopedFile(ToClaudePtTurnsFile(), stateScope)) + "'; $p=Split-Path -Parent $f; if(-not (Test-Path -LiteralPath $p)){ New-Item -Path $p -ItemType Directory -Force | Out-Null }; $cur=0; if(Test-Path -LiteralPath $f){ $v=(Get-Content -LiteralPath $f -Raw -ErrorAction SilentlyContinue); if($v){ $cur=[int]$v.Trim() } }; $cur=$cur+1; Set-Content -LiteralPath $f -Value $cur -Encoding utf8 -NoNewline; Write-Output $cur";
+		string turnResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(turnScript, "", 10, _opsAgent, "", "Claude PT Turn Count");
+		string turnCount = turnResult.Trim();
 
 		// Build state summary
 		string stateSummary = "\n\n--- Pass-Through State ---";
 		stateSummary = stateSummary + "\nModel=" + model;
+		stateSummary = stateSummary + "\nStateScope=" + ToClaudePtStateScope(stateScope);
 		stateSummary = stateSummary + "\nTurn=" + turnCount;
 		stateSummary = stateSummary + "\nTimeout=" + JsonUtil.ToStringExt(timeoutSeconds).ToString() + "s";
 		if (!StringUtil.IsEmpty(currentWorkDir) && currentWorkDir != "none")
@@ -555,11 +584,11 @@ prototype ToStartNewClaudeConversation : ClaudeCodeSkillAction
 
 	function Execute(string model) : string
 	{
-		ToClaudePtWriteState(ToClaudePtConvIdFile(), "none");
-		ToClaudePtWriteState(ToClaudePtTurnsFile(), "0");
+		ToClaudePtWriteState(ToClaudePtConvIdFile(), "none", "");
+		ToClaudePtWriteState(ToClaudePtTurnsFile(), "0", "");
 		if (!StringUtil.IsEmpty(model))
 		{
-			ToClaudePtWriteState(ToClaudePtModelFile(), model);
+			ToClaudePtWriteState(ToClaudePtModelFile(), model, "");
 			return "New claude conversation started.`nModel=" + model + "`nTurn=0`nThe next ToTalkToClaude call will begin fresh.";
 		}
 		return "New claude conversation started.`nTurn=0`nThe next ToTalkToClaude call will begin fresh.";
@@ -576,9 +605,9 @@ prototype ToGetClaudeConversationState : ClaudeCodeSkillAction
 
 	function Execute() : string
 	{
-		string model = ToClaudePtReadState(ToClaudePtModelFile());
-		string workDir = ToClaudePtReadState(ToClaudePtWorkDirFile());
-		string turns = ToClaudePtReadState(ToClaudePtTurnsFile());
+		string model = ToClaudePtReadState(ToClaudePtModelFile(), "");
+		string workDir = ToClaudePtReadState(ToClaudePtWorkDirFile(), "");
+		string turns = ToClaudePtReadState(ToClaudePtTurnsFile(), "");
 
 		string result = "Claude Pass-Through State`n";
 		result = result + "Model=" + (StringUtil.IsEmpty(model) ? "sonnet (default)" : model) + "`n";
@@ -602,7 +631,7 @@ prototype ToSetClaudeModel : ClaudeCodeSkillAction
 		if (StringUtil.IsEmpty(model))
 			return "Error: model is required. Valid options: sonnet, opus, haiku, fable, or full model names.";
 
-		ToClaudePtWriteState(ToClaudePtModelFile(), model);
+		ToClaudePtWriteState(ToClaudePtModelFile(), model, "");
 		return "Claude model set to: " + model + "`nThis will apply to the next ToTalkToClaude call.";
 	}
 }
@@ -619,7 +648,7 @@ prototype ToSetClaudeWorkingDirectory : ClaudeCodeSkillAction
 	{
 		if (StringUtil.IsEmpty(workingDirectory) || workingDirectory == "none")
 		{
-			ToClaudePtWriteState(ToClaudePtWorkDirFile(), "none");
+			ToClaudePtWriteState(ToClaudePtWorkDirFile(), "none", "");
 			return "Claude working directory reset to default.";
 		}
 
@@ -628,8 +657,52 @@ prototype ToSetClaudeWorkingDirectory : ClaudeCodeSkillAction
 		if (checkResult.Contains("MISSING"))
 			return "Error: directory does not exist: " + workingDirectory;
 
-		ToClaudePtWriteState(ToClaudePtWorkDirFile(), workingDirectory);
+		ToClaudePtWriteState(ToClaudePtWorkDirFile(), workingDirectory, "");
 		return "Claude working directory set to: " + workingDirectory;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set scoped claude model")]
+[SemanticProgram.InfinitivePhrase("to switch scoped claude model")]
+prototype ToSetScopedClaudeModel : ClaudeCodeSkillAction
+{
+	Description = @"stateScope - required caller-owned scope such as a Buffaly session key. model - required model to store for that scope. Use this instead of ToSetClaudeModel when concurrent sessions may call Claude.";
+
+	function Execute(string stateScope, string model) : string
+	{
+		if (StringUtil.IsEmpty(stateScope))
+			return "Error: stateScope is required for scoped Claude state.";
+		if (StringUtil.IsEmpty(model))
+			return "Error: model is required. Valid options: sonnet, opus, haiku, fable, or full model names.";
+
+		ToClaudePtWriteState(ToClaudePtModelFile(), model, stateScope);
+		return "Scoped Claude model set.`nStateScope=" + ToClaudePtStateScope(stateScope) + "`nModel=" + model;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get scoped claude conversation state")]
+[SemanticProgram.InfinitivePhrase("to check scoped claude conversation status")]
+prototype ToGetScopedClaudeConversationState : ClaudeCodeSkillAction
+{
+	Description = @"stateScope - required caller-owned scope such as a Buffaly session key. Returns the Claude pass-through state for that explicit scope.";
+
+	function Execute(string stateScope) : string
+	{
+		if (StringUtil.IsEmpty(stateScope))
+			return "Error: stateScope is required for scoped Claude state.";
+
+		string model = ToClaudePtReadState(ToClaudePtModelFile(), stateScope);
+		string workDir = ToClaudePtReadState(ToClaudePtWorkDirFile(), stateScope);
+		string turns = ToClaudePtReadState(ToClaudePtTurnsFile(), stateScope);
+		string safeScope = ToClaudePtStateScope(stateScope);
+
+		string result = "Scoped Claude Pass-Through State`n";
+		result = result + "StateScope=" + safeScope + "`n";
+		result = result + "Model=" + (StringUtil.IsEmpty(model) ? "sonnet (default)" : model) + "`n";
+		result = result + "WorkingDirectory=" + (StringUtil.IsEmpty(workDir) || workDir == "none" ? "(default)" : workDir) + "`n";
+		result = result + "TurnCount=" + (StringUtil.IsEmpty(turns) ? "0" : turns);
+
+		return result;
 	}
 }
 
