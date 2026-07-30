@@ -218,15 +218,17 @@ export default defineBackground(() => {
 		loadServers().then(async (state) => {
 			let servers = state.servers;
 			let active = servers.find((server) => server.ServerId === state.activeServerId) || null;
-			const status = active ? await inspectServer(active.Origin, active.Connection) : { State: 'Unavailable' as ServerState, Version: '' };
-			if (active?.Connection) {
+			const fallbackConnection = await loadConnection();
+			const activeConnection = active?.Connection || (active && fallbackConnection?.Origin === active.Origin ? fallbackConnection : null);
+			const status = active ? await inspectServer(active.Origin, activeConnection) : { State: 'Unavailable' as ServerState, Version: '' };
+			if (active && activeConnection) {
 				let recovered: DurableConversation[] = [];
-				try { recovered = await listDurableConversations(active.Connection); }
+				try { recovered = await listDurableConversations(activeConnection); }
 				catch (error) { console.warn('Failed to list recovered Buffaly conversations:', error); }
 				if (recovered.length > 0) {
 					const conversationsBySessionKey = { ...(active.ConversationsBySessionKey ?? {}) };
 					recovered.forEach((conversation) => { conversationsBySessionKey[conversation.SessionKey] = conversationsBySessionKey[conversation.SessionKey] || conversation; });
-					active = await saveServer({ ...active, ConversationsBySessionKey: conversationsBySessionKey }, true).then(() => ({ ...active!, ConversationsBySessionKey: conversationsBySessionKey }));
+					active = await saveServer({ ...active, Connection: activeConnection, ConversationsBySessionKey: conversationsBySessionKey }, true).then(() => ({ ...active!, Connection: activeConnection, ConversationsBySessionKey: conversationsBySessionKey }));
 					servers = servers.map((server) => server.ServerId === active!.ServerId ? active! : server);
 				}
 			}
