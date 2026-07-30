@@ -1,5 +1,11 @@
 # buffaly-workspace-session-ui.js Change History
 
+## Marketing Agency Workbench Wiring (2026-07-30)
+
+- Renders the configured Marketing Website Sales parent skill and four prompt actions in the removable Workspace drawer.
+- Each action opens a module-owned input panel and prepares the existing Agent Next composer through the feature-neutral extension host without auto-submitting.
+- Shared file rows and the Files-drawer source now use live owning-session provenance; guarded Move prompts for a destination, confirms, calls the typed endpoint, and refreshes the list.
+
 ## Initial Next-Shell Contribution (2026-07-21)
 
 - Registered `workspace.current-session` through `BuffalyAgentNextExtensions` at `sessionHeader.context`.

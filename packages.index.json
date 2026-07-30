@@ -16877,10 +16877,10 @@
       "PackageType": "WebModule",
       "Title": "Workspace",
       "Description": "Buffaly Web Module package for Workspace.",
-      "Version": "0.1.10",
+      "Version": "0.1.11",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/Workspace",
-      "SourceUrl": "",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/Workspace",
       "Phrases": [
         "Workspace",
         "Workspace"
@@ -16888,7 +16888,7 @@
       "Files": [
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "3991ee6f38c8a8dd5a991031e08da3f6d8da6eeeeca5eb22d7cd4c3393f4c800"
+          "Sha256": "c7ee6135af68999266fffb6889e06c52eb3c922a624b16706f766c13e381291a"
         },
         {
           "Path": "Buffaly.Agent.Workspaces.Web.deps.json",
@@ -16896,47 +16896,47 @@
         },
         {
           "Path": "Buffaly.Agent.Workspaces.Web.dll",
-          "Sha256": "15b156f5df40458ef12ed965b9fe67dfda076668012e120cf247b83a1d16758c"
+          "Sha256": "622474ead5bac4f0da779378256824615a9d6e94bbb0747f7c9e481f2cd3e4e2"
         },
         {
           "Path": "web-module.json",
-          "Sha256": "f1a34e74ddc3697a7667654be8bc97de848b993660ff38e08ae3c517a207fb4b"
+          "Sha256": "0883b6beb0f8552d98780fd287ac5cc45e5bdce2784f2b9599fd924c1845cb31"
         },
         {
           "Path": "wwwroot/css/buffaly-workspace-session-ui.css",
-          "Sha256": "3c4dfb545480d9df77e6ebba44f7f272164f52e444b40bd9a56d2fd135e283f6"
+          "Sha256": "95bcf7516d0c1bd80ef9eff8b3ce2a283da19966c89974281714f986ee877cae"
         },
         {
           "Path": "wwwroot/css/buffaly-workspace-session-ui.css.br",
-          "Sha256": "c6566977e7197f900edc23bb51f7af3fd2bd00e840ac66e4f6153659cd9cffd0"
+          "Sha256": "e1a1e449e176d5e936f2c3efe3a27419f2a8f57d40c2a35fc13062b2a1916671"
         },
         {
           "Path": "wwwroot/css/buffaly-workspace-session-ui.css.gz",
-          "Sha256": "8ecef51cb0533aa22c8a9d55311fc168b4992ab7aea31208b356563c2c53c81a"
+          "Sha256": "a2d9eba639757c38f21f1d56e5537d2107b7ec2d6e19853af4542cdf03ce13be"
         },
         {
           "Path": "wwwroot/js/buffaly-workspace-session-ui.js",
-          "Sha256": "3bb1f6e90cef481d27a5fab5e4ec6ba6390f529f35abe91d0364a4048f8e14a1"
+          "Sha256": "2b8d335a98c05b1802dd1464add223e6fe18ddf881904b7eab3959b6a4038996"
         },
         {
           "Path": "wwwroot/js/buffaly-workspace-session-ui.js.br",
-          "Sha256": "7ad86e5e5ed582eaab6561689360f54275442753a70c05d4cbd8d6d51c870f1b"
+          "Sha256": "946d7218c0529d14ea1833257e6e404216501e09b7727c7134bb53a9c5a53ed6"
         },
         {
           "Path": "wwwroot/js/buffaly-workspace-session-ui.js.gz",
-          "Sha256": "29a25005fe9f48aaea471f79c4a6905fb8fb2670c5ce51232c1fa85ea247eb2b"
+          "Sha256": "72f83a69cd2e22073c84b0d70d61f9d1d0e0f214ca7f3bb77ae545dd7928bc8e"
         },
         {
           "Path": "wwwroot/js/buffaly-workspace-session-ui.js.md",
-          "Sha256": "a36a618f878953672b4a6aa5cd398c0b1a02f2817cddd71681b0dbb69cbbdc63"
+          "Sha256": "a0a4d46ea0e7916e684fb598f629b057d00f9de2b4fb9ed727cc4f5209df8313"
         },
         {
           "Path": "wwwroot/js/buffaly-workspace-session-ui.js.md.br",
-          "Sha256": "1fc7a62dc72be38ca33227bb492361019ffbb0cd285b4af0308a2b715c9ef552"
+          "Sha256": "8d8098fc7b592f7e2b12e4d5ec4dae86dca0d8dc891f1fb425fd87b3d952bcbc"
         },
         {
           "Path": "wwwroot/js/buffaly-workspace-session-ui.js.md.gz",
-          "Sha256": "aae86e09406d67066ba0155242ca6762cacd55770d2cd02a612a30e252bf1493"
+          "Sha256": "184e46bacec577f4d8413d8f256be7ca4ed269c8d06ad7698f9d5bc71761ff18"
         }
       ],
       "ProjectArtifacts": [],
@@ -16944,7 +16944,8 @@
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
       "RequiresRestart": true,
-      "RequiresPreStartInstall": true
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     },
     {
       "PackageId": "TrafficAnalysis",
