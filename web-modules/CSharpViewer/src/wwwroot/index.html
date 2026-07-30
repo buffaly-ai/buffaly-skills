@@ -11,6 +11,9 @@
     <div class="brand"><span class="brand-mark">C#</span><span>C# Viewer</span></div>
     <label for="root-select">Source root</label>
     <select id="root-select" aria-label="Source root"></select>
+    <label for="symbol-search">Symbol</label>
+    <input id="symbol-search" type="search" placeholder="Search symbols…" aria-label="Search symbols across the selected root" autocomplete="off">
+    <select id="symbol-results" aria-label="Symbol search results" disabled><option value="">Type 2+ characters</option></select>
     <span class="separator"></span>
     <button id="collapse-all" type="button">Collapse all</button>
     <label for="type-select">Type</label>
