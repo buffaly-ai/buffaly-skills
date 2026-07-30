@@ -282,7 +282,7 @@ function Read-JsonFile([string]$path) {
                 $warnings.Add("ClaudeCode runtime regression action passed: " + (($runtimeText -split "`r?`n")[0]))
             }
         } else {
-            $errors.Add("ClaudeCode runtime regression action was not invoked. Pass -ClaudeCodeRuntimeRegressionCommand or set BUFFALY_CLAUDECODE_RUNTIME_REGRESSION_COMMAND so ordinary package validation executes ToRunClaudeCodeStateScopingRegression in a live runtime.")
+            $warnings.Add("ClaudeCode live-runtime regression was not requested. Supply -ClaudeCodeRuntimeRegressionCommand or BUFFALY_CLAUDECODE_RUNTIME_REGRESSION_COMMAND when a live Buffaly runtime is intentionally available.")
         }
     }
 
