@@ -1,5 +1,10 @@
 # Test-ExtensionPackage.ps1
 
+## 2026-07-30 Bind production execution to the exact candidate
+- The validator now supplies the candidate package root, version, normalized `index.pts` SHA-256, and a one-time challenge to the trusted runtime command through dedicated environment variables.
+- A successful runner must load the supplied candidate root and report its independently observed version/hash plus the challenge. Generic, replayed, or mismatched PASS output fails validation.
+- This prevents an installed ClaudeCode runtime from certifying different candidate bytes merely because its production regression passes.
+
 ## 2026-07-30 Trusted live execution replaces repository self-attestation
 - Removed acceptance of `validation-evidence/ClaudeCode.runtime-regression.evidence.json`; a contributor-controlled repository file cannot prove that production behavior executed.
 - Release validation now requires a successful explicit command supplied through `-ClaudeCodeRuntimeRegressionCommand` or `BUFFALY_CLAUDECODE_RUNTIME_REGRESSION_COMMAND`.

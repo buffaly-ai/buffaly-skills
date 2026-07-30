@@ -271,17 +271,39 @@ function Read-JsonFile([string]$path) {
         }
 
         if (-not [string]::IsNullOrWhiteSpace($ClaudeCodeRuntimeRegressionCommand)) {
+            $entryPointHash = Get-FileHashForPackage $packageRoot $entryPoint
+            $validationChallenge = [System.Guid]::NewGuid().ToString("N")
+            $previousPackageRoot = $env:BUFFALY_CLAUDECODE_CANDIDATE_PACKAGE_ROOT
+            $previousPackageVersion = $env:BUFFALY_CLAUDECODE_CANDIDATE_PACKAGE_VERSION
+            $previousEntryPointHash = $env:BUFFALY_CLAUDECODE_CANDIDATE_ENTRYPOINT_SHA256
+            $previousChallenge = $env:BUFFALY_CLAUDECODE_VALIDATION_CHALLENGE
             $runtimeCommandPath = Join-Path ([System.IO.Path]::GetTempPath()) ("claude-code-runtime-regression-" + [System.Guid]::NewGuid().ToString("N") + ".ps1")
-            Set-Content -LiteralPath $runtimeCommandPath -Value $ClaudeCodeRuntimeRegressionCommand -Encoding UTF8
-            $runtimeOutput = & powershell -NoProfile -ExecutionPolicy Bypass -File $runtimeCommandPath 2>&1
-            Remove-Item -LiteralPath $runtimeCommandPath -Force -ErrorAction SilentlyContinue
+            try {
+                $env:BUFFALY_CLAUDECODE_CANDIDATE_PACKAGE_ROOT = $packageRoot
+                $env:BUFFALY_CLAUDECODE_CANDIDATE_PACKAGE_VERSION = $version
+                $env:BUFFALY_CLAUDECODE_CANDIDATE_ENTRYPOINT_SHA256 = $entryPointHash
+                $env:BUFFALY_CLAUDECODE_VALIDATION_CHALLENGE = $validationChallenge
+                Set-Content -LiteralPath $runtimeCommandPath -Value $ClaudeCodeRuntimeRegressionCommand -Encoding UTF8
+                $runtimeOutput = & powershell -NoProfile -ExecutionPolicy Bypass -File $runtimeCommandPath 2>&1
+                $runtimeExitCode = $LASTEXITCODE
+            } finally {
+                Remove-Item -LiteralPath $runtimeCommandPath -Force -ErrorAction SilentlyContinue
+                $env:BUFFALY_CLAUDECODE_CANDIDATE_PACKAGE_ROOT = $previousPackageRoot
+                $env:BUFFALY_CLAUDECODE_CANDIDATE_PACKAGE_VERSION = $previousPackageVersion
+                $env:BUFFALY_CLAUDECODE_CANDIDATE_ENTRYPOINT_SHA256 = $previousEntryPointHash
+                $env:BUFFALY_CLAUDECODE_VALIDATION_CHALLENGE = $previousChallenge
+            }
             $runtimeText = ($runtimeOutput | Out-String).Trim()
-            if ($LASTEXITCODE -ne 0) {
-                $errors.Add("ClaudeCode runtime regression command failed with exit code $LASTEXITCODE`: " + $runtimeText)
+            if ($runtimeExitCode -ne 0) {
+                $errors.Add("ClaudeCode runtime regression command failed with exit code $runtimeExitCode`: " + $runtimeText)
             } elseif ($runtimeText -notmatch '^PASS: ClaudeCode state scoping regression') {
                 $errors.Add("ClaudeCode runtime regression command did not return PASS. Output: " + $runtimeText)
+            } elseif ($runtimeText -notmatch ('(?m)^CandidatePackageVersion=' + [regex]::Escape($version) + '\r?$') -or
+                    $runtimeText -notmatch ('(?m)^CandidateEntryPointSha256=' + [regex]::Escape($entryPointHash) + '\r?$') -or
+                    $runtimeText -notmatch ('(?m)^ValidationChallenge=' + [regex]::Escape($validationChallenge) + '\r?$')) {
+                $errors.Add("ClaudeCode runtime regression result was not bound to the exact candidate version $version, entry-point SHA-256 $entryPointHash, and validation challenge. The trusted runner must load BUFFALY_CLAUDECODE_CANDIDATE_PACKAGE_ROOT and report its independently observed candidate identity.")
             } else {
-                $warnings.Add("ClaudeCode runtime regression action passed: " + (($runtimeText -split "`r?`n")[0]))
+                $warnings.Add("ClaudeCode runtime regression action passed for exact candidate version $version and entry-point SHA-256 $entryPointHash.")
             }
         } elseif ($RequireClaudeCodeRuntimeRegression) {
             $errors.Add("ClaudeCode release validation requires a successful live runtime command. Supply -ClaudeCodeRuntimeRegressionCommand or BUFFALY_CLAUDECODE_RUNTIME_REGRESSION_COMMAND to invoke ToRunClaudeCodeStateScopingRegression through a trusted external runtime boundary; repository files are not accepted as execution evidence.")
