@@ -5,6 +5,7 @@ param(
     [string]$RepoRoot = (Split-Path $PSScriptRoot -Parent),
     [Parameter(Mandatory = $false)]
     [string]$ClaudeCodeRuntimeRegressionCommand = "",
+    [switch]$RequireClaudeCodeRuntimeRegression,
     [switch]$JsonOutput
 )
 
@@ -36,7 +37,8 @@ function Read-JsonFile([string]$path) {
         [string]$RepoRoot,
         $SkillIndex,
         $PackageIndex,
-        [string]$ClaudeCodeRuntimeRegressionCommand = ""
+        [string]$ClaudeCodeRuntimeRegressionCommand = "",
+        [bool]$RequireClaudeCodeRuntimeRegression = $false
     )
 
     $errors = [System.Collections.Generic.List[string]]::new()
@@ -282,7 +284,26 @@ function Read-JsonFile([string]$path) {
                 $warnings.Add("ClaudeCode runtime regression action passed: " + (($runtimeText -split "`r?`n")[0]))
             }
         } else {
-            $warnings.Add("ClaudeCode live-runtime regression was not requested. Supply -ClaudeCodeRuntimeRegressionCommand or BUFFALY_CLAUDECODE_RUNTIME_REGRESSION_COMMAND when a live Buffaly runtime is intentionally available.")
+            $runtimeEvidencePath = Join-Path $RepoRoot "validation-evidence\ClaudeCode.runtime-regression.evidence.json"
+            if ($RequireClaudeCodeRuntimeRegression) {
+                if (-not (Test-Path $runtimeEvidencePath -PathType Leaf)) {
+                    $errors.Add("ClaudeCode production state-scoping regression evidence is required for release validation. Run ToRunClaudeCodeStateScopingRegression in a live runtime and record validation-evidence/ClaudeCode.runtime-regression.evidence.json for this exact package version and entry-point hash.")
+                } else {
+                    try {
+                        $runtimeEvidence = Get-Content $runtimeEvidencePath -Raw | ConvertFrom-Json
+                        $entryPointHash = Get-FileHashForPackage $packageRoot $entryPoint
+                        if ([int]$runtimeEvidence.SchemaVersion -ne 1 -or [string]$runtimeEvidence.PackageId -ne $packageId -or [string]$runtimeEvidence.PackageVersion -ne $version -or [string]$runtimeEvidence.EntryPointSha256 -ne $entryPointHash -or [string]$runtimeEvidence.Action -ne "ToRunClaudeCodeStateScopingRegression" -or [string]$runtimeEvidence.Result -ne "Passed" -or [string]$runtimeEvidence.Output -notmatch '^PASS: ClaudeCode state scoping regression' -or [string]::IsNullOrWhiteSpace([string]$runtimeEvidence.ValidatedUtc)) {
+                            $errors.Add("ClaudeCode production state-scoping regression evidence does not match this exact package version, entry-point hash, action, PASS output, and passing result.")
+                        } else {
+                            $warnings.Add("ClaudeCode production state-scoping regression evidence passed for version $version and entry-point SHA-256 $entryPointHash.")
+                        }
+                    } catch {
+                        $errors.Add("ClaudeCode production state-scoping regression evidence is invalid JSON: $($_.Exception.Message)")
+                    }
+                }
+            } else {
+                $warnings.Add("ClaudeCode live-runtime regression was not requested. Release validation must use -RequireClaudeCodeRuntimeRegression or supply an explicit runtime command.")
+            }
         }
     }
 
@@ -306,7 +327,7 @@ if ($MyInvocation.InvocationName -ne '.') {
     $skillIndex = Read-JsonFile (Join-Path $RepoRoot "skills.index.json")
     $packageIndex = Read-JsonFile (Join-Path $RepoRoot "packages.index.json")
 
-    $result = Test-ExtensionPackageInternal -PackageName $PackageName -RepoRoot $RepoRoot -SkillIndex $skillIndex -PackageIndex $packageIndex -ClaudeCodeRuntimeRegressionCommand $ClaudeCodeRuntimeRegressionCommand
+    $result = Test-ExtensionPackageInternal -PackageName $PackageName -RepoRoot $RepoRoot -SkillIndex $skillIndex -PackageIndex $packageIndex -ClaudeCodeRuntimeRegressionCommand $ClaudeCodeRuntimeRegressionCommand -RequireClaudeCodeRuntimeRegression $RequireClaudeCodeRuntimeRegression.IsPresent
 
     if ($JsonOutput) {
         [PSCustomObject]@{
