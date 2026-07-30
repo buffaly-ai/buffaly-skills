@@ -47,9 +47,14 @@ export function conversationSessionKey(binding: ConversationBinding | null | und
   return isDurableConversation(binding) ? binding.SessionKey : '';
 }
 
-export function conversationSelectionId(binding: ConversationBinding | null | undefined): string {
+export function conversationStorageIdentity(binding: ConversationBinding | null | undefined): string {
   if (!binding) return '';
   return isDurableConversation(binding) ? binding.SessionKey : (isLegacyConversation(binding) ? binding.SessionBindingId : '');
+}
+
+export function conversationSelectionId(binding: ConversationBinding | null | undefined): string {
+  if (!binding) return '';
+  return isDurableConversation(binding) ? `session:${binding.SessionKey}` : (isLegacyConversation(binding) ? `legacy:${binding.SessionBindingId}` : '');
 }
 
 export function conversationFromBootstrap(bootstrap: ConversationBootstrap): ConversationBinding {
@@ -194,13 +199,22 @@ export async function listBrowserInstances(connection: ExtensionConnection): Pro
   return readJson<ExtensionBrowserInstanceRecord[]>(await fetch(new URL('/web-modules/ExtensionBrowser/api/instances', connection.Origin), { cache: 'no-store' }));
 }
 
+export async function listInstallationConversations(connection: ExtensionConnection): Promise<DurableConversation[]> {
+  const conversations = await readJson<Array<{ SessionKey: string; InstallationRegistrationId: string; DisplayName: string; PromptPolicyRevision: number }>>(await fetch(new URL('/web-modules/ExtensionBrowser/api/conversations/list', connection.Origin), {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential }),
+  }));
+  return conversations.map((item) => ({ Kind: 'durable', SessionKey: item.SessionKey, InstallationRegistrationId: item.InstallationRegistrationId, BrowserContextId: '', DisplayName: item.DisplayName, PromptPolicyRevision: item.PromptPolicyRevision }));
+}
 
-export async function migrateLegacyConversation(connection: ExtensionConnection, binding: LegacyConversationBinding, browserContextId: string): Promise<DurableConversation> {
+
+export async function migrateLegacyConversation(connection: ExtensionConnection, SessionBindingId: string): Promise<DurableConversation> {
   const migrated = await readJson<LegacyConversationMigrationResult>(await fetch(new URL('/web-modules/ExtensionBrowser/api/migrations/session-binding', connection.Origin), {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential, SessionBindingId: binding.SessionBindingId }),
+    body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential, SessionBindingId }),
   }));
-  return { Kind: 'durable', SessionKey: migrated.SessionKey, InstallationRegistrationId: migrated.InstallationRegistrationId, BrowserContextId: browserContextId, DisplayName: migrated.DisplayName || binding.DisplayName, PromptPolicyRevision: migrated.PromptPolicyRevision };
+  if (!migrated.SessionKey) throw new Error('Legacy migration did not return an authoritative SessionKey.');
+  return { Kind: 'durable', SessionKey: migrated.SessionKey, InstallationRegistrationId: migrated.InstallationRegistrationId, BrowserContextId: '', DisplayName: migrated.DisplayName, PromptPolicyRevision: migrated.PromptPolicyRevision };
 }
 
 export async function createDurableConversation(connection: ExtensionConnection, browserContextId: string, displayName: string): Promise<ConversationBootstrap> {
@@ -211,10 +225,10 @@ export async function createDurableConversation(connection: ExtensionConnection,
   return { Kind: 'durable', Origin: connection.Origin, SessionKey: created.SessionKey, InstallationRegistrationId: connection.InstallationRegistrationId, BrowserContextId: browserContextId, DisplayName: created.DisplayName, PromptPolicyRevision: created.PromptPolicyRevision, NavigationToken: created.NavigationToken };
 }
 
-export async function openDurableConversation(connection: ExtensionConnection, sessionKey: string, browserContextId: string, displayName = ''): Promise<ConversationBootstrap> {
+export async function openDurableConversation(connection: ExtensionConnection, sessionKey: string, browserContextId: string): Promise<ConversationBootstrap> {
   const opened = await readJson<{ SessionKey: string; DisplayName: string; PromptPolicyRevision: number; NavigationToken: string }>(await fetch(new URL('/web-modules/ExtensionBrowser/api/conversations/open', connection.Origin), {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential, SessionKey: sessionKey, BrowserContextId: browserContextId, DisplayName: displayName }),
+    body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential, SessionKey: sessionKey, BrowserContextId: browserContextId }),
   }));
   return { Kind: 'durable', Origin: connection.Origin, SessionKey: opened.SessionKey, InstallationRegistrationId: connection.InstallationRegistrationId, BrowserContextId: browserContextId, DisplayName: opened.DisplayName, PromptPolicyRevision: opened.PromptPolicyRevision, NavigationToken: opened.NavigationToken };
 }

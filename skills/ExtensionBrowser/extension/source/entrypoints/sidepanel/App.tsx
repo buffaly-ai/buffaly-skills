@@ -25,7 +25,7 @@ const defaultOrigin = 'http://127.0.0.1:5016';
 
 function conversationSelectionId(conversation: SavedConversation | null | undefined): string {
   if (!conversation) return '';
-  return 'SessionKey' in conversation ? conversation.SessionKey : ('SessionBindingId' in conversation ? conversation.SessionBindingId : '');
+  return 'SessionKey' in conversation ? `session:${conversation.SessionKey}` : ('SessionBindingId' in conversation ? `legacy:${conversation.SessionBindingId}` : '');
 }
 
 function conversationUrl(bootstrap: ConversationBootstrap): string {

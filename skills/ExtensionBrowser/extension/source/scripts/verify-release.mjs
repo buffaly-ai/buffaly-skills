@@ -14,6 +14,13 @@ const serverSource = fs.readFileSync(path.join(root, 'lib/buffaly-servers.ts'), 
 const toolRouterSource = fs.readFileSync(path.join(root, 'lib/tool-router.ts'), 'utf8');
 const failures = [];
 const check = (condition, message) => { if (!condition) failures.push(message); };
+const forbiddenLegacyResume = ['resume', 'Conversation'].join('');
+const forbiddenReplacementCreate = ['replacement = await ', 'createConversation'].join('');
+const forbiddenReuseCreate = ["createConversation(connection, '", "ReuseCurrent'"].join('');
+const forbiddenCombinedLookup = ['conversation', 'Identity'].join('');
+const forbiddenSessionKeyFallback = ['SessionKey', ' ||'].join('');
+const forbiddenLegacyBindingFallback = ['SessionBindingId', ' ||'].join('');
+const forbiddenActiveSessionKeyFallback = ['ActiveSessionKey: server.ActiveSessionKey', ' ||'].join('');
 
 check(manifest.manifest_version === 3, 'manifest_version must be 3');
 check(manifest.name === 'Buffaly Browser Agent', 'release name is incorrect');
@@ -67,17 +74,30 @@ check(backgroundSource.includes("list_extension_browser_instances"), 'instance-r
 check(!backgroundSource.includes("set_session_browser_instance_default") && !backgroundSource.includes("setSessionBrowserInstanceDefault"), 'extension client must not expose direct session default mutation; durable open attaches the default');
 check(!backgroundSource.includes("SessionBindingId: bootstrap") && !backgroundSource.includes("ConversationSlotId: bootstrap"), 'durable conversation records must not synthesize legacy binding identifiers');
 check(fs.readFileSync(path.join(root, 'lib/buffaly-connection.ts'), 'utf8').includes("/web-modules/ExtensionBrowser/api/conversations/navigation-token"), 'durable navigation token requests must use the conversation SessionKey API');
-check(fs.readFileSync(path.join(root, 'lib/buffaly-connection.ts'), 'utf8').includes('issueLegacyNavigationToken') && backgroundSource.includes("if (!prepared.SessionKey) throw new Error('The active Buffaly conversation does not include a session key.')") && backgroundSource.includes('issueConversationNavigationToken(connection, prepared.SessionKey)'), 'pop-out must migrate legacy records and then use the durable SessionKey navigation-token endpoint');
+check(fs.readFileSync(path.join(root, 'lib/buffaly-connection.ts'), 'utf8').includes('issueLegacyNavigationToken') && backgroundSource.includes('async function ensureDurableConversation') && backgroundSource.includes('issueConversationNavigationToken(connection, prepared.SessionKey)'), 'pop-out must normalize legacy records to durable SessionKey records before minting the durable navigation-token endpoint');
 const popoutBlock = backgroundSource.slice(backgroundSource.indexOf("request.type === 'open_buffaly_conversation_tab'"), backgroundSource.indexOf("request.type === 'create_buffaly_conversation'"));
 check(!popoutBlock.includes('issueLegacyNavigationToken'), 'pop-out must not call the legacy navigation-token endpoint');
+check(!backgroundSource.includes(forbiddenLegacyResume), 'new normal service-worker flow must not call the legacy resume helper');
 check(fs.readFileSync(path.join(root, 'lib/buffaly-servers.ts'), 'utf8').includes('if (isLegacyConversation(binding)) conversationsByBindingId'), 'durable conversations must not enter the legacy binding-id map');
-check(backgroundSource.includes('migrateLegacyConversation(connection, binding, browserContextId)') && backgroundSource.includes('refusing to create a replacement automatically'), 'background restore/select must migrate legacy pointers and reject silent replacement creates');
-check(!backgroundSource.includes('conversationIdentity') && !serverSource.includes('conversationIdentity'), 'extension client must not use a combined binding/session identity helper for durable opens or maps');
-check(backgroundSource.includes('conversationSelectionId || request.sessionKey || request.sessionBindingId'), 'selection must accept explicit selection id, session key, and legacy binding id during compatibility');
+check(backgroundSource.includes('migrateLegacyConversation(connection, binding.SessionBindingId)') && backgroundSource.includes('openDurableConversation(connection, prepared.SessionKey, browserContextId)') && backgroundSource.indexOf('migrateLegacyConversation(connection, binding.SessionBindingId)') < backgroundSource.indexOf('openDurableConversation(connection, prepared.SessionKey, browserContextId)') && backgroundSource.includes('refusing to create a replacement automatically'), 'background restore/select must migrate legacy pointers before durable open and reject silent replacement creates');
+check(backgroundSource.includes('async function ensureDurableConversation') && backgroundSource.includes('await ensureDurableConversation(connection, binding, browserContextId)'), 'bootstrap/select/popout must share the migrate-or-return-durable helper');
+check(!backgroundSource.includes(forbiddenReplacementCreate) && !backgroundSource.includes(forbiddenReuseCreate), 'background restore/select must not silently create replacement conversations');
+check(!backgroundSource.includes(forbiddenCombinedLookup) && !serverSource.includes(forbiddenCombinedLookup), 'extension client must not use a combined binding/session identity helper for durable opens or maps');
+check(backgroundSource.includes('function requestConversationSelectionId') && !backgroundSource.includes(forbiddenSessionKeyFallback) && !backgroundSource.includes(forbiddenLegacyBindingFallback), 'selection must accept compatibility ids without a chained binding-id-as-session-key fallback');
+check(fs.readFileSync(path.join(root, 'entrypoints/sidepanel/App.tsx'), 'utf8').includes('`session:${conversation.SessionKey}`') && fs.readFileSync(path.join(root, 'entrypoints/sidepanel/App.tsx'), 'utf8').includes('`legacy:${conversation.SessionBindingId}`'), 'sidepanel selection values must distinguish durable sessions from legacy binding ids');
+check(!serverSource.includes(forbiddenActiveSessionKeyFallback), 'server summaries must not expose legacy binding ids through ActiveSessionKey fallbacks');
+check(serverSource.includes('conversationStorageIdentity') && serverSource.includes("selectionId.startsWith('session:')") && serverSource.includes("selectionId.startsWith('legacy:')"), 'storage must keep lookup identity separate from durable SessionKey and parse typed selection ids');
 check(serverSource.includes('if (sessionKey) conversationsBySessionKey[sessionKey] = binding'), 'session-key map must only be populated with an actual SessionKey');
+check(serverSource.includes('delete conversationsByBindingId[replacedLegacyBinding.SessionBindingId]') && serverSource.includes('candidate.SessionBindingId === replacedLegacyBinding.SessionBindingId'), 'migrating a legacy conversation must remove its legacy binding and old context entries');
+check(!serverSource.includes('BuffalyInstanceRoutingMigrationVersion:') && !serverSource.includes('BuffalyInstanceRoutingMigrationVersion ='), 'loadServers must not claim full migration version while legacy entries can remain');
 check(serverSource.includes('return { ...binding, BrowserContextId: binding.BrowserContextId || browserContextId };'), 'selection lookup must not persist legacy records before migration/open');
 check(backgroundSource.includes("createDurableConversation") && backgroundSource.includes("openDurableConversation") && backgroundSource.includes("SessionKey"), 'durable session-key conversation API paths are missing');
 const connectionSource = fs.readFileSync(path.join(root, 'lib/buffaly-connection.ts'), 'utf8');
+const migrateLegacyFunction = connectionSource.slice(connectionSource.indexOf('export async function migrateLegacyConversation'), connectionSource.indexOf('export async function createDurableConversation'));
+check(migrateLegacyFunction.includes('SessionBindingId: string') && migrateLegacyFunction.includes('/web-modules/ExtensionBrowser/api/migrations/session-binding') && migrateLegacyFunction.includes('InstallationCredential') && migrateLegacyFunction.includes('DisplayName: migrated.DisplayName'), 'migrateLegacyConversation must accept only a legacy SessionBindingId and return server-authoritative durable conversation data');
+const openDurableFunction = connectionSource.slice(connectionSource.indexOf('export async function openDurableConversation'), connectionSource.indexOf('export async function createConversation'));
+check(!openDurableFunction.includes('DisplayName: displayName') && !openDurableFunction.includes('DisplayName: request.DisplayName'), 'conversation open client must not send non-authoritative DisplayName');
+check(!/JSON\.stringify\([\s\S]{0,180}DisplayName/.test(openDurableFunction), 'conversation open client must not send ignored DisplayName in the request body');
 check(connectionSource.includes('interface LegacyConversationBinding') && !connectionSource.includes('SessionKey?: string') && !connectionSource.includes('SessionKey: binding.SessionKey'), 'legacy saved conversation records must not carry durable SessionKey values');
 check(fs.readFileSync(path.join(root, 'lib/buffaly-connection.ts'), 'utf8').includes('RoutingKey'), 'instance routing key frame support is missing');
 for (const size of [16, 48, 128]) {

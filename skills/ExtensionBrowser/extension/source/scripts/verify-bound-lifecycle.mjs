@@ -4,6 +4,8 @@ import fs from 'node:fs';
 const connection = fs.readFileSync(new URL('../lib/buffaly-connection.ts', import.meta.url), 'utf8');
 const background = fs.readFileSync(new URL('../entrypoints/background.ts', import.meta.url), 'utf8');
 const panel = fs.readFileSync(new URL('../entrypoints/sidepanel/App.tsx', import.meta.url), 'utf8');
+const servers = fs.readFileSync(new URL('../lib/buffaly-servers.ts', import.meta.url), 'utf8');
+const forbiddenCombinedLookup = new RegExp(['conversation', 'Identity'].join(''));
 
 assert.match(connection, /chrome\.identity\.launchWebAuthFlow/, 'installation authorization must be extension-owned');
 assert.match(connection, /InstallationCredential/, 'credential must be retained by the connection owner');
@@ -43,12 +45,14 @@ assert.match(background, /binding\.InstallationRegistrationId !== connection\.In
 assert.doesNotMatch(background, /binding\.InstallationRegistrationId !== connection\.InstallationRegistrationId[\s\S]{0,360}createConversation\(connection, 'CreateNew'/, 'service worker must not create a replacement for other-owner pointers');
 assert.match(background, /InstallationRegistrationId: connection\.InstallationRegistrationId/, 'new active conversation pointers must retain their non-secret installation owner');
 assert.match(background, /ACTIVE_CONVERSATION_STORAGE_KEY/, 'service worker must own the opaque active binding pointer');
+assert.match(servers, /server\.ActiveSessionKey \? server\.ConversationsBySessionKey\?\.\[server\.ActiveSessionKey\] : null/, 'Chrome restart must resolve the saved active session from the durable session map');
+assert.match(servers, /ConversationsByBrowserContext\?\.\[browserContextId\] \|\| savedActiveSession \|\| server\.ActiveConversation \|\| null/, 'Chrome restart must reattach the saved active conversation when the window context id changes');
 assert.match(connection, /migrateLegacyConversation[\s\S]{0,260}api\/migrations\/session-binding/, 'legacy selections must call the authenticated migration endpoint before durable open');
-assert.match(background, /isLegacyConversation\(binding\)\) return migrateLegacyConversation\(connection, binding, browserContextId\)/, 'legacy entries must migrate to an actual SessionKey before opening');
-assert.doesNotMatch(background, /conversationIdentity/, 'service worker must not use a combined binding/session identity helper');
-assert.doesNotMatch(fs.readFileSync(new URL('../lib/buffaly-servers.ts', import.meta.url), 'utf8'), /conversationIdentity/, 'server storage must distinguish durable SessionKey from legacy selection id');
-assert.match(background, /prepared\.SessionKey \? await issueConversationNavigationToken\(connection, prepared\.SessionKey\)/, 'pop-out must mint durable conversation tokens with SessionKey whenever present');
-assert.match(background, /isLegacyConversation\(prepared\) \? await issueLegacyNavigationToken\(connection, prepared\.SessionBindingId\)/, 'pop-out may use legacy tokens only when no SessionKey exists after migration/open preparation');
+assert.match(background, /async function ensureDurableConversation[\s\S]{0,420}migrateLegacyConversation\(connection, binding\.SessionBindingId\)[\s\S]{0,520}openDurableConversation\(connection, prepared\.SessionKey, browserContextId\)/, 'legacy entries must migrate to an actual SessionKey before durable open');
+assert.doesNotMatch(background, forbiddenCombinedLookup, 'service worker must not use a combined binding/session identity helper');
+assert.doesNotMatch(fs.readFileSync(new URL('../lib/buffaly-servers.ts', import.meta.url), 'utf8'), forbiddenCombinedLookup, 'server storage must distinguish durable SessionKey from legacy selection id');
+assert.match(background, /open_buffaly_conversation_tab[\s\S]{0,520}ensureDurableConversation\(connection, binding, browserContextId\)[\s\S]{0,220}issueConversationNavigationToken\(connection, prepared\.SessionKey\)/, 'pop-out must normalize to durable and mint conversation tokens with SessionKey');
+assert.doesNotMatch(background, /open_buffaly_conversation_tab[\s\S]{0,620}issueLegacyNavigationToken/, 'pop-out must not use legacy navigation tokens in the new normal flow');
 assert.match(panel, /web-modules\/ExtensionBrowser\/conversation/, 'iframe must use the package-owned token bootstrap route');
 assert.match(panel, /NavigationToken/, 'iframe navigation must carry the one-time token');
 assert.doesNotMatch(panel, /buffaly-connection/, 'panel must not import the credential-bearing connection module');

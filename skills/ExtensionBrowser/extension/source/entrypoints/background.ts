@@ -1,7 +1,7 @@
 import { handleToolCall, grantDebuggerConsent, revokeDebuggerConsent } from '../lib/tool-router';
 import { detachDebugger, isAttached } from '../lib/debugger-session';
 import { getLogEntries, getLogVersion } from '../lib/tool-log';
-import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, authorizeInstallation, conversationFromBootstrap, createDurableConversation, isLegacyConversation, issueConversationNavigationToken, listBrowserInstances, loadBoundToolResult, loadConnection, migrateLegacyConversation, openDurableConversation, type ConversationBinding, type DurableConversation } from '../lib/buffaly-connection';
+import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, authorizeInstallation, conversationFromBootstrap, createDurableConversation, isLegacyConversation, issueConversationNavigationToken, listBrowserInstances, listInstallationConversations, loadBoundToolResult, loadConnection, migrateLegacyConversation, openDurableConversation, type ConversationBinding, type DurableConversation } from '../lib/buffaly-connection';
 import { activateConversation, activateServer, canonicalServerOrigin, conversationForContext, getActiveServer, loadServers, removeServer, saveServer, summarizeServers, updateActiveServer, updateActiveServerConversation, type SavedBuffalyServer, type ServerState } from '../lib/buffaly-servers';
 import type { BoundToolInvocationIdentity } from '../lib/types';
 
@@ -12,20 +12,23 @@ const pendingBoundTools = new Map<string, { browserContextId: string; resolve: (
 
 
 
-async function prepareConversationForOpen(connection: Awaited<ReturnType<typeof loadConnection>> & {}, binding: ConversationBinding, browserContextId: string): Promise<DurableConversation> {
+async function ensureDurableConversation(connection: Awaited<ReturnType<typeof loadConnection>> & {}, binding: ConversationBinding, browserContextId: string): Promise<DurableConversation> {
   if (binding.InstallationRegistrationId !== connection.InstallationRegistrationId) {
     throw new Error('The selected conversation belongs to a different Chrome installation registration; refusing to create a replacement automatically.');
   }
-  if (isLegacyConversation(binding)) return migrateLegacyConversation(connection, binding, browserContextId);
+  if (isLegacyConversation(binding)) {
+    const migrated = await migrateLegacyConversation(connection, binding.SessionBindingId);
+    return { ...migrated, BrowserContextId: browserContextId };
+  }
   if (!binding.SessionKey) throw new Error('The selected conversation does not include a durable session key.');
   return { Kind: 'durable', SessionKey: binding.SessionKey, InstallationRegistrationId: binding.InstallationRegistrationId, BrowserContextId: browserContextId, DisplayName: binding.DisplayName, PromptPolicyRevision: binding.PromptPolicyRevision };
 }
 
 async function openPreparedConversation(connection: Awaited<ReturnType<typeof loadConnection>> & {}, binding: ConversationBinding, browserContextId: string) {
-  const prepared = await prepareConversationForOpen(connection, binding, browserContextId);
+  const prepared = await ensureDurableConversation(connection, binding, browserContextId);
   await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: prepared });
-  await updateActiveServerConversation(browserContextId, prepared);
-  return openDurableConversation(connection, prepared.SessionKey, browserContextId, prepared.DisplayName);
+  await updateActiveServerConversation(browserContextId, prepared, isLegacyConversation(binding) ? binding : undefined);
+  return openDurableConversation(connection, prepared.SessionKey, browserContextId);
 }
 
 function publishBrowserContexts(): void {
@@ -85,6 +88,20 @@ function isTrustedExtensionPage(sender: chrome.runtime.MessageSender): boolean {
 	if (sender.id !== chrome.runtime.id || !sender.url) return false;
 	const trustedOrigin = new URL(chrome.runtime.getURL('/')).origin;
 	return new URL(sender.url).origin === trustedOrigin;
+}
+
+function requestString(value: unknown): string {
+  if (typeof value === 'string') return value;
+  if (value == null) return '';
+  return String(value);
+}
+
+function requestConversationSelectionId(request: Record<string, unknown>): string {
+  const explicitSelectionId = requestString(request.conversationSelectionId);
+  if (explicitSelectionId) return explicitSelectionId;
+  const sessionKey = requestString(request.sessionKey);
+  if (sessionKey) return sessionKey;
+  return requestString(request.sessionBindingId);
 }
 
 // Export the CDP bridge hook at module evaluation time. WXT's lifecycle
@@ -199,7 +216,14 @@ export default defineBackground(() => {
 	  if (request.type === 'get_buffaly_servers') {
 		if (!isTrustedExtensionPage(sender)) { sendResponse({ ok: false, error: 'Unauthorized: servers can only be read from an extension page' }); return false; }
 		loadServers().then(async (state) => {
-			const active = state.servers.find((server) => server.ServerId === state.activeServerId) || null;
+			let active = state.servers.find((server) => server.ServerId === state.activeServerId) || null;
+			if (active?.Connection) {
+				const recovered = await listInstallationConversations(active.Connection);
+				const conversationsBySessionKey = { ...(active.ConversationsBySessionKey ?? {}) };
+				for (const conversation of recovered) conversationsBySessionKey[conversation.SessionKey] = conversation;
+				active = await updateActiveServer({ ConversationsBySessionKey: conversationsBySessionKey });
+				state = await loadServers();
+			}
 			const status = active ? await inspectServer(active.Origin, active.Connection) : { State: 'Unavailable' as ServerState, Version: '' };
 			sendResponse({ ok: true, data: { Servers: summarizeServers(state.servers, state.activeServerId), ActiveServer: active ? { ServerId: active.ServerId, Name: active.Name, Origin: active.Origin } : null, ...status } });
 		}).catch((err: Error) => sendResponse({ ok: false, error: err.message }));
@@ -213,7 +237,7 @@ export default defineBackground(() => {
 			const state = await loadServers();
 			const existing = state.servers.find((server) => server.ServerId === request.serverId) || state.servers.find((server) => server.Origin === origin);
 			const sameOrigin = existing?.Origin === origin;
-			const saved = { ServerId: existing?.ServerId || crypto.randomUUID(), Name: String(request.name || new URL(origin).hostname).trim(), Origin: origin, Connection: sameOrigin ? existing?.Connection || null : null, ActiveConversation: sameOrigin ? existing?.ActiveConversation || null : null, LastConnectedUtc: sameOrigin ? existing?.LastConnectedUtc || '' : '' };
+			const saved = { ...(sameOrigin ? existing : null), ServerId: existing?.ServerId || crypto.randomUUID(), Name: String(request.name || new URL(origin).hostname).trim(), Origin: origin, Connection: sameOrigin ? existing?.Connection || null : null, ActiveConversation: sameOrigin ? existing?.ActiveConversation || null : null, LastConnectedUtc: sameOrigin ? existing?.LastConnectedUtc || '' : '' };
 			await saveServer(saved, true);
 			sendResponse({ ok: true, data: { Server: { ServerId: saved.ServerId, Name: saved.Name, Origin: saved.Origin, Authorized: Boolean(saved.Connection), Active: true, LastConnectedUtc: saved.LastConnectedUtc } } });
 			void startInstallationChannel().catch((error) => console.error('Failed to restart Buffaly installation channel after saving the server:', error));
@@ -248,9 +272,6 @@ export default defineBackground(() => {
           let binding = server ? conversationForContext(server, browserContextId) || undefined : undefined;
           if (!connection || !binding) return null;
           const bootstrap = await openPreparedConversation(connection, binding, browserContextId);
-          const opened = conversationFromBootstrap(bootstrap);
-          await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: opened });
-          await updateActiveServerConversation(browserContextId, opened);
           return bootstrap;
         })
         .then((bootstrap) => sendResponse({ ok: true, data: bootstrap }))
@@ -263,14 +284,11 @@ export default defineBackground(() => {
         sendResponse({ ok: false, error: 'Unauthorized: conversations can only be selected from an extension page' });
         return false;
       }
-      Promise.all([loadConnection(), activateConversation(String(request.conversationSelectionId || request.sessionKey || request.sessionBindingId || ''), String(request.browserContextId || ''))])
+      Promise.all([loadConnection(), activateConversation(requestConversationSelectionId(request), String(request.browserContextId || ''))])
         .then(async ([connection, binding]) => {
           if (!connection) throw new Error('Buffaly installation is not authorized.');
           const browserContextId = String(request.browserContextId || '');
           const bootstrap = await openPreparedConversation(connection, binding, browserContextId);
-          const opened = conversationFromBootstrap(bootstrap);
-          await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: opened });
-          await updateActiveServerConversation(opened.BrowserContextId, opened);
           sendResponse({ ok: true, data: bootstrap });
         })
         .catch((err: Error) => sendResponse({ ok: false, error: err.message }));
@@ -287,9 +305,8 @@ export default defineBackground(() => {
           const binding = server ? conversationForContext(server, String(request.browserContextId || '')) || undefined : undefined;
           if (!connection || !binding) throw new Error('No active Buffaly conversation is available.');
           const browserContextId = String(request.browserContextId || '');
-          const prepared = isLegacyConversation(binding) ? await prepareConversationForOpen(connection, binding, browserContextId) : binding;
-          if (prepared !== binding) await updateActiveServerConversation(browserContextId, prepared);
-          if (!prepared.SessionKey) throw new Error('The active Buffaly conversation does not include a session key.');
+          const prepared = await ensureDurableConversation(connection, binding, browserContextId);
+          await updateActiveServerConversation(browserContextId, prepared, isLegacyConversation(binding) ? binding : undefined);
           const navigation = await issueConversationNavigationToken(connection, prepared.SessionKey);
           const url = new URL('/web-modules/ExtensionBrowser/conversation', connection.Origin);
           url.searchParams.set('presentation', 'standard');
