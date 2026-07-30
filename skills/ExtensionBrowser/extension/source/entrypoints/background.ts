@@ -219,8 +219,10 @@ export default defineBackground(() => {
 			let servers = state.servers;
 			let active = servers.find((server) => server.ServerId === state.activeServerId) || null;
 			const status = active ? await inspectServer(active.Origin, active.Connection) : { State: 'Unavailable' as ServerState, Version: '' };
-			if (active?.Connection && status.State === 'Ready') {
-				const recovered = await listDurableConversations(active.Connection);
+			if (active?.Connection) {
+				let recovered: DurableConversation[] = [];
+				try { recovered = await listDurableConversations(active.Connection); }
+				catch (error) { console.warn('Failed to list recovered Buffaly conversations:', error); }
 				if (recovered.length > 0) {
 					const conversationsBySessionKey = { ...(active.ConversationsBySessionKey ?? {}) };
 					recovered.forEach((conversation) => { conversationsBySessionKey[conversation.SessionKey] = conversationsBySessionKey[conversation.SessionKey] || conversation; });
