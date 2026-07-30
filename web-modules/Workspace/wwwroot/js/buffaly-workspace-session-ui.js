@@ -122,6 +122,12 @@
 			}
 		});
 		heading.appendChild(openFiles);
+		const openWorkspace = createElement("button", "bws-open-workspace", "Open workspace");
+		openWorkspace.type = "button";
+		openWorkspace.addEventListener("click", function () {
+			window.BuffalyWorkspaceWorkbench.open(context.sessionKey, summary);
+		});
+		heading.appendChild(openWorkspace);
 		drawer.appendChild(heading);
 
 		if (summary.profile) {
@@ -222,6 +228,9 @@
 			if (!summary.isAttached || abort.signal.aborted) {
 				context.slotElement.replaceChildren();
 				return;
+			}
+			if (new URL(window.location.href).searchParams.get("workspaceView") === "workbench") {
+				window.BuffalyWorkspaceWorkbench.open(context.sessionKey, summary);
 			}
 			mountWorkspace(context, summary, abort.signal);
 		}).catch(function (error) {
