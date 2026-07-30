@@ -10,6 +10,7 @@ const background = fs.readFileSync(path.join(root, '.output/chrome-mv3/backgroun
 const sidepanel = fs.readFileSync(path.join(root, '.output/chrome-mv3/chunks', fs.readdirSync(path.join(root, '.output/chrome-mv3/chunks')).find((file) => file.startsWith('sidepanel-'))), 'utf8');
 const backgroundSource = fs.readFileSync(path.join(root, 'entrypoints/background.ts'), 'utf8');
 const sidepanelSource = fs.readFileSync(path.join(root, 'entrypoints/sidepanel/App.tsx'), 'utf8');
+const toolRouterSource = fs.readFileSync(path.join(root, 'lib/tool-router.ts'), 'utf8');
 const failures = [];
 const check = (condition, message) => { if (!condition) failures.push(message); };
 
@@ -34,6 +35,8 @@ check(sidepanelSource.includes("void refreshServers().catch"), 'Save server comp
 check(backgroundSource.includes("data: { Server:") && sidepanelSource.includes("setServersStatus((current) =>"), 'Save server must update the selector immediately from its persisted summary');
 check(backgroundSource.includes("request.type === 'remove_buffaly_server'") && sidepanelSource.includes('Manage selected server') && sidepanelSource.includes('Server settings') && sidepanelSource.includes('Save changes'), 'saved-server management UI and worker contract are missing');
 check(backgroundSource.includes('const sameOrigin = existing?.Origin === origin') && backgroundSource.includes('Connection: sameOrigin ?'), 'changing a saved server origin must not transfer its credential or conversation authority');
+check(toolRouterSource.includes('chrome.windows.update(tab.windowId, { focused: true })'), 'switch_tab must focus the selected tab window before follow-up bound tools run');
+check(!toolRouterSource.includes('content script failed and debugger not attached'), 'ordinary page-text failures must not instruct the user to attach debugger');
 const savedServerReply = backgroundSource.indexOf("sendResponse({ ok: true, data: { Server:");
 const backgroundChannelRestart = backgroundSource.indexOf('void startInstallationChannel().catch', savedServerReply);
 check(savedServerReply >= 0 && backgroundChannelRestart > savedServerReply, 'Save server must acknowledge persisted state before restarting an authorized channel');

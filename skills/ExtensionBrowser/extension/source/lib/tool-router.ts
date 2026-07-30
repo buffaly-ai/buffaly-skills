@@ -125,13 +125,14 @@ async function handleGetPageText(args: GetPageTextArgs): Promise<ToolResult> {
       return (document.body?.innerText || '').slice(0, ml);
     }, maxLength);
     return { ok: true, data: { text, tabId } };
-  } catch {
+  } catch (reason) {
     // Fallback to debugger if content script fails
     if (isAttached(tabId)) {
       const text = await getPageTextViaDebugger(tabId, maxLength);
       return { ok: true, data: { text, tabId } };
     }
-    throw new Error('Cannot read page text: content script failed and debugger not attached');
+    const detail = reason instanceof Error ? reason.message : String(reason);
+    throw new Error(`Cannot read page text through Chrome scripting for tab ${tabId}: ${detail}`);
   }
 }
 
@@ -440,6 +441,11 @@ async function handleCloseTab(args: CloseTabArgs): Promise<ToolResult> {
 async function handleSwitchTab(args: SwitchTabArgs): Promise<ToolResult> {
   await chrome.tabs.update(args.tabId, { active: true });
   const tab = await chrome.tabs.get(args.tabId);
+  // `active: true` selects a tab inside its own window but does not focus that
+  // window. Bound follow-up tools resolve the current Chrome window, so focus
+  // the selected tab's window before returning to preserve deterministic
+  // switch -> read/click behavior when the side-panel UI is popped out.
+  await chrome.windows.update(tab.windowId, { focused: true });
   return { ok: true, data: { ok: true, tabId: args.tabId, url: tab.url ?? '', title: tab.title ?? '' } };
 }
 
