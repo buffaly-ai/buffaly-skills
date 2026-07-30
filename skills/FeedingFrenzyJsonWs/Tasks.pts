@@ -76,7 +76,7 @@ prototype TaskStatuses_GetTaskStatusByTaskStatusName : FeedingFrenzyJsonWsSkillA
 prototype Tasks_InsertTask : FeedingFrenzyJsonWsGuardedWriteAction
 {
 	Description = @"Creates a task through generated Tasks.InsertTask. DueDate is an ISO-like string; pass an empty string for no due date. Data must contain only approved task metadata.";
-	function Execute(FeedingFrenzyJsonWsService service, string TaskDescription, int TaskStatusID, int AssignToUserID, int CreatedByUserID, string Data, string DueDate, string Notes) : string
+	function Execute(FeedingFrenzyJsonWsService service, string TaskDescription, int TaskStatusID, int? AssignToUserID, int CreatedByUserID, string Data, string DueDate, string Notes) : string
 	{
 		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
@@ -95,7 +95,7 @@ prototype Tasks_InsertTask : FeedingFrenzyJsonWsGuardedWriteAction
 prototype Tasks_UpdateTask : FeedingFrenzyJsonWsGuardedWriteAction
 {
 	Description = @"Updates a task through generated Tasks.UpdateTask. DueDate is an ISO-like string; pass an empty string for no due date.";
-	function Execute(FeedingFrenzyJsonWsService service, int TaskID, string TaskDescription, int TaskStatusID, int AssignToUserID, int CreatedByUserID, string Data, string DueDate, string Notes) : string
+	function Execute(FeedingFrenzyJsonWsService service, int TaskID, string TaskDescription, int TaskStatusID, int? AssignToUserID, int CreatedByUserID, string Data, string DueDate, string Notes) : string
 	{
 		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
