@@ -1,8 +1,8 @@
 import { handleToolCall, grantDebuggerConsent, revokeDebuggerConsent } from '../lib/tool-router';
 import { detachDebugger, isAttached } from '../lib/debugger-session';
 import { getLogEntries, getLogVersion } from '../lib/tool-log';
-import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, PROMPT_POLICY_REVISION, authorizeInstallation, createConversation, issueNavigationToken, loadBoundToolResult, loadConnection, type ConversationBinding } from '../lib/buffaly-connection';
-import { activateServer, canonicalServerOrigin, conversationForContext, getActiveServer, loadServers, removeServer, saveServer, summarizeServers, updateActiveServer, updateActiveServerConversation, type SavedBuffalyServer, type ServerState } from '../lib/buffaly-servers';
+import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, PROMPT_POLICY_REVISION, authorizeInstallation, createConversation, issueNavigationToken, loadBoundToolResult, loadConnection, resumeConversation, type ConversationBinding } from '../lib/buffaly-connection';
+import { activateConversation, activateServer, canonicalServerOrigin, conversationForContext, getActiveServer, loadServers, removeServer, saveServer, summarizeServers, updateActiveServer, updateActiveServerConversation, type SavedBuffalyServer, type ServerState } from '../lib/buffaly-servers';
 import type { BoundToolInvocationIdentity } from '../lib/types';
 
 let installationChannel: InstallationChannel | null = null;
@@ -226,10 +226,32 @@ export default defineBackground(() => {
             await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: binding });
             await updateActiveServerConversation(browserContextId, binding);
           }
-          const navigation = await issueNavigationToken(connection, binding.SessionBindingId);
-          return { Origin: connection.Origin, ...binding, NavigationToken: navigation.NavigationToken };
+          const bootstrap = await resumeConversation(connection, binding, browserContextId);
+          const resumed: ConversationBinding = { ConversationSlotId: bootstrap.ConversationSlotId, SessionBindingId: bootstrap.SessionBindingId, InstallationRegistrationId: bootstrap.InstallationRegistrationId, BrowserContextId: bootstrap.BrowserContextId, DisplayName: bootstrap.DisplayName, PromptPolicyRevision: bootstrap.PromptPolicyRevision };
+          await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: resumed });
+          await updateActiveServerConversation(browserContextId, resumed);
+          return bootstrap;
         })
         .then((bootstrap) => sendResponse({ ok: true, data: bootstrap }))
+        .catch((err: Error) => sendResponse({ ok: false, error: err.message }));
+      return true;
+    }
+
+    if (request.type === 'select_buffaly_conversation') {
+      if (!isTrustedExtensionPage(sender)) {
+        sendResponse({ ok: false, error: 'Unauthorized: conversations can only be selected from an extension page' });
+        return false;
+      }
+      Promise.all([loadConnection(), activateConversation(String(request.sessionBindingId || ''), String(request.browserContextId || ''))])
+        .then(async ([connection, binding]) => {
+          if (!connection) throw new Error('Buffaly installation is not authorized.');
+          if (binding.InstallationRegistrationId !== connection.InstallationRegistrationId) throw new Error('The selected conversation belongs to a different Chrome installation registration.');
+          const bootstrap = await resumeConversation(connection, binding, String(request.browserContextId || ''));
+          const resumed: ConversationBinding = { ConversationSlotId: bootstrap.ConversationSlotId, SessionBindingId: bootstrap.SessionBindingId, InstallationRegistrationId: bootstrap.InstallationRegistrationId, BrowserContextId: bootstrap.BrowserContextId, DisplayName: bootstrap.DisplayName, PromptPolicyRevision: bootstrap.PromptPolicyRevision };
+          await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: resumed });
+          await updateActiveServerConversation(resumed.BrowserContextId, resumed);
+          sendResponse({ ok: true, data: bootstrap });
+        })
         .catch((err: Error) => sendResponse({ ok: false, error: err.message }));
       return true;
     }

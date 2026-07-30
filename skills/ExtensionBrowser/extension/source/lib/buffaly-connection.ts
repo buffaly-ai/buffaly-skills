@@ -159,6 +159,15 @@ export async function createConversation(connection: ExtensionConnection, mode: 
   return { Origin: connection.Origin, ConversationSlotId: slotId, SessionBindingId: binding.SessionBindingId, InstallationRegistrationId: connection.InstallationRegistrationId, BrowserContextId: browserContextId, DisplayName: displayName, PromptPolicyRevision: binding.PromptPolicyRevision, NavigationToken: navigation.NavigationToken };
 }
 
+export async function resumeConversation(connection: ExtensionConnection, binding: ConversationBinding, browserContextId: string): Promise<ConversationBootstrap> {
+  const resumed = await readJson<{ SessionBindingId: string; SessionKey: string; PromptPolicyRevision: number }>(await fetch(new URL('/web-modules/ExtensionBrowser/api/session-bindings/resume', connection.Origin), {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential, SessionBindingId: binding.SessionBindingId, BrowserContextId: browserContextId }),
+  }));
+  const navigation = await issueNavigationToken(connection, resumed.SessionBindingId);
+  return { Origin: connection.Origin, ConversationSlotId: binding.ConversationSlotId, SessionBindingId: resumed.SessionBindingId, InstallationRegistrationId: connection.InstallationRegistrationId, BrowserContextId: browserContextId, DisplayName: binding.DisplayName, PromptPolicyRevision: resumed.PromptPolicyRevision, NavigationToken: navigation.NavigationToken };
+}
+
 export async function issueNavigationToken(connection: ExtensionConnection, sessionBindingId: string): Promise<{ NavigationToken: string }> {
   return readJson<{ NavigationToken: string }>(await fetch(new URL('/web-modules/ExtensionBrowser/api/navigation-tokens', connection.Origin), {
     method: 'POST', headers: { 'Content-Type': 'application/json' },

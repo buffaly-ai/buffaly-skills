@@ -14,6 +14,7 @@ export interface SavedBuffalyServer {
   Connection: ExtensionConnection | null;
   ActiveConversation: ConversationBinding | null;
   ConversationsByBrowserContext?: Record<string, ConversationBinding>;
+  ConversationsByBindingId?: Record<string, ConversationBinding>;
   LastConnectedUtc: string;
 }
 
@@ -21,10 +22,29 @@ export function conversationForContext(server: SavedBuffalyServer, browserContex
   return server.ConversationsByBrowserContext?.[browserContextId] || (server.ActiveConversation?.BrowserContextId === browserContextId ? server.ActiveConversation : null);
 }
 
+export function conversationsForServer(server: SavedBuffalyServer): ConversationBinding[] {
+  const byId = new Map<string, ConversationBinding>();
+  const add = (binding: ConversationBinding | null | undefined) => { if (binding?.SessionBindingId) byId.set(binding.SessionBindingId, binding); };
+  add(server.ActiveConversation);
+  Object.values(server.ConversationsByBrowserContext || {}).forEach(add);
+  Object.values(server.ConversationsByBindingId || {}).forEach(add);
+  return Array.from(byId.values()).sort((left, right) => (left.DisplayName || '').localeCompare(right.DisplayName || '') || left.SessionBindingId.localeCompare(right.SessionBindingId));
+}
+
 export async function updateActiveServerConversation(browserContextId: string, binding: ConversationBinding): Promise<SavedBuffalyServer> {
   const server = await getActiveServer();
   if (!server) throw new Error('Select a Buffaly server first.');
-  return updateActiveServer({ ActiveConversation: binding, ConversationsByBrowserContext: { ...(server.ConversationsByBrowserContext || {}), [browserContextId]: binding } });
+  return updateActiveServer({ ActiveConversation: binding, ConversationsByBrowserContext: { ...(server.ConversationsByBrowserContext || {}), [browserContextId]: binding }, ConversationsByBindingId: { ...(server.ConversationsByBindingId || {}), [binding.SessionBindingId]: binding } });
+}
+
+export async function activateConversation(sessionBindingId: string, browserContextId: string): Promise<ConversationBinding> {
+  const server = await getActiveServer();
+  if (!server) throw new Error('Select a Buffaly server first.');
+  const binding = server.ConversationsByBindingId?.[sessionBindingId] || (server.ActiveConversation?.SessionBindingId === sessionBindingId ? server.ActiveConversation : null) || Object.values(server.ConversationsByBrowserContext || {}).find((candidate) => candidate.SessionBindingId === sessionBindingId) || null;
+  if (!binding) throw new Error('The selected Buffaly conversation was not found in this Chrome installation.');
+  const contextualBinding = { ...binding, BrowserContextId: binding.BrowserContextId || browserContextId };
+  await updateActiveServerConversation(browserContextId, contextualBinding);
+  return contextualBinding;
 }
 
 export interface SavedBuffalyServerSummary {
@@ -34,6 +54,8 @@ export interface SavedBuffalyServerSummary {
   Authorized: boolean;
   Active: boolean;
   LastConnectedUtc: string;
+  ActiveConversationSessionBindingId: string;
+  Conversations: ConversationBinding[];
 }
 
 export function canonicalServerOrigin(value: string): string {
@@ -109,5 +131,5 @@ export async function updateActiveServer(update: Partial<SavedBuffalyServer>): P
 }
 
 export function summarizeServers(servers: SavedBuffalyServer[], activeServerId: string): SavedBuffalyServerSummary[] {
-  return servers.map(({ ServerId, Name, Origin, Connection, LastConnectedUtc }) => ({ ServerId, Name, Origin, Authorized: Boolean(Connection), Active: ServerId === activeServerId, LastConnectedUtc }));
+  return servers.map((server) => ({ ServerId: server.ServerId, Name: server.Name, Origin: server.Origin, Authorized: Boolean(server.Connection), Active: server.ServerId === activeServerId, LastConnectedUtc: server.LastConnectedUtc, ActiveConversationSessionBindingId: server.ActiveConversation?.SessionBindingId || '', Conversations: conversationsForServer(server) }));
 }
