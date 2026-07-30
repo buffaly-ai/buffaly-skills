@@ -1,7 +1,7 @@
 import { handleToolCall, grantDebuggerConsent, revokeDebuggerConsent } from '../lib/tool-router';
 import { detachDebugger, isAttached } from '../lib/debugger-session';
 import { getLogEntries, getLogVersion } from '../lib/tool-log';
-import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, PROMPT_POLICY_REVISION, authorizeInstallation, createConversation, issueNavigationToken, loadBoundToolResult, loadConnection, resumeConversation, type ConversationBinding } from '../lib/buffaly-connection';
+import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, authorizeInstallation, conversationFromBootstrap, createDurableConversation, isLegacyConversation, issueConversationNavigationToken, listBrowserInstances, loadBoundToolResult, loadConnection, migrateLegacyConversation, openDurableConversation, type ConversationBinding, type DurableConversation } from '../lib/buffaly-connection';
 import { activateConversation, activateServer, canonicalServerOrigin, conversationForContext, getActiveServer, loadServers, removeServer, saveServer, summarizeServers, updateActiveServer, updateActiveServerConversation, type SavedBuffalyServer, type ServerState } from '../lib/buffaly-servers';
 import type { BoundToolInvocationIdentity } from '../lib/types';
 
@@ -9,6 +9,24 @@ let installationChannel: InstallationChannel | null = null;
 interface PanelRegistration { port: chrome.runtime.Port; panelInstanceId: string; browserContextId: string; windowId: number }
 const boundToolPanels = new Map<string, PanelRegistration>();
 const pendingBoundTools = new Map<string, { browserContextId: string; resolve: (result: Awaited<ReturnType<typeof handleToolCall>>) => void; reject: (error: Error) => void }>();
+
+
+
+async function prepareConversationForOpen(connection: Awaited<ReturnType<typeof loadConnection>> & {}, binding: ConversationBinding, browserContextId: string): Promise<DurableConversation> {
+  if (binding.InstallationRegistrationId !== connection.InstallationRegistrationId) {
+    throw new Error('The selected conversation belongs to a different Chrome installation registration; refusing to create a replacement automatically.');
+  }
+  if (isLegacyConversation(binding)) return migrateLegacyConversation(connection, binding, browserContextId);
+  if (!binding.SessionKey) throw new Error('The selected conversation does not include a durable session key.');
+  return { Kind: 'durable', SessionKey: binding.SessionKey, InstallationRegistrationId: binding.InstallationRegistrationId, BrowserContextId: browserContextId, DisplayName: binding.DisplayName, PromptPolicyRevision: binding.PromptPolicyRevision };
+}
+
+async function openPreparedConversation(connection: Awaited<ReturnType<typeof loadConnection>> & {}, binding: ConversationBinding, browserContextId: string) {
+  const prepared = await prepareConversationForOpen(connection, binding, browserContextId);
+  await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: prepared });
+  await updateActiveServerConversation(browserContextId, prepared);
+  return openDurableConversation(connection, prepared.SessionKey, browserContextId, prepared.DisplayName);
+}
 
 function publishBrowserContexts(): void {
   const observedUtc = new Date().toISOString();
@@ -169,6 +187,15 @@ export default defineBackground(() => {
       return true;
     }
 
+
+    if (request.type === 'list_extension_browser_instances') {
+      if (!isTrustedExtensionPage(sender)) { sendResponse({ ok: false, error: 'Unauthorized: instances can only be read from an extension page' }); return false; }
+      loadConnection().then((connection) => {
+        if (!connection) throw new Error('Buffaly installation is not authorized.');
+        return listBrowserInstances(connection);
+      }).then((instances) => sendResponse({ ok: true, data: instances })).catch((err: Error) => sendResponse({ ok: false, error: err.message }));
+      return true;
+    }
 	  if (request.type === 'get_buffaly_servers') {
 		if (!isTrustedExtensionPage(sender)) { sendResponse({ ok: false, error: 'Unauthorized: servers can only be read from an extension page' }); return false; }
 		loadServers().then(async (state) => {
@@ -220,16 +247,10 @@ export default defineBackground(() => {
           const browserContextId = String(request.browserContextId || '');
           let binding = server ? conversationForContext(server, browserContextId) || undefined : undefined;
           if (!connection || !binding) return null;
-          if (binding.InstallationRegistrationId !== connection.InstallationRegistrationId || (binding.PromptPolicyRevision || 0) < PROMPT_POLICY_REVISION) {
-            const replacement = await createConversation(connection, 'CreateNew', crypto.randomUUID(), browserContextId, binding.DisplayName || 'Chrome conversation');
-            binding = { ConversationSlotId: replacement.ConversationSlotId, SessionBindingId: replacement.SessionBindingId, InstallationRegistrationId: connection.InstallationRegistrationId, BrowserContextId: browserContextId, DisplayName: replacement.DisplayName, PromptPolicyRevision: replacement.PromptPolicyRevision };
-            await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: binding });
-            await updateActiveServerConversation(browserContextId, binding);
-          }
-          const bootstrap = await resumeConversation(connection, binding, browserContextId);
-          const resumed: ConversationBinding = { ConversationSlotId: bootstrap.ConversationSlotId, SessionBindingId: bootstrap.SessionBindingId, InstallationRegistrationId: bootstrap.InstallationRegistrationId, BrowserContextId: bootstrap.BrowserContextId, DisplayName: bootstrap.DisplayName, PromptPolicyRevision: bootstrap.PromptPolicyRevision };
-          await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: resumed });
-          await updateActiveServerConversation(browserContextId, resumed);
+          const bootstrap = await openPreparedConversation(connection, binding, browserContextId);
+          const opened = conversationFromBootstrap(bootstrap);
+          await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: opened });
+          await updateActiveServerConversation(browserContextId, opened);
           return bootstrap;
         })
         .then((bootstrap) => sendResponse({ ok: true, data: bootstrap }))
@@ -242,14 +263,14 @@ export default defineBackground(() => {
         sendResponse({ ok: false, error: 'Unauthorized: conversations can only be selected from an extension page' });
         return false;
       }
-      Promise.all([loadConnection(), activateConversation(String(request.sessionBindingId || ''), String(request.browserContextId || ''))])
+      Promise.all([loadConnection(), activateConversation(String(request.conversationSelectionId || request.sessionKey || request.sessionBindingId || ''), String(request.browserContextId || ''))])
         .then(async ([connection, binding]) => {
           if (!connection) throw new Error('Buffaly installation is not authorized.');
-          if (binding.InstallationRegistrationId !== connection.InstallationRegistrationId) throw new Error('The selected conversation belongs to a different Chrome installation registration.');
-          const bootstrap = await resumeConversation(connection, binding, String(request.browserContextId || ''));
-          const resumed: ConversationBinding = { ConversationSlotId: bootstrap.ConversationSlotId, SessionBindingId: bootstrap.SessionBindingId, InstallationRegistrationId: bootstrap.InstallationRegistrationId, BrowserContextId: bootstrap.BrowserContextId, DisplayName: bootstrap.DisplayName, PromptPolicyRevision: bootstrap.PromptPolicyRevision };
-          await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: resumed });
-          await updateActiveServerConversation(resumed.BrowserContextId, resumed);
+          const browserContextId = String(request.browserContextId || '');
+          const bootstrap = await openPreparedConversation(connection, binding, browserContextId);
+          const opened = conversationFromBootstrap(bootstrap);
+          await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: opened });
+          await updateActiveServerConversation(opened.BrowserContextId, opened);
           sendResponse({ ok: true, data: bootstrap });
         })
         .catch((err: Error) => sendResponse({ ok: false, error: err.message }));
@@ -265,7 +286,11 @@ export default defineBackground(() => {
         .then(async ([connection, server]) => {
           const binding = server ? conversationForContext(server, String(request.browserContextId || '')) || undefined : undefined;
           if (!connection || !binding) throw new Error('No active Buffaly conversation is available.');
-          const navigation = await issueNavigationToken(connection, binding.SessionBindingId);
+          const browserContextId = String(request.browserContextId || '');
+          const prepared = isLegacyConversation(binding) ? await prepareConversationForOpen(connection, binding, browserContextId) : binding;
+          if (prepared !== binding) await updateActiveServerConversation(browserContextId, prepared);
+          if (!prepared.SessionKey) throw new Error('The active Buffaly conversation does not include a session key.');
+          const navigation = await issueConversationNavigationToken(connection, prepared.SessionKey);
           const url = new URL('/web-modules/ExtensionBrowser/conversation', connection.Origin);
           url.searchParams.set('presentation', 'standard');
           url.searchParams.set('navigationToken', navigation.NavigationToken);
@@ -285,12 +310,12 @@ export default defineBackground(() => {
       loadConnection()
         .then((connection) => {
           if (!connection) throw new Error('Buffaly installation is not authorized.');
-          return createConversation(connection, 'CreateNew', crypto.randomUUID(), String(request.browserContextId || ''), request.displayName || 'Chrome conversation');
+          return createDurableConversation(connection, String(request.browserContextId || ''), request.displayName || 'Chrome conversation');
         })
 		  .then(async (bootstrap) => {
 			const connection = await loadConnection();
 			if (!connection) throw new Error('Buffaly installation is not authorized.');
-			const binding: ConversationBinding = { ConversationSlotId: bootstrap.ConversationSlotId, SessionBindingId: bootstrap.SessionBindingId, InstallationRegistrationId: connection.InstallationRegistrationId, BrowserContextId: bootstrap.BrowserContextId, DisplayName: bootstrap.DisplayName, PromptPolicyRevision: bootstrap.PromptPolicyRevision };
+			const binding = conversationFromBootstrap(bootstrap);
 			await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: binding });
 			await updateActiveServerConversation(binding.BrowserContextId, binding);
 			sendResponse({ ok: true, data: bootstrap });

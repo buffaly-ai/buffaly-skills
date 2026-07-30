@@ -7,6 +7,7 @@ export type ToolResult =
 // Credential-free correlation shared by the side panel and service worker.
 export interface BoundToolInvocationIdentity {
   SessionBindingId: string;
+  RoutingKey?: string;
   BrowserContextId: string;
   InvocationId: string;
 }
@@ -245,4 +246,26 @@ export interface ConsoleEvent {
 export interface ConsoleEventsResult {
   events: ConsoleEvent[];
   count: number;
+}
+
+export interface ExtensionBrowserBrowserContext {
+  BrowserContextId: string;
+  WindowId: number;
+  PanelInstanceId: string;
+  State: string;
+  ObservedUtc: string;
+}
+
+export interface ExtensionBrowserInstanceRecord {
+  InstanceId: string;
+  Connected: boolean;
+  State: string;
+  Contexts: ExtensionBrowserBrowserContext[];
+}
+
+export interface SessionBrowserInstanceDefaultRequest {
+  SessionKey: string;
+  InstanceId: string;
+  BrowserContextId: string;
+  Page: { Url: string; Title: string; TabId?: number; CapturedUtc: string };
 }

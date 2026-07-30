@@ -10,6 +10,7 @@ const background = fs.readFileSync(path.join(root, '.output/chrome-mv3/backgroun
 const sidepanel = fs.readFileSync(path.join(root, '.output/chrome-mv3/chunks', fs.readdirSync(path.join(root, '.output/chrome-mv3/chunks')).find((file) => file.startsWith('sidepanel-'))), 'utf8');
 const backgroundSource = fs.readFileSync(path.join(root, 'entrypoints/background.ts'), 'utf8');
 const sidepanelSource = fs.readFileSync(path.join(root, 'entrypoints/sidepanel/App.tsx'), 'utf8');
+const serverSource = fs.readFileSync(path.join(root, 'lib/buffaly-servers.ts'), 'utf8');
 const toolRouterSource = fs.readFileSync(path.join(root, 'lib/tool-router.ts'), 'utf8');
 const failures = [];
 const check = (condition, message) => { if (!condition) failures.push(message); };
@@ -57,10 +58,26 @@ check(sidepanelSource.includes('open_buffaly_conversation_tab'), 'bound conversa
 check(backgroundSource.includes('open_buffaly_conversation_tab') && backgroundSource.includes("chrome.tabs.create({ url: url.toString(), active: true })"), 'service-worker-owned bound conversation pop-out is missing');
 check(backgroundSource.includes("url.searchParams.set('presentation', 'standard')"), 'full-tab pop-out must explicitly request the standard conversation presentation');
 check(backgroundSource.includes("url.searchParams.set('navigationToken', navigation.NavigationToken)") && !backgroundSource.includes("url.searchParams.set('sessionKey'"), 'pop-out must use a fresh one-time navigation token instead of a session key');
-check(!sidepanel.includes('sessionKey') && !sidepanel.includes('SessionKey'), 'side panel must not navigate with a durable session key');
+const sidepanelStyleSource = fs.readFileSync(path.join(root, 'entrypoints/sidepanel/style.css'), 'utf8');
+check(sidepanelSource.includes('list_extension_browser_instances') && sidepanelStyleSource.includes('browser-instance-status'), 'side panel must show ExtensionBrowser instance routing status');
 check(background.includes('extension_handshake'), 'installation WebSocket channel handshake is missing');
 check(background.includes('channel_heartbeat'), 'installation WebSocket channel heartbeat is missing');
 check(background.includes('tool_completion'), 'bound tool completion contract is missing');
+check(backgroundSource.includes("list_extension_browser_instances"), 'instance-routing worker instance list message is missing');
+check(!backgroundSource.includes("set_session_browser_instance_default") && !backgroundSource.includes("setSessionBrowserInstanceDefault"), 'extension client must not expose direct session default mutation; durable open attaches the default');
+check(!backgroundSource.includes("SessionBindingId: bootstrap") && !backgroundSource.includes("ConversationSlotId: bootstrap"), 'durable conversation records must not synthesize legacy binding identifiers');
+check(fs.readFileSync(path.join(root, 'lib/buffaly-connection.ts'), 'utf8').includes("/web-modules/ExtensionBrowser/api/conversations/navigation-token"), 'durable navigation token requests must use the conversation SessionKey API');
+check(fs.readFileSync(path.join(root, 'lib/buffaly-connection.ts'), 'utf8').includes('issueLegacyNavigationToken') && backgroundSource.includes("if (!prepared.SessionKey) throw new Error('The active Buffaly conversation does not include a session key.')") && backgroundSource.includes('issueConversationNavigationToken(connection, prepared.SessionKey)'), 'pop-out must migrate legacy records and then use the durable SessionKey navigation-token endpoint');
+check(fs.readFileSync(path.join(root, 'lib/buffaly-servers.ts'), 'utf8').includes('if (isLegacyConversation(binding)) conversationsByBindingId'), 'durable conversations must not enter the legacy binding-id map');
+check(backgroundSource.includes('migrateLegacyConversation(connection, binding, browserContextId)') && backgroundSource.includes('refusing to create a replacement automatically'), 'background restore/select must migrate legacy pointers and reject silent replacement creates');
+check(!backgroundSource.includes('conversationIdentity') && !serverSource.includes('conversationIdentity'), 'extension client must not use a combined binding/session identity helper for durable opens or maps');
+check(backgroundSource.includes('conversationSelectionId || request.sessionKey || request.sessionBindingId'), 'selection must accept explicit selection id, session key, and legacy binding id during compatibility');
+check(serverSource.includes('if (sessionKey) conversationsBySessionKey[sessionKey] = binding'), 'session-key map must only be populated with an actual SessionKey');
+check(serverSource.includes('return { ...binding, BrowserContextId: binding.BrowserContextId || browserContextId };'), 'selection lookup must not persist legacy records before migration/open');
+check(backgroundSource.includes("createDurableConversation") && backgroundSource.includes("openDurableConversation") && backgroundSource.includes("SessionKey"), 'durable session-key conversation API paths are missing');
+const connectionSource = fs.readFileSync(path.join(root, 'lib/buffaly-connection.ts'), 'utf8');
+check(connectionSource.includes('interface LegacyConversationBinding') && !connectionSource.includes('SessionKey?: string') && !connectionSource.includes('SessionKey: binding.SessionKey'), 'legacy saved conversation records must not carry durable SessionKey values');
+check(fs.readFileSync(path.join(root, 'lib/buffaly-connection.ts'), 'utf8').includes('RoutingKey'), 'instance routing key frame support is missing');
 for (const size of [16, 48, 128]) {
   const file = path.join(root, `.output/chrome-mv3/icon/${size}.png`);
   check(fs.existsSync(file) && fs.statSync(file).size > 80, `icon/${size}.png is missing or still a placeholder`);

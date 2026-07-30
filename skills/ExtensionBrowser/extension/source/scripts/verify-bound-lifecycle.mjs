@@ -36,12 +36,19 @@ for (const messageType of ['tool_call', 'buffaly_connection_changed', 'grant_deb
 }
 assert.match(background, /createConversation\(connection, 'CreateNew', crypto\.randomUUID\(\)/, 'service worker must create each new conversation slot');
 assert.match(connection, /PROMPT_POLICY_REVISION/, 'extension must version its bound-conversation prompt policy');
-assert.match(background, /binding\.PromptPolicyRevision[\s\S]{0,180}< PROMPT_POLICY_REVISION[\s\S]{0,260}createConversation\(connection, 'CreateNew'/, 'service worker must replace a stored conversation created under an obsolete prompt policy');
+assert.match(background, /binding\.PromptPolicyRevision[\s\S]{0,180}< PROMPT_POLICY_REVISION[\s\S]{0,260}refusing to create a replacement automatically/, 'service worker must reject obsolete prompt-policy pointers instead of silently replacing them');
+assert.doesNotMatch(background, /binding\.PromptPolicyRevision[\s\S]{0,260}createConversation\(connection, 'CreateNew'/, 'service worker must not create a replacement for obsolete prompt-policy pointers');
 assert.match(connection, /interface ConversationBinding[\s\S]{0,220}InstallationRegistrationId: string;[\s\S]{0,100}BrowserContextId: string/, 'stored conversation pointers must identify their owning installation and browser context');
-assert.match(background, /binding\.InstallationRegistrationId !== connection\.InstallationRegistrationId[\s\S]{0,360}createConversation\(connection, 'CreateNew'/, 'service worker must replace a conversation owned by another installation registration');
+assert.match(background, /binding\.InstallationRegistrationId !== connection\.InstallationRegistrationId[\s\S]{0,260}refusing to create a replacement automatically/, 'service worker must reject other-owner pointers instead of silently replacing them');
+assert.doesNotMatch(background, /binding\.InstallationRegistrationId !== connection\.InstallationRegistrationId[\s\S]{0,360}createConversation\(connection, 'CreateNew'/, 'service worker must not create a replacement for other-owner pointers');
 assert.match(background, /InstallationRegistrationId: connection\.InstallationRegistrationId/, 'new active conversation pointers must retain their non-secret installation owner');
 assert.match(background, /ACTIVE_CONVERSATION_STORAGE_KEY/, 'service worker must own the opaque active binding pointer');
-assert.match(background, /issueNavigationToken\(connection, binding\.SessionBindingId\)/, 'service worker must mint a fresh token when restoring a conversation');
+assert.match(connection, /migrateLegacyConversation[\s\S]{0,260}api\/migrations\/session-binding/, 'legacy selections must call the authenticated migration endpoint before durable open');
+assert.match(background, /isLegacyConversation\(binding\)\) return migrateLegacyConversation\(connection, binding, browserContextId\)/, 'legacy entries must migrate to an actual SessionKey before opening');
+assert.doesNotMatch(background, /conversationIdentity/, 'service worker must not use a combined binding/session identity helper');
+assert.doesNotMatch(fs.readFileSync(new URL('../lib/buffaly-servers.ts', import.meta.url), 'utf8'), /conversationIdentity/, 'server storage must distinguish durable SessionKey from legacy selection id');
+assert.match(background, /prepared\.SessionKey \? await issueConversationNavigationToken\(connection, prepared\.SessionKey\)/, 'pop-out must mint durable conversation tokens with SessionKey whenever present');
+assert.match(background, /isLegacyConversation\(prepared\) \? await issueLegacyNavigationToken\(connection, prepared\.SessionBindingId\)/, 'pop-out may use legacy tokens only when no SessionKey exists after migration/open preparation');
 assert.match(panel, /web-modules\/ExtensionBrowser\/conversation/, 'iframe must use the package-owned token bootstrap route');
 assert.match(panel, /NavigationToken/, 'iframe navigation must carry the one-time token');
 assert.doesNotMatch(panel, /buffaly-connection/, 'panel must not import the credential-bearing connection module');
