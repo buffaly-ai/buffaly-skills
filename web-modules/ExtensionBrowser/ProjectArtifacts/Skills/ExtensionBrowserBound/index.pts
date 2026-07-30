@@ -1,5 +1,18 @@
 reference ExtensionBrowser.WebModule ExtensionBrowser.WebModule;
 import ExtensionBrowser.WebModule ExtensionBrowser.WebModule.ExtensionBrowserModuleService ExtensionBrowserModuleService;
+import ExtensionBrowser.WebModule ExtensionBrowser.WebModule.ExtensionBrowserServiceFacade ExtensionBrowserServiceFacade;
+
+prototype ExtensionBrowserInstallationService : Service
+{
+	String InstallationRegistrationId = new String();
+	String EntityName = new String();
+	ServiceName = "ExtensionBrowserInstallationService";
+	Scope = "per-binding";
+	AutoInitialize = false;
+	Description = @"One authorized Buffaly Browser Agent installation in one Chrome profile.";
+	function ToGetStatus() : string { return ExtensionBrowserServiceFacade.GetStatus(this.InstallationRegistrationId); }
+	function ToListBrowserContexts() : string { return ExtensionBrowserServiceFacade.ListBrowserContexts(this.InstallationRegistrationId); }
+}
 
 prototype ExtensionBrowserBoundSkillAction : OpsAction { Description = @"Bound regular-Chrome actions routed by the current session binding."; }
 [SemanticEntity("bound extension browser skill")]
