@@ -3,7 +3,6 @@ import { boundToolResultStorageKey, type BoundToolInvocationIdentity, type Exten
 export const CONNECTION_STORAGE_KEY = 'BuffalyExtensionConnection';
 export const CONVERSATIONS_STORAGE_KEY = 'BuffalyExtensionConversations';
 export const TOOL_SCHEMA_VERSION = 1;
-export const PROMPT_POLICY_REVISION = 1;
 
 export interface ExtensionConnection {
   Origin: string;
@@ -197,6 +196,14 @@ export async function loadConnection(): Promise<ExtensionConnection | null> {
 
 export async function listBrowserInstances(connection: ExtensionConnection): Promise<ExtensionBrowserInstanceRecord[]> {
   return readJson<ExtensionBrowserInstanceRecord[]>(await fetch(new URL('/web-modules/ExtensionBrowser/api/instances', connection.Origin), { cache: 'no-store' }));
+}
+
+export async function listDurableConversations(connection: ExtensionConnection): Promise<DurableConversation[]> {
+  const conversations = await readJson<LegacyConversationMigrationResult[]>(await fetch(new URL('/web-modules/ExtensionBrowser/api/conversations/list', connection.Origin), {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential }),
+  }));
+  return conversations.map((item) => ({ Kind: 'durable', SessionKey: item.SessionKey, InstallationRegistrationId: item.InstallationRegistrationId, BrowserContextId: '', DisplayName: item.DisplayName, PromptPolicyRevision: item.PromptPolicyRevision }));
 }
 
 export async function migrateLegacyConversation(connection: ExtensionConnection, SessionBindingId: string): Promise<DurableConversation> {
