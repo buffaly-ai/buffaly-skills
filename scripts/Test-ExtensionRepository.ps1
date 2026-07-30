@@ -4,6 +4,8 @@ param(
 
     [switch]$SkipReleaseRuntimeRegression,
 
+    [string]$ClaudeCodeRuntimeRegressionCommand = "",
+
     [switch]$JsonOutput
 )
 
@@ -18,10 +20,11 @@ function Read-JsonFile([string]$path) {
     return Get-Content $path -Raw | ConvertFrom-Json
 }
 
-function Test-ExtensionRepository {
+    function Test-ExtensionRepository {
     param(
         [string]$RepoRoot,
-        [bool]$RequireClaudeCodeRuntimeRegression = $true
+        [bool]$RequireClaudeCodeRuntimeRegression = $true,
+        [string]$ClaudeCodeRuntimeRegressionCommand = ""
     )
 
     $allErrors = [System.Collections.Generic.List[string]]::new()
@@ -64,7 +67,7 @@ function Test-ExtensionRepository {
     if ($null -ne $skillIndex) {
         foreach ($skill in @($skillIndex.Skills)) {
             $name = [string]$skill.SkillName
-            $result = Test-ExtensionPackageInternal -PackageName $name -PackageType Skill -RepoRoot $RepoRoot -SkillIndex $skillIndex -PackageIndex $packageIndex -RequireClaudeCodeRuntimeRegression $RequireClaudeCodeRuntimeRegression
+            $result = Test-ExtensionPackageInternal -PackageName $name -PackageType Skill -RepoRoot $RepoRoot -SkillIndex $skillIndex -PackageIndex $packageIndex -RequireClaudeCodeRuntimeRegression $RequireClaudeCodeRuntimeRegression -ClaudeCodeRuntimeRegressionCommand $ClaudeCodeRuntimeRegressionCommand
             $results.Add($result)
             if (-not $result.Passed) {
                 foreach ($e in $result.Errors) { $allErrors.Add("[$name] $e") }
@@ -147,7 +150,7 @@ function Test-ExtensionRepository {
     }
 }# --- Main execution when run directly (not dot-sourced) ---
 if ($MyInvocation.InvocationName -ne '.') {
-    $result = Test-ExtensionRepository -RepoRoot $RepoRoot -RequireClaudeCodeRuntimeRegression (-not $SkipReleaseRuntimeRegression.IsPresent)
+    $result = Test-ExtensionRepository -RepoRoot $RepoRoot -RequireClaudeCodeRuntimeRegression (-not $SkipReleaseRuntimeRegression.IsPresent) -ClaudeCodeRuntimeRegressionCommand $ClaudeCodeRuntimeRegressionCommand
 
     if ($JsonOutput) {
         $output = [PSCustomObject]@{

@@ -1,9 +1,12 @@
 # Test-ExtensionPackage.ps1
 
+## 2026-07-30 Trusted live execution replaces repository self-attestation
+- Removed acceptance of `validation-evidence/ClaudeCode.runtime-regression.evidence.json`; a contributor-controlled repository file cannot prove that production behavior executed.
+- Release validation now requires a successful explicit command supplied through `-ClaudeCodeRuntimeRegressionCommand` or `BUFFALY_CLAUDECODE_RUNTIME_REGRESSION_COMMAND`.
+- Missing and failing runners fail closed. Ordinary single-package inspection can still omit the production execution gate.
+
 ## 2026-07-30 Mandatory production evidence for release validation
-- Corrected the optional-runtime policy after review showed that it allowed unattended repository and installer validation to pass after checking only package wiring.
-- Added `-RequireClaudeCodeRuntimeRegression`, which accepts either a successful explicitly supplied live command or persisted passing evidence bound to the exact ClaudeCode version and normalized `index.pts` SHA-256.
-- Missing, malformed, stale, mismatched, or failed evidence blocks release validation. An explicitly supplied live command remains authoritative and cannot be masked by recorded evidence.
+- Superseded: repository-persisted evidence was subsequently rejected as editable self-attestation.
 - Ordinary single-package inspection remains available without a live runtime; full repository validation enables the production-evidence gate by default.
 
 ## 2026-07-30 Optional ClaudeCode live-runtime regression (superseded)
