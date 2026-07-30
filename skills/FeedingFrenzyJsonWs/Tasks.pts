@@ -1,0 +1,139 @@
+[SemanticProgram.InfinitivePhrase("to get a feeding frenzy task")]
+prototype Tasks_GetTask : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"Gets one task through FeedingFrenzy.Admin.Business.Tasks.GetTask.";
+	function Execute(FeedingFrenzyJsonWsService service, int TaskID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["TaskID"] = TaskID;
+		return service.CallBusinessRoute("tasks/get-task", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list feeding frenzy tasks")]
+prototype Tasks_GetTasks : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"Lists tasks through FeedingFrenzy.Admin.Business.Tasks.GetTasks.";
+	function Execute(FeedingFrenzyJsonWsService service) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		return service.CallBusinessRoute("tasks/get-tasks", new JsonObject());
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list feeding frenzy tasks by status")]
+prototype Tasks_GetTasksByTaskStatusID : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"Lists tasks for one TaskStatusID through the generated Tasks JsonWs route.";
+	function Execute(FeedingFrenzyJsonWsService service, int TaskStatusID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["TaskStatusID"] = TaskStatusID;
+		return service.CallBusinessRoute("tasks/get-tasks-by-task-status-id", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get a feeding frenzy task status")]
+prototype TaskStatuses_GetTaskStatus : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"Gets one task status through FeedingFrenzy.Admin.Business.TaskStatuses.GetTaskStatus.";
+	function Execute(FeedingFrenzyJsonWsService service, int TaskStatusID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["TaskStatusID"] = TaskStatusID;
+		return service.CallBusinessRoute("task-statuses/get-task-status", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list feeding frenzy task statuses")]
+prototype TaskStatuses_GetTaskStatuses : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"Lists task statuses through FeedingFrenzy.Admin.Business.TaskStatuses.GetTaskStatuses.";
+	function Execute(FeedingFrenzyJsonWsService service) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		return service.CallBusinessRoute("task-statuses/get-task-statuses", new JsonObject());
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get a feeding frenzy task status by name")]
+prototype TaskStatuses_GetTaskStatusByTaskStatusName : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"Gets one task status by exact TaskStatusName through the generated TaskStatuses JsonWs route.";
+	function Execute(FeedingFrenzyJsonWsService service, string TaskStatusName) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["TaskStatusName"] = TaskStatusName;
+		return service.CallBusinessRoute("task-statuses/get-task-status-by-task-status-name", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create a feeding frenzy task")]
+prototype Tasks_InsertTask : FeedingFrenzyJsonWsGuardedWriteAction
+{
+	Description = @"Creates a task through generated Tasks.InsertTask. DueDate is an ISO-like string; pass an empty string for no due date. Data must contain only approved task metadata.";
+	function Execute(FeedingFrenzyJsonWsService service, string TaskDescription, int TaskStatusID, int AssignToUserID, int CreatedByUserID, string Data, string DueDate, string Notes) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["TaskDescription"] = TaskDescription;
+		args["TaskStatusID"] = TaskStatusID;
+		args["AssignToUserID"] = AssignToUserID;
+		args["CreatedByUserID"] = CreatedByUserID;
+		args["Data"] = Data;
+		args["DueDate"] = DueDate;
+		args["Notes"] = Notes;
+		return service.CallBusinessRoute("tasks/insert-task", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to update a feeding frenzy task")]
+prototype Tasks_UpdateTask : FeedingFrenzyJsonWsGuardedWriteAction
+{
+	Description = @"Updates a task through generated Tasks.UpdateTask. DueDate is an ISO-like string; pass an empty string for no due date.";
+	function Execute(FeedingFrenzyJsonWsService service, int TaskID, string TaskDescription, int TaskStatusID, int AssignToUserID, int CreatedByUserID, string Data, string DueDate, string Notes) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["TaskID"] = TaskID;
+		args["TaskDescription"] = TaskDescription;
+		args["TaskStatusID"] = TaskStatusID;
+		args["AssignToUserID"] = AssignToUserID;
+		args["CreatedByUserID"] = CreatedByUserID;
+		args["Data"] = Data;
+		args["DueDate"] = DueDate;
+		args["Notes"] = Notes;
+		return service.CallBusinessRoute("tasks/update-task", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to update feeding frenzy task data")]
+prototype Tasks_UpdateTaskData : FeedingFrenzyJsonWsGuardedWriteAction
+{
+	Description = @"Updates only a task's Data JSON through generated Tasks.UpdateTaskData.";
+	function Execute(FeedingFrenzyJsonWsService service, int TaskID, string Data) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["TaskID"] = TaskID;
+		args["Data"] = Data;
+		return service.CallBusinessRoute("tasks/update-task-data", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to remove a feeding frenzy task")]
+prototype Tasks_RemoveTask : FeedingFrenzyJsonWsGuardedWriteAction
+{
+	Description = @"Removes one task through generated Tasks.RemoveTask.";
+	function Execute(FeedingFrenzyJsonWsService service, int TaskID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["TaskID"] = TaskID;
+		return service.CallBusinessRoute("tasks/remove-task", args);
+	}
+}

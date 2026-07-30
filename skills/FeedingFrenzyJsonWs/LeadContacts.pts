@@ -1,0 +1,27 @@
+[SemanticProgram.InfinitivePhrase("to get feeding frenzy lead contact by id")]
+prototype LeadContacts_GetLeadContact : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"service - required FeedingFrenzyJsonWsService binding. LeadContactID - numeric lead contact id.";
+
+	function Execute(FeedingFrenzyJsonWsService service, int LeadContactID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["LeadContactID"] = LeadContactID;
+		return service.CallBusinessRoute("lead-contacts/get-lead-contact", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get feeding frenzy lead contacts by lead id")]
+prototype LeadContacts_GetLeadContactsByLeadID : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"service - required FeedingFrenzyJsonWsService binding. LeadID - numeric lead id.";
+
+	function Execute(FeedingFrenzyJsonWsService service, int LeadID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["LeadID"] = LeadID;
+		return service.CallBusinessRoute("lead-contacts/get-lead-contacts-by-lead-id", args);
+	}
+}

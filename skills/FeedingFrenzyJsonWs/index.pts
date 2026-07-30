@@ -2,11 +2,16 @@ import Buffaly.Agent.Tools.Http Buffaly.Agent.Tools.Http.JsonWsHelper JsonWsHelp
 import BasicUtilities BasicUtilities.JsonObject JsonObject;
 import BasicUtilities BasicUtilities.StringUtil StringUtil;
 
-prototype FeedingFrenzyJsonWsSkillAction : OpsAction
+prototype FeedingFrenzyJsonWsSkillAction : OpsAction, CoreAction
 {
-	Description = @"Base action type for Feeding Frenzy JSON WS service tools.";
+	Description = @"Base action type for read-oriented Feeding Frenzy JSON WS service tools exposed to the default Feeding Frenzy agent.";
 }
 
+
+prototype FeedingFrenzyJsonWsGuardedWriteAction : OpsAction
+{
+	Description = @"Base action type for Feeding Frenzy JSON WS write tools. These are intentionally not included in FeedingFrenzyJsonWsSkillAction so they are not exposed to the default Feeding Frenzy agent without an explicit guarded root.";
+}
 [SemanticEntity("feeding frenzy json ws skill")]
 prototype FeedingFrenzyJsonWsSkill : SkillEntity
 {
@@ -22,6 +27,7 @@ prototype FeedingFrenzyJsonWsService : Service
 
 	String BaseUrl = new String();
 	String BusinessApiPrefix = "api/feedingfrenzy.admin.business";
+	String CallCenterApiPrefix = "api/feedingfrenzy.callcenter";
 	String UiApiPrefix = "api/feedingfrenzy.admin.ui";
 	String TokenKey = "FeedingFrenzy.ApiKey";
 
@@ -36,6 +42,12 @@ prototype FeedingFrenzyJsonWsService : Service
 	{
 		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
 		return JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.BusinessApiPrefix, routePath, this.TokenKey, normalizedArgs);
+	}
+
+	function CallCallCenterRoute(string routePath, JsonObject args) : string
+	{
+		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
+		return JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.CallCenterApiPrefix, routePath, this.TokenKey, normalizedArgs);
 	}
 
 	function CallUiRoute(string routePath, JsonObject args) : string
@@ -106,6 +118,15 @@ prototype ToGetFeedingFrenzyLeadsByImportKey : FeedingFrenzyJsonWsSkillAction
 }
 
 include "Leads.pts";
+include "Calls.pts";
+include "LeadNotes.pts";
+include "LeadNoteTypes.pts";
+include "LeadContacts.pts";
+include "LeadAddresses.pts";
+include "LeadTags.pts";
+include "Users.pts";
+include "UserAutomation.pts";
+include "Tasks.pts";
 include "LeadAutomation.pts";
 include "LeadStatuses.pts";
 include "LeadSubStatuses.pts";
@@ -114,6 +135,5 @@ include "Tags.pts";
 include "SalesRepresentatives.pts";
 include "LeadsAdmin.pts";
 include "SalesRepresentativesAdmin.pts";
-include "LeadDocuments.pts";
-include "LeadFileDocuments.pts";
-include "AgreementSigning.pts";
+include "AgreementTemplates.pts";
+

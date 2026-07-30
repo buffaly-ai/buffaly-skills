@@ -958,47 +958,79 @@
     },
     {
       "SkillName": "FeedingFrenzyJsonWs",
-      "Title": "Feeding Frenzy JsonWS",
-      "Description": "Buffaly skill package for Feeding Frenzy JsonWS.",
-      "Version": "0.1.2",
+      "Title": "Feeding Frenzy JsonWs",
+      "Description": "Buffaly skill package for Feeding Frenzy JsonWs.",
+      "Version": "0.1.3",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
-        "Feeding Frenzy JsonWS",
+        "Feeding Frenzy JsonWs",
         "FeedingFrenzyJsonWs"
       ],
       "Path": "skills/FeedingFrenzyJsonWs",
       "Files": [
         {
-          "Path": "AgreementSigning.pts",
-          "Sha256": "90d024b959d737f94cbfedee857013533f8f3a78c9bd902e928ca7b5d39822fc"
+          "Path": "AgreementTemplates.pts",
+          "Sha256": "7951e43e1dffe838b9e0a6d1ecdd30276363fd77a3c0f48f56906ee2aec86075"
         },
         {
-          "Path": "AgreementSigning.pts.md",
-          "Sha256": "6de7bf8321fc567ed5a596753eecff776a705c24900fc0976a06c19649b50440"
+          "Path": "AgreementTemplates.pts.md",
+          "Sha256": "16a9ca87c42d12796142a3a93a87fc8567ff0ee3f93f1770808db27dd10563c8"
+        },
+        {
+          "Path": "Calls.pts",
+          "Sha256": "f1ca482ae417728d840c8c9b0295031369c2ea1f1fedfe01ac841ab430194c4d"
+        },
+        {
+          "Path": "Calls.pts.md",
+          "Sha256": "6333fcac27520048a99e5473113dcd3ea97e413731bbd9b89ed377b1c1863561"
         },
         {
           "Path": "index.pts",
-          "Sha256": "a1c22060f70af9ab435328787011f69ce4e0306d34ba5952d681983314c5653f"
+          "Sha256": "30adbf123d7d9e2b0093db80ab573525eaff682a38628eee06348606e3a6e81b"
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "c74331a714c14429afb7179d7934e08fe2b102ee2a9124890113b5b0c081902e"
+          "Sha256": "5e0b8884651d0f2d33cbf0a0dd024ae4577de2ac31f2b843b1a96bfb4a5e0dba"
+        },
+        {
+          "Path": "LeadAddresses.pts",
+          "Sha256": "6e6d4d78a73cff431a2b14e091d209d8f650ad2e7f6dda078948cf23f3268adc"
+        },
+        {
+          "Path": "LeadAddresses.pts.md",
+          "Sha256": "80d3a029bdf35a971ab4659b9e18924a1f678bd29ae2ab247e8a39ffd08cf3de"
         },
         {
           "Path": "LeadAutomation.pts",
-          "Sha256": "067b5d0bde8d22ed3f08d2a1abcd86afefc6a6cb773d42ba74cb9cea681933e6"
+          "Sha256": "bc49aab16cbe424f8a87307b7a962bd8e4e06b144f33d2904b10a9dd4bd6dc78"
         },
         {
           "Path": "LeadAutomation.pts.md",
           "Sha256": "b3f3ec5402307df757916fb3bbacc9ec2c5512d7c5d3c908ff0ceed448322531"
         },
         {
-          "Path": "LeadDocuments.pts",
-          "Sha256": "3f0ea0e5f2b9761714ea410ac7787d9a17c0eb19b4924191c4ef020ef875cfe5"
+          "Path": "LeadContacts.pts",
+          "Sha256": "1b67a94c11cb5fd4f274c3f9039df9b5863d6c94c401febb1a2f9d962184d801"
         },
         {
-          "Path": "LeadFileDocuments.pts",
-          "Sha256": "dff5a1b34730979a6723d70ffd960be6f06d56ca4bbafff33b6b81c7cccf444c"
+          "Path": "LeadContacts.pts.md",
+          "Sha256": "c6e515b52769f5fa9095d2e93ac7b4276eea19296b8c709ee3b24f280df49ee2"
+        },
+        {
+          "Path": "LeadNotes.pts",
+          "Sha256": "dcc845cb1c4947b9f4c191bdd17fe1896205fd52232132254d7c984bf1fc78f0"
+        },
+        {
+          "Path": "LeadNotes.pts.md",
+          "Sha256": "f5ff0af2328132686caa8bb1b71c8fcb195153d50b2bf1c3a25b9692c0ad2c51"
+        },
+        {
+          "Path": "LeadNoteTypes.pts",
+          "Sha256": "a58b37ac9136e87df48f45863fb4a1b2545c5fcb35c862fc84fd42fa940d5938"
+        },
+        {
+          "Path": "LeadNoteTypes.pts.md",
+          "Sha256": "507b46966d5db3282e3b8b6680fc81ff6711e8b154ba74175bf6fa895ebd37d7"
         },
         {
           "Path": "Leads.pts",
@@ -1033,12 +1065,20 @@
           "Sha256": "1b4915a49abef6b0efe5caf185aa76a073ad72f0367c5a02cc1a97713807f805"
         },
         {
+          "Path": "LeadTags.pts",
+          "Sha256": "44b122f42b51828298b9e8ae571480d50c221e06fd7fd72e51a7f387e3033063"
+        },
+        {
+          "Path": "LeadTags.pts.md",
+          "Sha256": "78b4a4ba20cd3c6142e4f8d330ef857510aeacf6176d336b04a329e69e0756ab"
+        },
+        {
           "Path": "SalesRepresentatives.pts",
-          "Sha256": "42d8f3fcae167690b6bdc59b4bd7a6e27123ab9e36a3df1d6b2ec2ebf88ca5af"
+          "Sha256": "6f7c5e9dd692a91c99c4557e8cfc32cddb9684817d92fffbb820909ed067ed36"
         },
         {
           "Path": "SalesRepresentatives.pts.md",
-          "Sha256": "243f88d0d76ebac90db35543d8aeed33750523ba7d66f3d46483e8a777d79b23"
+          "Sha256": "6855c97f2b9419216d176d13ab7db785a7cbf8843b830a225dfa003815c7df67"
         },
         {
           "Path": "SalesRepresentativesAdmin.pts",
@@ -1050,7 +1090,7 @@
         },
         {
           "Path": "SKILL.md",
-          "Sha256": "4d20272ae35bee1a3125fdb07c1c7b22d9f8a6617dd39f934b3d0aeac53dc605"
+          "Sha256": "12be9d1d1970494473aaf88ebd3796fcabf2bd86ef036f57f0e12fefb298bc84"
         },
         {
           "Path": "Sources.pts",
@@ -1067,6 +1107,30 @@
         {
           "Path": "Tags.pts.md",
           "Sha256": "d51fb486facf38891f86f5128460e5172215a47c38480ed42008d1a9a0b9218b"
+        },
+        {
+          "Path": "Tasks.pts",
+          "Sha256": "085179d71ebd0753af16e3762464ec00acba25b6997c20d6dc69451abd41f645"
+        },
+        {
+          "Path": "Tasks.pts.md",
+          "Sha256": "f52412a9aee1cba33f6eb0d6a6f637b918ba5506343ff9f23f860ab9d1b6551e"
+        },
+        {
+          "Path": "UserAutomation.pts",
+          "Sha256": "b29cb087044b15d9811f3ed356e8f23ff5d0b346c8376304bd172eed4b1152e2"
+        },
+        {
+          "Path": "UserAutomation.pts.md",
+          "Sha256": "0228bd2fc5306932ad88635f5eb5ef0375af85033f419efdcfa0ec866efb7e56"
+        },
+        {
+          "Path": "Users.pts",
+          "Sha256": "4a5056a039efbdf9de133792bbfec144e7428c023d2d758d7c683e0443dadac0"
+        },
+        {
+          "Path": "Users.pts.md",
+          "Sha256": "61346f61f0c3ef3fd05b5352b04d3ccb867432dd70b92e2afeca557f09026603"
         }
       ],
       "EntryPoint": "index.pts",
