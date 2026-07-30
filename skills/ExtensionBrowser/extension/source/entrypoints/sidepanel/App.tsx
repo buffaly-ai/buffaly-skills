@@ -1,14 +1,13 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import type { ToolResult, ToolLogEntry } from '../../lib/types';
+import { boundToolResultStorageKey, type BoundToolInvocationIdentity, type ToolResult, type ToolLogEntry } from '../../lib/types';
 import { handleToolCall } from '../../lib/tool-router';
-import { boundToolResultStorageKey, type BoundToolInvocationIdentity } from '../../lib/buffaly-connection';
 
 async function callTool(tool: string, args: Record<string, unknown> = {}): Promise<ToolResult> {
   return new Promise((resolve) => chrome.runtime.sendMessage({ type: 'tool_call', tool, args }, resolve));
 }
 
 interface ActiveTab { tabId: number; url: string; title: string }
-interface ConversationBootstrap { Origin: string; ConversationSlotId: string; SessionBindingId: string; DisplayName: string; PromptPolicyRevision: number; NavigationToken: string }
+interface ConversationBootstrap { Origin: string; ConversationSlotId: string; SessionBindingId: string; BrowserContextId: string; DisplayName: string; PromptPolicyRevision: number; NavigationToken: string }
 interface WorkerResponse<T> { ok: boolean; data?: T; error?: string }
 type ServerState = 'Ready' | 'SignInRequired' | 'Unavailable' | 'WebModuleMissing';
 interface ServerSummary { ServerId: string; Name: string; Origin: string; Authorized: boolean; Active: boolean; LastConnectedUtc: string }
@@ -27,6 +26,8 @@ function conversationUrl(bootstrap: ConversationBootstrap): string {
 
 export default function App() {
   const conversationFrame = useRef<HTMLIFrameElement | null>(null);
+  const panelInstanceId = useRef(crypto.randomUUID());
+  const browserContextId = useRef('');
   const logo48Url = chrome.runtime.getURL('icon/48.png');
   const logo128Url = chrome.runtime.getURL('icon/128.png');
   const [toolLog, setToolLog] = useState<ToolLogEntry[]>([]);
@@ -45,6 +46,14 @@ export default function App() {
   const [microphoneDiagnostic, setMicrophoneDiagnostic] = useState<MicrophoneDiagnostic | null>(null);
   const [error, setError] = useState('');
 
+  const getBrowserContextId = useCallback(async (): Promise<string> => {
+    if (browserContextId.current) return browserContextId.current;
+    const currentWindow = await chrome.windows.getCurrent();
+    if (currentWindow.id === undefined) throw new Error('Chrome did not identify the side-panel window.');
+    browserContextId.current = `window-${currentWindow.id}`;
+    return browserContextId.current;
+  }, []);
+
   const refreshServers = useCallback(async (): Promise<ServersStatus> => {
     const response = await chrome.runtime.sendMessage({ type: 'get_buffaly_servers' }) as WorkerResponse<ServersStatus> | undefined;
     if (!response?.ok || !response.data) throw new Error(response?.error || 'Saved Buffaly servers could not be read.');
@@ -62,15 +71,15 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    Promise.all([
+    getBrowserContextId().then((contextId) => Promise.all([
       refreshServers(),
-      chrome.runtime.sendMessage({ type: 'get_buffaly_conversation_bootstrap' }),
+      chrome.runtime.sendMessage({ type: 'get_buffaly_conversation_bootstrap', browserContextId: contextId }),
       chrome.storage.local.get([panelModeStorageKey]),
-    ]).then(([, bootstrap, stored]) => {
+    ])).then(([, bootstrap, stored]) => {
       if (bootstrap.ok && bootstrap.data) setConversation(bootstrap.data as ConversationBootstrap);
       if (stored[panelModeStorageKey] === 'agent' || stored[panelModeStorageKey] === 'chat') setPanelMode(stored[panelModeStorageKey] as PanelMode);
     }).catch((reason) => setError(reason instanceof Error ? reason.message : String(reason)));
-  }, [refreshServers]);
+  }, [getBrowserContextId, refreshServers]);
 
   useEffect(() => {
     refreshStatus();
@@ -82,10 +91,18 @@ export default function App() {
       if (disposed || boundToolPort) return;
       const port = chrome.runtime.connect({ name: 'bound-tool-executor' });
       boundToolPort = port;
-      heartbeatTimer = setInterval(() => port.postMessage({ type: 'bound_tool_executor_heartbeat' }), 20_000);
-      port.onMessage.addListener((msg: { type: string; requestId: string; tool?: string; args?: Record<string, unknown>; identity?: BoundToolInvocationIdentity }) => {
+      const registerPanel = async () => {
+        const currentWindow = await chrome.windows.getCurrent();
+        if (currentWindow.id === undefined) throw new Error('Chrome did not identify the side-panel window.');
+        const contextId = await getBrowserContextId();
+        port.postMessage({ type: 'register_panel', schemaVersion: 1, panelInstanceId: panelInstanceId.current, browserContextId: contextId, windowId: currentWindow.id });
+      };
+      void registerPanel().catch((reason) => setError(reason instanceof Error ? reason.message : String(reason)));
+      heartbeatTimer = setInterval(() => port.postMessage({ type: 'bound_tool_executor_heartbeat', panelInstanceId: panelInstanceId.current }), 20_000);
+      port.onMessage.addListener((msg: { type: string; requestId: string; tool?: string; args?: Record<string, unknown>; identity?: BoundToolInvocationIdentity; windowId?: number }) => {
         if (msg.type !== 'execute_bound_tool' || !msg.tool || !msg.identity) return;
-        handleToolCall(msg.tool, msg.args || {})
+        const contextualArgs = { ...(msg.args || {}), __boundWindowId: msg.windowId };
+        handleToolCall(msg.tool, contextualArgs)
           .then(async (result) => {
             await chrome.storage.local.set({ [boundToolResultStorageKey(msg.identity!)]: { CreatedAtUtc: new Date().toISOString(), Result: result } });
             port.postMessage({ type: 'bound_tool_result', requestId: msg.requestId, result });
@@ -106,7 +123,7 @@ export default function App() {
     const tabListener = () => refreshStatus();
     chrome.runtime.onMessage.addListener(runtimeListener); chrome.tabs.onActivated.addListener(tabListener); chrome.tabs.onUpdated.addListener(tabListener);
     return () => { disposed = true; if (reconnectTimer) clearTimeout(reconnectTimer); if (heartbeatTimer) clearInterval(heartbeatTimer); boundToolPort?.disconnect(); chrome.runtime.onMessage.removeListener(runtimeListener); chrome.tabs.onActivated.removeListener(tabListener); chrome.tabs.onUpdated.removeListener(tabListener); };
-  }, [refreshStatus]);
+  }, [getBrowserContextId, refreshStatus]);
 
   useEffect(() => {
     const respondWithCurrentPage = (event: MessageEvent) => {
@@ -158,12 +175,12 @@ export default function App() {
       if (!selected?.ok) throw new Error(selected?.error || 'The Buffaly server could not be selected.');
       const status = await refreshServers();
       if (status.State === 'Ready') {
-        const bootstrap = await chrome.runtime.sendMessage({ type: 'get_buffaly_conversation_bootstrap' }) as WorkerResponse<ConversationBootstrap> | undefined;
+        const bootstrap = await chrome.runtime.sendMessage({ type: 'get_buffaly_conversation_bootstrap', browserContextId: await getBrowserContextId() }) as WorkerResponse<ConversationBootstrap> | undefined;
         if (bootstrap?.ok && bootstrap.data) setConversation(bootstrap.data);
       }
     } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
     finally { setBusy(''); }
-  }, [refreshServers]);
+  }, [getBrowserContextId, refreshServers]);
 
   const openServerSettings = useCallback(() => {
     if (!serversStatus.ActiveServer) return;
@@ -189,23 +206,23 @@ export default function App() {
       if (!authorization) throw new Error('The ExtensionBrowser service worker did not answer. Reload the extension and reopen the side panel.');
       if (!authorization.ok || !authorization.data) throw new Error(authorization.error || 'Buffaly authorization failed.');
       await refreshServers();
-      const created = await chrome.runtime.sendMessage({ type: 'create_buffaly_conversation', displayName: 'Chrome conversation' }) as WorkerResponse<ConversationBootstrap> | undefined;
+      const created = await chrome.runtime.sendMessage({ type: 'create_buffaly_conversation', browserContextId: await getBrowserContextId(), displayName: 'Chrome conversation' }) as WorkerResponse<ConversationBootstrap> | undefined;
       if (!created?.ok || !created.data) throw new Error(created?.error || 'The bound conversation could not be created.');
       setConversation(created.data as ConversationBootstrap);
     } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
     finally { setBusy(''); }
-  }, [origin, refreshServers, serverName, serversStatus.ActiveServer?.Name]);
+  }, [getBrowserContextId, origin, refreshServers, serverName, serversStatus.ActiveServer?.Name]);
 
   const newConversation = useCallback(async () => {
     if (!connected) return;
     setBusy('new'); setError('');
     try {
-      const created = await chrome.runtime.sendMessage({ type: 'create_buffaly_conversation', displayName: 'Chrome conversation' });
+      const created = await chrome.runtime.sendMessage({ type: 'create_buffaly_conversation', browserContextId: await getBrowserContextId(), displayName: 'Chrome conversation' });
       if (!created.ok) throw new Error(created.error);
       setConversation(created.data as ConversationBootstrap);
     } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
     finally { setBusy(''); }
-  }, [connected]);
+  }, [connected, getBrowserContextId]);
 
   const selectPanelMode = useCallback((mode: PanelMode) => {
     setPanelMode(mode);
@@ -215,11 +232,11 @@ export default function App() {
   const openConversationTab = useCallback(async () => {
     setBusy('popout'); setError('');
     try {
-      const opened = await chrome.runtime.sendMessage({ type: 'open_buffaly_conversation_tab' }) as WorkerResponse<{ Opened: boolean }> | undefined;
+      const opened = await chrome.runtime.sendMessage({ type: 'open_buffaly_conversation_tab', browserContextId: await getBrowserContextId() }) as WorkerResponse<{ Opened: boolean }> | undefined;
       if (!opened?.ok) throw new Error(opened?.error || 'The conversation could not be opened in a tab.');
     } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
     finally { setBusy(''); }
-  }, []);
+  }, [getBrowserContextId]);
 
   const enableControl = useCallback(async () => { setBusy('control'); chrome.runtime.sendMessage({ type: 'grant_debugger_consent' }); await callTool('attach_debugger'); setBusy(''); await refreshStatus(); }, [refreshStatus]);
   const pauseControl = useCallback(async () => { setBusy('control'); await callTool('detach_debugger'); chrome.runtime.sendMessage({ type: 'revoke_debugger_consent' }); setBusy(''); await refreshStatus(); }, [refreshStatus]);

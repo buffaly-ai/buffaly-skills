@@ -17,12 +17,15 @@ assert.match(connection, /SessionBindingId: invocation\.SessionBindingId, Invoca
 assert.match(connection, /await this\.deliverCompletion\(pendingCompletion\)/, 'live completions must use acknowledged delivery');
 assert.match(connection, /await this\.deliverCompletion\(\{ StorageKey: key, Completion: item\.Completion \}\)/, 'recovered completions must use the same acknowledged delivery');
 assert.match(connection, /if \(!result\.Matched\) throw new Error/, 'completion outbox entries must require server correlation before deletion');
-assert.doesNotMatch(connection, /socket\.send\(JSON\.stringify\(pendingCompletion\.Completion\)\)/, 'live completion delivery must not delete after an unacknowledged WebSocket send');
+assert.match(connection, /socket\.send\(JSON\.stringify\(pendingCompletion\.Completion\)\)[\s\S]{0,160}flushPendingCompletions/, 'live completion may use WebSocket only when durable HTTP acknowledgement remains scheduled');
 assert.doesNotMatch(connection, /this\.socket\.send\(JSON\.stringify\(item\.Completion\)\)/, 'recovered completion delivery must not delete after an unacknowledged WebSocket send');
-assert.match(background, /new InstallationChannel\(connection, invokeBoundTool\)/, 'service worker must own the installation channel while delegating execution to the persistent side panel');
+assert.match(background, /new InstallationChannel\(connection, invokeBoundTool, publishBrowserContexts\)/, 'service worker must own the installation channel and publish its live window contexts');
 assert.match(background, /port\.name !== 'bound-tool-executor'/, 'service worker must accept only the dedicated side-panel executor port');
-assert.match(background, /boundToolPort!\.postMessage\(\{ type: 'execute_bound_tool'/, 'service worker must dispatch bound tools through the dedicated port');
+assert.doesNotMatch(background, /let boundToolPort/, 'service worker must not retain a scalar latest-panel executor');
+assert.match(background, /boundToolPanels = new Map/, 'service worker must retain simultaneous panel executors by browser context');
+assert.match(background, /BOUND_BROWSER_CONTEXT_OFFLINE/, 'missing bound windows must fail without retargeting');
 assert.match(panel, /chrome\.runtime\.connect\(\{ name: 'bound-tool-executor' \}\)/, 'side panel must own the persistent executor port');
+assert.match(panel, /type: 'register_panel'[\s\S]{0,200}browserContextId: contextId[\s\S]{0,120}windowId: currentWindow\.id/, 'side panel must register its stable document and Chrome window context');
 assert.match(panel, /port\.onDisconnect\.addListener[\s\S]{0,360}connectBoundToolPort\(\)/, 'side panel must restore its executor port after MV3 worker replacement');
 assert.match(panel, /msg\.type !== 'execute_bound_tool'/, 'side panel must execute bound tools without receiving channel credentials');
 assert.match(background, /sender\.id !== chrome\.runtime\.id \|\| !sender\.url/, 'trusted extension messages must require this extension identity and URL');
@@ -34,7 +37,7 @@ for (const messageType of ['tool_call', 'buffaly_connection_changed', 'grant_deb
 assert.match(background, /createConversation\(connection, 'CreateNew', crypto\.randomUUID\(\)/, 'service worker must create each new conversation slot');
 assert.match(connection, /PROMPT_POLICY_REVISION/, 'extension must version its bound-conversation prompt policy');
 assert.match(background, /binding\.PromptPolicyRevision[\s\S]{0,180}< PROMPT_POLICY_REVISION[\s\S]{0,260}createConversation\(connection, 'CreateNew'/, 'service worker must replace a stored conversation created under an obsolete prompt policy');
-assert.match(connection, /interface ConversationBinding[\s\S]{0,180}InstallationRegistrationId: string/, 'stored conversation pointers must identify their owning installation registration');
+assert.match(connection, /interface ConversationBinding[\s\S]{0,220}InstallationRegistrationId: string;[\s\S]{0,100}BrowserContextId: string/, 'stored conversation pointers must identify their owning installation and browser context');
 assert.match(background, /binding\.InstallationRegistrationId !== connection\.InstallationRegistrationId[\s\S]{0,360}createConversation\(connection, 'CreateNew'/, 'service worker must replace a conversation owned by another installation registration');
 assert.match(background, /InstallationRegistrationId: connection\.InstallationRegistrationId/, 'new active conversation pointers must retain their non-secret installation owner');
 assert.match(background, /ACTIVE_CONVERSATION_STORAGE_KEY/, 'service worker must own the opaque active binding pointer');

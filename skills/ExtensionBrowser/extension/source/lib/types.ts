@@ -4,6 +4,19 @@ export type ToolResult =
   | { ok: true; data: unknown }
   | { ok: false; error: string; code?: string };
 
+// Credential-free correlation shared by the side panel and service worker.
+export interface BoundToolInvocationIdentity {
+  SessionBindingId: string;
+  BrowserContextId: string;
+  InvocationId: string;
+}
+
+export const BOUND_TOOL_RESULT_STORAGE_PREFIX = 'BuffalyBoundToolResult:';
+
+export function boundToolResultStorageKey(identity: BoundToolInvocationIdentity): string {
+  return BOUND_TOOL_RESULT_STORAGE_PREFIX + identity.SessionBindingId + ':' + identity.InvocationId;
+}
+
 // ─── Tool Request (side panel → background) ───
 
 export interface ToolRequest {

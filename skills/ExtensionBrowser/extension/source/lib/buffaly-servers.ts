@@ -13,7 +13,18 @@ export interface SavedBuffalyServer {
   Origin: string;
   Connection: ExtensionConnection | null;
   ActiveConversation: ConversationBinding | null;
+  ConversationsByBrowserContext?: Record<string, ConversationBinding>;
   LastConnectedUtc: string;
+}
+
+export function conversationForContext(server: SavedBuffalyServer, browserContextId: string): ConversationBinding | null {
+  return server.ConversationsByBrowserContext?.[browserContextId] || (server.ActiveConversation?.BrowserContextId === browserContextId ? server.ActiveConversation : null);
+}
+
+export async function updateActiveServerConversation(browserContextId: string, binding: ConversationBinding): Promise<SavedBuffalyServer> {
+  const server = await getActiveServer();
+  if (!server) throw new Error('Select a Buffaly server first.');
+  return updateActiveServer({ ActiveConversation: binding, ConversationsByBrowserContext: { ...(server.ConversationsByBrowserContext || {}), [browserContextId]: binding } });
 }
 
 export interface SavedBuffalyServerSummary {

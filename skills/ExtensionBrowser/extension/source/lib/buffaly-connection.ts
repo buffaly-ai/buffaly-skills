@@ -1,4 +1,4 @@
-import type { ToolResult } from './types';
+import { boundToolResultStorageKey, type BoundToolInvocationIdentity, type ToolResult } from './types';
 
 export const CONNECTION_STORAGE_KEY = 'BuffalyExtensionConnection';
 export const CONVERSATIONS_STORAGE_KEY = 'BuffalyExtensionConversations';
@@ -16,6 +16,7 @@ export interface ConversationBinding {
   ConversationSlotId: string;
   SessionBindingId: string;
   InstallationRegistrationId: string;
+  BrowserContextId: string;
   DisplayName: string;
   PromptPolicyRevision: number;
 }
@@ -28,13 +29,13 @@ export interface ConversationBootstrap extends ConversationBinding {
 export const ACTIVE_CONVERSATION_STORAGE_KEY = 'BuffalyActiveConversationBinding';
 const PENDING_COMPLETION_STORAGE_PREFIX = 'BuffalyPendingCompletion:';
 const PENDING_INVOCATION_STORAGE_PREFIX = 'BuffalyPendingInvocation:';
-export const BOUND_TOOL_RESULT_STORAGE_PREFIX = 'BuffalyBoundToolResult:';
 const PENDING_COMPLETION_LIFETIME_MS = 45_000;
 
 interface ToolInvocation {
   Type: 'tool_invocation';
   SchemaVersion: 1;
   SessionBindingId: string;
+  BrowserContextId: string;
   InvocationId: string;
   Tool: string;
   ArgumentsJson: string;
@@ -66,18 +67,17 @@ interface PendingToolInvocation {
   Invocation: ToolInvocation;
 }
 
-export interface BoundToolInvocationIdentity {
-  SessionBindingId: string;
-  InvocationId: string;
+export interface BrowserContextSnapshot {
+  BrowserContextId: string;
+  WindowId: number;
+  PanelInstanceId: string;
+  State: 'Ready';
+  ObservedUtc: string;
 }
 
 interface PendingBoundToolResult {
   CreatedAtUtc: string;
   Result: ToolResult;
-}
-
-export function boundToolResultStorageKey(identity: BoundToolInvocationIdentity): string {
-  return BOUND_TOOL_RESULT_STORAGE_PREFIX + identity.SessionBindingId + ':' + identity.InvocationId;
 }
 
 export async function loadBoundToolResult(identity: BoundToolInvocationIdentity): Promise<ToolResult | null> {
@@ -150,13 +150,13 @@ export async function loadConnection(): Promise<ExtensionConnection | null> {
   return (stored[CONNECTION_STORAGE_KEY] as ExtensionConnection | undefined) || null;
 }
 
-export async function createConversation(connection: ExtensionConnection, mode: 'ReuseCurrent' | 'CreateNew', slotId: string, displayName: string): Promise<ConversationBootstrap> {
+export async function createConversation(connection: ExtensionConnection, mode: 'ReuseCurrent' | 'CreateNew', slotId: string, browserContextId: string, displayName: string): Promise<ConversationBootstrap> {
   const binding = await readJson<{ SessionBindingId: string; SessionKey: string; PromptPolicyRevision: number }>(await fetch(new URL('/web-modules/ExtensionBrowser/api/session-bindings', connection.Origin), {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential, ConversationSlotId: slotId, Mode: mode, DisplayName: displayName }),
+    body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential, ConversationSlotId: slotId, BrowserContextId: browserContextId, Mode: mode, DisplayName: displayName }),
   }));
   const navigation = await issueNavigationToken(connection, binding.SessionBindingId);
-  return { Origin: connection.Origin, ConversationSlotId: slotId, SessionBindingId: binding.SessionBindingId, InstallationRegistrationId: connection.InstallationRegistrationId, DisplayName: displayName, PromptPolicyRevision: binding.PromptPolicyRevision, NavigationToken: navigation.NavigationToken };
+  return { Origin: connection.Origin, ConversationSlotId: slotId, SessionBindingId: binding.SessionBindingId, InstallationRegistrationId: connection.InstallationRegistrationId, BrowserContextId: browserContextId, DisplayName: displayName, PromptPolicyRevision: binding.PromptPolicyRevision, NavigationToken: navigation.NavigationToken };
 }
 
 export async function issueNavigationToken(connection: ExtensionConnection, sessionBindingId: string): Promise<{ NavigationToken: string }> {
@@ -184,7 +184,7 @@ export class InstallationChannel {
   private resumingInvocations: Promise<void> | null = null;
   private stopped = false;
 
-  constructor(private readonly connection: ExtensionConnection, private readonly invoke: (tool: string, args: Record<string, unknown>, identity: BoundToolInvocationIdentity) => Promise<ToolResult>) {}
+  constructor(private readonly connection: ExtensionConnection, private readonly invoke: (tool: string, args: Record<string, unknown>, identity: BoundToolInvocationIdentity) => Promise<ToolResult>, private readonly onConnected: () => void = () => {}) {}
 
   start(): Promise<void> {
     if (this.socket?.readyState === WebSocket.OPEN) return Promise.resolve();
@@ -203,6 +203,11 @@ export class InstallationChannel {
     this.socket = null;
   }
 
+  publishBrowserContexts(contexts: BrowserContextSnapshot[]): void {
+    if (this.socket?.readyState !== WebSocket.OPEN) return;
+    this.socket.send(JSON.stringify({ Type: 'browser_context_snapshot', SchemaVersion: 1, Contexts: contexts }));
+  }
+
   private async connect(): Promise<void> {
     const channelUrl = new URL('/web-modules/ExtensionBrowser/api/channel', this.connection.Origin);
     channelUrl.protocol = channelUrl.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -213,6 +218,7 @@ export class InstallationChannel {
     await new Promise<void>((resolve, reject) => {
       socket.addEventListener('open', () => {
         socket.send(JSON.stringify({ Type: 'extension_handshake', SchemaVersion: 1, InstallationRegistrationId: this.connection.InstallationRegistrationId, InstallationCredential: this.connection.InstallationCredential }));
+        queueMicrotask(this.onConnected);
         this.startHeartbeat(socket);
         void this.resumePendingInvocations();
         resolve();
@@ -284,7 +290,7 @@ export class InstallationChannel {
     if (invocation.Tool === 'navigate' || invocation.Tool === 'get_active_tab') {
       await chrome.storage.local.set({ [invocationStorageKey]: { CreatedAtUtc: new Date().toISOString(), Invocation: invocation } satisfies PendingToolInvocation });
     }
-    const identity = { SessionBindingId: invocation.SessionBindingId, InvocationId: invocation.InvocationId };
+    const identity = { SessionBindingId: invocation.SessionBindingId, BrowserContextId: invocation.BrowserContextId, InvocationId: invocation.InvocationId };
     const result = await this.invoke(invocation.Tool, args, identity);
     const pendingCompletion = await this.persistCompletion(invocation, result);
     await chrome.storage.local.remove(boundToolResultStorageKey(identity));
@@ -338,7 +344,7 @@ export class InstallationChannel {
       let args: Record<string, unknown>;
       try { args = JSON.parse(item.Invocation.ArgumentsJson) as Record<string, unknown>; }
       catch { await chrome.storage.local.remove(key); continue; }
-      const identity = { SessionBindingId: item.Invocation.SessionBindingId, InvocationId: item.Invocation.InvocationId };
+      const identity = { SessionBindingId: item.Invocation.SessionBindingId, BrowserContextId: item.Invocation.BrowserContextId, InvocationId: item.Invocation.InvocationId };
       const resultKey = boundToolResultStorageKey(identity);
       const storedResult = await loadBoundToolResult(identity);
       const result = storedResult ?? (item.Invocation.Tool === 'navigate'

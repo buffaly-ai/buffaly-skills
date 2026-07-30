@@ -1,22 +1,27 @@
 import { handleToolCall, grantDebuggerConsent, revokeDebuggerConsent } from '../lib/tool-router';
 import { detachDebugger, isAttached } from '../lib/debugger-session';
 import { getLogEntries, getLogVersion } from '../lib/tool-log';
-import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, PROMPT_POLICY_REVISION, authorizeInstallation, createConversation, issueNavigationToken, loadBoundToolResult, loadConnection, type BoundToolInvocationIdentity, type ConversationBinding } from '../lib/buffaly-connection';
-import { activateServer, canonicalServerOrigin, getActiveServer, loadServers, removeServer, saveServer, summarizeServers, updateActiveServer, type SavedBuffalyServer, type ServerState } from '../lib/buffaly-servers';
+import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, PROMPT_POLICY_REVISION, authorizeInstallation, createConversation, issueNavigationToken, loadBoundToolResult, loadConnection, type ConversationBinding } from '../lib/buffaly-connection';
+import { activateServer, canonicalServerOrigin, conversationForContext, getActiveServer, loadServers, removeServer, saveServer, summarizeServers, updateActiveServer, updateActiveServerConversation, type SavedBuffalyServer, type ServerState } from '../lib/buffaly-servers';
+import type { BoundToolInvocationIdentity } from '../lib/types';
 
 let installationChannel: InstallationChannel | null = null;
-let boundToolPort: chrome.runtime.Port | null = null;
-const pendingBoundTools = new Map<string, { resolve: (result: Awaited<ReturnType<typeof handleToolCall>>) => void; reject: (error: Error) => void }>();
+interface PanelRegistration { port: chrome.runtime.Port; panelInstanceId: string; browserContextId: string; windowId: number }
+const boundToolPanels = new Map<string, PanelRegistration>();
+const pendingBoundTools = new Map<string, { browserContextId: string; resolve: (result: Awaited<ReturnType<typeof handleToolCall>>) => void; reject: (error: Error) => void }>();
+
+function publishBrowserContexts(): void {
+  const observedUtc = new Date().toISOString();
+  installationChannel?.publishBrowserContexts([...boundToolPanels.values()].map((panel) => ({ BrowserContextId: panel.browserContextId, WindowId: panel.windowId, PanelInstanceId: panel.panelInstanceId, State: 'Ready', ObservedUtc: observedUtc })));
+}
 
 async function invokeBoundTool(tool: string, args: Record<string, unknown>, identity: BoundToolInvocationIdentity): Promise<Awaited<ReturnType<typeof handleToolCall>>> {
-  // These operations are backed only by chrome.tabs and acknowledge before
-  // destination page lifecycle can tear down the side-panel execution context.
-  if (tool === 'navigate' || tool === 'get_active_tab') return handleToolCall(tool, args);
-  if (!boundToolPort) throw new Error('The ExtensionBrowser side panel is not available to execute the bound tool.');
+  const panel = boundToolPanels.get(identity.BrowserContextId);
+  if (!panel) throw new Error(`BOUND_BROWSER_CONTEXT_OFFLINE: ${identity.BrowserContextId}`);
   const requestId = crypto.randomUUID();
   const portResult = new Promise<Awaited<ReturnType<typeof handleToolCall>>>((resolve, reject) => {
-    pendingBoundTools.set(requestId, { resolve, reject });
-    boundToolPort!.postMessage({ type: 'execute_bound_tool', requestId, tool, args, identity });
+    pendingBoundTools.set(requestId, { browserContextId: identity.BrowserContextId, resolve, reject });
+    panel.port.postMessage({ type: 'execute_bound_tool', requestId, tool, args, identity, windowId: panel.windowId });
   });
   const durableResult = (async () => {
     for (let attempt = 0; attempt < 80; attempt++) {
@@ -35,7 +40,7 @@ async function startInstallationChannel(): Promise<void> {
   installationChannel?.stop();
 	installationChannel = null;
 	if (!connection) return;
-  installationChannel = new InstallationChannel(connection, invokeBoundTool);
+  installationChannel = new InstallationChannel(connection, invokeBoundTool, publishBrowserContexts);
 	await installationChannel.start();
 }
 
@@ -81,21 +86,32 @@ export default defineBackground(() => {
 
   chrome.runtime.onConnect.addListener((port) => {
     if (port.name !== 'bound-tool-executor' || !port.sender || !isTrustedExtensionPage(port.sender)) return;
-    boundToolPort?.disconnect();
-    boundToolPort = port;
-    port.onMessage.addListener((message: { type: string; requestId: string; result?: Awaited<ReturnType<typeof handleToolCall>>; error?: string }) => {
+    let registration: PanelRegistration | null = null;
+    port.onMessage.addListener((message: { type: string; schemaVersion?: number; panelInstanceId?: string; browserContextId?: string; windowId?: number; requestId?: string; result?: Awaited<ReturnType<typeof handleToolCall>>; error?: string }) => {
+      if (message.type === 'register_panel') {
+        if (message.schemaVersion !== 1 || !message.panelInstanceId || !message.browserContextId || !Number.isInteger(message.windowId)) { port.disconnect(); return; }
+        const existing = boundToolPanels.get(message.browserContextId);
+        if (existing && existing.port !== port) existing.port.disconnect();
+        registration = { port, panelInstanceId: message.panelInstanceId, browserContextId: message.browserContextId, windowId: message.windowId! };
+        boundToolPanels.set(registration.browserContextId, registration);
+        publishBrowserContexts();
+        return;
+      }
       if (message.type === 'bound_tool_executor_heartbeat') return;
-      if (message.type !== 'bound_tool_result') return;
+      if (message.type !== 'bound_tool_result' || !message.requestId) return;
       const pending = pendingBoundTools.get(message.requestId);
-      if (!pending) return;
+      if (!pending || pending.browserContextId !== registration?.browserContextId) return;
       pendingBoundTools.delete(message.requestId);
       if (message.result) pending.resolve(message.result);
       else pending.reject(new Error(message.error || 'The side panel did not return a tool result.'));
     });
     port.onDisconnect.addListener(() => {
-      if (boundToolPort === port) boundToolPort = null;
-      for (const pending of pendingBoundTools.values()) pending.reject(new Error('The ExtensionBrowser side panel disconnected during tool execution.'));
-      pendingBoundTools.clear();
+      if (registration && boundToolPanels.get(registration.browserContextId)?.port === port) { boundToolPanels.delete(registration.browserContextId); publishBrowserContexts(); }
+      for (const [requestId, pending] of pendingBoundTools) {
+        if (pending.browserContextId !== registration?.browserContextId) continue;
+        pending.reject(new Error('The bound browser context disconnected during tool execution.'));
+        pendingBoundTools.delete(requestId);
+      }
     });
   });
 
@@ -199,15 +215,16 @@ export default defineBackground(() => {
         sendResponse({ ok: false, error: 'Unauthorized: conversation bootstrap can only be read from an extension page' });
         return false;
       }
-      Promise.all([loadConnection(), chrome.storage.local.get(ACTIVE_CONVERSATION_STORAGE_KEY)])
-        .then(async ([connection, stored]) => {
-          let binding = stored[ACTIVE_CONVERSATION_STORAGE_KEY] as ConversationBinding | undefined;
+      Promise.all([loadConnection(), getActiveServer()])
+        .then(async ([connection, server]) => {
+          const browserContextId = String(request.browserContextId || '');
+          let binding = server ? conversationForContext(server, browserContextId) || undefined : undefined;
           if (!connection || !binding) return null;
           if (binding.InstallationRegistrationId !== connection.InstallationRegistrationId || (binding.PromptPolicyRevision || 0) < PROMPT_POLICY_REVISION) {
-            const replacement = await createConversation(connection, 'CreateNew', crypto.randomUUID(), binding.DisplayName || 'Chrome conversation');
-            binding = { ConversationSlotId: replacement.ConversationSlotId, SessionBindingId: replacement.SessionBindingId, InstallationRegistrationId: connection.InstallationRegistrationId, DisplayName: replacement.DisplayName, PromptPolicyRevision: replacement.PromptPolicyRevision };
+            const replacement = await createConversation(connection, 'CreateNew', crypto.randomUUID(), browserContextId, binding.DisplayName || 'Chrome conversation');
+            binding = { ConversationSlotId: replacement.ConversationSlotId, SessionBindingId: replacement.SessionBindingId, InstallationRegistrationId: connection.InstallationRegistrationId, BrowserContextId: browserContextId, DisplayName: replacement.DisplayName, PromptPolicyRevision: replacement.PromptPolicyRevision };
             await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: binding });
-            await updateActiveServer({ ActiveConversation: binding });
+            await updateActiveServerConversation(browserContextId, binding);
           }
           const navigation = await issueNavigationToken(connection, binding.SessionBindingId);
           return { Origin: connection.Origin, ...binding, NavigationToken: navigation.NavigationToken };
@@ -222,9 +239,9 @@ export default defineBackground(() => {
         sendResponse({ ok: false, error: 'Unauthorized: conversation pop-out can only originate from an extension page' });
         return false;
       }
-      Promise.all([loadConnection(), chrome.storage.local.get(ACTIVE_CONVERSATION_STORAGE_KEY)])
-        .then(async ([connection, stored]) => {
-          const binding = stored[ACTIVE_CONVERSATION_STORAGE_KEY] as ConversationBinding | undefined;
+      Promise.all([loadConnection(), getActiveServer()])
+        .then(async ([connection, server]) => {
+          const binding = server ? conversationForContext(server, String(request.browserContextId || '')) || undefined : undefined;
           if (!connection || !binding) throw new Error('No active Buffaly conversation is available.');
           const navigation = await issueNavigationToken(connection, binding.SessionBindingId);
           const url = new URL('/web-modules/ExtensionBrowser/conversation', connection.Origin);
@@ -246,14 +263,14 @@ export default defineBackground(() => {
       loadConnection()
         .then((connection) => {
           if (!connection) throw new Error('Buffaly installation is not authorized.');
-          return createConversation(connection, 'CreateNew', crypto.randomUUID(), request.displayName || 'Chrome conversation');
+          return createConversation(connection, 'CreateNew', crypto.randomUUID(), String(request.browserContextId || ''), request.displayName || 'Chrome conversation');
         })
 		  .then(async (bootstrap) => {
 			const connection = await loadConnection();
 			if (!connection) throw new Error('Buffaly installation is not authorized.');
-			const binding: ConversationBinding = { ConversationSlotId: bootstrap.ConversationSlotId, SessionBindingId: bootstrap.SessionBindingId, InstallationRegistrationId: connection.InstallationRegistrationId, DisplayName: bootstrap.DisplayName, PromptPolicyRevision: bootstrap.PromptPolicyRevision };
+			const binding: ConversationBinding = { ConversationSlotId: bootstrap.ConversationSlotId, SessionBindingId: bootstrap.SessionBindingId, InstallationRegistrationId: connection.InstallationRegistrationId, BrowserContextId: bootstrap.BrowserContextId, DisplayName: bootstrap.DisplayName, PromptPolicyRevision: bootstrap.PromptPolicyRevision };
 			await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: binding });
-			await updateActiveServer({ ActiveConversation: binding });
+			await updateActiveServerConversation(binding.BrowserContextId, binding);
 			sendResponse({ ok: true, data: bootstrap });
         })
         .catch((err: Error) => sendResponse({ ok: false, error: err.message }));
