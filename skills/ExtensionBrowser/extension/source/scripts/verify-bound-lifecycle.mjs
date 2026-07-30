@@ -36,10 +36,10 @@ assert.doesNotMatch(background, /sender\.tab !== undefined/, 'privileged side-pa
 for (const messageType of ['tool_call', 'buffaly_connection_changed', 'grant_debugger_consent', 'revoke_debugger_consent', 'get_tool_log']) {
   assert.match(background, new RegExp(`request\\.type === '${messageType}'[\\s\\S]{0,180}!isTrustedExtensionPage\\(sender\\)`), `${messageType} must use exact extension-origin trust`);
 }
-assert.match(background, /createConversation\(connection, 'CreateNew', crypto\.randomUUID\(\)/, 'service worker must create each new conversation slot');
+assert.match(background, /createDurableConversation\(connection, String\(request\.browserContextId \|\| ''\), request\.displayName \|\| 'Chrome conversation'\)/, 'service worker must create explicit new durable conversations only from create requests');
 assert.match(connection, /PROMPT_POLICY_REVISION/, 'extension must version its bound-conversation prompt policy');
-assert.match(background, /binding\.PromptPolicyRevision[\s\S]{0,180}< PROMPT_POLICY_REVISION[\s\S]{0,260}refusing to create a replacement automatically/, 'service worker must reject obsolete prompt-policy pointers instead of silently replacing them');
-assert.doesNotMatch(background, /binding\.PromptPolicyRevision[\s\S]{0,260}createConversation\(connection, 'CreateNew'/, 'service worker must not create a replacement for obsolete prompt-policy pointers');
+assert.doesNotMatch(background, /binding\.PromptPolicyRevision[\s\S]{0,180}< PROMPT_POLICY_REVISION/, 'service worker must not reject old prompt-policy pointers before same-session durable open');
+assert.doesNotMatch(background, /binding\.PromptPolicyRevision[\s\S]{0,260}createDurableConversation/, 'service worker must not create a replacement for obsolete prompt-policy pointers');
 assert.match(connection, /interface ConversationBinding[\s\S]{0,220}InstallationRegistrationId: string;[\s\S]{0,100}BrowserContextId: string/, 'stored conversation pointers must identify their owning installation and browser context');
 assert.match(background, /binding\.InstallationRegistrationId !== connection\.InstallationRegistrationId[\s\S]{0,260}refusing to create a replacement automatically/, 'service worker must reject other-owner pointers instead of silently replacing them');
 assert.doesNotMatch(background, /binding\.InstallationRegistrationId !== connection\.InstallationRegistrationId[\s\S]{0,360}createConversation\(connection, 'CreateNew'/, 'service worker must not create a replacement for other-owner pointers');

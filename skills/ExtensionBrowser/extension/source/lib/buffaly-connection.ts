@@ -199,15 +199,6 @@ export async function listBrowserInstances(connection: ExtensionConnection): Pro
   return readJson<ExtensionBrowserInstanceRecord[]>(await fetch(new URL('/web-modules/ExtensionBrowser/api/instances', connection.Origin), { cache: 'no-store' }));
 }
 
-export async function listInstallationConversations(connection: ExtensionConnection): Promise<DurableConversation[]> {
-  const conversations = await readJson<Array<{ SessionKey: string; InstallationRegistrationId: string; DisplayName: string; PromptPolicyRevision: number }>>(await fetch(new URL('/web-modules/ExtensionBrowser/api/conversations/list', connection.Origin), {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential }),
-  }));
-  return conversations.map((item) => ({ Kind: 'durable', SessionKey: item.SessionKey, InstallationRegistrationId: item.InstallationRegistrationId, BrowserContextId: '', DisplayName: item.DisplayName, PromptPolicyRevision: item.PromptPolicyRevision }));
-}
-
-
 export async function migrateLegacyConversation(connection: ExtensionConnection, SessionBindingId: string): Promise<DurableConversation> {
   const migrated = await readJson<LegacyConversationMigrationResult>(await fetch(new URL('/web-modules/ExtensionBrowser/api/migrations/session-binding', connection.Origin), {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -233,26 +224,10 @@ export async function openDurableConversation(connection: ExtensionConnection, s
   return { Kind: 'durable', Origin: connection.Origin, SessionKey: opened.SessionKey, InstallationRegistrationId: connection.InstallationRegistrationId, BrowserContextId: browserContextId, DisplayName: opened.DisplayName, PromptPolicyRevision: opened.PromptPolicyRevision, NavigationToken: opened.NavigationToken };
 }
 
-export async function createConversation(connection: ExtensionConnection, mode: 'ReuseCurrent' | 'CreateNew', slotId: string, browserContextId: string, displayName: string): Promise<ConversationBootstrap> {
-  const binding = await readJson<{ SessionBindingId: string; PromptPolicyRevision: number }>(await fetch(new URL('/web-modules/ExtensionBrowser/api/session-bindings', connection.Origin), {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential, ConversationSlotId: slotId, BrowserContextId: browserContextId, Mode: mode, DisplayName: displayName }),
-  }));
-  const navigation = await issueLegacyNavigationToken(connection, binding.SessionBindingId);
-  return { Kind: 'legacy', Origin: connection.Origin, ConversationSlotId: slotId, SessionBindingId: binding.SessionBindingId, InstallationRegistrationId: connection.InstallationRegistrationId, BrowserContextId: browserContextId, DisplayName: displayName, PromptPolicyRevision: binding.PromptPolicyRevision, NavigationToken: navigation.NavigationToken };
-}
-
 export async function issueConversationNavigationToken(connection: ExtensionConnection, sessionKey: string): Promise<{ NavigationToken: string }> {
   return readJson<{ NavigationToken: string }>(await fetch(new URL('/web-modules/ExtensionBrowser/api/conversations/navigation-token', connection.Origin), {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential, SessionKey: sessionKey }),
-  }));
-}
-
-export async function issueLegacyNavigationToken(connection: ExtensionConnection, sessionBindingId: string): Promise<{ NavigationToken: string }> {
-  return readJson<{ NavigationToken: string }>(await fetch(new URL('/web-modules/ExtensionBrowser/api/navigation-tokens', connection.Origin), {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential, SessionBindingId: sessionBindingId }),
   }));
 }
 

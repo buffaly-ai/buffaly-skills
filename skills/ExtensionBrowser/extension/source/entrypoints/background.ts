@@ -1,7 +1,7 @@
 import { handleToolCall, grantDebuggerConsent, revokeDebuggerConsent } from '../lib/tool-router';
 import { detachDebugger, isAttached } from '../lib/debugger-session';
 import { getLogEntries, getLogVersion } from '../lib/tool-log';
-import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, authorizeInstallation, conversationFromBootstrap, createDurableConversation, isLegacyConversation, issueConversationNavigationToken, listBrowserInstances, listInstallationConversations, loadBoundToolResult, loadConnection, migrateLegacyConversation, openDurableConversation, type ConversationBinding, type DurableConversation } from '../lib/buffaly-connection';
+import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, authorizeInstallation, conversationFromBootstrap, createDurableConversation, isLegacyConversation, issueConversationNavigationToken, listBrowserInstances, loadBoundToolResult, loadConnection, migrateLegacyConversation, openDurableConversation, type ConversationBinding, type DurableConversation } from '../lib/buffaly-connection';
 import { activateConversation, activateServer, canonicalServerOrigin, conversationForContext, getActiveServer, loadServers, removeServer, saveServer, summarizeServers, updateActiveServer, updateActiveServerConversation, type SavedBuffalyServer, type ServerState } from '../lib/buffaly-servers';
 import type { BoundToolInvocationIdentity } from '../lib/types';
 
@@ -216,14 +216,7 @@ export default defineBackground(() => {
 	  if (request.type === 'get_buffaly_servers') {
 		if (!isTrustedExtensionPage(sender)) { sendResponse({ ok: false, error: 'Unauthorized: servers can only be read from an extension page' }); return false; }
 		loadServers().then(async (state) => {
-			let active = state.servers.find((server) => server.ServerId === state.activeServerId) || null;
-			if (active?.Connection) {
-				const recovered = await listInstallationConversations(active.Connection);
-				const conversationsBySessionKey = { ...(active.ConversationsBySessionKey ?? {}) };
-				for (const conversation of recovered) conversationsBySessionKey[conversation.SessionKey] = conversation;
-				active = await updateActiveServer({ ConversationsBySessionKey: conversationsBySessionKey });
-				state = await loadServers();
-			}
+			const active = state.servers.find((server) => server.ServerId === state.activeServerId) || null;
 			const status = active ? await inspectServer(active.Origin, active.Connection) : { State: 'Unavailable' as ServerState, Version: '' };
 			sendResponse({ ok: true, data: { Servers: summarizeServers(state.servers, state.activeServerId), ActiveServer: active ? { ServerId: active.ServerId, Name: active.Name, Origin: active.Origin } : null, ...status } });
 		}).catch((err: Error) => sendResponse({ ok: false, error: err.message }));
