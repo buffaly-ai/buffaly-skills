@@ -10,7 +10,7 @@ import { validateUrl, looksLikePaymentForm } from './safety';
 import {
   attachDebugger, detachDebugger, isAttached, getAttachedTabId,
   clickViaDebugger, clickAtCoords, typeViaDebugger, pressKeyViaDebugger,
-  screenshotViaDebugger, scrollViaDebugger, navigateViaDebugger,
+  scrollViaDebugger, navigateViaDebugger,
   getPageTextViaDebugger, waitForSelector, hoverViaDebugger,
   getConsoleEvents, clearConsoleEvents,
 } from './debugger-session';
@@ -190,12 +190,33 @@ async function handleScreenshot(args: ScreenshotArgs): Promise<ToolResult> {
   const tabId = await resolveTabId(args.tabId);
   const fullPage = args.fullPage ?? false;
 
-  if (!isAttached(tabId)) {
-    return { ok: false, error: 'Debugger not attached. Call attach_debugger first.', code: 'DEBUGGER_NOT_ATTACHED' };
+  if (fullPage) {
+    return {
+      ok: false,
+      error: 'Bound screenshot captures the visible Chrome viewport only. Use Buffaly\'s standard screenshot capability for a full-page capture.',
+      code: 'FULL_PAGE_SCREENSHOT_UNSUPPORTED',
+    };
   }
 
-  const screenshot = await screenshotViaDebugger(tabId, fullPage);
-  return { ok: true, data: screenshot };
+  const tab = await chrome.tabs.get(tabId);
+  if (!tab.active || tab.windowId === undefined) {
+    return {
+      ok: false,
+      error: `Tab ${tabId} is not the visible tab in its Chrome window. Switch to it before taking a bound screenshot.`,
+      code: 'TAB_NOT_VISIBLE',
+    };
+  }
+
+  const dataUrl = await chrome.tabs.captureVisibleTab(tab.windowId, { format: 'png' });
+  const viewport = await executeInTab(tabId, () => ({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  }));
+
+  return {
+    ok: true,
+    data: { dataUrl, width: viewport.width, height: viewport.height, tabId },
+  };
 }
 
 async function handleFindElements(args: FindElementsArgs): Promise<ToolResult> {

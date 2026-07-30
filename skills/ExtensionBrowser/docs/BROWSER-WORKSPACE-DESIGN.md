@@ -4,7 +4,7 @@
 Redesign the ExtensionBrowser side panel from a developer command console into a trustworthy Buffaly browser-agent workspace. The design borrows proven interaction patterns from Claude for Chrome—persistent conversation, page awareness, visible autonomy state, takeover, activity history, and safety confirmations—without copying Anthropic branding or coupling Buffaly to Claude-specific services.
 
 ## 2. Current State
-`entrypoints/sidepanel/App.tsx` renders a header, a dominant debugger attach button, four quick tools, a local message transcript, tool log, and a text input. The text input is not an agent: it recognizes six hard-coded commands. `background.ts` exposes a central typed router; DOM tools use `chrome.scripting`, while privileged input/screenshot/console operations require side-panel consent before `chrome.debugger` attachment. `lib/bridge.js` lets Buffaly call that router through the extension service worker.
+`entrypoints/sidepanel/App.tsx` renders a header, a dominant debugger attach button, four quick tools, a local message transcript, tool log, and a text input. The text input is not an agent: it recognizes six hard-coded commands. `background.ts` exposes a central typed router; DOM tools use `chrome.scripting`, visible-viewport screenshots use `chrome.tabs.captureVisibleTab`, and privileged input/console operations require side-panel consent before `chrome.debugger` attachment. `lib/bridge.js` lets Buffaly call that router through the extension service worker.
 
 ## 3. Current Call Chain
 ```text

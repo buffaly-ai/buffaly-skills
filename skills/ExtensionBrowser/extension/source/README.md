@@ -32,7 +32,7 @@ The release archive is written to `.output/buffaly-browser-agent-<version>-chrom
 - `tabs`: lists, opens, closes, switches, and navigates tabs.
 - `scripting`: performs page text and DOM operations.
 - `activeTab`: scopes user-initiated access to the active tab.
-- `debugger`: provides trusted input, screenshots, console events, and debugger-backed navigation after explicit consent.
+- `debugger`: provides trusted input, console events, and debugger-backed navigation after explicit consent. Visible-viewport screenshots use `chrome.tabs.captureVisibleTab` and do not require debugger access.
 - `<all_urls>` host access: enables the browser tool surface on user-selected web pages. Browser-internal and file URLs are blocked by the extension safety layer.
 
 See `PRIVACY.md` for data handling and disclosure details.

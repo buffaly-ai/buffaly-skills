@@ -37,6 +37,9 @@ check(backgroundSource.includes("request.type === 'remove_buffaly_server'") && s
 check(backgroundSource.includes('const sameOrigin = existing?.Origin === origin') && backgroundSource.includes('Connection: sameOrigin ?'), 'changing a saved server origin must not transfer its credential or conversation authority');
 check(toolRouterSource.includes('chrome.windows.update(tab.windowId, { focused: true })'), 'switch_tab must focus the selected tab window before follow-up bound tools run');
 check(!toolRouterSource.includes('content script failed and debugger not attached'), 'ordinary page-text failures must not instruct the user to attach debugger');
+check(toolRouterSource.includes("chrome.tabs.captureVisibleTab(tab.windowId, { format: 'png' })"), 'bound screenshot must capture the visible tab without debugger access');
+check(!toolRouterSource.includes("error: 'Debugger not attached. Call attach_debugger first.'"), 'ordinary screenshot must not require or recommend debugger attachment');
+check(toolRouterSource.includes("code: 'FULL_PAGE_SCREENSHOT_UNSUPPORTED'") && toolRouterSource.includes("Buffaly\\'s standard screenshot capability"), 'full-page screenshot requests must refer to Buffaly standard screenshot capability without debugger escalation');
 const savedServerReply = backgroundSource.indexOf("sendResponse({ ok: true, data: { Server:");
 const backgroundChannelRestart = backgroundSource.indexOf('void startInstallationChannel().catch', savedServerReply);
 check(savedServerReply >= 0 && backgroundChannelRestart > savedServerReply, 'Save server must acknowledge persisted state before restarting an authorized channel');

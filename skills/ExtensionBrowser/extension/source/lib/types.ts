@@ -70,14 +70,6 @@ export interface TabInfo {
   active: boolean;
 }
 
-// ─── Screenshot Result ───
-
-export interface ScreenshotResult {
-  dataUrl: string;  // base64 PNG data URL
-  width: number;
-  height: number;
-}
-
 // ─── Tool Names (union for type safety) ───
 
 export type ToolName =
