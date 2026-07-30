@@ -237,24 +237,6 @@ export default defineBackground(() => {
 		return true;
 	  }
 
-	  if (request.type === 'recover_buffaly_conversations') {
-		if (!isTrustedExtensionPage(sender)) { sendResponse({ ok: false, error: 'Unauthorized: conversations can only be recovered from an extension page' }); return false; }
-		Promise.resolve().then(async () => {
-			const state = await loadServers();
-			let active = state.servers.find((server) => server.ServerId === state.activeServerId) || null;
-			if (!active) throw new Error('Select a Buffaly server first.');
-			const fallbackConnection = await loadConnection();
-			const activeConnection = active.Connection || (fallbackConnection?.Origin === active.Origin ? fallbackConnection : null);
-			if (!activeConnection) throw new Error('The active Buffaly server has no installation credential.');
-			const recovered = await listDurableConversations(activeConnection);
-			const conversationsBySessionKey = { ...(active.ConversationsBySessionKey ?? {}) };
-			recovered.forEach((conversation) => { conversationsBySessionKey[conversation.SessionKey] = conversation; });
-			await saveServer({ ...active, Connection: activeConnection, ConversationsBySessionKey: conversationsBySessionKey }, true);
-			return { Recovered: recovered.length, ServerId: active.ServerId };
-		}).then((data) => sendResponse({ ok: true, data })).catch((err: Error) => sendResponse({ ok: false, error: err.message }));
-		return true;
-	  }
-
 	  if (request.type === 'save_buffaly_server') {
 		if (!isTrustedExtensionPage(sender)) { sendResponse({ ok: false, error: 'Unauthorized: servers can only be saved from an extension page' }); return false; }
 		Promise.resolve().then(async () => {
