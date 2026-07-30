@@ -68,6 +68,11 @@ prototype ToCollectRedditAdsData : TrafficAnalysisSkillAction
 [SemanticProgram.InfinitivePhrase("to aggregate traffic analysis for email rendering")]
 prototype ToAggregateTrafficAnalysis : TrafficAnalysisSkillAction
 {
-	Description = @"Aggregate available collector envelope JSON documents into the TrafficAnalysis email report view model.";
-	function Execute(string runId, string runSettingsJson, string collectorsJson) : string { return TrafficAnalysisProtoScriptFacade.AggregateTrafficAnalysis(runId, runSettingsJson, collectorsJson); }
+	Description = @"Aggregate available collector envelope JSON documents into the TrafficAnalysis email report view model using one bounded runtime LLM synthesis pass for narrative and prioritization.";
+	function Execute(string runId, string runSettingsJson, string collectorsJson) : string
+	{
+		string prompt = TrafficAnalysisProtoScriptFacade.BuildAggregateSynthesisPrompt(runSettingsJson, collectorsJson);
+		string modelResponseJson = ToAskModelViaBuffalyRuntime.Execute(prompt, "Return strict JSON only. Use only supplied metrics and collector analysis. Do not invent numbers.", "", "", "", "[]");
+		return TrafficAnalysisProtoScriptFacade.AggregateTrafficAnalysisWithSynthesis(runId, runSettingsJson, collectorsJson, modelResponseJson);
+	}
 }
