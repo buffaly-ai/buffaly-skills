@@ -1,6 +1,22 @@
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $validator = Join-Path $repoRoot 'scripts\Test-ExtensionPackage.ps1'
+$repositoryValidator = Join-Path $repoRoot 'scripts\Test-ExtensionRepository.ps1'
+$previousRuntimeCommand = $env:BUFFALY_CLAUDECODE_RUNTIME_REGRESSION_COMMAND
+try {
+    $env:BUFFALY_CLAUDECODE_RUNTIME_REGRESSION_COMMAND = $null
+    $ordinaryRepositoryOutput = & powershell -NoProfile -ExecutionPolicy Bypass -File $repositoryValidator -RepoRoot $repoRoot 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        throw ('Ordinary repository validation must not gate on ClaudeCode runtime execution: ' + (($ordinaryRepositoryOutput | Out-String).Trim()))
+    }
+    $gatedRepositoryOutput = & powershell -NoProfile -ExecutionPolicy Bypass -File $repositoryValidator -RepoRoot $repoRoot -RequireClaudeCodeRuntimeRegression 2>&1
+    if ($LASTEXITCODE -eq 0) { throw 'Explicit ClaudeCode repository runtime validation must reject a missing trusted runner.' }
+    if (($gatedRepositoryOutput | Out-String) -notmatch 'ClaudeCode release validation requires a successful live runtime command') {
+        throw 'Explicit ClaudeCode repository validation did not preserve the missing-runner diagnostic.'
+    }
+} finally {
+    $env:BUFFALY_CLAUDECODE_RUNTIME_REGRESSION_COMMAND = $previousRuntimeCommand
+}
 $ordinary = & powershell -NoProfile -ExecutionPolicy Bypass -File $validator -PackageName ClaudeCode -RepoRoot $repoRoot -JsonOutput | ConvertFrom-Json
 if (-not $ordinary.Passed) { throw 'Ordinary ClaudeCode package inspection must remain available without a live runner.' }
 $release = & powershell -NoProfile -ExecutionPolicy Bypass -File $validator -PackageName ClaudeCode -RepoRoot $repoRoot -RequireClaudeCodeRuntimeRegression -JsonOutput | ConvertFrom-Json

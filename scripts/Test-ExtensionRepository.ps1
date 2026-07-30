@@ -4,12 +4,15 @@ param(
 
     [switch]$SkipReleaseRuntimeRegression,
 
+    [switch]$RequireClaudeCodeRuntimeRegression,
+
     [string]$ClaudeCodeRuntimeRegressionCommand = "",
 
     [switch]$JsonOutput
 )
 
 $ErrorActionPreference = "Stop"
+$repositoryRequiresClaudeCodeRuntimeRegression = $RequireClaudeCodeRuntimeRegression.IsPresent
 
 # Dot-source the single-package validation script to get Test-ExtensionPackageInternal
 . (Join-Path $PSScriptRoot "Test-ExtensionPackage.ps1")
@@ -23,7 +26,7 @@ function Read-JsonFile([string]$path) {
     function Test-ExtensionRepository {
     param(
         [string]$RepoRoot,
-        [bool]$RequireClaudeCodeRuntimeRegression = $true,
+        [bool]$RequireClaudeCodeRuntimeRegression = $false,
         [string]$ClaudeCodeRuntimeRegressionCommand = ""
     )
 
@@ -150,7 +153,8 @@ function Read-JsonFile([string]$path) {
     }
 }# --- Main execution when run directly (not dot-sourced) ---
 if ($MyInvocation.InvocationName -ne '.') {
-    $result = Test-ExtensionRepository -RepoRoot $RepoRoot -RequireClaudeCodeRuntimeRegression (-not $SkipReleaseRuntimeRegression.IsPresent) -ClaudeCodeRuntimeRegressionCommand $ClaudeCodeRuntimeRegressionCommand
+    $runClaudeCodeRuntimeRegression = $repositoryRequiresClaudeCodeRuntimeRegression -and -not $SkipReleaseRuntimeRegression.IsPresent
+    $result = Test-ExtensionRepository -RepoRoot $RepoRoot -RequireClaudeCodeRuntimeRegression $runClaudeCodeRuntimeRegression -ClaudeCodeRuntimeRegressionCommand $ClaudeCodeRuntimeRegressionCommand
 
     if ($JsonOutput) {
         $output = [PSCustomObject]@{
