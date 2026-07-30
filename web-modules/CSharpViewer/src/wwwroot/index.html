@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>C# Viewer</title>
+  <link rel="stylesheet" href="/web-modules/CSharpViewer/csharp-viewer.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">C#</span><span>C# Viewer</span></div>
+    <label for="root-select">Source root</label>
+    <select id="root-select" aria-label="Source root"></select>
+    <span class="separator"></span>
+    <button id="collapse-all" type="button">Collapse all</button>
+    <div class="status" id="status" role="status">Loading…</div>
+  </header>
+  <main>
+    <aside class="sidebar">
+      <div class="sidebar-title">Explorer <span id="file-count"></span></div>
+      <div id="tree" class="tree" role="tree"></div>
+    </aside>
+    <section class="workspace">
+      <div class="tabbar"><div class="tab" id="active-tab">No file selected</div></div>
+      <div class="breadcrumb" id="breadcrumb">Select a C# file from Explorer</div>
+      <div class="empty" id="empty"><div class="empty-mark">C#</div><strong>Real source, read only.</strong><span>Choose a file to inspect its current contents.</span></div>
+      <div class="code-wrap hidden" id="code-wrap"><div class="lines" id="lines" aria-hidden="true"></div><pre><code id="code"></code></pre></div>
+      <footer><span id="metadata">READ ONLY</span><span>C#</span><span>UTF-8</span></footer>
+    </section>
+  </main>
+  <script src="/web-modules/CSharpViewer/csharp-viewer.js"></script>
+</body>
+</html>
