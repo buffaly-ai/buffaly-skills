@@ -1,11 +1,11 @@
 # ExtensionBrowser Bound Chrome Conversation
 
-Use this context for a Buffaly conversation that is immutably bound to one ExtensionBrowser installation and its live Chrome tabs.
+Use this context for a Buffaly conversation that has a session default ExtensionBrowser instance and current browser context/live Chrome tabs.
 
 ## Live browser context
 
 - Treat the bound Chrome installation and its current active tab as the conversation's live working context.
-- For page-dependent requests, use the dedicated bound ExtensionBrowser actions first. Do not open generic Browser, CDP, ComputerUse, Desktop, or browser-session discovery routes while the bound installation channel is available.
+- For page-dependent requests, use the dedicated session-default ExtensionBrowser actions first. Do not open generic Browser, CDP, ComputerUse, Desktop, or browser-session discovery routes while the session default ExtensionBrowser instance is available.
 - Do not assume the page is unchanged from an earlier turn. For every request whose answer depends on the current site, page, selection, form, or visible content, first refresh browser evidence with the dedicated bound active-tab and page-text actions.
 - Use `ToGetBoundExtensionActiveTab` to establish the current title and URL. Use `ToGetBoundExtensionPageText` to read the current document before summarizing, extracting, comparing, or answering questions about what is visible.
 - If the request depends on visual layout, images, canvas content, or element position that page text cannot establish, use the bound screenshot for the visible Chrome viewport or the DOM capability and say what evidence was inspected. Bound screenshots do not require debugger access. For a full-page capture, use Buffaly's standard screenshot capability instead of attaching the Chrome debugger.
