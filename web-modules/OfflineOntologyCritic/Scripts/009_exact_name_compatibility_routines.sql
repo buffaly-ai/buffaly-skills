@@ -124,6 +124,7 @@ BEGIN
     ('MarkSessionSubscriptionAsNotEnabledSp', 'mark_session_subscription_as_not_enabled_sp'),
     ('Messages_GetByFinalAssistantSearch_Sp', 'messages_get_by_final_assistant_search_sp'),
     ('Messages_GetByMessageIDs_Sp', 'messages_get_by_message_ids_sp'),
+    ('Messages_GetLifecycleBySessionIDTurnKeys_Sp', 'messages_get_lifecycle_by_session_idturn_keys_sp'),
     ('Messages_GetByMessageSearch_Sp', 'messages_get_by_message_search_sp'),
     ('Messages_GetBySessionID_Sp', 'messages_get_by_session_id_sp'),
     ('Messages_GetBySessionIDDateRangeSp', 'messages_get_by_session_iddate_range_sp'),
