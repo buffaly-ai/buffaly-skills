@@ -9,6 +9,7 @@ import Buffaly.Agent.Host Buffaly.Agent.Host.SessionInfo SessionInfo;
 import Buffaly.Agent.Host Buffaly.Agent.Host.SessionManagement.Sessions Sessions;
 import ActionLearningCoordinator.Web ActionLearningCoordinator.Web.OntologyFoundryProposalProjection OntologyFoundryProposalProjection;
 import ActionLearningCoordinator.Web ActionLearningCoordinator.Web.ActionLearningCandidateProjection ActionLearningCandidateProjection;
+import ActionLearningCoordinator.Web ActionLearningCoordinator.Web.OnlineMemoryCriticBatchProjection OnlineMemoryCriticBatchProjection;
 
 [SemanticEntity("session work coordinator action root")]
 prototype SessionWorkCoordinatorActionRoot : OpsAction
@@ -67,6 +68,30 @@ prototype ActionLearningCoordinatorSkill : SessionWorkCoordinatorSkill
 	ActionRoot = ActionLearningCoordinatorActionRoot;
 }
 
+[SemanticEntity("online memory critic batch coordinator entity root")]
+prototype OnlineMemoryCriticBatchCoordinatorEntityRoot : SemanticEntityBase
+{
+	Description = @"Restricted entity root for the Terra Online Memory Critic batch coordinator workspace.";
+}
+
+[SemanticEntity("online memory critic batch coordinator action root")]
+prototype OnlineMemoryCriticBatchCoordinatorActionRoot : SessionWorkCoordinatorActionRoot
+{
+	Description = @"Restricted action root for the Terra Online Memory Critic batch coordinator workspace.";
+}
+
+prototype OnlineMemoryCriticBatchCoordinatorSkillAction : OnlineMemoryCriticBatchCoordinatorActionRoot
+{
+	Description = @"Base action for Terra Online Memory Critic batch coordinator workspace operations.";
+}
+
+[SemanticEntity("online memory critic batch coordinator skill")]
+prototype OnlineMemoryCriticBatchCoordinatorSkill : SessionWorkCoordinatorSkill
+{
+	Description = @"Coordinates selected-turn Terra Online Memory Critic batches using the actual deterministic critic child with event delivery disabled.";
+	ActionRoot = OnlineMemoryCriticBatchCoordinatorActionRoot;
+}
+
 [SemanticEntity("ontology foundry coordinator entity root")]
 prototype OntologyFoundryCoordinatorEntityRoot : SemanticEntityBase
 {
@@ -96,6 +121,10 @@ prototype ToGetSessionWorkCoordinatorInfo : SessionWorkCoordinatorSkillAction
 {
 	function Execute(string specialization = "action-learning") : string
 	{
+		if (specialization == @"online-memory-critic-batch")
+		{
+			return @"{""SchemaVersion"":2,""WorkspaceId"":""online-memory-critic-batch"",""DisplayName"":""Online Memory Critic Batch"",""CoordinatorSkill"":""OnlineMemoryCriticBatchCoordinatorSkill"",""BaseSkill"":""SessionWorkCoordinatorSkill"",""WorkerSkill"":""OnlineSessionMemoryCriticSkill"",""SessionKey"":""" + _opsAgent.GetSessionKeyOrEmpty() + @""",""AgentName"":""online-memory-critic-batch-coordinator"",""LedgerPath"":""artifacts/session-work/ledger.json"",""WorkspaceDefinitionAction"":""ToGetOnlineMemoryCriticBatchWorkspaceDefinition"",""PortfolioAction"":""ToGetOnlineMemoryCriticBatchPortfolio"",""ItemWorkspaceAction"":""ToGetOnlineMemoryCriticBatchSourceWorkspace""}";
+		}
 		if (specialization == @"ontology-foundry")
 		{
 			return @"{""SchemaVersion"":2,""WorkspaceId"":""ontology-foundry"",""DisplayName"":""Ontology Foundry"",""CoordinatorSkill"":""OntologyFoundryCoordinatorSkill"",""BaseSkill"":""SessionWorkCoordinatorSkill"",""WorkerSkill"":""OntologyFoundrySkill"",""SessionKey"":""" + _opsAgent.GetSessionKeyOrEmpty() + @""",""AgentName"":""ontology-foundry-coordinator"",""LedgerPath"":""artifacts/session-work/ledger.json"",""WorkspaceDefinitionAction"":""ToGetOntologyFoundryWorkspaceDefinition"",""PortfolioAction"":""ToGetOntologyFoundryPortfolio"",""ItemWorkspaceAction"":""ToGetOntologyFoundrySourceWorkspace""}";
@@ -436,4 +465,99 @@ prototype ToRunOntologyFoundryWorkerOperation : OntologyFoundryCoordinatorSkillA
 		return OntologyFoundryProposalProjection.RunWorkerOperation(sourceSessionKey, workerSessionKey, actionPrototypeName, inputValue);
 	}
 	Description = @"Runs one allowlisted Ontology Foundry prompt operation on the exact source-attached worker and returns its canonical dispatch or terminal status.";
+}
+
+[SemanticProgram.InfinitivePhrase("to get the online memory critic batch workspace definition")]
+prototype ToGetOnlineMemoryCriticBatchWorkspaceDefinition : OnlineMemoryCriticBatchCoordinatorSkillAction, SessionWorkWorkspaceDefinitionProvider
+{
+	function Execute() : string
+	{
+		return @"{""SchemaVersion"":1,""WorkspaceId"":""online-memory-critic-batch"",""DisplayName"":""Online Memory Critic Batch"",""Description"":""Sequential Terra selected-turn Online Memory Critic batches using the actual deterministic critic child with live event delivery disabled."",""WorkerAgentName"":""online-session-memory-critic"",""WorkerSessionSuffix"":""-online-memory-critic"",""ArtifactPath"":""artifacts/online-memory-critic-batch/manifest.json"",""AttachAction"":""ToAttachOnlineMemoryCriticBatchWorker"",""RunAction"":""ToRunOnlineMemoryCriticBatchOperation"",""PreviewTitle"":""Terra critic batch manifest"",""PreviewDescription"":""Pending and queued selected source turns for uncontested Terra memory critic review.""}";
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get the online memory critic batch coordinator portfolio")]
+prototype ToGetOnlineMemoryCriticBatchPortfolio : OnlineMemoryCriticBatchCoordinatorSkillAction, SessionWorkPortfolioProvider
+{
+	function Execute() : string
+	{
+		return ToGetSessionWorkLedger.Execute();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get an online memory critic batch source workspace")]
+prototype ToGetOnlineMemoryCriticBatchSourceWorkspace : OnlineMemoryCriticBatchCoordinatorSkillAction, SessionWorkItemWorkspaceProvider
+{
+	function Execute(string sourceSessionKey) : string
+	{
+		Sessions.ValidateSessionKey(sourceSessionKey);
+		return OnlineMemoryCriticBatchProjection.BuildSourceWorkspace(Sessions.GetSessionsRootPath(), sourceSessionKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to attach an online memory critic batch worker to a source session")]
+prototype ToAttachOnlineMemoryCriticBatchWorker : OnlineMemoryCriticBatchCoordinatorSkillAction
+{
+	function Execute(string sourceSessionKey, string workerSessionKey) : string
+	{
+		JsonObject attached = new JsonObject(OnlineMemoryCriticBatchProjection.AttachWorker(Sessions.GetSessionsRootPath(), sourceSessionKey, workerSessionKey));
+		string resolvedWorkerSessionKey = attached.GetStringOrFail(@"WorkerSessionKey", @"Attached critic worker key is required.");
+		JsonObject receipt = new JsonObject(ToAddSessionWorkEntry.Execute(sourceSessionKey));
+		JsonObject ledger = receipt.GetJsonObjectOrFail(@"Ledger", @"Session work attachment receipt Ledger is required.");
+		JsonArray entries = ledger.GetJsonArrayOrFail(@"Entries", @"Session work ledger Entries is required.");
+		foreach (JsonValue value in entries)
+		{
+			JsonObject entry = value.ToJsonObjectOrFail(@"Session work ledger entries must be objects.");
+			if (entry.GetStringOrFail(@"SourceSessionKey", @"Session work entry SourceSessionKey is required.") == sourceSessionKey)
+			{
+				entry[@"WorkerSessionKey"] = resolvedWorkerSessionKey;
+				entry[@"WorkerAgentName"] = @"online-session-memory-critic";
+				entry[@"ProcessorSkill"] = @"OnlineSessionMemoryCriticSkill";
+				entry[@"OperationState"] = @"Attached";
+				entry[@"EventDeliveryEnabled"] = false;
+			}
+		}
+		ledger[@"Entries"] = entries;
+		FileSystemTools.ReplaceTextFile(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json", ledger.ToJSON());
+		attached[@"Ledger"] = ledger;
+		return attached.ToJSON();
+	}
+	Description = @"Creates or reuses the actual deterministic online-memory-critic child, disables event delivery, configures Terra, and records it as the batch worker.";
+}
+
+[SemanticProgram.InfinitivePhrase("to add an online memory critic batch turn")]
+prototype ToAddOnlineMemoryCriticBatchTurn : OnlineMemoryCriticBatchCoordinatorSkillAction
+{
+	function Execute(string sourceSessionKey, string turnKey) : string
+	{
+		Sessions.ValidateSessionKey(sourceSessionKey);
+		return OnlineMemoryCriticBatchProjection.AddTurn(Sessions.GetSessionsRootPath(), sourceSessionKey, turnKey);
+	}
+	Description = @"Adds one exact completed source turn key to the source-owned Terra Online Memory Critic batch manifest.";
+}
+
+[SemanticProgram.InfinitivePhrase("to run an online memory critic batch operation")]
+prototype ToRunOnlineMemoryCriticBatchOperation : OnlineMemoryCriticBatchCoordinatorSkillAction
+{
+	function Execute(string sourceSessionKey, string actionPrototypeName, string inputValue = @"") : string
+	{
+		Sessions.ValidateSessionKey(sourceSessionKey);
+		JsonObject ledger = new JsonObject(ToGetSessionWorkLedger.Execute());
+		JsonArray entries = ledger.GetJsonArrayOrFail(@"Entries", @"Session work ledger Entries is required.");
+		string workerSessionKey = @"";
+		foreach (JsonValue value in entries)
+		{
+			JsonObject entry = value.ToJsonObjectOrFail(@"Session work ledger entries must be objects.");
+			if (entry.GetStringOrFail(@"SourceSessionKey", @"Session work entry SourceSessionKey is required.") == sourceSessionKey)
+			{
+				workerSessionKey = entry.GetStringOrFail(@"WorkerSessionKey", @"An attached Online Memory Critic batch worker is required.");
+			}
+		}
+		if (String.IsNullOrWhiteSpace(workerSessionKey))
+		{
+			throw new InvalidOperationException(@"No attached Online Memory Critic batch worker was found for source session " + sourceSessionKey);
+		}
+		return OnlineMemoryCriticBatchProjection.RunWorkerOperation(Sessions.GetSessionsRootPath(), sourceSessionKey, workerSessionKey, actionPrototypeName, inputValue);
+	}
+	Description = @"Runs one selected-turn Terra Online Memory Critic batch operation against the actual critic child with event delivery disabled and concurrency one.";
 }

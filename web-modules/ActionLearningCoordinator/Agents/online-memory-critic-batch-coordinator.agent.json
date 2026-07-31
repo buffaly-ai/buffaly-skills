@@ -1,0 +1,14 @@
+{
+  "AgentName": "online-memory-critic-batch-coordinator",
+  "DisplayName": "Online Memory Critic Batch Coordinator",
+  "PromptFile": "Skills/ActionLearningCoordinator/Prompts/OnlineMemoryCriticBatchCoordinator.md",
+  "PromptContext": "",
+  "RootActionPrototypeName": "OnlineMemoryCriticBatchCoordinatorSkillAction",
+  "RootEntityPrototypeName": "OnlineMemoryCriticBatchCoordinatorEntityRoot",
+  "DefaultModelName": "gpt-5.5",
+  "UiPage": "/web-modules/ActionLearningCoordinator/dashboard?workspace=online-memory-critic-batch",
+  "IsReadOnly": false,
+  "IsHidden": false,
+  "CanChangeModel": true,
+  "CompanionAgents": []
+}

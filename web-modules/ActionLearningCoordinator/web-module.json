@@ -19,6 +19,12 @@
         "DisplayName": "Ontology Foundry Coordinator",
         "Path": "/web-modules/SessionWorkCoordinator/dashboard?workspace=ontology-foundry",
         "Description": "Inspect Ontology Foundry source attachments and source-owned EvidenceGraphs through the shared coordinator workspace."
+      },
+      {
+        "Name": "online-memory-critic-batch-coordinator",
+        "DisplayName": "Online Memory Critic Batch Coordinator",
+        "Path": "/web-modules/SessionWorkCoordinator/dashboard?workspace=online-memory-critic-batch",
+        "Description": "Run selected-turn Terra Online Memory Critic batches sequentially through the actual critic child with event delivery disabled."
       }
     ],
     "ProjectArtifacts": [
