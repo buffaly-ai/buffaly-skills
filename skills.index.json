@@ -2248,10 +2248,11 @@
     {
       "SkillName": "TabularData",
       "Title": "Tabular Data",
-      "Description": "TabularData Skill",
-      "Version": "0.1.0",
+      "Description": "Buffaly skill package for Tabular Data.",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "Tabular Data",
         "TabularData"
       ],
       "Path": "skills/TabularData",
@@ -2259,6 +2260,10 @@
         {
           "Path": "index.pts",
           "Sha256": "44889acb7134bf2f420ef3734f00513bb28c2e08aeb388629bde5929a56724eb"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "bbe64b05ae3d5f9e8c1018e4a989e356d148699aec09c84e9847b8c2c25b8fa7"
         },
         {
           "Path": "index.pts.md",
@@ -2271,11 +2276,7 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "TailscaleExposure",
