@@ -18,6 +18,8 @@ Google Ads, OpenAI Usage, and Reddit Ads direct collector actions now explicitly
 
 TrafficAnalysis declares explicit references to the installed Google Ads, OpenAI Admin, and Reddit Ads provider assemblies and exposes thin module-owned bridge prototypes over their existing read-only services. This makes the TrafficAnalysis project compile independently of whether another package's action artifact was imported into the same run project, without adding source clients or duplicating provider logic.
 
+Each provider bridge passes source returns into a `StringRef`-typed envelope builder before crossing the worker method boundary. The builder materializes and parses provider JSON within the same ProtoScript execution, preventing a large value from being returned as a handle and then immediately re-spooled after attempted resolution.
+
 The recursive GA4 and Tracking Logs fan-out helpers receive only a compact numeric property-ID array rather than the full safe property projection. Compact IDs and safe evidence are projected through separate read-only inventory calls so the large provider response is never stored and reused through a ProtoScript string local, where runtime spooling can replace it with a handle. Accumulated source responses are materialized at every recursive entry because those arrays can legitimately cross the inline-string threshold.
 
 After deterministic envelope construction, each successful collector makes one bounded `ToAskModelViaBuffalyRuntime` call. The strict response may replace only `analysis.summary`, `analysis.insights`, `analysis.anomalies`, and `analysis.recommendations`. Invalid or failed model output preserves the deterministic fallback; raw data and metrics are never model-authored.
