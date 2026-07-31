@@ -9828,10 +9828,10 @@
       "PackageType": "WebModule",
       "Title": "OpenAI Administration",
       "Description": "Buffaly Web Module package for OpenAI Administration.",
-      "Version": "0.1.12",
+      "Version": "0.1.13",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/OpenAIAdmin",
-      "SourceUrl": "",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/OpenAIAdmin",
       "Phrases": [
         "OpenAI Administration",
         "OpenAIAdmin"
@@ -9843,7 +9843,7 @@
         },
         {
           "Path": "Buffaly.OpenAiAdmin.WebModule.dll",
-          "Sha256": "31828cedbd7857b9c112c2154731d646f258b945bd36b665abb2e803b2d96ea4"
+          "Sha256": "7172f09bea6ac5f831632e87f3ef3678a3c5c2a015468e7e18c63d3a495ba498"
         },
         {
           "Path": "web-module.json",
@@ -9875,7 +9875,8 @@
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
       "RequiresRestart": true,
-      "RequiresPreStartInstall": true
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     },
     {
       "PackageId": "OpenAIImageGeneration",
