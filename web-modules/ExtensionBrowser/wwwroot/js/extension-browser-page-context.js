@@ -4,25 +4,23 @@
   const presentation = new URLSearchParams(window.location.search).get('presentation');
   if (presentation !== 'sidepanel' || window.parent === window) return;
 
-  const RESPONSE_TYPE = 'extension_browser_current_page_response';
-  const REQUEST_TYPE = 'extension_browser_current_page_request';
-  const USER_STATE_KEY = 'ExtensionBrowser.CurrentPage';
-  const pending = new Map();
+	const RESPONSE_TYPE = 'extension_browser_send_user_state_response';
+	const REQUEST_TYPE = 'extension_browser_send_user_state_request';
+	const pendingSendUserState = new Map();
   const pendingMicrophones = new Map();
-  const freshlyEnrichedInputs = new WeakSet();
-  let evaluateWrapper = null;
-  let steerWrapper = null;
-  let composerFactoryWrapper = null;
-  let composerAssignmentTrapInstalled = false;
-  let replayingComposerDispatch = false;
 
-  function publishFreshUserState(page) {
-    window.BuffalyAgentNativeUserState = {
-      getFreshUserState() {
-        return { [USER_STATE_KEY]: page };
-      }
-    };
-  }
+	// Request one authoritative extension identity and current-page snapshot for ordinary Send.
+	function requestSendUserState() {
+		return new Promise((resolve, reject) => {
+			const requestId = crypto.randomUUID();
+			const timer = window.setTimeout(() => {
+				pendingSendUserState.delete(requestId);
+				reject(new Error('Extension browser context could not be captured before sending.'));
+			}, 5000);
+			pendingSendUserState.set(requestId, { resolve, reject, timer });
+			window.parent.postMessage({ type: REQUEST_TYPE, requestId }, '*');
+		});
+	}
 
   function installMicrophoneDiagnostics() {
     if (typeof navigator === 'undefined' || !navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function') return;
@@ -120,18 +118,6 @@
     request.resolve(request.stream);
   }
 
-  function requestCurrentPage() {
-    return new Promise((resolve, reject) => {
-      const requestId = crypto.randomUUID();
-      const timer = window.setTimeout(() => {
-        pending.delete(requestId);
-        reject(new Error('Current Chrome page could not be captured before sending.'));
-      }, 5000);
-      pending.set(requestId, { resolve, reject, timer });
-      window.parent.postMessage({ type: REQUEST_TYPE, requestId }, '*');
-    });
-  }
-
   window.addEventListener('message', (event) => {
     if (!event.data) return;
     const microphone = pendingMicrophones.get(event.data.requestId);
@@ -147,210 +133,21 @@
         const error = new Error(String(event.data.message || 'Chrome did not grant microphone access.'));
         error.name = String(event.data.name || 'MicrophoneError');
         finishBrokeredMicrophone(event.data.requestId, error);
-      }
-      return;
-    }
-    if (event.source !== window.parent) return;
-    if (event.data.type !== RESPONSE_TYPE) return;
-    const request = pending.get(event.data.requestId);
-    if (!request) return;
-    pending.delete(event.data.requestId);
-    window.clearTimeout(request.timer);
-    if (event.data.error) request.reject(new Error(String(event.data.error)));
-    else request.resolve(event.data.page);
+		}
+		return;
+	}
+	if (event.source !== window.parent || event.data.type !== RESPONSE_TYPE) return;
+	const request = pendingSendUserState.get(event.data.requestId);
+	if (!request) return;
+	pendingSendUserState.delete(event.data.requestId);
+	window.clearTimeout(request.timer);
+	if (event.data.error) request.reject(new Error(String(event.data.error)));
+	else request.resolve(event.data.userState);
   });
 
-  function injectPage(input, page) {
-    if (!input || typeof input !== 'object') throw new Error('Buffaly input is required for page context.');
-    input.UserState = Object.assign({}, input.UserState || {}, { [USER_STATE_KEY]: page });
-  }
-
-  function hasInjectedCurrentPage(input) {
-    return Boolean(input
-      && typeof input === 'object'
-      && input.UserState
-      && typeof input.UserState === 'object'
-      && input.UserState[USER_STATE_KEY]);
-  }
-
-  async function enrichInput(input) {
-    if (hasInjectedCurrentPage(input)) return;
-    const page = await requestCurrentPage();
-    injectPage(input, page);
-  }
-
-  function reportFailure(initializer, error) {
-    if (initializer && typeof initializer.onErrorReceived === 'function') {
-      initializer.onErrorReceived({ Error: error.message });
-      return;
-    }
-    window.dispatchEvent(new CustomEvent('buffaly:extension-browser-context-error', { detail: { message: error.message } }));
-  }
-
-  function installEvaluateInterceptor() {
-    if (!window.JsonMethod || typeof window.JsonMethod.callWithInitializer !== 'function') return false;
-    if (window.JsonMethod.callWithInitializer === evaluateWrapper) return true;
-    const original = window.JsonMethod.callWithInitializer.bind(window.JsonMethod);
-    evaluateWrapper = function (initializer) {
-      const isEvaluate = initializer && initializer.Method === 'EvaluateWithInput'
-        && initializer.Params && initializer.Params.Input;
-      if (!isEvaluate) return original(initializer);
-      freshlyEnrichedInputs.delete(initializer.Params.Input);
-      enrichInput(initializer.Params.Input).then(() => {
-        original(initializer);
-      }).catch((error) => reportFailure(initializer, error));
-    };
-    window.JsonMethod.callWithInitializer = evaluateWrapper;
-    return true;
-  }
-
-  function installSteerInterceptor() {
-    if (!window.BuffalyAgentService || typeof window.BuffalyAgentService.SteerInputObjectAsync !== 'function') return false;
-    if (window.BuffalyAgentService.SteerInputObjectAsync === steerWrapper) return true;
-    const original = window.BuffalyAgentService.SteerInputObjectAsync.bind(window.BuffalyAgentService);
-    steerWrapper = async function (request) {
-      if (request && request.input) freshlyEnrichedInputs.delete(request.input);
-      await enrichInput(request.input);
-      return original(request);
-    };
-    window.BuffalyAgentService.SteerInputObjectAsync = steerWrapper;
-    return true;
-  }
-
-  function wrapComposerFactory(composer) {
-    if (!composer || typeof composer.createComposerController !== 'function') return false;
-    if (composer.createComposerController === composerFactoryWrapper) return true;
-    const originalFactory = composer.createComposerController.bind(composer);
-    composerFactoryWrapper = function (config) {
-      if (!config || typeof config.invokeOpsService !== 'function') return originalFactory(config);
-      const originalInvoke = config.invokeOpsService;
-      const enrichedConfig = Object.assign({}, config, {
-        invokeOpsService(methodKebabName, methodName, params, callback, onError) {
-          const input = methodName === 'EvaluateWithInput' && params ? params.Input
-            : methodName === 'SteerInput' && params ? params.input
-              : null;
-          if (!input) return originalInvoke(methodKebabName, methodName, params, callback, onError);
-          requestCurrentPage().then((page) => {
-            injectPage(input, page);
-            freshlyEnrichedInputs.add(input);
-            originalInvoke(methodKebabName, methodName, params, callback, onError);
-          }).catch((error) => {
-            if (typeof onError === 'function') onError({ Error: error.message });
-            else window.dispatchEvent(new CustomEvent('buffaly:extension-browser-context-error', { detail: { message: error.message } }));
-          });
-        }
-      });
-      return originalFactory(enrichedConfig);
-    };
-    composer.createComposerController = composerFactoryWrapper;
-    return true;
-  }
-
-  function installComposerInterceptor() {
-    if (wrapComposerFactory(window.BuffalyAgentComposer)) return true;
-    if (composerAssignmentTrapInstalled) return false;
-    const descriptor = Object.getOwnPropertyDescriptor(window, 'BuffalyAgentComposer');
-    if (descriptor && descriptor.configurable === false) return false;
-    let composerValue = descriptor && descriptor.get ? descriptor.get.call(window) : descriptor ? descriptor.value : undefined;
-    Object.defineProperty(window, 'BuffalyAgentComposer', {
-      configurable: true,
-      enumerable: descriptor ? descriptor.enumerable : true,
-      get() { return composerValue; },
-      set(value) {
-        composerValue = value;
-        wrapComposerFactory(value);
-      }
-    });
-    composerAssignmentTrapInstalled = true;
-    if (composerValue) wrapComposerFactory(composerValue);
-    return false;
-  }
-
-  const installStatus = window.ExtensionBrowserPageContext = {
-    evaluateInstalled: false,
-    steerInstalled: false,
-    composerInstalled: false
-  };
-  let evaluateInstalled = false;
-  let steerInstalled = false;
-  function installAvailableInterceptors() {
-    installStatus.composerInstalled = installComposerInterceptor();
-    evaluateInstalled = installEvaluateInterceptor();
-    steerInstalled = installSteerInterceptor();
-    installStatus.evaluateInstalled = evaluateInstalled;
-    installStatus.steerInstalled = steerInstalled;
-    return installStatus.composerInstalled && evaluateInstalled && steerInstalled;
-  }
-
-  // Gate the actual user gesture so an already-mounted composer reads the new page through its
-  // generic synchronous UserState provider. Replaying the button preserves Send versus Steer.
-  function resolveComposerPromptElement() {
-    return document.getElementById('txtOpsV2Prompt')
-      || document.querySelector('textarea[placeholder*="Type a prompt" i]')
-      || document.querySelector('textarea');
-  }
-
-  function isComposerPromptElement(element) {
-    const prompt = resolveComposerPromptElement();
-    return Boolean(prompt && element === prompt);
-  }
-
-  function resolveComposerSendButton(target) {
-    const explicit = target && typeof target.closest === 'function'
-      ? target.closest('#btnOpsV2Send')
-      : null;
-    if (explicit) return explicit;
-    const button = target && typeof target.closest === 'function'
-      ? target.closest('button')
-      : null;
-    if (!button) return null;
-    const prompt = resolveComposerPromptElement();
-    if (!prompt || !prompt.value || !prompt.value.trim()) return null;
-    const label = `${button.id || ''} ${button.name || ''} ${button.title || ''} ${button.getAttribute('aria-label') || ''} ${button.textContent || ''}`.toLowerCase();
-    if (label.includes('send') || label.includes('submit') || label.includes('arrow_upward') || label.includes('↑')) return button;
-    const promptRect = prompt.getBoundingClientRect();
-    const buttonRect = button.getBoundingClientRect();
-    const nearPrompt = buttonRect.left >= promptRect.left - 24
-      && buttonRect.top >= promptRect.top - 24
-      && buttonRect.right <= promptRect.right + 80
-      && buttonRect.bottom <= promptRect.bottom + 80;
-    return nearPrompt ? button : null;
-  }
-
-  function installBeforeComposerDispatch(event) {
-    if (replayingComposerDispatch) return;
-    const target = event && event.target;
-    const sendButton = resolveComposerSendButton(target);
-    const isSendClick = event.type === 'click' && sendButton;
-    const isEnterSubmit = event.type === 'keydown' && event.key === 'Enter' && !event.shiftKey
-      && target && isComposerPromptElement(target);
-    if (!isSendClick && !isEnterSubmit) return;
-
-    const replayButton = sendButton || document.getElementById('btnOpsV2Send') || document.querySelector('button[aria-label*="send" i]');
-    if (!replayButton || replayButton.disabled) return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    installAvailableInterceptors();
-    requestCurrentPage().then((page) => {
-      publishFreshUserState(page);
-      replayingComposerDispatch = true;
-      try {
-        replayButton.click();
-      } finally {
-        replayingComposerDispatch = false;
-      }
-    }).catch((error) => {
-      window.dispatchEvent(new CustomEvent('buffaly:extension-browser-context-error', { detail: { message: error.message } }));
-    });
-  }
-
   installMicrophoneDiagnostics();
-  installAvailableInterceptors();
-  document.addEventListener('click', installBeforeComposerDispatch, true);
-  document.addEventListener('keydown', installBeforeComposerDispatch, true);
-  window.addEventListener('load', installAvailableInterceptors, { once: true });
-  const timer = window.setInterval(() => {
-    installAvailableInterceptors();
-  }, 100);
-  window.setTimeout(() => window.clearInterval(timer), 5000);
+	window.BuffalyAgentNextExtensions.registerSendUserStateProvider({
+		id: 'extension-browser.send-user-state',
+		provide: requestSendUserState
+	});
 }());
