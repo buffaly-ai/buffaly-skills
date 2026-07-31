@@ -1,3 +1,4 @@
+reference FeedingFrenzy.TrafficAnalysis.Web FeedingFrenzy.TrafficAnalysis.Web;
 import FeedingFrenzy.TrafficAnalysis.Web FeedingFrenzy.TrafficAnalysis.Web.TrafficAnalysisProtoScriptFacade TrafficAnalysisProtoScriptFacade;
 
 [SemanticEntity("traffic analysis skill")]
@@ -31,7 +32,8 @@ prototype ToCollectGa4TrafficData : TrafficAnalysisSkillAction
 	function Execute(string runId, string runSettingsJson) : string
 	{
 		string binding = TrafficAnalysisProtoScriptFacade.ResolveWebPropertiesBinding(runSettingsJson);
-		FeedingFrenzyWebPropertiesJsonWsService service = binding == "Remote" ? FeedingFrenzyWebPropertiesJsonWsService#Remote : FeedingFrenzyWebPropertiesJsonWsService#Local;
+		FeedingFrenzyWebPropertiesJsonWsService service = FeedingFrenzyWebPropertiesJsonWsService#Remote;
+		if (binding == "Local") service = FeedingFrenzyWebPropertiesJsonWsService#Local;
 		string timeframe = TrafficAnalysisProtoScriptFacade.ResolveWebPropertiesTimeframe(runSettingsJson);
 		string propertiesJson = TrafficAnalysisProtoScriptFacade.ProjectWebProperties(WebProperties_GetWebProperties.Execute(service), true);
 		string summariesJson = "[]";
@@ -50,7 +52,8 @@ prototype ToCollectTrackingLogData : TrafficAnalysisSkillAction
 	function Execute(string runId, string runSettingsJson) : string
 	{
 		string binding = TrafficAnalysisProtoScriptFacade.ResolveWebPropertiesBinding(runSettingsJson);
-		FeedingFrenzyWebPropertiesJsonWsService service = binding == "Remote" ? FeedingFrenzyWebPropertiesJsonWsService#Remote : FeedingFrenzyWebPropertiesJsonWsService#Local;
+		FeedingFrenzyWebPropertiesJsonWsService service = FeedingFrenzyWebPropertiesJsonWsService#Remote;
+		if (binding == "Local") service = FeedingFrenzyWebPropertiesJsonWsService#Local;
 		string timeframe = TrafficAnalysisProtoScriptFacade.ResolveWebPropertiesTimeframe(runSettingsJson);
 		string propertiesJson = TrafficAnalysisProtoScriptFacade.ProjectWebProperties(WebProperties_GetWebProperties.Execute(service), false);
 		string overviewsJson = "[]";
