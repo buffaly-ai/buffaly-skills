@@ -18,7 +18,7 @@
     styleLoaded = true;
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.7.13";
+    link.href = "/web-modules/DispatchTreeViewer/css/dispatch-tree.css?v=0.7.14";
     document.head.appendChild(link);
   }
 
