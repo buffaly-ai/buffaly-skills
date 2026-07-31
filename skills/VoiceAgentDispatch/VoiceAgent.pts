@@ -7,17 +7,6 @@ prototype VoiceAgentDispatchSkillAction : OpsAction { Description = @"Base actio
 prototype VoiceAgentAction : VoiceAgentDispatchSkillAction { Description = @"Narrow action root exposed to the realtime Voice Agent."; }
 prototype VoiceAgentEntityRoot : SemanticEntityBase { EntityName = @"voice agent entity root"; Description = @"Minimal entity root for the realtime Voice Agent."; }
 
-[SemanticProgram.InfinitivePhrase("to show the ProtoScript environment")]
-[SemanticProgram.InfinitivePhrase("to show the voice agent shell")]
-prototype ToShowVoiceAgentProtoScriptEnvironment : VoiceAgentAction
-{
-	Description = @"Returns a deterministic identity for the currently loaded lightweight Voice Agent ProtoScript entry.";
-	function Execute() : string
-	{
-		return "ProtoScript environment: OpsAgent/VoiceAgentProject.pts; agent: voice-agent; action root: VoiceAgentAction; entity root: VoiceAgentEntityRoot; substrate: OpsAgent/CoreLite";
-	}
-}
-
 [SemanticProgram.InfinitivePhrase("to send instructions to the voice agent dispatcher")]
 prototype ToSendMessageToVoiceAgentDispatcher : VoiceAgentAction
 {
