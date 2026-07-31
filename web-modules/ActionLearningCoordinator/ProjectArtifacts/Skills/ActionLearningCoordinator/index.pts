@@ -343,7 +343,7 @@ prototype ToGetActionLearningWorkspaceDefinition : ActionLearningCoordinatorSkil
 {
 	function Execute() : string
 	{
-		return @"{""SchemaVersion"":1,""WorkspaceId"":""action-learning"",""DisplayName"":""Action Learning"",""Description"":""Evidence-bound reusable action candidates by source session."",""WorkerAgentName"":""action-learning"",""WorkerSessionSuffix"":""-action-learning"",""ArtifactPath"":""artifacts/action-learning/action-candidates.md"",""AttachAction"":""ToAttachActionLearningWorker"",""PreviewTitle"":""Discovered reusable actions"",""PreviewDescription"":""Bounded candidate preview from the living source artifact.""}";
+		return @"{""SchemaVersion"":1,""WorkspaceId"":""action-learning"",""DisplayName"":""Action Learning"",""Description"":""Evidence-bound reusable action candidates by source session."",""WorkerAgentName"":""action-learning"",""WorkerSessionSuffix"":""-action-learning"",""ArtifactPath"":""artifacts/action-learning/action-candidates.md"",""AttachAction"":""ToAttachActionLearningWorker"",""RunAction"":""ToRunActionLearningWorkerOperation"",""PreviewTitle"":""Discovered reusable actions"",""PreviewDescription"":""Bounded candidate preview from the living source artifact.""}";
 	}
 }
 
@@ -364,6 +364,48 @@ prototype ToGetActionLearningSourceWorkspace : ActionLearningCoordinatorSkillAct
 		Sessions.ValidateSessionKey(sourceSessionKey);
 		return ActionLearningCandidateProjection.BuildSourceWorkspace(Sessions.GetSessionsRootPath(), sourceSessionKey);
 	}
+}
+
+[SemanticProgram.InfinitivePhrase("to run an action learning worker operation")]
+prototype ToRunActionLearningWorkerOperation : ActionLearningCoordinatorSkillAction
+{
+	function Execute(string sourceSessionKey, string actionPrototypeName, string inputValue = @"") : string
+	{
+		Sessions.ValidateSessionKey(sourceSessionKey);
+		JsonObject ledger = new JsonObject(ToGetSessionWorkLedger.Execute());
+		JsonArray entries = ledger.GetJsonArrayOrFail(@"Entries", @"Session work ledger Entries is required.");
+		string workerSessionKey = @"";
+		foreach (JsonValue value in entries)
+		{
+			JsonObject entry = value.ToJsonObjectOrFail(@"Session work ledger entries must be objects.");
+			if (entry.GetStringOrFail(@"SourceSessionKey", @"Session work entry SourceSessionKey is required.") == sourceSessionKey)
+			{
+				workerSessionKey = entry.GetStringOrFail(@"WorkerSessionKey", @"An attached Action Learning worker is required.");
+			}
+		}
+		if (String.IsNullOrWhiteSpace(workerSessionKey))
+		{
+			throw new InvalidOperationException(@"No attached Action Learning worker was found for source session " + sourceSessionKey);
+		}
+		string result = ActionLearningCandidateProjection.RunWorkerOperation(Sessions.GetSessionsRootPath(), sourceSessionKey, workerSessionKey, actionPrototypeName, inputValue);
+		if (actionPrototypeName == @"ToResetActionLearningFromBeginning" || actionPrototypeName == @"ToStartActionLearningFromBeginning")
+		{
+			foreach (JsonValue value in entries)
+			{
+				JsonObject entry = value.ToJsonObjectOrFail(@"Session work ledger entries must be objects.");
+				if (entry.GetStringOrFail(@"SourceSessionKey", @"Session work entry SourceSessionKey is required.") == sourceSessionKey)
+				{
+					entry.Remove(@"LastAcceptedSourceTurnId");
+					entry.Remove(@"LastAcceptedSourceTurnUtc");
+					entry[@"OperationState"] = @"Reset";
+				}
+			}
+			ledger[@"Entries"] = entries;
+			FileSystemTools.ReplaceTextFile(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json", ledger.ToJSON());
+		}
+		return result;
+	}
+	Description = @"Runs one allowlisted Action Learning operation on the exact source-attached worker, including guarded reset and start-from-beginning controls.";
 }
 
 [SemanticProgram.InfinitivePhrase("to get the ontology foundry workspace definition")]
