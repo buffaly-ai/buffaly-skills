@@ -86,6 +86,11 @@
 - Documented that both wrappers return compact JSON with `MessageID`, `SessionID`, `MessageKey`, `TurnKey`, `SequenceNumber`, `Role`, and `Text`.
 - Design Decision: direct session-message search belongs in the existing SessionManagement skill and should expose fixed domain tools rather than generic SQL parameters or the heavier semantic conversation search path.
 
+## Expose Scoped Message Search Escalation (2026-07-31)
+- Extended `ToSearchSessionMessages(...)` and `ToSearchSessionFinalAssistantMessages(...)` with `searchScope` and `maxMessageScanCount`, forwarding both to the C# session tools.
+- Kept `maxMessageScanCount` defaulted to `0` so omitted counts use the scope-specific default: shallow recent search first, broader deep/all scans only when explicitly requested.
+- Design Decision: the ProtoScript skill surface must expose the same recent/deep/all escalation contract as the C# tools so agents can follow `NextSearchSuggestion` without silently repeating the shallow scan.
+
 ## Add Targeted Archive/Unarchive Wrappers (2026-06-11)
 - Imported `DeleteSessionResultContract` and added `ToArchiveBuffalySession(sessionKey)` as a thin wrapper over `SessionTools.ArchiveSessionTool(...)`.
 - Added `ToUnarchiveBuffalySession(sessionKey)` as a thin wrapper over `SessionTools.UnarchiveSessionTool(...)`.
