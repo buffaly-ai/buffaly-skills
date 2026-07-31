@@ -25,6 +25,28 @@ prototype TrafficAnalysisCollectorAnalyzer
 	}
 }
 
+prototype TrafficAnalysisGa4SourceCollector
+{
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string timeframe, string propertiesJson, int index, string summariesJson) : string
+	{
+		if (index >= TrafficAnalysisProtoScriptFacade.GetWebPropertyCount(propertiesJson)) return summariesJson;
+		int webPropertyID = TrafficAnalysisProtoScriptFacade.GetWebPropertyIDAt(propertiesJson, index);
+		string nextSummariesJson = TrafficAnalysisProtoScriptFacade.AppendSourceResponse(summariesJson, WebProperties_GetWebPropertyAnalyticsSummary.Execute(service, webPropertyID, timeframe));
+		return TrafficAnalysisGa4SourceCollector.Execute(service, timeframe, propertiesJson, index + 1, nextSummariesJson);
+	}
+}
+
+prototype TrafficAnalysisTrackingSourceCollector
+{
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string timeframe, string propertiesJson, int index, string overviewsJson) : string
+	{
+		if (index >= TrafficAnalysisProtoScriptFacade.GetWebPropertyCount(propertiesJson)) return overviewsJson;
+		int webPropertyID = TrafficAnalysisProtoScriptFacade.GetWebPropertyIDAt(propertiesJson, index);
+		string nextOverviewsJson = TrafficAnalysisProtoScriptFacade.AppendSourceResponse(overviewsJson, WebProperties_GetWebPropertyTrafficOverview.Execute(service, webPropertyID, timeframe));
+		return TrafficAnalysisTrackingSourceCollector.Execute(service, timeframe, propertiesJson, index + 1, nextOverviewsJson);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to collect ga4 traffic data")]
 prototype ToCollectGa4TrafficData : TrafficAnalysisSkillAction
 {
@@ -36,11 +58,7 @@ prototype ToCollectGa4TrafficData : TrafficAnalysisSkillAction
 		if (binding == "Local") service = FeedingFrenzyWebPropertiesJsonWsService#Local;
 		string timeframe = TrafficAnalysisProtoScriptFacade.ResolveWebPropertiesTimeframe(runSettingsJson);
 		string propertiesJson = TrafficAnalysisProtoScriptFacade.ProjectWebProperties(WebProperties_GetWebProperties.Execute(service), true);
-		string summariesJson = "[]";
-		foreach (int webPropertyID in TrafficAnalysisProtoScriptFacade.GetWebPropertyIDs(propertiesJson))
-		{
-			summariesJson = TrafficAnalysisProtoScriptFacade.AppendSourceResponse(summariesJson, WebProperties_GetWebPropertyAnalyticsSummary.Execute(service, webPropertyID, timeframe));
-		}
+		string summariesJson = TrafficAnalysisGa4SourceCollector.Execute(service, timeframe, propertiesJson, 0, "[]");
 		return TrafficAnalysisCollectorAnalyzer.Execute(TrafficAnalysisProtoScriptFacade.BuildGa4Envelope(runId, runSettingsJson, propertiesJson, summariesJson));
 	}
 }
@@ -56,11 +74,7 @@ prototype ToCollectTrackingLogData : TrafficAnalysisSkillAction
 		if (binding == "Local") service = FeedingFrenzyWebPropertiesJsonWsService#Local;
 		string timeframe = TrafficAnalysisProtoScriptFacade.ResolveWebPropertiesTimeframe(runSettingsJson);
 		string propertiesJson = TrafficAnalysisProtoScriptFacade.ProjectWebProperties(WebProperties_GetWebProperties.Execute(service), false);
-		string overviewsJson = "[]";
-		foreach (int webPropertyID in TrafficAnalysisProtoScriptFacade.GetWebPropertyIDs(propertiesJson))
-		{
-			overviewsJson = TrafficAnalysisProtoScriptFacade.AppendSourceResponse(overviewsJson, WebProperties_GetWebPropertyTrafficOverview.Execute(service, webPropertyID, timeframe));
-		}
+		string overviewsJson = TrafficAnalysisTrackingSourceCollector.Execute(service, timeframe, propertiesJson, 0, "[]");
 		return TrafficAnalysisCollectorAnalyzer.Execute(TrafficAnalysisProtoScriptFacade.BuildTrackingLogsEnvelope(runId, runSettingsJson, propertiesJson, overviewsJson));
 	}
 }
