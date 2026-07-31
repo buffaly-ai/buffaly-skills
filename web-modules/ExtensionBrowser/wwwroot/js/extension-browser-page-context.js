@@ -165,6 +165,20 @@
     input.UserState = Object.assign({}, input.UserState || {}, { [USER_STATE_KEY]: page });
   }
 
+  function hasInjectedCurrentPage(input) {
+    return Boolean(input
+      && typeof input === 'object'
+      && input.UserState
+      && typeof input.UserState === 'object'
+      && input.UserState[USER_STATE_KEY]);
+  }
+
+  async function enrichInput(input) {
+    if (hasInjectedCurrentPage(input)) return;
+    const page = await requestCurrentPage();
+    injectPage(input, page);
+  }
+
   function reportFailure(initializer, error) {
     if (initializer && typeof initializer.onErrorReceived === 'function') {
       initializer.onErrorReceived({ Error: error.message });
@@ -181,9 +195,8 @@
       const isEvaluate = initializer && initializer.Method === 'EvaluateWithInput'
         && initializer.Params && initializer.Params.Input;
       if (!isEvaluate) return original(initializer);
-      if (freshlyEnrichedInputs.delete(initializer.Params.Input)) return original(initializer);
-      requestCurrentPage().then((page) => {
-        injectPage(initializer.Params.Input, page);
+      freshlyEnrichedInputs.delete(initializer.Params.Input);
+      enrichInput(initializer.Params.Input).then(() => {
         original(initializer);
       }).catch((error) => reportFailure(initializer, error));
     };
@@ -196,9 +209,8 @@
     if (window.BuffalyAgentService.SteerInputObjectAsync === steerWrapper) return true;
     const original = window.BuffalyAgentService.SteerInputObjectAsync.bind(window.BuffalyAgentService);
     steerWrapper = async function (request) {
-      if (request && request.input && freshlyEnrichedInputs.delete(request.input)) return original(request);
-      const page = await requestCurrentPage();
-      injectPage(request.input, page);
+      if (request && request.input) freshlyEnrichedInputs.delete(request.input);
+      await enrichInput(request.input);
       return original(request);
     };
     window.BuffalyAgentService.SteerInputObjectAsync = steerWrapper;
