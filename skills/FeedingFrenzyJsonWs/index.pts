@@ -139,3 +139,19 @@ include "LeadsAdmin.pts";
 include "SalesRepresentativesAdmin.pts";
 include "AgreementTemplates.pts";
 
+[SemanticProgram.InfinitivePhrase("to get a Feeding Frenzy file pre-signed URL")]
+[SemanticProgram.InfinitivePhrase("to get a Feeding Frenzy S3 recording URL")]
+[SemanticProgram.InfinitivePhrase("to call Files GetPreSignedURL securely")]
+prototype ToGetFeedingFrenzyFilePreSignedUrl : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"Gets a short-lived authorized URL from a stable Feeding Frenzy FileID or S3 key. The URL is redacted by default and is returned only when RevealUrl is explicitly true; never persist a pre-signed URL as a file key.";
+
+	function Execute(FeedingFrenzyJsonWsService service, int FileID, string FileKey, bool RevealUrl) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		if (StringUtil.IsEmpty(service.AutomationUserEmail)) return "Error: FeedingFrenzyJsonWsService.AutomationUserEmail is required for file pre-sign authorization.";
+		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=service.AutomationUserEmail; args["FileID"]=FileID; args["FileKey"]=FileKey; args["RevealUrl"]=RevealUrl;
+		return service.CallBusinessRoute("files/get-file-pre-signed-url-as-automation", args);
+	}
+}
+

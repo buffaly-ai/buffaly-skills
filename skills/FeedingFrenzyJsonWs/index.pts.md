@@ -1,5 +1,10 @@
 # FeedingFrenzyJsonWs ProtoScript Change History
 
+## Add secure file pre-sign action (2026-07-31)
+- Added `ToGetFeedingFrenzyFilePreSignedUrl` beside the existing Feeding Frenzy JsonWs file surface.
+- The server contract binds an enabled automation administrator, accepts a stable FileID or S3 key, refuses queried/expired URL input, and returns expiry plus host/path evidence.
+- Full pre-signed URL output is opt-in through `RevealUrl`; the default response keeps the URL empty so it is not accidentally logged or persisted as a durable file key.
+
 ## Bind signing Draft writes to an auditable automation user (2026-07-31)
 - Added `AutomationUserEmail` to the service contract and bound production to the established enabled administrator `matt+buffaly@intelligencefactory.ai`.
 - Updated the guarded Markdown-to-lead action to call the automation-specific server route, which establishes ordinary Feeding Frenzy user context before creating or reusing a Draft.
