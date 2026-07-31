@@ -28,8 +28,10 @@ prototype TrafficAnalysisCollectorAnalyzer
 
 prototype TrafficAnalysisGa4SourceCollector
 {
-	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string timeframe, string propertiesJson, int index, string summariesJson) : string
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string timeframe, StringRef propertiesValue, int index, StringRef summariesValue) : string
 	{
+		string propertiesJson = ToResolveStringReference.Execute(propertiesValue);
+		string summariesJson = ToResolveStringReference.Execute(summariesValue);
 		if (index >= TrafficAnalysisProtoScriptFacade.GetWebPropertyCount(propertiesJson)) return summariesJson;
 		int webPropertyID = TrafficAnalysisProtoScriptFacade.GetWebPropertyIDAt(propertiesJson, index);
 		string nextSummariesJson = TrafficAnalysisProtoScriptFacade.AppendSourceResponse(summariesJson, WebProperties_GetWebPropertyAnalyticsSummary.Execute(service, webPropertyID, timeframe));
@@ -39,8 +41,10 @@ prototype TrafficAnalysisGa4SourceCollector
 
 prototype TrafficAnalysisTrackingSourceCollector
 {
-	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string timeframe, string propertiesJson, int index, string overviewsJson) : string
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string timeframe, StringRef propertiesValue, int index, StringRef overviewsValue) : string
 	{
+		string propertiesJson = ToResolveStringReference.Execute(propertiesValue);
+		string overviewsJson = ToResolveStringReference.Execute(overviewsValue);
 		if (index >= TrafficAnalysisProtoScriptFacade.GetWebPropertyCount(propertiesJson)) return overviewsJson;
 		int webPropertyID = TrafficAnalysisProtoScriptFacade.GetWebPropertyIDAt(propertiesJson, index);
 		string nextOverviewsJson = TrafficAnalysisProtoScriptFacade.AppendSourceResponse(overviewsJson, WebProperties_GetWebPropertyTrafficOverview.Execute(service, webPropertyID, timeframe));

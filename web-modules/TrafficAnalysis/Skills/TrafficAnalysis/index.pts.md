@@ -14,6 +14,8 @@ Google Ads calls the existing campaign, search-term, and creative actions direct
 
 Intermediate collector envelopes can exceed the runtime's inline-string threshold. The analyzer accepts the envelope as `StringRef` and explicitly materializes it through `ToResolveStringReference` before JSON parsing, preventing a large Google Ads envelope from collapsing into analysis-only output. Existing source actions retain their declared `string` contracts; coercing those returns to `StringRef` changes valid source JSON into a reference-shaped value.
 
+The recursive GA4 and Tracking Logs fan-out helpers also accept their potentially large property and accumulated-response arguments as `StringRef` and materialize them at every method entry. ProtoScript may spool those values between recursive calls; without this boundary, the helper sees the reference token instead of the property array, incorrectly terminates at index zero, and emits empty source results even though the Feeding Frenzy endpoints are healthy.
+
 After deterministic envelope construction, each successful collector makes one bounded `ToAskModelViaBuffalyRuntime` call. The strict response may replace only `analysis.summary`, `analysis.insights`, `analysis.anomalies`, and `analysis.recommendations`. Invalid or failed model output preserves the deterministic fallback; raw data and metrics are never model-authored.
 ## Deterministic email rendering
 
