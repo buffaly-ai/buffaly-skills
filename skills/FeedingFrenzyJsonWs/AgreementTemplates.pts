@@ -26,9 +26,10 @@ prototype ToCreateFeedingFrenzySigningDraftFromMarkdown : FeedingFrenzyJsonWsGua
 {
     Description = @"Attaches completed Markdown to a lead and creates the ordinary document-signing request in Draft. Does not send it.";
     function Execute(FeedingFrenzyJsonWsService service, int LeadID, string DocumentName, string MarkdownContent, string CustomerLegalName, string RecipientName, string RecipientEmail, string ExpirationDate, int ReminderIntervalDays, int ProviderSignerUserID, string SourceFileName, string AgreementTemplateKey) : string
-    {
-        if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
-        JsonObject args = new JsonObject(); args["LeadID"]=LeadID; args["DocumentName"]=DocumentName; args["MarkdownContent"]=MarkdownContent; args["CustomerLegalName"]=CustomerLegalName; args["RecipientName"]=RecipientName; args["RecipientEmail"]=RecipientEmail; args["ExpirationDate"]=ExpirationDate; args["ReminderIntervalDays"]=ReminderIntervalDays; args["ProviderSignerUserID"]=ProviderSignerUserID; args["SourceFileName"]=SourceFileName; args["AgreementTemplateKey"]=AgreementTemplateKey;
-        return service.CallBusinessRoute("lead-document-signing-requests/create-buffaly-signing-draft", args);
-    }
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		if (StringUtil.IsEmpty(service.AutomationUserEmail)) return "Error: FeedingFrenzyJsonWsService.AutomationUserEmail is required for signing Draft creation.";
+		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=service.AutomationUserEmail; args["LeadID"]=LeadID; args["DocumentName"]=DocumentName; args["MarkdownContent"]=MarkdownContent; args["CustomerLegalName"]=CustomerLegalName; args["RecipientName"]=RecipientName; args["RecipientEmail"]=RecipientEmail; args["ExpirationDate"]=ExpirationDate; args["ReminderIntervalDays"]=ReminderIntervalDays; args["ProviderSignerUserID"]=ProviderSignerUserID; args["SourceFileName"]=SourceFileName; args["AgreementTemplateKey"]=AgreementTemplateKey;
+		return service.CallBusinessRoute("lead-document-signing-requests/create-buffaly-signing-draft-as-automation", args);
+	}
 }
