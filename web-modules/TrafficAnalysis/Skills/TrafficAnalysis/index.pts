@@ -50,6 +50,36 @@ prototype TrafficAnalysisTrackingSourceCollector
 	}
 }
 
+prototype TrafficAnalysisGetGa4PropertySummary
+{
+	function Execute(string binding, int webPropertyID, string timeframe) : string
+	{
+		FeedingFrenzyWebPropertiesJsonWsService service = FeedingFrenzyWebPropertiesJsonWsService#Remote;
+		if (binding == "Local") service = FeedingFrenzyWebPropertiesJsonWsService#Local;
+		return WebProperties_GetWebPropertyAnalyticsSummary.Execute(service, webPropertyID, timeframe);
+	}
+}
+
+prototype TrafficAnalysisGetWebProperties
+{
+	function Execute(string binding) : string
+	{
+		FeedingFrenzyWebPropertiesJsonWsService service = FeedingFrenzyWebPropertiesJsonWsService#Remote;
+		if (binding == "Local") service = FeedingFrenzyWebPropertiesJsonWsService#Local;
+		return WebProperties_GetWebProperties.Execute(service);
+	}
+}
+
+prototype TrafficAnalysisGetTrackingPropertyOverview
+{
+	function Execute(string binding, int webPropertyID, string timeframe) : string
+	{
+		FeedingFrenzyWebPropertiesJsonWsService service = FeedingFrenzyWebPropertiesJsonWsService#Remote;
+		if (binding == "Local") service = FeedingFrenzyWebPropertiesJsonWsService#Local;
+		return WebProperties_GetWebPropertyTrafficOverview.Execute(service, webPropertyID, timeframe);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to collect ga4 traffic data")]
 prototype ToCollectGa4TrafficData : TrafficAnalysisSkillAction
 {
