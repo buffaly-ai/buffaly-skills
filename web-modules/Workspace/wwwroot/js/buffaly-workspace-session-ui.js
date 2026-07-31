@@ -1,7 +1,7 @@
 (function () {
 	"use strict";
 
-	const stylesheetHref = "/web-modules/Workspace/css/buffaly-workspace-session-ui.css?v=0.1.0";
+	const stylesheetHref = "/web-modules/Workspace/css/buffaly-workspace-session-ui.css?v=0.1.1";
 	const viewStateBySessionKey = new Map();
 
 	function getNextExtensions() {
@@ -45,6 +45,19 @@
 
 	function getArtifactUrl(sessionKey, artifact) {
 		return "/api/web-modules/Workspace/session-artifact?sessionKey=" + encodeURIComponent(sessionKey) + "&owningSessionKey=" + encodeURIComponent(artifact.owningSessionKey) + "&path=" + encodeURIComponent(artifact.relativePath);
+	}
+
+	function getFileTypeLabel(artifact) {
+		const name = String(artifact && artifact.relativePath || "").toLowerCase();
+		if (artifact && artifact.kind === "Directory") { return "DIR"; }
+		if (/\.pdf$/.test(name)) { return "PDF"; }
+		if (/\.(html?|url)$/.test(name)) { return "WEB"; }
+		if (/\.md$/.test(name)) { return "MD"; }
+		if (/\.(png|jpe?g|webp|gif|svg)$/.test(name)) { return "IMG"; }
+		if (/\.zip$/.test(name)) { return "ZIP"; }
+		if (/\.json$/.test(name)) { return "JSON"; }
+		if (/\.txt$/.test(name)) { return "TXT"; }
+		return "FILE";
 	}
 
 	function moveArtifact(sessionKey, artifact, destinationPath, signal) {
@@ -161,7 +174,7 @@
 			files.replaceChildren();
 			summary.artifacts.forEach(function (artifact) {
 			const isDirectory = artifact.kind === "Directory";
-			const item = renderItem(isDirectory ? "📁" : "📄", artifact.relativePath, artifact.owningSessionKey + (isDirectory ? " · folder" : " · " + artifact.length + " bytes"), isDirectory ? "" : "Open", isDirectory ? null : { href: getArtifactUrl(context.sessionKey, artifact) });
+			const item = renderItem(getFileTypeLabel(artifact), artifact.relativePath, artifact.owningSessionKey + (isDirectory ? " · folder" : " · " + artifact.length + " bytes"), isDirectory ? "" : "Open", isDirectory ? null : { href: getArtifactUrl(context.sessionKey, artifact) });
 			if (!isDirectory) {
 				const move = createElement("button", "bws-item-move", "Move"); move.type = "button";
 				move.addEventListener("click", function () {
@@ -249,29 +262,6 @@
 	const extensions = getNextExtensions();
 	if (!extensions || typeof extensions.register !== "function") {
 		return;
-	}
-
-	// Supply removable Workspace files to the generic Files drawer without touching its DOM.
-	if (typeof extensions.registerFileSource === "function") {
-		extensions.registerFileSource({
-			id: "workspace.shared-artifacts",
-			label: "Workspace files",
-			load: function (context) {
-				return loadSummary(context.sessionKey).then(function (summary) {
-					if (!summary.isAttached) {
-						return null;
-					}
-					return summary.artifacts.map(function (artifact) {
-						return {
-							Name: artifact.owningSessionKey + "/" + artifact.relativePath,
-							Kind: artifact.kind,
-							Detail: artifact.owningSessionKey + (artifact.kind === "Directory" ? " · folder" : " · " + artifact.length + " bytes"),
-							Url: artifact.kind === "Directory" ? "" : getArtifactUrl(context.sessionKey, artifact)
-						};
-					});
-				});
-			}
-		});
 	}
 
 	extensions.register({
