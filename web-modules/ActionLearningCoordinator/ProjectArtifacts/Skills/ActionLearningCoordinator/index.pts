@@ -281,9 +281,6 @@ prototype ToAttachActionLearningWorker : ActionLearningCoordinatorSkillAction
 				throw new InvalidOperationException(@"Worker is already attached to a different source in this coordinator ledger: " + existingSource);
 			}
 		}
-		CreateAgentInitializationContract initialization = new CreateAgentInitializationContract();
-		initialization.ParentSessionKey = sourceSessionKey;
-		BuffalyAgentService.CreateAgentFromProject(workerSessionKey, @"OpsAgent", @"action-learning", initialization);
 		JsonArray updatedEntries = new JsonArray();
 		bool found = false;
 		foreach (JsonValue value in entries)
@@ -325,7 +322,7 @@ prototype ToAttachActionLearningWorker : ActionLearningCoordinatorSkillAction
 		receipt[@"Ledger"] = ledger;
 		return receipt.ToJSON();
 	}
-	Description = @"Creates or reuses the source-attached Action Learning worker and records its exact binding in the coordinator ledger.";
+	Description = @"Validates an existing source-attached Action Learning worker and records its exact binding in the coordinator ledger. Browser/host callers create a missing worker before invoking this worker-owned action.";
 }
 
 [SemanticProgram.InfinitivePhrase("to list action learning coordinator actions")]
