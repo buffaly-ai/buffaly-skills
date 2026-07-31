@@ -60,8 +60,9 @@ prototype ToCollectGa4TrafficData : TrafficAnalysisSkillAction
 		FeedingFrenzyWebPropertiesJsonWsService service = FeedingFrenzyWebPropertiesJsonWsService#Remote;
 		if (binding == "Local") service = FeedingFrenzyWebPropertiesJsonWsService#Local;
 		string timeframe = TrafficAnalysisProtoScriptFacade.ResolveWebPropertiesTimeframe(runSettingsJson);
-		string propertiesJson = TrafficAnalysisProtoScriptFacade.ProjectWebProperties(WebProperties_GetWebProperties.Execute(service), true);
-		string propertyIDsJson = TrafficAnalysisProtoScriptFacade.GetWebPropertyIDs(propertiesJson);
+		string sourcePropertiesJson = WebProperties_GetWebProperties.Execute(service);
+		string propertyIDsJson = TrafficAnalysisProtoScriptFacade.ProjectWebPropertyIDs(sourcePropertiesJson, true);
+		string propertiesJson = TrafficAnalysisProtoScriptFacade.ProjectWebProperties(sourcePropertiesJson, true);
 		string summariesJson = TrafficAnalysisGa4SourceCollector.Execute(service, timeframe, propertyIDsJson, 0, "[]");
 		return TrafficAnalysisCollectorAnalyzer.Execute(TrafficAnalysisProtoScriptFacade.BuildGa4Envelope(runId, runSettingsJson, propertiesJson, summariesJson));
 	}
@@ -77,8 +78,9 @@ prototype ToCollectTrackingLogData : TrafficAnalysisSkillAction
 		FeedingFrenzyWebPropertiesJsonWsService service = FeedingFrenzyWebPropertiesJsonWsService#Remote;
 		if (binding == "Local") service = FeedingFrenzyWebPropertiesJsonWsService#Local;
 		string timeframe = TrafficAnalysisProtoScriptFacade.ResolveWebPropertiesTimeframe(runSettingsJson);
-		string propertiesJson = TrafficAnalysisProtoScriptFacade.ProjectWebProperties(WebProperties_GetWebProperties.Execute(service), false);
-		string propertyIDsJson = TrafficAnalysisProtoScriptFacade.GetWebPropertyIDs(propertiesJson);
+		string sourcePropertiesJson = WebProperties_GetWebProperties.Execute(service);
+		string propertyIDsJson = TrafficAnalysisProtoScriptFacade.ProjectWebPropertyIDs(sourcePropertiesJson, false);
+		string propertiesJson = TrafficAnalysisProtoScriptFacade.ProjectWebProperties(sourcePropertiesJson, false);
 		string overviewsJson = TrafficAnalysisTrackingSourceCollector.Execute(service, timeframe, propertyIDsJson, 0, "[]");
 		return TrafficAnalysisCollectorAnalyzer.Execute(TrafficAnalysisProtoScriptFacade.BuildTrackingLogsEnvelope(runId, runSettingsJson, propertiesJson, overviewsJson));
 	}
