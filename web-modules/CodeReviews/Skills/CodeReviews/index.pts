@@ -104,10 +104,13 @@ prototype ToGetGlobalCodeReviewLanguageGuidance : GlobalCodeReviewsAgentAction
 	Description = @"Language - one exact token: CSharp, ProtoScript, or JavaScript. Returns the authoritative installed CodeReviews guidance through the trusted runtime prompt loader. Read every applicable language before completing the grouped review.";
 	function Execute(string Language) : string
 	{
-		if (Language == "CSharp") return _opsAgent.LoadTrustedPromptText("Nodes/Personal/CodeReviews/CodeReviews.CSharp.md");
-		if (Language == "ProtoScript") return _opsAgent.LoadTrustedPromptText("Nodes/Personal/CodeReviews/CodeReviews.ProtoScript.md");
-		if (Language == "JavaScript") return _opsAgent.LoadTrustedPromptText("Nodes/Personal/CodeReviews/CodeReviews.JavaScript.md");
-		throw "Language must be exactly CSharp, ProtoScript, or JavaScript.";
+		String promptPath = new String();
+		if (StringUtil.EqualNoCase(Language, "CSharp")) promptPath = "Nodes/Personal/CodeReviews/CodeReviews.CSharp.md";
+		else if (StringUtil.EqualNoCase(Language, "ProtoScript")) promptPath = "Nodes/Personal/CodeReviews/CodeReviews.ProtoScript.md";
+		else if (StringUtil.EqualNoCase(Language, "JavaScript")) promptPath = "Nodes/Personal/CodeReviews/CodeReviews.JavaScript.md";
+		else throw "Language must be exactly CSharp, ProtoScript, or JavaScript.";
+		String promptText = _opsAgent.LoadTrustedPromptText(promptPath);
+		return promptText;
 	}
 }
 
