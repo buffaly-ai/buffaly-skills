@@ -1,5 +1,10 @@
 # FeedingFrenzyJsonWs ProtoScript Change History
 
+## Bind signing Draft writes to an auditable automation user (2026-07-31)
+- Added `AutomationUserEmail` to the service contract and bound production to the established enabled administrator `matt+buffaly@intelligencefactory.ai`.
+- Updated the guarded Markdown-to-lead action to call the automation-specific server route, which establishes ordinary Feeding Frenzy user context before creating or reusing a Draft.
+- The API bearer remains transport authorization; the explicit automation user supplies lead permissions and persisted staff audit identity. Customer signer and provider countersigner identities remain separate document inputs.
+
 ## Add guarded lead-tag mutation (2026-07-29)
 - Added the existing `lead-tags/insert-or-update-lead-tag` API route as a guarded write action with fully qualified `SemanticProgram.InfinitivePhrase` annotation syntax.
 - Kept the action outside the default read-oriented action root by inheriting from `FeedingFrenzyJsonWsGuardedWriteAction`.
