@@ -1917,11 +1917,11 @@
     {
       "SkillName": "ProcessManagement",
       "Title": "Process Management",
-      "Description": "Process Management Skill",
-      "Version": "0.1.0",
+      "Description": "Buffaly skill package for Process Management.",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
-        "process management",
+        "Process Management",
         "ProcessManagement"
       ],
       "Path": "skills/ProcessManagement",
@@ -1932,15 +1932,19 @@
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "75c07236084dfb58fdc0c176c9ad72f0717cb84c1b199598050c3d53c9ab5797"
+          "Sha256": "d62c7dc78afcb6db5ac4b3223e819f517a5bf84f5d568c8d8bd68d827a9b1a3d"
         },
         {
           "Path": "PromptActions.pts",
-          "Sha256": "2d16d109d318de36d0f22542b24b37533675f943ca0852e9fe06caa86ca87922"
+          "Sha256": "13db2845b78bc4b0c0287b499e4c8d25560efe2f4dbc9722d22d101a9b193c44"
         },
         {
           "Path": "Prompts/ToAddDeterministicScheduledTask.prompt.md",
           "Sha256": "7bb9ffa495953889fef97d96d5e570ae8b3156ed0f77bed4ae752087c03a1bc0"
+        },
+        {
+          "Path": "Prompts/ToDiagnoseBuffalyProcessFailure.prompt.md",
+          "Sha256": "9eef9b9a99bde24bdc338ea90870d9a6710763367b51e4338df772e5a17fed35"
         },
         {
           "Path": "Prompts/ToExplainHowToAddRecurringProcess.prompt.md",
@@ -1957,11 +1961,7 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "Recaptcha",

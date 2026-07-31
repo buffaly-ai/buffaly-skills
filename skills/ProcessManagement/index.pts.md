@@ -26,6 +26,7 @@
 ## Clarify Compact List Tool Output (2026-06-13)
 - Updated ProcessManagement list action descriptions to state that scheduled task, recurring process, and all-process list tools return compact summary rows without raw RunData.
 - Design Decision: list tools should be safe for quick selection and follow-up operations; details remain available through ToGetBuffalyProcessDetails.
+- Added `ToDiagnoseBuffalyProcessFailure` as the Process Management-owned read-only last-run diagnostic workflow. It combines existing details/configuration actions with bounded log inspection and optional typed dependency preflight, redacts secrets, and explicitly forbids enable/disable/trigger/repair side effects.
 
 ## Add Deterministic Scheduled Task How-To Prompt (2026-06-16)
 - Added `ToAddDeterministicScheduledTask` as a ProcessManagement prompt action for creating `ProtoScriptScheduledProcessHandler` interval processes that run deterministic ProtoScript methods without submitting LLM prompts or using model tokens.

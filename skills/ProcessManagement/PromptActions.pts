@@ -27,3 +27,15 @@ prototype ToAddDeterministicScheduledTask : PromptAction
 	PromptPath = "Skills/ProcessManagement/Prompts/ToAddDeterministicScheduledTask.prompt.md";
 	Description = "Guide creation of deterministic scheduled ProtoScript tasks that do not call an LLM or use model tokens.";
 }
+
+[SemanticProgram.InfinitivePhrase("to diagnose why a scheduled process failed")]
+[SemanticProgram.InfinitivePhrase("to diagnose a scheduled process last-run failure")]
+[SemanticProgram.InfinitivePhrase("to troubleshoot a Buffaly process failure")]
+prototype ToDiagnoseBuffalyProcessFailure : PromptAction, ProcessManagementSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = "Skills/ProcessManagement/Prompts/ToDiagnoseBuffalyProcessFailure.prompt.md";
+	Description = @"Read-only guided diagnosis of one process's last-run state, bounded logs, configuration, and known dependency health. Never prints secrets or enables, disables, triggers, or repairs the process.";
+}
