@@ -71,24 +71,24 @@ prototype ActionLearningCoordinatorSkill : SessionWorkCoordinatorSkill
 [SemanticEntity("online memory critic batch coordinator entity root")]
 prototype OnlineMemoryCriticBatchCoordinatorEntityRoot : SemanticEntityBase
 {
-	Description = @"Restricted entity root for the Terra Online Memory Critic batch coordinator workspace.";
+	Description = @"Restricted entity root for the Online Memory Critic batch coordinator workspace.";
 }
 
 [SemanticEntity("online memory critic batch coordinator action root")]
 prototype OnlineMemoryCriticBatchCoordinatorActionRoot : SessionWorkCoordinatorActionRoot
 {
-	Description = @"Restricted action root for the Terra Online Memory Critic batch coordinator workspace.";
+	Description = @"Restricted action root for the Online Memory Critic batch coordinator workspace.";
 }
 
 prototype OnlineMemoryCriticBatchCoordinatorSkillAction : OnlineMemoryCriticBatchCoordinatorActionRoot
 {
-	Description = @"Base action for Terra Online Memory Critic batch coordinator workspace operations.";
+	Description = @"Base action for Online Memory Critic batch coordinator workspace operations.";
 }
 
 [SemanticEntity("online memory critic batch coordinator skill")]
 prototype OnlineMemoryCriticBatchCoordinatorSkill : SessionWorkCoordinatorSkill
 {
-	Description = @"Coordinates selected-turn Terra Online Memory Critic batches using the actual deterministic critic child with event delivery disabled.";
+	Description = @"Coordinates selected-turn Online Memory Critic batches using the actual deterministic critic child with event delivery disabled.";
 	ActionRoot = OnlineMemoryCriticBatchCoordinatorActionRoot;
 }
 
@@ -472,7 +472,7 @@ prototype ToGetOnlineMemoryCriticBatchWorkspaceDefinition : OnlineMemoryCriticBa
 {
 	function Execute() : string
 	{
-		return @"{""SchemaVersion"":1,""WorkspaceId"":""online-memory-critic-batch"",""DisplayName"":""Online Memory Critic Batch"",""Description"":""Sequential Terra selected-turn Online Memory Critic batches using the actual deterministic critic child with live event delivery disabled."",""WorkerAgentName"":""online-session-memory-critic"",""WorkerSessionSuffix"":""-online-memory-critic"",""ArtifactPath"":""artifacts/online-memory-critic-batch/manifest.json"",""AttachAction"":""ToAttachOnlineMemoryCriticBatchWorker"",""RunAction"":""ToRunOnlineMemoryCriticBatchOperation"",""PreviewTitle"":""Terra critic batch manifest"",""PreviewDescription"":""Pending and queued selected source turns for uncontested Terra memory critic review.""}";
+		return @"{""SchemaVersion"":1,""WorkspaceId"":""online-memory-critic-batch"",""DisplayName"":""Online Memory Critic Batch"",""Description"":""Sequential selected-turn Online Memory Critic batches using the actual deterministic critic child with live event delivery disabled."",""WorkerAgentName"":""online-session-memory-critic"",""WorkerSessionSuffix"":""-online-memory-critic"",""ArtifactPath"":""artifacts/online-memory-critic-batch/manifest.json"",""AttachAction"":""ToAttachOnlineMemoryCriticBatchWorker"",""RunAction"":""ToRunOnlineMemoryCriticBatchOperation"",""PreviewTitle"":""Online memory critic batch manifest"",""PreviewDescription"":""Pending and queued selected source turns for uncontested online memory critic review.""}";
 	}
 }
 
@@ -522,7 +522,7 @@ prototype ToAttachOnlineMemoryCriticBatchWorker : OnlineMemoryCriticBatchCoordin
 		attached[@"Ledger"] = ledger;
 		return attached.ToJSON();
 	}
-	Description = @"Creates or reuses the actual deterministic online-memory-critic child, disables event delivery, configures Terra, and records it as the batch worker.";
+	Description = @"Creates or reuses the actual deterministic online-memory-critic child, disables event delivery, preserves the worker model configuration, and records it as the batch worker.";
 }
 
 [SemanticProgram.InfinitivePhrase("to add an online memory critic batch turn")]
@@ -533,7 +533,7 @@ prototype ToAddOnlineMemoryCriticBatchTurn : OnlineMemoryCriticBatchCoordinatorS
 		Sessions.ValidateSessionKey(sourceSessionKey);
 		return OnlineMemoryCriticBatchProjection.AddTurn(Sessions.GetSessionsRootPath(), sourceSessionKey, turnKey);
 	}
-	Description = @"Adds one exact completed source turn key to the source-owned Terra Online Memory Critic batch manifest.";
+	Description = @"Adds one exact completed source turn key to the source-owned Online Memory Critic batch manifest.";
 }
 
 [SemanticProgram.InfinitivePhrase("to run an online memory critic batch operation")]
@@ -559,5 +559,5 @@ prototype ToRunOnlineMemoryCriticBatchOperation : OnlineMemoryCriticBatchCoordin
 		}
 		return OnlineMemoryCriticBatchProjection.RunWorkerOperation(Sessions.GetSessionsRootPath(), sourceSessionKey, workerSessionKey, actionPrototypeName, inputValue);
 	}
-	Description = @"Runs one selected-turn Terra Online Memory Critic batch operation against the actual critic child with event delivery disabled and concurrency one.";
+	Description = @"Runs one selected-turn Online Memory Critic batch operation against the actual critic child with event delivery disabled and concurrency one.";
 }
