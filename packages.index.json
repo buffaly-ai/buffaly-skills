@@ -13872,10 +13872,10 @@
       "PackageType": "WebModule",
       "Title": "Source Viewer",
       "Description": "Buffaly Web Module package for Source Viewer.",
-      "Version": "0.1.4",
+      "Version": "0.1.5",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/SourceViewer",
-      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/SourceViewer",
+      "SourceUrl": "",
       "Phrases": [
         "Source Viewer",
         "SourceViewer"
@@ -13887,7 +13887,7 @@
         },
         {
           "Path": "Buffaly.SourceViewer.WebModule.dll",
-          "Sha256": "c58337ba2e81babd17113172c5b97c59bf8e27d95ffc39d9b6e0b70b267a5b3d"
+          "Sha256": "99ddbb070b171ac5746ebac6561e4cb5dc511603c9e5a61309279cdc175b4b32"
         },
         {
           "Path": "web-module.json",
@@ -13947,7 +13947,8 @@
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
       "RequiresRestart": true,
-      "RequiresPreStartInstall": true
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     },
     {
       "PackageId": "Buffaly.Agent.Wiki",
