@@ -9828,7 +9828,7 @@
       "PackageType": "WebModule",
       "Title": "OpenAI Administration",
       "Description": "Buffaly Web Module package for OpenAI Administration.",
-      "Version": "0.1.13",
+      "Version": "0.1.14",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/OpenAIAdmin",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/OpenAIAdmin",
@@ -9843,11 +9843,19 @@
         },
         {
           "Path": "Buffaly.OpenAiAdmin.WebModule.dll",
-          "Sha256": "7172f09bea6ac5f831632e87f3ef3678a3c5c2a015468e7e18c63d3a495ba498"
+          "Sha256": "1703da623cb66330b39fc13b404ef9cd1126cb2ca364ae430b1577a5d694f79f"
+        },
+        {
+          "Path": "Skills/OpenAIAdmin/index.pts",
+          "Sha256": "db6d0745d23ddad29f2f1306a721826259cf048881a813dd47b3f39155d5ff7c"
+        },
+        {
+          "Path": "Skills/OpenAIAdmin/OpenAiAdminAgentTools.pts",
+          "Sha256": "a0a3cdf9b23cb7a18da6591d5f270b2594ce1b889ccfad9e9bc0fe3ebcab1401"
         },
         {
           "Path": "web-module.json",
-          "Sha256": "8629ded6e15cdf9c5a42de0f03f0cf34b0be3e9ffccbe6e66ef5647e8fc41ecd"
+          "Sha256": "3b0d18ca29f8b9c833f14ea9793c0bad9853449d05154963ccfa17fd27b99998"
         },
         {
           "Path": "wwwroot/components/openai-admin-module.js",
@@ -9870,7 +9878,12 @@
           "Sha256": "14845b298b96932bf5c6bb1bd747c36e10700c57f6624a0e3838f4fbd7dcd521"
         }
       ],
-      "ProjectArtifacts": [],
+      "ProjectArtifacts": [
+        {
+          "ProjectName": "Skills/OpenAIAdmin",
+          "SourcePath": "Skills/OpenAIAdmin/"
+        }
+      ],
       "Dependencies": [],
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
