@@ -1,0 +1,13 @@
+{
+  "Module": {
+    "Enabled": true,
+    "Name": "CSharpViewer",
+    "DisplayName": "C# Viewer",
+    "Description": "Browse permitted C# source trees in a compact, read-only code viewer.",
+    "AssemblyPath": "CSharpViewer/Buffaly.CSharpViewer.dll",
+    "TypeName": "Buffaly.CSharpViewer.CSharpViewerWebModule",
+    "LoadOrder": 330,
+    "AgentScripts": ["/web-modules/CSharpViewer/csharp-viewer-file-provider.js?v=0.1.5"],
+    "Pages": [{ "Name": "Viewer", "DisplayName": "C# Viewer", "Path": "/web-modules/CSharpViewer/" }]
+  }
+}
