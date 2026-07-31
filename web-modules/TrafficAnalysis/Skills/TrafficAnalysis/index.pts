@@ -123,10 +123,11 @@ prototype ToCollectGoogleAdsData : TrafficAnalysisSkillAction
 		string customerID = TrafficAnalysisProtoScriptFacade.GetRequiredSetting(runSettingsJson, "GoogleAdsCustomerId");
 		string loginCustomerID = TrafficAnalysisProtoScriptFacade.GetSetting(runSettingsJson, "GoogleAdsLoginCustomerId", "");
 		string dateRangePreset = TrafficAnalysisProtoScriptFacade.GetSetting(runSettingsJson, "GoogleAdsDateRangePreset", "LAST_7_DAYS");
+		string campaignsJson = ToResolveStringReference.Execute(ToRunGoogleAdsCampaignReport.Execute(customerID, loginCustomerID, dateRangePreset));
+		string searchTermsJson = ToResolveStringReference.Execute(ToRunGoogleAdsSearchTermReport.Execute(customerID, loginCustomerID, dateRangePreset));
+		string adCreativesJson = ToResolveStringReference.Execute(ToRunGoogleAdsAdCreativeReport.Execute(customerID, loginCustomerID, dateRangePreset));
 		string collectorEnvelopeJson = TrafficAnalysisProtoScriptFacade.BuildGoogleAdsEnvelope(runId, runSettingsJson,
-			ToRunGoogleAdsCampaignReport.Execute(customerID, loginCustomerID, dateRangePreset),
-			ToRunGoogleAdsSearchTermReport.Execute(customerID, loginCustomerID, dateRangePreset),
-			ToRunGoogleAdsAdCreativeReport.Execute(customerID, loginCustomerID, dateRangePreset));
+			campaignsJson, searchTermsJson, adCreativesJson);
 		return TrafficAnalysisCollectorAnalyzer.Execute(collectorEnvelopeJson);
 	}
 }
@@ -153,7 +154,8 @@ prototype ToCollectOpenAIUsageData : TrafficAnalysisSkillAction
 	{
 		string startDate = TrafficAnalysisProtoScriptFacade.GetRequiredSetting(runSettingsJson, "StartDateUtc");
 		string endDate = TrafficAnalysisProtoScriptFacade.GetRequiredSetting(runSettingsJson, "EndDateUtc");
-		return TrafficAnalysisCollectorAnalyzer.Execute(TrafficAnalysisProtoScriptFacade.BuildOpenAIUsageEnvelope(runId, runSettingsJson, ToGetOpenAIUsageAndCosts.Execute(startDate, endDate)));
+		string usageJson = ToResolveStringReference.Execute(ToGetOpenAIUsageAndCosts.Execute(startDate, endDate));
+		return TrafficAnalysisCollectorAnalyzer.Execute(TrafficAnalysisProtoScriptFacade.BuildOpenAIUsageEnvelope(runId, runSettingsJson, usageJson));
 	}
 }
 
@@ -166,7 +168,8 @@ prototype ToCollectRedditAdsData : TrafficAnalysisSkillAction
 		string adAccountID = TrafficAnalysisProtoScriptFacade.GetRequiredSetting(runSettingsJson, "RedditAdsAccountId");
 		string reportType = TrafficAnalysisProtoScriptFacade.GetSetting(runSettingsJson, "RedditAdsReportType", "campaign");
 		string dateRangePreset = TrafficAnalysisProtoScriptFacade.GetSetting(runSettingsJson, "RedditAdsDateRangePreset", "last_7d");
-		return TrafficAnalysisCollectorAnalyzer.Execute(TrafficAnalysisProtoScriptFacade.BuildRedditAdsEnvelope(runId, runSettingsJson, ToGenerateRedditAdsWebReport.Execute(adAccountID, reportType, dateRangePreset)));
+		string reportJson = ToResolveStringReference.Execute(ToGenerateRedditAdsWebReport.Execute(adAccountID, reportType, dateRangePreset));
+		return TrafficAnalysisCollectorAnalyzer.Execute(TrafficAnalysisProtoScriptFacade.BuildRedditAdsEnvelope(runId, runSettingsJson, reportJson));
 	}
 }
 
