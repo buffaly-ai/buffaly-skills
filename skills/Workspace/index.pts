@@ -43,6 +43,24 @@ prototype ToAttachCurrentSessionToWorkspace : WorkspaceSkillAction
     }
 }
 
+[SemanticProgram.InfinitivePhrase("to attach a named session to a workspace")]
+[SemanticProgram.InfinitivePhrase("to add a session to a workspace by key")]
+[SemanticProgram.InfinitivePhrase("to attach session X to workspace Y")]
+prototype ToAttachNamedSessionToWorkspace : WorkspaceSkillAction
+{
+    Description = @"targetSessionKey - exact existing session key. workspaceKey - existing workspace key. relationshipType - why the target session belongs. summary - concise durable summary. Idempotent for an existing attachment and verifies membership after writing.";
+
+    function Execute(string targetSessionKey, string workspaceKey, string relationshipType, string summary) : CurrentWorkspaceRecord
+    {
+        return WorkspaceTools.AttachNamedSessionToWorkspace(
+            _opsAgent.GetCurrentSessionDirectory(),
+            targetSessionKey,
+            workspaceKey,
+            relationshipType,
+            summary);
+    }
+}
+
 [SemanticProgram.InfinitivePhrase("to get the current workspace")]
 prototype ToGetCurrentWorkspace : WorkspaceSkillAction
 {
