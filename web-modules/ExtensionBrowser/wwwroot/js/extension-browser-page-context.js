@@ -284,18 +284,49 @@
 
   // Gate the actual user gesture so an already-mounted composer reads the new page through its
   // generic synchronous UserState provider. Replaying the button preserves Send versus Steer.
+  function resolveComposerPromptElement() {
+    return document.getElementById('txtOpsV2Prompt')
+      || document.querySelector('textarea[placeholder*="Type a prompt" i]')
+      || document.querySelector('textarea');
+  }
+
+  function isComposerPromptElement(element) {
+    const prompt = resolveComposerPromptElement();
+    return Boolean(prompt && element === prompt);
+  }
+
+  function resolveComposerSendButton(target) {
+    const explicit = target && typeof target.closest === 'function'
+      ? target.closest('#btnOpsV2Send')
+      : null;
+    if (explicit) return explicit;
+    const button = target && typeof target.closest === 'function'
+      ? target.closest('button')
+      : null;
+    if (!button) return null;
+    const prompt = resolveComposerPromptElement();
+    if (!prompt || !prompt.value || !prompt.value.trim()) return null;
+    const label = `${button.id || ''} ${button.name || ''} ${button.title || ''} ${button.getAttribute('aria-label') || ''} ${button.textContent || ''}`.toLowerCase();
+    if (label.includes('send') || label.includes('submit') || label.includes('arrow_upward') || label.includes('↑')) return button;
+    const promptRect = prompt.getBoundingClientRect();
+    const buttonRect = button.getBoundingClientRect();
+    const nearPrompt = buttonRect.left >= promptRect.left - 24
+      && buttonRect.top >= promptRect.top - 24
+      && buttonRect.right <= promptRect.right + 80
+      && buttonRect.bottom <= promptRect.bottom + 80;
+    return nearPrompt ? button : null;
+  }
+
   function installBeforeComposerDispatch(event) {
     if (replayingComposerDispatch) return;
     const target = event && event.target;
-    const sendButton = target && typeof target.closest === 'function'
-      ? target.closest('#btnOpsV2Send')
-      : null;
+    const sendButton = resolveComposerSendButton(target);
     const isSendClick = event.type === 'click' && sendButton;
     const isEnterSubmit = event.type === 'keydown' && event.key === 'Enter' && !event.shiftKey
-      && target && target.id === 'txtOpsV2Prompt';
+      && target && isComposerPromptElement(target);
     if (!isSendClick && !isEnterSubmit) return;
 
-    const replayButton = sendButton || document.getElementById('btnOpsV2Send');
+    const replayButton = sendButton || document.getElementById('btnOpsV2Send') || document.querySelector('button[aria-label*="send" i]');
     if (!replayButton || replayButton.disabled) return;
     event.preventDefault();
     event.stopImmediatePropagation();
