@@ -16,11 +16,13 @@ prototype TrafficAnalysisSkill : SkillEntity
 
 prototype TrafficAnalysisCollectorAnalyzer
 {
-	function Execute(string collectorEnvelopeJson) : string
+	function Execute(StringRef collectorEnvelopeValue) : string
 	{
+		string collectorEnvelopeJson = ToResolveStringReference.Execute(collectorEnvelopeValue);
 		if (!TrafficAnalysisProtoScriptFacade.ShouldAnalyzeCollector(collectorEnvelopeJson)) return collectorEnvelopeJson;
 		string prompt = TrafficAnalysisProtoScriptFacade.BuildCollectorAnalysisPrompt(collectorEnvelopeJson);
-		string modelResponseJson = ToAskModelViaBuffalyRuntime.Execute(prompt, "Return strict JSON only. Use only supplied source metrics and raw data. Do not invent numbers.", "", "", "", "[]");
+		StringRef modelResponseValue = ToAskModelViaBuffalyRuntime.Execute(prompt, "Return strict JSON only. Use only supplied source metrics and raw data. Do not invent numbers.", "", "", "", "[]");
+		string modelResponseJson = ToResolveStringReference.Execute(modelResponseValue);
 		return TrafficAnalysisProtoScriptFacade.ApplyCollectorAnalysis(collectorEnvelopeJson, modelResponseJson);
 	}
 }
@@ -31,7 +33,9 @@ prototype TrafficAnalysisGa4SourceCollector
 	{
 		if (index >= TrafficAnalysisProtoScriptFacade.GetWebPropertyCount(propertiesJson)) return summariesJson;
 		int webPropertyID = TrafficAnalysisProtoScriptFacade.GetWebPropertyIDAt(propertiesJson, index);
-		string nextSummariesJson = TrafficAnalysisProtoScriptFacade.AppendSourceResponse(summariesJson, WebProperties_GetWebPropertyAnalyticsSummary.Execute(service, webPropertyID, timeframe));
+		StringRef responseValue = WebProperties_GetWebPropertyAnalyticsSummary.Execute(service, webPropertyID, timeframe);
+		string responseJson = ToResolveStringReference.Execute(responseValue);
+		string nextSummariesJson = TrafficAnalysisProtoScriptFacade.AppendSourceResponse(summariesJson, responseJson);
 		return TrafficAnalysisGa4SourceCollector.Execute(service, timeframe, propertiesJson, index + 1, nextSummariesJson);
 	}
 }
@@ -42,7 +46,9 @@ prototype TrafficAnalysisTrackingSourceCollector
 	{
 		if (index >= TrafficAnalysisProtoScriptFacade.GetWebPropertyCount(propertiesJson)) return overviewsJson;
 		int webPropertyID = TrafficAnalysisProtoScriptFacade.GetWebPropertyIDAt(propertiesJson, index);
-		string nextOverviewsJson = TrafficAnalysisProtoScriptFacade.AppendSourceResponse(overviewsJson, WebProperties_GetWebPropertyTrafficOverview.Execute(service, webPropertyID, timeframe));
+		StringRef responseValue = WebProperties_GetWebPropertyTrafficOverview.Execute(service, webPropertyID, timeframe);
+		string responseJson = ToResolveStringReference.Execute(responseValue);
+		string nextOverviewsJson = TrafficAnalysisProtoScriptFacade.AppendSourceResponse(overviewsJson, responseJson);
 		return TrafficAnalysisTrackingSourceCollector.Execute(service, timeframe, propertiesJson, index + 1, nextOverviewsJson);
 	}
 }
@@ -57,7 +63,8 @@ prototype ToCollectGa4TrafficData : TrafficAnalysisSkillAction
 		FeedingFrenzyWebPropertiesJsonWsService service = FeedingFrenzyWebPropertiesJsonWsService#Remote;
 		if (binding == "Local") service = FeedingFrenzyWebPropertiesJsonWsService#Local;
 		string timeframe = TrafficAnalysisProtoScriptFacade.ResolveWebPropertiesTimeframe(runSettingsJson);
-		string propertiesJson = TrafficAnalysisProtoScriptFacade.ProjectWebProperties(WebProperties_GetWebProperties.Execute(service), true);
+		StringRef propertiesValue = WebProperties_GetWebProperties.Execute(service);
+		string propertiesJson = TrafficAnalysisProtoScriptFacade.ProjectWebProperties(ToResolveStringReference.Execute(propertiesValue), true);
 		string summariesJson = TrafficAnalysisGa4SourceCollector.Execute(service, timeframe, propertiesJson, 0, "[]");
 		return TrafficAnalysisCollectorAnalyzer.Execute(TrafficAnalysisProtoScriptFacade.BuildGa4Envelope(runId, runSettingsJson, propertiesJson, summariesJson));
 	}
@@ -73,7 +80,8 @@ prototype ToCollectTrackingLogData : TrafficAnalysisSkillAction
 		FeedingFrenzyWebPropertiesJsonWsService service = FeedingFrenzyWebPropertiesJsonWsService#Remote;
 		if (binding == "Local") service = FeedingFrenzyWebPropertiesJsonWsService#Local;
 		string timeframe = TrafficAnalysisProtoScriptFacade.ResolveWebPropertiesTimeframe(runSettingsJson);
-		string propertiesJson = TrafficAnalysisProtoScriptFacade.ProjectWebProperties(WebProperties_GetWebProperties.Execute(service), false);
+		StringRef propertiesValue = WebProperties_GetWebProperties.Execute(service);
+		string propertiesJson = TrafficAnalysisProtoScriptFacade.ProjectWebProperties(ToResolveStringReference.Execute(propertiesValue), false);
 		string overviewsJson = TrafficAnalysisTrackingSourceCollector.Execute(service, timeframe, propertiesJson, 0, "[]");
 		return TrafficAnalysisCollectorAnalyzer.Execute(TrafficAnalysisProtoScriptFacade.BuildTrackingLogsEnvelope(runId, runSettingsJson, propertiesJson, overviewsJson));
 	}
@@ -88,10 +96,13 @@ prototype ToCollectGoogleAdsData : TrafficAnalysisSkillAction
 		string customerID = TrafficAnalysisProtoScriptFacade.GetRequiredSetting(runSettingsJson, "GoogleAdsCustomerId");
 		string loginCustomerID = TrafficAnalysisProtoScriptFacade.GetSetting(runSettingsJson, "GoogleAdsLoginCustomerId", "");
 		string dateRangePreset = TrafficAnalysisProtoScriptFacade.GetSetting(runSettingsJson, "GoogleAdsDateRangePreset", "LAST_7_DAYS");
+		StringRef campaignsValue = ToRunGoogleAdsCampaignReport.Execute(customerID, loginCustomerID, dateRangePreset);
+		StringRef searchTermsValue = ToRunGoogleAdsSearchTermReport.Execute(customerID, loginCustomerID, dateRangePreset);
+		StringRef adCreativesValue = ToRunGoogleAdsAdCreativeReport.Execute(customerID, loginCustomerID, dateRangePreset);
 		string collectorEnvelopeJson = TrafficAnalysisProtoScriptFacade.BuildGoogleAdsEnvelope(runId, runSettingsJson,
-			ToRunGoogleAdsCampaignReport.Execute(customerID, loginCustomerID, dateRangePreset),
-			ToRunGoogleAdsSearchTermReport.Execute(customerID, loginCustomerID, dateRangePreset),
-			ToRunGoogleAdsAdCreativeReport.Execute(customerID, loginCustomerID, dateRangePreset));
+			ToResolveStringReference.Execute(campaignsValue),
+			ToResolveStringReference.Execute(searchTermsValue),
+			ToResolveStringReference.Execute(adCreativesValue));
 		return TrafficAnalysisCollectorAnalyzer.Execute(collectorEnvelopeJson);
 	}
 }
@@ -103,9 +114,11 @@ prototype ToCollectLinkedInData : TrafficAnalysisSkillAction
 	function Execute(string runId, string runSettingsJson) : string
 	{
 		string organizationUrn = TrafficAnalysisProtoScriptFacade.GetRequiredSetting(runSettingsJson, "LinkedInOrganizationUrn");
+		StringRef memberAnalyticsValue = ToGetLinkedInMemberAnalytics.Execute("IMPRESSION");
+		StringRef organizationAnalyticsValue = ToGetLinkedInOrganizationAnalytics.Execute(organizationUrn);
 		string collectorEnvelopeJson = TrafficAnalysisProtoScriptFacade.BuildLinkedInEnvelope(runId, runSettingsJson,
-			ToGetLinkedInMemberAnalytics.Execute("IMPRESSION"),
-			ToGetLinkedInOrganizationAnalytics.Execute(organizationUrn));
+			ToResolveStringReference.Execute(memberAnalyticsValue),
+			ToResolveStringReference.Execute(organizationAnalyticsValue));
 		return TrafficAnalysisCollectorAnalyzer.Execute(collectorEnvelopeJson);
 	}
 }
@@ -118,7 +131,8 @@ prototype ToCollectOpenAIUsageData : TrafficAnalysisSkillAction
 	{
 		string startDate = TrafficAnalysisProtoScriptFacade.GetRequiredSetting(runSettingsJson, "StartDateUtc");
 		string endDate = TrafficAnalysisProtoScriptFacade.GetRequiredSetting(runSettingsJson, "EndDateUtc");
-		return TrafficAnalysisCollectorAnalyzer.Execute(TrafficAnalysisProtoScriptFacade.BuildOpenAIUsageEnvelope(runId, runSettingsJson, ToGetOpenAIUsageAndCosts.Execute(startDate, endDate)));
+		StringRef usageValue = ToGetOpenAIUsageAndCosts.Execute(startDate, endDate);
+		return TrafficAnalysisCollectorAnalyzer.Execute(TrafficAnalysisProtoScriptFacade.BuildOpenAIUsageEnvelope(runId, runSettingsJson, ToResolveStringReference.Execute(usageValue)));
 	}
 }
 
@@ -131,7 +145,8 @@ prototype ToCollectRedditAdsData : TrafficAnalysisSkillAction
 		string adAccountID = TrafficAnalysisProtoScriptFacade.GetRequiredSetting(runSettingsJson, "RedditAdsAccountId");
 		string reportType = TrafficAnalysisProtoScriptFacade.GetSetting(runSettingsJson, "RedditAdsReportType", "campaign");
 		string dateRangePreset = TrafficAnalysisProtoScriptFacade.GetSetting(runSettingsJson, "RedditAdsDateRangePreset", "last_7d");
-		return TrafficAnalysisCollectorAnalyzer.Execute(TrafficAnalysisProtoScriptFacade.BuildRedditAdsEnvelope(runId, runSettingsJson, ToGenerateRedditAdsWebReport.Execute(adAccountID, reportType, dateRangePreset)));
+		StringRef reportValue = ToGenerateRedditAdsWebReport.Execute(adAccountID, reportType, dateRangePreset);
+		return TrafficAnalysisCollectorAnalyzer.Execute(TrafficAnalysisProtoScriptFacade.BuildRedditAdsEnvelope(runId, runSettingsJson, ToResolveStringReference.Execute(reportValue)));
 	}
 }
 
