@@ -2,9 +2,12 @@
 
 This bundled infrastructure skill implements the minimal queued-message bridge between a lightweight Voice Agent and its automatically attached full Buffaly dispatcher child.
 
+- `VoiceAgentProject.pts` loads `VoiceAgent.pts` over the shared `OpsAgent/CoreLite` substrate instead of the full OpsAgent graph.
+- `VoiceAgentEntityRoot` provides the profile's narrow entity root, and `ToShowVoiceAgentProtoScriptEnvironment` proves the active entry and substrate in staging sessions.
 - `VoiceAgentAction` exposes dispatcher actions plus three read-only session-bound actions: recent turns, selected turn detail, and selected message markdown.
 - Bound actions accept no session key. They delegate to `SessionTools`, which resolves the target from trusted Voice Agent runtime state and enforces binding limits.
 - `VoiceAgentDispatcher` is the dispatcher prompt-context prototype and supplemental action root; its specialized action is `ToSendMessageToVoiceAgent`.
+- The full-project `index.pts` includes the lightweight file and defines only that dispatcher-return action, keeping `ContextPrompt` infrastructure out of the Voice Agent entry.
 - Send actions call `SessionTools.SendToSessionTool` and return a truthful plain-text delivery signal that prevents model-driven duplicate sends; latest-turn recovery returns the existing `TurnSummaryContract`.
 - Targets come only from runtime-bound `VoiceAgent.DispatcherSessionKey` and `VoiceAgent.SourceSessionKey`.
 - Dispatcher returns begin with `[label: Voice Agent Dispatcher]`.

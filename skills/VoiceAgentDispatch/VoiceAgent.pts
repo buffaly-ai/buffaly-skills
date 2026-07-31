@@ -1,0 +1,73 @@
+import Buffaly.Agent.Host Buffaly.Agent.Host.TurnSummaryContract TurnSummaryContract;
+import Buffaly.Agent.Host Buffaly.Agent.Host.GetSessionTurnBootstrapResponse GetSessionTurnBootstrapResponse;
+import Buffaly.Agent.Host Buffaly.Agent.Host.GetTurnDetailResponse GetTurnDetailResponse;
+import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.SessionTools SessionTools;
+
+prototype VoiceAgentDispatchSkillAction : OpsAction { Description = @"Base action type for the lightweight Voice Agent dispatcher bridge."; }
+prototype VoiceAgentAction : VoiceAgentDispatchSkillAction { Description = @"Narrow action root exposed to the realtime Voice Agent."; }
+prototype VoiceAgentEntityRoot : SemanticEntityBase { EntityName = @"voice agent entity root"; Description = @"Minimal entity root for the realtime Voice Agent."; }
+
+[SemanticProgram.InfinitivePhrase("to show the ProtoScript environment")]
+[SemanticProgram.InfinitivePhrase("to show the voice agent shell")]
+prototype ToShowVoiceAgentProtoScriptEnvironment : VoiceAgentAction
+{
+	Description = @"Returns a deterministic identity for the currently loaded lightweight Voice Agent ProtoScript entry.";
+	function Execute() : string
+	{
+		return "ProtoScript environment: OpsAgent/VoiceAgentProject.pts; agent: voice-agent; action root: VoiceAgentAction; entity root: VoiceAgentEntityRoot; substrate: OpsAgent/CoreLite";
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to send instructions to the voice agent dispatcher")]
+prototype ToSendMessageToVoiceAgentDispatcher : VoiceAgentAction
+{
+	Description = @"instruction - self-contained work or follow-up to queue to the dispatcher bound in current Voice Agent user state. Queues without waiting and returns immediately using the established Level 2 end-cycle pattern.";
+	function Execute(string instruction) : string
+	{
+		string dispatcherSessionKey = UserState.GetStringOrNull("VoiceAgent.DispatcherSessionKey");
+		string queueItemId = SessionTools.SendToVoiceAgentDispatcherOncePerCurrentTurnTool(_opsAgent, "voice-to-dispatcher", dispatcherSessionKey, instruction);
+		return "Instruction queued for the Voice Agent Dispatcher. Queue ID: " + queueItemId + ". End cycle now.";
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get the latest voice agent dispatcher turn")]
+prototype ToGetLatestVoiceAgentDispatcherTurn : VoiceAgentAction
+{
+	Description = @"Returns the most recent turn summary from the bound dispatcher. Use once for missing detail, never for polling.";
+	function Execute() : TurnSummaryContract
+	{
+		string dispatcherSessionKey = UserState.GetStringOrNull("VoiceAgent.DispatcherSessionKey");
+		return SessionTools.GetMostRecentSessionTurnTool(dispatcherSessionKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get recent turns from the session bound to the voice agent")]
+prototype ToGetBoundSessionRecentTurns : VoiceAgentAction
+{
+	Description = @"maxTurns - number of recent turn summaries to read, from 1 through 10. Resolves the target only from the current Voice Agent's trusted server binding.";
+	function Execute(int maxTurns = 5) : GetSessionTurnBootstrapResponse
+	{
+		return SessionTools.GetBoundSessionRecentTurnsTool(_opsAgent, maxTurns);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get a turn from the session bound to the voice agent")]
+prototype ToGetBoundSessionTurnDetail : VoiceAgentAction
+{
+	Description = @"turnId - selected turn identifier from bound recent turns. maxRows - bounded detail row count, from 1 through 200. The target session cannot be supplied or changed.";
+	function Execute(string turnId, int maxRows = 100) : GetTurnDetailResponse
+	{
+		return SessionTools.GetBoundSessionTurnDetailTool(_opsAgent, turnId, maxRows);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get a message from the session bound to the voice agent")]
+prototype ToGetBoundSessionMessageMarkdown : VoiceAgentAction
+{
+	Description = @"messageKey - selected message identifier from bound turn detail. Returns bounded markdown from the trusted target session; no session key or file path is accepted.";
+	function Execute(string messageKey) : string
+	{
+		return SessionTools.GetBoundSessionMessageMarkdownTool(_opsAgent, messageKey);
+	}
+}
+

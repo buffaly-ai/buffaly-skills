@@ -2684,7 +2684,7 @@
       "SkillName": "VoiceAgentDispatch",
       "Title": "Voice Agent Dispatch",
       "Description": "Buffaly skill package for Voice Agent Dispatch.",
-      "Version": "0.1.9",
+      "Version": "0.1.10",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Voice Agent Dispatch",
@@ -2694,11 +2694,15 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "92116b79ba266057c9d59022e1f810f899ab15bafd3adff929f38ed31559c9a9"
+          "Sha256": "64d08aa4643255eb40f547c5810cf678ed59a051d72bd429cf782af3d4fae103"
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "6697ab60035fb3bd3b6bb90f822e638d1482e0726d6e57d0d02b9155efb8e8ca"
+          "Sha256": "1393de865da2a942f9914bbfdb87653dc766309626050bc3bb9c0f92fe946a06"
+        },
+        {
+          "Path": "VoiceAgent.pts",
+          "Sha256": "2ff0233b73359122c8d0763e29fe8eee5c032c3d55bf1d668b8efe198d9398b3"
         }
       ],
       "EntryPoint": "index.pts",
