@@ -151,7 +151,7 @@ export default function App() {
   }, [getBrowserContextId, refreshStatus]);
 
   useEffect(() => {
-    const respondWithCurrentPage = (event: MessageEvent) => {
+    const respondWithSendUserState = (event: MessageEvent) => {
       if (!conversation || event.source !== conversationFrame.current?.contentWindow || event.origin !== new URL(conversation.Origin).origin) return;
       const request = event.data as ({ type?: string; requestId?: string } & Partial<MicrophoneDiagnostic>) | null;
       if (request?.type === 'extension_browser_microphone_diagnostic') {
@@ -167,17 +167,25 @@ export default function App() {
         if (diagnostic.result === 'rejected') setMicrophoneError({ name: diagnostic.name || 'MicrophoneError', message: diagnostic.message || 'Chrome rejected microphone capture.' });
         return;
       }
-      if (!request || request.type !== 'extension_browser_current_page_request' || !request.requestId) return;
+      if (!request || request.type !== 'extension_browser_send_user_state_request' || !request.requestId) return;
+      if (!conversation.InstallationRegistrationId || !conversation.BrowserContextId) {
+        event.source?.postMessage({ type: 'extension_browser_send_user_state_response', requestId: request.requestId, error: 'Extension browser identity is unavailable.' }, { targetOrigin: event.origin });
+        return;
+      }
       handleToolCall('get_active_tab', {}).then((result) => {
         if (!result.ok) throw new Error(result.error || 'Chrome did not return the active page.');
         const page = result.data as ActiveTab;
-        event.source?.postMessage({ type: 'extension_browser_current_page_response', requestId: request.requestId, page: { Url: page.url, Title: page.title, TabId: page.tabId, CapturedUtc: new Date().toISOString() } }, { targetOrigin: event.origin });
+        event.source?.postMessage({ type: 'extension_browser_send_user_state_response', requestId: request.requestId, userState: {
+          'ExtensionBrowser.DefaultInstanceId': conversation.InstallationRegistrationId,
+          'ExtensionBrowser.BrowserContextId': conversation.BrowserContextId,
+          'ExtensionBrowser.CurrentPage': { Url: page.url, Title: page.title, TabId: page.tabId, CapturedUtc: new Date().toISOString() }
+        } }, { targetOrigin: event.origin });
       }).catch((reason) => {
-        event.source?.postMessage({ type: 'extension_browser_current_page_response', requestId: request.requestId, error: reason instanceof Error ? reason.message : String(reason) }, { targetOrigin: event.origin });
+        event.source?.postMessage({ type: 'extension_browser_send_user_state_response', requestId: request.requestId, error: reason instanceof Error ? reason.message : String(reason) }, { targetOrigin: event.origin });
       });
     };
-    window.addEventListener('message', respondWithCurrentPage);
-    return () => window.removeEventListener('message', respondWithCurrentPage);
+    window.addEventListener('message', respondWithSendUserState);
+    return () => window.removeEventListener('message', respondWithSendUserState);
   }, [conversation]);
 
   const saveNewServer = useCallback(async () => {
