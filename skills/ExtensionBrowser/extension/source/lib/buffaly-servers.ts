@@ -1,4 +1,4 @@
-import type { ConversationBinding, ExtensionConnection } from './buffaly-connection';
+import { conversationSessionKey, conversationStorageIdentity, isDurableConversation, isLegacyConversation, type ConversationBinding, type ExtensionConnection } from './buffaly-connection';
 
 export const SERVERS_STORAGE_KEY = 'BuffalyServers';
 export const ACTIVE_SERVER_STORAGE_KEY = 'BuffalyActiveServerId';
@@ -13,7 +13,69 @@ export interface SavedBuffalyServer {
   Origin: string;
   Connection: ExtensionConnection | null;
   ActiveConversation: ConversationBinding | null;
+  ActiveSessionKey?: string;
+  ConversationsBySessionKey?: Record<string, ConversationBinding>;
+  ConversationsByBrowserContext?: Record<string, ConversationBinding>;
+  ConversationsByBindingId?: Record<string, ConversationBinding>;
+  BuffalyInstanceRoutingMigrationVersion?: number;
   LastConnectedUtc: string;
+}
+
+function sessionSelectionKey(selectionId: string): string {
+  return selectionId.startsWith('session:') ? selectionId.slice('session:'.length) : selectionId;
+}
+
+function legacySelectionKey(selectionId: string): string {
+  return selectionId.startsWith('legacy:') ? selectionId.slice('legacy:'.length) : selectionId;
+}
+
+export function conversationForContext(server: SavedBuffalyServer, browserContextId: string): ConversationBinding | null {
+  const savedActiveSession = server.ActiveSessionKey ? server.ConversationsBySessionKey?.[server.ActiveSessionKey] : null;
+  return server.ConversationsByBrowserContext?.[browserContextId] || savedActiveSession || server.ActiveConversation || null;
+}
+
+export function conversationsForServer(server: SavedBuffalyServer): ConversationBinding[] {
+  const byId = new Map<string, ConversationBinding>();
+  const add = (binding: ConversationBinding | null | undefined) => { const key = conversationStorageIdentity(binding); if (binding && key) byId.set(key, binding); };
+  add(server.ActiveConversation);
+  Object.values(server.ConversationsBySessionKey ?? {}).forEach(add);
+  Object.values(server.ConversationsByBrowserContext ?? {}).forEach(add);
+  Object.values(server.ConversationsByBindingId ?? {}).forEach(add);
+  return Array.from(byId.values()).sort((left, right) => (left.DisplayName || '').localeCompare(right.DisplayName || '') || conversationStorageIdentity(left).localeCompare(conversationStorageIdentity(right)));
+}
+
+function activeSessionKey(server: SavedBuffalyServer): string {
+  return server.ActiveSessionKey ? server.ActiveSessionKey : conversationSessionKey(server.ActiveConversation);
+}
+
+export async function updateActiveServerConversation(browserContextId: string, binding: ConversationBinding, replacedLegacyBinding?: ConversationBinding): Promise<SavedBuffalyServer> {
+  const server = await getActiveServer();
+  if (!server) throw new Error('Select a Buffaly server first.');
+  const storageIdentity = conversationStorageIdentity(binding);
+  if (!storageIdentity) throw new Error('The selected Buffaly conversation does not have a durable session key or legacy binding id.');
+  const sessionKey = conversationSessionKey(binding);
+  const conversationsBySessionKey = { ...(server.ConversationsBySessionKey ?? {}) };
+  if (sessionKey) conversationsBySessionKey[sessionKey] = binding;
+  const conversationsByBindingId = { ...(server.ConversationsByBindingId ?? {}) };
+  if (isLegacyConversation(binding)) conversationsByBindingId[binding.SessionBindingId] = binding;
+  if (isDurableConversation(binding) && isLegacyConversation(replacedLegacyBinding)) delete conversationsByBindingId[replacedLegacyBinding.SessionBindingId];
+  if (isDurableConversation(binding)) Object.entries(conversationsByBindingId).filter(([, candidate]) => candidate.BrowserContextId === browserContextId).forEach(([bindingId]) => delete conversationsByBindingId[bindingId]);
+  const conversationsByBrowserContext = { ...(server.ConversationsByBrowserContext ?? {}) };
+  if (isDurableConversation(binding) && isLegacyConversation(replacedLegacyBinding)) Object.entries(conversationsByBrowserContext).filter(([, candidate]) => isLegacyConversation(candidate) && candidate.SessionBindingId === replacedLegacyBinding.SessionBindingId).forEach(([contextId]) => delete conversationsByBrowserContext[contextId]);
+  if (isDurableConversation(binding)) Object.entries(conversationsByBrowserContext).filter(([, candidate]) => isLegacyConversation(candidate) && candidate.BrowserContextId === browserContextId).forEach(([contextId]) => delete conversationsByBrowserContext[contextId]);
+  conversationsByBrowserContext[browserContextId] = binding;
+  return updateActiveServer({ ActiveConversation: binding, ActiveSessionKey: sessionKey, ConversationsBySessionKey: conversationsBySessionKey, ConversationsByBrowserContext: conversationsByBrowserContext, ConversationsByBindingId: conversationsByBindingId });
+}
+
+export async function activateConversation(conversationSelectionId: string, browserContextId: string): Promise<ConversationBinding> {
+  const server = await getActiveServer();
+  if (!server) throw new Error('Select a Buffaly server first.');
+  const sessionKey = sessionSelectionKey(conversationSelectionId);
+  const legacyBindingId = legacySelectionKey(conversationSelectionId);
+  const matches = (candidate: ConversationBinding | null | undefined) => Boolean(candidate && ((isDurableConversation(candidate) && candidate.SessionKey === sessionKey) || (isLegacyConversation(candidate) && candidate.SessionBindingId === legacyBindingId)));
+  const binding = server.ConversationsBySessionKey?.[sessionKey] || server.ConversationsByBindingId?.[legacyBindingId] || (matches(server.ActiveConversation) ? server.ActiveConversation : null) || Object.values(server.ConversationsByBrowserContext ?? {}).find(matches) || null;
+  if (!binding) throw new Error('The selected Buffaly conversation was not found in this Chrome installation.');
+  return { ...binding, BrowserContextId: binding.BrowserContextId || browserContextId };
 }
 
 export interface SavedBuffalyServerSummary {
@@ -23,6 +85,9 @@ export interface SavedBuffalyServerSummary {
   Authorized: boolean;
   Active: boolean;
   LastConnectedUtc: string;
+  ActiveConversationSessionBindingId: string;
+  ActiveSessionKey: string;
+  Conversations: ConversationBinding[];
 }
 
 export function canonicalServerOrigin(value: string): string {
@@ -37,7 +102,7 @@ export async function loadServers(): Promise<{ servers: SavedBuffalyServer[]; ac
   let activeServerId = (stored[ACTIVE_SERVER_STORAGE_KEY] as string | undefined) || '';
   const legacy = stored.BuffalyExtensionConnection as ExtensionConnection | undefined;
   if (servers.length === 0 && legacy) {
-    const server: SavedBuffalyServer = { ServerId: crypto.randomUUID(), Name: 'Buffaly', Origin: legacy.Origin, Connection: legacy, ActiveConversation: (stored.BuffalyActiveConversationBinding as ConversationBinding | undefined) || null, LastConnectedUtc: '' };
+    const server: SavedBuffalyServer = { ServerId: crypto.randomUUID(), Name: 'Buffaly', Origin: legacy.Origin, Connection: legacy, ActiveConversation: (stored.BuffalyActiveConversationBinding as ConversationBinding | undefined) || null, ActiveSessionKey: conversationSessionKey(stored.BuffalyActiveConversationBinding as ConversationBinding | undefined), LastConnectedUtc: '' };
     servers = [server]; activeServerId = server.ServerId;
     await chrome.storage.local.set({ [SERVERS_STORAGE_KEY]: servers, [ACTIVE_SERVER_STORAGE_KEY]: activeServerId });
   }
@@ -98,5 +163,5 @@ export async function updateActiveServer(update: Partial<SavedBuffalyServer>): P
 }
 
 export function summarizeServers(servers: SavedBuffalyServer[], activeServerId: string): SavedBuffalyServerSummary[] {
-  return servers.map(({ ServerId, Name, Origin, Connection, LastConnectedUtc }) => ({ ServerId, Name, Origin, Authorized: Boolean(Connection), Active: ServerId === activeServerId, LastConnectedUtc }));
+  return servers.map((server) => ({ ServerId: server.ServerId, Name: server.Name, Origin: server.Origin, Authorized: Boolean(server.Connection), Active: server.ServerId === activeServerId, LastConnectedUtc: server.LastConnectedUtc, ActiveConversationSessionBindingId: isLegacyConversation(server.ActiveConversation) ? server.ActiveConversation.SessionBindingId : '', ActiveSessionKey: activeSessionKey(server), Conversations: conversationsForServer(server) }));
 }

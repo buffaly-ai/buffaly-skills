@@ -1,4 +1,4 @@
-import type { DebuggerSession, ScreenshotResult } from './types';
+import type { DebuggerSession } from './types';
 
 // ─── Debugger Session Management ───
 // Manages chrome.debugger attach/detach lifecycle per tab.
@@ -175,40 +175,6 @@ export async function pressKeyViaDebugger(
   await cdpSend(tabId, 'Input.dispatchKeyEvent', { type: 'keyDown', key, modifiers });
   await cdpSend(tabId, 'Input.dispatchKeyEvent', { type: 'keyUp', key, modifiers });
   return { pressed: true, key };
-}
-
-// ─── Screenshot via CDP (adapted from cdp_helper.js handlers.screenshot) ───
-
-export async function screenshotViaDebugger(
-  tabId: number,
-  fullPage = false
-): Promise<ScreenshotResult> {
-  const opts: Record<string, unknown> = { format: 'png' };
-  if (fullPage) opts.captureBeyondViewport = true;
-
-  const result = await cdpSend(tabId, 'Page.captureScreenshot', opts) as { data: string };
-
-  // Get viewport dimensions
-  const vpResult = await cdpSend(tabId, 'Runtime.evaluate', {
-    expression: 'JSON.stringify({ w: window.innerWidth, h: window.innerHeight })',
-    returnByValue: true,
-  }) as { result?: { value?: string } };
-
-  let width = 0;
-  let height = 0;
-  try {
-    const dims = JSON.parse(vpResult?.result?.value ?? '{}');
-    width = dims.w ?? 0;
-    height = dims.h ?? 0;
-  } catch {
-    // ignore parse errors
-  }
-
-  return {
-    dataUrl: `data:image/png;base64,${result.data}`,
-    width,
-    height,
-  };
 }
 
 // ─── Scroll via CDP (adapted from cdp_helper.js handlers.scroll) ───

@@ -1,4 +1,4 @@
-prototype SalesRepresentatives_CopySalesRepresentative : FeedingFrenzyJsonWsSkillAction
+prototype SalesRepresentatives_CopySalesRepresentative : FeedingFrenzyJsonWsGuardedWriteAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeID) : string
 	{
@@ -51,7 +51,7 @@ prototype SalesRepresentatives_GetSalesRepresentativesBySalesRepresentativeTypeI
 	}
 }
 
-prototype SalesRepresentatives_InsertSalesRepresentative : FeedingFrenzyJsonWsSkillAction
+prototype SalesRepresentatives_InsertSalesRepresentative : FeedingFrenzyJsonWsGuardedWriteAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, string Notes, bool IsEnabled, string Data, string Name, string Email, string Phone, int SalesRepresentativeTypeID) : string
 	{
@@ -68,7 +68,7 @@ prototype SalesRepresentatives_InsertSalesRepresentative : FeedingFrenzyJsonWsSk
 	}
 }
 
-prototype SalesRepresentatives_MarkSalesRepresentativeAsEnabled : FeedingFrenzyJsonWsSkillAction
+prototype SalesRepresentatives_MarkSalesRepresentativeAsEnabled : FeedingFrenzyJsonWsGuardedWriteAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeID) : string
 	{
@@ -79,7 +79,7 @@ prototype SalesRepresentatives_MarkSalesRepresentativeAsEnabled : FeedingFrenzyJ
 	}
 }
 
-prototype SalesRepresentatives_MarkSalesRepresentativeAsNotEnabled : FeedingFrenzyJsonWsSkillAction
+prototype SalesRepresentatives_MarkSalesRepresentativeAsNotEnabled : FeedingFrenzyJsonWsGuardedWriteAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeID) : string
 	{
@@ -90,7 +90,7 @@ prototype SalesRepresentatives_MarkSalesRepresentativeAsNotEnabled : FeedingFren
 	}
 }
 
-prototype SalesRepresentatives_RemoveSalesRepresentative : FeedingFrenzyJsonWsSkillAction
+prototype SalesRepresentatives_RemoveSalesRepresentative : FeedingFrenzyJsonWsGuardedWriteAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeID) : string
 	{
@@ -101,7 +101,7 @@ prototype SalesRepresentatives_RemoveSalesRepresentative : FeedingFrenzyJsonWsSk
 	}
 }
 
-prototype SalesRepresentatives_UpdateSalesRepresentative : FeedingFrenzyJsonWsSkillAction
+prototype SalesRepresentatives_UpdateSalesRepresentative : FeedingFrenzyJsonWsGuardedWriteAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeID, string Notes, bool IsEnabled, string Data, string FirstName, string LastName, string Email, string Phone, int SalesRepresentativeTypeID, int UserID) : string
 	{
@@ -121,7 +121,7 @@ prototype SalesRepresentatives_UpdateSalesRepresentative : FeedingFrenzyJsonWsSk
 	}
 }
 
-prototype SalesRepresentatives_UpdateSalesRepresentativeData : FeedingFrenzyJsonWsSkillAction
+prototype SalesRepresentatives_UpdateSalesRepresentativeData : FeedingFrenzyJsonWsGuardedWriteAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeID, string Data) : string
 	{
@@ -132,3 +132,4 @@ prototype SalesRepresentatives_UpdateSalesRepresentativeData : FeedingFrenzyJson
 		return service.CallBusinessRoute("sales-representatives/update-sales-representative-data", args);
 	}
 }
+

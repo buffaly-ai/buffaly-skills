@@ -1,72 +1,78 @@
+import FeedingFrenzy.TrafficAnalysis.Web FeedingFrenzy.TrafficAnalysis.Web.TrafficAnalysisProtoScriptFacade TrafficAnalysisProtoScriptFacade;
+
 [SemanticEntity("traffic analysis skill")]
 prototype TrafficAnalysisSkillAction : OpsAction
 {
-	Description = @"Base action type for the two-level traffic analysis pipeline.";
+	Description = @"Base action type for the two-stage traffic analysis pipeline.";
 }
 
 prototype TrafficAnalysisSkill : SkillEntity
 {
 	EntityName = "traffic analysis skill";
-	Description = @"Validated prompt workflows that use existing typed data-source tools for four independent collectors and a partial-failure-tolerant traffic summary aggregator.";
+	Description = @"Ordinary deterministic traffic analysis collectors and aggregator. Collectors return enriched JSON envelopes; the aggregator owns cross-source synthesis and email report composition.";
 	ActionRoot = TrafficAnalysisSkillAction;
 }
 
-[SemanticProgram.InfinitivePhrase("to collect web property traffic data")]
-prototype ToCollectWebPropertyTrafficData : ValidatedPromptAction, TrafficAnalysisSkillAction
+[SemanticProgram.InfinitivePhrase("to collect ga4 traffic data")]
+prototype ToCollectGa4TrafficData : TrafficAnalysisSkillAction
 {
-	IsPromptAction = true; SkillKind = "validated-prompt"; SkillVersion = "1.0.0"; ChildSessionScope = "per-action";
-	PromptPath = @"Skills/TrafficAnalysis/Prompts/traffic-collector.prompt.md";
-	WorkPromptPath = @"Skills/TrafficAnalysis/Prompts/traffic-collector.prompt.md";
-	ValidationPromptPath = @"Skills/TrafficAnalysis/Prompts/collector.validation.prompt.md";
-	Description = @"Collect all active Feeding Frenzy web properties through the independent WebProperties wrappers, analyze GA4 and classified tracking traffic, and save artifacts/data-stream/traffic-properties.json with exact prompt provenance.";
+	Description = @"Collect GA4 traffic data for the requested run and return the common collector envelope JSON.";
+	function Execute(string runId, string runSettingsJson) : string
+	{
+		FeedingFrenzyWebPropertiesJsonWsService service = FeedingFrenzyWebPropertiesJsonWsService#Local;
+		string propertiesJson = WebProperties_GetWebProperties.Execute(service);
+		return TrafficAnalysisProtoScriptFacade.CollectGa4TrafficDataFromSourceJson(runId, runSettingsJson, propertiesJson);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to collect tracking log data")]
+prototype ToCollectTrackingLogData : TrafficAnalysisSkillAction
+{
+	Description = @"Collect tracking-log traffic data for the requested run and return the common collector envelope JSON.";
+	function Execute(string runId, string runSettingsJson) : string
+	{
+		FeedingFrenzyWebPropertiesJsonWsService service = FeedingFrenzyWebPropertiesJsonWsService#Local;
+		string propertiesJson = WebProperties_GetWebProperties.Execute(service);
+		return TrafficAnalysisProtoScriptFacade.CollectTrackingLogDataFromSourceJson(runId, runSettingsJson, propertiesJson);
+	}
 }
 
 [SemanticProgram.InfinitivePhrase("to collect google ads data")]
-prototype ToCollectGoogleAdsData : ValidatedPromptAction, TrafficAnalysisSkillAction
+prototype ToCollectGoogleAdsData : TrafficAnalysisSkillAction
 {
-	IsPromptAction = true; SkillKind = "validated-prompt"; SkillVersion = "1.0.0"; ChildSessionScope = "per-action";
-	PromptPath = @"Skills/TrafficAnalysis/Prompts/google-ads-collector.prompt.md";
-	WorkPromptPath = @"Skills/TrafficAnalysis/Prompts/google-ads-collector.prompt.md";
-	ValidationPromptPath = @"Skills/TrafficAnalysis/Prompts/collector.validation.prompt.md";
-	Description = @"Use the existing Google Ads reporting tools to save campaign, search-term, and creative data with spend-efficiency analysis and exact prompt provenance.";
+	Description = @"Collect Google Ads campaign, search-term, and creative data for the requested run and return the common collector envelope JSON.";
+	function Execute(string runId, string runSettingsJson) : string { return TrafficAnalysisProtoScriptFacade.CollectGoogleAdsData(runId, runSettingsJson); }
 }
 
 [SemanticProgram.InfinitivePhrase("to collect linkedin analytics")]
-prototype ToCollectLinkedInData : ValidatedPromptAction, TrafficAnalysisSkillAction
+prototype ToCollectLinkedInData : TrafficAnalysisSkillAction
 {
-	IsPromptAction = true; SkillKind = "validated-prompt"; SkillVersion = "1.0.0"; ChildSessionScope = "per-action";
-	PromptPath = @"Skills/TrafficAnalysis/Prompts/linkedin-collector.prompt.md";
-	WorkPromptPath = @"Skills/TrafficAnalysis/Prompts/linkedin-collector.prompt.md";
-	ValidationPromptPath = @"Skills/TrafficAnalysis/Prompts/collector.validation.prompt.md";
-	Description = @"Use existing LinkedIn member and organization analytics tools to save artifacts/data-stream/linkedin-analytics.json with analysis and exact prompt provenance.";
+	Description = @"Collect LinkedIn analytics for the requested run and return the common collector envelope JSON.";
+	function Execute(string runId, string runSettingsJson) : string { return TrafficAnalysisProtoScriptFacade.CollectLinkedInData(runId, runSettingsJson); }
 }
 
 [SemanticProgram.InfinitivePhrase("to collect openai usage data")]
-prototype ToCollectOpenAIUsageData : ValidatedPromptAction, TrafficAnalysisSkillAction
+prototype ToCollectOpenAIUsageData : TrafficAnalysisSkillAction
 {
-	IsPromptAction = true; SkillKind = "validated-prompt"; SkillVersion = "1.0.0"; ChildSessionScope = "per-action";
-	PromptPath = @"Skills/TrafficAnalysis/Prompts/openai-usage-collector.prompt.md";
-	WorkPromptPath = @"Skills/TrafficAnalysis/Prompts/openai-usage-collector.prompt.md";
-	ValidationPromptPath = @"Skills/TrafficAnalysis/Prompts/collector.validation.prompt.md";
-	Description = @"Use existing OpenAI Admin usage and API-key cost tools to save artifacts/data-stream/openai-usage.json with analysis and exact prompt provenance.";
+	Description = @"Collect OpenAI usage data for the requested run and return the common collector envelope JSON.";
+	function Execute(string runId, string runSettingsJson) : string { return TrafficAnalysisProtoScriptFacade.CollectOpenAIUsageData(runId, runSettingsJson); }
 }
 
 [SemanticProgram.InfinitivePhrase("to collect reddit ads data")]
-prototype ToCollectRedditAdsData : ValidatedPromptAction, TrafficAnalysisSkillAction
+prototype ToCollectRedditAdsData : TrafficAnalysisSkillAction
 {
-	IsPromptAction = true; SkillKind = "validated-prompt"; SkillVersion = "1.0.0"; ChildSessionScope = "per-action";
-	PromptPath = @"Skills/TrafficAnalysis/Prompts/reddit-ads-collector.prompt.md";
-	WorkPromptPath = @"Skills/TrafficAnalysis/Prompts/reddit-ads-collector.prompt.md";
-	ValidationPromptPath = @"Skills/TrafficAnalysis/Prompts/collector.validation.prompt.md";
-	Description = @"Use the existing Reddit Ads account and reporting actions to save artifacts/data-stream/reddit-ads.json with spend-efficiency analysis and exact prompt provenance.";
+	Description = @"Collect Reddit Ads data for the requested run when configured and return the common collector envelope JSON.";
+	function Execute(string runId, string runSettingsJson) : string { return TrafficAnalysisProtoScriptFacade.CollectRedditAdsData(runId, runSettingsJson); }
 }
 
 [SemanticProgram.InfinitivePhrase("to aggregate traffic analysis for email rendering")]
-prototype ToAggregateTrafficAnalysis : ValidatedPromptAction, TrafficAnalysisSkillAction
+prototype ToAggregateTrafficAnalysis : TrafficAnalysisSkillAction
 {
-	IsPromptAction = true; SkillKind = "validated-prompt"; SkillVersion = "1.0.0"; ChildSessionScope = "per-action";
-	PromptPath = @"Skills/TrafficAnalysis/Prompts/aggregator.prompt.md";
-	WorkPromptPath = @"Skills/TrafficAnalysis/Prompts/aggregator.prompt.md";
-	ValidationPromptPath = @"Skills/TrafficAnalysis/Prompts/aggregator.validation.prompt.md";
-	Description = @"Aggregate all available traffic collector envelopes into the versioned Intelligence Factory email report view model, tolerate failed or missing inputs, and save presentation-neutral JSON with exact prompt provenance for deterministic module rendering.";
+	Description = @"Aggregate available collector envelope JSON documents into the TrafficAnalysis email report view model using one bounded runtime LLM synthesis pass for narrative and prioritization.";
+	function Execute(string runId, string runSettingsJson, string collectorsJson) : string
+	{
+		string prompt = TrafficAnalysisProtoScriptFacade.BuildAggregateSynthesisPrompt(runSettingsJson, collectorsJson);
+		string modelResponseJson = ToAskModelViaBuffalyRuntime.Execute(prompt, "Return strict JSON only. Use only supplied metrics and collector analysis. Do not invent numbers.", "", "", "", "[]");
+		return TrafficAnalysisProtoScriptFacade.AggregateTrafficAnalysisWithSynthesis(runId, runSettingsJson, collectorsJson, modelResponseJson);
+	}
 }

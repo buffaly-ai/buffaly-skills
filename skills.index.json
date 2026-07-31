@@ -425,7 +425,7 @@
       "SkillName": "ClaudeCode",
       "Title": "Claude Code",
       "Description": "Buffaly skill package for Claude Code.",
-      "Version": "0.1.1",
+      "Version": "0.1.14",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Claude Code",
@@ -435,15 +435,19 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "420ab91b02b42a8eb7a3ca23462868a9bb84c1232e365156070ec27201a54115"
+          "Sha256": "2b857eabcde7165881556482c74a266656c9599dfc1310a15fda8bb19e5031a7"
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "dbe387cb7d3e9eb6bf293246d87ab9250788b9e659337d42bc73fbecc5d9c6af"
+          "Sha256": "4a52f7402b797cfca63ef56d74cfa451c48fa399f93fe5be36f41333e8db97fc"
         },
         {
           "Path": "SKILL.md",
-          "Sha256": "52ec0f3f019fbed831ddfd3674cb00f932f12c173f0f80ce5675054523f8a894"
+          "Sha256": "73c2d9fe07431e165d8e8b6f60e1deb06adecf47eeb8c7385f8e63ea1d43a9d4"
+        },
+        {
+          "Path": "Test-ClaudeCodeStateScoping.ps1",
+          "Sha256": "00cdaffe052ed5bf46e8c5401575192cfcf5315eab9679dce78dc657696f4a45"
         }
       ],
       "EntryPoint": "index.pts",
@@ -676,7 +680,7 @@
       "SkillName": "ExtensionBrowser",
       "Title": "Extension Browser",
       "Description": "Buffaly skill package for Extension Browser.",
-      "Version": "0.2.49",
+      "Version": "0.2.68",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Extension Browser",
@@ -686,15 +690,15 @@
       "Files": [
         {
           "Path": "docs/BROWSER-WORKSPACE-DESIGN.md",
-          "Sha256": "ce3256815c51d84f74d8552dce475a8bbab9916b4b9ee65f1a145eb8d611a363"
+          "Sha256": "83b5f5540a789e08ab0ffb8c0ba982e93c7461a18ca867e2b8ae575a319c9174"
         },
         {
           "Path": "docs/VALIDATION.md",
-          "Sha256": "80f7f18cebd360629381a89de2432bb02e9bde99e96cc844354413f42e0f3b11"
+          "Sha256": "273ca2057010027a091996081aa858e944ccbaefca4d9f44b7b775f82c8a6070"
         },
         {
-          "Path": "extension/release/Buffaly-Browser-Agent-0.2.51-chrome.zip",
-          "Sha256": "1377f14f753b7d5e9dfb0094ded5e18088bb1ea149a02de5e51ea57fcc152cdb"
+          "Path": "extension/release/Buffaly-Browser-Agent-0.2.53-chrome.zip",
+          "Sha256": "b250be30aa53537df78f0e0942016f500d6abad1c38e1a2c9f43f1997a6d55a9"
         },
         {
           "Path": "extension/source/.gitignore",
@@ -702,7 +706,7 @@
         },
         {
           "Path": "extension/source/entrypoints/background.ts",
-          "Sha256": "5949504c44f7e020ecb393481e17801b5d79c98fd0900f2650586af2d301a0e2"
+          "Sha256": "f75fcf3ac572d96bf760b29a697cc4cd18b743c8d8fb618f83e7bf6817e899f6"
         },
         {
           "Path": "extension/source/entrypoints/content.ts",
@@ -710,7 +714,7 @@
         },
         {
           "Path": "extension/source/entrypoints/sidepanel/App.tsx",
-          "Sha256": "55e7a82b15dc98bd12d7924fe1312040784d4d5fc7f49c093d5a59d13537dd99"
+          "Sha256": "75514b48146a0679b0e0b95a04cc1f658c354363f9dccaead6eb80aadc866734"
         },
         {
           "Path": "extension/source/entrypoints/sidepanel/index.html",
@@ -722,19 +726,19 @@
         },
         {
           "Path": "extension/source/entrypoints/sidepanel/style.css",
-          "Sha256": "6b180955d4f7e275b5aab6df191f284bd10acaeed5f20a7c21ec4d87f670e149"
+          "Sha256": "8ec3f61e60dcc747dbb46c3f18ca594f525c8669c6105c1dbd50a48632953529"
         },
         {
           "Path": "extension/source/lib/buffaly-connection.ts",
-          "Sha256": "ff6ac5e488b0b3b42ceea0af39c9f49d463241c0c870af2d82df71c0eeccc047"
+          "Sha256": "b6c1502077620d645da200f5e859f3735ec5b5bde8c8a25d8aa4803772922196"
         },
         {
           "Path": "extension/source/lib/buffaly-servers.ts",
-          "Sha256": "6745c70db6f8d4ca244709c858ad41e5c2c6c8ad9e1f290322c435df1614b3b5"
+          "Sha256": "8a55e08fe5ceb261aa52a08b600055d3a36eabb8c4c4051e9b9c327b1f5842df"
         },
         {
           "Path": "extension/source/lib/debugger-session.ts",
-          "Sha256": "c5e2100a6c245d2029def7fb9d7139cb3a513be73bdee64d1841ceca73512586"
+          "Sha256": "7d18e04ad0e8895d4d3d883ea79c976d1bc4aff1f53afb7c9674b1d41d610686"
         },
         {
           "Path": "extension/source/lib/safety.ts",
@@ -746,19 +750,19 @@
         },
         {
           "Path": "extension/source/lib/tool-router.ts",
-          "Sha256": "c2ae22bb4865fbaf013b02df3f878e6915141b27c60e7b5cd1031508509c005a"
+          "Sha256": "963f4e5c7bb366734c5f375a7ddabd1939539f27f340b119819a8072701155fb"
         },
         {
           "Path": "extension/source/lib/types.ts",
-          "Sha256": "2cca60a054cc6331806ab668270b55bcc46db3695804a403ae3ef9da035f68bb"
+          "Sha256": "1c4f74e4e2e0044afdb7f0e6275ea0512f4d9119829a7da5edfd8a95573f6265"
         },
         {
           "Path": "extension/source/package-lock.json",
-          "Sha256": "2aaf39b510f826c246796e552bfdbad390d69d8301d9029f956713cae3dafe1d"
+          "Sha256": "b1af9a9930f02d20b890f4eab50d8b9a8eb869c95b8a7fe347a71a919ea47d11"
         },
         {
           "Path": "extension/source/package.json",
-          "Sha256": "2281b2a7519dcaa6704b894db4039ca16836489374a7505092d0360ea49fca16"
+          "Sha256": "3b9cb7f971e6333a90143973558ca1dcf768378899a66d253a26418d5b8bcd90"
         },
         {
           "Path": "extension/source/PRIVACY.md",
@@ -778,19 +782,19 @@
         },
         {
           "Path": "extension/source/README.md",
-          "Sha256": "026be99c097d828cac33b9f8daa4a375ffecbe2ae1b336e3e5f7d0dd12a2b425"
+          "Sha256": "46b03294decbcfa9299e5dd3932d541b69e89a3c82e1de8dafdf0a1ae38fee6a"
         },
         {
           "Path": "extension/source/scripts/verify-bound-lifecycle.mjs",
-          "Sha256": "5c8fb67842bc6101df0719434da22f02b61de4771375eb08f7388eab1536a440"
+          "Sha256": "aebe99ed7c4670ee7852d3602cd6ae923a7e331437d056507ed88f503ec5321b"
         },
         {
           "Path": "extension/source/scripts/verify-bound-lifecycle.mjs.md",
-          "Sha256": "5484b2d9af81c9aaa9cac6191d08309b4d16b8c113e698bfc147320c3dbde611"
+          "Sha256": "f1f5e0048352a2472aa0ec52b24bed6bc71d3a9d413f01741d5895c2ca535b57"
         },
         {
           "Path": "extension/source/scripts/verify-release.mjs",
-          "Sha256": "02360aaa9913099d51bcd5097a6e99d083276681f9667e994abb6c6ad48207d0"
+          "Sha256": "a0d10cd0f782ba487e7294e419c8c8a2ff409eea87c773d4ee561b78ee4a67d2"
         },
         {
           "Path": "extension/source/tsconfig.json",
@@ -798,7 +802,7 @@
         },
         {
           "Path": "extension/source/wxt.config.ts",
-          "Sha256": "70f87e00e7a082561eb18a998ea808124a729fc08323ba58351925446c97c388"
+          "Sha256": "d9ab87836e1d56e2849d95a292a88f2681b27f22adbdaef7be3f806198b4635f"
         },
         {
           "Path": "index.pts",
@@ -818,7 +822,7 @@
         },
         {
           "Path": "SKILL.md",
-          "Sha256": "a3b22a3089748a20a4bf19bf0cf93dedbd139fca89aef0175e869ea1909ac0af"
+          "Sha256": "0da6139227592087f3ceb8d103f253271efc143d7a31318f9068e2a9a6e86b37"
         }
       ],
       "EntryPoint": "index.pts",
@@ -954,47 +958,79 @@
     },
     {
       "SkillName": "FeedingFrenzyJsonWs",
-      "Title": "Feeding Frenzy JsonWS",
-      "Description": "Buffaly skill package for Feeding Frenzy JsonWS.",
-      "Version": "0.1.2",
+      "Title": "Feeding Frenzy JsonWs",
+      "Description": "Buffaly skill package for Feeding Frenzy JsonWs.",
+      "Version": "0.1.5",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
-        "Feeding Frenzy JsonWS",
+        "Feeding Frenzy JsonWs",
         "FeedingFrenzyJsonWs"
       ],
       "Path": "skills/FeedingFrenzyJsonWs",
       "Files": [
         {
-          "Path": "AgreementSigning.pts",
-          "Sha256": "90d024b959d737f94cbfedee857013533f8f3a78c9bd902e928ca7b5d39822fc"
+          "Path": "AgreementTemplates.pts",
+          "Sha256": "7951e43e1dffe838b9e0a6d1ecdd30276363fd77a3c0f48f56906ee2aec86075"
         },
         {
-          "Path": "AgreementSigning.pts.md",
-          "Sha256": "6de7bf8321fc567ed5a596753eecff776a705c24900fc0976a06c19649b50440"
+          "Path": "AgreementTemplates.pts.md",
+          "Sha256": "16a9ca87c42d12796142a3a93a87fc8567ff0ee3f93f1770808db27dd10563c8"
+        },
+        {
+          "Path": "Calls.pts",
+          "Sha256": "f1ca482ae417728d840c8c9b0295031369c2ea1f1fedfe01ac841ab430194c4d"
+        },
+        {
+          "Path": "Calls.pts.md",
+          "Sha256": "6333fcac27520048a99e5473113dcd3ea97e413731bbd9b89ed377b1c1863561"
         },
         {
           "Path": "index.pts",
-          "Sha256": "a1c22060f70af9ab435328787011f69ce4e0306d34ba5952d681983314c5653f"
+          "Sha256": "30adbf123d7d9e2b0093db80ab573525eaff682a38628eee06348606e3a6e81b"
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "c74331a714c14429afb7179d7934e08fe2b102ee2a9124890113b5b0c081902e"
+          "Sha256": "5e0b8884651d0f2d33cbf0a0dd024ae4577de2ac31f2b843b1a96bfb4a5e0dba"
+        },
+        {
+          "Path": "LeadAddresses.pts",
+          "Sha256": "6e6d4d78a73cff431a2b14e091d209d8f650ad2e7f6dda078948cf23f3268adc"
+        },
+        {
+          "Path": "LeadAddresses.pts.md",
+          "Sha256": "80d3a029bdf35a971ab4659b9e18924a1f678bd29ae2ab247e8a39ffd08cf3de"
         },
         {
           "Path": "LeadAutomation.pts",
-          "Sha256": "067b5d0bde8d22ed3f08d2a1abcd86afefc6a6cb773d42ba74cb9cea681933e6"
+          "Sha256": "bc49aab16cbe424f8a87307b7a962bd8e4e06b144f33d2904b10a9dd4bd6dc78"
         },
         {
           "Path": "LeadAutomation.pts.md",
           "Sha256": "b3f3ec5402307df757916fb3bbacc9ec2c5512d7c5d3c908ff0ceed448322531"
         },
         {
-          "Path": "LeadDocuments.pts",
-          "Sha256": "3f0ea0e5f2b9761714ea410ac7787d9a17c0eb19b4924191c4ef020ef875cfe5"
+          "Path": "LeadContacts.pts",
+          "Sha256": "1b67a94c11cb5fd4f274c3f9039df9b5863d6c94c401febb1a2f9d962184d801"
         },
         {
-          "Path": "LeadFileDocuments.pts",
-          "Sha256": "dff5a1b34730979a6723d70ffd960be6f06d56ca4bbafff33b6b81c7cccf444c"
+          "Path": "LeadContacts.pts.md",
+          "Sha256": "c6e515b52769f5fa9095d2e93ac7b4276eea19296b8c709ee3b24f280df49ee2"
+        },
+        {
+          "Path": "LeadNotes.pts",
+          "Sha256": "dcc845cb1c4947b9f4c191bdd17fe1896205fd52232132254d7c984bf1fc78f0"
+        },
+        {
+          "Path": "LeadNotes.pts.md",
+          "Sha256": "f5ff0af2328132686caa8bb1b71c8fcb195153d50b2bf1c3a25b9692c0ad2c51"
+        },
+        {
+          "Path": "LeadNoteTypes.pts",
+          "Sha256": "a58b37ac9136e87df48f45863fb4a1b2545c5fcb35c862fc84fd42fa940d5938"
+        },
+        {
+          "Path": "LeadNoteTypes.pts.md",
+          "Sha256": "507b46966d5db3282e3b8b6680fc81ff6711e8b154ba74175bf6fa895ebd37d7"
         },
         {
           "Path": "Leads.pts",
@@ -1029,12 +1065,20 @@
           "Sha256": "1b4915a49abef6b0efe5caf185aa76a073ad72f0367c5a02cc1a97713807f805"
         },
         {
+          "Path": "LeadTags.pts",
+          "Sha256": "44b122f42b51828298b9e8ae571480d50c221e06fd7fd72e51a7f387e3033063"
+        },
+        {
+          "Path": "LeadTags.pts.md",
+          "Sha256": "78b4a4ba20cd3c6142e4f8d330ef857510aeacf6176d336b04a329e69e0756ab"
+        },
+        {
           "Path": "SalesRepresentatives.pts",
-          "Sha256": "42d8f3fcae167690b6bdc59b4bd7a6e27123ab9e36a3df1d6b2ec2ebf88ca5af"
+          "Sha256": "6f7c5e9dd692a91c99c4557e8cfc32cddb9684817d92fffbb820909ed067ed36"
         },
         {
           "Path": "SalesRepresentatives.pts.md",
-          "Sha256": "243f88d0d76ebac90db35543d8aeed33750523ba7d66f3d46483e8a777d79b23"
+          "Sha256": "6855c97f2b9419216d176d13ab7db785a7cbf8843b830a225dfa003815c7df67"
         },
         {
           "Path": "SalesRepresentativesAdmin.pts",
@@ -1046,7 +1090,7 @@
         },
         {
           "Path": "SKILL.md",
-          "Sha256": "4d20272ae35bee1a3125fdb07c1c7b22d9f8a6617dd39f934b3d0aeac53dc605"
+          "Sha256": "12be9d1d1970494473aaf88ebd3796fcabf2bd86ef036f57f0e12fefb298bc84"
         },
         {
           "Path": "Sources.pts",
@@ -1063,6 +1107,30 @@
         {
           "Path": "Tags.pts.md",
           "Sha256": "d51fb486facf38891f86f5128460e5172215a47c38480ed42008d1a9a0b9218b"
+        },
+        {
+          "Path": "Tasks.pts",
+          "Sha256": "87be2a5ccd47f5df99bbbffb4fc35c216b17e9e5910537ef445676b52f4dabcc"
+        },
+        {
+          "Path": "Tasks.pts.md",
+          "Sha256": "c5e5f9ca3db82256f5414035ffb9f21d78beb9bfe7bce71557bb3e9257877af2"
+        },
+        {
+          "Path": "UserAutomation.pts",
+          "Sha256": "b29cb087044b15d9811f3ed356e8f23ff5d0b346c8376304bd172eed4b1152e2"
+        },
+        {
+          "Path": "UserAutomation.pts.md",
+          "Sha256": "0228bd2fc5306932ad88635f5eb5ef0375af85033f419efdcfa0ec866efb7e56"
+        },
+        {
+          "Path": "Users.pts",
+          "Sha256": "2598bf1003e775da9898ce137113aa613dcc65fcce697162304b6ef3209e54fc"
+        },
+        {
+          "Path": "Users.pts.md",
+          "Sha256": "61346f61f0c3ef3fd05b5352b04d3ccb867432dd70b92e2afeca557f09026603"
         }
       ],
       "EntryPoint": "index.pts",
@@ -2698,7 +2766,7 @@
       "SkillName": "Workspace",
       "Title": "Workspace",
       "Description": "Buffaly skill package for Workspace.",
-      "Version": "0.1.10",
+      "Version": "0.1.12",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Workspace",
@@ -2716,7 +2784,7 @@
         },
         {
           "Path": "lib/Buffaly.Agent.Workspaces.dll",
-          "Sha256": "e43296ba6ec97e72594cb389f04a45ba45a337391c1a2cab03c450c7516abaf8"
+          "Sha256": "8d7ef5dd65bd28b45ed41bb9ba65d7ff8e498e5891d10ed5bbc55a0814127d29"
         }
       ],
       "EntryPoint": "index.pts",

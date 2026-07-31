@@ -10,7 +10,7 @@ import { validateUrl, looksLikePaymentForm } from './safety';
 import {
   attachDebugger, detachDebugger, isAttached, getAttachedTabId,
   clickViaDebugger, clickAtCoords, typeViaDebugger, pressKeyViaDebugger,
-  screenshotViaDebugger, scrollViaDebugger, navigateViaDebugger,
+  scrollViaDebugger, navigateViaDebugger,
   getPageTextViaDebugger, waitForSelector, hoverViaDebugger,
   getConsoleEvents, clearConsoleEvents,
 } from './debugger-session';
@@ -18,18 +18,34 @@ import { addLogEntry, updateLogEntry } from './tool-log';
 
 // ─── Helper: get active tab ───
 
-async function getActiveTab(): Promise<{ tabId: number; url: string; title: string }> {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+async function getActiveTab(windowId?: number): Promise<{ tabId: number; url: string; title: string }> {
+  const [tab] = await chrome.tabs.query(windowId === undefined ? { active: true, currentWindow: true } : { active: true, windowId });
   if (!tab) throw new Error('No active tab found');
   return { tabId: tab.id!, url: tab.url ?? '', title: tab.title ?? '' };
 }
 
 // ─── Helper: resolve tabId (use provided or active) ───
 
-async function resolveTabId(tabId?: number): Promise<number> {
+async function resolveTabId(tabId?: number, windowId?: number): Promise<number> {
   if (tabId) return tabId;
-  const active = await getActiveTab();
+  const active = await getActiveTab(windowId);
   return active.tabId;
+}
+
+function boundWindowId(args: Record<string, unknown>): number | undefined {
+  return typeof args.__boundWindowId === 'number' && Number.isInteger(args.__boundWindowId) ? args.__boundWindowId : undefined;
+}
+
+async function bindWindowToArguments(tool: string, args: Record<string, unknown>): Promise<Record<string, unknown>> {
+  const windowId = boundWindowId(args);
+  if (windowId === undefined || tool === 'get_active_tab' || tool === 'list_tabs' || tool === 'open_tab' || tool === 'get_status') return args;
+  if (typeof args.tabId === 'number') {
+    const tab = await chrome.tabs.get(args.tabId);
+    if (tab.windowId !== windowId) throw new Error(`BOUND_TAB_CONTEXT_MISMATCH: tab ${args.tabId} does not belong to window ${windowId}`);
+    return args;
+  }
+  const active = await getActiveTab(windowId);
+  return { ...args, tabId: active.tabId };
 }
 
 // ─── Helper: execute function in tab via chrome.scripting ───
@@ -110,8 +126,8 @@ export function isDebuggerConsentValid(): boolean {
 
 // ─── Tool Handlers ───
 
-async function handleGetActiveTab(): Promise<ToolResult> {
-  const tab = await getActiveTab();
+async function handleGetActiveTab(args: Record<string, unknown>): Promise<ToolResult> {
+  const tab = await getActiveTab(boundWindowId(args));
   return { ok: true, data: tab };
 }
 
@@ -125,13 +141,14 @@ async function handleGetPageText(args: GetPageTextArgs): Promise<ToolResult> {
       return (document.body?.innerText || '').slice(0, ml);
     }, maxLength);
     return { ok: true, data: { text, tabId } };
-  } catch {
+  } catch (reason) {
     // Fallback to debugger if content script fails
     if (isAttached(tabId)) {
       const text = await getPageTextViaDebugger(tabId, maxLength);
       return { ok: true, data: { text, tabId } };
     }
-    throw new Error('Cannot read page text: content script failed and debugger not attached');
+    const detail = reason instanceof Error ? reason.message : String(reason);
+    throw new Error(`Cannot read page text through Chrome scripting for tab ${tabId}: ${detail}`);
   }
 }
 
@@ -189,12 +206,33 @@ async function handleScreenshot(args: ScreenshotArgs): Promise<ToolResult> {
   const tabId = await resolveTabId(args.tabId);
   const fullPage = args.fullPage ?? false;
 
-  if (!isAttached(tabId)) {
-    return { ok: false, error: 'Debugger not attached. Call attach_debugger first.', code: 'DEBUGGER_NOT_ATTACHED' };
+  if (fullPage) {
+    return {
+      ok: false,
+      error: 'Bound screenshot captures the visible Chrome viewport only. Use Buffaly\'s standard screenshot capability for a full-page capture.',
+      code: 'FULL_PAGE_SCREENSHOT_UNSUPPORTED',
+    };
   }
 
-  const screenshot = await screenshotViaDebugger(tabId, fullPage);
-  return { ok: true, data: screenshot };
+  const tab = await chrome.tabs.get(tabId);
+  if (!tab.active || tab.windowId === undefined) {
+    return {
+      ok: false,
+      error: `Tab ${tabId} is not the visible tab in its Chrome window. Switch to it before taking a bound screenshot.`,
+      code: 'TAB_NOT_VISIBLE',
+    };
+  }
+
+  const dataUrl = await chrome.tabs.captureVisibleTab(tab.windowId, { format: 'png' });
+  const viewport = await executeInTab(tabId, () => ({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  }));
+
+  return {
+    ok: true,
+    data: { dataUrl, width: viewport.width, height: viewport.height, tabId },
+  };
 }
 
 async function handleFindElements(args: FindElementsArgs): Promise<ToolResult> {
@@ -409,8 +447,9 @@ async function handleWait(args: WaitArgs): Promise<ToolResult> {
   return { ok: false, error: 'wait requires either ms or selector' };
 }
 
-async function handleListTabs(): Promise<ToolResult> {
-  const tabs = await chrome.tabs.query({});
+async function handleListTabs(args: Record<string, unknown>): Promise<ToolResult> {
+  const windowId = boundWindowId(args);
+  const tabs = await chrome.tabs.query(windowId === undefined ? {} : { windowId });
   const tabInfos = tabs.map((t) => ({
     tabId: t.id!,
     url: t.url ?? '',
@@ -420,11 +459,11 @@ async function handleListTabs(): Promise<ToolResult> {
   return { ok: true, data: tabInfos };
 }
 
-async function handleOpenTab(args: OpenTabArgs): Promise<ToolResult> {
+async function handleOpenTab(args: OpenTabArgs & { __boundWindowId?: number }): Promise<ToolResult> {
   const urlCheck = validateUrl(args.url);
   if (!urlCheck.ok) return { ok: false, error: urlCheck.error! };
 
-  const tab = await chrome.tabs.create({ url: args.url });
+  const tab = await chrome.tabs.create({ url: args.url, windowId: args.__boundWindowId });
   return { ok: true, data: { tabId: tab.id!, url: tab.url ?? args.url, title: tab.title ?? '' } };
 }
 
@@ -440,6 +479,11 @@ async function handleCloseTab(args: CloseTabArgs): Promise<ToolResult> {
 async function handleSwitchTab(args: SwitchTabArgs): Promise<ToolResult> {
   await chrome.tabs.update(args.tabId, { active: true });
   const tab = await chrome.tabs.get(args.tabId);
+  // `active: true` selects a tab inside its own window but does not focus that
+  // window. Bound follow-up tools resolve the current Chrome window, so focus
+  // the selected tab's window before returning to preserve deterministic
+  // switch -> read/click behavior when the side-panel UI is popped out.
+  await chrome.windows.update(tab.windowId, { focused: true });
   return { ok: true, data: { ok: true, tabId: args.tabId, url: tab.url ?? '', title: tab.title ?? '' } };
 }
 
@@ -465,8 +509,8 @@ async function handleDetachDebugger(args: { tabId?: number }): Promise<ToolResul
   return { ok: true, data: { detached: true, tabId } };
 }
 
-async function handleGetStatus(): Promise<ToolResult> {
-  const activeTab = await getActiveTab().catch(() => null);
+async function handleGetStatus(args: Record<string, unknown>): Promise<ToolResult> {
+  const activeTab = await getActiveTab(boundWindowId(args)).catch(() => null);
   const attachedTabId = getAttachedTabId();
   return {
     ok: true,
@@ -586,6 +630,7 @@ async function handleConsoleEvents(args: ConsoleEventsArgs): Promise<ToolResult>
 // ─── Main Tool Router ───
 
 export async function handleToolCall(tool: string, args: Record<string, unknown>): Promise<ToolResult> {
+  args = await bindWindowToArguments(tool, args);
   const logId = addLogEntry(tool, args);
 
   try {
@@ -593,7 +638,7 @@ export async function handleToolCall(tool: string, args: Record<string, unknown>
 
     switch (tool as ToolName) {
       case 'get_active_tab':
-        result = await handleGetActiveTab();
+        result = await handleGetActiveTab(args);
         break;
       case 'get_page_text':
         result = await handleGetPageText(args as unknown as GetPageTextArgs);
@@ -626,7 +671,7 @@ export async function handleToolCall(tool: string, args: Record<string, unknown>
         result = await handleWait(args as unknown as WaitArgs);
         break;
       case 'list_tabs':
-        result = await handleListTabs();
+        result = await handleListTabs(args);
         break;
       case 'open_tab':
         result = await handleOpenTab(args as unknown as OpenTabArgs);
@@ -643,8 +688,8 @@ export async function handleToolCall(tool: string, args: Record<string, unknown>
       case 'detach_debugger':
         result = await handleDetachDebugger(args);
         break;
-     case 'get_status':
-       result = await handleGetStatus();
+      case 'get_status':
+        result = await handleGetStatus(args);
        break;
       case 'go_back':
         result = await handleGoBack(args as unknown as GoBackArgs);

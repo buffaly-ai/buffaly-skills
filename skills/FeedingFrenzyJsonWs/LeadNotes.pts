@@ -1,0 +1,56 @@
+[SemanticProgram.InfinitivePhrase("to get feeding frenzy lead note by id")]
+prototype LeadNotes_GetLeadNote : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"service - required FeedingFrenzyJsonWsService binding. LeadNoteID - numeric lead note id.";
+
+	function Execute(FeedingFrenzyJsonWsService service, int LeadNoteID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["LeadNoteID"] = LeadNoteID;
+		return service.CallBusinessRoute("lead-notes/get-lead-note", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get feeding frenzy lead notes by lead id")]
+prototype LeadNotes_GetLeadNotesByLeadID : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"service - required FeedingFrenzyJsonWsService binding. LeadID - numeric lead id.";
+
+	function Execute(FeedingFrenzyJsonWsService service, int LeadID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["LeadID"] = LeadID;
+		return service.CallBusinessRoute("lead-notes/get-lead-notes-by-lead-id", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get feeding frenzy follow up by lead id")]
+prototype LeadNotes_GetFollowUpByLeadID : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"service - required FeedingFrenzyJsonWsService binding. LeadID - numeric lead id.";
+
+	function Execute(FeedingFrenzyJsonWsService service, int LeadID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["LeadID"] = LeadID;
+		return service.CallBusinessRoute("lead-notes/get-follow-up-by-lead-id", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get feeding frenzy appointments")]
+prototype LeadNotes_GetAppointments : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"service - required FeedingFrenzyJsonWsService binding. StartDate and StopDate should be ISO-like date strings accepted by Feeding Frenzy JsonWs DateTime binding.";
+
+	function Execute(FeedingFrenzyJsonWsService service, string StartDate, string StopDate) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["StartDate"] = StartDate;
+		args["StopDate"] = StopDate;
+		return service.CallBusinessRoute("lead-notes/get-appointments", args);
+	}
+}

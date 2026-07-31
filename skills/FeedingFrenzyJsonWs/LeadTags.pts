@@ -1,0 +1,14 @@
+[SemanticProgram.InfinitivePhrase("to add a tag to a Feeding Frenzy lead")]
+prototype LeadTags_InsertOrUpdateLeadTag : FeedingFrenzyJsonWsGuardedWriteAction
+{
+	Description = @"Adds or updates one tag on a Feeding Frenzy lead. This mutates lead data and is intentionally outside the default read-oriented action root.";
+
+	function Execute(FeedingFrenzyJsonWsService service, int LeadID, string TagName) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["LeadID"] = LeadID;
+		args["TagName"] = TagName;
+		return service.CallBusinessRoute("lead-tags/insert-or-update-lead-tag", args);
+	}
+}

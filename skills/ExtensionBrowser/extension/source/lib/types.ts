@@ -4,6 +4,20 @@ export type ToolResult =
   | { ok: true; data: unknown }
   | { ok: false; error: string; code?: string };
 
+// Credential-free correlation shared by the side panel and service worker.
+export interface BoundToolInvocationIdentity {
+  SessionBindingId: string;
+  RoutingKey?: string;
+  BrowserContextId: string;
+  InvocationId: string;
+}
+
+export const BOUND_TOOL_RESULT_STORAGE_PREFIX = 'BuffalyBoundToolResult:';
+
+export function boundToolResultStorageKey(identity: BoundToolInvocationIdentity): string {
+  return BOUND_TOOL_RESULT_STORAGE_PREFIX + identity.SessionBindingId + ':' + identity.InvocationId;
+}
+
 // ─── Tool Request (side panel → background) ───
 
 export interface ToolRequest {
@@ -68,14 +82,6 @@ export interface TabInfo {
   url: string;
   title: string;
   active: boolean;
-}
-
-// ─── Screenshot Result ───
-
-export interface ScreenshotResult {
-  dataUrl: string;  // base64 PNG data URL
-  width: number;
-  height: number;
 }
 
 // ─── Tool Names (union for type safety) ───
@@ -240,4 +246,26 @@ export interface ConsoleEvent {
 export interface ConsoleEventsResult {
   events: ConsoleEvent[];
   count: number;
+}
+
+export interface ExtensionBrowserBrowserContext {
+  BrowserContextId: string;
+  WindowId: number;
+  PanelInstanceId: string;
+  State: string;
+  ObservedUtc: string;
+}
+
+export interface ExtensionBrowserInstanceRecord {
+  InstanceId: string;
+  Connected: boolean;
+  State: string;
+  Contexts: ExtensionBrowserBrowserContext[];
+}
+
+export interface SessionBrowserInstanceDefaultRequest {
+  SessionKey: string;
+  InstanceId: string;
+  BrowserContextId: string;
+  Page: { Url: string; Title: string; TabId?: number; CapturedUtc: string };
 }

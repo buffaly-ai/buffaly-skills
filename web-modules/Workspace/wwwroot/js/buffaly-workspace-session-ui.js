@@ -43,8 +43,15 @@
 		});
 	}
 
-	function getArtifactUrl(sessionKey, relativePath) {
-		return "/api/web-modules/Workspace/artifact?sessionKey=" + encodeURIComponent(sessionKey) + "&path=" + encodeURIComponent(relativePath);
+	function getArtifactUrl(sessionKey, artifact) {
+		return "/api/web-modules/Workspace/session-artifact?sessionKey=" + encodeURIComponent(sessionKey) + "&owningSessionKey=" + encodeURIComponent(artifact.owningSessionKey) + "&path=" + encodeURIComponent(artifact.relativePath);
+	}
+
+	function moveArtifact(sessionKey, artifact, destinationPath, signal) {
+		return fetch("/api/web-modules/Workspace/move-session-artifact", { method: "POST", headers: { "Accept": "application/json", "Content-Type": "application/json" }, signal: signal, body: JSON.stringify({ sessionKey: sessionKey, owningSessionKey: artifact.owningSessionKey, sourcePath: artifact.relativePath, destinationPath: destinationPath }) }).then(function (response) {
+			if (!response.ok) { return response.text().then(function (message) { throw new Error(message || "Workspace artifact move failed with status " + response.status + "."); }); }
+			return response.json();
+		});
 	}
 
 	function renderItem(icon, name, detail, actionText, action) {
@@ -69,7 +76,27 @@
 		return item;
 	}
 
-	function mountWorkspace(context, summary) {
+	function openActionPanel(drawer, action) {
+		let panel = drawer.querySelector(".bws-action-panel");
+		if (!panel) { panel = createElement("section", "bws-action-panel"); drawer.prepend(panel); }
+		panel.replaceChildren();
+		const close = createElement("button", "bws-action-panel-close", "×"); close.type = "button"; close.setAttribute("aria-label", "Close action panel"); close.addEventListener("click", function () { panel.remove(); });
+		panel.append(close, createElement("small", "bws-profile-label", "PROMPT ACTION"), createElement("h3", "", action.displayName), createElement("code", "", action.prototypeName));
+		const templateLabel = createElement("label", "bws-field"); templateLabel.append(createElement("span", "", "Template")); const template = createElement("input"); template.value = action.templateName; templateLabel.append(template);
+		const targetLabel = createElement("label", "bws-field"); targetLabel.append(createElement("span", "", "Organization or target")); const target = createElement("input"); target.placeholder = "Enter company, website, or lead"; targetLabel.append(target);
+		const instructionsLabel = createElement("label", "bws-field"); instructionsLabel.append(createElement("span", "", "Instructions")); const instructions = createElement("textarea"); instructions.rows = 4; instructions.placeholder = "Add action-specific context"; instructionsLabel.append(instructions);
+		const prepare = createElement("button", "bws-prepare-action", "Prepare action"); prepare.type = "button"; prepare.addEventListener("click", function () {
+			const targetValue = target.value.trim();
+			if (!targetValue) { target.focus(); return; }
+			const instruction = "Use " + action.prototypeName + " for " + targetValue + ".\nTemplate: " + template.value.trim() + (instructions.value.trim() ? "\nInstructions: " + instructions.value.trim() : "");
+			getNextExtensions().populateComposer(instruction);
+			panel.remove();
+		});
+		panel.append(templateLabel, targetLabel, instructionsLabel, prepare);
+		target.focus();
+	}
+
+	function mountWorkspace(context, summary, signal) {
 		const viewState = viewStateBySessionKey.get(context.sessionKey) || { isOpen: false, selectedTab: "files" };
 		const root = createElement("span", "bws-root");
 		const trigger = createElement("button", "bws-chip", "Workspace: " + summary.workspaceName);
@@ -95,7 +122,30 @@
 			}
 		});
 		heading.appendChild(openFiles);
+		const openWorkspace = createElement("button", "bws-open-workspace", "Open workspace");
+		openWorkspace.type = "button";
+		openWorkspace.addEventListener("click", function () {
+			window.BuffalyWorkspaceWorkbench.open(context.sessionKey, summary);
+		});
+		heading.appendChild(openWorkspace);
 		drawer.appendChild(heading);
+
+		if (summary.profile) {
+			const profile = createElement("section", "bws-profile");
+			profile.appendChild(createElement("small", "bws-profile-label", "PINNED SKILL"));
+			profile.appendChild(createElement("strong", "bws-profile-name", summary.profile.pinnedSkillName));
+			profile.appendChild(createElement("code", "bws-profile-prototype", summary.profile.pinnedSkillPrototype));
+			const actions = createElement("div", "bws-actions");
+			summary.profile.actions.forEach(function (action) {
+				const button = createElement("button", "bws-action");
+				button.type = "button";
+				button.append(createElement("strong", "", action.displayName), createElement("small", "", action.prototypeName));
+				button.addEventListener("click", function () { openActionPanel(drawer, action); });
+				actions.appendChild(button);
+			});
+			profile.appendChild(actions);
+			drawer.appendChild(profile);
+		}
 
 		const tabs = createElement("div", "bws-tabs");
 		const filesTab = createElement("button", "bws-tab is-active", "Shared files " + summary.artifacts.length);
@@ -107,13 +157,26 @@
 		const sessions = createElement("div", "bws-list");
 		sessions.hidden = true;
 
-		summary.artifacts.forEach(function (artifact) {
+		function renderArtifacts() {
+			files.replaceChildren();
+			summary.artifacts.forEach(function (artifact) {
 			const isDirectory = artifact.kind === "Directory";
-			files.appendChild(renderItem(isDirectory ? "📁" : "📄", artifact.relativePath, isDirectory ? "Shared folder" : artifact.length + " bytes", isDirectory ? "" : "Open", isDirectory ? null : { href: getArtifactUrl(context.sessionKey, artifact.relativePath) }));
-		});
-		if (summary.artifacts.length === 0) {
-			files.appendChild(createElement("div", "bws-empty", "No shared artifacts yet."));
+			const item = renderItem(isDirectory ? "📁" : "📄", artifact.relativePath, artifact.owningSessionKey + (isDirectory ? " · folder" : " · " + artifact.length + " bytes"), isDirectory ? "" : "Open", isDirectory ? null : { href: getArtifactUrl(context.sessionKey, artifact) });
+			if (!isDirectory) {
+				const move = createElement("button", "bws-item-move", "Move"); move.type = "button";
+				move.addEventListener("click", function () {
+					const destination = window.prompt("Move inside " + artifact.owningSessionKey + " artifacts to:", artifact.relativePath);
+					if (!destination || destination === artifact.relativePath || !window.confirm("Move " + artifact.relativePath + " to " + destination + "?")) return;
+					move.disabled = true;
+					moveArtifact(context.sessionKey, artifact, destination, signal).then(function () { return loadSummary(context.sessionKey, signal); }).then(function (next) { summary = next; renderArtifacts(); }).catch(function (error) { window.alert(error.message); }).finally(function () { move.disabled = false; });
+				});
+				item.appendChild(move);
+			}
+			files.appendChild(item);
+			});
+			if (summary.artifacts.length === 0) files.appendChild(createElement("div", "bws-empty", "No shared artifacts yet."));
 		}
+		renderArtifacts();
 
 		summary.sessions.forEach(function (session) {
 			sessions.appendChild(renderItem("💬", session.sessionKey, session.isCurrent ? "Current session" : "Linked session", session.isCurrent ? "" : "Open", function () {
@@ -166,7 +229,10 @@
 				context.slotElement.replaceChildren();
 				return;
 			}
-			mountWorkspace(context, summary);
+			if (new URL(window.location.href).searchParams.get("workspaceView") === "workbench") {
+				window.BuffalyWorkspaceWorkbench.open(context.sessionKey, summary);
+			}
+			mountWorkspace(context, summary, abort.signal);
 		}).catch(function (error) {
 			if (error.name !== "AbortError") {
 				context.diagnostics.report({ Type: "workspace-summary-failed", Message: error.message });
@@ -197,10 +263,10 @@
 					}
 					return summary.artifacts.map(function (artifact) {
 						return {
-							Name: artifact.relativePath,
+							Name: artifact.owningSessionKey + "/" + artifact.relativePath,
 							Kind: artifact.kind,
-							Detail: artifact.kind === "Directory" ? "Shared folder" : artifact.length + " bytes",
-							Url: artifact.kind === "Directory" ? "" : getArtifactUrl(context.sessionKey, artifact.relativePath)
+							Detail: artifact.owningSessionKey + (artifact.kind === "Directory" ? " · folder" : " · " + artifact.length + " bytes"),
+							Url: artifact.kind === "Directory" ? "" : getArtifactUrl(context.sessionKey, artifact)
 						};
 					});
 				});

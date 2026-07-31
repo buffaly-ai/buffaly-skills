@@ -1,21 +1,53 @@
 reference ExtensionBrowser.WebModule ExtensionBrowser.WebModule;
 import ExtensionBrowser.WebModule ExtensionBrowser.WebModule.ExtensionBrowserModuleService ExtensionBrowserModuleService;
+import ExtensionBrowser.WebModule ExtensionBrowser.WebModule.ExtensionBrowserServiceFacade ExtensionBrowserServiceFacade;
 
-prototype ExtensionBrowserBoundSkillAction : OpsAction { Description = @"Bound regular-Chrome actions routed by the current session binding."; }
+prototype ExtensionBrowserInstallationService : Service
+{
+	String InstallationRegistrationId = new String();
+	String EntityName = new String();
+	ServiceName = "ExtensionBrowserInstallationService";
+	// Buffaly Service scope term: one concrete service instance per authorized Chrome installation.
+	Scope = "per-binding";
+	AutoInitialize = false;
+	Description = @"One authorized Buffaly Browser Agent installation in one Chrome profile. Scope remains per-binding because Buffaly service binding means one named concrete service instance, not a legacy session binding.";
+	function ToGetStatus() : string { return ExtensionBrowserServiceFacade.GetStatus(this.InstallationRegistrationId); }
+	function ToListBrowserContexts() : string { return ExtensionBrowserServiceFacade.ListBrowserContexts(this.InstallationRegistrationId); }
+}
+
+prototype ExtensionBrowserBoundSkillAction : OpsAction { Description = @"Regular-Chrome actions routed by the current session default ExtensionBrowser instance and browser context."; }
 [SemanticEntity("bound extension browser skill")]
-prototype ExtensionBrowserBoundSkill : SkillEntity { EntityName = "bound extension browser skill"; Description = @"Use the Chrome extension installation bound to the current Buffaly session."; ActionRoot = ExtensionBrowserBoundSkillAction; }
+prototype ExtensionBrowserBoundSkill : SkillEntity { EntityName = "bound extension browser skill"; Description = @"Use the current session default ExtensionBrowser instance and browser context."; ActionRoot = ExtensionBrowserBoundSkillAction; }
 prototype ExtensionBrowserBoundSession : ContextPrompt
 {
 	EntityName = "extension browser bound session prompt context";
-	ContextPhrase = "when a Chrome conversation is bound to one ExtensionBrowser installation and current tab";
+	ContextPhrase = "when a Chrome conversation has a default ExtensionBrowser instance and current browser context";
 	PromptPath = @"ContextPrompts/ExtensionBrowserBoundSession.prompt.md";
 	ActionRoot = ExtensionBrowserBoundSkillAction;
 	DefinitionPromptPath = @"ContextPrompts/ContextPromptDefinition.prompt.md";
 }
+[SemanticProgram.InfinitivePhrase("to list extension browser instances")]
+prototype ToListExtensionBrowserInstances : ExtensionBrowserBoundSkillAction
+{
+	Description = @"List online ExtensionBrowser instances registered with this Buffaly server. InstanceId equals InstallationRegistrationId.";
+	function Execute() : string { return ExtensionBrowserModuleService.ListInstances(); }
+}
+[SemanticProgram.InfinitivePhrase("to invoke an extension browser instance tool")]
+prototype ToInvokeExtensionBrowserInstanceTool : ExtensionBrowserBoundSkillAction
+{
+	Description = @"Invoke one supported browser tool against an explicit ExtensionBrowser instance. InstanceId equals InstallationRegistrationId.";
+	function Execute(string instanceId, string browserContextId, string tool, string argsJson) : string { return ExtensionBrowserModuleService.InvokeForInstance(instanceId, browserContextId, tool, argsJson, 30); }
+}
+[SemanticProgram.InfinitivePhrase("to set a session extension browser instance")]
+prototype ToSetSessionExtensionBrowserInstance : ExtensionBrowserBoundSkillAction
+{
+	Description = @"Set the default ExtensionBrowser instance for one Buffaly session without creating a replacement session.";
+	function Execute(string sessionKey, string instanceId, string browserContextId) : string { return ExtensionBrowserServiceFacade.SetSessionExtensionBrowserInstance(sessionKey, instanceId, browserContextId); }
+}
 [SemanticProgram.InfinitivePhrase("to invoke a bound extension browser tool")]
 prototype ToInvokeBoundExtensionBrowserTool : ExtensionBrowserBoundSkillAction
 {
-	Description = @"Invoke one supported tool through the extension installation bound to the current session. Supported names: get_active_tab, get_page_text, get_dom_snapshot, screenshot, find_elements, navigate, click, type_text, press_key, scroll, wait, list_tabs, open_tab, close_tab, switch_tab, attach_debugger, detach_debugger, get_status, go_back, go_forward, hover, select_option, get_attribute, check_exists, get_viewport, and get_console_events. No port, credential, session target, arbitrary JavaScript, or runScript tool is accepted.";
+	Description = @"Invoke one supported tool through the current session default ExtensionBrowser instance and browser context. Supported names: get_active_tab, get_page_text, get_dom_snapshot, screenshot, find_elements, navigate, click, type_text, press_key, scroll, wait, list_tabs, open_tab, close_tab, switch_tab, attach_debugger, detach_debugger, get_status, go_back, go_forward, hover, select_option, get_attribute, check_exists, get_viewport, and get_console_events. No port, credential, session target, arbitrary JavaScript, or runScript tool is accepted.";
 	function Execute(string tool, string argsJson) : string { return ExtensionBrowserModuleService.InvokeForSession(_opsAgent.GetSessionKeyOrEmpty(), tool, argsJson, 30); }
 }
 [SemanticProgram.InfinitivePhrase("to get the active tab from the bound extension")]
@@ -28,19 +60,19 @@ prototype ToGetBoundExtensionActiveTab : ExtensionBrowserBoundSkillAction
 [SemanticProgram.InfinitivePhrase("to summarize the visible page in bound chrome")]
 prototype ToGetBoundExtensionPageText : ExtensionBrowserBoundSkillAction
 {
-	Description = @"Read visible document text from the current tab through the Chrome installation immutably bound to this Buffaly session. Use this action instead of guessing a runScript or arbitrary JavaScript tool name.";
+	Description = @"Read visible document text from the current tab through this session's default ExtensionBrowser instance and current browser context. Use this action instead of guessing a runScript or arbitrary JavaScript tool name.";
 	function Execute() : string { return ExtensionBrowserModuleService.InvokeForSession(_opsAgent.GetSessionKeyOrEmpty(), "get_page_text", "{}", 30); }
 }
 [SemanticProgram.InfinitivePhrase("to navigate the current tab with the bound extension")]
 [SemanticProgram.InfinitivePhrase("to open a web page in the bound chrome tab")]
 prototype ToNavigateBoundExtensionCurrentTab : ExtensionBrowserBoundSkillAction
 {
- Description = @"Navigate the current tab through the Chrome installation immutably bound to this Buffaly session.";
+ Description = @"Navigate the current tab through this session's default ExtensionBrowser instance and current browser context.";
  function Execute(string url) : string { return ExtensionBrowserModuleService.NavigateCurrentTabForSession(_opsAgent.GetSessionKeyOrEmpty(), url); }
 }
 [SemanticProgram.InfinitivePhrase("to navigate a bound extension tab")]
 prototype ToNavigateBoundExtensionTab : ExtensionBrowserBoundSkillAction
 {
- Description = @"Navigate one explicit tab through the Chrome installation immutably bound to this Buffaly session.";
+ Description = @"Navigate one explicit tab through this session's default ExtensionBrowser instance and current browser context.";
  function Execute(string url, int tabId) : string { return ExtensionBrowserModuleService.NavigateTabForSession(_opsAgent.GetSessionKeyOrEmpty(), url, tabId); }
 }

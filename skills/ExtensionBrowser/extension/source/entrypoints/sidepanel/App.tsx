@@ -1,22 +1,38 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import type { ToolResult, ToolLogEntry } from '../../lib/types';
+import { boundToolResultStorageKey, type BoundToolInvocationIdentity, type ExtensionBrowserInstanceRecord, type ToolResult, type ToolLogEntry } from '../../lib/types';
 import { handleToolCall } from '../../lib/tool-router';
-import { boundToolResultStorageKey, type BoundToolInvocationIdentity } from '../../lib/buffaly-connection';
 
 async function callTool(tool: string, args: Record<string, unknown> = {}): Promise<ToolResult> {
   return new Promise((resolve) => chrome.runtime.sendMessage({ type: 'tool_call', tool, args }, resolve));
 }
 
 interface ActiveTab { tabId: number; url: string; title: string }
-interface ConversationBootstrap { Origin: string; ConversationSlotId: string; SessionBindingId: string; DisplayName: string; PromptPolicyRevision: number; NavigationToken: string }
+interface ConversationBase { InstallationRegistrationId: string; BrowserContextId: string; DisplayName: string; PromptPolicyRevision: number }
+interface DurableConversation extends ConversationBase { Kind?: 'durable'; SessionKey: string }
+interface LegacyConversationBinding extends ConversationBase { Kind?: 'legacy'; ConversationSlotId: string; SessionBindingId: string }
+type SavedConversation = DurableConversation | LegacyConversationBinding;
+type ConversationBootstrap = SavedConversation & { Origin: string; NavigationToken: string }
 interface WorkerResponse<T> { ok: boolean; data?: T; error?: string }
 type ServerState = 'Ready' | 'SignInRequired' | 'Unavailable' | 'WebModuleMissing';
-interface ServerSummary { ServerId: string; Name: string; Origin: string; Authorized: boolean; Active: boolean; LastConnectedUtc: string }
+type ConversationSummary = SavedConversation
+interface ServerSummary { ServerId: string; Name: string; Origin: string; Authorized: boolean; Active: boolean; LastConnectedUtc: string; ActiveConversationSessionBindingId: string; ActiveSessionKey?: string; Conversations: ConversationSummary[] }
 interface ServersStatus { Servers: ServerSummary[]; ActiveServer: { ServerId: string; Name: string; Origin: string } | null; State: ServerState; Version: string }
 interface MicrophoneDiagnostic { origin: string; policyAllowsMicrophone: boolean | null; permissionState: string; result: string; name?: string; message?: string }
 type PanelMode = 'chat' | 'agent';
 const panelModeStorageKey = 'BuffalyPanelMode';
 const defaultOrigin = 'http://127.0.0.1:5016';
+
+
+function conversationSelectionId(conversation: SavedConversation | null | undefined): string {
+  if (!conversation) return '';
+  return 'SessionKey' in conversation ? `session:${conversation.SessionKey}` : ('SessionBindingId' in conversation ? `legacy:${conversation.SessionBindingId}` : '');
+}
+
+function conversationOptionLabel(conversation: SavedConversation): string {
+  const name = conversation.DisplayName || 'Chrome conversation';
+  if ('SessionKey' in conversation) return `${name} — session:${conversation.SessionKey.slice(-8)}`;
+  return `${name} — binding:${conversation.SessionBindingId.slice(0, 8)}`;
+}
 
 function conversationUrl(bootstrap: ConversationBootstrap): string {
   const url = new URL('/web-modules/ExtensionBrowser/conversation', bootstrap.Origin);
@@ -27,6 +43,8 @@ function conversationUrl(bootstrap: ConversationBootstrap): string {
 
 export default function App() {
   const conversationFrame = useRef<HTMLIFrameElement | null>(null);
+  const panelInstanceId = useRef(crypto.randomUUID());
+  const browserContextId = useRef('');
   const logo48Url = chrome.runtime.getURL('icon/48.png');
   const logo128Url = chrome.runtime.getURL('icon/128.png');
   const [toolLog, setToolLog] = useState<ToolLogEntry[]>([]);
@@ -37,6 +55,7 @@ export default function App() {
   const [connected, setConnected] = useState(false);
   const [conversation, setConversation] = useState<ConversationBootstrap | null>(null);
   const [serversStatus, setServersStatus] = useState<ServersStatus>({ Servers: [], ActiveServer: null, State: 'Unavailable', Version: '' });
+  const [browserInstances, setBrowserInstances] = useState<ExtensionBrowserInstanceRecord[]>([]);
   const [showAddServer, setShowAddServer] = useState(false);
   const [showServerSettings, setShowServerSettings] = useState(false);
   const [serverName, setServerName] = useState('Local Buffaly');
@@ -44,6 +63,14 @@ export default function App() {
   const [microphoneError, setMicrophoneError] = useState<{ name: string; message: string } | null>(null);
   const [microphoneDiagnostic, setMicrophoneDiagnostic] = useState<MicrophoneDiagnostic | null>(null);
   const [error, setError] = useState('');
+
+  const getBrowserContextId = useCallback(async (): Promise<string> => {
+    if (browserContextId.current) return browserContextId.current;
+    const currentWindow = await chrome.windows.getCurrent();
+    if (currentWindow.id === undefined) throw new Error('Chrome did not identify the side-panel window.');
+    browserContextId.current = `window-${currentWindow.id}`;
+    return browserContextId.current;
+  }, []);
 
   const refreshServers = useCallback(async (): Promise<ServersStatus> => {
     const response = await chrome.runtime.sendMessage({ type: 'get_buffaly_servers' }) as WorkerResponse<ServersStatus> | undefined;
@@ -54,6 +81,12 @@ export default function App() {
     return response.data;
   }, []);
 
+
+  const refreshBrowserInstances = useCallback(async () => {
+    const response = await chrome.runtime.sendMessage({ type: 'list_extension_browser_instances' }) as WorkerResponse<ExtensionBrowserInstanceRecord[]> | undefined;
+    if (response?.ok && response.data) setBrowserInstances(response.data);
+  }, []);
+
   const refreshStatus = useCallback(async () => {
     const result = await callTool('get_status');
     if (!result.ok) return;
@@ -62,15 +95,16 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    Promise.all([
+    getBrowserContextId().then((contextId) => Promise.all([
       refreshServers(),
-      chrome.runtime.sendMessage({ type: 'get_buffaly_conversation_bootstrap' }),
+      refreshBrowserInstances(),
+      chrome.runtime.sendMessage({ type: 'get_buffaly_conversation_bootstrap', browserContextId: contextId }),
       chrome.storage.local.get([panelModeStorageKey]),
-    ]).then(([, bootstrap, stored]) => {
-      if (bootstrap.ok && bootstrap.data) setConversation(bootstrap.data as ConversationBootstrap);
+    ])).then(([, , bootstrap, stored]) => {
+      if (bootstrap.ok && bootstrap.data) setConversation(bootstrap.data as ConversationBootstrap); void refreshBrowserInstances().catch(() => undefined);
       if (stored[panelModeStorageKey] === 'agent' || stored[panelModeStorageKey] === 'chat') setPanelMode(stored[panelModeStorageKey] as PanelMode);
     }).catch((reason) => setError(reason instanceof Error ? reason.message : String(reason)));
-  }, [refreshServers]);
+  }, [getBrowserContextId, refreshBrowserInstances, refreshServers]);
 
   useEffect(() => {
     refreshStatus();
@@ -82,10 +116,18 @@ export default function App() {
       if (disposed || boundToolPort) return;
       const port = chrome.runtime.connect({ name: 'bound-tool-executor' });
       boundToolPort = port;
-      heartbeatTimer = setInterval(() => port.postMessage({ type: 'bound_tool_executor_heartbeat' }), 20_000);
-      port.onMessage.addListener((msg: { type: string; requestId: string; tool?: string; args?: Record<string, unknown>; identity?: BoundToolInvocationIdentity }) => {
+      const registerPanel = async () => {
+        const currentWindow = await chrome.windows.getCurrent();
+        if (currentWindow.id === undefined) throw new Error('Chrome did not identify the side-panel window.');
+        const contextId = await getBrowserContextId();
+        port.postMessage({ type: 'register_panel', schemaVersion: 1, panelInstanceId: panelInstanceId.current, browserContextId: contextId, windowId: currentWindow.id });
+      };
+      void registerPanel().catch((reason) => setError(reason instanceof Error ? reason.message : String(reason)));
+      heartbeatTimer = setInterval(() => port.postMessage({ type: 'bound_tool_executor_heartbeat', panelInstanceId: panelInstanceId.current }), 20_000);
+      port.onMessage.addListener((msg: { type: string; requestId: string; tool?: string; args?: Record<string, unknown>; identity?: BoundToolInvocationIdentity; windowId?: number }) => {
         if (msg.type !== 'execute_bound_tool' || !msg.tool || !msg.identity) return;
-        handleToolCall(msg.tool, msg.args || {})
+        const contextualArgs = { ...(msg.args || {}), __boundWindowId: msg.windowId };
+        handleToolCall(msg.tool, contextualArgs)
           .then(async (result) => {
             await chrome.storage.local.set({ [boundToolResultStorageKey(msg.identity!)]: { CreatedAtUtc: new Date().toISOString(), Result: result } });
             port.postMessage({ type: 'bound_tool_result', requestId: msg.requestId, result });
@@ -106,7 +148,7 @@ export default function App() {
     const tabListener = () => refreshStatus();
     chrome.runtime.onMessage.addListener(runtimeListener); chrome.tabs.onActivated.addListener(tabListener); chrome.tabs.onUpdated.addListener(tabListener);
     return () => { disposed = true; if (reconnectTimer) clearTimeout(reconnectTimer); if (heartbeatTimer) clearInterval(heartbeatTimer); boundToolPort?.disconnect(); chrome.runtime.onMessage.removeListener(runtimeListener); chrome.tabs.onActivated.removeListener(tabListener); chrome.tabs.onUpdated.removeListener(tabListener); };
-  }, [refreshStatus]);
+  }, [getBrowserContextId, refreshStatus]);
 
   useEffect(() => {
     const respondWithCurrentPage = (event: MessageEvent) => {
@@ -158,12 +200,12 @@ export default function App() {
       if (!selected?.ok) throw new Error(selected?.error || 'The Buffaly server could not be selected.');
       const status = await refreshServers();
       if (status.State === 'Ready') {
-        const bootstrap = await chrome.runtime.sendMessage({ type: 'get_buffaly_conversation_bootstrap' }) as WorkerResponse<ConversationBootstrap> | undefined;
+        const bootstrap = await chrome.runtime.sendMessage({ type: 'get_buffaly_conversation_bootstrap', browserContextId: await getBrowserContextId() }) as WorkerResponse<ConversationBootstrap> | undefined;
         if (bootstrap?.ok && bootstrap.data) setConversation(bootstrap.data);
       }
     } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
     finally { setBusy(''); }
-  }, [refreshServers]);
+  }, [getBrowserContextId, refreshBrowserInstances, refreshServers]);
 
   const openServerSettings = useCallback(() => {
     if (!serversStatus.ActiveServer) return;
@@ -189,23 +231,35 @@ export default function App() {
       if (!authorization) throw new Error('The ExtensionBrowser service worker did not answer. Reload the extension and reopen the side panel.');
       if (!authorization.ok || !authorization.data) throw new Error(authorization.error || 'Buffaly authorization failed.');
       await refreshServers();
-      const created = await chrome.runtime.sendMessage({ type: 'create_buffaly_conversation', displayName: 'Chrome conversation' }) as WorkerResponse<ConversationBootstrap> | undefined;
+      const created = await chrome.runtime.sendMessage({ type: 'create_buffaly_conversation', browserContextId: await getBrowserContextId(), displayName: 'Chrome conversation' }) as WorkerResponse<ConversationBootstrap> | undefined;
       if (!created?.ok || !created.data) throw new Error(created?.error || 'The bound conversation could not be created.');
       setConversation(created.data as ConversationBootstrap);
     } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
     finally { setBusy(''); }
-  }, [origin, refreshServers, serverName, serversStatus.ActiveServer?.Name]);
+  }, [getBrowserContextId, origin, refreshServers, serverName, serversStatus.ActiveServer?.Name]);
 
   const newConversation = useCallback(async () => {
     if (!connected) return;
     setBusy('new'); setError('');
     try {
-      const created = await chrome.runtime.sendMessage({ type: 'create_buffaly_conversation', displayName: 'Chrome conversation' });
+      const created = await chrome.runtime.sendMessage({ type: 'create_buffaly_conversation', browserContextId: await getBrowserContextId(), displayName: 'Chrome conversation' });
       if (!created.ok) throw new Error(created.error);
       setConversation(created.data as ConversationBootstrap);
     } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
     finally { setBusy(''); }
-  }, [connected]);
+  }, [connected, getBrowserContextId]);
+
+  const selectConversation = useCallback(async (conversationSelectionId: string) => {
+    if (!conversationSelectionId) return;
+    setBusy('select-conversation'); setError('');
+    try {
+      const selected = await chrome.runtime.sendMessage({ type: 'select_buffaly_conversation', conversationSelectionId, browserContextId: await getBrowserContextId() }) as WorkerResponse<ConversationBootstrap> | undefined;
+      if (!selected?.ok || !selected.data) throw new Error(selected?.error || 'The selected Buffaly conversation could not be resumed.');
+      setConversation(selected.data);
+      await refreshServers();
+    } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
+    finally { setBusy(''); }
+  }, [getBrowserContextId, refreshBrowserInstances, refreshServers]);
 
   const selectPanelMode = useCallback((mode: PanelMode) => {
     setPanelMode(mode);
@@ -215,23 +269,24 @@ export default function App() {
   const openConversationTab = useCallback(async () => {
     setBusy('popout'); setError('');
     try {
-      const opened = await chrome.runtime.sendMessage({ type: 'open_buffaly_conversation_tab' }) as WorkerResponse<{ Opened: boolean }> | undefined;
+      const opened = await chrome.runtime.sendMessage({ type: 'open_buffaly_conversation_tab', browserContextId: await getBrowserContextId() }) as WorkerResponse<{ Opened: boolean }> | undefined;
       if (!opened?.ok) throw new Error(opened?.error || 'The conversation could not be opened in a tab.');
     } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
     finally { setBusy(''); }
-  }, []);
+  }, [getBrowserContextId]);
 
   const enableControl = useCallback(async () => { setBusy('control'); chrome.runtime.sendMessage({ type: 'grant_debugger_consent' }); await callTool('attach_debugger'); setBusy(''); await refreshStatus(); }, [refreshStatus]);
   const pauseControl = useCallback(async () => { setBusy('control'); await callTool('detach_debugger'); chrome.runtime.sendMessage({ type: 'revoke_debugger_consent' }); setBusy(''); await refreshStatus(); }, [refreshStatus]);
 
   const stateLabel = serversStatus.State === 'Ready' ? 'Ready' : serversStatus.State === 'SignInRequired' ? 'Sign-in required' : serversStatus.State === 'WebModuleMissing' ? 'ExtensionBrowser not installed' : 'Unavailable';
+  const savedConversations = serversStatus.Servers.find((server) => server.ServerId === serversStatus.ActiveServer?.ServerId)?.Conversations || [];
   return <main className={`app mode-${panelMode}`}>
     <header className="topbar"><div className="brand"><img src={logo48Url} alt="" /><div><strong>{serversStatus.ActiveServer?.Name || 'Buffaly'}</strong><span>{serversStatus.ActiveServer?.Origin || 'Choose a server'}</span></div></div><span className={`live-state ${serversStatus.State === 'Ready' ? 'active' : ''}`} title={stateLabel}><i /><b>{stateLabel}</b></span></header>
     <section className="server-bar" aria-label="Buffaly server"><select aria-label="Saved Buffaly server" value={serversStatus.ActiveServer?.ServerId || ''} onChange={(event) => void selectServer(event.target.value)} disabled={!!busy}><option value="" disabled>Choose a Buffaly server</option>{serversStatus.Servers.map((server) => <option key={server.ServerId} value={server.ServerId}>{server.Name}</option>)}</select><button onClick={() => setShowAddServer((visible) => !visible)} aria-expanded={showAddServer}>Add</button>{serversStatus.ActiveServer && <><button onClick={openServerSettings} aria-label="Manage selected server" title="Server settings">⚙</button><button onClick={() => void refreshServers()} aria-label="Check selected server">↻</button></>}</section>
     {showAddServer && <section className="add-server"><label>Name<input value={serverName} onChange={(event) => setServerName(event.target.value)} /></label><label>Origin<input value={origin} onChange={(event) => setOrigin(event.target.value)} placeholder="https://buffaly.example.com" /></label><button onClick={saveNewServer} disabled={!!busy || !serverName.trim() || !origin.trim()}>Save server</button></section>}
     {showServerSettings && serversStatus.ActiveServer && <div className="modal-backdrop"><section className="settings-modal" role="dialog" aria-modal="true" aria-label="Buffaly server settings"><img src={logo48Url} alt="" /><h2>Server settings</h2><p>View or update this Chrome installation's saved Buffaly server. Authorization and conversations remain isolated per origin.</p><label>Name<input value={serverName} onChange={(event) => setServerName(event.target.value)} /></label><label>Origin<input value={origin} onChange={(event) => setOrigin(event.target.value)} /></label><div className="server-details"><span>State <b>{stateLabel}</b></span><span>WebModule <b>{serversStatus.Version || 'Not detected'}</b></span><span>Authorized <b>{serversStatus.Servers.find((server) => server.ServerId === serversStatus.ActiveServer?.ServerId)?.Authorized ? 'Yes' : 'No'}</b></span></div>{error && <div className="settings-error">{error}</div>}<div className="modal-actions"><button className="disconnect" onClick={removeActiveServer} disabled={!!busy}>Remove</button><span /><button className="secondary" onClick={() => setShowServerSettings(false)}>Cancel</button><button className="primary" onClick={saveNewServer} disabled={!!busy || !serverName.trim() || !origin.trim()}>Save changes</button></div></section></div>}
-    <nav className="primary-tabs" aria-label="Side panel views"><button className={panelMode === 'chat' ? 'selected' : ''} onClick={() => selectPanelMode('chat')} aria-current={panelMode === 'chat' ? 'page' : undefined}>Chat</button><button className={panelMode === 'agent' ? 'selected' : ''} onClick={() => selectPanelMode('agent')} aria-current={panelMode === 'agent' ? 'page' : undefined}>Agent <span>{toolLog.length}</span></button>{panelMode === 'chat' && conversation && <><button className="new-conversation" onClick={newConversation} disabled={!!busy}>New</button><button className="popout-conversation" onClick={openConversationTab} disabled={!!busy} aria-label="Open conversation in a full tab" title="Open in full tab">↗</button></>}</nav>
-    <section className={`workspace ${conversation ? 'embedded' : ''}`} hidden={panelMode !== 'chat'} inert={panelMode !== 'chat' ? true : undefined}>{connected && conversation ? <div className="embed-shell">{microphoneError && <div className="microphone-help"><strong>Microphone access failed for this Buffaly server.</strong><span>{microphoneError.name}: {microphoneError.message}</span>{microphoneDiagnostic && <span>Origin: {microphoneDiagnostic.origin}; policy: {String(microphoneDiagnostic.policyAllowsMicrophone)}; permission: {microphoneDiagnostic.permissionState}; result: {microphoneDiagnostic.result}</span>}<button className="dismiss" onClick={() => setMicrophoneError(null)}>Dismiss</button></div>}<iframe ref={conversationFrame} title="Buffaly session" src={conversationUrl(conversation)} allow="clipboard-read; clipboard-write; microphone" /></div> : <div className="welcome"><img src={logo128Url} alt="Buffaly" /><p className="eyebrow">BUFFALY + THIS PAGE</p><h1>{serversStatus.ActiveServer ? serversStatus.ActiveServer.Name : 'Add a Buffaly server'}</h1><p>{serversStatus.State === 'Ready' ? 'This Chrome is authorized. Start a bound conversation for the current page.' : serversStatus.State === 'SignInRequired' ? 'This server is reachable. Sign in once to authorize this Chrome installation.' : serversStatus.State === 'WebModuleMissing' ? 'This Buffaly server does not have the ExtensionBrowser WebModule installed.' : 'Choose or add a reachable Buffaly server. Remote and Tailscale servers must use HTTPS.'}</p>{error && <div className="settings-error">{error}</div>}{serversStatus.State === 'SignInRequired' && <button className="connect-button" onClick={connect} disabled={!!busy}>Sign in and authorize this Chrome <span>{busy ? 'Connecting…' : 'Open sign-in'}</span></button>}{serversStatus.State === 'Ready' && <button className="connect-button" onClick={newConversation} disabled={!!busy}>New conversation <span>Bound to Chrome</span></button>}</div>}</section>
+    <nav className="primary-tabs" aria-label="Side panel views"><button className={panelMode === 'chat' ? 'selected' : ''} onClick={() => selectPanelMode('chat')} aria-current={panelMode === 'chat' ? 'page' : undefined}>Chat</button><button className={panelMode === 'agent' ? 'selected' : ''} onClick={() => selectPanelMode('agent')} aria-current={panelMode === 'agent' ? 'page' : undefined}>Agent <span>{toolLog.length}</span></button>{panelMode === 'chat' && savedConversations.length > 0 && <><select className="conversation-selector" aria-label="Saved Buffaly conversation" value={conversationSelectionId(conversation)} onChange={(event) => void selectConversation(event.target.value)} disabled={!!busy}><option value="" disabled>Select conversation</option>{savedConversations.map((item) => <option key={conversationSelectionId(item)} value={conversationSelectionId(item)}>{conversationOptionLabel(item)}</option>)}</select><button className="new-conversation" onClick={newConversation} disabled={!!busy}>New</button>{conversation && <button className="popout-conversation" onClick={openConversationTab} disabled={!!busy} aria-label="Open conversation in a full tab" title="Open in full tab">↗</button>}</>}</nav>
+    <section className={`workspace ${conversation ? 'embedded' : ''}`} hidden={panelMode !== 'chat'} inert={panelMode !== 'chat' ? true : undefined}>{connected && conversation ? <div className="embed-shell">{microphoneError && <div className="microphone-help"><strong>Microphone access failed for this Buffaly server.</strong><span>{microphoneError.name}: {microphoneError.message}</span>{microphoneDiagnostic && <span>Origin: {microphoneDiagnostic.origin}; policy: {String(microphoneDiagnostic.policyAllowsMicrophone)}; permission: {microphoneDiagnostic.permissionState}; result: {microphoneDiagnostic.result}</span>}<button className="dismiss" onClick={() => setMicrophoneError(null)}>Dismiss</button></div>}<iframe ref={conversationFrame} title="Buffaly session" src={conversationUrl(conversation)} allow="clipboard-read; clipboard-write; microphone" /></div> : <div className="welcome"><img src={logo128Url} alt="Buffaly" /><p className="eyebrow">BUFFALY + THIS PAGE</p><h1>{serversStatus.ActiveServer ? serversStatus.ActiveServer.Name : 'Add a Buffaly server'}</h1><p>{serversStatus.State === 'Ready' ? 'This Chrome is authorized. Start a bound conversation for the current page.' : serversStatus.State === 'SignInRequired' ? 'This server is reachable. Sign in once to authorize this Chrome installation.' : serversStatus.State === 'WebModuleMissing' ? 'This Buffaly server does not have the ExtensionBrowser WebModule installed.' : 'Choose or add a reachable Buffaly server. Remote and Tailscale servers must use HTTPS.'}</p>{error && <div className="settings-error">{error}</div>}{serversStatus.State === 'SignInRequired' && <button className="connect-button" onClick={connect} disabled={!!busy}>Sign in and authorize this Chrome <span>{busy ? 'Connecting…' : 'Open sign-in'}</span></button>}{serversStatus.State === 'Ready' && savedConversations.length > 0 && <div className="recovered-conversations" aria-label="Recovered Buffaly conversations">{savedConversations.map((item) => <button key={conversationSelectionId(item)} className="recovered-conversation" onClick={() => void selectConversation(conversationSelectionId(item))} disabled={!!busy}>{conversationOptionLabel(item)}</button>)}</div>}{serversStatus.State === 'Ready' && <button className="connect-button" onClick={newConversation} disabled={!!busy}>New conversation <span>Bound to Chrome</span></button>}</div>}</section>
     <section className="agent-panel" hidden={panelMode !== 'agent'} inert={panelMode !== 'agent' ? true : undefined}><section className="page-card" aria-label="Current page"><div className="page-icon">↗</div><div className="page-copy"><span>Working on</span><strong>{activeTab?.title || 'Current page'}</strong><small>{activeTab?.url || 'Open a web page to begin'}</small></div><button className="icon-button" onClick={refreshStatus} aria-label="Refresh page context">↻</button></section><section className={`control-card ${debuggerAttached ? 'enabled' : ''}`}><div><strong>{debuggerAttached ? 'Buffaly can act on this tab' : 'Page access is ready'}</strong><p>{debuggerAttached ? 'Trusted clicks and typing are enabled.' : 'Enable control when this conversation needs to click or type.'}</p></div><button onClick={debuggerAttached ? pauseControl : enableControl} disabled={busy === 'control'}>{debuggerAttached ? 'Pause' : 'Enable'}</button></section><div className="activity-heading"><div><span>Browser activity</span><small>Actions from this conversation</small></div><b>{toolLog.length}</b></div><div className="activity-panel">{toolLog.length === 0 ? <div className="activity-empty"><b>✓</b><h2>No browser activity yet</h2><p>Actions from this bound conversation will appear here.</p></div> : toolLog.slice().reverse().map((entry) => <article key={entry.id} className={`activity-row ${entry.status}`}><i>{entry.status === 'success' ? '✓' : entry.status === 'error' ? '!' : '·'}</i><div><strong>{entry.tool.replaceAll('_', ' ')}</strong><small>{new Date(entry.timestamp).toLocaleTimeString()} · {entry.status}</small></div></article>)}</div></section>
   </main>;
 }
