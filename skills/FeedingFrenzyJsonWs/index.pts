@@ -30,7 +30,6 @@ prototype FeedingFrenzyJsonWsService : Service
 	String CallCenterApiPrefix = "api/feedingfrenzy.callcenter";
 	String UiApiPrefix = "api/feedingfrenzy.admin.ui";
 	String TokenKey = "FeedingFrenzy.ApiKey";
-	String AutomationUserEmail = new String();
 
 	function Initialize() : string
 	{
@@ -64,7 +63,6 @@ partial prototype FeedingFrenzyJsonWsService#Remote : FeedingFrenzyJsonWsService
 {
 	BaseUrl = "https://ff.medek.ai";
 	TokenKey = "FeedingFrenzy.ApiKey";
-	AutomationUserEmail = "matt+buffaly@intelligencefactory.ai";
 	Description = "Remote Feeding Frenzy JSON service binding.";
 }
 
