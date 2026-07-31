@@ -13,15 +13,33 @@ prototype TrafficAnalysisSkill : SkillEntity
 	ActionRoot = TrafficAnalysisSkillAction;
 }
 
+prototype TrafficAnalysisCollectorAnalyzer
+{
+	function Execute(string collectorEnvelopeJson) : string
+	{
+		if (!TrafficAnalysisProtoScriptFacade.ShouldAnalyzeCollector(collectorEnvelopeJson)) return collectorEnvelopeJson;
+		string prompt = TrafficAnalysisProtoScriptFacade.BuildCollectorAnalysisPrompt(collectorEnvelopeJson);
+		string modelResponseJson = ToAskModelViaBuffalyRuntime.Execute(prompt, "Return strict JSON only. Use only supplied source metrics and raw data. Do not invent numbers.", "", "", "", "[]");
+		return TrafficAnalysisProtoScriptFacade.ApplyCollectorAnalysis(collectorEnvelopeJson, modelResponseJson);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to collect ga4 traffic data")]
 prototype ToCollectGa4TrafficData : TrafficAnalysisSkillAction
 {
 	Description = @"Collect GA4 traffic data for the requested run and return the common collector envelope JSON.";
 	function Execute(string runId, string runSettingsJson) : string
 	{
-		FeedingFrenzyWebPropertiesJsonWsService service = FeedingFrenzyWebPropertiesJsonWsService#Local;
-		string propertiesJson = WebProperties_GetWebProperties.Execute(service);
-		return TrafficAnalysisProtoScriptFacade.CollectGa4TrafficDataFromSourceJson(runId, runSettingsJson, propertiesJson);
+		string binding = TrafficAnalysisProtoScriptFacade.ResolveWebPropertiesBinding(runSettingsJson);
+		FeedingFrenzyWebPropertiesJsonWsService service = binding == "Remote" ? FeedingFrenzyWebPropertiesJsonWsService#Remote : FeedingFrenzyWebPropertiesJsonWsService#Local;
+		string timeframe = TrafficAnalysisProtoScriptFacade.ResolveWebPropertiesTimeframe(runSettingsJson);
+		string propertiesJson = TrafficAnalysisProtoScriptFacade.ProjectWebProperties(WebProperties_GetWebProperties.Execute(service), true);
+		string summariesJson = "[]";
+		foreach (int webPropertyID in TrafficAnalysisProtoScriptFacade.GetWebPropertyIDs(propertiesJson))
+		{
+			summariesJson = TrafficAnalysisProtoScriptFacade.AppendSourceResponse(summariesJson, WebProperties_GetWebPropertyAnalyticsSummary.Execute(service, webPropertyID, timeframe));
+		}
+		return TrafficAnalysisCollectorAnalyzer.Execute(TrafficAnalysisProtoScriptFacade.BuildGa4Envelope(runId, runSettingsJson, propertiesJson, summariesJson));
 	}
 }
 
@@ -31,9 +49,16 @@ prototype ToCollectTrackingLogData : TrafficAnalysisSkillAction
 	Description = @"Collect tracking-log traffic data for the requested run and return the common collector envelope JSON.";
 	function Execute(string runId, string runSettingsJson) : string
 	{
-		FeedingFrenzyWebPropertiesJsonWsService service = FeedingFrenzyWebPropertiesJsonWsService#Local;
-		string propertiesJson = WebProperties_GetWebProperties.Execute(service);
-		return TrafficAnalysisProtoScriptFacade.CollectTrackingLogDataFromSourceJson(runId, runSettingsJson, propertiesJson);
+		string binding = TrafficAnalysisProtoScriptFacade.ResolveWebPropertiesBinding(runSettingsJson);
+		FeedingFrenzyWebPropertiesJsonWsService service = binding == "Remote" ? FeedingFrenzyWebPropertiesJsonWsService#Remote : FeedingFrenzyWebPropertiesJsonWsService#Local;
+		string timeframe = TrafficAnalysisProtoScriptFacade.ResolveWebPropertiesTimeframe(runSettingsJson);
+		string propertiesJson = TrafficAnalysisProtoScriptFacade.ProjectWebProperties(WebProperties_GetWebProperties.Execute(service), false);
+		string overviewsJson = "[]";
+		foreach (int webPropertyID in TrafficAnalysisProtoScriptFacade.GetWebPropertyIDs(propertiesJson))
+		{
+			overviewsJson = TrafficAnalysisProtoScriptFacade.AppendSourceResponse(overviewsJson, WebProperties_GetWebPropertyTrafficOverview.Execute(service, webPropertyID, timeframe));
+		}
+		return TrafficAnalysisCollectorAnalyzer.Execute(TrafficAnalysisProtoScriptFacade.BuildTrackingLogsEnvelope(runId, runSettingsJson, propertiesJson, overviewsJson));
 	}
 }
 
@@ -41,28 +66,56 @@ prototype ToCollectTrackingLogData : TrafficAnalysisSkillAction
 prototype ToCollectGoogleAdsData : TrafficAnalysisSkillAction
 {
 	Description = @"Collect Google Ads campaign, search-term, and creative data for the requested run and return the common collector envelope JSON.";
-	function Execute(string runId, string runSettingsJson) : string { return TrafficAnalysisProtoScriptFacade.CollectGoogleAdsData(runId, runSettingsJson); }
+	function Execute(string runId, string runSettingsJson) : string
+	{
+		string customerID = TrafficAnalysisProtoScriptFacade.GetRequiredSetting(runSettingsJson, "GoogleAdsCustomerId");
+		string loginCustomerID = TrafficAnalysisProtoScriptFacade.GetSetting(runSettingsJson, "GoogleAdsLoginCustomerId", "");
+		string dateRangePreset = TrafficAnalysisProtoScriptFacade.GetSetting(runSettingsJson, "GoogleAdsDateRangePreset", "LAST_7_DAYS");
+		string collectorEnvelopeJson = TrafficAnalysisProtoScriptFacade.BuildGoogleAdsEnvelope(runId, runSettingsJson,
+			ToRunGoogleAdsCampaignReport.Execute(customerID, loginCustomerID, dateRangePreset),
+			ToRunGoogleAdsSearchTermReport.Execute(customerID, loginCustomerID, dateRangePreset),
+			ToRunGoogleAdsAdCreativeReport.Execute(customerID, loginCustomerID, dateRangePreset));
+		return TrafficAnalysisCollectorAnalyzer.Execute(collectorEnvelopeJson);
+	}
 }
 
 [SemanticProgram.InfinitivePhrase("to collect linkedin analytics")]
 prototype ToCollectLinkedInData : TrafficAnalysisSkillAction
 {
 	Description = @"Collect LinkedIn analytics for the requested run and return the common collector envelope JSON.";
-	function Execute(string runId, string runSettingsJson) : string { return TrafficAnalysisProtoScriptFacade.CollectLinkedInData(runId, runSettingsJson); }
+	function Execute(string runId, string runSettingsJson) : string
+	{
+		string organizationUrn = TrafficAnalysisProtoScriptFacade.GetRequiredSetting(runSettingsJson, "LinkedInOrganizationUrn");
+		string collectorEnvelopeJson = TrafficAnalysisProtoScriptFacade.BuildLinkedInEnvelope(runId, runSettingsJson,
+			ToGetLinkedInMemberAnalytics.Execute("IMPRESSION"),
+			ToGetLinkedInOrganizationAnalytics.Execute(organizationUrn));
+		return TrafficAnalysisCollectorAnalyzer.Execute(collectorEnvelopeJson);
+	}
 }
 
 [SemanticProgram.InfinitivePhrase("to collect openai usage data")]
 prototype ToCollectOpenAIUsageData : TrafficAnalysisSkillAction
 {
 	Description = @"Collect OpenAI usage data for the requested run and return the common collector envelope JSON.";
-	function Execute(string runId, string runSettingsJson) : string { return TrafficAnalysisProtoScriptFacade.CollectOpenAIUsageData(runId, runSettingsJson); }
+	function Execute(string runId, string runSettingsJson) : string
+	{
+		string startDate = TrafficAnalysisProtoScriptFacade.GetRequiredSetting(runSettingsJson, "StartDateUtc");
+		string endDate = TrafficAnalysisProtoScriptFacade.GetRequiredSetting(runSettingsJson, "EndDateUtc");
+		return TrafficAnalysisCollectorAnalyzer.Execute(TrafficAnalysisProtoScriptFacade.BuildOpenAIUsageEnvelope(runId, runSettingsJson, ToGetOpenAIUsageAndCosts.Execute(startDate, endDate)));
+	}
 }
 
 [SemanticProgram.InfinitivePhrase("to collect reddit ads data")]
 prototype ToCollectRedditAdsData : TrafficAnalysisSkillAction
 {
 	Description = @"Collect Reddit Ads data for the requested run when configured and return the common collector envelope JSON.";
-	function Execute(string runId, string runSettingsJson) : string { return TrafficAnalysisProtoScriptFacade.CollectRedditAdsData(runId, runSettingsJson); }
+	function Execute(string runId, string runSettingsJson) : string
+	{
+		string adAccountID = TrafficAnalysisProtoScriptFacade.GetRequiredSetting(runSettingsJson, "RedditAdsAccountId");
+		string reportType = TrafficAnalysisProtoScriptFacade.GetSetting(runSettingsJson, "RedditAdsReportType", "campaign");
+		string dateRangePreset = TrafficAnalysisProtoScriptFacade.GetSetting(runSettingsJson, "RedditAdsDateRangePreset", "last_7d");
+		return TrafficAnalysisCollectorAnalyzer.Execute(TrafficAnalysisProtoScriptFacade.BuildRedditAdsEnvelope(runId, runSettingsJson, ToGenerateRedditAdsWebReport.Execute(adAccountID, reportType, dateRangePreset)));
+	}
 }
 
 [SemanticProgram.InfinitivePhrase("to aggregate traffic analysis for email rendering")]
