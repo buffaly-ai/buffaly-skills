@@ -20,6 +20,7 @@ prototype BuffalyNLMemoryRuntimeMemoryService : Service
 	function Initialize() : void
 	{
 		BuffalyNlMemoryRuntimeTools.RestoreRuntimeMemoriesFromSessionArtifacts(_runtime, _opsAgent);
+		BuffalyNlMemoryRuntimeTools.RestoreOnlineActionsFromSessionArtifacts(_runtime, _opsAgent);
 	}
 }
 
@@ -52,6 +53,36 @@ prototype ToInterpretRuntimePrototypeDefinitionWithProvenance : BuffalyNLMemoryS
 	function Execute(string prototypeDefinition, string collectionMode, string sourceTurnKey, string evidence, string rationale, string confidence, string provider, string modelName, string reasoningLevel, string scanRunId, string anchorTurnKey) : string
 	{
 		return BuffalyNlMemoryRuntimeTools.InterpretRuntimePrototypeDefinitionWithProvenance(_runtime, _opsAgent, prototypeDefinition, collectionMode, sourceTurnKey, evidence, rationale, confidence, provider, modelName, reasoningLevel, scanRunId, anchorTurnKey);
+	}
+}
+
+prototype ToInterpretOnlineActionDefinition : BuffalyNLMemorySkillAction
+{
+	Description = @"Internal source-session action that upserts one complete Online Action Critic definition into artifacts/online-action-critic/SessionActions.pts and interprets it live.";
+
+	function Execute(string prototypeDefinition) : string
+	{
+		return BuffalyNlMemoryRuntimeTools.InterpretAndPersistOnlineActionDefinition(_runtime, _opsAgent, prototypeDefinition);
+	}
+}
+
+prototype ToReadOnlineActionDefinition : BuffalyNLMemorySkillAction
+{
+	Description = @"Internal source-session action that returns one exact definition owned by SessionActions.pts, or an empty string when absent.";
+
+	function Execute(string prototypeName) : string
+	{
+		return BuffalyNlMemoryRuntimeTools.ReadOnlineActionDefinition(_opsAgent, prototypeName);
+	}
+}
+
+prototype ToClearOnlineActions : BuffalyNLMemorySkillAction
+{
+	Description = @"Internal source-session action that deletes only artifacts/online-action-critic/SessionActions.pts. Runtime definitions disappear on the next normal runtime rebuild.";
+
+	function Execute() : string
+	{
+		return BuffalyNlMemoryRuntimeTools.ClearOnlineActions(_opsAgent);
 	}
 }
 
