@@ -1955,7 +1955,7 @@
       "SkillName": "ProcessManagement",
       "Title": "Process Management",
       "Description": "Buffaly skill package for Process Management.",
-      "Version": "0.1.1",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Process Management",
@@ -1966,6 +1966,10 @@
         {
           "Path": "index.pts",
           "Sha256": "c5a20e3f24cf7df797abd0a0d9d813459aa5953ef93eb33f88ecdd248ef8aaf0"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "0bef8d97340b592abf99582916a2fd934d8a97470dbe8785ee6beb7fa498912a"
         },
         {
           "Path": "index.pts.md",
