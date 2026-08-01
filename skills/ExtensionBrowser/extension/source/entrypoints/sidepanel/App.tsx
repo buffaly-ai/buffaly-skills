@@ -16,11 +16,15 @@ interface WorkerResponse<T> { ok: boolean; data?: T; error?: string }
 type ServerState = 'Ready' | 'SignInRequired' | 'Unavailable' | 'WebModuleMissing';
 type ConversationSummary = SavedConversation
 interface ServerSummary { ServerId: string; Name: string; Origin: string; Authorized: boolean; Active: boolean; LastConnectedUtc: string; ActiveConversationSessionBindingId: string; ActiveSessionKey?: string; Conversations: ConversationSummary[] }
-interface ServersStatus { Servers: ServerSummary[]; ActiveServer: { ServerId: string; Name: string; Origin: string } | null; State: ServerState; Version: string; ConversationsStale?: boolean }
+interface ServersStatus { Servers: ServerSummary[]; ActiveServer: { ServerId: string; Name: string; Origin: string } | null; State: ServerState; Version: string; ChannelConnected: boolean; InstallationState: string; LastConnectedUtc: string; RegisteredExtensionVersion: string; ToolSchemaVersion: number; ConversationsStale?: boolean }
+interface SendReceipt { RequestId: string; CapturedUtc: string; SessionKey: string; PageUrl: string; PageTitle: string; Status: 'Success' | 'Failure'; Error: string }
 interface MicrophoneDiagnostic { origin: string; policyAllowsMicrophone: boolean | null; permissionState: string; result: string; name?: string; message?: string }
 type PanelMode = 'chat' | 'agent';
 const panelModeStorageKey = 'BuffalyPanelMode';
 const defaultOrigin = 'http://127.0.0.1:5016';
+
+function compactIdentity(value: string): string { return value ? `…${value.slice(-8)}` : 'Unavailable'; }
+function displayUtc(value: string): string { return value ? new Date(value).toLocaleString() : 'Never'; }
 
 
 function conversationSelectionId(conversation: SavedConversation | null | undefined): string {
@@ -44,6 +48,7 @@ function conversationUrl(bootstrap: ConversationBootstrap): string {
 export default function App() {
   const conversationFrame = useRef<HTMLIFrameElement | null>(null);
   const refreshServersInFlight = useRef<Promise<ServersStatus> | null>(null);
+  const refreshDiagnosticsInFlight = useRef<Promise<void> | null>(null);
   const panelInstanceId = useRef(crypto.randomUUID());
   const browserContextId = useRef('');
   const logo48Url = chrome.runtime.getURL('icon/48.png');
@@ -55,15 +60,19 @@ export default function App() {
   const [busy, setBusy] = useState('');
   const [connected, setConnected] = useState(false);
   const [conversation, setConversation] = useState<ConversationBootstrap | null>(null);
-  const [serversStatus, setServersStatus] = useState<ServersStatus>({ Servers: [], ActiveServer: null, State: 'Unavailable', Version: '' });
+  const [serversStatus, setServersStatus] = useState<ServersStatus>({ Servers: [], ActiveServer: null, State: 'Unavailable', Version: '', ChannelConnected: false, InstallationState: '', LastConnectedUtc: '', RegisteredExtensionVersion: '', ToolSchemaVersion: 0 });
   const [browserInstances, setBrowserInstances] = useState<ExtensionBrowserInstanceRecord[]>([]);
   const [showAddServer, setShowAddServer] = useState(false);
   const [showServerSettings, setShowServerSettings] = useState(false);
+  const [showDiagnostics, setShowDiagnostics] = useState(false);
   const [serverName, setServerName] = useState('Local Buffaly');
   const [origin, setOrigin] = useState(defaultOrigin);
   const [microphoneError, setMicrophoneError] = useState<{ name: string; message: string } | null>(null);
   const [microphoneDiagnostic, setMicrophoneDiagnostic] = useState<MicrophoneDiagnostic | null>(null);
   const [error, setError] = useState('');
+  const [lastSendReceipt, setLastSendReceipt] = useState<SendReceipt | null>(null);
+  const [diagnosticsCapturedUtc, setDiagnosticsCapturedUtc] = useState('');
+  const [diagnosticsCopied, setDiagnosticsCopied] = useState(false);
 
   const getBrowserContextId = useCallback(async (): Promise<string> => {
     if (browserContextId.current) return browserContextId.current;
@@ -100,6 +109,22 @@ export default function App() {
     const data = result.data as { debuggerAttached: boolean; activeTab: ActiveTab | null };
     setDebuggerAttached(data.debuggerAttached); setActiveTab(data.activeTab);
   }, []);
+
+  const refreshDiagnostics = useCallback(async () => {
+    if (refreshDiagnosticsInFlight.current) return refreshDiagnosticsInFlight.current;
+    const refresh = (async () => {
+      setBusy('diagnostics'); setDiagnosticsCopied(false);
+      try {
+        await getBrowserContextId();
+        await Promise.all([refreshServers(), refreshBrowserInstances(), refreshStatus()]);
+        setDiagnosticsCapturedUtc(new Date().toISOString());
+      } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
+      finally { setBusy(''); }
+    })();
+    refreshDiagnosticsInFlight.current = refresh;
+    try { await refresh; }
+    finally { if (refreshDiagnosticsInFlight.current === refresh) refreshDiagnosticsInFlight.current = null; }
+  }, [getBrowserContextId, refreshBrowserInstances, refreshServers, refreshStatus]);
 
   useEffect(() => {
     getBrowserContextId().then((contextId) => Promise.all([
@@ -185,19 +210,25 @@ export default function App() {
       }
       if (!request || request.type !== 'extension_browser_send_user_state_request' || !request.requestId) return;
       if (!conversation.InstallationRegistrationId || !conversation.BrowserContextId) {
-        event.source?.postMessage({ type: 'extension_browser_send_user_state_response', requestId: request.requestId, error: 'Extension browser identity is unavailable.' }, { targetOrigin: event.origin });
+        const message = 'Extension browser identity is unavailable.';
+        setLastSendReceipt({ RequestId: request.requestId, CapturedUtc: new Date().toISOString(), SessionKey: 'SessionKey' in conversation ? conversation.SessionKey : '', PageUrl: '', PageTitle: '', Status: 'Failure', Error: message });
+        event.source?.postMessage({ type: 'extension_browser_send_user_state_response', requestId: request.requestId, error: message }, { targetOrigin: event.origin });
         return;
       }
       handleToolCall('get_active_tab', {}).then((result) => {
         if (!result.ok) throw new Error(result.error || 'Chrome did not return the active page.');
         const page = result.data as ActiveTab;
+        const capturedUtc = new Date().toISOString();
+        setLastSendReceipt({ RequestId: request.requestId!, CapturedUtc: capturedUtc, SessionKey: 'SessionKey' in conversation ? conversation.SessionKey : '', PageUrl: page.url, PageTitle: page.title, Status: 'Success', Error: '' });
         event.source?.postMessage({ type: 'extension_browser_send_user_state_response', requestId: request.requestId, userState: {
           'ExtensionBrowser.DefaultInstanceId': conversation.InstallationRegistrationId,
           'ExtensionBrowser.BrowserContextId': conversation.BrowserContextId,
-          'ExtensionBrowser.CurrentPage': { Url: page.url, Title: page.title, TabId: page.tabId, CapturedUtc: new Date().toISOString() }
+          'ExtensionBrowser.CurrentPage': { Url: page.url, Title: page.title, TabId: page.tabId, CapturedUtc: capturedUtc }
         } }, { targetOrigin: event.origin });
       }).catch((reason) => {
-        event.source?.postMessage({ type: 'extension_browser_send_user_state_response', requestId: request.requestId, error: reason instanceof Error ? reason.message : String(reason) }, { targetOrigin: event.origin });
+        const message = reason instanceof Error ? reason.message : String(reason);
+        setLastSendReceipt({ RequestId: request.requestId!, CapturedUtc: new Date().toISOString(), SessionKey: 'SessionKey' in conversation ? conversation.SessionKey : '', PageUrl: '', PageTitle: '', Status: 'Failure', Error: message });
+        event.source?.postMessage({ type: 'extension_browser_send_user_state_response', requestId: request.requestId, error: message }, { targetOrigin: event.origin });
       });
     };
     window.addEventListener('message', respondWithSendUserState);
@@ -210,7 +241,7 @@ export default function App() {
       const response = await chrome.runtime.sendMessage({ type: 'save_buffaly_server', serverId: showServerSettings ? serversStatus.ActiveServer?.ServerId : '', name: serverName, origin }) as WorkerResponse<{ Server: ServerSummary }> | undefined;
       if (!response?.ok || !response.data) throw new Error(response?.error || 'The Buffaly server could not be saved.');
        const saved = response.data.Server;
-       setServersStatus((current) => ({ ...current, Servers: current.Servers.filter((server) => server.ServerId !== saved.ServerId && server.Origin !== saved.Origin).map((server) => ({ ...server, Active: false })).concat(saved), ActiveServer: { ServerId: saved.ServerId, Name: saved.Name, Origin: saved.Origin }, State: 'Unavailable', Version: '' }));
+       setServersStatus((current) => ({ ...current, Servers: current.Servers.filter((server) => server.ServerId !== saved.ServerId && server.Origin !== saved.Origin).map((server) => ({ ...server, Active: false })).concat(saved), ActiveServer: { ServerId: saved.ServerId, Name: saved.Name, Origin: saved.Origin }, State: 'Unavailable', Version: '', ChannelConnected: false, InstallationState: '', LastConnectedUtc: '', RegisteredExtensionVersion: '', ToolSchemaVersion: 0 }));
        setOrigin(saved.Origin); setConnected(false); setConversation(null); setShowAddServer(false); setShowServerSettings(false);
        void refreshServers().catch((reason) => setError(reason instanceof Error ? reason.message : String(reason)));
     } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
@@ -235,6 +266,11 @@ export default function App() {
     if (!serversStatus.ActiveServer) return;
     setServerName(serversStatus.ActiveServer.Name); setOrigin(serversStatus.ActiveServer.Origin); setShowAddServer(false); setShowServerSettings(true); setError('');
   }, [serversStatus.ActiveServer]);
+
+  const openDiagnostics = useCallback(() => {
+    setShowAddServer(false); setShowServerSettings(false); setShowDiagnostics(true); setError('');
+    void refreshDiagnostics();
+  }, [refreshDiagnostics]);
 
   const removeActiveServer = useCallback(async () => {
     const server = serversStatus.ActiveServer;
@@ -304,11 +340,22 @@ export default function App() {
 
   const stateLabel = serversStatus.State === 'Ready' ? 'Ready' : serversStatus.State === 'SignInRequired' ? 'Sign-in required' : serversStatus.State === 'WebModuleMissing' ? 'ExtensionBrowser not installed' : 'Unavailable';
   const savedConversations = serversStatus.Servers.find((server) => server.ServerId === serversStatus.ActiveServer?.ServerId)?.Conversations || [];
+  const activeSavedServer = serversStatus.Servers.find((server) => server.ServerId === serversStatus.ActiveServer?.ServerId);
+  const diagnostics = {
+    CapturedUtc: diagnosticsCapturedUtc,
+    Server: { Name: serversStatus.ActiveServer?.Name || '', Origin: serversStatus.ActiveServer?.Origin || '', State: serversStatus.State, WebModuleVersion: serversStatus.Version || '', Authorized: activeSavedServer?.Authorized === true, InstallationState: serversStatus.InstallationState, ChannelConnected: serversStatus.ChannelConnected, LastConnectedUtc: serversStatus.LastConnectedUtc, ConversationsStale: serversStatus.ConversationsStale === true },
+    Extension: { Version: chrome.runtime.getManifest().version, RegisteredVersion: serversStatus.RegisteredExtensionVersion, ToolSchemaVersion: serversStatus.ToolSchemaVersion },
+    Identity: { InstallationRegistrationId: conversation?.InstallationRegistrationId || activeSavedServer?.Conversations?.[0]?.InstallationRegistrationId || '', BrowserContextId: browserContextId.current, PanelInstanceId: panelInstanceId.current, SessionKey: conversation && 'SessionKey' in conversation ? conversation.SessionKey : '' },
+    CurrentPage: { Title: activeTab?.title || '', Url: activeTab?.url || '' },
+    LastSendReceipt: lastSendReceipt,
+  };
+  const copyDiagnostics = async () => { await navigator.clipboard.writeText(JSON.stringify(diagnostics, null, 2)); setDiagnosticsCopied(true); };
   return <main className={`app mode-${panelMode}`}>
     <header className="topbar"><div className="brand"><img src={logo48Url} alt="" /><div><strong>{serversStatus.ActiveServer?.Name || 'Buffaly'}</strong><span>{serversStatus.ActiveServer?.Origin || 'Choose a server'}</span></div></div><span className={`live-state ${serversStatus.State === 'Ready' ? 'active' : ''}`} title={stateLabel}><i /><b>{stateLabel}</b></span></header>
-    <section className="server-bar" aria-label="Buffaly server"><select aria-label="Saved Buffaly server" value={serversStatus.ActiveServer?.ServerId || ''} onChange={(event) => void selectServer(event.target.value)} disabled={!!busy}><option value="" disabled>Choose a Buffaly server</option>{serversStatus.Servers.map((server) => <option key={server.ServerId} value={server.ServerId}>{server.Name}</option>)}</select><button onClick={() => setShowAddServer((visible) => !visible)} aria-expanded={showAddServer}>Add</button>{serversStatus.ActiveServer && <><button onClick={openServerSettings} aria-label="Manage selected server" title="Server settings">⚙</button><button onClick={() => void refreshServers()} aria-label="Check selected server">↻</button></>}</section>
+    <section className="server-bar" aria-label="Buffaly server"><select aria-label="Saved Buffaly server" value={serversStatus.ActiveServer?.ServerId || ''} onChange={(event) => void selectServer(event.target.value)} disabled={!!busy}><option value="" disabled>Choose a Buffaly server</option>{serversStatus.Servers.map((server) => <option key={server.ServerId} value={server.ServerId}>{server.Name}</option>)}</select><button onClick={() => setShowAddServer((visible) => !visible)} aria-expanded={showAddServer}>Add</button>{serversStatus.ActiveServer && <><button onClick={openServerSettings} aria-label="Manage selected server" title="Server settings">⚙</button><button onClick={openDiagnostics} aria-label="Open connection diagnostics" title="Connection diagnostics">ⓘ</button><button onClick={() => void refreshServers()} aria-label="Check selected server">↻</button></>}</section>
     {showAddServer && <section className="add-server"><label>Name<input value={serverName} onChange={(event) => setServerName(event.target.value)} /></label><label>Origin<input value={origin} onChange={(event) => setOrigin(event.target.value)} placeholder="https://buffaly.example.com" /></label><button onClick={saveNewServer} disabled={!!busy || !serverName.trim() || !origin.trim()}>Save server</button></section>}
     {showServerSettings && serversStatus.ActiveServer && <div className="modal-backdrop"><section className="settings-modal" role="dialog" aria-modal="true" aria-label="Buffaly server settings"><img src={logo48Url} alt="" /><h2>Server settings</h2><p>View or update this Chrome installation's saved Buffaly server. Authorization and conversations remain isolated per origin.</p><label>Name<input value={serverName} onChange={(event) => setServerName(event.target.value)} /></label><label>Origin<input value={origin} onChange={(event) => setOrigin(event.target.value)} /></label><div className="server-details"><span>State <b>{stateLabel}</b></span><span>WebModule <b>{serversStatus.Version || 'Not detected'}</b></span><span>Authorized <b>{serversStatus.Servers.find((server) => server.ServerId === serversStatus.ActiveServer?.ServerId)?.Authorized ? 'Yes' : 'No'}</b></span></div>{error && <div className="settings-error">{error}</div>}<div className="modal-actions"><button className="disconnect" onClick={removeActiveServer} disabled={!!busy}>Remove</button><span /><button className="secondary" onClick={() => setShowServerSettings(false)}>Cancel</button><button className="primary" onClick={saveNewServer} disabled={!!busy || !serverName.trim() || !origin.trim()}>Save changes</button></div></section></div>}
+    {showDiagnostics && <div className="modal-backdrop"><section className="settings-modal diagnostics-modal" role="dialog" aria-modal="true" aria-label="ExtensionBrowser connection diagnostics"><img src={logo48Url} alt="" /><h2>Connection diagnostics</h2><p>Secret-free runtime state for this Chrome installation and its most recent ordinary Send context capture.</p><div className="diagnostics-grid"><span>Chrome extension <b>{chrome.runtime.getManifest().version}</b></span><span>WebModule <b>{serversStatus.Version || 'Not detected'}</b></span><span>Registered extension <b>{serversStatus.RegisteredExtensionVersion || 'Unknown'}</b></span><span>Tool schema <b>{serversStatus.ToolSchemaVersion || 'Unknown'}</b></span><span>Server <b>{stateLabel}</b></span><span>Authorized <b>{activeSavedServer?.Authorized ? 'Yes' : 'No'}</b></span><span>Installation state <b>{serversStatus.InstallationState || 'Unknown'}</b></span><span>WebSocket channel <b>{serversStatus.ChannelConnected ? 'Connected' : 'Disconnected'}</b></span><span>Installation <b>{compactIdentity(diagnostics.Identity.InstallationRegistrationId)}</b></span><span>Browser context <b>{compactIdentity(diagnostics.Identity.BrowserContextId)}</b></span><span>Panel <b>{compactIdentity(diagnostics.Identity.PanelInstanceId)}</b></span><span>Session <b>{compactIdentity(diagnostics.Identity.SessionKey)}</b></span><span>Last server connection <b>{displayUtc(serversStatus.LastConnectedUtc)}</b></span><span>Conversation list <b>{serversStatus.ConversationsStale ? 'Stale' : 'Current'}</b></span></div><div className="diagnostics-section"><strong>Current page</strong><span>{activeTab?.title || 'Unavailable'}</span><small>{activeTab?.url || 'No active page was captured.'}</small><small>Snapshot: {displayUtc(diagnosticsCapturedUtc)}</small></div><div className={`diagnostics-section receipt ${lastSendReceipt?.Status === 'Failure' ? 'failed' : ''}`}><strong>Last ordinary Send context</strong>{lastSendReceipt ? <><span>{lastSendReceipt.Status} · {displayUtc(lastSendReceipt.CapturedUtc)}</span><small>{lastSendReceipt.PageTitle || lastSendReceipt.Error || 'No page title'}</small><small>{lastSendReceipt.PageUrl || `Error: ${lastSendReceipt.Error}`}</small><small>Request {compactIdentity(lastSendReceipt.RequestId)}</small></> : <small>No ordinary Send has requested browser context since this panel opened.</small>}</div>{error && <div className="settings-error">{error}</div>}<div className="modal-actions"><button className="secondary" onClick={() => void refreshDiagnostics()} disabled={busy === 'diagnostics'}>{busy === 'diagnostics' ? 'Refreshing…' : 'Refresh'}</button><button className="secondary" onClick={() => void copyDiagnostics()}>{diagnosticsCopied ? 'Copied' : 'Copy diagnostics'}</button><span /><button className="primary" onClick={() => setShowDiagnostics(false)}>Done</button></div></section></div>}
     <nav className="primary-tabs" aria-label="Side panel views"><button className={panelMode === 'chat' ? 'selected' : ''} onClick={() => selectPanelMode('chat')} aria-current={panelMode === 'chat' ? 'page' : undefined}>Chat</button><button className={panelMode === 'agent' ? 'selected' : ''} onClick={() => selectPanelMode('agent')} aria-current={panelMode === 'agent' ? 'page' : undefined}>Agent <span>{toolLog.length}</span></button>{panelMode === 'chat' && savedConversations.length > 0 && <><select className="conversation-selector" aria-label="Saved Buffaly conversation" title={serversStatus.ConversationsStale ? 'Conversation names may be stale; click to retry.' : 'Saved Buffaly conversations'} value={conversationSelectionId(conversation)} onPointerDown={() => void refreshServers().catch(() => undefined)} onFocus={() => void refreshServers().catch(() => undefined)} onChange={(event) => void selectConversation(event.target.value)} disabled={!!busy}><option value="" disabled>{serversStatus.ConversationsStale ? 'Conversations may be stale' : 'Select conversation'}</option>{savedConversations.map((item) => <option key={conversationSelectionId(item)} value={conversationSelectionId(item)}>{conversationOptionLabel(item)}</option>)}</select><button className="new-conversation" onClick={newConversation} disabled={!!busy}>New</button>{conversation && <button className="popout-conversation" onClick={openConversationTab} disabled={!!busy} aria-label="Open conversation in a full tab" title="Open in full tab">↗</button>}</>}</nav>
     <section className={`workspace ${conversation ? 'embedded' : ''}`} hidden={panelMode !== 'chat'} inert={panelMode !== 'chat' ? true : undefined}>{connected && conversation ? <div className="embed-shell">{microphoneError && <div className="microphone-help"><strong>Microphone access failed for this Buffaly server.</strong><span>{microphoneError.name}: {microphoneError.message}</span>{microphoneDiagnostic && <span>Origin: {microphoneDiagnostic.origin}; policy: {String(microphoneDiagnostic.policyAllowsMicrophone)}; permission: {microphoneDiagnostic.permissionState}; result: {microphoneDiagnostic.result}</span>}<button className="dismiss" onClick={() => setMicrophoneError(null)}>Dismiss</button></div>}<iframe ref={conversationFrame} title="Buffaly session" src={conversationUrl(conversation)} allow="clipboard-read; clipboard-write; microphone" /></div> : <div className="welcome"><img src={logo128Url} alt="Buffaly" /><p className="eyebrow">BUFFALY + THIS PAGE</p><h1>{serversStatus.ActiveServer ? serversStatus.ActiveServer.Name : 'Add a Buffaly server'}</h1><p>{serversStatus.State === 'Ready' ? 'This Chrome is authorized. Start a bound conversation for the current page.' : serversStatus.State === 'SignInRequired' ? 'This server is reachable. Sign in once to authorize this Chrome installation.' : serversStatus.State === 'WebModuleMissing' ? 'This Buffaly server does not have the ExtensionBrowser WebModule installed.' : 'Choose or add a reachable Buffaly server. Remote and Tailscale servers must use HTTPS.'}</p>{error && <div className="settings-error">{error}</div>}{serversStatus.State === 'SignInRequired' && <button className="connect-button" onClick={connect} disabled={!!busy}>Sign in and authorize this Chrome <span>{busy ? 'Connecting…' : 'Open sign-in'}</span></button>}{serversStatus.State === 'Ready' && savedConversations.length > 0 && <div className="recovered-conversations" aria-label="Recovered Buffaly conversations">{savedConversations.map((item) => <button key={conversationSelectionId(item)} className="recovered-conversation" onClick={() => void selectConversation(conversationSelectionId(item))} disabled={!!busy}>{conversationOptionLabel(item)}</button>)}</div>}{serversStatus.State === 'Ready' && <button className="connect-button" onClick={newConversation} disabled={!!busy}>New conversation <span>Bound to Chrome</span></button>}</div>}</section>
     <section className="agent-panel" hidden={panelMode !== 'agent'} inert={panelMode !== 'agent' ? true : undefined}><section className="page-card" aria-label="Current page"><div className="page-icon">↗</div><div className="page-copy"><span>Working on</span><strong>{activeTab?.title || 'Current page'}</strong><small>{activeTab?.url || 'Open a web page to begin'}</small></div><button className="icon-button" onClick={refreshStatus} aria-label="Refresh page context">↻</button></section><section className={`control-card ${debuggerAttached ? 'enabled' : ''}`}><div><strong>{debuggerAttached ? 'Buffaly can act on this tab' : 'Page access is ready'}</strong><p>{debuggerAttached ? 'Trusted clicks and typing are enabled.' : 'Enable control when this conversation needs to click or type.'}</p></div><button onClick={debuggerAttached ? pauseControl : enableControl} disabled={busy === 'control'}>{debuggerAttached ? 'Pause' : 'Enable'}</button></section><div className="activity-heading"><div><span>Browser activity</span><small>Actions from this conversation</small></div><b>{toolLog.length}</b></div><div className="activity-panel">{toolLog.length === 0 ? <div className="activity-empty"><b>✓</b><h2>No browser activity yet</h2><p>Actions from this bound conversation will appear here.</p></div> : toolLog.slice().reverse().map((entry) => <article key={entry.id} className={`activity-row ${entry.status}`}><i>{entry.status === 'success' ? '✓' : entry.status === 'error' ? '!' : '·'}</i><div><strong>{entry.tool.replaceAll('_', ' ')}</strong><small>{new Date(entry.timestamp).toLocaleTimeString()} · {entry.status}</small></div></article>)}</div></section>

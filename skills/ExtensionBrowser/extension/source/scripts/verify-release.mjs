@@ -38,6 +38,11 @@ check(!backgroundSource.includes("new URL('/web-modules/ExtensionBrowser/microph
 check(!backgroundSource.includes("secondaryPattern: `${chrome.runtime.getURL('/')}*`"), 'microphone grant must not use an invalid chrome-extension secondary pattern');
 check(sidepanelSource.includes('allow="clipboard-read; clipboard-write; microphone"'), 'trusted conversation iframe must delegate microphone permission to the Buffaly server origin');
 check(sidepanelSource.includes('TabId: page.tabId'), 'current-page UserState snapshot must preserve the active tab ID');
+check(sidepanelSource.includes('Connection diagnostics') && sidepanelSource.includes('Copy diagnostics') && sidepanelSource.includes('refreshDiagnostics'), 'secret-free connection diagnostics panel controls are missing');
+check(sidepanelSource.includes('setLastSendReceipt') && sidepanelSource.includes("Status: 'Success'") && sidepanelSource.includes("Status: 'Failure'"), 'ordinary Send must record both successful and failed context-capture receipts');
+check(sidepanelSource.includes('ChannelConnected: serversStatus.ChannelConnected') && sidepanelSource.includes('RegisteredVersion: serversStatus.RegisteredExtensionVersion'), 'diagnostics must project channel and registered-extension status');
+check(sidepanelSource.includes('activeSavedServer?.Conversations?.[0]?.InstallationRegistrationId'), 'diagnostics must tolerate an optimistic saved-server summary before conversations are loaded');
+check(!sidepanelSource.includes('InstallationCredential') && !sidepanelSource.includes('AuthorizationCode'), 'side-panel diagnostics must not reference installation credentials or authorization codes');
 check(backgroundSource.includes("canonicalServerOrigin(String(request.origin || '').trim())") && backgroundSource.includes("Promise.resolve().then(async () =>"), 'Save server must validate input inside its asynchronous response path');
 check(sidepanelSource.includes("void refreshServers().catch"), 'Save server completion must not block on server health inspection');
 check(backgroundSource.includes("data: { Server:") && sidepanelSource.includes("setServersStatus((current) =>"), 'Save server must update the selector immediately from its persisted summary');

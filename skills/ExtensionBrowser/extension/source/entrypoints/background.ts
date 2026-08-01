@@ -65,22 +65,25 @@ async function startInstallationChannel(): Promise<void> {
 	await installationChannel.start();
 }
 
-async function inspectServer(origin: string, connection: SavedBuffalyServer['Connection']): Promise<{ State: ServerState; Version: string }> {
+interface ServerInspection { State: ServerState; Version: string; ChannelConnected: boolean; InstallationState: string; LastConnectedUtc: string; RegisteredExtensionVersion: string; ToolSchemaVersion: number }
+
+async function inspectServer(origin: string, connection: SavedBuffalyServer['Connection']): Promise<ServerInspection> {
+	const unavailable = (State: ServerState, Version = ''): ServerInspection => ({ State, Version, ChannelConnected: false, InstallationState: '', LastConnectedUtc: '', RegisteredExtensionVersion: '', ToolSchemaVersion: 0 });
 	try {
 		const response = await fetch(new URL('/web-modules/ExtensionBrowser/health', origin), { cache: 'no-store' });
-		if (response.status === 404) return { State: 'WebModuleMissing', Version: '' };
-		if (!response.ok) return { State: 'Unavailable', Version: '' };
+		if (response.status === 404) return unavailable('WebModuleMissing');
+		if (!response.ok) return unavailable('Unavailable');
 		const health = await response.json() as { Version?: string };
-		if (!connection) return { State: 'SignInRequired', Version: health.Version || '' };
+		if (!connection) return unavailable('SignInRequired', health.Version || '');
 		const status = await fetch(new URL('/web-modules/ExtensionBrowser/api/installations/status', origin), {
 			method: 'POST', headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential }),
 		});
-		if (!status.ok) return { State: 'SignInRequired', Version: health.Version || '' };
-		const installation = await status.json() as { ChannelConnected?: boolean };
-		return { State: installation.ChannelConnected ? 'Ready' : 'Unavailable', Version: health.Version || '' };
+		if (!status.ok) return unavailable('SignInRequired', health.Version || '');
+		const installation = await status.json() as { ChannelConnected?: boolean; State?: string; LastConnectedUtc?: string; ExtensionVersion?: string; ToolSchemaVersion?: number };
+		return { State: installation.ChannelConnected ? 'Ready' : 'Unavailable', Version: health.Version || '', ChannelConnected: installation.ChannelConnected === true, InstallationState: installation.State || '', LastConnectedUtc: installation.LastConnectedUtc || '', RegisteredExtensionVersion: installation.ExtensionVersion || '', ToolSchemaVersion: installation.ToolSchemaVersion || 0 };
 	} catch {
-		return { State: 'Unavailable', Version: '' };
+		return unavailable('Unavailable');
 	}
 }
 
@@ -221,7 +224,7 @@ export default defineBackground(() => {
 			let conversationsStale = false;
 			const fallbackConnection = await loadConnection();
 			const activeConnection = active?.Connection || (active && fallbackConnection?.Origin === active.Origin ? fallbackConnection : null);
-			const status = active ? await inspectServer(active.Origin, activeConnection) : { State: 'Unavailable' as ServerState, Version: '' };
+			const status = active ? await inspectServer(active.Origin, activeConnection) : { State: 'Unavailable' as ServerState, Version: '', ChannelConnected: false, InstallationState: '', LastConnectedUtc: '', RegisteredExtensionVersion: '', ToolSchemaVersion: 0 };
 			if (active && activeConnection) {
 				try {
 					const authoritative = await listDurableConversations(activeConnection);
