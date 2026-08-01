@@ -2,6 +2,7 @@
   "Version": 1,
   "ModulePath": "Skills/TabularData/index.pts",
   "Prototypes": {
+    "BasicCsvWalkthroughGrid": "Skills/TabularData/index.pts",
     "CsvDataSourceGrid": "Skills/TabularData/index.pts",
     "CsvDataSourceSkill": "Skills/TabularData/index.pts",
     "CsvDataSourceSkillAction": "Skills/TabularData/index.pts",
@@ -9,13 +10,24 @@
     "TabularDataSkill": "Skills/TabularData/index.pts",
     "TabularDataSkillAction": "Skills/TabularData/index.pts",
     "ToDescribeDataTable": "Skills/TabularData/index.pts",
+    "ToExportBasicCsvWalkthroughCurrentView": "Skills/TabularData/index.pts",
+    "ToFilterBasicCsvWalkthroughCardiologyBalanceDue": "Skills/TabularData/index.pts",
+    "ToFilterBasicCsvWalkthroughHighPriorityAppointments": "Skills/TabularData/index.pts",
+    "ToFilterBasicCsvWalkthroughMedicareOver250": "Skills/TabularData/index.pts",
+    "ToFilterBasicCsvWalkthroughNext30DaysNotCancelled": "Skills/TabularData/index.pts",
+    "ToFilterBasicCsvWalkthroughReadyAppointments": "Skills/TabularData/index.pts",
     "ToFilterDataTableRows": "Skills/TabularData/index.pts",
+    "ToGetBasicCsvWalkthroughSampleFilePath": "Skills/TabularData/index.pts",
+    "ToGetBasicCsvWalkthroughSampleUrl": "Skills/TabularData/index.pts",
     "ToGetDataTableSchemaJson": "Skills/TabularData/index.pts",
+    "ToLoadBasicCsvWalkthroughSampleData": "Skills/TabularData/index.pts",
     "ToLoadCsvFileAsDataTable": "Skills/TabularData/index.pts",
     "ToLoadCsvUrlAsDataTable": "Skills/TabularData/index.pts",
     "ToPreviewDataTable": "Skills/TabularData/index.pts",
     "ToPreviewDataTablePage": "Skills/TabularData/index.pts",
     "ToSelectDataTableColumns": "Skills/TabularData/index.pts",
-    "ToSortDataTableRows": "Skills/TabularData/index.pts"
+    "ToSortDataTableRows": "Skills/TabularData/index.pts",
+    "ToSummarizeBasicCsvWalkthroughAppointmentsByClinic": "Skills/TabularData/index.pts",
+    "ToSummarizeBasicCsvWalkthroughReadyAppointmentsByClinic": "Skills/TabularData/index.pts"
   }
 }

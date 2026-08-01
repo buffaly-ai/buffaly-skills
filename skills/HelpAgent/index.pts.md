@@ -143,3 +143,8 @@ Expose documentation-oriented tools to the Help Agent without granting the full 
 ## Use Project-Wide Shared Imports (2026-06-15)
 - Removed local `Buffaly.Agent.Tools.TabularData` reference and local `RuntimeInstallRootFeature` import from the Help Agent skill wrapper.
 - Design Decision: shared DLL references and install-root helper bindings belong in `OpsAgent/Imports.pts`; skill files should import the shared types without creating skill-local assembly resolution probes.
+
+## Move Basic CSV Runtime Tools Behind Lazy TabularData (2026-08-01)
+- Moved the DLL-backed Basic CSV convenience actions and `BasicCsvWalkthroughGrid` helper to the lazy TabularData module.
+- Kept the HelpAgent prompt walkthrough eager and preserved `HelpAgentActionRoot` on the moved action prototypes.
+- HelpAgent no longer imports `TabularDataFunctions` or `CsvDataSourceFunctions` during ordinary project startup.

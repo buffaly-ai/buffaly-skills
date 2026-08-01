@@ -27,3 +27,8 @@
 ## Default Core Entity Surface Cleanup (2026-06-20)
 - Removed `CoreEntity` from `CsvDataSourceSkill` and `TabularDataSkill` so tabular-data skills remain discoverable through skill/action search without appearing in the default ontology prompt surface.
 - Kept grid callback prototypes on `SemanticEntityBase` rather than parentless so `Description` remains a valid inherited field without reintroducing `CoreEntity`.
+
+## Own All TabularData Runtime Consumers (2026-08-01)
+- Moved the Basic CSV walkthrough convenience actions and helper prototype from eager HelpAgent source into this lazy module.
+- Kept their `HelpAgentActionRoot` ancestry so HelpAgent capability filtering remains unchanged after activation.
+- The module retains the assembly-name reference `reference Buffaly.Agent.Tools.TabularData Buffaly.Agent.Tools.TabularData;`; no eager project file references or imports the DLL.
