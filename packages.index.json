@@ -10495,10 +10495,10 @@
       "PackageType": "WebModule",
       "Title": "LinkedIn",
       "Description": "Buffaly Web Module package for LinkedIn.",
-      "Version": "0.1.83",
+      "Version": "0.1.84",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/LinkedIn",
-      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/LinkedIn",
+      "SourceUrl": "",
       "Phrases": [
         "LinkedIn",
         "LinkedIn"
@@ -10514,7 +10514,7 @@
         },
         {
           "Path": "Buffaly.LinkedIn.dll",
-          "Sha256": "d69b74988a728e1c9e41ae86ed60c21316ac5de02ed79f2afde9804b3a7195cd"
+          "Sha256": "78db864ce36356e76cf4a6daae3ef4617d3dd008ff466e46f70093b359c32d6e"
         },
         {
           "Path": "Buffaly.ProviderContracts.dll",
@@ -10539,6 +10539,10 @@
         {
           "Path": "Skills/LinkedIn/index.pts",
           "Sha256": "8e8f8b87abb5a7037fedb508c462fe4b6e6f33ec5da11400a5b9b4fee1c20897"
+        },
+        {
+          "Path": "Skills/LinkedIn/index.pts.lazy.json",
+          "Sha256": "dbff93d834f0ac7d58ec4115115e9a369cc462e41a14904aa748d44c1690d6d7"
         },
         {
           "Path": "Skills/LinkedIn/LinkedInActions.pts",
@@ -10587,10 +10591,6 @@
         {
           "Path": "wwwroot/js/linkedin.js",
           "Sha256": "824e4811d74d573ce19b044ec552706711de1844df28eedc237456282f5361df"
-        },
-        {
-          "Path": "Skills/LinkedIn/index.pts.lazy.json",
-          "Sha256": "dbff93d834f0ac7d58ec4115115e9a369cc462e41a14904aa748d44c1690d6d7"
         }
       ],
       "ProjectArtifacts": [
@@ -10603,7 +10603,8 @@
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
       "RequiresRestart": true,
-      "RequiresPreStartInstall": true
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     },
     {
       "PackageId": "Office365",
