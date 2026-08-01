@@ -4,7 +4,7 @@ prototype BuffalyCapabilityInspectionSkillAction : OpsAction
 }
 
 [SemanticEntity("buffaly capability inspection skill, installed capabilities skill")]
-prototype BuffalyCapabilityInspectionSkill : SkillEntity
+prototype BuffalyCapabilityInspectionSkill : SkillEntity, CoreEntity
 {
 	Description = "Read-only self-inspection actions for listing this Buffaly install's tools, prompt actions, skills, web modules, and providers.";
 	ActionRoot = BuffalyCapabilityInspectionSkillAction;

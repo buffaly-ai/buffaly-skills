@@ -152,17 +152,18 @@
     {
       "SkillName": "BuffalyCapabilityInspection",
       "Title": "Buffaly Capability Inspection",
-      "Description": "Buffaly Capability Inspection Skill",
-      "Version": "0.1.1",
+      "Description": "Buffaly skill package for Buffaly Capability Inspection.",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "Buffaly Capability Inspection",
         "BuffalyCapabilityInspection"
       ],
       "Path": "skills/BuffalyCapabilityInspection",
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "8c80c5168e2b0440118fb97ba8da584a6594b97e71bdf5af4c73776a25f1b8c8"
+          "Sha256": "07ac436f304ee1aac94ec006112675db18302ba578a50f051b0a41c142aa65d1"
         },
         {
           "Path": "index.pts.md",
@@ -175,11 +176,7 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "BuffalyMaintenance",
