@@ -1418,7 +1418,7 @@
       "SkillName": "LLM",
       "Title": "L L M",
       "Description": "Buffaly skill package for L L M.",
-      "Version": "0.1.1",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "L L M",
@@ -1429,6 +1429,10 @@
         {
           "Path": "index.pts",
           "Sha256": "96374da02855422f3f25c35ddb552da296b4dc21517867a71d9fa72e6077484d"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "0d3394a817ad41da769ef8256b259837c8b63e082197b4ecb5aac7037549e996"
         },
         {
           "Path": "index.pts.md",
@@ -1469,11 +1473,7 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "Level2Watcher",
