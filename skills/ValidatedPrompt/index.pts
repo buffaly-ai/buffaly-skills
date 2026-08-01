@@ -138,6 +138,7 @@ prototype ToSummarizeTextInOneSentenceSkill : ValidatedPromptAction, ValidatedPr
 	SkillKind = "validated-prompt";
 	SkillVersion = "1.0.0";
 	Description = "Summarize provided text in exactly one faithful sentence without adding facts.";
+	ValidatedPromptActionName = "ToSummarizeTextInOneSentenceSkill";
 	WorkPromptPath = @"Skills/ValidatedPrompt/Prompts/SummarizeTextInOneSentence.work.prompt.md";
 	ValidationPromptPath = @"Skills/ValidatedPrompt/Prompts/SummarizeTextInOneSentence.validation.prompt.md";
 }
@@ -172,6 +173,7 @@ prototype ToGenerateWorkflowReportNarrativeValidatedSkill : ValidatedPromptActio
 	SkillKind = "validated-prompt";
 	SkillVersion = "1.0.0";
 	Description = @"Generate and validate a narrative summary from a buffaly.workflowRunReport.v1 JSON document while treating the JSON as the source of truth.";
+	ValidatedPromptActionName = "ToGenerateWorkflowReportNarrativeValidatedSkill";
 	WorkPromptPath = @"Skills/ValidatedPrompt/WorkflowReport/Prompts/GenerateWorkflowReportNarrative.prompt.md";
 	ValidationPromptPath = @"Skills/ValidatedPrompt/WorkflowReport/Prompts/ValidateWorkflowReportNarrative.prompt.md";
 }

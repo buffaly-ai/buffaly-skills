@@ -14,6 +14,8 @@ Marketing- or client-specific validated prompt workflows should live in their ow
 - `ToSummarizeTextInOneSentenceSkill` — minimal sample validated prompt action.
 - Workflow-report narrative actions and debugging helpers remain generic infrastructure examples.
 
+Concrete `ValidatedPromptAction` prototypes assign `ValidatedPromptActionName` to their canonical prototype name so inherited direct `Execute(userInput, maxAttempts)` calls route through the validated runner without a third-party action.
+
 ## Source-of-truth rule
 
 Do not add one-off business/domain workflow actions here. Put them in their owning skill so semantic discovery resolves the original public action name to the validated action instead of to a duplicate side-by-side action.
