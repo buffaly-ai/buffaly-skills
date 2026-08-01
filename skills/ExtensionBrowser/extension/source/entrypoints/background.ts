@@ -2,7 +2,7 @@ import { handleToolCall, grantDebuggerConsent, revokeDebuggerConsent } from '../
 import { detachDebugger, isAttached } from '../lib/debugger-session';
 import { getLogEntries, getLogVersion } from '../lib/tool-log';
 import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, authorizeInstallation, conversationFromBootstrap, createDurableConversation, isLegacyConversation, issueConversationNavigationToken, listBrowserInstances, listDurableConversations, loadBoundToolResult, loadConnection, migrateLegacyConversation, openDurableConversation, type ConversationBinding, type DurableConversation } from '../lib/buffaly-connection';
-import { activateConversation, activateServer, canonicalServerOrigin, conversationForContext, getActiveServer, loadServers, removeServer, saveServer, summarizeServers, updateActiveServer, updateActiveServerConversation, type SavedBuffalyServer, type ServerState } from '../lib/buffaly-servers';
+import { activateConversation, activateServer, canonicalServerOrigin, conversationForContext, getActiveServer, loadServers, reconcileAuthoritativeConversations, removeServer, saveServer, summarizeServers, updateActiveServer, updateActiveServerConversation, type SavedBuffalyServer, type ServerState } from '../lib/buffaly-servers';
 import type { BoundToolInvocationIdentity } from '../lib/types';
 
 let installationChannel: InstallationChannel | null = null;
@@ -218,21 +218,26 @@ export default defineBackground(() => {
 		loadServers().then(async (state) => {
 			let servers = state.servers;
 			let active = servers.find((server) => server.ServerId === state.activeServerId) || null;
+			let conversationsStale = false;
 			const fallbackConnection = await loadConnection();
 			const activeConnection = active?.Connection || (active && fallbackConnection?.Origin === active.Origin ? fallbackConnection : null);
 			const status = active ? await inspectServer(active.Origin, activeConnection) : { State: 'Unavailable' as ServerState, Version: '' };
 			if (active && activeConnection) {
-				let recovered: DurableConversation[] = [];
-				try { recovered = await listDurableConversations(activeConnection); }
-				catch (error) { console.warn('Failed to list recovered Buffaly conversations:', error); }
-				if (recovered.length > 0) {
-					const conversationsBySessionKey = { ...(active.ConversationsBySessionKey ?? {}) };
-					recovered.forEach((conversation) => { conversationsBySessionKey[conversation.SessionKey] = conversationsBySessionKey[conversation.SessionKey] || conversation; });
-					active = await saveServer({ ...active, Connection: activeConnection, ConversationsBySessionKey: conversationsBySessionKey }, true).then(() => ({ ...active!, Connection: activeConnection, ConversationsBySessionKey: conversationsBySessionKey }));
+				try {
+					const authoritative = await listDurableConversations(activeConnection);
+					const conversationsBySessionKey = reconcileAuthoritativeConversations(active.ConversationsBySessionKey ?? {}, authoritative, activeConnection.InstallationRegistrationId);
+					const conversationsByBrowserContext = Object.fromEntries(Object.entries(active.ConversationsByBrowserContext ?? {}).flatMap(([contextId, binding]) => {
+						if (isLegacyConversation(binding)) return [[contextId, binding]];
+						const authoritativeBinding = conversationsBySessionKey[binding.SessionKey];
+						return authoritativeBinding ? [[contextId, { ...authoritativeBinding, BrowserContextId: binding.BrowserContextId || contextId }]] : [];
+					}));
+					const activeSessionKey = active.ActiveSessionKey && conversationsBySessionKey[active.ActiveSessionKey] ? active.ActiveSessionKey : '';
+					const activeConversation = activeSessionKey ? conversationsBySessionKey[activeSessionKey] : (isLegacyConversation(active.ActiveConversation) ? active.ActiveConversation : null);
+					active = await saveServer({ ...active, Connection: activeConnection, ActiveConversation: activeConversation, ActiveSessionKey: activeSessionKey, ConversationsBySessionKey: conversationsBySessionKey, ConversationsByBrowserContext: conversationsByBrowserContext }, true).then(() => ({ ...active!, Connection: activeConnection, ActiveConversation: activeConversation, ActiveSessionKey: activeSessionKey, ConversationsBySessionKey: conversationsBySessionKey, ConversationsByBrowserContext: conversationsByBrowserContext }));
 					servers = servers.map((server) => server.ServerId === active!.ServerId ? active! : server);
-				}
+				} catch (error) { conversationsStale = true; console.warn('Failed to refresh authoritative Buffaly conversations; retaining the last successful cache:', error); }
 			}
-			sendResponse({ ok: true, data: { Servers: summarizeServers(servers, state.activeServerId), ActiveServer: active ? { ServerId: active.ServerId, Name: active.Name, Origin: active.Origin } : null, ...status } });
+			sendResponse({ ok: true, data: { Servers: summarizeServers(servers, state.activeServerId), ActiveServer: active ? { ServerId: active.ServerId, Name: active.Name, Origin: active.Origin } : null, ConversationsStale: conversationsStale, ...status } });
 		}).catch((err: Error) => sendResponse({ ok: false, error: err.message }));
 		return true;
 	  }

@@ -1,4 +1,6 @@
-# Buffaly Browser Agent 0.2.53 / WebModule 0.1.61 validation
+# Buffaly Browser Agent 0.2.54 / WebModule 0.1.62 validation
+
+0.2.54 / WebModule 0.1.62 make existing ExtensionBrowser conversations server-authoritative and reusable. New `Chrome-<guid>` sessions register in an installation-scoped atomic catalog; the authenticated list route resolves current Buffaly session names and bounded activity metadata; a one-time owner/default-instance-verified reconciliation adopts eligible pre-catalog sessions. Chrome treats successful server lists as authoritative for durable identity and rename metadata, preserves local browser-context convenience state, retains the last successful cache on list failure, and refreshes visible side panels without overlapping requests. Selection continues to open the same immutable SessionKey and never creates a replacement. Focused contract tests and the extension release gate enforce these boundaries.
 
 WebModule 0.1.61 makes the one-channel-per-installation invariant directly auditable. Health now reports both the global online-channel count and the sorted, secret-free installation registration IDs that own those channels. Deterministic coverage reconnects the same installation, proves the prior channel is cancelled/replaced without increasing the count, proves disposing the obsolete lease cannot remove the replacement, and proves disposing the current lease removes the owner.
 

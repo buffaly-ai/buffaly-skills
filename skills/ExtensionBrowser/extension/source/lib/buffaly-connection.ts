@@ -21,6 +21,11 @@ export interface ConversationBase {
 export interface DurableConversation extends ConversationBase {
   Kind?: 'durable';
   SessionKey: string;
+  DateCreatedUtc?: string;
+  UpdatedUtc?: string;
+  LastFinalMessageUtc?: string;
+  MessageCount?: number;
+  IsRunning?: boolean;
 }
 
 export interface LegacyConversationBinding extends ConversationBase {
@@ -33,6 +38,7 @@ export type SavedConversation = DurableConversation | LegacyConversationBinding;
 export type ConversationBinding = SavedConversation;
 export type ConversationBootstrap = (DurableConversation | LegacyConversationBinding) & { Origin: string; NavigationToken: string };
 export interface LegacyConversationMigrationResult { SessionKey: string; InstallationRegistrationId: string; DisplayName: string; PromptPolicyRevision: number }
+export interface ExtensionBrowserConversationSummary extends LegacyConversationMigrationResult { DateCreatedUtc: string; UpdatedUtc: string; LastFinalMessageUtc: string; MessageCount: number; IsRunning: boolean }
 
 export function isLegacyConversation(binding: ConversationBinding | null | undefined): binding is LegacyConversationBinding {
   return Boolean(binding && 'SessionBindingId' in binding && typeof binding.SessionBindingId === 'string' && binding.SessionBindingId.length > 0);
@@ -199,11 +205,11 @@ export async function listBrowserInstances(connection: ExtensionConnection): Pro
 }
 
 export async function listDurableConversations(connection: ExtensionConnection): Promise<DurableConversation[]> {
-  const conversations = await readJson<LegacyConversationMigrationResult[]>(await fetch(new URL('/web-modules/ExtensionBrowser/api/conversations/list', connection.Origin), {
+  const conversations = await readJson<ExtensionBrowserConversationSummary[]>(await fetch(new URL('/web-modules/ExtensionBrowser/api/conversations/list', connection.Origin), {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential }),
   }));
-  return conversations.map((item) => ({ Kind: 'durable', SessionKey: item.SessionKey, InstallationRegistrationId: item.InstallationRegistrationId, BrowserContextId: '', DisplayName: item.DisplayName, PromptPolicyRevision: item.PromptPolicyRevision }));
+  return conversations.map((item) => ({ Kind: 'durable', SessionKey: item.SessionKey, InstallationRegistrationId: item.InstallationRegistrationId, BrowserContextId: '', DisplayName: item.DisplayName, PromptPolicyRevision: item.PromptPolicyRevision, DateCreatedUtc: item.DateCreatedUtc, UpdatedUtc: item.UpdatedUtc, LastFinalMessageUtc: item.LastFinalMessageUtc, MessageCount: item.MessageCount, IsRunning: item.IsRunning }));
 }
 
 export async function migrateLegacyConversation(connection: ExtensionConnection, SessionBindingId: string): Promise<DurableConversation> {

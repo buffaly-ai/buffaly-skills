@@ -44,6 +44,18 @@ export function conversationsForServer(server: SavedBuffalyServer): Conversation
   return Array.from(byId.values()).sort((left, right) => (left.DisplayName || '').localeCompare(right.DisplayName || '') || conversationStorageIdentity(left).localeCompare(conversationStorageIdentity(right)));
 }
 
+export function reconcileAuthoritativeConversations(local: Record<string, ConversationBinding>, authoritative: ConversationBinding[], installationRegistrationId: string): Record<string, ConversationBinding> {
+  const reconciled: Record<string, ConversationBinding> = {};
+  authoritative.forEach((serverConversation) => {
+    if (!isDurableConversation(serverConversation)) throw new Error('The authoritative conversation list returned a legacy binding.');
+    if (serverConversation.InstallationRegistrationId !== installationRegistrationId) throw new Error('The authoritative conversation list returned a different installation registration.');
+    const cached = local[serverConversation.SessionKey];
+    if (cached && cached.InstallationRegistrationId !== installationRegistrationId) throw new Error('A cached conversation belongs to a different installation registration.');
+    reconciled[serverConversation.SessionKey] = { ...cached, ...serverConversation, Kind: 'durable', BrowserContextId: cached?.BrowserContextId || '' };
+  });
+  return reconciled;
+}
+
 function activeSessionKey(server: SavedBuffalyServer): string {
   return server.ActiveSessionKey ? server.ActiveSessionKey : conversationSessionKey(server.ActiveConversation);
 }
