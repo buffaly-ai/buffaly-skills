@@ -15,7 +15,7 @@
 		const style = document.createElement('style');
 		style.id = 'extension-browser-native-session-rename';
 		style.textContent = [
-			'.ops-v2-header-session-actions { display: inline-flex !important; }',
+			'html[data-buffaly-presentation="sidepanel"] .ops-v2-header-session-actions { display: inline-flex !important; }',
 			'#btnOpsV2HeaderPinSession, #btnOpsV2HeaderArchiveSession { display: none !important; }'
 		].join('\n');
 		(document.head || document.documentElement).appendChild(style);
