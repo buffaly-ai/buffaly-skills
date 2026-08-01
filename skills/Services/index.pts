@@ -5,7 +5,7 @@ prototype ServicesSkillAction : OpsAction
 
 [SemanticEntity("services skill")]
 [SemanticEntity("service discovery skill")]
-prototype ServicesSkill : SkillEntity
+prototype ServicesSkill : SkillEntity, CoreEntity
 {
 	EntityName = "services skill, service discovery skill";
 	Description = "Service discovery tools for listing available ProtoScript-backed services and inspecting the declared service hierarchy.";

@@ -2005,34 +2005,31 @@
     {
       "SkillName": "Services",
       "Title": "Services",
-      "Description": "Buffaly OpsAgent skill package for Services.",
-      "Version": "0.1.1",
+      "Description": "Buffaly skill package for Services.",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "Services",
         "Services"
       ],
       "Path": "skills/Services",
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "052e377191c00cab3c84db072e6469cb73d911f1559727c1ae5788247fa4da7a"
-        },
-        {
-          "Path": "index.pts.md",
-          "Sha256": "5787871032893180c67d6b5acf6422a8a807574765d430b7dc1c66edb5386f16"
+          "Sha256": "e882aaa1f590c2bd22a81e043ca226a291255049c047e01c4d6a648ffefb1fb8"
         },
         {
           "Path": "index.pts.lazy.json",
           "Sha256": "a33b2240830cbc6571aea6bef80854e8cadf6f57a8e489b83ca02eb6c7373b00"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "5787871032893180c67d6b5acf6422a8a807574765d430b7dc1c66edb5386f16"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "SessionHistory",
