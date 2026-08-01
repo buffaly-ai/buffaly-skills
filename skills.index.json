@@ -2601,7 +2601,7 @@
       "SkillName": "UserSecrets",
       "Title": "User Secrets",
       "Description": "Buffaly skill package for User Secrets.",
-      "Version": "0.1.6",
+      "Version": "0.1.7",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "User Secrets",
@@ -2612,6 +2612,10 @@
         {
           "Path": "index.pts",
           "Sha256": "1a92f3750b5e1e1a7a570706f1b354bb70713729ef8a3c34a2eaa98690aae7c2"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "1fe514c81327090f868e006cf3639d28f221004618294c274ca605b1f3a5c35f"
         },
         {
           "Path": "index.pts.md",
