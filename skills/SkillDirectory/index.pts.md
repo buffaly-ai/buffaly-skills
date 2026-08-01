@@ -1,11 +1,5 @@
 # SkillDirectory/index.pts
 
-## 2026-08-01 Lazy sidecar generation action
-
-- Added `ToGenerateLazySkillSidecar`, a thin typed ProtoScript wrapper over `SkillPublishingService.GenerateLazySkillIndex`.
-- The action validates a selected skill by compiling it in the supplied project context and optionally writes `index.pts.lazy.json` atomically.
-- It returns the native `GenerateLazySkillIndexResultContract`; the host serializes the structured result at the tool boundary. Normal agent startup does not generate or repair sidecars.
-
 ## 2026-07-22 Installed extension update actions
 
 - Added package-directory actions that belong to the existing Skill Management/Skill Directory surface rather than Extension Publishing: `ToPreviewInstalledBuffalyExtensionUpdates`, `ToUpdateInstalledBuffalyExtensions`, `ToPreviewBuffalyExtensionProfileUpdate`, and `ToUpdateBuffalyExtensionProfile`.
