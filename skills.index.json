@@ -116,7 +116,7 @@
       "SkillName": "BrowserSession",
       "Title": "Browser Session",
       "Description": "Buffaly skill package for Browser Session.",
-      "Version": "0.1.4",
+      "Version": "0.1.5",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Browser Session",
@@ -127,6 +127,10 @@
         {
           "Path": "index.pts",
           "Sha256": "f0128c514377fb7739aca8a8393825b12c862d83764065c317ca4cc680f55396"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "11627ec1344272aaa10eee66dcb59652abc0f162e1b4d170f861c9a296efd4aa"
         },
         {
           "Path": "index.pts.md",
