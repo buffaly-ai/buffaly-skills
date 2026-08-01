@@ -2254,10 +2254,10 @@
       "SkillName": "SqlServer",
       "Title": "Sql Server",
       "Description": "Buffaly skill package for Sql Server.",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
-        "sql server",
+        "Sql Server",
         "SqlServer"
       ],
       "Path": "skills/SqlServer",
@@ -2275,6 +2275,10 @@
           "Sha256": "4e9adb5c13edacd4ddb16cfb268a505a8997aa86e6496e152d73de0d46b436b2"
         },
         {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "bbca88ff934025aa07c992eebc5f37a13063bf05d897a3c611dfec93bb25224b"
+        },
+        {
           "Path": "PromptActions.pts",
           "Sha256": "1849e15209a77ce82409d4741670e916fa0f9e80b6884dcedcfddc8a8d219e7c"
         },
@@ -2289,11 +2293,7 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "TabularData",
