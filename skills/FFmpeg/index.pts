@@ -1,5 +1,5 @@
 [SemanticEntity("ffmpeg skill")]
-prototype FFmpegSkill : SkillEntity
+prototype FFmpegSkill : SkillEntity, CoreEntity
 {
 	Description = "FFmpeg and ffprobe media recording, validation, transformation, and session artifact publishing actions.";
 	ActionRoot = FFmpegSkillAction;

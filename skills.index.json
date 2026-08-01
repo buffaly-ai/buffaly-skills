@@ -838,7 +838,7 @@
       "SkillName": "FFmpeg",
       "Title": "FFmpeg Media Tools",
       "Description": "Buffaly skill package for FFmpeg Media Tools.",
-      "Version": "0.1.1",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "FFmpeg Media Tools",
@@ -848,7 +848,11 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "ea667dc7d08e4162b22ac8c301d0f3597068059922528b5a584e3123815a8fa6"
+          "Sha256": "fc2fbc27f9794cb1545b6adce7e53dc7b6bc2d002a41970c380aaa8ea22269a4"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "207b97908fb215af3784eb24d7c07c9df2263d8ed6061ff3f645565531b1dac3"
         },
         {
           "Path": "index.pts.md",
@@ -861,19 +865,11 @@
         {
           "Path": "SKILL.md",
           "Sha256": "c01480f9b38ed6c048e9ee7f76d1dd89ca2f7b578fc196c57d914675693e560d"
-        },
-        {
-          "Path": "index.pts.lazy.json",
-          "Sha256": "207b97908fb215af3784eb24d7c07c9df2263d8ed6061ff3f645565531b1dac3"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "FairPathJsonWs",
