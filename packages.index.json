@@ -16924,10 +16924,10 @@
       "PackageType": "WebModule",
       "Title": "Workspace",
       "Description": "Buffaly Web Module package for Workspace.",
-      "Version": "0.1.19",
+      "Version": "0.1.20",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/Workspace",
-      "SourceUrl": "",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/Workspace",
       "Phrases": [
         "Workspace",
         "Workspace"
@@ -16935,7 +16935,7 @@
       "Files": [
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "eafb4eb93c2df71882013a1940833cba833bbbb34201daa3157032beeeba4f08"
+          "Sha256": "cd6b56a67bac4a6162e85a4489d948fc64db0f5bafda311632a6547f01aa8de6"
         },
         {
           "Path": "Buffaly.Agent.Workspaces.Web.deps.json",
@@ -16943,47 +16943,71 @@
         },
         {
           "Path": "Buffaly.Agent.Workspaces.Web.dll",
-          "Sha256": "9e3c309b10b9fee31bc0c88937d0ab38a67382ebdfac92d7bc918e15377490b3"
+          "Sha256": "1affb098d64486c3e8aa9508976d87605a45573e579a3a3c4e0600d1fe3516da"
         },
         {
           "Path": "web-module.json",
-          "Sha256": "0556732498d0f10940caf0df52ec8f3f3330ac5e3e583b6840ce7717b78b4119"
+          "Sha256": "09916cc045751b9556363429cd1980d6a5e4d3f93fc4d34eb69f821eee562429"
         },
         {
           "Path": "wwwroot/css/buffaly-workspace-session-ui.css",
-          "Sha256": "79a741c7f22a04c49ead74dd7d8d44f9c164796654805bdb85e048548510186d"
+          "Sha256": "b9430afb2c04c9de915c1c0aa6e3d9cd3a351c4764aaff6c3f7de2034feb363d"
         },
         {
           "Path": "wwwroot/css/buffaly-workspace-session-ui.css.br",
-          "Sha256": "2e05465d848b5cdecb89e52ad05f6165e57d869c94ce2eb663be52ddcb7aef5d"
+          "Sha256": "668b7b0fcb3b9d1fc222d1f1c810c9cadef1fc618236008111ee0e46a487e798"
         },
         {
           "Path": "wwwroot/css/buffaly-workspace-session-ui.css.gz",
-          "Sha256": "a26b49862b94be7739c972b158963e1da49ef6ffac8062c900c56eff6b3b950b"
+          "Sha256": "b0b3810fc65ef3a614d5d6207929bed2b31f9be0abeb49716799368a73fb2770"
+        },
+        {
+          "Path": "wwwroot/js/buffaly-workspace-module.js",
+          "Sha256": "c8e99057cb09c8638ef9d60688e6a7921c30a9a11d3fac120ec9507321e1c9a9"
+        },
+        {
+          "Path": "wwwroot/js/buffaly-workspace-module.js.br",
+          "Sha256": "b7ac924dd2e9bd5a5a7a409d27861dca845277e8489635e1c5fea44140389cf0"
+        },
+        {
+          "Path": "wwwroot/js/buffaly-workspace-module.js.gz",
+          "Sha256": "c3cd71d24f5781ef4261d55101001970e346000639c308c475d5c7b839c86062"
+        },
+        {
+          "Path": "wwwroot/js/buffaly-workspace-module.js.md",
+          "Sha256": "e342bc3b4bc0289e4000a19acad0a50e460ba2bd7678dd76cf5bbb65815e8a63"
+        },
+        {
+          "Path": "wwwroot/js/buffaly-workspace-module.js.md.br",
+          "Sha256": "6089e0f0b8c3f895c4ea91833cda0622822375ad7ef335c9850f3344d88514e4"
+        },
+        {
+          "Path": "wwwroot/js/buffaly-workspace-module.js.md.gz",
+          "Sha256": "776fe2f657ebedf7ee3c294376612d6ec9ba0e08fdbe127a4b335adb06c84aee"
         },
         {
           "Path": "wwwroot/js/buffaly-workspace-session-ui.js",
-          "Sha256": "9b981df6eb59c1e85e6708305306084e638212b4bdfa8ba5193ab2639174a57b"
+          "Sha256": "fc4ae4996f36b9270d3f08313c951c97a42473ae00ba363289b5614248f01501"
         },
         {
           "Path": "wwwroot/js/buffaly-workspace-session-ui.js.br",
-          "Sha256": "615091af72cc3843f4ee56d3a2c64471aa5b52bd8f316ec968fa8350d7afe17b"
+          "Sha256": "8cfc8884e204d7b7e3d0b831c07b505279a1b7be7891d4d0f0e646faa73bb551"
         },
         {
           "Path": "wwwroot/js/buffaly-workspace-session-ui.js.gz",
-          "Sha256": "90ff11b64aa77a20d8d3e4cac1bf1f8620d73d003a80fe304779ddbe3a127866"
+          "Sha256": "5407bddc6e4e5946e77145c36f9cf003399cc641586582c14107fd85737b952e"
         },
         {
           "Path": "wwwroot/js/buffaly-workspace-session-ui.js.md",
-          "Sha256": "dee4430277cff4e37594aab0dd442bf26a6f6232aee3c0a912f52526f4153075"
+          "Sha256": "d93787ab57f922de750a9e042039917824c1b3e9b5915eb154270e286f025709"
         },
         {
           "Path": "wwwroot/js/buffaly-workspace-session-ui.js.md.br",
-          "Sha256": "0c187ccab8aba08882e1158617f72ab6ff27b72b6f4c611655bc176a592bfc47"
+          "Sha256": "ca45147ba0be2e7cf7e310070494d2063ace61bf75f109327d71d87510987617"
         },
         {
           "Path": "wwwroot/js/buffaly-workspace-session-ui.js.md.gz",
-          "Sha256": "0b480f7b3e5b9c31744aa49e9cf08a595ea68bbe8ac7c28b125adc617fad1445"
+          "Sha256": "cc4167528a021cc8289cbe922f683cb09c5b9b58fa3eb2895a56aefc7a7f682d"
         },
         {
           "Path": "wwwroot/js/buffaly-workspace-workbench.js",
@@ -17008,6 +17032,42 @@
         {
           "Path": "wwwroot/js/buffaly-workspace-workbench.js.md.gz",
           "Sha256": "098f85001df18b8b7fb8ab7f364891d232a0dffb725ec4488c751dc605b650fa"
+        },
+        {
+          "Path": "wwwroot/workspace-index.html",
+          "Sha256": "7b21077cff91c8f89b6c2a66e86721dd4c926e9fee70dcc7f40f4997744d179d"
+        },
+        {
+          "Path": "wwwroot/workspace-index.html.br",
+          "Sha256": "b4771c8aca0a8a44026b25ff0866255154719e7ad8e72cfb958f45d6fb1a6b05"
+        },
+        {
+          "Path": "wwwroot/workspace-index.html.gz",
+          "Sha256": "7e9a846777161a1ab26a29c81d015cfc201c3a13218b565397015b01b6d430fa"
+        },
+        {
+          "Path": "wwwroot/workspace-pages.md",
+          "Sha256": "a1d6aa192fae35331eb87da1a5b06c93b936b51998c64db940898705cdceea0d"
+        },
+        {
+          "Path": "wwwroot/workspace-pages.md.br",
+          "Sha256": "2041385da7c4e2b53782230356514784f90af95fe59238f3ec085c0d75d4e03e"
+        },
+        {
+          "Path": "wwwroot/workspace-pages.md.gz",
+          "Sha256": "cebc9d12e2181de62ee8047cac7f78afb2cbafe764c029a87a8467b5291d49d1"
+        },
+        {
+          "Path": "wwwroot/workspace-workbench.html",
+          "Sha256": "813e082e72de746b684e2210dce25ee556d56c5d03eb4e30f8d7ffe724a99b00"
+        },
+        {
+          "Path": "wwwroot/workspace-workbench.html.br",
+          "Sha256": "4b48148b04319d42f0e165d190a44bd1c1ba3f987e91b01fd36948edbc070c66"
+        },
+        {
+          "Path": "wwwroot/workspace-workbench.html.gz",
+          "Sha256": "c76d27be80256710be0e1c4cc304d443d7d71d6ec9fa311e6a33ffa857100938"
         }
       ],
       "ProjectArtifacts": [],
