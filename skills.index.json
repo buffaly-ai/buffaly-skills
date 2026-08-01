@@ -1497,10 +1497,11 @@
     {
       "SkillName": "LocalTask",
       "Title": "Local Task",
-      "Description": "Buffaly OpsAgent skill package for LocalTask.",
-      "Version": "0.1.1",
+      "Description": "Buffaly skill package for Local Task.",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "Local Task",
         "LocalTask"
       ],
       "Path": "skills/LocalTask",
@@ -1516,19 +1517,11 @@
         {
           "Path": "Prompts/ToCreateAndMaintainLocalTask.prompt.md",
           "Sha256": "30839563f3eb5810fd72c472c7974d8cf101cab6ff0b1755d06c5336310b7400"
-        },
-        {
-          "Path": "index.pts.lazy.json",
-          "Sha256": "43e98babde4433f26b4ce7fe53b9594631668e53cd6a790b265c6203380855e4"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "MetabaseJsonWs",
