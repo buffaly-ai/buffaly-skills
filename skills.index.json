@@ -2599,7 +2599,7 @@
       "SkillName": "ValidatedPrompt",
       "Title": "Validated Prompt",
       "Description": "Buffaly skill package for Validated Prompt.",
-      "Version": "0.1.5",
+      "Version": "0.1.6",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Validated Prompt",
@@ -2609,7 +2609,11 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "9290237cd3820e1d0625d9866d4a804b861f6aa3d8445c4a7a41c2c7082aac99"
+          "Sha256": "0b82a47d3c54b14fe2441c6267c6d953d629c3febf72a157e34c265e6c401731"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "0ad1df682bffc3358fee75c4ce2e4855ae4ff997ef05f2b6682cff52ab3a21e9"
         },
         {
           "Path": "index.pts.md",
@@ -2642,10 +2646,6 @@
         {
           "Path": "WorkflowReport/workflow-report-viewer.html.md",
           "Sha256": "d0c8673924d40c16ed8801f5500117153fec9e418a28e9109bf665fe090afa02"
-        },
-        {
-          "Path": "index.pts.lazy.json",
-          "Sha256": "0ad1df682bffc3358fee75c4ce2e4855ae4ff997ef05f2b6682cff52ab3a21e9"
         }
       ],
       "EntryPoint": "index.pts",
