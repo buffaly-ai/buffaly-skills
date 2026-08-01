@@ -1478,10 +1478,11 @@
     {
       "SkillName": "Level2Watcher",
       "Title": "Level2 Watcher",
-      "Description": "Buffaly OpsAgent skill package for Level2Watcher.",
-      "Version": "0.1.0",
+      "Description": "Buffaly skill package for Level2 Watcher.",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "Level2 Watcher",
         "Level2Watcher"
       ],
       "Path": "skills/Level2Watcher",
@@ -1491,17 +1492,17 @@
           "Sha256": "c7f513d0b4373f41a01b243aa3e71306352d882d7b6ef149432c5a5e21f23b87"
         },
         {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "b80138267d8fb3c2cd28f924b9f3236b2f980d0d98ae6515a54a2f204f0ad842"
+        },
+        {
           "Path": "index.pts.md",
           "Sha256": "2069223198f565d01f46e2e1ed31cc6b40b1070417ccc268428fb25c07fd5a01"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "LocalTask",
