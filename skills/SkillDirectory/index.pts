@@ -1,3 +1,9 @@
+reference Buffaly.Agent.SkillManagement Buffaly.Agent.SkillManagement;
+
+import Buffaly.Agent.SkillManagement Buffaly.Agent.SkillManagement.SkillPublishingService SkillPublishingService;
+import Buffaly.Agent.SkillManagement Buffaly.Agent.SkillManagement.GenerateLazySkillIndexRequestContract GenerateLazySkillIndexRequestContract;
+import Buffaly.Agent.SkillManagement Buffaly.Agent.SkillManagement.GenerateLazySkillIndexResultContract GenerateLazySkillIndexResultContract;
+
 prototype SkillDirectorySkillAction : OpsAction
 {
 	Description = @"Base action type for official Buffaly Skill Directory tools.";
@@ -152,5 +158,22 @@ prototype ToUpdateBuffalyExtensionProfile : SkillDirectorySkillAction
 		request["DryRun"] = dryRun;
 		request["AllowPreStartInstall"] = allowPreStartInstall;
 		return ToCallPackageDirectoryService("update-instance-extension-profile", "UpdateInstanceExtensionProfile", request);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to generate a lazy skill sidecar")]
+[SemanticProgram.InfinitivePhrase("to build a lazy prototype index")]
+[SemanticProgram.InfinitivePhrase("to precompile a ProtoScript skill index")]
+prototype ToGenerateLazySkillSidecar : SkillDirectorySkillAction
+{
+	Description = @"projectFilePath - absolute validation Project.pts path. skillEntryPointPath - absolute skill index.pts path under that project. writeSidecar - true to atomically write index.pts.lazy.json after successful validation. Compiles the skill in project context and returns validation, prototype ownership, timing, and sidecar details as JSON.";
+
+	function Execute(string projectFilePath, string skillEntryPointPath, bool writeSidecar) : GenerateLazySkillIndexResultContract
+	{
+		GenerateLazySkillIndexRequestContract request = new GenerateLazySkillIndexRequestContract();
+		request.ProjectFilePath = projectFilePath;
+		request.SkillEntryPointPath = skillEntryPointPath;
+		request.WriteSidecar = writeSidecar;
+		return SkillPublishingService.GenerateLazySkillIndex(request);
 	}
 }

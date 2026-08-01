@@ -2,7 +2,7 @@ reference Buffaly.Agent.AudioTranscription;
 import Buffaly.Agent.AudioTranscription Buffaly.Agent.AudioTranscription.AudioArtifactTranscriptionTool AudioArtifactTranscriptionTool;
 
 [SemanticEntity("audio transcription skill")]
-prototype AudioTranscriptionSkill : SkillEntity, CoreEntity
+prototype AudioTranscriptionSkill : SkillEntity
 {
 	Description = "Transcription-only audio artifact tools that reuse the existing Buffaly voice transcription endpoint.";
 	ActionRoot = AudioTranscriptionSkillAction;

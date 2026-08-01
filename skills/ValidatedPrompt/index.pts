@@ -6,7 +6,7 @@ prototype ValidatedPromptSkillAction : OpsAction
 }
 
 [SemanticEntity("validated prompt skill")]
-prototype ValidatedPromptSkill : SkillEntity, CoreEntity
+prototype ValidatedPromptSkill : SkillEntity
 {
 	Description = "Validated prompt runner and sample validated prompt actions.";
 	ActionRoot = ValidatedPromptSkillAction;

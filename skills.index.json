@@ -75,7 +75,7 @@
       "SkillName": "AudioTranscription",
       "Title": "Audio Transcription",
       "Description": "Buffaly skill package for Audio Transcription.",
-      "Version": "0.1.4",
+      "Version": "0.1.5",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Audio Transcription",
@@ -85,7 +85,7 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "b8d149c38ae45e3c3b88d0f26204e0f22e0e1d2a8e8b04923d8765093d48b398"
+          "Sha256": "ac25b8568e570fd1f9b7eae252a8e094a635414938c4a1a1d868748b1d8ea5ba"
         },
         {
           "Path": "index.pts.md",
@@ -98,6 +98,10 @@
         {
           "Path": "SKILL.md",
           "Sha256": "87d5aa8ac149b84b0bf8224748a6ddc322f7ddc267d3ded1c397d475f8a4a192"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "b66e492995b4509f9553e67b6119d1fb78018a589c7f3bae8d26709a798ad84a"
         }
       ],
       "EntryPoint": "index.pts",
@@ -149,7 +153,7 @@
       "SkillName": "BuffalyCapabilityInspection",
       "Title": "Buffaly Capability Inspection",
       "Description": "Buffaly Capability Inspection Skill",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "BuffalyCapabilityInspection"
@@ -158,7 +162,7 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "07ac436f304ee1aac94ec006112675db18302ba578a50f051b0a41c142aa65d1"
+          "Sha256": "8c80c5168e2b0440118fb97ba8da584a6594b97e71bdf5af4c73776a25f1b8c8"
         },
         {
           "Path": "index.pts.md",
@@ -833,7 +837,7 @@
       "SkillName": "FFmpeg",
       "Title": "FFmpeg Media Tools",
       "Description": "Buffaly skill package for FFmpeg Media Tools.",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "FFmpeg Media Tools",
@@ -843,7 +847,7 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "fc2fbc27f9794cb1545b6adce7e53dc7b6bc2d002a41970c380aaa8ea22269a4"
+          "Sha256": "ea667dc7d08e4162b22ac8c301d0f3597068059922528b5a584e3123815a8fa6"
         },
         {
           "Path": "index.pts.md",
@@ -856,6 +860,10 @@
         {
           "Path": "SKILL.md",
           "Sha256": "c01480f9b38ed6c048e9ee7f76d1dd89ca2f7b578fc196c57d914675693e560d"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "207b97908fb215af3784eb24d7c07c9df2263d8ed6061ff3f645565531b1dac3"
         }
       ],
       "EntryPoint": "index.pts",
@@ -1319,7 +1327,7 @@
       "SkillName": "HelpAgent",
       "Title": "Help Agent",
       "Description": "Buffaly skill package for Help Agent.",
-      "Version": "0.1.1",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Help Agent",
@@ -1333,7 +1341,7 @@
         },
         {
           "Path": "index.pts",
-          "Sha256": "6a0e9fe34a0c758238973471675b5ba03d41155ec03043ffcaef10d470773d42"
+          "Sha256": "b72cc6d796c105c7e77cf08c4bbb5ad810fab4f2820aed77d2bc6702161a47c4"
         },
         {
           "Path": "index.pts.md",
@@ -1760,7 +1768,7 @@
       "SkillName": "Onboarding",
       "Title": "Onboarding",
       "Description": "Buffaly OpsAgent skill package for Onboarding.",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Onboarding"
@@ -1769,7 +1777,7 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "eb2db10a86f4f25022e0bd8511918992bef2b826494aa1e8c6980450441eb3f1"
+          "Sha256": "2826330a810d31cd2aa829fbfb457a9d448f5547cc28b45476234d1a6a46cb58"
         },
         {
           "Path": "index.pts.md",
@@ -2004,7 +2012,7 @@
       "SkillName": "Services",
       "Title": "Services",
       "Description": "Buffaly OpsAgent skill package for Services.",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Services"
@@ -2013,11 +2021,15 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "e882aaa1f590c2bd22a81e043ca226a291255049c047e01c4d6a648ffefb1fb8"
+          "Sha256": "052e377191c00cab3c84db072e6469cb73d911f1559727c1ae5788247fa4da7a"
         },
         {
           "Path": "index.pts.md",
           "Sha256": "5787871032893180c67d6b5acf6422a8a807574765d430b7dc1c66edb5386f16"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "a33b2240830cbc6571aea6bef80854e8cadf6f57a8e489b83ca02eb6c7373b00"
         }
       ],
       "EntryPoint": "index.pts",
@@ -2153,7 +2165,7 @@
       "SkillName": "SkillDirectory",
       "Title": "Skill Directory",
       "Description": "Buffaly skill package for Skill Directory.",
-      "Version": "0.1.2",
+      "Version": "0.1.3",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Skill Directory",
@@ -2163,11 +2175,11 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "422c51a009828363a0ba17055d6b8e7ba5d5042e7629bea941a6be9c17674d2a"
+          "Sha256": "40da92bbc133ab25d9abc68320bb15617f07c8668269934d26ed6ffae2cab44f"
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "9ba88a704a62a4fcd65c8f88026bf12415bcc4c2a881d949a5a1ce10029ecc28"
+          "Sha256": "ec0a500b35264f7b822831031e15482ae9ad667da9e5cad358974db1111063e4"
         },
         {
           "Path": "SKILL.md",
@@ -2290,7 +2302,7 @@
       "SkillName": "TailscaleExposure",
       "Title": "Tailscale Exposure",
       "Description": "Guide and validation helpers for exposing a Buffaly instance through Tailscale.",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "expose Buffaly through Tailscale",
@@ -2306,7 +2318,11 @@
         },
         {
           "Path": "index.pts",
-          "Sha256": "b59d0f6ffbd46a8d1f0424f3ea0e1f0fe2dbd67b644898275e156e44e80daca0"
+          "Sha256": "674f865a612ec54eaa8acc32d7b2faf90bdc045d794422c1f44706ad25adb3c6"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "037fef4af751b555e2259b4fad152fcf33c07e139eede7f059750ba98e19c53c"
         }
       ],
       "EntryPoint": "index.pts",
@@ -2588,7 +2604,7 @@
       "SkillName": "ValidatedPrompt",
       "Title": "Validated Prompt",
       "Description": "Buffaly skill package for Validated Prompt.",
-      "Version": "0.1.4",
+      "Version": "0.1.5",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Validated Prompt",
@@ -2598,7 +2614,7 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "0b82a47d3c54b14fe2441c6267c6d953d629c3febf72a157e34c265e6c401731"
+          "Sha256": "9290237cd3820e1d0625d9866d4a804b861f6aa3d8445c4a7a41c2c7082aac99"
         },
         {
           "Path": "index.pts.md",
@@ -2631,6 +2647,10 @@
         {
           "Path": "WorkflowReport/workflow-report-viewer.html.md",
           "Sha256": "d0c8673924d40c16ed8801f5500117153fec9e418a28e9109bf665fe090afa02"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "0ad1df682bffc3358fee75c4ce2e4855ae4ff997ef05f2b6682cff52ab3a21e9"
         }
       ],
       "EntryPoint": "index.pts",
