@@ -62,7 +62,7 @@ prototype ToInterpretOnlineActionDefinition : BuffalyNLMemorySkillAction
 
 	function Execute(string prototypeDefinition) : string
 	{
-		return BuffalyNlMemoryRuntimeTools.InterpretAndPersistOnlineActionDefinition(_runtime, _opsAgent, prototypeDefinition);
+		return BuffalyNlMemoryRuntimeTools.InterpretAndPersistOnlineActionDefinitionWithDiagnostic(_runtime, _opsAgent, prototypeDefinition);
 	}
 }
 
