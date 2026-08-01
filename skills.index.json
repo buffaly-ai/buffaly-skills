@@ -1319,21 +1319,25 @@
       "SkillName": "HelpAgent",
       "Title": "Help Agent",
       "Description": "Buffaly skill package for Help Agent.",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
-        "help agent",
+        "Help Agent",
         "HelpAgent"
       ],
       "Path": "skills/HelpAgent",
       "Files": [
         {
+          "Path": "Contracts.pts",
+          "Sha256": "3832383cd098b8def76fef1797a460a9272c566f26351ced230722f9804f7417"
+        },
+        {
           "Path": "index.pts",
-          "Sha256": "efa4e881185ea56429c3f941eafa26fc7a1c05125dfd8d3031cec3181a392e9c"
+          "Sha256": "6a0e9fe34a0c758238973471675b5ba03d41155ec03043ffcaef10d470773d42"
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "df305bc4f43ad9a0739150fe20e00650783d13f30788a672151369dafe80220c"
+          "Sha256": "59f5d4d3b1d6349f4986ef8a7d898f974888ba95fb1c16eacd4de370bdf1b6e5"
         },
         {
           "Path": "Prompts/ToCreateBasicCsvDownloadExportWalkthrough.prompt.md",
@@ -1366,15 +1370,19 @@
         {
           "Path": "Prompts/ToImportCodexCoworkConversationWalkthrough.prompt.md",
           "Sha256": "dd08edf8017708ab68bd232c8c89c98dfc32982cf5361ad5b6ddd1462a1e8681"
+        },
+        {
+          "Path": "TabularData/index.pts",
+          "Sha256": "e528288bb7fe3c28b7ceeb58437e603dcc9e318611b9815ca44a6ec73522c525"
+        },
+        {
+          "Path": "TabularData/index.pts.lazy.json",
+          "Sha256": "8ebe3971c37ffeff4125fcab4d5a60f73a36a5c5b6864336311f399c3178c436"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "LLM",
