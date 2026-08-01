@@ -1764,17 +1764,18 @@
     {
       "SkillName": "Onboarding",
       "Title": "Onboarding",
-      "Description": "Buffaly OpsAgent skill package for Onboarding.",
-      "Version": "0.1.1",
+      "Description": "Buffaly skill package for Onboarding.",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "Onboarding",
         "Onboarding"
       ],
       "Path": "skills/Onboarding",
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "2826330a810d31cd2aa829fbfb457a9d448f5547cc28b45476234d1a6a46cb58"
+          "Sha256": "eb2db10a86f4f25022e0bd8511918992bef2b826494aa1e8c6980450441eb3f1"
         },
         {
           "Path": "index.pts.md",
@@ -1835,11 +1836,7 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "OnlineSessionMemoryCritic",

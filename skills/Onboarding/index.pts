@@ -36,7 +36,7 @@ prototype ToShowInstallCapabilitiesSkill : OnboardingPromptAction
 	Description = "Guide a new user through the Buffaly Navigation capabilities screen, explaining installed skills, tools, prompt actions, context prompts, agents, providers, services, modules, ontology, and inspection surfaces in outcome-oriented language.";
 }
 
-prototype OnboardingSkill : SkillEntity
+prototype OnboardingSkill : SkillEntity, CoreEntity
 {
     EntityName = "Buffaly onboarding skill";
     Description = "Guided onboarding workflows for helping users understand Buffaly and teach it the first terms, actions, and preferences it should understand.";
