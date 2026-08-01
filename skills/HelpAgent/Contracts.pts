@@ -1,0 +1,4 @@
+prototype HelpAgentActionRoot : OpsAction
+{
+	Description = @"Documentation and approved guided-walkthrough action root for the Buffaly Help Agent. It exposes documentation/wiki lookup, LLM-backed web search, and narrow walkthrough prompt actions.";
+}

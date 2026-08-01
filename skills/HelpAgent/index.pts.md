@@ -148,3 +148,8 @@ Expose documentation-oriented tools to the Help Agent without granting the full 
 - Moved the DLL-backed Basic CSV convenience actions and `BasicCsvWalkthroughGrid` helper to the lazy TabularData module.
 - Kept the HelpAgent prompt walkthrough eager and preserved `HelpAgentActionRoot` on the moved action prototypes.
 - HelpAgent no longer imports `TabularDataFunctions` or `CsvDataSourceFunctions` during ordinary project startup.
+
+## Own Lazy TabularData Walkthrough Adapter (2026-08-01)
+- Extracted the real `HelpAgentActionRoot` declaration into `Contracts.pts`, which the eager HelpAgent entry point includes.
+- Moved the DLL-backed walkthrough declarations into `HelpAgent/TabularData/index.pts`, declared as a nested lazy module by the HelpAgent package entry point.
+- This keeps standalone TabularData independent and validates the adapter against a real package-owned contract instead of a validation-only stub.

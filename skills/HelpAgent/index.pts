@@ -1,3 +1,6 @@
+include "Contracts.pts";
+include lazy "TabularData/index.pts";
+
 import Buffaly.Agent.Wiki Buffaly.Agent.Wiki.WikiModule WikiModule;
 import Buffaly.Agent.Wiki Buffaly.Agent.Wiki.WikiService WikiServiceApi;
 import Buffaly.Agent.Wiki Buffaly.Agent.Wiki.ListWikiArticlesRequestContract ListWikiArticlesRequestContract;
@@ -12,11 +15,6 @@ import Buffaly.Agent.Wiki Buffaly.Agent.Wiki.SearchWikiRequestContract SearchWik
 import Buffaly.Agent.Wiki Buffaly.Agent.Wiki.SearchWikiResponseContract SearchWikiResponseContract;
 import Buffaly.Agent.Tools.Llm Buffaly.Agent.Tools.Llm.LLMs LLMs;
 import Buffaly.Agent.Tools.Platform Buffaly.Agent.Tools.Platform.CoreOntologyTools CoreOntologyTools;
-
-prototype HelpAgentActionRoot : OpsAction
-{
-	Description = @"Documentation and approved guided-walkthrough action root for the Buffaly Help Agent. It exposes documentation/wiki lookup, LLM-backed web search, and narrow walkthrough prompt actions.";
-}
 
 prototype HelpAgentPromptAction : PromptAction, HelpAgentActionRoot
 {

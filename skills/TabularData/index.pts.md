@@ -32,3 +32,7 @@
 - Moved the Basic CSV walkthrough convenience actions and helper prototype from eager HelpAgent source into this lazy module.
 - Kept their `HelpAgentActionRoot` ancestry so HelpAgent capability filtering remains unchanged after activation.
 - The module retains the assembly-name reference `reference Buffaly.Agent.Tools.TabularData Buffaly.Agent.Tools.TabularData;`; no eager project file references or imports the DLL.
+
+## Restore Independent Package Boundary (2026-08-01)
+- Removed the HelpAgent-owned Basic CSV walkthrough adapter declarations from this package so TabularData compiles against CoreLite alone.
+- The walkthrough adapter now lives under the HelpAgent package and uses HelpAgent's real packaged action-root contract.
