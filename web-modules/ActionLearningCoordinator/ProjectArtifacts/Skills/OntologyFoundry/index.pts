@@ -143,17 +143,6 @@ prototype ToOntologyFoundryListPrototypeFirstLevelDescendants : OntologyFoundryS
 	}
 }
 
-[SemanticProgram.InfinitivePhrase("to list ontology foundry installed web modules")]
-prototype ToOntologyFoundryListInstalledWebModules : OntologyFoundrySkillAction, OntologyFoundryActionRoot
-{
-	Description = @"Returns the authoritative installed web-module inventory, enabled state, and declared UI pages for family comparison.";
-
-	function Execute() : string
-	{
-		return ToListInstalledCapabilityWebModules.Execute();
-	}
-}
-
 [SemanticProgram.InfinitivePhrase("to list ontology foundry active level two sessions")]
 prototype ToOntologyFoundryListActiveSessions : OntologyFoundrySkillAction, OntologyFoundryActionRoot
 {
