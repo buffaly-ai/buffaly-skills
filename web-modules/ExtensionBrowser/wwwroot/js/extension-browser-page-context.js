@@ -9,6 +9,18 @@
 	const pendingSendUserState = new Map();
   const pendingMicrophones = new Map();
 
+	// The shared side-panel presentation hides all native session actions. ExtensionBrowser
+	// must keep the iframe's existing rename action available without duplicating its contract.
+	function exposeNativeRenameAction() {
+		const style = document.createElement('style');
+		style.id = 'extension-browser-native-session-rename';
+		style.textContent = [
+			'.ops-v2-header-session-actions { display: inline-flex !important; }',
+			'#btnOpsV2HeaderPinSession, #btnOpsV2HeaderArchiveSession { display: none !important; }'
+		].join('\n');
+		(document.head || document.documentElement).appendChild(style);
+	}
+
 	// Request one authoritative extension identity and current-page snapshot for ordinary Send.
 	function requestSendUserState() {
 		return new Promise((resolve, reject) => {
@@ -145,6 +157,7 @@
 	else request.resolve(event.data.userState);
   });
 
+	exposeNativeRenameAction();
   installMicrophoneDiagnostics();
 	window.BuffalyAgentNextExtensions.registerSendUserStateProvider({
 		id: 'extension-browser.send-user-state',
