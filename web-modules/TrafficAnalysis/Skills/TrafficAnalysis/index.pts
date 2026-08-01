@@ -34,25 +34,27 @@ prototype TrafficAnalysisCollectorAnalyzer
 
 prototype TrafficAnalysisGa4SourceCollector
 {
-	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string timeframe, string propertyIDsJson, int index, string summariesValue) : string
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string timeframe, string propertyIDsJson, string summariesValue) : string
 	{
 		string summariesJson = ToResolveStringReference.Execute(summariesValue);
+		int index = TrafficAnalysisProtoScriptFacade.GetWebPropertyIDCount(summariesJson);
 		if (index >= TrafficAnalysisProtoScriptFacade.GetWebPropertyIDCount(propertyIDsJson)) return summariesJson;
 		int webPropertyID = TrafficAnalysisProtoScriptFacade.GetCompactWebPropertyIDAt(propertyIDsJson, index);
 		string nextSummariesJson = TrafficAnalysisProtoScriptFacade.AppendSourceResponse(summariesJson, WebProperties_GetWebPropertyAnalyticsSummary.Execute(service, webPropertyID, timeframe));
-		return TrafficAnalysisGa4SourceCollector.Execute(service, timeframe, propertyIDsJson, index + 1, nextSummariesJson);
+		return TrafficAnalysisGa4SourceCollector.Execute(service, timeframe, propertyIDsJson, nextSummariesJson);
 	}
 }
 
 prototype TrafficAnalysisTrackingSourceCollector
 {
-	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string timeframe, string propertyIDsJson, int index, string overviewsValue) : string
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string timeframe, string propertyIDsJson, string overviewsValue) : string
 	{
 		string overviewsJson = ToResolveStringReference.Execute(overviewsValue);
+		int index = TrafficAnalysisProtoScriptFacade.GetWebPropertyIDCount(overviewsJson);
 		if (index >= TrafficAnalysisProtoScriptFacade.GetWebPropertyIDCount(propertyIDsJson)) return overviewsJson;
 		int webPropertyID = TrafficAnalysisProtoScriptFacade.GetCompactWebPropertyIDAt(propertyIDsJson, index);
 		string nextOverviewsJson = TrafficAnalysisProtoScriptFacade.AppendSourceResponse(overviewsJson, WebProperties_GetWebPropertyTrafficOverview.Execute(service, webPropertyID, timeframe));
-		return TrafficAnalysisTrackingSourceCollector.Execute(service, timeframe, propertyIDsJson, index + 1, nextOverviewsJson);
+		return TrafficAnalysisTrackingSourceCollector.Execute(service, timeframe, propertyIDsJson, nextOverviewsJson);
 	}
 }
 
@@ -194,7 +196,7 @@ prototype ToCollectGa4TrafficData : TrafficAnalysisSkillAction
 		string timeframe = TrafficAnalysisProtoScriptFacade.ResolveWebPropertiesTimeframe(runSettingsJson);
 		string propertyIDsJson = TrafficAnalysisProtoScriptFacade.ProjectWebPropertyIDs(WebProperties_GetWebProperties.Execute(service), true);
 		string propertiesJson = TrafficAnalysisProtoScriptFacade.ProjectWebProperties(WebProperties_GetWebProperties.Execute(service), true);
-		string summariesJson = TrafficAnalysisGa4SourceCollector.Execute(service, timeframe, propertyIDsJson, 0, "[]");
+		string summariesJson = TrafficAnalysisGa4SourceCollector.Execute(service, timeframe, propertyIDsJson, "[]");
 		return TrafficAnalysisCollectorAnalyzer.Execute(TrafficAnalysisProtoScriptFacade.BuildGa4Envelope(runId, runSettingsJson, propertiesJson, summariesJson));
 	}
 }
@@ -211,7 +213,7 @@ prototype ToCollectTrackingLogData : TrafficAnalysisSkillAction
 		string timeframe = TrafficAnalysisProtoScriptFacade.ResolveWebPropertiesTimeframe(runSettingsJson);
 		string propertyIDsJson = TrafficAnalysisProtoScriptFacade.ProjectWebPropertyIDs(WebProperties_GetWebProperties.Execute(service), false);
 		string propertiesJson = TrafficAnalysisProtoScriptFacade.ProjectWebProperties(WebProperties_GetWebProperties.Execute(service), false);
-		string overviewsJson = TrafficAnalysisTrackingSourceCollector.Execute(service, timeframe, propertyIDsJson, 0, "[]");
+		string overviewsJson = TrafficAnalysisTrackingSourceCollector.Execute(service, timeframe, propertyIDsJson, "[]");
 		return TrafficAnalysisCollectorAnalyzer.Execute(TrafficAnalysisProtoScriptFacade.BuildTrackingLogsEnvelope(runId, runSettingsJson, propertiesJson, overviewsJson));
 	}
 }
