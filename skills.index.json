@@ -264,7 +264,7 @@
       "SkillName": "BuffalySelfManagement",
       "Title": "Buffaly Self Management",
       "Description": "Buffaly skill package for Buffaly Self Management.",
-      "Version": "0.1.1",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Buffaly Self Management",
@@ -283,6 +283,10 @@
         {
           "Path": "index.pts",
           "Sha256": "af53ff3b70d5f69964f9d2a0041b7d9e7b9bd7d42a9de5881a562b0c488b563c"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "d46144abe52192fba3ace90d15d64375c24ae33f299ca9a7744a47f4640d6e87"
         },
         {
           "Path": "Prompts/AddDllBackedCapabilities.prompt.md",
