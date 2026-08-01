@@ -3,7 +3,7 @@ import OfflineOntologyCritic.Web OfflineOntologyCritic.Web.OfflineOntologyCritic
 [SemanticEntity("offline ontology critic action root")]
 prototype OfflineOntologyCriticActionRoot : OpsAction
 {
-	Description = @"Limited action root for the separate offline ontology critic agent. Exposes only offline ontology critic prompt skills plus narrow session, ontology, ledger, and checkpoint tools.";
+	Description = @"Limited action root for OfflineCritic feedback infrastructure. The retired two-part action-learning prompt workflow is not exposed.";
 }
 
 [SemanticEntity("offline ontology critic entity root")]
@@ -19,41 +19,6 @@ prototype OfflineOntologyCriticSkillAction : OfflineOntologyCriticActionRoot
 
 include "PromptActions.pts";
 
-[SemanticProgram.InfinitivePhrase("to run offline ontology critic phase one")]
-[SemanticProgram.InfinitivePhrase("to attach phase one offline critic to a session")]
-prototype ToRunOfflineOntologyCriticPhase1 : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
-{
-	Description = @"sourceSessionKey - source session to review. requestedCriticSessionKey - optional exact critic child session key. provider/modelName/reasoningLevel are optional and default to ollama/glm-5.2/medium. Creates or reuses an attached child and seeds the Phase 1 run prompt.";
-
-	function Execute(string sourceSessionKey, string requestedCriticSessionKey = "", string provider = "", string modelName = "", string reasoningLevel = "", int timeoutSeconds = 1200) : string
-	{
-		return OfflineOntologyCriticWebTools.RunPhase1CriticMarkdown(sourceSessionKey, requestedCriticSessionKey, provider, modelName, reasoningLevel, timeoutSeconds);
-	}
-}
-
-[SemanticProgram.InfinitivePhrase("to run the offline critic against a session")]
-[SemanticProgram.InfinitivePhrase("to run named offline ontology critic phase one")]
-prototype ToRunNamedOfflineOntologyCriticPhase1 : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
-{
-	Description = @"sourceSessionKey - source session to review. Enforces child session name '<source> - offline critic', offline-ontology-critic agent/profile roots, empty context, and provider/model/reasoning defaults ollama/glm-5.2/medium unless explicitly overridden.";
-
-	function Execute(string sourceSessionKey, string provider = "", string modelName = "", string reasoningLevel = "", int timeoutSeconds = 1200) : string
-	{
-		return OfflineOntologyCriticWebTools.RunNamedPhase1CriticMarkdownForProtoScript(_opsAgent, sourceSessionKey, provider, modelName, reasoningLevel, timeoutSeconds);
-	}
-}
-
-[SemanticProgram.InfinitivePhrase("to run the offline critic materializer against a session")]
-[SemanticProgram.InfinitivePhrase("to run named offline ontology critic phase two materializer")]
-prototype ToRunNamedOfflineOntologyCriticMaterializer : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
-{
-	Description = @"sourceSessionKey - source session whose '<source> - offline critic' Phase 1 artifact should be materialized. phase1ArtifactPath - optional explicit Phase 1 artifact path. Enforces child session name '<source> - critic materializer' using the normal buffaly-agent profile with provider/model/reasoning defaults ollama/glm-5.2/medium unless explicitly overridden.";
-
-	function Execute(string sourceSessionKey, string phase1ArtifactPath = "", string provider = "", string modelName = "", string reasoningLevel = "", int timeoutSeconds = 1800) : string
-	{
-		return OfflineOntologyCriticWebTools.RunNamedCriticMaterializerMarkdownForProtoScript(_opsAgent, sourceSessionKey, phase1ArtifactPath, provider, modelName, reasoningLevel, timeoutSeconds);
-	}
-}
 [SemanticProgram.InfinitivePhrase("to get offline ontology critic run status")]
 prototype ToGetOfflineOntologyCriticRunStatus : OfflineOntologyCriticSkillAction, OfflineOntologyCriticActionRoot
 {
@@ -276,6 +241,7 @@ prototype ToOfflineCriticListPrototypeFirstLevelDescendants : OfflineOntologyCri
 		return ToListPrototypeFirstLevelDescendants.Execute(prototype);
 	}
 }
+
 
 
 

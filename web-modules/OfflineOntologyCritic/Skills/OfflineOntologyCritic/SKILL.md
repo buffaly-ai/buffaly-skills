@@ -1,12 +1,5 @@
-# Offline Ontology Critic Skill
+# OfflineCritic Feedback Infrastructure Skill
 
-Provides prompt-skill tools for the dedicated `offline-ontology-critic` agent.
+Provides the limited tool root needed by feedback-review child sessions launched from the Buffaly feedback modal.
 
-The skill is intentionally rooted under `OfflineOntologyCriticActionRoot` so the normal Buffaly agent does not receive these tools by default.
-
-Initial tools:
-
-- `ToRunOfflineOntologyCriticPhase1Skill`
-- `ToRunOfflineOntologyCriticPhase2Skill`
-- `ToPreviewOntologyAdditionsFromLedgerSkill`
-- `ToMaterializeApprovedOntologyAdditionsSkill`
+The old two-part/action-learning prompt workflow was retired. Action learning now uses its own workflow outside this package. OfflineCritic remains installed so feedback review children can publish completion events and use the retained infrastructure endpoints.
