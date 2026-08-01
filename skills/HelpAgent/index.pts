@@ -350,7 +350,7 @@ prototype ToConnectFirstToolForHelpAgent : HelpAgentPromptAction
 	PromptPath = @"Skills/Onboarding/Prompts/ToConnectFirstToolSkill.prompt.md";
 	Description = "Guide a new user through choosing and starting their first useful Buffaly integration from Help Agent mode.";
 }
-prototype HelpAgentSkill : SkillEntity
+prototype HelpAgentSkill : SkillEntity, CoreEntity
 {
 	EntityName = "Buffaly Help Agent skill";
 	Description = "Documentation assistance and approved guided walkthrough root for the Buffaly Help Agent.";
