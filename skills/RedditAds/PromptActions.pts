@@ -1,0 +1,47 @@
+prototype RedditAdsPromptAction : PromptAction
+{
+	Description = "Base action type for Reddit Ads prompt workflows.";
+}
+
+[SemanticProgram.InfinitivePhrase("to audit a reddit ad account")]
+[SemanticProgram.InfinitivePhrase("to summarize reddit ads account performance")]
+prototype ToAuditRedditAdAccountSkill : RedditAdsPromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/RedditAds/Prompts/AuditRedditAdAccount.prompt.md";
+	Description = @"Loads the workflow for auditing Reddit ad account readiness, inventory, tracking assets, and recent account performance without exposing token values.";
+}
+
+[SemanticProgram.InfinitivePhrase("to plan a reddit ads campaign")]
+[SemanticProgram.InfinitivePhrase("to plan a reddit lead generation campaign")]
+prototype ToPlanRedditCampaignSkill : RedditAdsPromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/RedditAds/Prompts/PlanRedditCampaign.prompt.md";
+	Description = @"Loads the workflow for planning a Reddit ads campaign using existing account inventory, audiences, pixels, and safety constraints.";
+}
+
+[SemanticProgram.InfinitivePhrase("to create a paused reddit campaign")]
+prototype ToCreatePausedRedditCampaignWorkflowSkill : RedditAdsPromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/RedditAds/Prompts/CreatePausedRedditCampaign.prompt.md";
+	Description = @"Loads the guarded workflow for creating a campaign structure with campaign, ad group, creative, and ad objects created PAUSED only.";
+}
+
+[SemanticProgram.InfinitivePhrase("to recommend reddit ads optimizations")]
+[SemanticProgram.InfinitivePhrase("to find underperforming reddit ads")]
+prototype ToRecommendRedditAdsOptimizationsSkill : RedditAdsPromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/RedditAds/Prompts/RecommendRedditAdsOptimizations.prompt.md";
+	Description = @"Loads the workflow for comparing campaign, ad group, and ad performance and recommending safe optimization next steps without mutating account state.";
+}

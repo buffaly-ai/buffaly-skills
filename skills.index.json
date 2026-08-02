@@ -3152,6 +3152,55 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": []
+    },
+    {
+      "SkillName": "RedditAds",
+      "Title": "Reddit Ads API",
+      "Description": "Buffaly skill package for Reddit Ads API.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Reddit Ads API",
+        "RedditAds"
+      ],
+      "Path": "skills/RedditAds",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "3b7ee922810b981097bf3173135983125599b9f5258c63c89b787b9afad6c92c"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "926df4698f0bfc9b243009c3f439f068998d87253809f812ba73f6d2ad1c45b0"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "cc4853c5cca36083b38c3d3b5799a86a54d944c489ad031c780309572e81524c"
+        },
+        {
+          "Path": "Prompts/AuditRedditAdAccount.prompt.md",
+          "Sha256": "574f8849daac34d6ac2578da40ad85611b02be25d6ad8a7f580fa0ce7b37a1ce"
+        },
+        {
+          "Path": "Prompts/CreatePausedRedditCampaign.prompt.md",
+          "Sha256": "143d89917a498b432408cd76791f48ab931de032efdf0950f1ef585ecfaebe9d"
+        },
+        {
+          "Path": "Prompts/PlanRedditCampaign.prompt.md",
+          "Sha256": "5c4e4276503e14f4a5598738edf60f1b96512ffc5100f37ff10d27baff2e558f"
+        },
+        {
+          "Path": "Prompts/RecommendRedditAdsOptimizations.prompt.md",
+          "Sha256": "327fa6e3576c59e7da29bb52382667f61e20b016b50123de9dc5fe3be9ec1ab5"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "e8246095f9f277f5ffa81e4de52bf8463684fd95adc7c16e0302fafedaf51554"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
     }
   ]
 }

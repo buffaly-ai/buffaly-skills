@@ -1,0 +1,211 @@
+reference Buffaly.RedditAds Buffaly.RedditAds;
+
+import Buffaly.RedditAds Buffaly.RedditAds.RedditAdsApiFacade RedditAdsApiFacade;
+
+include "PromptActions.pts";
+
+prototype RedditAdsSkillAction : OpsAction
+{
+	Description = @"Base action type for Reddit Ads API v3 access checks, inventory listing, reporting, and paused-only creation.";
+}
+
+[SemanticEntity("reddit ads skill")]
+[SemanticEntity("reddit marketing api skill")]
+prototype RedditAdsSkill : SkillEntity
+{
+	EntityName = "reddit ads skill";
+	Description = "Reddit Ads API v3 tools for checking access, listing ad inventory, reporting, and paused-only creation using the RedditAds.Token UserSecrets entry.";
+	ActionRoot = RedditAdsSkillAction;
+}
+
+function ToRedditAdsApiTokenSecretKey() : string
+{
+	return RedditAdsApiFacade.GetTokenSecretKey();
+}
+
+[SemanticProgram.InfinitivePhrase("to get reddit ads api token secret key")]
+prototype ToGetRedditAdsApiTokenSecretKey : RedditAdsSkillAction
+{
+	Description = @"Returns the UserSecrets key name used for the Reddit Ads API token. Does not return the token value.";
+
+	function Execute() : string
+	{
+		return ToRedditAdsApiTokenSecretKey();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to test reddit ads api access")]
+prototype ToTestRedditAdsApiAccess : RedditAdsSkillAction
+{
+	Description = @"Uses the RedditAds.Token UserSecrets value to call Reddit Ads API and returns raw JSON. Does not return the token value.";
+
+	function Execute() : string
+	{
+		return RedditAdsApiFacade.TestAccess(UserSecrets.GetSecret(ToRedditAdsApiTokenSecretKey()));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list reddit ad accounts")]
+prototype ToListRedditAdAccounts : RedditAdsSkillAction
+{
+	Description = @"Uses the RedditAds.Token UserSecrets value to list visible Reddit ad accounts and returns raw JSON. Does not return the token value.";
+
+	function Execute() : string
+	{
+		return RedditAdsApiFacade.ListAdAccounts(UserSecrets.GetSecret(ToRedditAdsApiTokenSecretKey()));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get reddit ad account")]
+prototype ToGetRedditAdAccount : RedditAdsSkillAction
+{
+	Description = @"adAccountId - Reddit ad account id. Uses the RedditAds.Token UserSecrets value and returns raw JSON. Does not return the token value.";
+
+	function Execute(string adAccountId) : string
+	{
+		return RedditAdsApiFacade.GetAdAccount(UserSecrets.GetSecret(ToRedditAdsApiTokenSecretKey()), adAccountId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list reddit campaigns")]
+prototype ToListRedditCampaigns : RedditAdsSkillAction
+{
+	Description = @"adAccountId - Reddit ad account id. Uses the RedditAds.Token UserSecrets value to list campaigns and returns raw JSON. Does not return the token value.";
+
+	function Execute(string adAccountId) : string
+	{
+		return RedditAdsApiFacade.ListCampaigns(UserSecrets.GetSecret(ToRedditAdsApiTokenSecretKey()), adAccountId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create paused reddit campaign")]
+prototype ToCreatePausedRedditCampaign : RedditAdsSkillAction
+{
+	Description = @"adAccountId - Reddit ad account id. name - Campaign name. objective - Reddit campaign objective. budgetInMicrocents - daily budget in microcents. Creates the campaign with status PAUSED only, does not activate spend, and does not return the token value.";
+
+	function Execute(string adAccountId, string name, string objective, int budgetInMicrocents) : string
+	{
+		return RedditAdsApiFacade.CreatePausedCampaign(UserSecrets.GetSecret(ToRedditAdsApiTokenSecretKey()), adAccountId, name, objective, budgetInMicrocents);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get reddit campaign")]
+prototype ToGetRedditCampaign : RedditAdsSkillAction
+{
+	Description = @"campaignId - Reddit campaign id. Read-only action that uses the RedditAds.Token UserSecrets value to get one campaign and returns raw JSON. Does not return the token value.";
+
+	function Execute(string campaignId) : string
+	{
+		return RedditAdsApiFacade.GetCampaign(UserSecrets.GetSecret(ToRedditAdsApiTokenSecretKey()), campaignId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list reddit ad groups")]
+prototype ToListRedditAdGroups : RedditAdsSkillAction
+{
+	Description = @"adAccountId - Reddit ad account id. Uses the RedditAds.Token UserSecrets value to list ad groups and returns raw JSON. Does not return the token value.";
+
+	function Execute(string adAccountId) : string
+	{
+		return RedditAdsApiFacade.ListAdGroups(UserSecrets.GetSecret(ToRedditAdsApiTokenSecretKey()), adAccountId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create paused reddit ad group")]
+prototype ToCreatePausedRedditAdGroup : RedditAdsSkillAction
+{
+	Description = @"adAccountId - Reddit ad account id. name - Ad group name. campaignId - Parent campaign id. dailyBudgetInMicrocents - daily budget. targetingJson - Reddit targeting JSON (communities, interests, keywords, location, device). Creates the ad group with status PAUSED only, does not activate spend, and does not return the token value.";
+
+	function Execute(string adAccountId, string name, string campaignId, int dailyBudgetInMicrocents, string targetingJson) : string
+	{
+		return RedditAdsApiFacade.CreatePausedAdGroup(UserSecrets.GetSecret(ToRedditAdsApiTokenSecretKey()), adAccountId, name, campaignId, dailyBudgetInMicrocents, targetingJson);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get reddit ad group")]
+prototype ToGetRedditAdGroup : RedditAdsSkillAction
+{
+	Description = @"adGroupId - Reddit ad group id. Read-only action that uses the RedditAds.Token UserSecrets value to get one ad group and returns raw JSON. Does not return the token value.";
+
+	function Execute(string adGroupId) : string
+	{
+		return RedditAdsApiFacade.GetAdGroup(UserSecrets.GetSecret(ToRedditAdsApiTokenSecretKey()), adGroupId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list reddit ads")]
+prototype ToListRedditAds : RedditAdsSkillAction
+{
+	Description = @"adAccountId - Reddit ad account id. Uses the RedditAds.Token UserSecrets value to list ads and returns raw JSON. Does not return the token value.";
+
+	function Execute(string adAccountId) : string
+	{
+		return RedditAdsApiFacade.ListAds(UserSecrets.GetSecret(ToRedditAdsApiTokenSecretKey()), adAccountId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create paused reddit ad")]
+prototype ToCreatePausedRedditAd : RedditAdsSkillAction
+{
+	Description = @"adAccountId - Reddit ad account id. name - Ad name. adGroupId - Parent ad group id. creativeId - Existing creative id. Creates the ad with status PAUSED only, does not activate spend, and does not return the token value.";
+
+	function Execute(string adAccountId, string name, string adGroupId, string creativeId) : string
+	{
+		return RedditAdsApiFacade.CreatePausedAd(UserSecrets.GetSecret(ToRedditAdsApiTokenSecretKey()), adAccountId, name, adGroupId, creativeId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get reddit ad")]
+prototype ToGetRedditAd : RedditAdsSkillAction
+{
+	Description = @"adId - Reddit ad id. Read-only action that uses the RedditAds.Token UserSecrets value to get one ad and returns raw JSON. Does not return the token value.";
+
+	function Execute(string adId) : string
+	{
+		return RedditAdsApiFacade.GetAd(UserSecrets.GetSecret(ToRedditAdsApiTokenSecretKey()), adId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list reddit ad creatives")]
+prototype ToListRedditAdCreatives : RedditAdsSkillAction
+{
+	Description = @"adAccountId - Reddit ad account id. Uses the RedditAds.Token UserSecrets value to list ad creatives and returns raw JSON. Does not return the token value.";
+
+	function Execute(string adAccountId) : string
+	{
+		return RedditAdsApiFacade.ListAdCreatives(UserSecrets.GetSecret(ToRedditAdsApiTokenSecretKey()), adAccountId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list reddit custom audiences")]
+prototype ToListRedditCustomAudiences : RedditAdsSkillAction
+{
+	Description = @"adAccountId - Reddit ad account id. Uses the RedditAds.Token UserSecrets value to list custom audiences and returns raw JSON. Does not return the token value.";
+
+	function Execute(string adAccountId) : string
+	{
+		return RedditAdsApiFacade.ListCustomAudiences(UserSecrets.GetSecret(ToRedditAdsApiTokenSecretKey()), adAccountId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list reddit pixels")]
+prototype ToListRedditPixels : RedditAdsSkillAction
+{
+	Description = @"adAccountId - Reddit ad account id. Uses the RedditAds.Token UserSecrets value to list pixels and returns raw JSON. Does not return the token value.";
+
+	function Execute(string adAccountId) : string
+	{
+		return RedditAdsApiFacade.ListPixels(UserSecrets.GetSecret(ToRedditAdsApiTokenSecretKey()), adAccountId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to generate reddit ads report")]
+prototype ToGenerateRedditAdsReport : RedditAdsSkillAction
+{
+	Description = @"adAccountId - Reddit ad account id. reportType - report type (e.g., 'campaign', 'ad_group', 'ad'). dateRangePreset - date preset (e.g., 'last_7d', 'last_30d'). Uses the RedditAds.Token UserSecrets value to generate a report and returns raw JSON. Does not return the token value.";
+
+	function Execute(string adAccountId, string reportType, string dateRangePreset) : string
+	{
+		return RedditAdsApiFacade.GenerateReport(UserSecrets.GetSecret(ToRedditAdsApiTokenSecretKey()), adAccountId, reportType, dateRangePreset);
+	}
+}
