@@ -10741,7 +10741,7 @@
       "PackageType": "WebModule",
       "Title": "O ff ic e365",
       "Description": "Buffaly Web Module package for O ff ic e365.",
-      "Version": "0.1.8",
+      "Version": "0.1.9",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/Office365",
       "SourceUrl": "",
@@ -10788,7 +10788,7 @@
         },
         {
           "Path": "Buffaly.Office365.dll",
-          "Sha256": "df2708891273678cffec0f2dd94a9b53b98d8052bb2747a578eeb6f65320f492"
+          "Sha256": "83fddffddad7e351a7f9df5903927e148823ddd36d707114ff3dba926ef954c1"
         },
         {
           "Path": "Buffaly.Office365.WebModule.deps.json",
@@ -10796,11 +10796,11 @@
         },
         {
           "Path": "Buffaly.Office365.WebModule.dll",
-          "Sha256": "46fc7e3e2accacdf4bda4a1e8923412caf469c698e1a97b04acfe98e8f4e4353"
+          "Sha256": "d01bc236ad33b6e449801b330e6a1f050334a76b2feefb0eeec2433a0a31fbc9"
         },
         {
           "Path": "Buffaly.Office365.WebModule.exe",
-          "Sha256": "63784c53a03a8b21ca7617f357d684f99f59efbe266b06620c639f06b7703ff7"
+          "Sha256": "51a206c501b264f19b92046e5628fadd0ec31882f5ab5f52237b11a2e7bab711"
         },
         {
           "Path": "Buffaly.Office365.WebModule.runtimeconfig.json",
@@ -11092,7 +11092,8 @@
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
       "RequiresRestart": true,
-      "RequiresPreStartInstall": true
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     },
     {
       "PackageId": "OfflineOntologyCritic",
