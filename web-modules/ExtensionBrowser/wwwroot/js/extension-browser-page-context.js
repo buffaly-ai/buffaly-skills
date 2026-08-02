@@ -85,6 +85,30 @@
     return { type: description.type, sdp: description.sdp };
   }
 
+  async function reportMicrophoneSignal(stream, stage) {
+    const track = stream && stream.getAudioTracks()[0];
+    if (!track) return;
+    let audioContext = null;
+    try {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioContext.state === 'suspended') await audioContext.resume();
+      const analyser = audioContext.createAnalyser();
+      analyser.fftSize = 2048;
+      audioContext.createMediaStreamSource(stream).connect(analyser);
+      const samples = new Float32Array(analyser.fftSize);
+      let squaredSum = 0, sampleCount = 0, peak = 0;
+      const deadline = performance.now() + 1000;
+      while (performance.now() < deadline) {
+        analyser.getFloatTimeDomainData(samples);
+        for (const value of samples) { const magnitude = Math.abs(value); squaredSum += value * value; sampleCount += 1; if (magnitude > peak) peak = magnitude; }
+        await new Promise(resolve => window.setTimeout(resolve, 50));
+      }
+      window.parent.postMessage({ type: 'extension_browser_microphone_diagnostic', origin: window.location.origin, permissionState: 'broker', result: 'signal', stage, rms: sampleCount ? Math.sqrt(squaredSum / sampleCount) : 0, peak, trackMuted: track.muted, trackEnabled: track.enabled, trackReadyState: track.readyState, capturedUtc: new Date().toISOString() }, '*');
+    } catch (error) {
+      window.parent.postMessage({ type: 'extension_browser_microphone_diagnostic', origin: window.location.origin, permissionState: 'broker', result: 'signal-error', stage, name: error && error.name || 'SignalProbeError', message: error && error.message || String(error), capturedUtc: new Date().toISOString() }, '*');
+    } finally { try { audioContext && await audioContext.close(); } catch (_) { } }
+  }
+
   function requestBrokeredMicrophone() {
     return new Promise((resolve, reject) => {
       const requestId = crypto.randomUUID();
@@ -104,6 +128,7 @@
         track.stop = () => { scheduleBrokeredMicrophoneRelease(requestId); stop(); };
         stream.addTrack(track);
         track.addEventListener('ended', () => scheduleBrokeredMicrophoneRelease(requestId), { once: true });
+        void reportMicrophoneSignal(stream, 'iframe-receiver');
         finishBrokeredMicrophone(requestId, null);
       };
     });
@@ -152,6 +177,8 @@
         const error = new Error(String(event.data.message || 'Chrome did not grant microphone access.'));
         error.name = String(event.data.name || 'MicrophoneError');
         finishBrokeredMicrophone(event.data.requestId, error);
+		} else if (event.data.type === 'extension_browser_microphone_signal') {
+			window.parent.postMessage({ type: 'extension_browser_microphone_diagnostic', origin: window.location.origin, permissionState: 'broker', result: 'signal', stage: 'broker-source', rms: Number(event.data.rms) || 0, peak: Number(event.data.peak) || 0, trackMuted: event.data.trackMuted === true, trackEnabled: event.data.trackEnabled !== false, trackReadyState: String(event.data.trackReadyState || 'unknown'), capturedUtc: String(event.data.capturedUtc || new Date().toISOString()) }, '*');
 		}
 		return;
 	}
