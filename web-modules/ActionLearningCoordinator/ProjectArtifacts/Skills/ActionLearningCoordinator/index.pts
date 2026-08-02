@@ -17,6 +17,7 @@ import ActionLearningCoordinator.Web ActionLearningCoordinator.Web.OntologyFound
 import ActionLearningCoordinator.Web ActionLearningCoordinator.Web.ActionLearningCandidateProjection ActionLearningCandidateProjection;
 import ActionLearningCoordinator.Web ActionLearningCoordinator.Web.OnlineMemoryCriticBatchProjection OnlineMemoryCriticBatchProjection;
 import ActionLearningCoordinator.Web ActionLearningCoordinator.Web.OnlineActionCriticBatchProjection OnlineActionCriticBatchProjection;
+import ActionLearningCoordinator.Web ActionLearningCoordinator.Web.SessionWorkCoordinatorFile SessionWorkCoordinatorFile;
 
 [SemanticEntity("session work coordinator action root")]
 prototype SessionWorkCoordinatorActionRoot : OpsAction
@@ -175,11 +176,11 @@ prototype ToGetSessionWorkLedger : SessionWorkCoordinatorSkillAction
 	function Execute() : string
 	{
 		string path = Path.Combine(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json");
-		if (!File.Exists(path))
+		if (!SessionWorkCoordinatorFile.Exists(path))
 		{
 			return @"{""SchemaVersion"":2,""CoordinatorSkill"":""SessionWorkCoordinatorSkill"",""Exists"":false,""Entries"":[]}";
 		}
-		return File.ReadAllText(path);
+		return SessionWorkCoordinatorFile.ReadAllText(path);
 	}
 	Description = @"Reads the fixed JSON ledger owned by the current coordinator session. Missing is explicit and does not create state.";
 }
@@ -190,9 +191,9 @@ prototype ToInitializeSessionWorkLedger : SessionWorkCoordinatorSkillAction
 	function Execute() : string
 	{
 		string path = Path.Combine(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json");
-		if (File.Exists(path))
+		if (SessionWorkCoordinatorFile.Exists(path))
 		{
-			return File.ReadAllText(path);
+			return SessionWorkCoordinatorFile.ReadAllText(path);
 		}
 		string ledger = @"{""SchemaVersion"":2,""CoordinatorSkill"":""SessionWorkCoordinatorSkill"",""Exists"":true,""Entries"":[]}";
 		FileSystemTools.ReplaceTextFile(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json", ledger);
@@ -208,9 +209,9 @@ prototype ToAddSessionWorkEntry : SessionWorkCoordinatorSkillAction
 	{
 		string path = Path.Combine(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json");
 		JsonObject ledger = new JsonObject(@"{""SchemaVersion"":2,""CoordinatorSkill"":""SessionWorkCoordinatorSkill"",""Exists"":true,""Entries"":[]}");
-		if (File.Exists(path))
+		if (SessionWorkCoordinatorFile.Exists(path))
 		{
-			ledger = new JsonObject(File.ReadAllText(path));
+			ledger = new JsonObject(SessionWorkCoordinatorFile.ReadAllText(path));
 		}
 		JsonArray entries = ledger.GetJsonArrayOrFail(@"Entries", @"Session work ledger Entries is required.");
 		foreach (JsonValue value in entries)
@@ -247,7 +248,7 @@ prototype ToRemoveSessionWorkEntry : SessionWorkCoordinatorSkillAction
 	function Execute(string sourceSessionKey) : string
 	{
 		string path = Path.Combine(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json");
-		if (!File.Exists(path))
+		if (!SessionWorkCoordinatorFile.Exists(path))
 		{
 			JsonObject absentLedger = new JsonObject(@"{""SchemaVersion"":2,""CoordinatorSkill"":""SessionWorkCoordinatorSkill"",""Exists"":false,""Entries"":[]}");
 			JsonObject absent = new JsonObject();
@@ -256,7 +257,7 @@ prototype ToRemoveSessionWorkEntry : SessionWorkCoordinatorSkillAction
 			absent[@"Ledger"] = absentLedger;
 			return absent.ToJSON();
 		}
-		JsonObject ledger = new JsonObject(File.ReadAllText(path));
+		JsonObject ledger = new JsonObject(SessionWorkCoordinatorFile.ReadAllText(path));
 		JsonArray entries = ledger.GetJsonArrayOrFail(@"Entries", @"Session work ledger Entries is required.");
 		foreach (JsonValue value in entries)
 		{
@@ -301,9 +302,9 @@ prototype ToAttachActionLearningWorker : ActionLearningCoordinatorSkillAction
 		workerSessionKey = validated.GetStringOrFail(@"WorkerSessionKey", @"Validated worker session key is required.");
 		string path = Path.Combine(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json");
 		JsonObject ledger = new JsonObject(@"{""SchemaVersion"":2,""CoordinatorSkill"":""SessionWorkCoordinatorSkill"",""Exists"":true,""Entries"":[]}");
-		if (File.Exists(path))
+		if (SessionWorkCoordinatorFile.Exists(path))
 		{
-			ledger = new JsonObject(File.ReadAllText(path));
+			ledger = new JsonObject(SessionWorkCoordinatorFile.ReadAllText(path));
 		}
 		JsonArray entries = ledger.GetJsonArrayOrFail(@"Entries", @"Session work ledger Entries is required.");
 		foreach (JsonValue value in entries)
