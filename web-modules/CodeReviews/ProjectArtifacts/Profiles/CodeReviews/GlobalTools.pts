@@ -1,0 +1,226 @@
+reference Buffaly.CodeReviews Buffaly.CodeReviews;
+reference Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness;
+reference Buffaly.Agent.Host Buffaly.Agent.Host;
+reference Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions;
+reference BasicUtilities BasicUtilities;
+import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewFindingsService CodeReviewFindingsService;
+import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewTurnAgentService CodeReviewTurnAgentService;
+import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewEvidenceService CodeReviewEvidenceService;
+import Buffaly.Agent.Host Buffaly.Agent.Host.BuffalyArtifacts BuffalyArtifacts;
+import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.SessionTools SessionTools;
+import BasicUtilities BasicUtilities.JsonUtil JsonUtil;
+
+[SemanticEntity("code reviews agent tools")]
+prototype CodeReviewsAgentToolsSkill : SkillEntity
+{
+	Description = "Typed CodeReviews lifecycle tools for code review agents.";
+	ActionRoot = CodeReviewsAgentToolsAction;
+}
+
+prototype CodeReviewsAgentToolsAction : OpsAction
+{
+	Description = @"Base action type for CodeReviews agent lifecycle tools.";
+}
+
+[SemanticProgram.InfinitivePhrase("to attach a configured code review agent")]
+prototype ToAttachConfiguredCodeReviewAgent : CodeReviewsAgentToolsAction
+{
+	Description = @"Review one selected completed source turn and attach the deterministic CodeReviews child to future turn.completed events.";
+	function Execute(string turnKey, string provider, string modelName, string reasoningLevel) : string { return CodeReviewTurnAgentService.AttachForCurrentSession(_opsAgent, turnKey, provider, modelName, reasoningLevel); }
+}
+
+[SemanticProgram.InfinitivePhrase("to detach the code review agent")]
+prototype ToDetachConfiguredCodeReviewAgent : CodeReviewsAgentToolsAction
+{
+	function Execute() : string { return CodeReviewTurnAgentService.DetachForCurrentSession(_opsAgent); }
+}
+
+[SemanticProgram.InfinitivePhrase("to get code review attachment status")]
+prototype ToGetConfiguredCodeReviewAgentStatus : CodeReviewsAgentToolsAction
+{
+	function Execute() : string { return CodeReviewTurnAgentService.GetAttachmentStatusForCurrentSession(_opsAgent); }
+}
+
+[SemanticProgram.InfinitivePhrase("to dispatch a code review completed turn")]
+prototype ToDispatchCodeReviewTurnCompletedEvent : CodeReviewsAgentToolsAction
+{
+	function Execute(string callbackJson) : string { return CodeReviewTurnAgentService.RenderTurnDispatchFromCallback(callbackJson); }
+}
+
+[SemanticProgram.InfinitivePhrase("to submit grouped code review turn findings")]
+prototype ToSubmitCodeReviewTurnFindings : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
+{
+	function Execute(string SourceTurnContextJson, string ReviewText) : string { return CodeReviewFindingsService.SubmitTurnFindingsJson(_opsAgent, SourceTurnContextJson, ReviewText); }
+}
+
+[SemanticProgram.InfinitivePhrase("to complete a grouped code review turn without findings")]
+prototype ToCompleteCodeReviewTurnWithoutFindings : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
+{
+	function Execute(string SourceTurnContextJson) : string { return CodeReviewFindingsService.CompleteTurnWithoutFindingsJson(_opsAgent, SourceTurnContextJson); }
+}
+
+[SemanticProgram.InfinitivePhrase("to mark a grouped code review turn failed")]
+prototype ToMarkCodeReviewTurnFailed : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
+{
+	function Execute(string SourceTurnContextJson, string FailureReason) : string { return CodeReviewFindingsService.MarkTurnFailedJson(_opsAgent, SourceTurnContextJson, FailureReason); }
+}
+
+[SemanticProgram.InfinitivePhrase("to inspect an exact code review commit diff")]
+prototype ToGetCodeReviewCommitDiff : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
+{
+	Description = @"RepositoryPath - exact local repository path from SourceTurnContextJson. CommitSha - exact manifest SHA. Returns a bounded typed commit snapshot containing metadata, changed files, rename information, and per-file patches. Read every manifest commit with this action; do not substitute the working tree or a range.";
+	function Execute(string RepositoryPath, string CommitSha) : string { return CodeReviewEvidenceService.GetCommitDiffJson(RepositoryPath, CommitSha); }
+}
+
+[SemanticProgram.InfinitivePhrase("to read a code review file at an exact commit")]
+prototype ToGetCodeReviewFileAtCommit : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
+{
+	Description = @"RepositoryPath - exact local repository path from SourceTurnContextJson. CommitSha - exact manifest SHA. Path - repository-relative file path from the commit snapshot. Returns bounded file content from that exact commit for surrounding context; never reads the current working tree.";
+	function Execute(string RepositoryPath, string CommitSha, string Path) : string { return CodeReviewEvidenceService.GetFileAtCommitJson(RepositoryPath, CommitSha, Path); }
+}
+
+[SemanticProgram.InfinitivePhrase("to inspect the latest source turn for global code review")]
+prototype ToGetGlobalCodeReviewMostRecentSourceTurn : GlobalCodeReviewsAgentAction
+{
+	Description = @"SourceSessionKey - exact source session from SourceTurnContextJson. Returns only the latest bounded turn summary. Use the immutable reviewed turn in SourceTurnContextJson as primary evidence; use this only to identify later corrections or current source-session state.";
+	function Execute(string SourceSessionKey) : string { return JsonUtil.ToStringExt(SessionTools.GetMostRecentSessionTurnTool(SourceSessionKey)).ToString(); }
+}
+
+[SemanticProgram.InfinitivePhrase("to inspect recent source turns for global code review")]
+prototype ToGetGlobalCodeReviewRecentSourceTurns : GlobalCodeReviewsAgentAction
+{
+	Description = @"SourceSessionKey - exact source session from SourceTurnContextJson. MaxTurns - bounded count of recent summaries, capped by the typed SessionTools service. Use only when the immutable reviewed turn and governing artifacts are insufficient or later corrections may affect a suspected finding.";
+	function Execute(string SourceSessionKey, int MaxTurns = 5) : string { return JsonUtil.ToStringExt(SessionTools.GetRecentSessionTurnsTool(SourceSessionKey, MaxTurns)).ToString(); }
+}
+
+[SemanticProgram.InfinitivePhrase("to read authoritative language guidance for global code review")]
+prototype ToGetGlobalCodeReviewLanguageGuidance : GlobalCodeReviewsAgentAction
+{
+	Description = @"Language - one exact token: CSharp, ProtoScript, or JavaScript. Returns the authoritative installed CodeReviews guidance through the trusted runtime prompt loader. Read every applicable language before completing the grouped review.";
+	function Execute(string Language) : string
+	{
+		String promptPath = new String();
+		if (StringUtil.EqualNoCase(Language, "CSharp")) promptPath = "../../Nodes/Personal/CodeReviews/CodeReviews.CSharp.md";
+		else if (StringUtil.EqualNoCase(Language, "ProtoScript")) promptPath = "../../Nodes/Personal/CodeReviews/CodeReviews.ProtoScript.md";
+		else if (StringUtil.EqualNoCase(Language, "JavaScript")) promptPath = "../../Nodes/Personal/CodeReviews/CodeReviews.JavaScript.md";
+		else throw "Language must be exactly CSharp, ProtoScript, or JavaScript.";
+		String promptText = _opsAgent.LoadTrustedPromptText(promptPath);
+		return promptText;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to submit code review findings")]
+[SemanticProgram.InfinitivePhrase("to deliver code review findings")]
+prototype ToSubmitCodeReviewFindings : CodeReviewsAgentToolsAction
+{
+	Description = @"RepositoryPath - local repository path. CommitSha - full or short hexadecimal commit SHA. ReviewText - markdown containing one or more material actionable findings. Every finding must explain the problem and consequence, cite concrete code evidence, cite the governing source-session document or instruction that justifies it, explain the mismatch, and recommend an action for the original agent. Stores findings, marks the commit reviewed, and notifies the parent session. Do not call this action when there are no material findings; call ToCompleteCodeReviewWithoutFindings instead. Do not pass source or child session keys.";
+
+	function Execute(string RepositoryPath, string CommitSha, string ReviewText) : string
+	{
+		return CodeReviewFindingsService.SubmitFindingsJson(RepositoryPath, CommitSha, ReviewText);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to complete a code review without findings")]
+[SemanticProgram.InfinitivePhrase("to mark a code review clean")]
+prototype ToCompleteCodeReviewWithoutFindings : CodeReviewsAgentToolsAction
+{
+	Description = @"RepositoryPath - local repository path. CommitSha - full or short hexadecimal commit SHA. Marks the review complete without storing findings and without notifying the source session. Use only after completing the required source-context and code review when there are no material actionable findings.";
+
+	function Execute(string RepositoryPath, string CommitSha) : string
+	{
+		return CodeReviewFindingsService.CompleteWithoutFindingsJson(RepositoryPath, CommitSha);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read a source session plan for code review")]
+prototype ToGetCodeReviewSourceSessionPlan : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
+{
+	Description = @"SourceSessionKey - exact source session associated with the reviewed commit. Returns the source session Plan.md through the typed artifact service.";
+
+	function Execute(string SourceSessionKey) : string
+	{
+		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionArtifactText(SourceSessionKey, "Plan.md")).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read source session scratch for code review")]
+prototype ToGetCodeReviewSourceSessionScratch : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
+{
+	Description = @"SourceSessionKey - exact source session associated with the reviewed commit. Returns the source session Scratch.md through the typed artifact service. Scratch is supporting evidence and must not override the user instruction, active task, or governing design.";
+
+	function Execute(string SourceSessionKey) : string
+	{
+		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionArtifactText(SourceSessionKey, "Scratch.md")).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list source session tasks for code review")]
+prototype ToListCodeReviewSourceSessionTasks : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
+{
+	Description = @"SourceSessionKey - exact source session associated with the reviewed commit. Returns validated root-level task artifact names through the typed artifact service.";
+
+	function Execute(string SourceSessionKey) : string
+	{
+		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionTaskArtifactNames(SourceSessionKey)).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read a source session task for code review")]
+prototype ToReadCodeReviewSourceSessionTask : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
+{
+	Description = @"SourceSessionKey - exact source session associated with the reviewed commit. TaskArtifactFileName - exact task-*.md file name returned by ToListCodeReviewSourceSessionTasks. Returns the validated task artifact through the typed artifact service.";
+
+	function Execute(string SourceSessionKey, string TaskArtifactFileName) : string
+	{
+		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionTaskArtifactText(SourceSessionKey, TaskArtifactFileName)).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list source session artifacts for code review")]
+[SemanticProgram.InfinitivePhrase("to list governing documents from a source session")]
+prototype ToListCodeReviewSourceSessionArtifacts : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
+{
+	Description = @"SourceSessionKey - exact source session associated with the reviewed commit. Returns the typed session artifact manifest, including discoverable files under artifacts/**. Use it to identify governing design or implementation documents. Do not inspect unrelated sessions.";
+
+	function Execute(string SourceSessionKey) : string
+	{
+		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionArtifacts(SourceSessionKey)).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read a source session artifact for code review")]
+[SemanticProgram.InfinitivePhrase("to read a governing document from a source session")]
+prototype ToReadCodeReviewSourceSessionArtifact : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
+{
+	Description = @"SourceSessionKey - exact source session associated with the reviewed commit. ArtifactPath - exact relative artifact path returned by ToListCodeReviewSourceSessionArtifacts. Returns the artifact through the typed artifact service. Read only plausible governing documents related to the reviewed change.";
+
+	function Execute(string SourceSessionKey, string ArtifactPath) : string
+	{
+		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionArtifactText(SourceSessionKey, ArtifactPath)).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get code review status")]
+[SemanticProgram.InfinitivePhrase("to check code review status")]
+prototype ToGetCodeReviewStatus : CodeReviewsAgentToolsAction
+{
+	Description = @"RepositoryPath - local repository path. CommitSha - full or short hexadecimal commit SHA. Returns the CodeReviews commit review record as JSON.";
+
+	function Execute(string RepositoryPath, string CommitSha) : string
+	{
+		return CodeReviewFindingsService.GetStatusJson(RepositoryPath, CommitSha);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to mark code review failed")]
+[SemanticProgram.InfinitivePhrase("to record code review failure")]
+prototype ToMarkCodeReviewFailed : CodeReviewsAgentToolsAction
+{
+	Description = @"RepositoryPath - local repository path. CommitSha - full or short hexadecimal commit SHA. FailureReason - concise reason the review could not be completed. Marks the CodeReviews commit review record failed.";
+
+	function Execute(string RepositoryPath, string CommitSha, string FailureReason) : string
+	{
+		return CodeReviewFindingsService.MarkFailedJson(RepositoryPath, CommitSha, FailureReason);
+	}
+}
