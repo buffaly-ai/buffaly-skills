@@ -1,8 +1,11 @@
 {
   "AgentName": "action-learning-coordinator",
   "DisplayName": "Action Learning Coordinator",
-  "Aliases": ["action learning coordinator"],
+  "Aliases": [
+    "action learning coordinator"
+  ],
   "PromptFile": "Skills/ActionLearningCoordinator/Prompts/ActionLearningCoordinator.md",
+  "ProjectFilePath": "Profiles/ActionLearningCoordinator/Project.pts",
   "RootActionPrototypeName": "ActionLearningCoordinatorSkillAction",
   "RootEntityPrototypeName": "ActionLearningCoordinatorEntityRoot",
   "Provider": "openai",

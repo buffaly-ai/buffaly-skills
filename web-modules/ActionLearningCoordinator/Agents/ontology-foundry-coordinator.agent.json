@@ -1,8 +1,12 @@
 {
   "AgentName": "ontology-foundry-coordinator",
   "DisplayName": "Ontology Foundry Coordinator",
-  "Aliases": ["ontology foundry coordinator", "foundry workspace"],
+  "Aliases": [
+    "ontology foundry coordinator",
+    "foundry workspace"
+  ],
   "PromptFile": "Skills/ActionLearningCoordinator/Prompts/OntologyFoundryCoordinator.md",
+  "ProjectFilePath": "Profiles/ActionLearningCoordinator/Project.pts",
   "RootActionPrototypeName": "OntologyFoundryCoordinatorSkillAction",
   "RootEntityPrototypeName": "OntologyFoundryCoordinatorEntityRoot",
   "Provider": "openai",

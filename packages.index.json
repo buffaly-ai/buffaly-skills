@@ -2440,10 +2440,10 @@
       "PackageType": "WebModule",
       "Title": "Action Learning Coordinator",
       "Description": "Buffaly Web Module package for Action Learning Coordinator.",
-      "Version": "0.1.73",
+      "Version": "0.1.74",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/ActionLearningCoordinator",
-      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/ActionLearningCoordinator",
+      "SourceUrl": "",
       "Phrases": [
         "Action Learning Coordinator",
         "ActionLearningCoordinator"
@@ -2455,7 +2455,7 @@
         },
         {
           "Path": "ActionLearningCoordinator.Web.dll",
-          "Sha256": "8c16d8460fbaa041c4e9d4f72849105c4b1bb617f8221d0e48cd9a4ee4503367"
+          "Sha256": "0f92d378947b1b203436975514db024f4965fe6660f3fbed927f6b1f3dc92d20"
         },
         {
           "Path": "ActionLearningCoordinator.Web.staticwebassets.endpoints.json",
@@ -2463,11 +2463,11 @@
         },
         {
           "Path": "Agents/action-learning-coordinator.agent.json",
-          "Sha256": "6ad6b510d1feed74e21056beab7717f48cedaa4f8ef51fcf7b09d0e56fd5b694"
+          "Sha256": "1e995fdade8876a81550a7bb1ba5e3437f5f54d38c87e275800a40c861dcbcba"
         },
         {
           "Path": "Agents/action-learning.agent.json",
-          "Sha256": "d99927c4bce19994b5d6c9c259fda79616d59fa8f4854ad47eaab7fc476bd68c"
+          "Sha256": "e9563b6a594fe8b9970ea0dcc0abea5682fb96d60be27edfd3abe4a5dbe8041c"
         },
         {
           "Path": "Agents/online-memory-critic-batch-coordinator.agent.json",
@@ -2475,15 +2475,27 @@
         },
         {
           "Path": "Agents/ontology-foundry-coordinator.agent.json",
-          "Sha256": "10c13e2685023590ce84b66969a13617049afea9653b375bafdb33fa7800017e"
+          "Sha256": "653850fa78a8ecee876af3f6e1ec24423db77c55c4833e28c74c6e1e464f4111"
         },
         {
           "Path": "Agents/ontology-foundry.agent.json",
-          "Sha256": "e770b4fae3b3d7b8d291181613fdd6e970daf89a7b606be7d490bd546787055f"
+          "Sha256": "27760e01aebc556d41d3766890e16df8a189d41bbca72449b5988a387aa1b0f1"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "663fc3f42e7eeada5d985f2b98d617227b56770fc92c3763a195288038d8388e"
+          "Sha256": "711ad819746aa7ecac4d0ee298482421355b3582cf8a68a3a165f4e3440d3daa"
+        },
+        {
+          "Path": "ProjectArtifacts/Profiles/ActionLearningCoordinator/Project.pts",
+          "Sha256": "623e0a68f95af21137e1bb67a74a5e6c38efc0b2c26523d0308b0c248a3e3306"
+        },
+        {
+          "Path": "ProjectArtifacts/Profiles/ActionLearning/Project.pts",
+          "Sha256": "9f8d66eecf2a03a8bb6d2ede8cd8085c20bf33a6f037b1233a31a79f41b734a9"
+        },
+        {
+          "Path": "ProjectArtifacts/Profiles/OntologyFoundry/Project.pts",
+          "Sha256": "de6c0be364ef185569b17ff141db06e67691b344d0ec52e0e3a5b9704f6f5b0c"
         },
         {
           "Path": "ProjectArtifacts/Prompts/OntologyFoundry.md",
@@ -2492,6 +2504,10 @@
         {
           "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/index.pts",
           "Sha256": "ba063516204edb1c8aaa509f8563523ec2d4b2f82ea4d50104946911eaec3cf4"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/index.pts.lazy.json",
+          "Sha256": "19242c3adcf2bfe94ace379013ff7c3d4ff463506fb643bdcfc2059d043243b7"
         },
         {
           "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/index.pts.md",
@@ -2512,6 +2528,10 @@
         {
           "Path": "ProjectArtifacts/Skills/ActionLearning/index.pts",
           "Sha256": "c7789406c62591b588989de35178ff28616fef9c6f21712e342086641910d0da"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearning/index.pts.lazy.json",
+          "Sha256": "7c143f0a3eeab3865595a086805935973c704ec667674721e77783e274929bad"
         },
         {
           "Path": "ProjectArtifacts/Skills/ActionLearning/index.pts.md",
@@ -2570,6 +2590,10 @@
           "Sha256": "ea13c288185627a87f8ee29acf5581301f5421c66b843e5b422683a85ec257a7"
         },
         {
+          "Path": "ProjectArtifacts/Skills/OntologyFoundry/index.pts.lazy.json",
+          "Sha256": "04035b56d6c6a22019dc413fb74c44eace8ce9c8274a161e77fe1fbbf42d582c"
+        },
+        {
           "Path": "ProjectArtifacts/Skills/OntologyFoundry/index.pts.md",
           "Sha256": "c968a20f19192031143a5f6af75d21f0c7197ae68b065047b2fb915d586ffb43"
         },
@@ -2623,7 +2647,7 @@
         },
         {
           "Path": "web-module.json",
-          "Sha256": "2c1d1149799b551b4940a949b6689da884e6f2cf3dc30c09f6aeb1a450db5af1"
+          "Sha256": "22bf6d97aeb122d35aa19a823c0ddbd3b64e00befc77bc2dd44fec899e98b164"
         },
         {
           "Path": "web.config",
@@ -2694,6 +2718,18 @@
         {
           "ProjectName": "Prompts",
           "SourcePath": "ProjectArtifacts/Prompts/"
+        },
+        {
+          "ProjectName": "Profiles/ActionLearning",
+          "SourcePath": "ProjectArtifacts/Profiles/ActionLearning/"
+        },
+        {
+          "ProjectName": "Profiles/ActionLearningCoordinator",
+          "SourcePath": "ProjectArtifacts/Profiles/ActionLearningCoordinator/"
+        },
+        {
+          "ProjectName": "Profiles/OntologyFoundry",
+          "SourcePath": "ProjectArtifacts/Profiles/OntologyFoundry/"
         }
       ],
       "Dependencies": [],
