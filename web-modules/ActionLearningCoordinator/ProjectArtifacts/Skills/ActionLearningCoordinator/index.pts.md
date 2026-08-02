@@ -1,6 +1,6 @@
 # Action Learning Coordinator ProtoScript
 
-The packaged Skill explicitly imports the `Path`, `File`, `JsonObject`, `JsonArray`, `JsonValue`, and `FileSystemTools` runtime symbols it uses. It does not rely on imports from the host project's broad `Imports.pts`, so lazy loading and standalone package activation compile the coordinator methods consistently.
+The packaged Skill explicitly references the FileSystem tool assembly and imports the `Path`, `File`, `InvalidOperationException`, `JsonObject`, `JsonArray`, `JsonValue`, and `FileSystemTools` runtime symbols it uses. It does not rely on references or imports from the host project's broad `Imports.pts`, so lazy loading and standalone package activation compile the coordinator methods consistently.
 
 Defines `SessionWorkCoordinatorSkill` as the common coordinator base, with `ActionLearningCoordinatorSkill` and `OntologyFoundryCoordinatorSkill` as specializations.
 
