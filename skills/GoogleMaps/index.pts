@@ -1,1 +1,5 @@
-﻿// Intentionally empty skill index placeholder.
+[SemanticEntity("Google Maps skill")]
+prototype GoogleMapsSkill : SkillEntity
+{
+	Description = @"Google Maps capability area for provider geolocation, reverse geocoding, and map-based analysis. No callable actions are currently packaged.";
+}

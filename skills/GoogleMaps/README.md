@@ -1,4 +1,4 @@
-﻿# Google Maps Skill
+# Google Maps Skill
 
 Status: Added for Skills page visibility.
 
@@ -15,3 +15,4 @@ Typical Buffaly use cases
 Notes
 - This folder is intended to surface the Google Maps capability on the Buffaly Skills page.
 - It represents the skill area used in the Medicaid analysis story for provider geolocation enrichment.
+- `GoogleMapsSkill` supplies the package identity used by semantic discovery and the lazy ownership sidecar. The package intentionally exposes no callable actions until a typed Google Maps implementation is added.

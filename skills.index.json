@@ -1300,30 +1300,31 @@
     {
       "SkillName": "GoogleMaps",
       "Title": "Google Maps",
-      "Description": "Buffaly OpsAgent skill package for GoogleMaps.",
-      "Version": "0.1.0",
+      "Description": "Buffaly skill package for Google Maps.",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "Google Maps",
         "GoogleMaps"
       ],
       "Path": "skills/GoogleMaps",
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "bf0bd631cf64542a28e4cf6e973b130945407bf612d1a37c135312353b82be1f"
+          "Sha256": "b0861fc4d7eec48684dc67031a939bfd93b87357ba68ee6945e85e4fb40ffe72"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "90a1da8e6c1e0298fcbddef8bf4dc3827f3185bf6017de082f31c646ade43d2d"
         },
         {
           "Path": "README.md",
-          "Sha256": "5d062f2df6834d41b49ce98ec78e8ea9247e8d86bcef5e3bec86d2f216f6f6c5"
+          "Sha256": "e53bad8d3201247ea3cc4f6c3488502d651d8be077c342efd7173347b20644cd"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "GoogleTagManager",
