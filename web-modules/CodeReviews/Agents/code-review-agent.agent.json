@@ -1,0 +1,15 @@
+{
+  "AgentName": "code-review-agent",
+  "DisplayName": "Code Review Agent",
+  "PromptFile": "Prompts/master.md",
+  "ProjectFilePath": "Profiles/CodeReviews/Project.pts",
+  "PromptContext": "CodeReviewContext",
+  "RootActionPrototypeName": "GlobalCodeReviewsAgentAction",
+  "RootEntityPrototypeName": "BuffalyCodeReviewsSolution",
+  "DefaultModelName": "gpt-5.5",
+  "UiPage": "/buffaly-agent.html",
+  "IsReadOnly": false,
+  "IsHidden": true,
+  "CanChangeModel": true,
+  "CompanionAgents": []
+}

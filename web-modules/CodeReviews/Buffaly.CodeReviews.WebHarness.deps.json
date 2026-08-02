@@ -571,6 +571,14 @@
           }
         }
       },
+      "Buffaly.Agent.SemanticDatabase/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agent.SemanticDatabase.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "Buffaly.Agent.Tools.SemanticDatabase/1.0.0.0": {
         "runtime": {
           "Buffaly.Agent.Tools.SemanticDatabase.dll": {
@@ -723,17 +731,17 @@
           }
         }
       },
-      "Buffaly.Agent.SemanticDatabase/1.0.0.0": {
+      "Buffaly.Agent.SemanticDatabase.DB/1.0.0.0": {
         "runtime": {
-          "Buffaly.Agent.SemanticDatabase.dll": {
+          "Buffaly.Agent.SemanticDatabase.DB.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         }
       },
-      "Buffaly.Agent.SemanticDatabase.DB/1.0.0.0": {
+      "Buffaly.AIProviderAPI/1.0.0.0": {
         "runtime": {
-          "Buffaly.Agent.SemanticDatabase.DB.dll": {
+          "Buffaly.AIProviderAPI.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -750,14 +758,6 @@
       "Buffaly.Agent.ProtoScriptAuthoring/1.0.0.0": {
         "runtime": {
           "Buffaly.Agent.ProtoScriptAuthoring.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
-          }
-        }
-      },
-      "Buffaly.AIProviderAPI/1.0.0.0": {
-        "runtime": {
-          "Buffaly.AIProviderAPI.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -1183,6 +1183,11 @@
       "serviceable": false,
       "sha512": ""
     },
+    "Buffaly.Agent.SemanticDatabase/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
     "Buffaly.Agent.Tools.SemanticDatabase/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
@@ -1278,12 +1283,12 @@
       "serviceable": false,
       "sha512": ""
     },
-    "Buffaly.Agent.SemanticDatabase/1.0.0.0": {
+    "Buffaly.Agent.SemanticDatabase.DB/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
     },
-    "Buffaly.Agent.SemanticDatabase.DB/1.0.0.0": {
+    "Buffaly.AIProviderAPI/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
@@ -1294,11 +1299,6 @@
       "sha512": ""
     },
     "Buffaly.Agent.ProtoScriptAuthoring/1.0.0.0": {
-      "type": "reference",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "Buffaly.AIProviderAPI/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""

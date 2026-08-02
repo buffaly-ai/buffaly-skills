@@ -22,11 +22,6 @@ prototype CodeReviewsAgentToolsAction : OpsAction
 	Description = @"Base action type for CodeReviews agent lifecycle tools.";
 }
 
-prototype GlobalCodeReviewsAgentAction : OpsAction
-{
-	Description = @"Exact action root for the automatic global reviewer. Includes only bounded source context, immutable commit evidence, authoritative review guidance, and grouped terminal actions.";
-}
-
 [SemanticProgram.InfinitivePhrase("to attach a configured code review agent")]
 prototype ToAttachConfiguredCodeReviewAgent : CodeReviewsAgentToolsAction
 {

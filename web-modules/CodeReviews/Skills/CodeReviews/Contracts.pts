@@ -1,0 +1,10 @@
+prototype GlobalCodeReviewsAgentAction : OpsAction
+{
+	Description = @"Exact eager root contract for the automatic global reviewer. Its operational tools are activated lazily by the CodeReviews profile.";
+}
+
+prototype BuffalyCodeReviewsSolution : SemanticEntityBase
+{
+	EntityName = "code reviews solution";
+	Description = "Minimal eager entity root for the CodeReviews lazy profile.";
+}
