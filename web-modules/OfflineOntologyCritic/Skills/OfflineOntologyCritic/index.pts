@@ -1,16 +1,5 @@
 reference OfflineOntologyCritic.Web OfflineOntologyCritic.Web;
 import OfflineOntologyCritic.Web OfflineOntologyCritic.Web.OfflineOntologyCriticTools OfflineOntologyCriticWebTools;
-[SemanticEntity("offline ontology critic action root")]
-prototype OfflineOntologyCriticActionRoot : OpsAction
-{
-	Description = @"Limited action root for OfflineCritic feedback infrastructure. The retired two-part action-learning prompt workflow is not exposed.";
-}
-
-[SemanticEntity("offline ontology critic entity root")]
-prototype OfflineOntologyCriticEntityRoot : SemanticEntityBase
-{
-	Description = @"Limited entity root for the separate offline ontology critic agent.";
-}
 
 prototype OfflineOntologyCriticSkillAction : OfflineOntologyCriticActionRoot
 {

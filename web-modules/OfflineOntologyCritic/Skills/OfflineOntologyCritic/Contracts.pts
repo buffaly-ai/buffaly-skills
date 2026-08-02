@@ -1,0 +1,10 @@
+prototype OfflineOntologyCriticActionRoot : OpsAction
+{
+	Description = @"Limited eager action-root contract for the Offline Ontology Critic. Its operational tools are activated lazily by the profile.";
+}
+
+prototype OfflineOntologyCriticEntityRoot : SemanticEntityBase
+{
+	EntityName = "offline ontology critic entity root";
+	Description = @"Limited eager entity-root contract for the Offline Ontology Critic.";
+}
