@@ -1,6 +1,6 @@
 prototype GlobalCodeReviewsAgentAction : OpsAction
 {
-	Description = @"Exact eager root contract for the automatic global reviewer. Its operational tools are activated lazily by the CodeReviews profile.";
+	Description = @"Exact eager root contract for the automatic global reviewer. Its required operational tools are supplied eagerly by the profile-local GlobalTools.pts file; the general OpsAgent skill may remain lazy.";
 }
 
 prototype BuffalyCodeReviewsSolution : SemanticEntityBase
