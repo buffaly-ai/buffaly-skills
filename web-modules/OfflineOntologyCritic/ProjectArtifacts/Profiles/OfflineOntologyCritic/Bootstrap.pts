@@ -1,0 +1,7 @@
+partial prototype OfflineOntologyCriticActionRoot : LazyProfileActionRoot;
+partial prototype OfflineOntologyCriticEntityRoot : LazyProfileEntityRoot;
+partial prototype ToLazyProfileSearchCandidateActions : OfflineOntologyCriticActionRoot;
+partial prototype ToLazyProfileSearchCandidateEntities : OfflineOntologyCriticActionRoot;
+partial prototype ToLazyProfileLoadProtoScriptActionTool : OfflineOntologyCriticActionRoot;
+partial prototype ToLazyProfileListLoadedProtoScriptActionTools : OfflineOntologyCriticActionRoot;
+partial prototype ToShowLazyProfileEnvironment : OfflineOntologyCriticActionRoot;
