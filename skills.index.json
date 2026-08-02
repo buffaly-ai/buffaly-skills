@@ -3075,6 +3075,83 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": []
+    },
+    {
+      "SkillName": "Office365",
+      "Title": "Office 365",
+      "Description": "Buffaly skill package for Office 365.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Office 365",
+        "Office365"
+      ],
+      "Path": "skills/Office365",
+      "Files": [
+        {
+          "Path": "Auth.pts",
+          "Sha256": "047cb309170bb891b321f28ab0ae1dee3ca3650837e75b7467052032b31e4798"
+        },
+        {
+          "Path": "Calendar.pts",
+          "Sha256": "0cc3d78cc202f3cd103d02abe28a21ad22492a64e0692dee572e9ebe43d45e1c"
+        },
+        {
+          "Path": "Calendar.pts.md",
+          "Sha256": "d123f4745a29c6a3380aa2afd4cedbd70ef4aceff7190b7eb586adfc199d2d1c"
+        },
+        {
+          "Path": "Common.pts",
+          "Sha256": "0e80a0709b4ae20a1e75a562f2e988eb4e00a407fac57bd21a476d14bfdb809d"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "80cadd1ec63024693e603e8554f81f55de88e515e2f897abff6e6d63c97b9351"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "d304ffb5ba2b5c709e1a6dae2b274678edf8870c8f9ee414c7c2068e96228905"
+        },
+        {
+          "Path": "Mail.pts",
+          "Sha256": "965296a4148d59a88d84a74a7815172c11447d11858fb4b4ab36595bf28f3897"
+        },
+        {
+          "Path": "Mail.pts.md",
+          "Sha256": "4298cdd1b3beeffbd4c150476c8348123c1cad74135d203d58fa65993cf73aa7"
+        },
+        {
+          "Path": "Office365Service.pts",
+          "Sha256": "a27741260b55a207db927c3dc55df83f2360d6946be321d32c7ba40cbf01cbf8"
+        },
+        {
+          "Path": "Office365Service.pts.md",
+          "Sha256": "8525b225d96c478e955a84c3aa878c51f0abb88ac2a916c4f1243be9b5e84037"
+        },
+        {
+          "Path": "OneDrive.pts",
+          "Sha256": "bb2abf17c0e66d717e90bde0828edb61a8b3bf790b9e1721c02e17e2a49710ae"
+        },
+        {
+          "Path": "OneDrive.pts.md",
+          "Sha256": "70c70a87395ca6a5de3e7426667f97cd2519c6f2e4db1dfaceafc1bcf8375ce8"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "846f186b00172683bc2bb5f848ff8f0e12fe72fc2e2edcfa754fd19c8d079be7"
+        },
+        {
+          "Path": "Teams.pts",
+          "Sha256": "69e68f06b172309df3c45f67631f1a7781940f3befedfbcc33559d5b212f3050"
+        },
+        {
+          "Path": "Teams.pts.md",
+          "Sha256": "617486437be6526599bfba6e1857c94bb99b1ddc65631fe9428fa614c8128273"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
     }
   ]
 }
