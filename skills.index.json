@@ -1385,7 +1385,7 @@
       "SkillName": "HelpAgent",
       "Title": "Help Agent",
       "Description": "Buffaly skill package for Help Agent.",
-      "Version": "0.1.3",
+      "Version": "0.1.4",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Help Agent",
@@ -1395,11 +1395,15 @@
       "Files": [
         {
           "Path": "Contracts.pts",
-          "Sha256": "3832383cd098b8def76fef1797a460a9272c566f26351ced230722f9804f7417"
+          "Sha256": "e7bfa274fdf6d834342d441029772530df1cdb3a6f5d5a6e9725b868054adaff"
         },
         {
           "Path": "index.pts",
           "Sha256": "6a0e9fe34a0c758238973471675b5ba03d41155ec03043ffcaef10d470773d42"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "5794050311c41b6b2e06b6b90d3869920c7ce872c810e5c8057948bf9a2b0686"
         },
         {
           "Path": "index.pts.md",
