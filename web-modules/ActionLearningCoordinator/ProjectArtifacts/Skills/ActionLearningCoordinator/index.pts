@@ -288,7 +288,7 @@ prototype ToRemoveSessionWorkEntry : SessionWorkCoordinatorSkillAction
 [SemanticProgram.InfinitivePhrase("to list session work attachment choices")]
 prototype ToListSessionWorkAttachmentChoices : SessionWorkCoordinatorSkillAction
 {
-	function Execute(string expectedWorkerAgentName, string workerSessionSuffix, int maxSources = 100) : string
+	function Execute(string expectedWorkerAgentName, string workerSessionSuffix, int maxSources) : string
 	{
 		return OntologyFoundryProposalProjection.BuildAttachmentChoices(expectedWorkerAgentName, workerSessionSuffix, maxSources);
 	}
@@ -565,7 +565,7 @@ prototype ToGetOnlineMemoryCriticBatchPortfolio : OnlineMemoryCriticBatchCoordin
 [SemanticProgram.InfinitivePhrase("to reconcile discovered online memory critic attachments")]
 prototype ToReconcileOnlineMemoryCriticBatchLedger : OnlineMemoryCriticBatchCoordinatorSkillAction
 {
-	function Execute(int maxWorkers = 200) : string
+	function Execute(int maxWorkers) : string
 	{
 		JsonObject discovery = new JsonObject(OnlineMemoryCriticBatchProjection.DiscoverAttachments(maxWorkers));
 		JsonArray attachments = discovery.GetJsonArrayOrFail(@"Attachments", @"Discovered Online Memory Critic attachments are required.");
