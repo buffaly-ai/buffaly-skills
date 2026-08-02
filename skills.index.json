@@ -50,7 +50,7 @@
       "SkillName": "Antigravity",
       "Title": "Antigravity",
       "Description": "Buffaly skill package for Antigravity.",
-      "Version": "0.1.11",
+      "Version": "0.1.12",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Antigravity",
@@ -65,6 +65,10 @@
         {
           "Path": "SKILL.md",
           "Sha256": "f98b8be1c36e96104c5bf34485721ab318e38ca97f9e84eb3287bbcfe8a222d8"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "ebf71376b6fbfb4192118ed7ff02021bddfe9b63d2934d87967a7d1b50f6126b"
         }
       ],
       "EntryPoint": "index.pts",
@@ -365,7 +369,7 @@
       "SkillName": "CareCascade",
       "Title": "Care Cascade",
       "Description": "CareCascade MedOnt ICD-10 and SNOMED API tools.",
-      "Version": "0.1.1",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [],
       "Path": "skills/CareCascade",
@@ -381,6 +385,10 @@
         {
           "Path": "SKILL.md",
           "Sha256": "e6235f0fc1a4fe76f8028ed82777c129552eaacc46a37844c31135fb18a8220a"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "18275d8ba287c6509cf26da9e70464aa39b503741e4dba62bdfc0ac2ac768f9e"
         }
       ],
       "EntryPoint": "index.pts",
@@ -395,7 +403,7 @@
       "SkillName": "CdpBrowser",
       "Title": "CDP Browser",
       "Description": "CDP browser automation tools that connect to the user real Chrome via Chrome DevTools Protocol. Preserves logins, avoids anti-bot detection, uses trusted input events. Tier 1 actions are always available; Tier 2 actions require approval.",
-      "Version": "1.0.8",
+      "Version": "1.0.9",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "CDP Browser",
@@ -432,6 +440,10 @@
         {
           "Path": "lib/package-lock.json",
           "Sha256": "f9926ed76996235c232d254d9ba48bf982e6b0cc3021e372e3f91cbe0bab721d"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "460450726ee0ae4dd1c1da888a7b8cfb789a22d46fb9a8b876488cab48b53dea"
         }
       ],
       "EntryPoint": "index.pts",
@@ -442,7 +454,7 @@
       "SkillName": "ClaudeCode",
       "Title": "Claude Code",
       "Description": "Buffaly skill package for Claude Code.",
-      "Version": "0.1.14",
+      "Version": "0.1.15",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Claude Code",
@@ -465,6 +477,10 @@
         {
           "Path": "Test-ClaudeCodeStateScoping.ps1",
           "Sha256": "00cdaffe052ed5bf46e8c5401575192cfcf5315eab9679dce78dc657696f4a45"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "99458d770743dd1838c0c5cb673c36f8f0327c2514432946772ebfcfb46ef6cf"
         }
       ],
       "EntryPoint": "index.pts",
@@ -710,7 +726,7 @@
       "SkillName": "ExtensionBrowser",
       "Title": "Extension Browser",
       "Description": "Buffaly skill package for Extension Browser.",
-      "Version": "0.2.72",
+      "Version": "0.2.73",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Extension Browser",
@@ -853,6 +869,10 @@
         {
           "Path": "SKILL.md",
           "Sha256": "0da6139227592087f3ceb8d103f253271efc143d7a31318f9068e2a9a6e86b37"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "2ab4563675eaaaad42ba426212ae41d3134eba320b7c4135bb11a4baf875f873"
         }
       ],
       "EntryPoint": "index.pts",
@@ -990,7 +1010,7 @@
       "SkillName": "FeedingFrenzyJsonWs",
       "Title": "Feeding Frenzy JsonWs",
       "Description": "Buffaly skill package for Feeding Frenzy JsonWs.",
-      "Version": "0.1.9",
+      "Version": "0.1.10",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Feeding Frenzy JsonWs",
@@ -1161,6 +1181,10 @@
         {
           "Path": "Users.pts.md",
           "Sha256": "61346f61f0c3ef3fd05b5352b04d3ccb867432dd70b92e2afeca557f09026603"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "d79164f7e096e8a7c537e800170ca86c2407579ed9ee2c7fe77ee88da399cedf"
         }
       ],
       "EntryPoint": "index.pts",
@@ -1235,7 +1259,7 @@
       "SkillName": "GoogleAnalytics",
       "Title": "Google Analytics",
       "Description": "Buffaly skill package for Google Analytics.",
-      "Version": "0.1.6",
+      "Version": "0.1.7",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Google Analytics",
@@ -1258,6 +1282,10 @@
         {
           "Path": "SKILL.md",
           "Sha256": "af922209c18def12037756083ef3e183a670e57488d355dde3bee407e0364393"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "6b84eb0a4933ebf350b8b1b26bc6e45377357ca04ce8abb7c12cbd2e1f2fea95"
         }
       ],
       "EntryPoint": "index.pts",
@@ -1296,7 +1324,7 @@
       "SkillName": "GoogleTagManager",
       "Title": "Google Tag Manager",
       "Description": "Buffaly skill package for Google Tag Manager.",
-      "Version": "0.1.2",
+      "Version": "0.1.3",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Google Tag Manager",
@@ -1311,6 +1339,10 @@
         {
           "Path": "lib/Buffaly.Marketing.dll",
           "Sha256": "76202805325e4e869569fdd51c87fb51db5cd5ec92531a88812d4653dedea961"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "2e0cce941254c963e0b71f3f9d2a00fb30c260e324377d98f750e4cdbd92ae30"
         }
       ],
       "EntryPoint": "index.pts",
@@ -1545,7 +1577,7 @@
       "SkillName": "MetabaseJsonWs",
       "Title": "Metabase JsonWs",
       "Description": "JSL1 JSONWS skill for RootTrax Metabase application, project, object, property, and materialization endpoints.",
-      "Version": "0.1.1",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "metabase jsonws",
@@ -1626,6 +1658,10 @@
         {
           "Path": "SKILL.md",
           "Sha256": "669dda73e94a0b22e10f0b443c1d019ae10708ac8d83b96773ab39af833933ea"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "3766ba65b07dec62f1160c8cde467516077d1aeee8a6f0a4da5a0ebd0eaf61fa"
         }
       ],
       "EntryPoint": "index.pts",
@@ -1902,7 +1938,7 @@
       "SkillName": "OpenAIAdmin",
       "Title": "OpenAI Administration",
       "Description": "Buffaly skill package for OpenAI Administration.",
-      "Version": "0.1.2",
+      "Version": "0.1.3",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "OpenAI Administration",
@@ -1925,6 +1961,10 @@
         {
           "Path": "SKILL.md",
           "Sha256": "182424acede2cb59b26ad8ae575fcfbad2c9f157e02b2cd4d18fc81839e7658a"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "8e92e104d706e57caf01b7a3b37729704e2efce469b489df4f55beb2c311f529"
         }
       ],
       "EntryPoint": "index.pts",
@@ -2381,7 +2421,7 @@
       "SkillName": "TebraDesktop",
       "Title": "TebraDesktop",
       "Description": "Buffaly skill package for TebraDesktop.",
-      "Version": "0.1.1",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "TebraDesktop",
@@ -2436,6 +2476,10 @@
         {
           "Path": "SKILL.md",
           "Sha256": "b9004acf9e1793bcefa179867baff7fe7391188374eccd49edcd60b033c09775"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "0a419f4d4446fc5bdf590222def4d4dba761772a25ab36af6d62538eb0d0bd3b"
         }
       ],
       "EntryPoint": "index.pts",
@@ -2446,7 +2490,7 @@
       "SkillName": "TebraWeb",
       "Title": "Tebra Web",
       "Description": "Buffaly skill package for Tebra Web.",
-      "Version": "0.1.1",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Tebra Web",
@@ -2465,6 +2509,10 @@
         {
           "Path": "SKILL.md",
           "Sha256": "9e9fd6202cf3067408ada240d688c0feda0961cb3b53479cf762d0e8763bb786"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "ab22ab5bd31eb3f48ce01c25bede0cd4bed7634749977285f5baf3bf9329cf06"
         }
       ],
       "EntryPoint": "index.pts",
@@ -2479,7 +2527,7 @@
       "SkillName": "Twilio",
       "Title": "Twilio",
       "Description": "Buffaly skill package for Twilio.",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Twilio",
@@ -2510,6 +2558,10 @@
         {
           "Path": "SKILL.md",
           "Sha256": "df40b0307f4cf0bedf3fee9d0a7217444cf3ce29b12c39082f2b9f6625fcc290"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "d06554cac6f793b5b5543b3e0dcae9a7b88d926e81c9fdd6edf3708974dd52cb"
         }
       ],
       "EntryPoint": "index.pts",
@@ -2573,7 +2625,7 @@
       "SkillName": "Unity",
       "Title": "Unity",
       "Description": "Buffaly skill package for Unity.",
-      "Version": "0.1.1",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Unity",
@@ -2596,6 +2648,10 @@
         {
           "Path": "unity-host-client.ps1",
           "Sha256": "f46dae7c5ebd89e308beffc0397d138e8718ab9fe3744195d1adfe64e4c99eff"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "e6479448d07660620e2740c4c6ca9e42f07eed09bb310a9057224f4fc15e7be5"
         }
       ],
       "EntryPoint": "index.pts",
@@ -2708,7 +2764,7 @@
       "SkillName": "VisualStudio",
       "Title": "Visual Studio",
       "Description": "Buffaly OpsAgent skill package for VisualStudio.",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "VisualStudio"
@@ -2746,6 +2802,10 @@
         {
           "Path": "VisualStudioOntologyGenerator.pts.md",
           "Sha256": "a27d7c19f87ec26d35a100eac746773e5977a4592356987fd0ddad9f20ce03c2"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "91c9d34d865f1dd0ff785026250e51519525c07956eff5969ce7543d1b5c1ebf"
         }
       ],
       "EntryPoint": "index.pts",
@@ -2854,7 +2914,7 @@
       "SkillName": "Workspace",
       "Title": "Workspace",
       "Description": "Buffaly skill package for Workspace.",
-      "Version": "0.1.15",
+      "Version": "0.1.16",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Workspace",
@@ -2873,6 +2933,10 @@
         {
           "Path": "lib/Buffaly.Agent.Workspaces.dll",
           "Sha256": "d26726e67ffbe9782495cd28f35f217f06ae5b3c7695831cc46291fc6a668259"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "ddb7755337557645b0d17738802dee8e1bafc0499c4f70dea3c1b2d43a03132c"
         }
       ],
       "EntryPoint": "index.pts",
@@ -2895,7 +2959,7 @@
         "map public opinion on X"
       ],
       "Description": "Search X (Twitter) via the xAI Responses API x_search hosted tool. The x_search tool runs server-side in Grok's agentic sampler loop. Requires XAI.HostedTools = x_search in the xAI provider feature settings.",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "SkillName": "XSearch",
       "Files": [
         {
@@ -2905,6 +2969,10 @@
         {
           "Path": "index.pts",
           "Sha256": "c2d5c2bd2b90b48843ee045bd9a690d26803e8261afbafd35979fbf748499442"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "b6251f0a02824945ceb5b730ce9f79e490fe5e05bddcc7d47c774975bfd2f381"
         }
       ],
       "EntryPoint": "index.pts",
@@ -2948,7 +3016,7 @@
       "SkillName": "ReleaseOps",
       "Title": "ReleaseOps",
       "Description": "Buffaly skill package for ReleaseOps.",
-      "Version": "0.1.15",
+      "Version": "0.1.16",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "ReleaseOps",
@@ -2967,6 +3035,10 @@
         {
           "Path": "lib/Buffaly.ReleaseOps.Client.dll",
           "Sha256": "6ec1d74deb4f55702e8d7033fb8478241a910da29c457f9d2b3632de32c226bc"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "a9ec18730420851199ba0e252515ece76513e840ccc380ca4460299eff664204"
         }
       ],
       "EntryPoint": "index.pts",

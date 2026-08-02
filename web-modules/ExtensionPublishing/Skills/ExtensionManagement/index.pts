@@ -10,4 +10,19 @@ prototype ExtensionManagementSkill : SkillEntity, CoreEntity
 	ActionRoot = ExtensionManagementSkillAction;
 }
 
+[SemanticProgram.InfinitivePhrase("to generate a lazy skill sidecar")]
+prototype ToGenerateLazySkillSidecar : ExtensionManagementSkillAction
+{
+	Description = "Strictly compile one skill in the supplied project context and optionally write its lazy prototype-to-module sidecar. Normal runtime never generates sidecars.";
+
+	function Execute(String projectFilePath, String skillEntryPointPath, Boolean writeSidecar) : GenerateLazySkillIndexResultContract
+	{
+		GenerateLazySkillIndexRequestContract request = new GenerateLazySkillIndexRequestContract();
+		request.ProjectFilePath = projectFilePath;
+		request.SkillEntryPointPath = skillEntryPointPath;
+		request.WriteSidecar = writeSidecar;
+		return SkillPublishingService.GenerateLazySkillIndex(request);
+	}
+}
+
 include "PromptActions.pts";

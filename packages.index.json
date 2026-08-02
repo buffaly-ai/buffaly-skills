@@ -7769,7 +7769,7 @@
       "PackageType": "WebModule",
       "Title": "Extension Publishing",
       "Description": "Buffaly Web Module package for Extension Publishing.",
-      "Version": "0.1.52",
+      "Version": "0.1.53",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/ExtensionPublishing",
       "SourceUrl": "",
@@ -7815,10 +7815,6 @@
           "Sha256": "96bd6f6347a9f9e6be982102eb237e132e897cc384d5561597f2ba67a4e753ef"
         },
         {
-          "Path": "Skills/ExtensionManagement/index.pts",
-          "Sha256": "f8bf4d9da213aa1290dfa711849de2c79ba691c583670e324683f1fb55090a6c"
-        },
-        {
           "Path": "Skills/ExtensionManagement/PromptActions.pts",
           "Sha256": "28c7e8948fb35bca5e79ea257f463d4f0b04378f56996fc09469c493ed6bee43"
         },
@@ -7853,6 +7849,14 @@
         {
           "Path": "WebAppUtilities.dll",
           "Sha256": "335967df11f698a811b0b25cd3564a4fd11db2585ea25603ea96d826b0b26050"
+        },
+        {
+          "Path": "Skills/ExtensionManagement/index.pts",
+          "Sha256": "3a5f1848e68a14079ba5ff0ac3fa1907c04b1a8dd2a0d6d869f49db19e65b55e"
+        },
+        {
+          "Path": "Skills/ExtensionManagement/index.pts.lazy.json",
+          "Sha256": "e8d7bddfc6d9144ed7d6bb11b1d8b5667f6554c682f49c1c43dc543ce3933b39"
         }
       ],
       "ProjectArtifacts": [
@@ -8700,7 +8704,7 @@
       "PackageType": "WebModule",
       "Title": "GoDaddy",
       "Description": "Buffaly Web Module package for GoDaddy.",
-      "Version": "0.1.40",
+      "Version": "0.1.41",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/GoDaddy",
       "SourceUrl": "",
@@ -8788,6 +8792,10 @@
         {
           "Path": "wwwroot/js/godaddy.js.md",
           "Sha256": "144a8a32a50b57477e749800ec136113b0fefc15893c4654874fb306586b3f24"
+        },
+        {
+          "Path": "Skills/GoDaddy/index.pts.lazy.json",
+          "Sha256": "f801c332049d45a86c5b64716c6ff31a172ff64ee8cfb3e808dc3c911bc8b855"
         }
       ],
       "ProjectArtifacts": [
@@ -13039,7 +13047,7 @@
       "PackageType": "WebModule",
       "Title": "OpenAI Administration",
       "Description": "Buffaly Web Module package for OpenAI Administration.",
-      "Version": "0.1.18",
+      "Version": "0.1.19",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/OpenAIAdmin",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/OpenAIAdmin",
@@ -13087,6 +13095,10 @@
         {
           "Path": "wwwroot/js/openai-admin.js",
           "Sha256": "14845b298b96932bf5c6bb1bd747c36e10700c57f6624a0e3838f4fbd7dcd521"
+        },
+        {
+          "Path": "Skills/OpenAIAdmin/index.pts.lazy.json",
+          "Sha256": "8e92e104d706e57caf01b7a3b37729704e2efce469b489df4f55beb2c311f529"
         }
       ],
       "ProjectArtifacts": [
@@ -16712,7 +16724,7 @@
       "PackageType": "WebModule",
       "Title": "Traffic Analysis",
       "Description": "Buffaly Web Module package for Traffic Analysis.",
-      "Version": "0.1.72",
+      "Version": "0.1.73",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/TrafficAnalysis",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/TrafficAnalysis",
@@ -16872,6 +16884,14 @@
         {
           "Path": "wwwroot/traffic-analysis.js",
           "Sha256": "066dc9b5610fb60dd8ddeefc289b9cf46a424535d70943c0649bfe81b21029ba"
+        },
+        {
+          "Path": "Skills/FeedingFrenzyWebPropertiesJsonWs/index.pts.lazy.json",
+          "Sha256": "7957171f1b64bcbdd752d9d9fb6c4b7af02f676fe524846d04c8facd348bfa77"
+        },
+        {
+          "Path": "Skills/TrafficAnalysis/index.pts.lazy.json",
+          "Sha256": "f42c62de27ea42e29753b76f93a3778376726b641e2df3cf759c93799c1889b9"
         }
       ],
       "ProjectArtifacts": [
