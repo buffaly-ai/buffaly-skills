@@ -231,7 +231,7 @@
       "SkillName": "BuffalyNLMemory",
       "Title": "Buffaly NL Memory",
       "Description": "Buffaly skill package for Buffaly NL Memory.",
-      "Version": "0.2.30",
+      "Version": "0.2.31",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Buffaly NL Memory",
@@ -252,12 +252,16 @@
           "Sha256": "0aba570d1eb601af24942cd6bc1e081c69c5a969a3cfca0f7ceae7282e0e2456"
         },
         {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "bd53c3032f82993b8b23eae47e9dbed197abac9d36eaff27d3cd3a2234441d56"
+        },
+        {
           "Path": "index.pts.md",
           "Sha256": "408ce0c344e3a661623675e52f3d9a1ec40d675f0cfc69fbc637b2816446a9e9"
         },
         {
           "Path": "lib/Buffaly.NLMemory.dll",
-          "Sha256": "d1664db2125004867289238cbd3308c24ee50afd53cd22961b59d989e2a44c46"
+          "Sha256": "ef87e95da109711a5b3696093909e33a3f42f0a8f36d88f0269f86101770d2f6"
         },
         {
           "Path": "Prompts/ToRememberSomethingTemporarilySkill.prompt.md",
