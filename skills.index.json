@@ -3055,6 +3055,35 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": []
+    },
+    {
+      "SkillName": "ChatGPTPro",
+      "Title": "ChatGPT Pro",
+      "Description": "Buffaly skill package for ChatGPT Pro.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "ChatGPT Pro",
+        "ChatGPTPro"
+      ],
+      "Path": "skills/ChatGPTPro",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "5b693888949a9642d89943d03ccdec7f9795fcb1dbe5a574be93debd5486a44a"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "34660aeec11fe3c21e3955142934588a605a7e753cd569caad1e703b6e5954c8"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "715654ac34468799fadce2de9ef6a784c11f9977ae477c85e5aff7d599220b0a"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
     }
   ]
 }
