@@ -62,7 +62,7 @@ prototype TrafficAnalysisTrackingSourceCollector
 
 prototype TrafficAnalysisGetGa4PropertySummary
 {
-	function Execute(string binding, int webPropertyID, string timeframe) : string
+	function Execute(string binding, int webPropertyID, string timeframe) : StringRef
 	{
 		FeedingFrenzyWebPropertiesJsonWsService service = FeedingFrenzyWebPropertiesJsonWsService#Remote;
 		if (binding == "Local") service = FeedingFrenzyWebPropertiesJsonWsService#Local;
@@ -72,7 +72,7 @@ prototype TrafficAnalysisGetGa4PropertySummary
 
 prototype TrafficAnalysisGetWebProperties
 {
-	function Execute(string binding) : string
+	function Execute(string binding) : StringRef
 	{
 		FeedingFrenzyWebPropertiesJsonWsService service = FeedingFrenzyWebPropertiesJsonWsService#Remote;
 		if (binding == "Local") service = FeedingFrenzyWebPropertiesJsonWsService#Local;
@@ -82,7 +82,7 @@ prototype TrafficAnalysisGetWebProperties
 
 prototype TrafficAnalysisGetTrackingPropertyOverview
 {
-	function Execute(string binding, int webPropertyID, string timeframe) : string
+	function Execute(string binding, int webPropertyID, string timeframe) : StringRef
 	{
 		FeedingFrenzyWebPropertiesJsonWsService service = FeedingFrenzyWebPropertiesJsonWsService#Remote;
 		if (binding == "Local") service = FeedingFrenzyWebPropertiesJsonWsService#Local;
@@ -92,7 +92,7 @@ prototype TrafficAnalysisGetTrackingPropertyOverview
 
 prototype TrafficAnalysisGetGoogleAdsCampaignReport
 {
-	function Execute(string customerId, string loginCustomerId, string dateRangePreset) : string
+	function Execute(string customerId, string loginCustomerId, string dateRangePreset) : StringRef
 	{
 		return GoogleAdsWebService.RunCampaignReportJson(customerId, loginCustomerId, dateRangePreset);
 	}
@@ -100,7 +100,7 @@ prototype TrafficAnalysisGetGoogleAdsCampaignReport
 
 prototype TrafficAnalysisGetGoogleAdsSearchTermReport
 {
-	function Execute(string customerId, string loginCustomerId, string dateRangePreset) : string
+	function Execute(string customerId, string loginCustomerId, string dateRangePreset) : StringRef
 	{
 		return GoogleAdsWebService.RunSearchTermReportJson(customerId, loginCustomerId, dateRangePreset);
 	}
@@ -108,7 +108,7 @@ prototype TrafficAnalysisGetGoogleAdsSearchTermReport
 
 prototype TrafficAnalysisGetGoogleAdsAdCreativeReport
 {
-	function Execute(string customerId, string loginCustomerId, string dateRangePreset) : string
+	function Execute(string customerId, string loginCustomerId, string dateRangePreset) : StringRef
 	{
 		return GoogleAdsWebService.RunAdCreativeReportJson(customerId, loginCustomerId, dateRangePreset);
 	}
@@ -116,7 +116,7 @@ prototype TrafficAnalysisGetGoogleAdsAdCreativeReport
 
 prototype TrafficAnalysisGetOpenAIUsageAndCosts
 {
-	function Execute(string startDate, string endDate) : string
+	function Execute(string startDate, string endDate) : StringRef
 	{
 		return OpenAiAdminAgentTools.GetUsageAndCosts(startDate, endDate);
 	}
@@ -124,7 +124,7 @@ prototype TrafficAnalysisGetOpenAIUsageAndCosts
 
 prototype TrafficAnalysisGetRedditAdsReport
 {
-	function Execute(string adAccountId, string reportType, string dateRangePreset) : string
+	function Execute(string adAccountId, string reportType, string dateRangePreset) : StringRef
 	{
 		return RedditAdsWebService.GenerateReportJson(adAccountId, reportType, dateRangePreset);
 	}
@@ -132,7 +132,7 @@ prototype TrafficAnalysisGetRedditAdsReport
 
 prototype TrafficAnalysisGetFacebookAdsReport
 {
-	function Execute(string adAccountId, string startDate, string endDate) : string
+	function Execute(string adAccountId, string startDate, string endDate) : StringRef
 	{
 		return FacebookAdsWebService.GetDashboardByDateRangeJson(adAccountId, startDate, endDate);
 	}
@@ -151,7 +151,7 @@ prototype TrafficAnalysisBuildGoogleAdsEnvelopeFromSources
 
 prototype TrafficAnalysisCollectGoogleAdsEnvelope
 {
-	function Execute(string runId, string runSettingsJson, string customerId, string loginCustomerId, string dateRangePreset) : string
+	function Execute(string runId, string runSettingsJson, string customerId, string loginCustomerId, string dateRangePreset) : StringRef
 	{
 		return TrafficAnalysisBuildGoogleAdsEnvelopeFromSources.Execute(runId, runSettingsJson,
 			GoogleAdsWebService.RunCampaignReportJson(customerId, loginCustomerId, dateRangePreset),
@@ -171,7 +171,7 @@ prototype TrafficAnalysisBuildOpenAIEnvelopeFromSource
 
 prototype TrafficAnalysisCollectOpenAIEnvelope
 {
-	function Execute(string runId, string runSettingsJson, string startDate, string endDate) : string
+	function Execute(string runId, string runSettingsJson, string startDate, string endDate) : StringRef
 	{
 		return TrafficAnalysisBuildOpenAIEnvelopeFromSource.Execute(runId, runSettingsJson, OpenAiAdminAgentTools.GetUsageAndCosts(startDate, endDate));
 	}
@@ -188,7 +188,7 @@ prototype TrafficAnalysisBuildRedditEnvelopeFromSource
 
 prototype TrafficAnalysisCollectRedditEnvelope
 {
-	function Execute(string runId, string runSettingsJson, string adAccountId, string reportType, string dateRangePreset) : string
+	function Execute(string runId, string runSettingsJson, string adAccountId, string reportType, string dateRangePreset) : StringRef
 	{
 		return TrafficAnalysisBuildRedditEnvelopeFromSource.Execute(runId, runSettingsJson, RedditAdsWebService.GenerateReportJson(adAccountId, reportType, dateRangePreset));
 	}
@@ -205,7 +205,7 @@ prototype TrafficAnalysisBuildFacebookAdsEnvelopeFromSource
 
 prototype TrafficAnalysisCollectFacebookAdsEnvelope
 {
-	function Execute(string runId, string runSettingsJson, string adAccountId, string startDate, string endDate) : string
+	function Execute(string runId, string runSettingsJson, string adAccountId, string startDate, string endDate) : StringRef
 	{
 		return TrafficAnalysisBuildFacebookAdsEnvelopeFromSource.Execute(runId, runSettingsJson, FacebookAdsWebService.GetDashboardByDateRangeJson(adAccountId, startDate, endDate));
 	}

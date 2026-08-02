@@ -31,3 +31,6 @@ After deterministic envelope construction, each successful collector makes one b
 
 ## Facebook Ads collector
 TrafficAnalysis now includes Facebook Ads as a seventh ordinary collector. It calls the existing FacebookAds provider for the run's explicit inclusive date range, preserves the provider dashboard response, derives spend/impressions/reach/click/link-click/rate/campaign metrics deterministically, and omits conversions until exact Meta action semantics are defined. Facebook participates in aggregate spend/reach visualizations and has a distinct report style.
+
+## Native StringRef return contracts
+Source bridge and large-payload collector methods return StringRef when the underlying provider can spool large JSON. This preserves native typed flow and prevents the ProtoScript interpreter from rejecting reference-backed values as missing string returns.
