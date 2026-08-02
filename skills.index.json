@@ -1876,8 +1876,8 @@
     {
       "SkillName": "OnlineSessionMemoryCritic",
       "Title": "Online Session Memory Critic",
-      "Description": "Manual or explicit-source one-turn online session memory review that also registers future completed-turn review, with targeted source inspection and canonical NLMemory writes.",
-      "Version": "0.3.1",
+      "Description": "Buffaly skill package for Online Session Memory Critic.",
+      "Version": "0.3.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Online Session Memory Critic",
@@ -1888,15 +1888,15 @@
         {
           "Path": "index.pts",
           "Sha256": "f92e9565ac25c9976aa5739a76fa6cd498e4a6be2c29ee21e04fc006e05cc1d9"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "76024e86316ccb8c3e907569c8feeb1a93f1c5d4cb415d5ede09a4b7c28b47dc"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "OpenAIAdmin",
