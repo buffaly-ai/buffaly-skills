@@ -36,8 +36,9 @@ prototype TrafficAnalysisCollectorAnalyzer
 
 prototype TrafficAnalysisGa4SourceCollector
 {
-	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string timeframe, string propertyIDsJson, string summariesValue) : string
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string timeframe, StringRef propertyIDsValue, StringRef summariesValue) : string
 	{
+		string propertyIDsJson = ToResolveStringReference.Execute(propertyIDsValue);
 		string summariesJson = ToResolveStringReference.Execute(summariesValue);
 		int index = TrafficAnalysisProtoScriptFacade.GetWebPropertyIDCount(summariesJson);
 		if (index >= TrafficAnalysisProtoScriptFacade.GetWebPropertyIDCount(propertyIDsJson)) return summariesJson;
@@ -49,8 +50,9 @@ prototype TrafficAnalysisGa4SourceCollector
 
 prototype TrafficAnalysisTrackingSourceCollector
 {
-	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string timeframe, string propertyIDsJson, string overviewsValue) : string
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string timeframe, StringRef propertyIDsValue, StringRef overviewsValue) : string
 	{
+		string propertyIDsJson = ToResolveStringReference.Execute(propertyIDsValue);
 		string overviewsJson = ToResolveStringReference.Execute(overviewsValue);
 		int index = TrafficAnalysisProtoScriptFacade.GetWebPropertyIDCount(overviewsJson);
 		if (index >= TrafficAnalysisProtoScriptFacade.GetWebPropertyIDCount(propertyIDsJson)) return overviewsJson;

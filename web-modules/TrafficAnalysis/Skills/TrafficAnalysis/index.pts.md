@@ -22,6 +22,8 @@ Each provider bridge passes source returns into a `StringRef`-typed envelope bui
 
 The recursive GA4 and Tracking Logs fan-out helpers receive only a compact numeric property-ID array rather than the full safe property projection. Compact IDs and safe evidence are projected through separate read-only inventory calls so the large provider response is never stored and reused through a ProtoScript string local, where runtime spooling can replace it with a handle. Accumulated source responses are materialized at every recursive entry because those arrays can legitimately cross the inline-string threshold.
 
+Both the compact property-ID input and the growing response accumulator are therefore declared as `StringRef` at the recursive action boundary and materialized inside every invocation. Declaring either value as `string` reintroduces the worker-spooling defect and can terminate the ordinary collector with `Method did not return a value` before it produces an envelope.
+
 The recursive wrappers no longer pass an index between ProtoScript actions. Each invocation derives its typed current index from the accumulated response-array count through `GetWebPropertyIDCount`, avoiding both bare numeric literals and `index + 1` expressions that become string-typed at ProtoScript action boundaries.
 
 After deterministic envelope construction, each successful collector makes one bounded `ToAskModelViaBuffalyRuntime` call. The strict response may replace only `analysis.summary`, `analysis.insights`, `analysis.anomalies`, and `analysis.recommendations`. Invalid or failed model output preserves the deterministic fallback; raw data and metrics are never model-authored.
