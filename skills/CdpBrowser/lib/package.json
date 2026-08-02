@@ -2,8 +2,14 @@
   "version": "1.0.0",
   "main": "cdp_helper.js",
   "name": "cdp-browser-helper",
+  "scripts": {
+    "build": "esbuild cdp_helper.js --bundle --platform=node --target=node18 --outfile=cdp_helper.bundle.js"
+  },
   "dependencies": {
     "chrome-remote-interface": "^0.33.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
   },
   "description": "CDP helper for Buffaly CdpBrowser skill"
 }

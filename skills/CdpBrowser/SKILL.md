@@ -9,7 +9,7 @@ CDP browser automation skill that connects to the user's real Chrome instance vi
 ## Architecture
 
 - ProtoScript actions (52 total) in `index.pts`
-- Node.js CDP helper (`lib/cdp_helper.js`) using `chrome-remote-interface`
+- Bundled Node.js CDP helper (`lib/cdp_helper.bundle.js`) containing the pinned `chrome-remote-interface` runtime dependency
 - Session state stored in `/tmp/buffaly-cdp-sessions.json`
 - Approval grant stored in `<session-dir>/.cdp/grant.json`
 
@@ -54,8 +54,12 @@ Or use `ToLaunchCdpChrome` (Tier 2) to launch automatically.
 ## Dependencies
 
 - Node.js >= 18.0
-- chrome-remote-interface >= 0.33
+- `chrome-remote-interface` >= 0.33 is bundled into the published helper; installed skills do not run `npm install`
 - Chrome >= 136
+
+## Package build
+
+Run `npm ci` followed by `npm run build` in `lib` before publishing. The package ships `cdp_helper.bundle.js`; `node_modules` remains authoring-only and is never required or mutated in an installed OpsAgent skill.
 
 ## Security
 

@@ -59,7 +59,7 @@ function ToCdpJsonEscape(string value) : string
 function ToCdpHelperPath() : string
 {
 	// Use the authoritative runtime project directory instead of reconstructing it through shell environment paths.
-	string helper = Path.Combine(_opsAgent.GetCurrentProjectDirectory(), "Skills", "CdpBrowser", "lib", "cdp_helper.js");
+	string helper = Path.Combine(_opsAgent.GetCurrentProjectDirectory(), "Skills", "CdpBrowser", "lib", "cdp_helper.bundle.js");
 	if (!File.Exists(helper))
 		return "";
 	return helper;
@@ -69,7 +69,7 @@ function ToCdpRunCommand(string cmdJson, int timeoutSeconds, string label) : str
 {
 	string helper = ToCdpHelperPath();
 	if (StringUtil.IsEmpty(helper))
-		return "Error: cdp_helper.js not found. Ensure the CdpBrowser skill is installed.";
+		return "Error: cdp_helper.bundle.js not found. Ensure the CdpBrowser skill is installed from a complete package.";
 	string script = "$ErrorActionPreference='Continue'; $tmp=[System.IO.Path]::GetTempFileName(); Set-Content -LiteralPath $tmp -Value '" + cmdJson.Replace("'", "''") + "' -Encoding utf8 -NoNewline; $result = & node '" + helper.Replace("'", "''") + "' $tmp 2>&1; Remove-Item $tmp -Force -ErrorAction SilentlyContinue; Write-Output $result";
 	return SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, "", label);
 }
