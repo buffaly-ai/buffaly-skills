@@ -2440,7 +2440,7 @@
       "PackageType": "WebModule",
       "Title": "Action Learning Coordinator",
       "Description": "Buffaly Web Module package for Action Learning Coordinator.",
-      "Version": "0.1.75",
+      "Version": "0.1.76",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/ActionLearningCoordinator",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/ActionLearningCoordinator",
@@ -2455,11 +2455,11 @@
         },
         {
           "Path": "ActionLearningCoordinator.Web.dll",
-          "Sha256": "e2d28f0944f4dab771a4e4fec9a805e97fbc83b2f4aaf6b1b809b7c3eb2b4a5c"
+          "Sha256": "aef11c5c6f65fbadd1356ae47d9442521ef211d1a2dfdb1d1bf5e584bad83c21"
         },
         {
           "Path": "ActionLearningCoordinator.Web.staticwebassets.endpoints.json",
-          "Sha256": "ead05ee859ff376762ab49a2b00af6eb8638b70d512a6312685dc8c7645f8d86"
+          "Sha256": "b8ea9fc670ab743fe4ae9ec03d619c60d8ed5032798875be9a9edfa5d4a6a141"
         },
         {
           "Path": "Agents/action-learning-coordinator.agent.json",
@@ -2468,6 +2468,10 @@
         {
           "Path": "Agents/action-learning.agent.json",
           "Sha256": "e9563b6a594fe8b9970ea0dcc0abea5682fb96d60be27edfd3abe4a5dbe8041c"
+        },
+        {
+          "Path": "Agents/online-action-critic-batch-coordinator.agent.json",
+          "Sha256": "069e047e6c1e50d8bdb91241dc3106967252aa7e4dbd4896660c784171791892"
         },
         {
           "Path": "Agents/online-memory-critic-batch-coordinator.agent.json",
@@ -2487,7 +2491,7 @@
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "890864e158cf25c25f6109b96db9a17f9982142b23ff7b858e5843b384e26e90"
+          "Sha256": "8682980b8813433d376418c7c58f8888b4cd09d6ce74c62a20cbc748dfa662dd"
         },
         {
           "Path": "ProjectArtifacts/ContextPrompts/OntologyFoundryOrchestrator.prompt.md",
@@ -2523,19 +2527,23 @@
         },
         {
           "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/index.pts",
-          "Sha256": "ba063516204edb1c8aaa509f8563523ec2d4b2f82ea4d50104946911eaec3cf4"
+          "Sha256": "2021c85ba8c46c419cfd4accadfc80e42e57f9aaeaeff2f38b92250a06c1369d"
         },
         {
           "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/index.pts.lazy.json",
-          "Sha256": "19242c3adcf2bfe94ace379013ff7c3d4ff463506fb643bdcfc2059d043243b7"
+          "Sha256": "f8031f278c6262266004c0bd41d6772a315143bb408f8173c7759a096122c216"
         },
         {
           "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/index.pts.md",
-          "Sha256": "ccc3ab5f0377444e74d2699ec36e13e0156abe2d8f12b9a93040aa3bd884edd1"
+          "Sha256": "d07d887086b66a787b519c8f8b7085a4a5fef10b172a08330b611b4a19210d07"
         },
         {
           "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/Prompts/ActionLearningCoordinator.md",
           "Sha256": "f10ea0ea63b00b50578123859bf2fcff0ca2fa6082cf23f8b6df8ed3d2f112c1"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/Prompts/OnlineActionCriticBatchCoordinator.md",
+          "Sha256": "d8b65de4dd078bd4171be3d9b5f85a8fb60446afa3b3be0a283fb00690c2f9f2"
         },
         {
           "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/Prompts/OnlineMemoryCriticBatchCoordinator.md",
@@ -2679,7 +2687,7 @@
         },
         {
           "Path": "web-module.json",
-          "Sha256": "055b47905aba22dc5b3471437326dc22aad801768c1a160af4c66e1395f55d92"
+          "Sha256": "c37a03b0be8e287bdb7b91c70bdb821882158b7df60eacafff304fd336c51ccc"
         },
         {
           "Path": "web.config",
@@ -2723,15 +2731,15 @@
         },
         {
           "Path": "wwwroot/workspaces.json",
-          "Sha256": "9ad07d1a95a10395270864ee035f89cbdba75ed49089d15ae5532e9abe2ca21c"
+          "Sha256": "0610675c7718136fb929339b8f92e2a3e3647226a79da6109ccc7cde14c17baf"
         },
         {
           "Path": "wwwroot/workspaces.json.br",
-          "Sha256": "2f2e88b24127e404494c90ef1d7fcecf8a02562656e20af0bc18eada9f3cd22a"
+          "Sha256": "4d44fbb050a404eb708ad11fcfb232a805aa908da80dfbc059a6b490ceb79df7"
         },
         {
           "Path": "wwwroot/workspaces.json.gz",
-          "Sha256": "48c06df52bc37185c55df5960cbf8128e3132115d5d077166c42cbe048c12d3b"
+          "Sha256": "4ff7806220ddf630f3952abaf8a9dd26c1cbe10036ea81c32ce272f918f611e9"
         }
       ],
       "ProjectArtifacts": [

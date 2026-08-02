@@ -25,6 +25,12 @@
         "DisplayName": "Online Memory Critic Batch Coordinator",
         "Path": "/web-modules/SessionWorkCoordinator/dashboard?workspace=online-memory-critic-batch",
         "Description": "Run selected-turn Online Memory Critic batches sequentially through the actual critic child with event delivery disabled."
+      },
+      {
+        "Name": "online-action-critic-batch-coordinator",
+        "DisplayName": "Online Action Critic Batch Coordinator",
+        "Path": "/web-modules/SessionWorkCoordinator/dashboard?workspace=online-action-critic-batch",
+        "Description": "Replay source turns sequentially through the actual Online Action Critic child while preserving learned actions and ledger history."
       }
     ],
     "ProjectArtifacts": [
