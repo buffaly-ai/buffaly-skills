@@ -1,0 +1,14 @@
+{
+  "source": "facebookAds",
+  "collectedAt": "2026-08-01T20:00:00Z",
+  "timeframe": "{{timeframe}}",
+  "status": "sample",
+  "rawData": { "report": { "Currency": "USD", "Summary": { "Spend": 146.20, "Impressions": 38200, "Reach": 24100, "Clicks": 685, "LinkClicks": 492, "Ctr": 1.79, "Cpc": 0.21, "Cpm": 3.83 }, "Campaigns": [] } },
+  "analysis": { "summary": "Facebook Ads produced broad paid-social reach with efficient click costs in the demonstration dataset.", "insights": ["Link clicks account for most measured clicks."], "anomalies": [], "recommendations": ["Test the best-performing Facebook creative against the strongest landing page."] },
+  "metrics": [
+    { "key": "spend", "label": "Spend", "value": 146.20, "unit": "USD", "displayValue": "$146.20", "evidence": "rawData.report.Summary.Spend" },
+    { "key": "impressions", "label": "Impressions", "value": 38200, "unit": "count", "displayValue": "38,200", "evidence": "rawData.report.Summary.Impressions" },
+    { "key": "reach", "label": "Reach", "value": 24100, "unit": "count", "displayValue": "24,100", "evidence": "rawData.report.Summary.Reach" },
+    { "key": "linkClicks", "label": "Link clicks", "value": 492, "unit": "count", "displayValue": "492", "evidence": "rawData.report.Summary.LinkClicks" }
+  ]
+}

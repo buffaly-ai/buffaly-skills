@@ -16831,7 +16831,7 @@
       "PackageType": "WebModule",
       "Title": "Traffic Analysis",
       "Description": "Buffaly Web Module package for Traffic Analysis.",
-      "Version": "0.1.73",
+      "Version": "0.1.74",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/TrafficAnalysis",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/TrafficAnalysis",
@@ -16858,11 +16858,15 @@
         },
         {
           "Path": "FeedingFrenzy.TrafficAnalysis.Web.dll",
-          "Sha256": "7829af76add442ff66a13d1161b4b0d8c4a9ffba6f64e16e2efa1d2a72fa87d6"
+          "Sha256": "050dee0617b0497c94145fe6b3335cb64435cd195a3c059343332ccb7ecc4a8a"
         },
         {
           "Path": "Npgsql.dll",
           "Sha256": "5406d26e745aff267098f30fb0da5b1507a13080b2066ee9003b071163d887c2"
+        },
+        {
+          "Path": "Samples/facebookAds.json",
+          "Sha256": "bfad27e3ad2d931dbf074092d0ee70f953a0dcead8f2152cc77bad664ac6c807"
         },
         {
           "Path": "Samples/googleAds.json",
@@ -16882,7 +16886,7 @@
         },
         {
           "Path": "Samples/traffic-summary.json",
-          "Sha256": "e4b05d6049dbd62cd6d0077c282c9703646c63ceee24709b0c026b3702aa6924"
+          "Sha256": "eb1ec713af413ca602c9970a640ccb9f3dc7657319bb56518c046d6c63ab7bc4"
         },
         {
           "Path": "Samples/traffic.json",
@@ -16891,6 +16895,10 @@
         {
           "Path": "Skills/FeedingFrenzyWebPropertiesJsonWs/index.pts",
           "Sha256": "dce334957f42d654f737fea7fd4d4947512af882f2c3721555eea6bc614a614a"
+        },
+        {
+          "Path": "Skills/FeedingFrenzyWebPropertiesJsonWs/index.pts.lazy.json",
+          "Sha256": "7957171f1b64bcbdd752d9d9fb6c4b7af02f676fe524846d04c8facd348bfa77"
         },
         {
           "Path": "Skills/FeedingFrenzyWebPropertiesJsonWs/index.pts.md",
@@ -16906,11 +16914,15 @@
         },
         {
           "Path": "Skills/TrafficAnalysis/index.pts",
-          "Sha256": "c7e154145a7470dd0485364bf54318fe8a816833b5167d94edc45430182dd19f"
+          "Sha256": "244867ec62af22f4b1f25e7ddd169296bbce8db3a4e6434fdf0aeb3509b5765a"
+        },
+        {
+          "Path": "Skills/TrafficAnalysis/index.pts.lazy.json",
+          "Sha256": "57eb005b50bed10bd6506f2a784bd231f7de752bdf838121e903602505599987"
         },
         {
           "Path": "Skills/TrafficAnalysis/index.pts.md",
-          "Sha256": "8f947176e6e18f3668bfc2a1e91ead8a24d84d794e169a732a6d0eb6e61f6fa9"
+          "Sha256": "d838b600806ef6f6c02e632e420bff870d9b7104b56b1d4e11939dc900939014"
         },
         {
           "Path": "Skills/TrafficAnalysis/Prompts/aggregator.prompt.md",
@@ -16923,6 +16935,10 @@
         {
           "Path": "Skills/TrafficAnalysis/Prompts/collector.validation.prompt.md",
           "Sha256": "1ced991f812f13666baaa8801662035b00e168142b19f38055f144ea7c648b0a"
+        },
+        {
+          "Path": "Skills/TrafficAnalysis/Prompts/facebook-ads-collector.prompt.md",
+          "Sha256": "78414161b1618ea1aa6a625213bf2074f73befe9a216837403435d9b3f23828e"
         },
         {
           "Path": "Skills/TrafficAnalysis/Prompts/google-ads-collector.prompt.md",
@@ -16962,7 +16978,7 @@
         },
         {
           "Path": "wwwroot/components/traffic-analysis-module.js",
-          "Sha256": "7b3ae698052d953149302a652aab6ede8994d6a0bbc45011bd5925c08650b0d4"
+          "Sha256": "78f83369435144a5a424e7da8b49246466d6958324f7e7015c730bda1028fe34"
         },
         {
           "Path": "wwwroot/dashboard.html",
@@ -16991,14 +17007,6 @@
         {
           "Path": "wwwroot/traffic-analysis.js",
           "Sha256": "066dc9b5610fb60dd8ddeefc289b9cf46a424535d70943c0649bfe81b21029ba"
-        },
-        {
-          "Path": "Skills/FeedingFrenzyWebPropertiesJsonWs/index.pts.lazy.json",
-          "Sha256": "7957171f1b64bcbdd752d9d9fb6c4b7af02f676fe524846d04c8facd348bfa77"
-        },
-        {
-          "Path": "Skills/TrafficAnalysis/index.pts.lazy.json",
-          "Sha256": "f42c62de27ea42e29753b76f93a3778376726b641e2df3cf759c93799c1889b9"
         }
       ],
       "ProjectArtifacts": [

@@ -6,6 +6,8 @@ reference Buffaly.OpenAiAdmin.WebModule;
 import Buffaly.OpenAiAdmin.WebModule Buffaly.OpenAiAdmin.WebModule.OpenAiAdminAgentTools OpenAiAdminAgentTools;
 reference Buffaly.RedditAds.Web Buffaly.RedditAds.Web;
 import Buffaly.RedditAds.Web Buffaly.RedditAds.Web.RedditAdsWebService RedditAdsWebService;
+reference Buffaly.FacebookAds Buffaly.FacebookAds;
+import Buffaly.FacebookAds Buffaly.FacebookAds.FacebookAdsWebService FacebookAdsWebService;
 
 [SemanticEntity("traffic analysis skill")]
 prototype TrafficAnalysisSkillAction : OpsAction
@@ -128,6 +130,14 @@ prototype TrafficAnalysisGetRedditAdsReport
 	}
 }
 
+prototype TrafficAnalysisGetFacebookAdsReport
+{
+	function Execute(string adAccountId, string startDate, string endDate) : string
+	{
+		return FacebookAdsWebService.GetDashboardByDateRangeJson(adAccountId, startDate, endDate);
+	}
+}
+
 prototype TrafficAnalysisBuildGoogleAdsEnvelopeFromSources
 {
 	function Execute(string runId, string runSettingsJson, StringRef campaignsValue, StringRef searchTermsValue, StringRef adCreativesValue) : string
@@ -181,6 +191,23 @@ prototype TrafficAnalysisCollectRedditEnvelope
 	function Execute(string runId, string runSettingsJson, string adAccountId, string reportType, string dateRangePreset) : string
 	{
 		return TrafficAnalysisBuildRedditEnvelopeFromSource.Execute(runId, runSettingsJson, RedditAdsWebService.GenerateReportJson(adAccountId, reportType, dateRangePreset));
+	}
+}
+
+prototype TrafficAnalysisBuildFacebookAdsEnvelopeFromSource
+{
+	function Execute(string runId, string runSettingsJson, StringRef reportValue) : string
+	{
+		string reportJson = ToResolveStringReference.Execute(reportValue);
+		return TrafficAnalysisProtoScriptFacade.BuildFacebookAdsEnvelope(runId, runSettingsJson, reportJson);
+	}
+}
+
+prototype TrafficAnalysisCollectFacebookAdsEnvelope
+{
+	function Execute(string runId, string runSettingsJson, string adAccountId, string startDate, string endDate) : string
+	{
+		return TrafficAnalysisBuildFacebookAdsEnvelopeFromSource.Execute(runId, runSettingsJson, FacebookAdsWebService.GetDashboardByDateRangeJson(adAccountId, startDate, endDate));
 	}
 }
 
@@ -268,6 +295,19 @@ prototype ToCollectRedditAdsData : TrafficAnalysisSkillAction
 		string reportType = TrafficAnalysisProtoScriptFacade.GetSetting(runSettingsJson, "RedditAdsReportType", "campaign");
 		string dateRangePreset = TrafficAnalysisProtoScriptFacade.GetSetting(runSettingsJson, "RedditAdsDateRangePreset", "last_7d");
 		return TrafficAnalysisCollectorAnalyzer.Execute(TrafficAnalysisCollectRedditEnvelope.Execute(runId, runSettingsJson, adAccountID, reportType, dateRangePreset));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to collect facebook ads data")]
+prototype ToCollectFacebookAdsData : TrafficAnalysisSkillAction
+{
+	Description = @"Collect Facebook Ads account and campaign performance for the requested run and return the common collector envelope JSON.";
+	function Execute(string runId, string runSettingsJson) : string
+	{
+		string adAccountID = TrafficAnalysisProtoScriptFacade.GetRequiredSetting(runSettingsJson, "FacebookAdsAccountId");
+		string startDate = TrafficAnalysisProtoScriptFacade.GetRequiredSetting(runSettingsJson, "StartDateUtc");
+		string endDate = TrafficAnalysisProtoScriptFacade.GetRequiredSetting(runSettingsJson, "EndDateUtc");
+		return TrafficAnalysisCollectorAnalyzer.Execute(TrafficAnalysisCollectFacebookAdsEnvelope.Execute(runId, runSettingsJson, adAccountID, startDate, endDate));
 	}
 }
 

@@ -28,3 +28,6 @@ After deterministic envelope construction, each successful collector makes one b
 ## Deterministic email rendering
 
 `ToAggregateTrafficAnalysis` emits only the versioned `intelligence-factory-traffic-email.v1` report view model in `artifacts/traffic-summary.json`. The TrafficAnalysis WebModule owns the packaged Intelligence Factory HTML template, logo, value escaping, repeated action/source rendering, and final `artifacts/traffic-summary-email.html` artifact. This keeps presentation iteration separate from collector and analysis prompting.
+
+## Facebook Ads collector
+TrafficAnalysis now includes Facebook Ads as a seventh ordinary collector. It calls the existing FacebookAds provider for the run's explicit inclusive date range, preserves the provider dashboard response, derives spend/impressions/reach/click/link-click/rate/campaign metrics deterministically, and omits conversions until exact Meta action semantics are defined. Facebook participates in aggregate spend/reach visualizations and has a distinct report style.

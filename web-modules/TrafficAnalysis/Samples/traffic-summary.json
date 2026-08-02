@@ -2,8 +2,8 @@
   "templateVersion": "intelligence-factory-traffic-email.v1",
   "reportLabel": "Traffic analysis",
   "timeframe": "{{timeframe}}",
-  "headline": "Traffic is healthy; Reddit leads acquisition efficiency",
-  "executiveSummary": "Human visits represent 84% of traffic. Google Ads produced 27 conversions at $18.01 each, while Reddit produced 19 at $11.51 each. LinkedIn engagement is strongest for practical AI implementation content. OpenAI usage cost is estimated at $41.28.",
+  "headline": "Traffic is healthy; paid social expands the opportunity set",
+  "executiveSummary": "Human visits represent 84% of traffic. Facebook and Reddit add meaningful paid-social reach alongside Google Ads, while LinkedIn engagement is strongest for practical AI implementation content. OpenAI usage remains a measurable operating cost.",
   "actions": [
     "Scale the Reddit Small Business AI campaign cautiously.",
     "Improve conversion paths on the AI Growth landing page.",
@@ -41,20 +41,25 @@
     {
       "key": "acquisition-efficiency",
       "unit": "USD",
-      "title": "Acquisition cost per conversion",
+      "title": "Paid channel spend",
       "items": [
         {
+          "label": "Facebook Ads",
+          "displayValue": "$146.20",
+          "value": 146.2
+        },
+        {
           "label": "Reddit Ads",
-          "displayValue": "$11.51",
-          "value": 11.51
+          "displayValue": "$218.76",
+          "value": 218.76
         },
         {
           "label": "Google Ads",
-          "displayValue": "$18.01",
-          "value": 18.01
+          "displayValue": "$486.32",
+          "value": 486.32
         }
       ],
-      "description": "Lower cost indicates more efficient paid acquisition."
+      "description": "Demonstration spend by paid acquisition channel."
     }
   ],
   "sources": [
@@ -201,9 +206,37 @@
         "Small Business AI is the leading campaign."
       ],
       "diagnostic": ""
+    },
+    {
+      "key": "facebookAds",
+      "name": "Facebook Ads",
+      "status": "sample",
+      "summary": "Facebook Ads produced broad paid-social reach with efficient click costs in the demonstration dataset.",
+      "metrics": [
+        {
+          "label": "Spend",
+          "value": "$146.20"
+        },
+        {
+          "label": "Impressions",
+          "value": "38,200"
+        },
+        {
+          "label": "Reach",
+          "value": "24,100"
+        },
+        {
+          "label": "Link clicks",
+          "value": "492"
+        }
+      ],
+      "insights": [
+        "Link clicks account for most measured clicks."
+      ],
+      "diagnostic": ""
     }
   ],
-  "footer": "Demonstration data from Traffic Properties, Google Ads, LinkedIn, OpenAI Usage, and Reddit Ads. Not live production data.",
+  "footer": "Demonstration data from GA4, Tracking Logs, Google Ads, LinkedIn, OpenAI Usage, Reddit Ads, and Facebook Ads. Not live production data.",
   "promptProvenance": {
     "promptFile": "aggregator.prompt.md",
     "promptText": "Combine every available source into the versioned TrafficAnalysis email report view model.",
