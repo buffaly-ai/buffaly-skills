@@ -8704,10 +8704,10 @@
       "PackageType": "WebModule",
       "Title": "GoDaddy",
       "Description": "Buffaly Web Module package for GoDaddy.",
-      "Version": "0.1.41",
+      "Version": "0.1.43",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/GoDaddy",
-      "SourceUrl": "",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/GoDaddy",
       "Phrases": [
         "GoDaddy",
         "GoDaddy"
@@ -8727,7 +8727,7 @@
         },
         {
           "Path": "Buffaly.GoDaddy.Web.dll",
-          "Sha256": "4e1171164a40a256c02359807006e90624de7f0973d4d463ea3931ec3e3e1a0a"
+          "Sha256": "26cd9bc85a7f2e21b54d4c9c77ff7f5e9cd31c78d6defda05a1b8be0cc52b547"
         },
         {
           "Path": "Buffaly.ProviderContracts.dll",
@@ -8748,6 +8748,10 @@
         {
           "Path": "Skills/GoDaddy/index.pts",
           "Sha256": "45264e13dae83cc011ce713e12ccdfe6839f01d92949ca117bd856156a26ece9"
+        },
+        {
+          "Path": "Skills/GoDaddy/index.pts.lazy.json",
+          "Sha256": "f801c332049d45a86c5b64716c6ff31a172ff64ee8cfb3e808dc3c911bc8b855"
         },
         {
           "Path": "Skills/GoDaddy/index.pts.md",
@@ -8792,10 +8796,6 @@
         {
           "Path": "wwwroot/js/godaddy.js.md",
           "Sha256": "144a8a32a50b57477e749800ec136113b0fefc15893c4654874fb306586b3f24"
-        },
-        {
-          "Path": "Skills/GoDaddy/index.pts.lazy.json",
-          "Sha256": "f801c332049d45a86c5b64716c6ff31a172ff64ee8cfb3e808dc3c911bc8b855"
         }
       ],
       "ProjectArtifacts": [

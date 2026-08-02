@@ -722,7 +722,7 @@
       "SkillName": "ExtensionBrowser",
       "Title": "Extension Browser",
       "Description": "Buffaly skill package for Extension Browser.",
-      "Version": "0.2.73",
+      "Version": "0.2.75",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Extension Browser",
@@ -851,6 +851,10 @@
           "Sha256": "4daea5086ea7e8deffec1cfbb593b5c954be3aed58e9af8b6ff54ed458eba9ba"
         },
         {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "2ab4563675eaaaad42ba426212ae41d3134eba320b7c4135bb11a4baf875f873"
+        },
+        {
           "Path": "lib/bridge.js",
           "Sha256": "252167ec7caae923f43cd3a6c3fe7fd77b9ec33366d56493ef138c0a69403bd8"
         },
@@ -865,10 +869,6 @@
         {
           "Path": "SKILL.md",
           "Sha256": "0da6139227592087f3ceb8d103f253271efc143d7a31318f9068e2a9a6e86b37"
-        },
-        {
-          "Path": "index.pts.lazy.json",
-          "Sha256": "2ab4563675eaaaad42ba426212ae41d3134eba320b7c4135bb11a4baf875f873"
         }
       ],
       "EntryPoint": "index.pts",
@@ -1006,7 +1006,7 @@
       "SkillName": "FeedingFrenzyJsonWs",
       "Title": "Feeding Frenzy JsonWs",
       "Description": "Buffaly skill package for Feeding Frenzy JsonWs.",
-      "Version": "0.1.10",
+      "Version": "0.1.12",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Feeding Frenzy JsonWs",
@@ -1033,6 +1033,10 @@
         {
           "Path": "index.pts",
           "Sha256": "4d97bed3d4de833aa7d83d0725a96981d5a27ae0d3cff4abd9a77d73d79b6ccc"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "d79164f7e096e8a7c537e800170ca86c2407579ed9ee2c7fe77ee88da399cedf"
         },
         {
           "Path": "index.pts.md",
@@ -1177,10 +1181,6 @@
         {
           "Path": "Users.pts.md",
           "Sha256": "61346f61f0c3ef3fd05b5352b04d3ccb867432dd70b92e2afeca557f09026603"
-        },
-        {
-          "Path": "index.pts.lazy.json",
-          "Sha256": "d79164f7e096e8a7c537e800170ca86c2407579ed9ee2c7fe77ee88da399cedf"
         }
       ],
       "EntryPoint": "index.pts",
@@ -1255,7 +1255,7 @@
       "SkillName": "GoogleAnalytics",
       "Title": "Google Analytics",
       "Description": "Buffaly skill package for Google Analytics.",
-      "Version": "0.1.7",
+      "Version": "0.1.9",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Google Analytics",
@@ -1268,6 +1268,10 @@
           "Sha256": "f533e0d16d06c00389b967a81de52785c674de70341c36841cadd8ef7e446f16"
         },
         {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "6b84eb0a4933ebf350b8b1b26bc6e45377357ca04ce8abb7c12cbd2e1f2fea95"
+        },
+        {
           "Path": "index.pts.md",
           "Sha256": "99e9408e2ca9ddf1442921e0fb95349d489830cbf2035fe814a814072ef58868"
         },
@@ -1278,10 +1282,6 @@
         {
           "Path": "SKILL.md",
           "Sha256": "af922209c18def12037756083ef3e183a670e57488d355dde3bee407e0364393"
-        },
-        {
-          "Path": "index.pts.lazy.json",
-          "Sha256": "6b84eb0a4933ebf350b8b1b26bc6e45377357ca04ce8abb7c12cbd2e1f2fea95"
         }
       ],
       "EntryPoint": "index.pts",
@@ -2417,7 +2417,7 @@
       "SkillName": "TebraDesktop",
       "Title": "TebraDesktop",
       "Description": "Buffaly skill package for TebraDesktop.",
-      "Version": "0.1.2",
+      "Version": "0.1.4",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "TebraDesktop",
@@ -2428,6 +2428,10 @@
         {
           "Path": "index.pts",
           "Sha256": "41666936eff8d5e1065a24470bca39117d2c604c9541b64348c4f4f4aa6304eb"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "0a419f4d4446fc5bdf590222def4d4dba761772a25ab36af6d62538eb0d0bd3b"
         },
         {
           "Path": "index.pts.md",
@@ -2472,10 +2476,6 @@
         {
           "Path": "SKILL.md",
           "Sha256": "b9004acf9e1793bcefa179867baff7fe7391188374eccd49edcd60b033c09775"
-        },
-        {
-          "Path": "index.pts.lazy.json",
-          "Sha256": "0a419f4d4446fc5bdf590222def4d4dba761772a25ab36af6d62538eb0d0bd3b"
         }
       ],
       "EntryPoint": "index.pts",
@@ -2486,7 +2486,7 @@
       "SkillName": "TebraWeb",
       "Title": "Tebra Web",
       "Description": "Buffaly skill package for Tebra Web.",
-      "Version": "0.1.2",
+      "Version": "0.1.4",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Tebra Web",
@@ -2499,31 +2499,27 @@
           "Sha256": "21c4e879ae0e4eae41e348470da2ce49996d254f7d94d5f20666329c049fe28d"
         },
         {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "ab22ab5bd31eb3f48ce01c25bede0cd4bed7634749977285f5baf3bf9329cf06"
+        },
+        {
           "Path": "index.pts.md",
           "Sha256": "f52ea5c8cbeb948d8fa1bdec97e1e320814930fe2f2052f29e3ce12d4da55fb1"
         },
         {
           "Path": "SKILL.md",
           "Sha256": "9e9fd6202cf3067408ada240d688c0feda0961cb3b53479cf762d0e8763bb786"
-        },
-        {
-          "Path": "index.pts.lazy.json",
-          "Sha256": "ab22ab5bd31eb3f48ce01c25bede0cd4bed7634749977285f5baf3bf9329cf06"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "Twilio",
       "Title": "Twilio",
       "Description": "Buffaly skill package for Twilio.",
-      "Version": "0.1.1",
+      "Version": "0.1.3",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Twilio",
@@ -2534,6 +2530,10 @@
         {
           "Path": "index.pts",
           "Sha256": "2b1d06783c7c5bd2d744691d61591d50cf9875b0c783b96a8f0c8be21e4182c5"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "d06554cac6f793b5b5543b3e0dcae9a7b88d926e81c9fdd6edf3708974dd52cb"
         },
         {
           "Path": "PromptActions.pts",
@@ -2554,10 +2554,6 @@
         {
           "Path": "SKILL.md",
           "Sha256": "df40b0307f4cf0bedf3fee9d0a7217444cf3ce29b12c39082f2b9f6625fcc290"
-        },
-        {
-          "Path": "index.pts.lazy.json",
-          "Sha256": "d06554cac6f793b5b5543b3e0dcae9a7b88d926e81c9fdd6edf3708974dd52cb"
         }
       ],
       "EntryPoint": "index.pts",
@@ -2621,7 +2617,7 @@
       "SkillName": "Unity",
       "Title": "Unity",
       "Description": "Buffaly skill package for Unity.",
-      "Version": "0.1.2",
+      "Version": "0.1.4",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Unity",
@@ -2634,6 +2630,10 @@
           "Sha256": "a93af4f0c628dd05c3d2afdc8a26520e3a5c22cca36387bc817000296a28837a"
         },
         {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "e6479448d07660620e2740c4c6ca9e42f07eed09bb310a9057224f4fc15e7be5"
+        },
+        {
           "Path": "index.pts.md",
           "Sha256": "aba861cdca813705f43e36cbe868ab16c795e5331c71bd38d12ba2522873a50e"
         },
@@ -2644,19 +2644,11 @@
         {
           "Path": "unity-host-client.ps1",
           "Sha256": "f46dae7c5ebd89e308beffc0397d138e8718ab9fe3744195d1adfe64e4c99eff"
-        },
-        {
-          "Path": "index.pts.lazy.json",
-          "Sha256": "e6479448d07660620e2740c4c6ca9e42f07eed09bb310a9057224f4fc15e7be5"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "UserSecrets",
@@ -2759,10 +2751,11 @@
     {
       "SkillName": "VisualStudio",
       "Title": "Visual Studio",
-      "Description": "Buffaly OpsAgent skill package for VisualStudio.",
-      "Version": "0.1.1",
+      "Description": "Buffaly skill package for Visual Studio.",
+      "Version": "0.1.3",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "Visual Studio",
         "VisualStudio"
       ],
       "Path": "skills/VisualStudio",
@@ -2778,6 +2771,10 @@
         {
           "Path": "index.pts",
           "Sha256": "f3f8bddab0013838afce9b8432fb0a745b04bc4231a2dd960671aa4b438b37ce"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "91c9d34d865f1dd0ff785026250e51519525c07956eff5969ce7543d1b5c1ebf"
         },
         {
           "Path": "index.pts.md",
@@ -2798,19 +2795,11 @@
         {
           "Path": "VisualStudioOntologyGenerator.pts.md",
           "Sha256": "a27d7c19f87ec26d35a100eac746773e5977a4592356987fd0ddad9f20ce03c2"
-        },
-        {
-          "Path": "index.pts.lazy.json",
-          "Sha256": "91c9d34d865f1dd0ff785026250e51519525c07956eff5969ce7543d1b5c1ebf"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "VoiceAgentDispatch",
@@ -2910,7 +2899,7 @@
       "SkillName": "Workspace",
       "Title": "Workspace",
       "Description": "Buffaly skill package for Workspace.",
-      "Version": "0.1.16",
+      "Version": "0.1.18",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Workspace",
@@ -2923,16 +2912,16 @@
           "Sha256": "7c2d847feccb4799e6ab7389bc4b34369f2507ccc93782e0b68a7dc24b28bd34"
         },
         {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "ddb7755337557645b0d17738802dee8e1bafc0499c4f70dea3c1b2d43a03132c"
+        },
+        {
           "Path": "index.pts.md",
           "Sha256": "4733cb8c9712efb3885aeed4983160381f29ac8d0de7e086fd2caf9d7847eae7"
         },
         {
           "Path": "lib/Buffaly.Agent.Workspaces.dll",
-          "Sha256": "d26726e67ffbe9782495cd28f35f217f06ae5b3c7695831cc46291fc6a668259"
-        },
-        {
-          "Path": "index.pts.lazy.json",
-          "Sha256": "ddb7755337557645b0d17738802dee8e1bafc0499c4f70dea3c1b2d43a03132c"
+          "Sha256": "b78a6fe57fe15e5ee79f5dc325c5c5c1b8fb65410813c6ede9eb297df66f884e"
         }
       ],
       "EntryPoint": "index.pts",
@@ -3012,7 +3001,7 @@
       "SkillName": "ReleaseOps",
       "Title": "ReleaseOps",
       "Description": "Buffaly skill package for ReleaseOps.",
-      "Version": "0.1.16",
+      "Version": "0.1.18",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "ReleaseOps",
@@ -3025,16 +3014,16 @@
           "Sha256": "2696c75c8d55872d7504d00eccb6db3f1c3ad857afe03ec03e0024d0947ba321"
         },
         {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "a9ec18730420851199ba0e252515ece76513e840ccc380ca4460299eff664204"
+        },
+        {
           "Path": "index.pts.md",
           "Sha256": "0697a81cd9b1c44df9cb6fea70e9036f8a5aad0b9366802beb60072cb0859a33"
         },
         {
           "Path": "lib/Buffaly.ReleaseOps.Client.dll",
-          "Sha256": "6ec1d74deb4f55702e8d7033fb8478241a910da29c457f9d2b3632de32c226bc"
-        },
-        {
-          "Path": "index.pts.lazy.json",
-          "Sha256": "a9ec18730420851199ba0e252515ece76513e840ccc380ca4460299eff664204"
+          "Sha256": "df22e9275d5ed3f6bc06d141f856de4df34aa3550ea3b362119d271e4be0cca3"
         }
       ],
       "EntryPoint": "index.pts",
