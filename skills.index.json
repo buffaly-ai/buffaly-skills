@@ -2158,21 +2158,26 @@
     {
       "SkillName": "SessionSync",
       "Title": "Session Sync",
-      "Description": "Buffaly OpsAgent skill package for SessionSync.",
-      "Version": "0.1.0",
+      "Description": "Buffaly skill package for Session Sync.",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "Session Sync",
         "SessionSync"
       ],
       "Path": "skills/SessionSync",
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "8b191be294359a90d54bab50675151351e19f94f08d3785504899a3d6e819610"
+          "Sha256": "ac107dbf8a8c6830d0847137972063a4e625959ee3a550de804fcfa284215d1f"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "ee26b9c26e3d3db67020d4fcac5fa1ebd20e28a2407353df5a6e8a279a79041f"
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "47b03c95c057347cbe4f13678d8f9f7184784c20331d1e37bbc61c14b3cc9f99"
+          "Sha256": "64b35dbe9a98895ca320906cb6295ebe599d0d7197ba39e494e5f41f98b2a6b9"
         },
         {
           "Path": "PromptActions.pts",
@@ -2189,11 +2194,7 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "SkillDirectory",

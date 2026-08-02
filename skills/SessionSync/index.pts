@@ -16,8 +16,6 @@ prototype SessionSyncSkill : SkillEntity
     ActionRoot = SessionSyncSkillAction;
 }
 
-include "PromptActions.pts";
-
 prototype SessionSemDbSearchSkillAction : OpsAction
 {
     Description = @"Base action type for local Sessions semantic search tools.";

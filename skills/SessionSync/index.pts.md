@@ -1,5 +1,10 @@
 # SessionSync index.pts Change History
 
+## 2026-08-02
+
+- Removed the prompt-action overlay from the lazy DLL-backed module closure so SessionSync can compile independently against CoreLite.
+- The normal OpsAgent skills index keeps `PromptActions.pts` eager because prompt workflow metadata depends on the full Core `PromptAction` contract.
+
 ## Wrapper Cleanup (2026-04-15)
 - Removed dead `SessionSync` debug and temporary-unavailable actions that were not authoritative tool paths.
 - Consolidated recent-session batch import down to one working ProtoScript wrapper over `SessionSemDbSyncDriver.SyncRecentSessionsAsDiagnostics(...)`.
