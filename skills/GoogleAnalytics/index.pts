@@ -1,5 +1,6 @@
 reference Buffaly.Marketing Buffaly.Marketing;
 import Buffaly.Marketing Buffaly.Marketing.GoogleAnalytics.GoogleAnalyticsProtoScriptFacade GoogleAnalyticsProtoScriptFacade;
+import Buffaly.Agent.Tools.Secrets Buffaly.Agent.Tools.Secrets.UserSecrets UserSecrets;
 
 prototype GoogleAnalyticsSkillAction : OpsAction
 {
@@ -34,6 +35,7 @@ prototype ToTestMarketingAnalyticsAccess : GoogleAnalyticsSkillAction
 
 	function Execute(string propertyAlias, string startDate, string endDate) : string
 	{
+		GoogleAnalyticsProtoScriptFacade.ConfigureServiceAccountCredentialJson(UserSecrets.GetSecret("GoogleAnalytics.ServiceAccountKey"));
 		return GoogleAnalyticsProtoScriptFacade.TestAccess(propertyAlias, startDate, endDate);
 	}
 }
@@ -46,6 +48,7 @@ prototype ToRunMarketingAnalyticsReport : GoogleAnalyticsSkillAction
 
 	function Execute(string propertyAlias, string startDate, string endDate, string dimensionsCsv, string metricsCsv, int limit) : string
 	{
+		GoogleAnalyticsProtoScriptFacade.ConfigureServiceAccountCredentialJson(UserSecrets.GetSecret("GoogleAnalytics.ServiceAccountKey"));
 		return GoogleAnalyticsProtoScriptFacade.RunReport(propertyAlias, startDate, endDate, dimensionsCsv, metricsCsv, limit);
 	}
 }
