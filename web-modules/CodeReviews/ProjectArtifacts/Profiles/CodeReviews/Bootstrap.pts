@@ -1,0 +1,6 @@
+partial prototype GlobalCodeReviewsAgentAction : LazyProfileActionRoot;
+partial prototype ToLazyProfileSearchCandidateActions : GlobalCodeReviewsAgentAction;
+partial prototype ToLazyProfileSearchCandidateEntities : GlobalCodeReviewsAgentAction;
+partial prototype ToLazyProfileLoadProtoScriptActionTool : GlobalCodeReviewsAgentAction;
+partial prototype ToLazyProfileListLoadedProtoScriptActionTools : GlobalCodeReviewsAgentAction;
+partial prototype ToShowLazyProfileEnvironment : GlobalCodeReviewsAgentAction;
