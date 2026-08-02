@@ -1,0 +1,145 @@
+import Buffaly.Agent.Host Buffaly.Agent.Host.SessionManagement.Sessions Sessions;
+import Buffaly.Agent.Host Buffaly.Agent.Host.BuffalySessionsService BuffalySessionsService;
+import Buffaly.Agent.Host Buffaly.Agent.Host.CreateAgentInitializationContract CreateAgentInitializationContract;
+
+prototype OntologyFoundryOrchestratorSkillAction : OntologyFoundryOrchestratorActionRoot
+{
+	Description = @"Base action for Foundry principal ledger and worker supervision tools.";
+}
+
+[SemanticEntity("ontology foundry orchestrator skill")]
+prototype OntologyFoundryOrchestratorSkill : SkillEntity
+{
+	Description = @"Maintains session coverage accounting and delegates bounded work to Ontology Foundry agents.";
+	ActionRoot = OntologyFoundryOrchestratorActionRoot;
+}
+
+[SemanticProgram.InfinitivePhrase("to create an ontology foundry orchestrator session")]
+prototype ToCreateOntologyFoundryOrchestratorSession : OpsAction
+{
+	Description = @"Parent bootstrap action. sessionKey - exact new or existing principal key. Creates the runtime from OpsAgent using the ontology-foundry-orchestrator profile.";
+	function Execute(string sessionKey) : Prototype
+	{
+		return BuffalyAgentService.CreateAgentFromProject(sessionKey, "OpsAgent", "ontology-foundry-orchestrator");
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read the ontology foundry ledger")]
+prototype ToReadOntologyFoundryLedger : OntologyFoundryOrchestratorSkillAction, OntologyFoundryOrchestratorActionRoot
+{
+	Description = @"Reads the principal session's fixed artifacts/ontology-foundry/foundry-ledger.md. Missing returns an empty string.";
+	function Execute() : string
+	{
+		string path = Path.Combine(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\ontology-foundry\foundry-ledger.md");
+		if (!File.Exists(path))
+		{
+			return "";
+		}
+		return File.ReadAllText(path);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to write the ontology foundry ledger")]
+prototype ToWriteOntologyFoundryLedger : OntologyFoundryOrchestratorSkillAction, OntologyFoundryOrchestratorActionRoot
+{
+	Description = @"markdown - complete coherent replacement for the principal session's one fixed Foundry ledger.";
+	function Execute(string markdown) : string
+	{
+		return FileSystemTools.ReplaceTextFile(
+			_opsAgent.GetCurrentSessionDirectory(),
+			@"artifacts\ontology-foundry\foundry-ledger.md",
+			markdown);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list recent eligible foundry session candidates")]
+[SemanticProgram.InfinitivePhrase("to list bounded foundry session inventory")]
+prototype ToListOntologyFoundrySessionInventory : OntologyFoundryOrchestratorSkillAction, OntologyFoundryOrchestratorActionRoot
+{
+	Description = @"maxCount and skip - bounded persisted recent-session inventory ordered by activity. Returns canonical SessionInfo metadata including AgentName, ParentSessionKey, UpdatedUtc, LastFinalMessageUtc, and MessageCount. The ledger applies agent, recency, exclusion, and hierarchy gates.";
+	function Execute(int maxCount = 100, int skip = 0) : string
+	{
+		return JsonUtil.ToFriendlyJSON(new JsonValue(BuffalySessionsService.GetRecentSessions(maxCount, skip, ""))).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read an ontology foundry candidate parent key")]
+prototype ToGetOntologyFoundrySessionParentKey : OntologyFoundryOrchestratorSkillAction, OntologyFoundryOrchestratorActionRoot
+{
+	Description = @"sessionKey - exact persisted candidate or its parent. Returns the authoritative parent key, or empty for a root. Use at most twice per candidate to classify depth 0, depth 1, or excluded depth 2+.";
+	function Execute(string sessionKey) : string
+	{
+		return SessionTools.GetParentSessionKeyTool(sessionKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get the latest source turn for ontology foundry review")]
+prototype ToGetOntologyFoundryPrincipalLatestSourceTurn : OntologyFoundryOrchestratorSkillAction, OntologyFoundryOrchestratorActionRoot
+{
+	Description = @"sourceSessionKey - exact eligible Level1 source. Returns its canonical most recent turn summary so the principal can freeze EndInclusiveSourceTurnId before reservation.";
+	function Execute(string sourceSessionKey) : TurnSummaryContract
+	{
+		return SessionTools.GetMostRecentSessionTurnTool(sourceSessionKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to inspect a cited source turn for ontology foundry review")]
+prototype ToInspectOntologyFoundryPrincipalSourceTurn : OntologyFoundryOrchestratorSkillAction, OntologyFoundryOrchestratorActionRoot
+{
+	Description = @"sourceSessionKey - exact assigned Level1 source. turnId - exact cited canonical source turn. maxRows - bounded detail row count. Use only when a recorded acceptance criterion requires direct source evidence.";
+	function Execute(string sourceSessionKey, string turnId, int maxRows = 200) : GetTurnDetailResponse
+	{
+		return SessionTools.GetSessionTurnDetailTool(sourceSessionKey, turnId, maxRows);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create an ontology foundry worker")]
+prototype ToCreateOntologyFoundryWorker : OntologyFoundryOrchestratorSkillAction, OntologyFoundryOrchestratorActionRoot
+{
+	Description = @"sourceSessionKey - exact Level1 session that owns the living EvidenceGraph. workerSessionKey - deterministic reusable child key reserved in the ledger. Creates the ontology-foundry profile as a child of the source session.";
+	function Execute(string sourceSessionKey, string workerSessionKey) : Prototype
+	{
+		CreateAgentInitializationContract initialization = new CreateAgentInitializationContract();
+		initialization.ParentSessionKey = sourceSessionKey;
+		return BuffalyAgentService.CreateAgentFromProject(workerSessionKey, "OpsAgent", "ontology-foundry", initialization);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to assign work to an ontology foundry worker")]
+prototype ToAssignOntologyFoundryWorker : OntologyFoundryOrchestratorSkillAction, OntologyFoundryOrchestratorActionRoot
+{
+	Description = @"workerSessionKey and instruction must match one reserved ledger row. Queues one bounded assignment without waiting.";
+	function Execute(string workerSessionKey, string instruction) : QueuedInputResult
+	{
+		return SessionTools.SendToSessionTool(workerSessionKey, instruction);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to inspect an ontology foundry worker turn")]
+prototype ToInspectOntologyFoundryWorkerTurn : OntologyFoundryOrchestratorSkillAction, OntologyFoundryOrchestratorActionRoot
+{
+	Description = @"workerSessionKey - exact assigned worker. Returns its most recent bounded turn summary.";
+	function Execute(string workerSessionKey) : TurnSummaryContract
+	{
+		return SessionTools.GetMostRecentSessionTurnTool(workerSessionKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read an ontology foundry source evidence graph")]
+prototype ToReadOntologyFoundryWorkerEvidenceGraph : OntologyFoundryOrchestratorSkillAction, OntologyFoundryOrchestratorActionRoot
+{
+	Description = @"sourceSessionKey - exact assigned Level1 source. Reads only its fixed artifacts/ontology-foundry/evidence-graph.md; missing returns empty.";
+	function Execute(string sourceSessionKey) : string
+	{
+		Sessions.ValidateSessionKey(sourceSessionKey);
+		string path = Path.Combine(
+			Sessions.GetSessionsRootPath(),
+			sourceSessionKey,
+			@"artifacts\ontology-foundry\evidence-graph.md");
+		if (!File.Exists(path))
+		{
+			return "";
+		}
+		return File.ReadAllText(path);
+	}
+}

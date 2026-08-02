@@ -1,0 +1,10 @@
+prototype OntologyFoundryOrchestratorActionRoot : OpsAction
+{
+	Description = @"Restricted eager action-root contract for the principal Ontology Foundry coordinator. Operational tools are activated lazily.";
+}
+
+prototype OntologyFoundryOrchestratorEntityRoot : SemanticEntityBase
+{
+	EntityName = "ontology foundry orchestrator entity root";
+	Description = @"Restricted eager entity-root contract for Foundry coverage and assignment concepts.";
+}

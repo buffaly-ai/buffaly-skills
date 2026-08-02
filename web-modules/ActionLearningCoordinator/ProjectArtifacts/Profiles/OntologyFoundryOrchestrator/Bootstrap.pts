@@ -1,0 +1,7 @@
+partial prototype OntologyFoundryOrchestratorActionRoot : LazyProfileActionRoot;
+partial prototype OntologyFoundryOrchestratorEntityRoot : LazyProfileEntityRoot;
+partial prototype ToLazyProfileSearchCandidateActions : OntologyFoundryOrchestratorActionRoot;
+partial prototype ToLazyProfileSearchCandidateEntities : OntologyFoundryOrchestratorActionRoot;
+partial prototype ToLazyProfileLoadProtoScriptActionTool : OntologyFoundryOrchestratorActionRoot;
+partial prototype ToLazyProfileListLoadedProtoScriptActionTools : OntologyFoundryOrchestratorActionRoot;
+partial prototype ToShowLazyProfileEnvironment : OntologyFoundryOrchestratorActionRoot;

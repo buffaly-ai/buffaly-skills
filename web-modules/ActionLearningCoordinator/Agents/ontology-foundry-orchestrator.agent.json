@@ -1,0 +1,19 @@
+{
+  "AgentName": "ontology-foundry-orchestrator",
+  "DisplayName": "Ontology Foundry Orchestrator",
+  "Aliases": ["foundry principal", "foundry coordinator"],
+  "PromptFile": "Prompts/OntologyFoundryOrchestrator.md",
+  "ProjectFilePath": "Profiles/OntologyFoundryOrchestrator/Project.pts",
+  "PromptContext": "OntologyFoundryOrchestratorContext",
+  "RootActionPrototypeName": "OntologyFoundryOrchestratorActionRoot",
+  "RootEntityPrototypeName": "OntologyFoundryOrchestratorEntityRoot",
+  "Provider": "openai",
+  "DefaultModelName": "gpt-5.6-sol",
+  "DefaultReasoningLevel": "medium",
+  "UiPage": "/buffaly-agent.html",
+  "IsReadOnly": false,
+  "IsHidden": false,
+  "CanChangeModel": true,
+  "DisableLevel2AutoAttach": true,
+  "CompanionAgents": []
+}
