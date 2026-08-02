@@ -36,3 +36,5 @@ TrafficAnalysis now includes Facebook Ads as a seventh ordinary collector. It ca
 
 ## Native StringRef return contracts
 Source bridge and large-payload collector methods return StringRef when the underlying provider can spool large JSON. This preserves native typed flow and prevents the ProtoScript interpreter from rejecting reference-backed values as missing string returns.
+
+The same native contract extends through all seven public `ToCollect*` actions because the analyzed envelope can also exceed the inline threshold. Google Ads keeps its intermediate collected envelope in a `StringRef` local before analysis. Returning or assigning these reference-backed values as `string` causes the worker to report `Method did not return a value` even when the provider itself is healthy.
