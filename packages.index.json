@@ -7949,8 +7949,8 @@
       "PackageId": "FacebookAds",
       "PackageType": "WebModule",
       "Title": "Facebook Ads",
-      "Description": "Read-only Facebook Ads reporting web module.",
-      "Version": "0.1.11",
+      "Description": "Buffaly Web Module package for Facebook Ads.",
+      "Version": "0.1.12",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/FacebookAds",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/FacebookAds",
@@ -7961,7 +7961,7 @@
       "Files": [
         {
           "Path": "Buffaly.Facebook.dll",
-          "Sha256": "644921d95b7a403720b1beb92b708f86d042dbd248bbe2dde32bc342d457803a"
+          "Sha256": "0eaa6703a5ab203ce015d5b61bc2cf407894b9eb071206c634ea3828acbec4e5"
         },
         {
           "Path": "Buffaly.FacebookAds.deps.json",
@@ -7969,7 +7969,7 @@
         },
         {
           "Path": "Buffaly.FacebookAds.dll",
-          "Sha256": "bc916724c30167678950fe9847f34750ddec6aca6fe2e5eb6271b196da2b3081"
+          "Sha256": "efbcc076309c4f6d273aee1e9563413b7a144759463ee8095e60334de325ba49"
         },
         {
           "Path": "Imports.pts",
@@ -7977,7 +7977,7 @@
         },
         {
           "Path": "Skills/FacebookAdsWeb/FacebookAdsWebActions.pts",
-          "Sha256": "82a73cbaae1a37b1a0fd3b6b64fb6013fde3328e4d7f401d2111cc82710d13de"
+          "Sha256": "ac8c25f7443e905af8dcb2a6254262e8730a9e159383c72866ec7c4940ffb869"
         },
         {
           "Path": "Skills/FacebookAdsWeb/index.pts",
@@ -8054,7 +8054,8 @@
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
       "RequiresRestart": true,
-      "RequiresPreStartInstall": true
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     },
     {
       "PackageId": "FeedingFrenzy.WebPropertyEditorAgent",

@@ -7,6 +7,9 @@ prototype ToListFacebookAdsAdAccounts : FacebookAdsWebSkillAction { Description 
 [SemanticProgram.InfinitivePhrase("to list facebook ads campaigns")]
 prototype ToListFacebookAdsCampaigns : FacebookAdsWebSkillAction { Description = @"Return campaign inventory and metrics as JSON. Use the returned campaign ID with ToViewFacebookAdsCampaignInteractiveSite or ToListFacebookAdsCampaignContents."; function Execute(string adAccountId, string datePreset) : string { return FacebookAdsWebService.ListCampaignsJson(adAccountId, datePreset); } }
 
+[SemanticProgram.InfinitivePhrase("to run a facebook ads performance report")]
+prototype ToRunFacebookAdsPerformanceReport : FacebookAdsWebSkillAction { Description = @"Return read-only account and campaign Facebook Ads performance for an explicit inclusive date range as JSON."; function Execute(string adAccountId, string startDate, string endDate) : string { return FacebookAdsWebService.GetDashboardByDateRangeJson(adAccountId, startDate, endDate); } }
+
 [SemanticProgram.InfinitivePhrase("to list facebook ads campaign contents")]
 prototype ToListFacebookAdsCampaignContents : FacebookAdsWebSkillAction { Description = @"Return one campaign plus its ad-set and ad inventories with stable IDs as JSON. Use a returned ad ID with ToViewFacebookAdInteractiveSite."; function Execute(string adAccountId, string campaignId, string datePreset) : string { return FacebookAdsWebService.ListCampaignContentsJson(adAccountId, campaignId, datePreset); } }
 
