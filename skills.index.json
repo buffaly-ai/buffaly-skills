@@ -398,48 +398,50 @@
     {
       "SkillName": "CdpBrowser",
       "Title": "CDP Browser",
-      "Description": "CDP browser automation tools that connect to the user real Chrome via Chrome DevTools Protocol. Preserves logins, avoids anti-bot detection, uses trusted input events. Tier 1 actions are always available; Tier 2 actions require approval.",
-      "Version": "1.0.9",
+      "Description": "Buffaly skill package for CDP Browser.",
+      "Version": "1.0.10",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "CDP Browser",
-        "CdpBrowser",
-        "cdp browser skill",
-        "cdp browser session skill"
+        "CdpBrowser"
       ],
       "Path": "skills/CdpBrowser",
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "4f2793304ef6bccd5ad18838425d8431ff5944f50afd6bdbef1f563db8c6e3cc"
+          "Sha256": "2b84fee83ef6821c6fb6b99ef20409f71d947c69c911800e8127697de742eb3f"
         },
         {
-          "Path": "PromptActions.pts",
-          "Sha256": "0c2aa13b4da9a59ebdb707172c4053f1e3a8b992c3f7d9e353c4e880e848db10"
+          "Path": "index.pts.lazy.json",
+          "Sha256": "460450726ee0ae4dd1c1da888a7b8cfb789a22d46fb9a8b876488cab48b53dea"
         },
         {
-          "Path": "SKILL.md",
-          "Sha256": "2858cb98cff6fa2741df46f9c2fbbe68caa9ee60652a2ef3723e9a0623e137c7"
-        },
-        {
-          "Path": "Prompts/UseCdpBrowserSkill.prompt.md",
-          "Sha256": "580a2edcfee79370fa98e33bd2a0f7a31c6e9d542c59fa88a897b366231b765a"
+          "Path": "lib/cdp_helper.bundle.js",
+          "Sha256": "45eac72a04b383d480d196ea5ec920d1147be44a01ce55a4b183372de788a38c"
         },
         {
           "Path": "lib/cdp_helper.js",
           "Sha256": "3ff13df3e1953e4b2acee2f45f9d2d011833d054db294cac036732b024170a37"
         },
         {
-          "Path": "lib/package.json",
-          "Sha256": "05e12ab17009206e4d00051d86e2cd76036945b0e43991836da3f7b101fa0e63"
-        },
-        {
           "Path": "lib/package-lock.json",
-          "Sha256": "f9926ed76996235c232d254d9ba48bf982e6b0cc3021e372e3f91cbe0bab721d"
+          "Sha256": "8dec5bf2b16efafa54ad117e49ac7866c90cc1ac9d102e20b26179c7056b8e1d"
         },
         {
-          "Path": "index.pts.lazy.json",
-          "Sha256": "460450726ee0ae4dd1c1da888a7b8cfb789a22d46fb9a8b876488cab48b53dea"
+          "Path": "lib/package.json",
+          "Sha256": "2c2bd6aea8aae7e36eb318c6688322b2fae4aff6d3103af40ad6fbaf585bb351"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "0c2aa13b4da9a59ebdb707172c4053f1e3a8b992c3f7d9e353c4e880e848db10"
+        },
+        {
+          "Path": "Prompts/UseCdpBrowserSkill.prompt.md",
+          "Sha256": "580a2edcfee79370fa98e33bd2a0f7a31c6e9d542c59fa88a897b366231b765a"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "9f0d7c3fcb691253af7cf370ba7ba60509b56deab87a0d18e6209ff0d93642d8"
         }
       ],
       "EntryPoint": "index.pts",
