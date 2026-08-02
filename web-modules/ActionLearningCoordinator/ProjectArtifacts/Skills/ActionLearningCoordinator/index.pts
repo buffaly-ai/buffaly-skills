@@ -540,7 +540,7 @@ prototype ToGetOnlineMemoryCriticBatchWorkspaceDefinition : OnlineMemoryCriticBa
 {
 	function Execute() : string
 	{
-		return @"{""SchemaVersion"":1,""WorkspaceId"":""online-memory-critic-batch"",""DisplayName"":""Online Memory Critic Batch"",""Description"":""Sequential selected-turn Online Memory Critic batches using the actual deterministic critic child with live event delivery disabled."",""WorkerAgentName"":""online-session-memory-critic"",""WorkerSessionSuffix"":""-online-memory-critic"",""ArtifactPath"":""artifacts/online-memory-critic-batch/manifest.json"",""AttachAction"":""ToAttachOnlineMemoryCriticBatchWorker"",""RunAction"":""ToRunOnlineMemoryCriticBatchOperation"",""PreviewTitle"":""Online memory critic batch manifest"",""PreviewDescription"":""Pending and queued selected source turns for uncontested online memory critic review.""}";
+		return @"{""SchemaVersion"":1,""WorkspaceId"":""online-memory-critic-batch"",""DisplayName"":""Online Memory Critic Batch"",""Description"":""Discover attached Online Memory Critics, inspect exact result-marker freshness, and process missing turns through the existing sequential coordinator without changing live event delivery."",""WorkerAgentName"":""online-session-memory-critic"",""WorkerSessionSuffix"":""-online-memory-critic"",""ArtifactPath"":""artifacts/online-memory-critic-batch/manifest.json"",""ReconcileAction"":""ToReconcileOnlineMemoryCriticBatchLedger"",""AttachAction"":""ToAttachOnlineMemoryCriticBatchWorker"",""RunAction"":""ToRunOnlineMemoryCriticBatchOperation"",""PreviewTitle"":""Online memory critic batch manifest"",""PreviewDescription"":""Exact reviewed, pending, and missing source turns for the attached Online Memory Critic.""}";
 	}
 }
 
@@ -551,6 +551,63 @@ prototype ToGetOnlineMemoryCriticBatchPortfolio : OnlineMemoryCriticBatchCoordin
 	{
 		return ToGetSessionWorkLedger.Execute();
 	}
+}
+
+[SemanticProgram.InfinitivePhrase("to reconcile discovered online memory critic attachments")]
+prototype ToReconcileOnlineMemoryCriticBatchLedger : OnlineMemoryCriticBatchCoordinatorSkillAction
+{
+	function Execute(int maxWorkers = 200) : string
+	{
+		JsonObject discovery = new JsonObject(OnlineMemoryCriticBatchProjection.DiscoverAttachments(maxWorkers));
+		JsonArray attachments = discovery.GetJsonArrayOrFail(@"Attachments", @"Discovered Online Memory Critic attachments are required.");
+		JsonObject ledger = new JsonObject(ToInitializeSessionWorkLedger.Execute());
+		JsonArray entries = ledger.GetJsonArrayOrFail(@"Entries", @"Session work ledger Entries is required.");
+		int addedCount = 0;
+		int updatedCount = 0;
+		foreach (JsonValue attachmentValue in attachments)
+		{
+			JsonObject attachment = attachmentValue.ToJsonObjectOrFail(@"Discovered attachment must be an object.");
+			string sourceSessionKey = attachment.GetStringOrFail(@"SourceSessionKey", @"Discovered source session key is required.");
+			string workerSessionKey = attachment.GetStringOrFail(@"WorkerSessionKey", @"Discovered worker session key is required.");
+			bool found = false;
+			foreach (JsonValue entryValue in entries)
+			{
+				JsonObject entry = entryValue.ToJsonObjectOrFail(@"Session work ledger entries must be objects.");
+				if (entry.GetStringOrFail(@"SourceSessionKey", @"Session work entry SourceSessionKey is required.") == sourceSessionKey)
+				{
+					entry[@"WorkerSessionKey"] = workerSessionKey;
+					entry[@"WorkerAgentName"] = @"online-session-memory-critic";
+					entry[@"ProcessorSkill"] = @"OnlineSessionMemoryCriticSkill";
+					entry[@"OperationState"] = @"Discovered";
+					found = true;
+					updatedCount = updatedCount + 1;
+				}
+			}
+			if (!found)
+			{
+				JsonObject entry = new JsonObject();
+				entry[@"SourceSessionKey"] = sourceSessionKey;
+				entry[@"Enabled"] = true;
+				entry[@"WorkerSessionKey"] = workerSessionKey;
+				entry[@"WorkerAgentName"] = @"online-session-memory-critic";
+				entry[@"ProcessorSkill"] = @"OnlineSessionMemoryCriticSkill";
+				entry[@"OperationState"] = @"Discovered";
+				entries.Add(new JsonValue(entry));
+				addedCount = addedCount + 1;
+			}
+		}
+		ledger[@"Entries"] = entries;
+		ledger[@"Exists"] = true;
+		FileSystemTools.ReplaceTextFile(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json", ledger.ToJSON());
+		JsonObject result = new JsonObject();
+		result[@"Outcome"] = @"Reconciled";
+		result[@"AddedCount"] = addedCount;
+		result[@"UpdatedCount"] = updatedCount;
+		result[@"Discovery"] = discovery;
+		result[@"Ledger"] = ledger;
+		return result.ToJSON();
+	}
+	Description = @"Discovers existing exact-profile Online Memory Critic children and records their source bindings in the coordinator ledger without changing enabled state, subscriptions, model selection, manifests, or queued work.";
 }
 
 [SemanticProgram.InfinitivePhrase("to get an online memory critic batch source workspace")]
@@ -582,7 +639,6 @@ prototype ToAttachOnlineMemoryCriticBatchWorker : OnlineMemoryCriticBatchCoordin
 				entry[@"WorkerAgentName"] = @"online-session-memory-critic";
 				entry[@"ProcessorSkill"] = @"OnlineSessionMemoryCriticSkill";
 				entry[@"OperationState"] = @"Attached";
-				entry[@"EventDeliveryEnabled"] = false;
 			}
 		}
 		ledger[@"Entries"] = entries;
@@ -590,7 +646,7 @@ prototype ToAttachOnlineMemoryCriticBatchWorker : OnlineMemoryCriticBatchCoordin
 		attached[@"Ledger"] = ledger;
 		return attached.ToJSON();
 	}
-	Description = @"Creates or reuses the actual deterministic online-memory-critic child, disables event delivery, preserves the worker model configuration, and records it as the batch worker.";
+	Description = @"Validates and records the actual deterministic online-memory-critic child while preserving its enabled state, subscriptions, and model configuration.";
 }
 
 [SemanticProgram.InfinitivePhrase("to add an online memory critic batch turn")]
@@ -627,7 +683,7 @@ prototype ToRunOnlineMemoryCriticBatchOperation : OnlineMemoryCriticBatchCoordin
 		}
 		return OnlineMemoryCriticBatchProjection.RunWorkerOperation(Sessions.GetSessionsRootPath(), sourceSessionKey, workerSessionKey, actionPrototypeName, inputValue);
 	}
-	Description = @"Runs one selected-turn Online Memory Critic batch operation against the actual critic child with event delivery disabled and concurrency one.";
+	Description = @"Runs one selected-turn Online Memory Critic batch operation against the actual critic child with concurrency one while preserving live event-delivery settings.";
 }
 
 
