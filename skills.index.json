@@ -932,23 +932,23 @@
     },
     {
       "SkillName": "FairPathJsonWs",
-      "Title": "FairPath JsonWs",
-      "Description": "FairPath JSON web service wrappers for selected route-based business and admin surfaces.",
-      "Version": "0.1.0",
+      "Title": "Fair Path JsonWS",
+      "Description": "Buffaly skill package for Fair Path JsonWS.",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
-        "fairpath json ws",
-        "fairpath json web service",
-        "call fairpath service",
-        "list fairpath organizations",
-        "get fairpath users",
-        "fairpath route wrappers"
+        "Fair Path JsonWS",
+        "FairPathJsonWs"
       ],
       "Path": "skills/FairPathJsonWs",
       "Files": [
         {
           "Path": "index.pts",
           "Sha256": "fa89e7623f480a4fb787a53ee759ee743ffe3026a8d4b438437a70dac949c9d2"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "ff0741c305279205b38e1c7eeee5683b9f849cd164be4f9850bec29545b9c0d0"
         },
         {
           "Path": "index.pts.md",
@@ -1008,17 +1008,8 @@
         }
       ],
       "EntryPoint": "index.pts",
-      "RelatedWikiSlugs": [
-        "reference/skill-directory"
-      ],
-      "Prerequisites": [
-        "Configured FairPath.AuthorizationToken UserSecrets value for protected remote calls",
-        "Network access to the configured FairPath service endpoint"
-      ],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
     },
     {
       "SkillName": "FeedingFrenzyJsonWs",
