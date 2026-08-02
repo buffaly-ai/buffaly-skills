@@ -1,5 +1,7 @@
 # Action Learning Coordinator ProtoScript
 
+The packaged Skill explicitly imports the `Path`, `File`, `JsonObject`, `JsonArray`, `JsonValue`, and `FileSystemTools` runtime symbols it uses. It does not rely on imports from the host project's broad `Imports.pts`, so lazy loading and standalone package activation compile the coordinator methods consistently.
+
 Defines `SessionWorkCoordinatorSkill` as the common coordinator base, with `ActionLearningCoordinatorSkill` and `OntologyFoundryCoordinatorSkill` as specializations.
 
 The reusable workspace contract adds `SessionWorkWorkspaceDefinitionProvider`, `SessionWorkPortfolioProvider`, and `SessionWorkItemWorkspaceProvider`. The dashboard binds to one specialization, calls `ToGetSessionWorkCoordinatorInfo(specialization)`, and then invokes only the provider names advertised by that live coordinator. Action Learning and Ontology Foundry use one renderer.
