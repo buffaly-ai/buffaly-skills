@@ -1,0 +1,21 @@
+prototype DispatchAgentActionRoot : OpsAction
+{
+	Description = @"Curated action root for bounded session-local dispatch tree lookup, guarded graph growth, local evidence recording, and Dispatch attachment tools. Delivery, session creation, queueing, and external entity tooling remain outside this skill and belong to existing core Buffaly tools.";
+}
+
+prototype DispatchAgentEntityRoot : SemanticEntityBase
+{
+	EntityName = "dispatch agent local ontology root";
+	Description = @"Entity root for one dispatch agent's session-local hidden-context routing tree.";
+}
+
+prototype DispatchAgentCuratedActionRoot : DispatchAgentActionRoot
+{
+	Description = @"Minimal action-root contract shared by normal discovery and the Dispatch Agent profile.";
+}
+
+prototype DispatchAgentCuratedEntityRoot : DispatchAgentEntityRoot
+{
+	EntityName = "dispatch agent curated entity root";
+	Description = @"Minimal entity-root contract shared by normal discovery and the Dispatch Agent profile.";
+}

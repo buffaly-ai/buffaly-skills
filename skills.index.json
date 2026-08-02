@@ -620,7 +620,7 @@
       "SkillName": "DispatchTree",
       "Title": "Dispatch Tree",
       "Description": "Buffaly skill package for Dispatch Tree.",
-      "Version": "0.1.33",
+      "Version": "0.1.34",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Dispatch Tree",
@@ -628,6 +628,10 @@
       ],
       "Path": "skills/DispatchTree",
       "Files": [
+        {
+          "Path": "Contracts.pts",
+          "Sha256": "5b6156ab9299f0547b29c01f3639e33bee966e4696cf3465b5f58b18b29b95fc"
+        },
         {
           "Path": "index.pts",
           "Sha256": "cde2e535eb48b6192542bcd7114e788209d6a736676f920b3d5f5fae20221fc8"
@@ -638,7 +642,7 @@
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "94dcd4d79ca5e15a0466f9248b47ebfa1b150aaeccf2def3e3c1d6b8cd5af601"
+          "Sha256": "942f53902fa5d65ea80d0c012ee88fafd44db7b2f5333998a741145cd51cec90"
         }
       ],
       "EntryPoint": "index.pts",
