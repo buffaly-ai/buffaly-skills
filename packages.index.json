@@ -7858,7 +7858,7 @@
       "PackageType": "WebModule",
       "Title": "Extension Publishing",
       "Description": "Buffaly Web Module package for Extension Publishing.",
-      "Version": "0.1.54",
+      "Version": "0.1.55",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/ExtensionPublishing",
       "SourceUrl": "",
@@ -7869,19 +7869,19 @@
       "Files": [
         {
           "Path": "BasicUtilities.dll",
-          "Sha256": "e9fb1a3676dfd29043ab1b6ab7c6572807f6d835510277cbbe162078506952be"
+          "Sha256": "075f1ba43e7b74fee215106847a92407c24a08d65cdc5f1ba3dfd3d1f815b68d"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "2a01c93c30e73565f4b583382924eee65b4e2a67d465c34e1d0cb045a79a77bc"
+          "Sha256": "02b58b98a9a94c10c1c3aec8cda4379dbdd50452279abf14b793ae19a2db014c"
         },
         {
           "Path": "Buffaly.ExtensionPublishing.WebModule.deps.json",
-          "Sha256": "d117d04fb399a18f29754626de65d370885f3804b95482e407ff826470734b72"
+          "Sha256": "46bb307b56b49ef8b9bd945e66e76f27c61a80f61d6caa0e2390a9f1a27a4ab0"
         },
         {
           "Path": "Buffaly.ExtensionPublishing.WebModule.dll",
-          "Sha256": "d85618a04381d3d3806792338bd6f6d283c2a123469bbfbe751e9e669e1bf6db"
+          "Sha256": "90b884f10d88e9b6cc4fcdd7ecbf40be12a227c391b9b7a4a40a5cca54623261"
         },
         {
           "Path": "Generated/JsonWs/Buffaly.ExtensionPublishing.WebModule.ExtensionPublishingService.ashx.js",
@@ -7898,6 +7898,10 @@
         {
           "Path": "Microsoft.Identity.Client.dll",
           "Sha256": "10d59df4170053ea9597e3c20adc9607ad17318ad5d8747eda3d930a5a4b463a"
+        },
+        {
+          "Path": "runtimes/win/lib/net9.0/System.Threading.AccessControl.dll",
+          "Sha256": "a7647d948f3f8b9be558581a92ff650ccdbd8d4aba83ca5357c50557c3e0d470"
         },
         {
           "Path": "Skills/ExtensionManagement/ExtensionManagementSkill.pts.md",
@@ -7938,6 +7942,10 @@
         {
           "Path": "Skills/ExtensionManagement/Prompts/ValidateExtensionLifecycle.prompt.md",
           "Sha256": "317b459b71ece6ef85b4a876be6ee8a06db120bf8a26875b2f343123ff445fbc"
+        },
+        {
+          "Path": "System.Threading.AccessControl.dll",
+          "Sha256": "94959de73af5f9e8010e61507f752dfbba190fce544eabe1c2a7d17fd3f5463e"
         },
         {
           "Path": "web-module.json",

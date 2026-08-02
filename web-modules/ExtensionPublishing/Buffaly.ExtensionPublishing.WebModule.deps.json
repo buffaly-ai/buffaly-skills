@@ -9,10 +9,27 @@
       "Buffaly.ExtensionPublishing.WebModule/1.0.0": {
         "dependencies": {
           "Buffaly.Agent.Web.Common": "1.0.0",
+          "System.Threading.AccessControl": "9.0.0",
           "WebAppUtilities": "1.0.0.0"
         },
         "runtime": {
           "Buffaly.ExtensionPublishing.WebModule.dll": {}
+        }
+      },
+      "System.Threading.AccessControl/9.0.0": {
+        "runtime": {
+          "lib/net9.0/System.Threading.AccessControl.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.24.52809"
+          }
+        },
+        "runtimeTargets": {
+          "runtimes/win/lib/net9.0/System.Threading.AccessControl.dll": {
+            "rid": "win",
+            "assetType": "runtime",
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.24.52809"
+          }
         }
       },
       "Buffaly.Agent.Web.Common/1.0.0": {
@@ -62,6 +79,13 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "System.Threading.AccessControl/9.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-s4T+FkDeNa/r1wS8R2ejuq7KgZb4VLwnJUtcVqORvdqBc7cEYltcK2o08qECMQNHbnMyZMpOmHE9BhMe2qljdA==",
+      "path": "system.threading.accesscontrol/9.0.0",
+      "hashPath": "system.threading.accesscontrol.9.0.0.nupkg.sha512"
     },
     "Buffaly.Agent.Web.Common/1.0.0": {
       "type": "project",
