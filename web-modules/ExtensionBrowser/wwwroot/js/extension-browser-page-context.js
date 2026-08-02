@@ -8,6 +8,7 @@
 	const REQUEST_TYPE = 'extension_browser_send_user_state_request';
 	const pendingSendUserState = new Map();
   const pendingMicrophones = new Map();
+  const MICROPHONE_RECORDER_FINALIZATION_GRACE_MS = 1000;
 
 	// The shared side-panel presentation hides all native session actions. ExtensionBrowser
 	// must keep the iframe's existing rename action available without duplicating its contract.
@@ -100,9 +101,9 @@
       peer.ontrack = event => {
         const track = event.track;
         const stop = track.stop.bind(track);
-        track.stop = () => { stop(); releaseBrokeredMicrophone(requestId); };
+        track.stop = () => { scheduleBrokeredMicrophoneRelease(requestId); stop(); };
         stream.addTrack(track);
-        track.addEventListener('ended', () => releaseBrokeredMicrophone(requestId), { once: true });
+        track.addEventListener('ended', () => scheduleBrokeredMicrophoneRelease(requestId), { once: true });
         finishBrokeredMicrophone(requestId, null);
       };
     });
@@ -115,6 +116,12 @@
     window.clearTimeout(request.timer);
     request.peer.close();
     if (!request.broker.closed) request.broker.postMessage({ type: 'extension_browser_microphone_release', requestId }, window.location.origin);
+  }
+
+  function scheduleBrokeredMicrophoneRelease(requestId) {
+    const request = pendingMicrophones.get(requestId);
+    if (!request || request.releaseTimer) return;
+    request.releaseTimer = window.setTimeout(() => releaseBrokeredMicrophone(requestId), MICROPHONE_RECORDER_FINALIZATION_GRACE_MS);
   }
 
   function finishBrokeredMicrophone(requestId, error) {
