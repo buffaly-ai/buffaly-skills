@@ -1,5 +1,10 @@
 # BuffalyCapabilityInspection index.pts Change History
 
+## 2026-08-02 - Restore general OpsAgent lazy ownership
+
+- Restored the generated lazy ownership sidecar after the Dispatch profile was redesigned around independent CoreLite contracts.
+- General OpsAgent may now discover and explicitly activate Capability Inspection without compiling it at startup; specialized profiles must own any eager contracts they require.
+
 ## 2026-08-01 - Keep profile-root contracts eager
 
 - Removed the lazy sidecar because eager DispatchTree profile roots inherit from `BuffalyCapabilityInspectionSkillAction` and `BuffalyCapabilityInspectionSkill` during startup compilation.
