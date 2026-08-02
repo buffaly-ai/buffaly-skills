@@ -288,9 +288,9 @@ prototype ToRemoveSessionWorkEntry : SessionWorkCoordinatorSkillAction
 [SemanticProgram.InfinitivePhrase("to list session work attachment choices")]
 prototype ToListSessionWorkAttachmentChoices : SessionWorkCoordinatorSkillAction
 {
-	function Execute(string expectedWorkerAgentName, string workerSessionSuffix, int maxSources) : string
+	function Execute(string expectedWorkerAgentName, string workerSessionSuffix, string maxSources) : string
 	{
-		return OntologyFoundryProposalProjection.BuildAttachmentChoices(expectedWorkerAgentName, workerSessionSuffix, maxSources);
+		return OntologyFoundryProposalProjection.BuildAttachmentChoicesFromText(expectedWorkerAgentName, workerSessionSuffix, maxSources);
 	}
 	Description = @"Lists bounded eligible source sessions and existing exact-profile workers for the shared coordinator attachment UI.";
 }
@@ -565,9 +565,9 @@ prototype ToGetOnlineMemoryCriticBatchPortfolio : OnlineMemoryCriticBatchCoordin
 [SemanticProgram.InfinitivePhrase("to reconcile discovered online memory critic attachments")]
 prototype ToReconcileOnlineMemoryCriticBatchLedger : OnlineMemoryCriticBatchCoordinatorSkillAction
 {
-	function Execute(int maxWorkers) : string
+	function Execute(string maxWorkers) : string
 	{
-		JsonObject discovery = new JsonObject(OnlineMemoryCriticBatchProjection.DiscoverAttachments(maxWorkers));
+		JsonObject discovery = new JsonObject(OnlineMemoryCriticBatchProjection.DiscoverAttachmentsFromText(maxWorkers));
 		JsonArray attachments = discovery.GetJsonArrayOrFail(@"Attachments", @"Discovered Online Memory Critic attachments are required.");
 		JsonObject ledger = new JsonObject(ToInitializeSessionWorkLedger.Execute());
 		JsonArray entries = ledger.GetJsonArrayOrFail(@"Entries", @"Session work ledger Entries is required.");
