@@ -109,6 +109,16 @@ prototype ToSetGoDaddyNameServers : GoDaddySkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to set godaddy domain forwarding")]
+prototype ToSetGoDaddyDomainForwarding : GoDaddySkillAction
+{
+	Description = @"fqdn - exact source hostname, including www when needed. url - absolute HTTP/HTTPS target URL. type - GoDaddy forwarding type such as REDIRECT_PERMANENT. Creates or updates GoDaddy domain forwarding. Requires confirmation.";
+	function Execute(string fqdn, string url, string type) : string
+	{
+		return GoDaddySkillFacade.SetDomainForwarding(fqdn, url, type);
+	}
+}
+
 // -- Domain transfer tools --
 
 [SemanticProgram.InfinitivePhrase("to get godaddy transfer agreements")]
