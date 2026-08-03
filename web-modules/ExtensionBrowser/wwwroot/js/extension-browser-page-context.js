@@ -120,8 +120,14 @@
         reject(new DOMException('Chrome blocked the Buffaly microphone window.', 'NotAllowedError'));
         return;
       }
-      const timer = window.setTimeout(() => finishBrokeredMicrophone(requestId, new Error('Buffaly microphone capture did not respond within 30 seconds.')), 30000);
-      pendingMicrophones.set(requestId, { resolve, reject, peer, stream, broker, timer });
+      const timer = window.setTimeout(() => {
+        const pending = pendingMicrophones.get(requestId);
+        const message = pending && pending.brokerReady
+          ? 'The Buffaly microphone window loaded but Enable and test microphone was not clicked within 30 seconds.'
+          : 'The Buffaly microphone window did not load or respond within 30 seconds.';
+        finishBrokeredMicrophone(requestId, new Error(message));
+      }, 30000);
+      pendingMicrophones.set(requestId, { resolve, reject, peer, stream, broker, timer, brokerReady: false });
       peer.ontrack = event => {
         const track = event.track;
         const stop = track.stop.bind(track);
@@ -166,7 +172,11 @@
     if (!event.data) return;
     const microphone = pendingMicrophones.get(event.data.requestId);
     if (microphone && event.source === microphone.broker && event.origin === window.location.origin) {
-      if (event.data.type === 'extension_browser_microphone_offer') {
+      if (event.data.type === 'extension_browser_microphone_ready') {
+        microphone.brokerReady = true;
+        window.parent.postMessage({ type: 'extension_browser_microphone_diagnostic', origin: window.location.origin, policyAllowsMicrophone: null, permissionState: 'awaiting-user-gesture', result: 'waiting', message: 'Click Enable and test microphone in the opened Buffaly microphone window.' }, '*');
+        try { microphone.broker.focus(); } catch (_) { }
+      } else if (event.data.type === 'extension_browser_microphone_offer') {
         microphone.peer.setRemoteDescription(event.data.offer)
           .then(() => microphone.peer.createAnswer())
           .then(answer => microphone.peer.setLocalDescription(answer))
