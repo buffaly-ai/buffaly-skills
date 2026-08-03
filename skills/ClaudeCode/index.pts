@@ -1,5 +1,3 @@
-import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.LiveToolInputCollectionRequestContract LiveToolInputCollectionRequestContract;
-import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.LiveToolInputCollectionResultContract LiveToolInputCollectionResultContract;
 import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.RuntimeUiEventOutputContract RuntimeUiEventOutputContract;
 import Buffaly.Agent.Tools.Process Buffaly.Agent.Tools.Process.ProcessToolDisplayOptions ProcessToolDisplayOptions;
 
@@ -77,12 +75,12 @@ function ToClaudeBuildArtifactRetentionScript(string outputRoot) : string
 
 function ToClaudePrepareInvocationDirectory() : string
 {
-	string outputDirectory = Path.Combine(ToClaudeTempPath(), "buffaly-claude-output", Path.GetRandomFileName());
-	string outputRoot = Path.GetDirectoryName(outputDirectory);
+	string baseDir = Path.Combine(ToClaudeTempPath(), "buffaly-claude-output");
+	string outputRoot = baseDir;
 	string script = "$ErrorActionPreference='Stop';";
-	script = script + "$current='" + ToClaudeEscapePowerShellSingleQuoted(outputDirectory) + "';";
+	script = script + "$root='" + ToClaudeEscapePowerShellSingleQuoted(outputRoot) + "';";
 	script = script + ToClaudeBuildArtifactRetentionScript(outputRoot);
-	script = script + "[System.IO.Directory]::CreateDirectory($current) | Out-Null; [System.IO.File]::WriteAllText((Join-Path $current '.active'), [DateTime]::UtcNow.ToString('O')); Write-Output $current;";
+	script = script + "$current=Join-Path $root ('invocation-' + [guid]::NewGuid().ToString('N').Substring(0,12)); [System.IO.Directory]::CreateDirectory($current) | Out-Null; [System.IO.File]::WriteAllText((Join-Path $current '.active'), [DateTime]::UtcNow.ToString('O')); Write-Output $current;";
 	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", 30, _opsAgent, "", "Claude Artifact Retention");
 	return ToClaudeCleanOutput(result);
 }
@@ -139,7 +137,7 @@ function ToClaudeBuildRunScript(string exePath, string argumentLine, string stdo
 	script = script + "$stdoutTask=$p.StandardOutput.BaseStream.CopyToAsync($stdoutStream);";
 	script = script + "$stderrTask=$p.StandardError.BaseStream.CopyToAsync($stderrStream);";
 	script = script + "$limitExceeded=$false; while(-not $p.HasExited){ if(($stdoutStream.Length+$stderrStream.Length) -gt 67108864L){ $limitExceeded=$true; $p.Kill() } else { Start-Sleep -Milliseconds 100 } };";
-	script = script + "$p.WaitForExit(); $stdoutTask.GetAwaiter().GetResult(); $stderrTask.GetAwaiter().GetResult(); $stdoutStream.Flush(); $stderrStream.Flush(); $outputBytes=$stdoutStream.Length+$stderrStream.Length; $stdoutStream.Dispose(); $stderrStream.Dispose();";
+	script = script + "$p.WaitForExit(); $null=$stdoutTask.GetAwaiter().GetResult(); $null=$stderrTask.GetAwaiter().GetResult(); $stdoutStream.Flush(); $stderrStream.Flush(); $outputBytes=$stdoutStream.Length+$stderrStream.Length; $stdoutStream.Dispose(); $stderrStream.Dispose();";
 	script = script + "$utf8=New-Object System.Text.UTF8Encoding($false);";
 	// Fail closed and remove oversized partial content. The diagnostic remains discoverable.
 	script = script + "$wrapperExitCode=$p.ExitCode; if($limitExceeded -or $outputBytes -gt 67108864L){ Remove-Item -LiteralPath $stdoutFile,$stderrFile -Force -ErrorAction SilentlyContinue; [System.IO.File]::WriteAllText((Join-Path $outputDirectory 'artifact-error.txt'), ('Claude stdout/stderr exceeded the 64 MiB invocation limit. OutputBytes=' + $outputBytes), $utf8); $wrapperExitCode=3 };";
@@ -426,16 +424,7 @@ Runs official claude -p with --output-format text --permission-mode bypassPermis
 
 	function Execute(string prompt, string model, string system, int maxTokens, string temperature, string workingDirectory, int timeoutSeconds) : string
 	{
-		if (StringUtil.IsEmpty(prompt))
-			return "Error: prompt is required.";
-		if (timeoutSeconds <= 0)
-			timeoutSeconds = 3600;
-		if (StringUtil.IsEmpty(model))
-			model = "sonnet";
-
-		string exe = ToClaudeDefaultExePath();
-
-		string outputDirectory = ToClaudePrepareInvocationDirectory();
+		return "DEBUG: prompt=" + prompt + " model=" + model;
 
 		// For long prompts, write to the same retained invocation directory as the response.
 		string actualPrompt = prompt;
@@ -668,7 +657,7 @@ This is the main pass-through action. It automatically manages model selection, 
 		// Increment turn count
 		string turnScript = "$f=Join-Path $env:TEMP '" + ToClaudeEscapePowerShellSingleQuoted(ToClaudePtScopedFile(ToClaudePtTurnsFile(), stateScope)) + "'; $p=Split-Path -Parent $f; if(-not (Test-Path -LiteralPath $p)){ New-Item -Path $p -ItemType Directory -Force | Out-Null }; $cur=0; if(Test-Path -LiteralPath $f){ $v=(Get-Content -LiteralPath $f -Raw -ErrorAction SilentlyContinue); if($v){ $cur=[int]$v.Trim() } }; $cur=$cur+1; Set-Content -LiteralPath $f -Value $cur -Encoding utf8 -NoNewline; Write-Output $cur";
 		string turnResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(turnScript, "", 10, _opsAgent, "", "Claude PT Turn Count");
-		string turnCount = turnResult.Trim();
+		string turnCount = ToClaudeCleanOutput(turnResult);
 
 		// Build state summary
 		string stateSummary = "\n\n--- Pass-Through State ---";
