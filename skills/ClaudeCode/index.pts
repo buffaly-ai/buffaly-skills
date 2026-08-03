@@ -216,6 +216,11 @@ function ToClaudePtTurnsFile() : string
 	return "claude_pt_turns.txt";
 }
 
+function ToClaudePtSessionFile() : string
+{
+	return "claude_pt_session.txt";
+}
+
 function ToClaudePtStateScope(string stateScope) : string
 {
 	string sessionKey = stateScope;
@@ -478,6 +483,7 @@ prototype ToStartScopedClaudeConversation : ClaudeCodeSkillAction
 			return "Error: stateScope is required for scoped Claude state.";
 
 		ToClaudePtWriteState(ToClaudePtConvIdFile(), "none", stateScope);
+		ToClaudePtWriteState(ToClaudePtSessionFile(), "none", stateScope);
 		ToClaudePtWriteState(ToClaudePtTurnsFile(), "0", stateScope);
 		if (!StringUtil.IsEmpty(model))
 			ToClaudePtWriteState(ToClaudePtModelFile(), model, stateScope);
@@ -627,7 +633,10 @@ This is the main pass-through action. It automatically manages model selection, 
 
 		// Build claude arguments
 		string exe = ToClaudeDefaultExePath();
+		string currentSessionId = ToClaudePtReadState(ToClaudePtSessionFile(), stateScope);
 		string args = "-p " + ToClaudeQuoted(actualPrompt) + " --model " + model + " --output-format text --permission-mode bypassPermissions";
+		if (!StringUtil.IsEmpty(currentSessionId) && currentSessionId != "none")
+			args = args + " --resume " + ToClaudeQuoted(currentSessionId);
 		if (!StringUtil.IsEmpty(system))
 			args = args + " --append-system-prompt " + ToClaudeQuoted(system);
 
@@ -650,6 +659,13 @@ This is the main pass-through action. It automatically manages model selection, 
 		{
 			return "Error: " + errorType + "`n`n" + result;
 		}
+
+		// Extract session ID from the most recent Claude JSONL session file
+		string sessionScript = "Write-Output (Get-ChildItem -Path (Join-Path $env:USERPROFILE '.claude/projects') -Recurse -Filter '*.jsonl' -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty BaseName)";
+		string sessionResult = SystemOperations.RunPowerShellStreamingToRuntimeUi(sessionScript, "", 10, _opsAgent, "", "Claude Session ID");
+		string newSessionId = ToClaudeCleanOutput(sessionResult);
+		if (!StringUtil.IsEmpty(newSessionId))
+			ToClaudePtWriteState(ToClaudePtSessionFile(), newSessionId, stateScope);
 
 		// Store model
 		ToClaudePtWriteState(ToClaudePtModelFile(), model, stateScope);
