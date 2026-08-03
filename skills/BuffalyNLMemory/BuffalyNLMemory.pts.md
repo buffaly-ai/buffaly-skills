@@ -5,6 +5,6 @@ Defines runtime prototype-memory services/actions, source-local Online Action Cr
 ## 2026-08-02
 
 - Moved `ToStartOnlineActionCriticFresh` from eager OpsAgent Core into this skill so the wrapper and its `ToClearOnlineActions` dependency activate together.
-- The dedicated online memory profile still includes BuffalyNLMemory eagerly; normal OpsAgent can now discover and explicitly load this complete action surface through the skill's lazy ownership map.
-- Removed the full-OpsAgent-only `OnlineActionCriticSkillAction` and `CoreAction` exposure parents. The skill now compiles against shared `ProtoScriptAction`/`PromptAction` contracts in both normal OpsAgent and the CoreLite online-memory profile; profile reachability comes from the explicit include or lazy sidecar rather than unrelated root inheritance.
+- The dedicated online memory profile includes BuffalyNLMemory explicitly. Normal OpsAgent also includes it eagerly so the session-scoped restore service runs during runtime initialization; the tool registrar still exposes its actions normally.
+- Removed the full-OpsAgent-only `OnlineActionCriticSkillAction` and `CoreAction` exposure parents. The skill now compiles against shared `ProtoScriptAction`/`PromptAction` contracts in both normal OpsAgent and the CoreLite online-memory profile; profile reachability comes from the explicit project include rather than unrelated root inheritance.
 - Imports the typed `OnlineActionCriticTools` helper directly because the moved start-fresh wrapper must compile in the CoreLite memory profile without relying on the separate Online Action Critic ProtoScript file to introduce that import.
