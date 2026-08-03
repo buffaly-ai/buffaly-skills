@@ -6,10 +6,10 @@
       "PackageType": "ProviderModule",
       "Title": "Anthropic Provider",
       "Description": "Buffaly Provider Module package for Anthropic Provider.",
-      "Version": "0.1.4",
+      "Version": "0.1.5",
       "PackageKind": "BuffalyProviderModule",
       "SourcePath": "provider-modules/Buffaly.Provider.Anthropic",
-      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/provider-modules/Buffaly.Provider.Anthropic",
+      "SourceUrl": "",
       "Phrases": [
         "Anthropic Provider",
         "Buffaly.Provider.Anthropic"
@@ -25,11 +25,11 @@
         },
         {
           "Path": "BasicUtilities.dll",
-          "Sha256": "4938647f139a04550321bbf8b9a31315583c6b57eebac906ffd0c1fc48c57c17"
+          "Sha256": "075f1ba43e7b74fee215106847a92407c24a08d65cdc5f1ba3dfd3d1f815b68d"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "efd821fac26a59f968662d165da64a992df2599df9a8efac82b3a016c51d1102"
+          "Sha256": "54a1b7f0de8ab1f58eb1f71851b3d81350eae0ebd1e6e11ffcf0917053aca417"
         },
         {
           "Path": "Buffaly.Provider.Anthropic.deps.json",
@@ -37,11 +37,11 @@
         },
         {
           "Path": "Buffaly.Provider.Anthropic.dll",
-          "Sha256": "d55265ca859b57f1e0af34db8b61ea42f8c0e42e9f5431d965119c6dd98ec257"
+          "Sha256": "277483ed85ad2e29ea4288128bbaf45667ab22db7ba8edb550c8ed737dd463bf"
         },
         {
           "Path": "Buffaly.ProviderContracts.dll",
-          "Sha256": "77449f97d2e94cc9742b032028fcadc0b975f1f17bd66225ffc86cde4ff8ab2b"
+          "Sha256": "0179c69d1f5879f0bd9cf2d045d4605851b98bf876a3b7eadddbc2a0c7303094"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -233,7 +233,8 @@
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
       "RequiresRestart": true,
-      "RequiresPreStartInstall": true
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     },
     {
       "PackageId": "Buffaly.Provider.Gemini",
