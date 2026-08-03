@@ -32,6 +32,7 @@ Wrappers for the third-party `oracle` CLI (steipete/oracle) that drives ChatGPT 
 - Uses `System.Diagnostics.ProcessStartInfo` for cross-platform process launching
 - Supports file attachment via `--file` flag (comma-separated paths in the `files` parameter)
 - Browser mode can take up to an hour for Pro models (usually ~10 minutes)
+- Ships `index.pts.lazy.json` so normal OpsAgent startup registers ChatGPT Pro reachability without compiling this module. Explicit tool loading activates the module before invocation.
 
 Requires:
 - `oracle` CLI installed (`brew install steipete/tap/oracle` or `npm i -g @steipete/oracle`)
