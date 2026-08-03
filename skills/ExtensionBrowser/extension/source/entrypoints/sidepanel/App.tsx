@@ -214,6 +214,7 @@ export default function App() {
         };
         setMicrophoneDiagnostic(diagnostic);
         if (diagnostic.stage) setMicrophoneSignals((current) => ({ ...current, [diagnostic.stage!]: diagnostic }));
+        if (diagnostic.result === 'waiting') setMicrophoneError({ name: 'Microphone action required', message: diagnostic.message || 'Click Enable and test microphone in the opened Buffaly microphone window.' });
         if (diagnostic.result === 'rejected') setMicrophoneError({ name: diagnostic.name || 'MicrophoneError', message: diagnostic.message || 'Chrome rejected microphone capture.' });
         return;
       }
