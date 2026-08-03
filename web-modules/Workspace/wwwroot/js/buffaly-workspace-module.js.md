@@ -12,3 +12,8 @@
 - Loads the workspace index through `/api/web-modules/Workspace/list`.
 - Loads a specific workspace through `/api/web-modules/Workspace/summary` and renders recent artifacts plus sessions with links back to Agent Next.
 - Uses hosted artifact URLs through the Workspace WebModule artifact endpoint instead of download-only or session-artifact mockup paths.
+
+## Stale-While-Revalidate Browser Cache (2026-08-03)
+
+- Added `sessionStorage`-backed cached rendering for the workspace index and workbench summary so reloads can paint the last response immediately while refreshing in the background.
+- Preserved the live WebModule endpoints as the authoritative source; browser cache is only a fast fallback and is replaced after each successful fetch.

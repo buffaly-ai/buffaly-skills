@@ -1,5 +1,11 @@
 # buffaly-workspace-session-ui.js Change History
 
+## Header Summary Browser Cache (2026-08-03)
+
+- Added a small `sessionStorage` cache for the current-session workspace summary so Agent Next header reloads can reuse the last known workspace link immediately.
+- The cache remains browser-side only and every load still starts a background no-store request to refresh the authoritative WebModule response.
+- The fresh background response re-renders the current header contribution when cached data was used, so workspace attachment or display-name changes are visible without waiting for another page reload.
+
 ## Full WebModule Shortcut (2026-08-01)
 
 - Simplified the Agent Next header contribution to a direct `Workspace: <name>` link into `/workspace/workbench.html`.

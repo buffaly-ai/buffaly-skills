@@ -30,17 +30,47 @@
 		return element;
 	}
 
-	function loadSummary(sessionKey, signal) {
-		return fetch("/api/web-modules/Workspace/current?sessionKey=" + encodeURIComponent(sessionKey), {
+	function cacheGet(key) {
+		try {
+			const raw = sessionStorage.getItem(key);
+			return raw ? JSON.parse(raw) : null;
+		} catch (_) {
+			return null;
+		}
+	}
+
+	function cacheSet(key, value) {
+		try {
+			sessionStorage.setItem(key, JSON.stringify({ storedUtc: new Date().toISOString(), value: value }));
+		} catch (_) {
+		}
+	}
+
+	function loadSummary(sessionKey, signal, onRefresh) {
+		const cacheKey = "bws:current:" + sessionKey + ":v1";
+		const cached = cacheGet(cacheKey);
+		const request = fetch("/api/web-modules/Workspace/current?sessionKey=" + encodeURIComponent(sessionKey), {
 			method: "GET",
 			headers: { "Accept": "application/json" },
+			cache: "no-store",
 			signal: signal
 		}).then(function (response) {
 			if (!response.ok) {
 				throw new Error("Workspace summary request failed with status " + response.status + ".");
 			}
 			return response.json();
+		}).then(function (summary) {
+			cacheSet(cacheKey, summary);
+			if (cached && cached.value && !signal.aborted && typeof onRefresh === "function") {
+				onRefresh(summary);
+			}
+			return summary;
 		});
+		if (cached && cached.value) {
+			request.catch(function () { });
+			return Promise.resolve(cached.value);
+		}
+		return request;
 	}
 
 	function getArtifactUrl(sessionKey, artifact) {
@@ -130,12 +160,15 @@
 			context.slotElement.replaceChildren();
 			return { dispose: function () { abort.abort(); } };
 		}
-		loadSummary(context.sessionKey, abort.signal).then(function (summary) {
+		function render(summary) {
 			if (!summary.isAttached || abort.signal.aborted) {
 				context.slotElement.replaceChildren();
 				return;
 			}
 			mountWorkspace(context, summary, abort.signal);
+		}
+		loadSummary(context.sessionKey, abort.signal, render).then(function (summary) {
+			render(summary);
 		}).catch(function (error) {
 			if (error.name !== "AbortError") {
 				context.diagnostics.report({ Type: "workspace-summary-failed", Message: error.message });

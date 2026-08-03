@@ -12,6 +12,17 @@
 	function sourceLabel(sessionKey) { return String(sessionKey || "").replace(/ Worker$/, "").replace(/ Growth Proposal$/, " proposal"); }
 	function reasonFor(item) { var p = String(item.relativePath || "").toLowerCase(); if (p.includes("proposal") || p.includes("deck")) return "Proposal deliverable"; if (p.includes("audit") || p.includes("analysis")) return "Audit evidence"; if (p.includes("report")) return "Validated report"; return "Workspace artifact"; }
 	function artifactUrl(anchorSessionKey, item) { return "/api/web-modules/Workspace/session-artifact?sessionKey=" + encodeURIComponent(anchorSessionKey || "") + "&owningSessionKey=" + encodeURIComponent(item.owningSessionKey || "") + "&path=" + encodeURIComponent(item.relativePath || ""); }
+	function cacheGet(key) { try { var raw = sessionStorage.getItem(key); return raw ? JSON.parse(raw) : null; } catch (_) { return null; } }
+	function cacheSet(key, value) { try { sessionStorage.setItem(key, JSON.stringify({ storedUtc: new Date().toISOString(), value: value })); } catch (_) { } }
+	function loadCachedJson(key, url, onData, onError) {
+		var cached = cacheGet(key);
+		var hadCached = !!(cached && cached.value);
+		if (hadCached) onData(cached.value, true);
+		fetch(url, { headers: { Accept: "application/json" }, cache: "no-store" }).then(function (response) { if (!response.ok) throw new Error(url + " failed with status " + response.status); return response.json(); }).then(function (data) {
+			cacheSet(key, data);
+			onData(data, false);
+		}).catch(function (error) { if (!hadCached && onError) onError(error); });
+	}
 	function isUseful(item) { return item.kind !== "Directory" && [".pdf", ".md", ".html", ".htm", ".url", ".pptx", ".ppt", ".docx", ".xlsx", ".csv", ".txt", ".png", ".jpg", ".jpeg", ".webp", ".zip", ".json"].indexOf(ext(item.relativePath)) >= 0; }
 	function buildFile(anchorSessionKey, item, idPrefix, index, pinned) {
 		return { id: idPrefix + "-" + index, name: nameFrom(item.relativePath), type: typeFrom(item.relativePath, item.kind), size: sizeText(item.length), source: item.owningSessionKey, sourceLabel: sourceLabel(item.owningSessionKey), path: item.relativePath, when: whenText(item.updatedUtc), updated: index, pinned: !!pinned, reason: pinned ? "Pinned workspace item" : reasonFor(item), excerpt: item.relativePath, href: artifactUrl(anchorSessionKey, item), updatedUtc: item.updatedUtc };
@@ -54,18 +65,18 @@
 	function renderIndex() {
 		var list = document.getElementById("workspace-list");
 		if (!list) return;
-		fetch("/api/web-modules/Workspace/list", { headers: { Accept: "application/json" } }).then(function (response) { if (!response.ok) throw new Error("Workspace list failed with status " + response.status); return response.json(); }).then(function (data) {
+		loadCachedJson("bws:index:list:v1", "/api/web-modules/Workspace/list", function (data, cached) {
 			var workspaces = data.workspaces || [];
 			if (!workspaces.length) { list.innerHTML = '<div class="bws-module-empty">No workspaces found.</div>'; return; }
-			list.innerHTML = workspaces.map(function (workspace) { return '<article class="bws-workspace-row"><div><strong>' + esc(workspace.workspaceName) + '</strong><small>' + esc(workspace.workspaceKey) + ' · ' + esc(workspace.sessionCount) + ' sessions</small></div><a class="bws-module-button" href="' + esc(workspaceUrl(workspace.workspaceKey, "")) + '">Open</a></article>'; }).join("");
-		}).catch(function (error) { list.innerHTML = '<div class="bws-module-empty">' + esc(error.message) + '</div>'; });
+			list.innerHTML = (cached ? '<div class="bws-module-cache-note">Showing cached workspaces while refreshing...</div>' : '') + workspaces.map(function (workspace) { return '<article class="bws-workspace-row"><div><strong>' + esc(workspace.workspaceName) + '</strong><small>' + esc(workspace.workspaceKey) + ' · ' + esc(workspace.sessionCount) + ' sessions</small></div><a class="bws-module-button" href="' + esc(workspaceUrl(workspace.workspaceKey, "")) + '">Open</a></article>'; }).join("");
+		}, function (error) { list.innerHTML = '<div class="bws-module-empty">' + esc(error.message) + '</div>'; });
 	}
 	function renderWorkbench() {
 		var root = document.getElementById("workspace-page-root");
 		if (!root) return;
 		var workspaceKey = qs("workspaceKey"), sessionKey = qs("sessionKey");
 		if (!workspaceKey) { root.innerHTML = '<div class="bws-module-empty">Missing workspaceKey.</div>'; return; }
-		fetch("/api/web-modules/Workspace/summary?workspaceKey=" + encodeURIComponent(workspaceKey) + "&sessionKey=" + encodeURIComponent(sessionKey), { headers: { Accept: "application/json" } }).then(function (response) { if (!response.ok) throw new Error("Workspace summary failed with status " + response.status); return response.json(); }).then(function (summary) {
+		loadCachedJson("bws:summary:" + workspaceKey + ":" + sessionKey + ":v1", "/api/web-modules/Workspace/summary?workspaceKey=" + encodeURIComponent(workspaceKey) + "&sessionKey=" + encodeURIComponent(sessionKey), function (summary) {
 			var anchor = sessionKey || summary.currentSessionKey || (summary.sessions && summary.sessions[0] && summary.sessions[0].sessionKey) || "";
 			var pins = buildPins(summary, anchor);
 			var files = pins.concat(buildFiles(summary, anchor));
@@ -74,7 +85,7 @@
 			var workbench = root.querySelector("workspace-workbench");
 			workbench.configure({ workspace: { key: summary.workspaceKey, sessionKey: anchor, name: summary.workspaceName || summary.workspaceKey, description: "Find shared artifacts, pinned material, skills, and source sessions." } });
 			workbench.start();
-		}).catch(function (error) { root.innerHTML = '<div class="bws-module-empty">' + esc(error.message) + '</div>'; });
+		}, function (error) { root.innerHTML = '<div class="bws-module-empty">' + esc(error.message) + '</div>'; });
 	}
 	renderIndex();
 	renderWorkbench();
