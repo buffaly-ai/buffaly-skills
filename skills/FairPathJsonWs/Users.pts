@@ -13,7 +13,7 @@ prototype Users_GetUsers : FairPathJsonWsSkillAction
 
 [SemanticProgram.InfinitivePhrase("to get fairpath user by email via jsonws")]
 [SemanticProgram.InfinitivePhrase("to find fairpath user by email via jsonws")]
-prototype Users_GetUserByEmail : FairPathJsonWsSkillAction
+prototype FairPathJsonWs_Users_GetUserByEmail : FairPathJsonWsSkillAction
 {
 	Description = @"JsonWs wrapper over FairPath.Business.Users.GetUserByEmail(Email). Returns raw response JSON string.";
 

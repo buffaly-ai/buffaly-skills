@@ -13,7 +13,7 @@ prototype Users_GetUser : FeedingFrenzyJsonWsSkillAction
 }
 
 [SemanticProgram.InfinitivePhrase("to get feeding frenzy user by email")]
-prototype Users_GetUserByEmail : FeedingFrenzyJsonWsSkillAction
+prototype FeedingFrenzyJsonWs_Users_GetUserByEmail : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. Email - user email address.";
 
