@@ -126,11 +126,13 @@ prototype ToDumpRuntimeMemories : ProtoScriptAction, BuffalyNLMemorySkillAction
 [SemanticProgram.InfinitivePhrase("to restore runtime memories from session artifacts")]
 prototype ToRestoreRuntimeMemoriesFromSessionArtifacts : ProtoScriptAction, BuffalyNLMemorySkillAction
 {
-	Description = @"Restores every .pts prototype artifact from artifacts/nl-memory into the active runtime memory store for the current session.";
+	Description = @"Restores session-local memory prototypes and Online Action Critic actions from their current-session artifacts into the active runtime.";
 
 	function Execute() : string
 	{
-		return BuffalyNlMemoryRuntimeTools.RestoreRuntimeMemoriesFromSessionArtifacts(_runtime, _opsAgent);
+		string memories = BuffalyNlMemoryRuntimeTools.RestoreRuntimeMemoriesFromSessionArtifacts(_runtime, _opsAgent);
+		string actions = BuffalyNlMemoryRuntimeTools.RestoreOnlineActionsFromSessionArtifacts(_runtime, _opsAgent);
+		return memories + "\r\n" + actions;
 	}
 }
 
