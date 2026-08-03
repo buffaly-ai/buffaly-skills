@@ -3,36 +3,77 @@
 	function esc(value) { return String(value == null ? "" : value).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
 	function qs(name) { return new URL(location.href).searchParams.get(name) || ""; }
 	function workspaceUrl(key, sessionKey) { return "/workspace/workbench.html?workspaceKey=" + encodeURIComponent(key) + (sessionKey ? "&sessionKey=" + encodeURIComponent(sessionKey) : ""); }
-	function agentUrl(sessionKey) { return "/buffaly-agent-next.html?sessionKey=" + encodeURIComponent(sessionKey); }
-	function artifactUrl(sessionKey, item) { return "/api/web-modules/Workspace/session-artifact?sessionKey=" + encodeURIComponent(sessionKey) + "&owningSessionKey=" + encodeURIComponent(item.owningSessionKey) + "&path=" + encodeURIComponent(item.relativePath); }
-	function fileIcon(item) { const name = String(item && item.relativePath || "").toLowerCase(); const kind = String(item && item.kind || "").toLowerCase(); if (kind === "directory") return "📁 DIR"; if (/\.pdf$/.test(name)) return "📕 PDF"; if (/\.(html?|url)$/.test(name)) return "🌐 WEB"; if (/\.md$/.test(name)) return "📝 MD"; if (/\.(png|jpe?g|webp|gif|svg)$/.test(name)) return "🖼️ IMG"; if (/\.zip$/.test(name)) return "🗜️ ZIP"; if (/\.json$/.test(name)) return "▣ JSON"; if (/\.txt$/.test(name)) return "📄 TXT"; return "📄 FILE"; }
-	function fileName(path) { return String(path || "").split(/[\\/]/).pop() || path; }
+	function agentUrl(sessionKey) { return "/buffaly-agent-next.html?sessionKey=" + encodeURIComponent(sessionKey || ""); }
+	function nameFrom(path) { return String(path || "").split(/[\\/]/).filter(Boolean).pop() || path || "artifact"; }
+	function ext(path) { var match = String(path || "").toLowerCase().match(/\.[a-z0-9]+$/); return match ? match[0] : ""; }
+	function typeFrom(path, kind) { if (kind === "Directory") return "DIR"; var e = ext(path); return e ? e.slice(1).toUpperCase() : "FILE"; }
+	function sizeText(bytes) { if (!bytes) return ""; if (bytes < 1024) return bytes + " B"; if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB"; return (bytes / 1048576).toFixed(1) + " MB"; }
+	function whenText(updatedUtc) { if (!updatedUtc) return "recent"; var ms = Date.now() - new Date(updatedUtc).getTime(); if (ms < 3600000) return Math.max(1, Math.round(ms / 60000)) + " min ago"; if (ms < 86400000) return Math.round(ms / 3600000) + " hr ago"; return Math.round(ms / 86400000) + " days ago"; }
+	function sourceLabel(sessionKey) { return String(sessionKey || "").replace(/ Worker$/, "").replace(/ Growth Proposal$/, " proposal"); }
+	function reasonFor(item) { var p = String(item.relativePath || "").toLowerCase(); if (p.includes("proposal") || p.includes("deck")) return "Proposal deliverable"; if (p.includes("audit") || p.includes("analysis")) return "Audit evidence"; if (p.includes("report")) return "Validated report"; return "Workspace artifact"; }
+	function artifactUrl(anchorSessionKey, item) { return "/api/web-modules/Workspace/session-artifact?sessionKey=" + encodeURIComponent(anchorSessionKey || "") + "&owningSessionKey=" + encodeURIComponent(item.owningSessionKey || "") + "&path=" + encodeURIComponent(item.relativePath || ""); }
+	function isUseful(item) { return item.kind !== "Directory" && [".pdf", ".md", ".html", ".htm", ".url", ".pptx", ".ppt", ".docx", ".xlsx", ".csv", ".txt", ".png", ".jpg", ".jpeg", ".webp", ".zip", ".json"].indexOf(ext(item.relativePath)) >= 0; }
+	function buildFile(anchorSessionKey, item, idPrefix, index, pinned) {
+		return { id: idPrefix + "-" + index, name: nameFrom(item.relativePath), type: typeFrom(item.relativePath, item.kind), size: sizeText(item.length), source: item.owningSessionKey, sourceLabel: sourceLabel(item.owningSessionKey), path: item.relativePath, when: whenText(item.updatedUtc), updated: index, pinned: !!pinned, reason: pinned ? "Pinned workspace item" : reasonFor(item), excerpt: item.relativePath, href: artifactUrl(anchorSessionKey, item), updatedUtc: item.updatedUtc };
+	}
+	function buildFiles(summary, anchorSessionKey) {
+		return (summary.artifacts || []).filter(isUseful).sort(function (a, b) { return String(b.updatedUtc || "").localeCompare(String(a.updatedUtc || "")); }).slice(0, 80).map(function (item, i) { return buildFile(anchorSessionKey, item, "live", i, false); });
+	}
+	function buildPins(summary, anchorSessionKey) {
+		return (summary.pins || []).map(function (pin, i) {
+			if (pin.type === "website") return { id: "pin-site-" + i, name: pin.title, type: "WEB", sourceLabel: pin.label || "Website", reason: pin.label || "Website", href: pin.url, pinned: true, kind: pin.kind || "website" };
+			return buildFile(anchorSessionKey, pin, "pin", i, true);
+		});
+	}
+	function buildSources(summary) {
+		return (summary.sessions || []).map(function (s, i) { return ["source-" + i, sourceLabel(s.sessionKey), s.sessionKey, (summary.artifacts || []).filter(function (a) { return a.owningSessionKey === s.sessionKey; }).length, s.isCurrent ? "Primary" : "Available"]; });
+	}
+	function buildSessionSourceCards(summary, anchorSessionKey) {
+		var bySession = new Map();
+		(summary.sessions || []).forEach(function (s) { bySession.set(s.sessionKey, { id: s.sessionKey, name: sourceLabel(s.sessionKey), sessionKey: s.sessionKey, isCurrent: !!s.isCurrent, relationshipType: s.relationshipType || "", summary: s.summary || "", artifactCount: 0, lastUpdatedUtc: s.lastObservedUtc || s.createdUtc || null, recentArtifacts: [] }); });
+		(summary.artifacts || []).filter(isUseful).forEach(function (a) {
+			var key = a.owningSessionKey || "Unknown session";
+			if (!bySession.has(key)) bySession.set(key, { id: key, name: sourceLabel(key), sessionKey: key, isCurrent: false, relationshipType: "", summary: "", artifactCount: 0, lastUpdatedUtc: null, recentArtifacts: [] });
+			var source = bySession.get(key);
+			source.artifactCount++;
+			if (a.updatedUtc && (!source.lastUpdatedUtc || new Date(a.updatedUtc) > new Date(source.lastUpdatedUtc))) source.lastUpdatedUtc = a.updatedUtc;
+			source.recentArtifacts.push({ name: nameFrom(a.relativePath), type: typeFrom(a.relativePath, a.kind), path: a.relativePath, href: artifactUrl(anchorSessionKey, a), updatedUtc: a.updatedUtc, when: whenText(a.updatedUtc) });
+		});
+		return Array.from(bySession.values()).map(function (s) { s.recentArtifacts = s.recentArtifacts.sort(function (a, b) { return new Date(b.updatedUtc || 0) - new Date(a.updatedUtc || 0); }).slice(0, 5); return s; }).sort(function (a, b) { return new Date(b.lastUpdatedUtc || 0) - new Date(a.lastUpdatedUtc || 0); });
+	}
+	function buildArtifactsBySession(summary, anchorSessionKey) {
+		var groups = {};
+		(summary.artifacts || []).filter(isUseful).forEach(function (a, i) {
+			var key = a.owningSessionKey || "Unknown session";
+			(groups[key] = groups[key] || []).push(buildFile(anchorSessionKey, a, "session-" + key.replace(/\W+/g, "-"), i, false));
+		});
+		Object.keys(groups).forEach(function (key) { groups[key].sort(function (a, b) { return String(b.updatedUtc || "").localeCompare(String(a.updatedUtc || "")); }); });
+		return groups;
+	}
+	function buildSkills(summary) { return (summary.profile && summary.profile.pinnedSkillName) ? [{ id: "sales", name: summary.profile.pinnedSkillName, prototype: summary.profile.pinnedSkillPrototype || "", category: "Pinned parent skill", description: "Pinned workspace skill.", actions: [] }] : []; }
 	function renderIndex() {
-		const list = document.getElementById("workspace-list");
+		var list = document.getElementById("workspace-list");
 		if (!list) return;
-		fetch("/api/web-modules/Workspace/list", { headers: { Accept: "application/json" } }).then(function (response) {
-			if (!response.ok) throw new Error("Workspace list failed with status " + response.status);
-			return response.json();
-		}).then(function (data) {
-			const workspaces = data.workspaces || [];
+		fetch("/api/web-modules/Workspace/list", { headers: { Accept: "application/json" } }).then(function (response) { if (!response.ok) throw new Error("Workspace list failed with status " + response.status); return response.json(); }).then(function (data) {
+			var workspaces = data.workspaces || [];
 			if (!workspaces.length) { list.innerHTML = '<div class="bws-module-empty">No workspaces found.</div>'; return; }
-			list.innerHTML = workspaces.map(function (workspace) {
-				return '<article class="bws-workspace-row"><div><strong>' + esc(workspace.workspaceName) + '</strong><small>' + esc(workspace.workspaceKey) + ' · ' + esc(workspace.sessionCount) + ' sessions</small></div><a class="bws-module-button" href="' + esc(workspaceUrl(workspace.workspaceKey, "")) + '">Open</a></article>';
-			}).join("");
+			list.innerHTML = workspaces.map(function (workspace) { return '<article class="bws-workspace-row"><div><strong>' + esc(workspace.workspaceName) + '</strong><small>' + esc(workspace.workspaceKey) + ' · ' + esc(workspace.sessionCount) + ' sessions</small></div><a class="bws-module-button" href="' + esc(workspaceUrl(workspace.workspaceKey, "")) + '">Open</a></article>'; }).join("");
 		}).catch(function (error) { list.innerHTML = '<div class="bws-module-empty">' + esc(error.message) + '</div>'; });
 	}
 	function renderWorkbench() {
-		const root = document.getElementById("workspace-page-root");
+		var root = document.getElementById("workspace-page-root");
 		if (!root) return;
-		const workspaceKey = qs("workspaceKey"), sessionKey = qs("sessionKey");
+		var workspaceKey = qs("workspaceKey"), sessionKey = qs("sessionKey");
 		if (!workspaceKey) { root.innerHTML = '<div class="bws-module-empty">Missing workspaceKey.</div>'; return; }
-		fetch("/api/web-modules/Workspace/summary?workspaceKey=" + encodeURIComponent(workspaceKey) + "&sessionKey=" + encodeURIComponent(sessionKey), { headers: { Accept: "application/json" } }).then(function (response) {
-			if (!response.ok) throw new Error("Workspace summary failed with status " + response.status);
-			return response.json();
-		}).then(function (summary) {
-			const anchor = sessionKey || (summary.sessions && summary.sessions[0] && summary.sessions[0].sessionKey) || "";
-			const files = (summary.artifacts || []).slice().sort(function (a, b) { return String(b.updatedUtc).localeCompare(String(a.updatedUtc)); }).slice(0, 80);
-			root.innerHTML = '<header class="bws-module-hero"><a href="/workspace/">← All workspaces</a><small>WORKSPACE</small><h1>' + esc(summary.workspaceName) + '</h1><p>' + esc(summary.sessions.length) + ' sessions · ' + esc(summary.artifacts.length) + ' artifacts</p></header><section class="bws-module-grid"><article class="bws-module-card"><h2>Recent files</h2><div class="bws-module-files">' + files.map(function (item) { return '<div class="bws-module-file"><span class="bws-module-type">' + esc(fileIcon(item)) + '</span><div><strong>' + esc(fileName(item.relativePath)) + '</strong><small>' + esc(item.owningSessionKey) + ' · ' + esc(item.relativePath) + '</small></div>' + (item.kind === "Directory" || !anchor ? '' : '<a class="bws-module-button" target="_blank" rel="noopener" href="' + esc(artifactUrl(anchor, item)) + '">Open</a>') + '</div>'; }).join("") + '</div></article><article class="bws-module-card"><h2>Sessions</h2><div class="bws-module-list">' + (summary.sessions || []).map(function (session) { return '<article class="bws-workspace-row"><div><strong>' + esc(session.sessionKey) + '</strong><small>' + (session.isCurrent ? 'Current / selected' : 'Included via workspace root tree') + '</small></div><a class="bws-module-button" href="' + esc(agentUrl(session.sessionKey)) + '">Open session</a></article>'; }).join("") + '</div></article></section>';
+		fetch("/api/web-modules/Workspace/summary?workspaceKey=" + encodeURIComponent(workspaceKey) + "&sessionKey=" + encodeURIComponent(sessionKey), { headers: { Accept: "application/json" } }).then(function (response) { if (!response.ok) throw new Error("Workspace summary failed with status " + response.status); return response.json(); }).then(function (summary) {
+			var anchor = sessionKey || summary.currentSessionKey || (summary.sessions && summary.sessions[0] && summary.sessions[0].sessionKey) || "";
+			var pins = buildPins(summary, anchor);
+			var files = pins.concat(buildFiles(summary, anchor));
+			window.WORKSPACE_WORKBENCH_DATA = { workspaceKey: summary.workspaceKey, parentSessionKey: anchor, files: files, importantFiles: pins, pinnedFiles: pins, pins: pins, skills: buildSkills(summary), actions: [], sources: buildSources(summary), sessionSourceCards: buildSessionSourceCards(summary, anchor), artifactsBySession: buildArtifactsBySession(summary, anchor) };
+			root.innerHTML = '<workspace-workbench id="workspace-workbench"></workspace-workbench>';
+			var workbench = root.querySelector("workspace-workbench");
+			workbench.configure({ workspace: { key: summary.workspaceKey, sessionKey: anchor, name: summary.workspaceName || summary.workspaceKey, description: "Find shared artifacts, pinned material, skills, and source sessions." } });
+			workbench.start();
 		}).catch(function (error) { root.innerHTML = '<div class="bws-module-empty">' + esc(error.message) + '</div>'; });
 	}
 	renderIndex();
