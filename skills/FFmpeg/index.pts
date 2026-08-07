@@ -73,6 +73,16 @@ function ToFFmpegDefaultProbeExe(string ffprobePath) : string
 	return ffprobePath;
 }
 
+function ToFFmpegDefaultPythonExe(string pythonPath) : string
+{
+	if (StringUtil.IsEmpty(pythonPath))
+	{
+		return "python";
+	}
+
+	return pythonPath;
+}
+
 [SemanticProgram.InfinitivePhrase("to get ffmpeg version")]
 [SemanticProgram.InfinitivePhrase("to verify ffmpeg is installed")]
 prototype ToGetFFmpegVersion : FFmpegSkillAction
@@ -99,6 +109,22 @@ Returns ffprobe JSON for duration, size, and streams.";
 		string exe = ToFFmpegDefaultProbeExe(ffprobePath);
 		string args = "-v error -show_entries format=duration,size -show_streams -of json " + ToFFmpegQuoted(filePath);
 		return SystemOperations.RunCommandLineWithTimeout(exe, args, 30);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to inspect PDF pages for content and clipping")]
+[SemanticProgram.InfinitivePhrase("to probe PDF page dimensions and image bounds")]
+[SemanticProgram.InfinitivePhrase("to detect PDF pages with missing content")]
+prototype ToInspectPdfPagesForContentAndClipping : FFmpegSkillAction
+{
+	Description = @"pdfFilePath - absolute path to the PDF file. pythonPath - optional Python executable; defaults to python on PATH. Uses PyMuPDF to return read-only JSON with page dimensions, text counts, image counts, and image bounds. Fails explicitly when Python, PyMuPDF, or the PDF is unavailable.";
+
+	function Execute(string pdfFilePath, string pythonPath = "") : string
+	{
+		string scriptBase64 = "aW1wb3J0IGZpdHosIGpzb24sIG9zLCBzeXMKcGF0aCA9IHN5cy5hcmd2WzFdCmlmIG5vdCBvcy5wYXRoLmlzZmlsZShwYXRoKToKICAgIHJhaXNlIEZpbGVOb3RGb3VuZEVycm9yKHBhdGgpCmRvYyA9IGZpdHoub3BlbihwYXRoKQpwYWdlcyA9IFtdCmZvciBpbmRleCwgcGFnZSBpbiBlbnVtZXJhdGUoZG9jKToKICAgIHRleHQgPSBwYWdlLmdldF90ZXh0KCkuc3RyaXAoKQogICAgYm91bmRzID0gW10KICAgIGltYWdlcyA9IHBhZ2UuZ2V0X2ltYWdlcygpCiAgICBmb3IgaW1hZ2UgaW4gaW1hZ2VzOgogICAgICAgIGZvciByZWN0IGluIHBhZ2UuZ2V0X2ltYWdlX3JlY3RzKGltYWdlWzBdKToKICAgICAgICAgICAgYm91bmRzLmFwcGVuZCh7IngwIjogcm91bmQocmVjdC54MCwgMSksICJ5MCI6IHJvdW5kKHJlY3QueTAsIDEpLCAieDEiOiByb3VuZChyZWN0LngxLCAxKSwgInkxIjogcm91bmQocmVjdC55MSwgMSl9KQogICAgcGFnZXMuYXBwZW5kKHsicGFnZSI6IGluZGV4ICsgMSwgIndpZHRoIjogcm91bmQocGFnZS5yZWN0LndpZHRoLCAxKSwgImhlaWdodCI6IHJvdW5kKHBhZ2UucmVjdC5oZWlnaHQsIDEpLCAidGV4dENoYXJzIjogbGVuKHRleHQpLCAiaGFzVGV4dCI6IGxlbih0ZXh0KSA+IDAsICJpbWFnZXMiOiBsZW4oaW1hZ2VzKSwgImltYWdlQm91bmRzIjogYm91bmRzfSkKcHJpbnQoanNvbi5kdW1wcyh7ImZpbGUiOiBvcy5wYXRoLmJhc2VuYW1lKHBhdGgpLCAicGFnZUNvdW50IjogbGVuKHBhZ2VzKSwgInBhZ2VzIjogcGFnZXN9LCBpbmRlbnQ9Mikp";
+		string pythonCode = "import base64;exec(base64.b64decode('" + scriptBase64 + "'))";
+		string args = "-c " + ToFFmpegQuoted(pythonCode) + " " + ToFFmpegQuoted(pdfFilePath);
+		return SystemOperations.RunCommandLineWithTimeout(ToFFmpegDefaultPythonExe(pythonPath), args, 180);
 	}
 }
 

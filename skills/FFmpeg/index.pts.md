@@ -27,3 +27,7 @@ This companion file records significant changes to the FFmpegSkill ProtoScript g
 - Added `ToExtractFFmpegAudioArtifact` to extract the first audio stream from source media into a separate `.m4a` AAC artifact under `artifacts/audio/` without mutating the source media.
 - The action probes the source before extraction, stages output through a temp directory, copies the audio artifact into the session artifact tree, then verifies/probes the staged audio output.
 - Replaced the desktop-recording timeout arithmetic expression with a constant timeout so the FFmpeg skill file indexes cleanly in the current ProtoScript binder.`r`n- Removed nested whole-command quoting from FFmpeg `cmd /c` prepare/copy calls so quoted file paths copy correctly through the runtime command wrapper.
+
+## 2026-08-07 - Promote learned PDF page inspection
+- Added `ToInspectPdfPagesForContentAndClipping`, a read-only PyMuPDF probe promoted from a useful Online Action Critic result.
+- The action reports page dimensions, text presence/count, image count, and image bounds through the managed command runner, with an optional Python executable path and explicit dependency failures.

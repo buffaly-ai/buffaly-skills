@@ -29,12 +29,13 @@ The renderer can detect `.mp4`, `.png`, `.jpg`, `.gif`, `.webp`, `.m4a`, `.mp3`,
 
 1. `ToGetFFmpegVersion`
 2. `ToProbeFFmpegMediaFile`
-3. `ToRecordFFmpegDesktopVideoArtifact`
-4. `ToRecordFFmpegBrowserDemoArtifact`
-5. `ToFinalizeFFmpegMkvRecordingArtifact`
-6. `ToNormalizeFFmpegVideoForWebArtifact`
-7. `ToExtractFFmpegVideoThumbnailArtifact`
-8. `ToTrimFFmpegVideoArtifact`
-9. `ToCompressFFmpegVideoArtifact`
-10. `ToCreateFFmpegContactSheetArtifact`
-11. `ToAddFFmpegTextOverlayArtifact`
+3. `ToInspectPdfPagesForContentAndClipping`
+4. `ToRecordFFmpegDesktopVideoArtifact`
+5. `ToRecordFFmpegBrowserDemoArtifact`
+6. `ToFinalizeFFmpegMkvRecordingArtifact`
+7. `ToNormalizeFFmpegVideoForWebArtifact`
+8. `ToExtractFFmpegVideoThumbnailArtifact`
+9. `ToTrimFFmpegVideoArtifact`
+10. `ToCompressFFmpegVideoArtifact`
+11. `ToCreateFFmpegContactSheetArtifact`
+12. `ToAddFFmpegTextOverlayArtifact`
