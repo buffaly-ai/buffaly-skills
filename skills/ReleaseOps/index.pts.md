@@ -9,3 +9,7 @@ Changed the client reference to an explicit skill-local `lib/Buffaly.ReleaseOps.
 ## 2026-08-01
 
 Changed the reference to assembly-name form because extension repository validation rejects path-based DLL references. Package installation still places the skill-owned client in its declared library payload, while ProtoScript resolves the canonical assembly identity without embedding a filesystem route.
+
+## 2026-08-07
+
+Promoted source-local extension-operation waiting into `ToWaitForExtensionOperation`, backed by the typed ReleaseOps client. Promoted immutable installer Build-ID monitoring and persisted evidence retrieval into `ToMonitorInstallerBuildProgress` and `ToExtractInstallerBuildEvidence`. These actions use ReleaseOps APIs and exact identities rather than session-local filesystem parsing.

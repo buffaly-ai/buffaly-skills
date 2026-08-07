@@ -39,3 +39,39 @@ prototype ToRequestFullBuffalyInstallerBuildSkill : ReleaseOpsSkillAction
         return ReleaseOpsExtensionFacade.RequestFullInstallerBuild(buildReason);
     }
 }
+
+[SemanticProgram.InfinitivePhrase("to wait for a Buffaly extension operation")]
+[SemanticProgram.InfinitivePhrase("to poll an extension operation to terminal state")]
+prototype ToWaitForExtensionOperation : ReleaseOpsSkillAction
+{
+    Description = @"Polls one persisted ReleaseOps extension operation by exact operation ID and returns its terminal typed record.";
+
+    function Execute(string operationId, int timeoutSeconds = 600) : string
+    {
+        return ReleaseOpsExtensionFacade.WaitForExtensionOperation(operationId, timeoutSeconds);
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to monitor an installer build")]
+[SemanticProgram.InfinitivePhrase("to wait for an installer build to reach terminal state")]
+prototype ToMonitorInstallerBuildProgress : ReleaseOpsSkillAction
+{
+    Description = @"Polls one immutable installer Build ID through the ReleaseOps API and returns the terminal build record.";
+
+    function Execute(int buildId, int timeoutSeconds = 1800) : string
+    {
+        return ReleaseOpsExtensionFacade.MonitorInstallerBuild(buildId, timeoutSeconds);
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to get installer build evidence")]
+[SemanticProgram.InfinitivePhrase("to inspect a failed installer build")]
+prototype ToExtractInstallerBuildEvidence : ReleaseOpsSkillAction
+{
+    Description = @"Returns the persisted ReleaseOps record for one immutable installer Build ID without mutating or rebuilding it.";
+
+    function Execute(int buildId) : string
+    {
+        return ReleaseOpsExtensionFacade.GetInstallerBuildEvidence(buildId);
+    }
+}
