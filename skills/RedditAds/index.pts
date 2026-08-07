@@ -211,3 +211,14 @@ prototype ToGenerateRedditAdsReport : RedditAdsSkillAction
 		return RedditAdsWebService.GenerateReportJson(adAccountId, reportType, dateRangePreset);
 	}
 }
+
+[SemanticProgram.InfinitivePhrase("to generate a reddit ads report by date range")]
+prototype ToGenerateRedditAdsReportByDateRange : RedditAdsSkillAction
+{
+	Description = @"adAccountId - Reddit ad account id. reportType - report type (campaign, ad_group, or ad). startDate/endDate - inclusive calendar dates in yyyy-MM-dd format. Uses the stored Reddit Ads OAuth connection to generate a report and returns raw JSON. Does not return the token value.";
+
+	function Execute(string adAccountId, string reportType, string startDate, string endDate) : string
+	{
+		return RedditAdsWebService.GenerateReportByDateRangeJson(adAccountId, reportType, startDate, endDate);
+	}
+}
