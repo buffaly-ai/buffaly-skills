@@ -9038,10 +9038,10 @@
       "PackageType": "WebModule",
       "Title": "Google Workspace",
       "Description": "Buffaly Web Module package for Google Workspace.",
-      "Version": "0.1.137",
+      "Version": "0.1.138",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/GoogleWorkspace",
-      "SourceUrl": "",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/GoogleWorkspace",
       "Phrases": [
         "Google Workspace",
         "GoogleWorkspace"
@@ -9077,7 +9077,7 @@
         },
         {
           "Path": "Buffaly.GoogleWorkspace.dll",
-          "Sha256": "a173ec682cfb5ed089d914f395eaca94c2abb98ecb5428cb9c35bd08b93c23a1"
+          "Sha256": "3be065010d0504b7a10938c699be8d882db88c1660020cff31b554c0b958cc3c"
         },
         {
           "Path": "Buffaly.GoogleWorkspace.WebModule.deps.json",
@@ -9085,11 +9085,11 @@
         },
         {
           "Path": "Buffaly.GoogleWorkspace.WebModule.dll",
-          "Sha256": "f0de57bf17481a7e1b07c66f4e378d2dae69243740a4d8ed1b1dc10b9de91235"
+          "Sha256": "3446bc8793969789b8e715feba5d236f11dc5b2ec01293ea09bfef35e83a9ed8"
         },
         {
           "Path": "Buffaly.GoogleWorkspace.WebModule.exe",
-          "Sha256": "566bc9dcefe0f9606848579e2572cc9e4128c8e0808583adfdc428b0b9fda629"
+          "Sha256": "d0095028ef4f1a25e34aa5f0ace6f13ade68370a3068f4caaa627a1aaed64f24"
         },
         {
           "Path": "Buffaly.GoogleWorkspace.WebModule.runtimeconfig.json",
@@ -9348,6 +9348,10 @@
           "Sha256": "0ecf336fb052e039b59734b4c50fd9a2d2fa9a0ce2405ffadfdaab6abdef7b64"
         },
         {
+          "Path": "Skills/GoogleWorkspace/index.pts.lazy.json",
+          "Sha256": "f18099aba8e363797ee8e8a07d6dd6e3d861bf8a1929d96dfa33e7da59c2b101"
+        },
+        {
           "Path": "Skills/GoogleWorkspace/Memory.pts",
           "Sha256": "7159a7788d36558e4dfabca84bf8384d0cc2b2e471f6b66c819293c8d8849a76"
         },
@@ -9578,10 +9582,6 @@
         {
           "Path": "zh-Hant/Microsoft.Data.SqlClient.resources.dll",
           "Sha256": "6a045428a176c4a42518ef6918b93ba0ee4a126dd15b523cc123bb14cad55e21"
-        },
-        {
-          "Path": "Skills/GoogleWorkspace/index.pts.lazy.json",
-          "Sha256": "f18099aba8e363797ee8e8a07d6dd6e3d861bf8a1929d96dfa33e7da59c2b101"
         }
       ],
       "ProjectArtifacts": [
