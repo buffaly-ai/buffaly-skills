@@ -1,5 +1,9 @@
 # TabularData Skill History
 
+## Strict Lazy Compilation Dependencies (2026-08-07)
+- Added the module-local assembly-name reference for `System.Data`; the module already imported `DataTable` but previously relied on the normal OpsAgent `Imports.pts` closure to reference its assembly.
+- This keeps TabularData independently compilable in the lightweight lazy validation project without introducing a file-path DLL reference.
+
 ## Initial Native DataTable Skill (2026-06-06)
 - Added a shared TabularData skill for native `DataTable` deterministic operations and `ProtoScriptPreviewGrid` JSON rendering.
 - Kept source-specific loading/preview actions and stored-procedure support out of this skill boundary; sources produce DataTable references and TabularData operates on them.

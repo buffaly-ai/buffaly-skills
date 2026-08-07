@@ -6,6 +6,7 @@
 - Added `ToPreviewPublishSkillToBuffalySkillRepository` and `ToPublishSkillToBuffalySkillRepository` as separate repository-publication operations with explicit replace, commit, and push choices.
 - These actions call the typed SkillManagement facade in-process. They do not guess JsonWs routes or duplicate compiler/publisher behavior in ProtoScript.
 - Generation, publication, package installation, and runtime reset remain separate lifecycle steps. Publishing does not install a package, and resetting a runtime does not generate a sidecar.
+- Added module-local assembly-name references/imports for SkillManagement and JsonWsHelper so strict lazy compilation does not depend on the normal OpsAgent `Imports.pts` closure.
 
 ## 2026-07-22 Installed extension update actions
 

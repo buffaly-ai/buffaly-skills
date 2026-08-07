@@ -1,3 +1,9 @@
+reference Buffaly.Agent.SkillManagement Buffaly.Agent.SkillManagement;
+reference Buffaly.Agent.Tools.Http Buffaly.Agent.Tools.Http;
+
+import Buffaly.Agent.SkillManagement Buffaly.Agent.SkillManagement.ProtoScriptCapabilityInspection ProtoScriptCapabilityInspection;
+import Buffaly.Agent.Tools.Http Buffaly.Agent.Tools.Http.JsonWsHelper JsonWsHelper;
+
 prototype SkillDirectorySkillAction : OpsAction
 {
 	Description = @"Base action type for official Buffaly Skill Directory tools.";
