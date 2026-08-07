@@ -38,3 +38,11 @@ TrafficAnalysis now includes Facebook Ads as a seventh ordinary collector. It ca
 Source bridge and large-payload collector methods return StringRef when the underlying provider can spool large JSON. This preserves native typed flow and prevents the ProtoScript interpreter from rejecting reference-backed values as missing string returns.
 
 The same native contract extends through all seven public `ToCollect*` actions because the analyzed envelope can also exceed the inline threshold. Google Ads keeps its intermediate collected envelope in a `StringRef` local before analysis. Returning or assigning these reference-backed values as `string` causes the worker to report `Method did not return a value` even when the provider itself is healthy.
+
+## 2026-08-07
+- Made the collector analyzer accept materialized JSON directly so the standalone public JSON-service boundary can invoke the same bounded analysis action without StringRef conversion ambiguity.
+
+
+## 2026-08-07
+- Added `ToAnalyzeTrafficAnalysisCollector` as an ordinary, analysis-only JSON boundary for the standalone application.
+- This action performs no source acquisition and keeps the existing bounded model contract.
