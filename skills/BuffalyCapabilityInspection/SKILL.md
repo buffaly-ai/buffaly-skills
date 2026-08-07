@@ -10,7 +10,7 @@ Read-only self-inspection actions for listing this Buffaly install's five primar
 
 ## Design
 
-ProtoScript is intentionally thin. The actions in `index.pts` delegate directly to `Buffaly.Agent.Web.CapabilityInspectionFacade`, which owns catalog aggregation, provider secret-safe shaping, validation, and JSON serialization.
+ProtoScript is intentionally thin. Web-backed actions delegate to `Buffaly.Agent.Web.CapabilityInspectionFacade`; worker-safe prompt-action and include-mode inspection delegates to `ProtoScriptCapabilityInspection`. Those owners perform catalog aggregation, validation, and JSON serialization.
 
 ## Actions
 
@@ -18,5 +18,6 @@ ProtoScript is intentionally thin. The actions in `index.pts` delegate directly 
 - `ToListInstalledCapabilitySkills`
 - `ToListInstalledCapabilityTools`
 - `ToListInstalledCapabilityPromptActions`
+- `ToInventorySkillIncludeModes`
 - `ToListInstalledCapabilityProviders`
 - `ToListInstalledCapabilityWebModules`

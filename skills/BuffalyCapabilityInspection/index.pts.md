@@ -13,5 +13,6 @@
 ## 2026-06-10 - Direct prompt-action inspection
 
 - Changed `ToListInstalledCapabilityPromptActions` to call `ProtoScriptCapabilityInspection.ListInstalledCapabilityPromptActions(...)` directly.
+- Added `ToInventorySkillIncludeModes` as a read-only semantic action backed by the in-process capability-inspection service.
 - Removed the worker-to-agent-web JsonWs dependency for prompt-action capability inspection.
 - This prevents wrong web base URL failures such as IIS `localhost:80` 404s during prompt-skill update workflows.

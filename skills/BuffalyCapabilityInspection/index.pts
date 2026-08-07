@@ -73,6 +73,19 @@ prototype ToListInstalledCapabilityPromptActions : BuffalyCapabilityInspectionSk
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to inventory skill include modes")]
+[SemanticProgram.InfinitivePhrase("to list eager and lazy skill routes")]
+[SemanticProgram.InfinitivePhrase("to inspect skill include sidecars and receipts")]
+prototype ToInventorySkillIncludeModes : BuffalyCapabilityInspectionSkillAction
+{
+	Description = @"Returns deterministic JSON for every skill route in Skills/index.pts, including eager/lazy mode and whether the matching lazy sidecar and package receipt exist.";
+
+	function Execute(string opsAgentRootPath) : string
+	{
+		return ProtoScriptCapabilityInspection.InventorySkillIncludeModes(opsAgentRootPath);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to list installed Buffaly providers")]
 [SemanticProgram.InfinitivePhrase("to show configured model providers")]
 [SemanticProgram.InfinitivePhrase("to inspect provider capability status")]
