@@ -6,8 +6,45 @@ prototype SkillDirectorySkillAction : OpsAction
 [SemanticEntity("skill directory skill")]
 prototype SkillDirectorySkill : SkillEntity
 {
-	Description = "Search, inspect, preview, and explicitly install official remote Buffaly skills.";
+	Description = "Search, inspect, validate, publish, and explicitly install Buffaly skills.";
 	ActionRoot = SkillDirectorySkillAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to generate a lazy skill index")]
+[SemanticProgram.InfinitivePhrase("to build a lazy skill sidecar")]
+[SemanticProgram.InfinitivePhrase("to validate a lazy ProtoScript skill")]
+prototype ToGenerateLazySkillIndex : SkillDirectorySkillAction
+{
+	Description = @"skillName - exact installed skill directory name. writeSidecar - true to atomically write index.pts.lazy.json after successful lightweight-project compilation; false to validate without mutation. This does not publish or install the skill.";
+
+	function Execute(string skillName, bool writeSidecar) : string
+	{
+		return ProtoScriptCapabilityInspection.GenerateLazySkillIndex(skillName, writeSidecar);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to preview publishing a Buffaly skill")]
+[SemanticProgram.InfinitivePhrase("to validate publishing a Buffaly skill")]
+prototype ToPreviewPublishSkillToBuffalySkillRepository : SkillDirectorySkillAction
+{
+	Description = @"skillName - exact installed skill directory name. replaceExisting - true when previewing replacement of an existing owner-repository payload. This validates lazy skills but does not write, commit, push, or install anything.";
+
+	function Execute(string skillName, bool replaceExisting) : string
+	{
+		return ProtoScriptCapabilityInspection.PreviewPublishSkillToBuffalySkillRepository(skillName, replaceExisting);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to publish a skill to the Buffaly skill repository")]
+[SemanticProgram.InfinitivePhrase("to publish a Buffaly skill")]
+prototype ToPublishSkillToBuffalySkillRepository : SkillDirectorySkillAction
+{
+	Description = @"skillName - exact installed skill directory name. replaceExisting - true to replace an existing owner-repository payload. commitChanges and pushChanges are explicit source-control choices; pushChanges requires commitChanges. Publishing validates and writes a lazy sidecar when the active project declares the skill lazy, but does not install the package into an environment.";
+
+	function Execute(string skillName, bool replaceExisting, bool commitChanges, bool pushChanges) : string
+	{
+		return ProtoScriptCapabilityInspection.PublishSkillToBuffalySkillRepository(skillName, replaceExisting, commitChanges, pushChanges);
+	}
 }
 
 function ToCallSkillDirectoryService(string routePath, string methodName, JsonObject request) : string
