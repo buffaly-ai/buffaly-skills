@@ -558,7 +558,7 @@ prototype ToGetOnlineMemoryCriticBatchPortfolio : OnlineMemoryCriticBatchCoordin
 {
 	function Execute() : string
 	{
-		return ToGetSessionWorkLedger.Execute();
+		return OnlineMemoryCriticBatchProjection.BuildPortfolio(Sessions.GetSessionsRootPath());
 	}
 }
 
@@ -657,7 +657,7 @@ prototype ToGetOnlineActionCriticBatchWorkspaceDefinition : OnlineActionCriticBa
 {
 	function Execute() : string
 	{
-		return @"{""SchemaVersion"":1,""WorkspaceId"":""online-action-critic-batch"",""DisplayName"":""Online Action Critic Batch"",""Description"":""Sequential selected-turn Online Action Critic batches using the actual deterministic critic child with live event delivery disabled."",""WorkerAgentName"":""online-action-critic"",""WorkerSessionSuffix"":""-online-action-critic"",""ArtifactPath"":""artifacts/online-action-critic-batch/manifest.json"",""AttachAction"":""ToAttachOnlineActionCriticBatchWorker"",""RunAction"":""ToRunOnlineActionCriticBatchOperation"",""PreviewTitle"":""Online memory critic batch manifest"",""PreviewDescription"":""Pending and queued selected source turns for uncontested online action critic review.""}";
+		return @"{""SchemaVersion"":1,""WorkspaceId"":""online-action-critic-batch"",""DisplayName"":""Online Action Critic Batch"",""Description"":""Sequential selected-turn Online Action Critic batches using the actual deterministic critic child with live event delivery disabled."",""WorkerAgentName"":""online-action-critic"",""WorkerSessionSuffix"":""-online-action-critic"",""ArtifactPath"":""artifacts/online-action-critic-batch/manifest.json"",""AttachAction"":""ToAttachOnlineActionCriticBatchWorker"",""RunAction"":""ToRunOnlineActionCriticBatchOperation"",""PreviewTitle"":""Online action critic batch manifest"",""PreviewDescription"":""Pending and queued selected source turns for uncontested online action critic review.""}";
 	}
 }
 
@@ -666,7 +666,7 @@ prototype ToGetOnlineActionCriticBatchPortfolio : OnlineActionCriticBatchCoordin
 {
 	function Execute() : string
 	{
-		return ToGetSessionWorkLedger.Execute();
+		return OnlineActionCriticBatchProjection.BuildPortfolio(Sessions.GetSessionsRootPath());
 	}
 }
 
@@ -697,7 +697,7 @@ prototype ToAttachOnlineActionCriticBatchWorker : OnlineActionCriticBatchCoordin
 			{
 				entry[@"WorkerSessionKey"] = resolvedWorkerSessionKey;
 				entry[@"WorkerAgentName"] = @"online-action-critic";
-				entry[@"ProcessorSkill"] = @"OnlineSessionMemoryCriticSkill";
+				entry[@"ProcessorSkill"] = @"OnlineActionCriticSkill";
 				entry[@"OperationState"] = @"Attached";
 				entry[@"EventDeliveryEnabled"] = false;
 			}
@@ -707,7 +707,7 @@ prototype ToAttachOnlineActionCriticBatchWorker : OnlineActionCriticBatchCoordin
 		attached[@"Ledger"] = ledger;
 		return attached.ToJSON();
 	}
-	Description = @"Creates or reuses the actual deterministic online-memory-critic child, disables event delivery, preserves the worker model configuration, and records it as the batch worker.";
+	Description = @"Creates or reuses the actual deterministic online-action-critic child, disables event delivery, preserves the worker model configuration, and records it as the batch worker.";
 }
 
 [SemanticProgram.InfinitivePhrase("to add an online action critic batch turn")]
