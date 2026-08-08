@@ -44,5 +44,5 @@ Official `claude` (Claude Code) wrappers plus a transparent pass-through layer. 
 - Fable model needs ~90-100s for full article rewrites; sonnet needs ~15-30s for most tasks
 
 Requires:
-- `claude` CLI installed (`npm install -g @anthropic-ai/claude-code`) and available on `PATH`; Windows also supports the standard `%APPDATA%\npm\claude.cmd` installation path
+- `claude` CLI installed (`npm install -g @anthropic-ai/claude-code`)
 - Claude Pro/Max subscription for subscription-backed auth
