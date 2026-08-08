@@ -4,6 +4,8 @@ Canonical Claude Code CLI Skill for subscription-backed authentication, one-shot
 
 One-shot prompt execution creates a retained invocation directory and resolves the Claude executable before constructing prompt artifacts and launching the process. This setup must not be replaced by a debug short-circuit when publishing the package.
 
+`ToRunClaudePrompt` maps a nonpositive `timeoutSeconds` value to 3600 seconds before calling the generic process facade, whose own nonpositive default is only 60 seconds. This preserves the skill's documented long-running prompt behavior for repository analysis and other substantial Claude tasks.
+
 ## 2026-07-18
 
 - Consolidated the retired `AnthropicAnt` aliases and action phrases into ClaudeCode so existing “Ant” language routes to the canonical Skill.

@@ -429,6 +429,11 @@ Runs official claude -p with --output-format text --permission-mode bypassPermis
 
 	function Execute(string prompt, string model, string system, int maxTokens, string temperature, string workingDirectory, int timeoutSeconds) : string
 	{
+		// The generic process facade treats nonpositive values as a 60-second default. Preserve this action's
+		// documented long-running contract by resolving zero before crossing that boundary.
+		if (timeoutSeconds <= 0)
+			timeoutSeconds = 3600;
+
 		string outputDirectory = ToClaudePrepareInvocationDirectory();
 		string exe = ToClaudeDefaultExePath();
 

@@ -42,6 +42,9 @@ Assert-Contains 'ToClaudePtReadState(ToClaudePtWorkDirFile(), workScope)' 'Regre
 Assert-Contains "Write-Output ('workingDirectory=' + (Get-Location).Path)" 'Regression action does not exercise the production wrapper working-directory seam.'
 Assert-Contains 'System.Security.Cryptography.SHA256' 'Production scope mapper does not include a SHA-256 hash suffix.'
 Assert-Contains 'return scope + "-" + hash;' 'Production scope mapper does not append the hash to the sanitized scope.'
+Assert-Contains '// The generic process facade treats nonpositive values as a 60-second default.' 'One-shot prompt action does not document the process timeout boundary.'
+Assert-Contains 'if (timeoutSeconds <= 0)' 'One-shot prompt action does not resolve its documented nonpositive timeout contract.'
+Assert-Contains 'timeoutSeconds = 3600;' 'One-shot prompt action does not map its documented no-timeout input to the long-running timeout.'
 
 [PSCustomObject]@{
     Passed = $true
@@ -50,8 +53,9 @@ Assert-Contains 'return scope + "-" + hash;' 'Production scope mapper does not a
     ValidatedSeams = @(
         'ToClaudePtStateScope',
         'ToClaudePtWriteState',
-        'ToClaudePtReadState',
-        'ToClaudePtWorkDirFile',
-        'wrapper workingDirectory metadata'
+		'ToClaudePtReadState',
+		'ToClaudePtWorkDirFile',
+		'wrapper workingDirectory metadata',
+		'one-shot nonpositive timeout mapping'
     )
 } | ConvertTo-Json -Depth 3
