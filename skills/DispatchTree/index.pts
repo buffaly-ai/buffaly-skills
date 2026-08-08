@@ -228,6 +228,17 @@ prototype ToGetDispatchChildren : DispatchTreeSkillAction, DispatchAgentCuratedA
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to diagnose dispatch node resolution")]
+prototype ToDiagnoseDispatchNodeResolution : DispatchTreeSkillAction
+{
+	Description = @"prototypeName - exact Dispatch node name to resolve. Diagnostic read-only probe that reports whether direct runtime lookup, descendant traversal, and the fallback resolver locate the same node. It never mutates memory, creates sessions, or queues work.";
+
+	function Execute(string prototypeName) : string
+	{
+		return RuntimeDispatchTreeFacade.DiagnoseNodeResolution(_runtime, prototypeName);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to get the direct parents of a dispatch node")]
 [SemanticProgram.InfinitivePhrase("to inspect a dispatch node's immediate categories")]
 prototype ToGetDispatchParents : DispatchTreeSkillAction, DispatchAgentCuratedActionRoot
