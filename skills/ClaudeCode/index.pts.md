@@ -2,6 +2,8 @@
 
 Canonical Claude Code CLI Skill for subscription-backed authentication, one-shot prompts, and pass-through conversations.
 
+One-shot prompt execution creates a retained invocation directory and resolves the Claude executable before constructing prompt artifacts and launching the process.
+
 ## 2026-07-18
 
 - Consolidated the retired `AnthropicAnt` aliases and action phrases into ClaudeCode so existing “Ant” language routes to the canonical Skill.
