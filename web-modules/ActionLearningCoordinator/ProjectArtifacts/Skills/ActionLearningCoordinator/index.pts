@@ -558,7 +558,7 @@ prototype ToGetOnlineMemoryCriticBatchPortfolio : OnlineMemoryCriticBatchCoordin
 {
 	function Execute() : string
 	{
-		return OnlineMemoryCriticBatchProjection.BuildPortfolio(Sessions.GetSessionsRootPath());
+		return OnlineMemoryCriticBatchProjection.ReadLedgerPortfolio(ToGetSessionWorkLedger.Execute());
 	}
 }
 
@@ -567,12 +567,11 @@ prototype ToReconcileOnlineMemoryCriticBatchLedger : OnlineMemoryCriticBatchCoor
 {
 	function Execute(string maxWorkers) : string
 	{
-		JsonObject result = new JsonObject(OnlineMemoryCriticBatchProjection.ReconcileAttachments(ToInitializeSessionWorkLedger.Execute(), maxWorkers));
-		JsonObject ledger = result.GetJsonObjectOrFail(@"Ledger", @"Reconciled session work ledger is required.");
+		JsonObject ledger = new JsonObject(OnlineMemoryCriticBatchProjection.RefreshDiscoveredLedger(ToInitializeSessionWorkLedger.Execute(), Sessions.GetSessionsRootPath(), maxWorkers));
 		FileSystemTools.ReplaceTextFile(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json", ledger.ToJSON());
-		return result.ToJSON();
+		return ledger.ToJSON();
 	}
-	Description = @"Discovers existing exact-profile Online Memory Critic children and records their source bindings in the coordinator ledger without changing enabled state, subscriptions, model selection, manifests, or queued work.";
+	Description = @"Explicitly discovers a bounded recent-session population of exact-profile Online Memory Critic children and atomically replaces this coordinator's specialization ledger snapshot without changing enabled state, subscriptions, model selection, manifests, or queued work.";
 }
 
 [SemanticProgram.InfinitivePhrase("to get an online memory critic batch source workspace")]
@@ -592,21 +591,7 @@ prototype ToAttachOnlineMemoryCriticBatchWorker : OnlineMemoryCriticBatchCoordin
 	{
 		JsonObject attached = new JsonObject(OnlineMemoryCriticBatchProjection.AttachWorker(Sessions.GetSessionsRootPath(), sourceSessionKey, workerSessionKey));
 		string resolvedWorkerSessionKey = attached.GetStringOrFail(@"WorkerSessionKey", @"Attached critic worker key is required.");
-		JsonObject receipt = new JsonObject(ToAddSessionWorkEntry.Execute(sourceSessionKey));
-		JsonObject ledger = receipt.GetJsonObjectOrFail(@"Ledger", @"Session work attachment receipt Ledger is required.");
-		JsonArray entries = ledger.GetJsonArrayOrFail(@"Entries", @"Session work ledger Entries is required.");
-		foreach (JsonValue value in entries)
-		{
-			JsonObject entry = value.ToJsonObjectOrFail(@"Session work ledger entries must be objects.");
-			if (entry.GetStringOrFail(@"SourceSessionKey", @"Session work entry SourceSessionKey is required.") == sourceSessionKey)
-			{
-				entry[@"WorkerSessionKey"] = resolvedWorkerSessionKey;
-				entry[@"WorkerAgentName"] = @"online-session-memory-critic";
-				entry[@"ProcessorSkill"] = @"OnlineSessionMemoryCriticSkill";
-				entry[@"OperationState"] = @"Attached";
-			}
-		}
-		ledger[@"Entries"] = entries;
+		JsonObject ledger = new JsonObject(OnlineMemoryCriticBatchProjection.RefreshLedgerEntry(ToInitializeSessionWorkLedger.Execute(), Sessions.GetSessionsRootPath(), sourceSessionKey, resolvedWorkerSessionKey));
 		FileSystemTools.ReplaceTextFile(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json", ledger.ToJSON());
 		attached[@"Ledger"] = ledger;
 		return attached.ToJSON();
@@ -646,7 +631,10 @@ prototype ToRunOnlineMemoryCriticBatchOperation : OnlineMemoryCriticBatchCoordin
 		{
 			throw new InvalidOperationException(@"No attached Online Memory Critic batch worker was found for source session " + sourceSessionKey);
 		}
-		return OnlineMemoryCriticBatchProjection.RunWorkerOperation(Sessions.GetSessionsRootPath(), sourceSessionKey, workerSessionKey, actionPrototypeName, inputValue);
+		string result = OnlineMemoryCriticBatchProjection.RunWorkerOperation(Sessions.GetSessionsRootPath(), sourceSessionKey, workerSessionKey, actionPrototypeName, inputValue);
+		JsonObject updatedLedger = new JsonObject(OnlineMemoryCriticBatchProjection.RefreshLedgerEntry(ToGetSessionWorkLedger.Execute(), Sessions.GetSessionsRootPath(), sourceSessionKey, workerSessionKey));
+		FileSystemTools.ReplaceTextFile(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json", updatedLedger.ToJSON());
+		return result;
 	}
 	Description = @"Runs one selected-turn Online Memory Critic batch operation against the actual critic child with concurrency one while preserving live event-delivery settings.";
 }
@@ -657,7 +645,7 @@ prototype ToGetOnlineActionCriticBatchWorkspaceDefinition : OnlineActionCriticBa
 {
 	function Execute() : string
 	{
-		return @"{""SchemaVersion"":1,""WorkspaceId"":""online-action-critic-batch"",""DisplayName"":""Online Action Critic Batch"",""Description"":""Sequential selected-turn Online Action Critic batches using the actual deterministic critic child with live event delivery disabled."",""WorkerAgentName"":""online-action-critic"",""WorkerSessionSuffix"":""-online-action-critic"",""ArtifactPath"":""artifacts/online-action-critic-batch/manifest.json"",""AttachAction"":""ToAttachOnlineActionCriticBatchWorker"",""RunAction"":""ToRunOnlineActionCriticBatchOperation"",""PreviewTitle"":""Online action critic batch manifest"",""PreviewDescription"":""Pending and queued selected source turns for uncontested online action critic review.""}";
+		return @"{""SchemaVersion"":1,""WorkspaceId"":""online-action-critic-batch"",""DisplayName"":""Online Action Critic Batch"",""Description"":""Sequential selected-turn Online Action Critic batches using the actual deterministic critic child with live event delivery disabled."",""WorkerAgentName"":""online-action-critic"",""WorkerSessionSuffix"":""-online-action-critic"",""ArtifactPath"":""artifacts/online-action-critic-batch/manifest.json"",""ReconcileAction"":""ToReconcileOnlineActionCriticBatchLedger"",""AttachAction"":""ToAttachOnlineActionCriticBatchWorker"",""RunAction"":""ToRunOnlineActionCriticBatchOperation"",""PreviewTitle"":""Online action critic batch manifest"",""PreviewDescription"":""Pending and queued selected source turns for uncontested online action critic review.""}";
 	}
 }
 
@@ -666,8 +654,20 @@ prototype ToGetOnlineActionCriticBatchPortfolio : OnlineActionCriticBatchCoordin
 {
 	function Execute() : string
 	{
-		return OnlineActionCriticBatchProjection.BuildPortfolio(Sessions.GetSessionsRootPath());
+		return OnlineActionCriticBatchProjection.ReadLedgerPortfolio(ToGetSessionWorkLedger.Execute());
 	}
+}
+
+[SemanticProgram.InfinitivePhrase("to reconcile discovered online action critic attachments")]
+prototype ToReconcileOnlineActionCriticBatchLedger : OnlineActionCriticBatchCoordinatorSkillAction
+{
+	function Execute(string maxWorkers) : string
+	{
+		JsonObject ledger = new JsonObject(OnlineActionCriticBatchProjection.RefreshDiscoveredLedger(ToInitializeSessionWorkLedger.Execute(), Sessions.GetSessionsRootPath(), maxWorkers));
+		FileSystemTools.ReplaceTextFile(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json", ledger.ToJSON());
+		return ledger.ToJSON();
+	}
+	Description = @"Explicitly discovers a bounded recent-session population of exact-profile Online Action Critic children and atomically replaces this coordinator's specialization ledger snapshot without changing enabled state, subscriptions, model selection, manifests, or queued work.";
 }
 
 [SemanticProgram.InfinitivePhrase("to get an online action critic batch source workspace")]
@@ -687,22 +687,7 @@ prototype ToAttachOnlineActionCriticBatchWorker : OnlineActionCriticBatchCoordin
 	{
 		JsonObject attached = new JsonObject(OnlineActionCriticBatchProjection.AttachWorker(Sessions.GetSessionsRootPath(), sourceSessionKey, workerSessionKey));
 		string resolvedWorkerSessionKey = attached.GetStringOrFail(@"WorkerSessionKey", @"Attached critic worker key is required.");
-		JsonObject receipt = new JsonObject(ToAddSessionWorkEntry.Execute(sourceSessionKey));
-		JsonObject ledger = receipt.GetJsonObjectOrFail(@"Ledger", @"Session work attachment receipt Ledger is required.");
-		JsonArray entries = ledger.GetJsonArrayOrFail(@"Entries", @"Session work ledger Entries is required.");
-		foreach (JsonValue value in entries)
-		{
-			JsonObject entry = value.ToJsonObjectOrFail(@"Session work ledger entries must be objects.");
-			if (entry.GetStringOrFail(@"SourceSessionKey", @"Session work entry SourceSessionKey is required.") == sourceSessionKey)
-			{
-				entry[@"WorkerSessionKey"] = resolvedWorkerSessionKey;
-				entry[@"WorkerAgentName"] = @"online-action-critic";
-				entry[@"ProcessorSkill"] = @"OnlineActionCriticSkill";
-				entry[@"OperationState"] = @"Attached";
-				entry[@"EventDeliveryEnabled"] = false;
-			}
-		}
-		ledger[@"Entries"] = entries;
+		JsonObject ledger = new JsonObject(OnlineActionCriticBatchProjection.RefreshLedgerEntry(ToInitializeSessionWorkLedger.Execute(), Sessions.GetSessionsRootPath(), sourceSessionKey, resolvedWorkerSessionKey));
 		FileSystemTools.ReplaceTextFile(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json", ledger.ToJSON());
 		attached[@"Ledger"] = ledger;
 		return attached.ToJSON();
@@ -742,7 +727,10 @@ prototype ToRunOnlineActionCriticBatchOperation : OnlineActionCriticBatchCoordin
 		{
 			throw new InvalidOperationException(@"No attached Online Action Critic batch worker was found for source session " + sourceSessionKey);
 		}
-		return OnlineActionCriticBatchProjection.RunWorkerOperation(Sessions.GetSessionsRootPath(), sourceSessionKey, workerSessionKey, actionPrototypeName, inputValue);
+		string result = OnlineActionCriticBatchProjection.RunWorkerOperation(Sessions.GetSessionsRootPath(), sourceSessionKey, workerSessionKey, actionPrototypeName, inputValue);
+		JsonObject updatedLedger = new JsonObject(OnlineActionCriticBatchProjection.RefreshLedgerEntry(ToGetSessionWorkLedger.Execute(), Sessions.GetSessionsRootPath(), sourceSessionKey, workerSessionKey));
+		FileSystemTools.ReplaceTextFile(_opsAgent.GetCurrentSessionDirectory(), @"artifacts\session-work\ledger.json", updatedLedger.ToJSON());
+		return result;
 	}
 	Description = @"Runs one selected-turn Online Action Critic batch operation against the actual critic child with event delivery disabled and concurrency one.";
 }
