@@ -5445,7 +5445,7 @@
       "PackageType": "WebModule",
       "Title": "Code Reviews",
       "Description": "Buffaly Web Module package for Code Reviews.",
-      "Version": "0.1.277",
+      "Version": "0.1.278",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/CodeReviews",
       "SourceUrl": "",
@@ -5607,6 +5607,10 @@
           "Sha256": "ef5708b21b6056b286d9d0888f25f5124d92b19df2e79c3fcdc5a3c973bcf1c0"
         },
         {
+          "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
+          "Sha256": "6e9b997f45393346cf2f96da99f7fa868f2286964a49ce66a59988defdaf84b6"
+        },
+        {
           "Path": "CSharp.dll",
           "Sha256": "9d18eaef122218e852e7fd7e5aef8c889d4bc7655f88212f2d335440efd2ff8c"
         },
@@ -5617,10 +5621,6 @@
         {
           "Path": "CSharp.Parsers.dll",
           "Sha256": "356dbcc749389d17a2d8dd15345bd03d050317167f901ea2e68eb7bb5b094e47"
-        },
-        {
-          "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
-          "Sha256": "6e9b997f45393346cf2f96da99f7fa868f2286964a49ce66a59988defdaf84b6"
         },
         {
           "Path": "de/Microsoft.Data.SqlClient.resources.dll",
@@ -5755,6 +5755,18 @@
           "Sha256": "ca9d25b7405908146f988c7fad48ded63e7f02df0e43bd1406803010428338be"
         },
         {
+          "Path": "ProjectArtifacts/Nodes/Personal/CodeReviews/CodeReviews.CSharp.md",
+          "Sha256": "6f2c806907426eb04466fa51bfb18872f34405fad3700044ad0944926a9af2ee"
+        },
+        {
+          "Path": "ProjectArtifacts/Nodes/Personal/CodeReviews/CodeReviews.JavaScript.md",
+          "Sha256": "7161a2f2ffe323101ed5c423fb479e47cbe6509e7f8d06957f781fd9329dcc96"
+        },
+        {
+          "Path": "ProjectArtifacts/Nodes/Personal/CodeReviews/CodeReviews.ProtoScript.md",
+          "Sha256": "0a29bc67d75159f3657bd94d8ad7b5670768689ce0e292abcf1201f20931c447"
+        },
+        {
           "Path": "ProjectArtifacts/Profiles/CodeReviews/Bootstrap.pts",
           "Sha256": "e8dc1fa45d7809f2e5e0fe6395330fc38ddad57ee4a0cf0e323e4eaf549495f4"
         },
@@ -5811,6 +5823,10 @@
           "Sha256": "052e576971b4601a46856011851140a627f8fd4af9fa462fb1561ecde6a1d71f"
         },
         {
+          "Path": "ru/Microsoft.Data.SqlClient.resources.dll",
+          "Sha256": "f7d51f47b1eba12021161ee39a7d08d24df1dcd52c131d1d94ee2c7e432f4cb4"
+        },
+        {
           "Path": "runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll",
           "Sha256": "4a95c42d14d8a83ca1007793648b6dae59cee957ea12470578f10c918f91d225"
         },
@@ -5837,10 +5853,6 @@
         {
           "Path": "runtimes/win/lib/net9.0/System.Security.Cryptography.Pkcs.dll",
           "Sha256": "6902fe2034ada133d5aa8df0d101279abb3093e346ebf34bbde62670f2a0e9bf"
-        },
-        {
-          "Path": "ru/Microsoft.Data.SqlClient.resources.dll",
-          "Sha256": "f7d51f47b1eba12021161ee39a7d08d24df1dcd52c131d1d94ee2c7e432f4cb4"
         },
         {
           "Path": "Skills/CodeReviews/Contracts.pts",
@@ -5896,7 +5908,7 @@
         },
         {
           "Path": "web-module.json",
-          "Sha256": "e56e05ad54984c5b44db0e33281aee3b39a6e981130b7d6d6b36f277336d36aa"
+          "Sha256": "3368fbe79d6f0f2d1f9a3082109fc963c9be8bc17bca13d9152ed27d6d2273cf"
         },
         {
           "Path": "web.config",
@@ -5977,54 +5989,6 @@
         {
           "Path": "wwwroot/index.html.md.gz",
           "Sha256": "3067f144b8bd5407c6a39548bc96ddfa75cd51f8654d07f4e4ef7b0cc6f440e0"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js",
-          "Sha256": "b6d9eb36f7ab66c9bab47f6b4ce57fd2fab6bd9bb59e251d55f7b96bc719f464"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js.br",
-          "Sha256": "1aa813366df1fd98d650fe9546a076bd3a8358d3a58b1e2dce6834b0158508a7"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js.gz",
-          "Sha256": "9d60259ec07fb7f6cb15c8a7800c7402a1109c84ac5824ef7ee1ac453a854ee7"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js.md",
-          "Sha256": "3d9e440f602c256a0a9b33a2ff8cbfa562d7df744c779278336e40bb8070c2e6"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js.md.br",
-          "Sha256": "00316e3471c79a97ff774de80357842e64b597f0b9d8c383cc954eb4ba6a48e7"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js.md.gz",
-          "Sha256": "fc8f1d9c605125a5140146aadb21ad9e432f13d967b151f364649374e74162a0"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json",
-          "Sha256": "b5a2e34ed9b9f1cca92e12f5d92a530c55ae50b7bab40ef6541346f8d524c188"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json.br",
-          "Sha256": "fde73a9f78ffc6c653ca275e9ce0f90bba0e97bf1d865a97eba16381a85d801b"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json.gz",
-          "Sha256": "61067aa8bccdb94f46d3d36008ef8f04922926b2e6b7b48211ee0c08d7de9f6e"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json.md",
-          "Sha256": "031fe562685b84920513e12567663cb1de3d4927c7ed0aef9a033aa8c6243c60"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json.md.br",
-          "Sha256": "b06c571a2a1f02ae49db2e0b3f46379aa003be0c9fe16c65a4939adf62ecf2e9"
-        },
-        {
-          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json.md.gz",
-          "Sha256": "7f7bdff96c1b8e4c5daad2dd215321fb7f95b2e1e4e8ee132be44dbfe05d3552"
         },
         {
           "Path": "wwwroot/js/code-reviews-agent-bridge.js",
@@ -6327,6 +6291,54 @@
           "Sha256": "e4b6768ebc946197aa51661eeed1b1633b6ad23632ef17144a9bc1fcb02e1d09"
         },
         {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js",
+          "Sha256": "b6d9eb36f7ab66c9bab47f6b4ce57fd2fab6bd9bb59e251d55f7b96bc719f464"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js.br",
+          "Sha256": "1aa813366df1fd98d650fe9546a076bd3a8358d3a58b1e2dce6834b0158508a7"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js.gz",
+          "Sha256": "9d60259ec07fb7f6cb15c8a7800c7402a1109c84ac5824ef7ee1ac453a854ee7"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js.md",
+          "Sha256": "3d9e440f602c256a0a9b33a2ff8cbfa562d7df744c779278336e40bb8070c2e6"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js.md.br",
+          "Sha256": "00316e3471c79a97ff774de80357842e64b597f0b9d8c383cc954eb4ba6a48e7"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js.md.gz",
+          "Sha256": "fc8f1d9c605125a5140146aadb21ad9e432f13d967b151f364649374e74162a0"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json",
+          "Sha256": "b5a2e34ed9b9f1cca92e12f5d92a530c55ae50b7bab40ef6541346f8d524c188"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json.br",
+          "Sha256": "fde73a9f78ffc6c653ca275e9ce0f90bba0e97bf1d865a97eba16381a85d801b"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json.gz",
+          "Sha256": "61067aa8bccdb94f46d3d36008ef8f04922926b2e6b7b48211ee0c08d7de9f6e"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json.md",
+          "Sha256": "031fe562685b84920513e12567663cb1de3d4927c7ed0aef9a033aa8c6243c60"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json.md.br",
+          "Sha256": "b06c571a2a1f02ae49db2e0b3f46379aa003be0c9fe16c65a4939adf62ecf2e9"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.json.md.gz",
+          "Sha256": "7f7bdff96c1b8e4c5daad2dd215321fb7f95b2e1e4e8ee132be44dbfe05d3552"
+        },
+        {
           "Path": "wwwroot/settings.html",
           "Sha256": "db701e1fadd48d81d5e9eb8278988c6b7bc2bff882a4fb6411ed58afd2fda3dc"
         },
@@ -6403,6 +6415,10 @@
         {
           "ProjectName": "Profiles/CodeReviews",
           "SourcePath": "ProjectArtifacts/Profiles/CodeReviews/"
+        },
+        {
+          "ProjectName": "Nodes/Personal/CodeReviews",
+          "SourcePath": "ProjectArtifacts/Nodes/Personal/CodeReviews/"
         }
       ],
       "Dependencies": [],
