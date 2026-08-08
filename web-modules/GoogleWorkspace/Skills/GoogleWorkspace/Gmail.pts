@@ -27,12 +27,13 @@ prototype ToSearchGoogleWorkspaceMessagesRaw : GoogleWorkspaceSkillAction
 		if (StringUtil.IsEmpty(scopePreset))
 			scopePreset = "gmail.read";
 
-		// Return completed raw facade JSON without exposing async Task/state-machine objects to ProtoScript callers.
-		return GoogleWorkspaceServiceHost.SearchMessagesRaw(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+		// Return facade JSON without reshaping.
+		return GoogleWorkspaceServiceHost.SearchMessagesAsyncRaw(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
 			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
 			query,
 			maxResults,
-			false);
+			false,
+			new CancellationToken(false));
 	}
 }
 
