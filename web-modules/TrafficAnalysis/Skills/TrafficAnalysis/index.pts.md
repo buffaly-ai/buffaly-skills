@@ -42,4 +42,5 @@ The same native contract extends through all seven public `ToCollect*` actions b
 ## 2026-08-07
 - Added `ToAnalyzeTrafficAnalysisCollector` as an ordinary, analysis-only JSON boundary for the standalone application.
 - Added `ToAnalyzeTrafficAnalysisCollector` to the lazy-load manifest so remote `run-proto-script-method` calls can resolve and activate the module by prototype name.
+- Moved the two public remote LLM actions into `Bridge.pts`, a minimal lazy module that excludes every source-provider dependency and includes only the Buffaly LLM runtime plus the TrafficAnalysis validation facade.
 - This action accepts materialized envelope JSON while the existing internal analyzer retains its `StringRef` contract for large collector outputs. It performs no source acquisition and keeps the existing bounded model contract.
