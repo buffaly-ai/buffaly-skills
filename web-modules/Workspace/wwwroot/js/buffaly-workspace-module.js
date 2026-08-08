@@ -75,8 +75,21 @@
 		var root = document.getElementById("workspace-page-root");
 		if (!root) return;
 		var workspaceKey = qs("workspaceKey"), sessionKey = qs("sessionKey");
-		if (!workspaceKey) { root.innerHTML = '<div class="bws-module-empty">Missing workspaceKey.</div>'; return; }
-		loadCachedJson("bws:summary:" + workspaceKey + ":" + sessionKey + ":v1", "/api/web-modules/Workspace/summary?workspaceKey=" + encodeURIComponent(workspaceKey) + "&sessionKey=" + encodeURIComponent(sessionKey), function (summary) {
+		if (!workspaceKey && !sessionKey) { root.innerHTML = '<div class="bws-module-empty">Missing workspaceKey or sessionKey.</div>'; return; }
+		var summaryUrl = workspaceKey
+			? "/api/web-modules/Workspace/summary?workspaceKey=" + encodeURIComponent(workspaceKey) + "&sessionKey=" + encodeURIComponent(sessionKey)
+			: "/api/web-modules/Workspace/current?sessionKey=" + encodeURIComponent(sessionKey);
+		var summaryCacheKey = workspaceKey
+			? "bws:summary:" + workspaceKey + ":" + sessionKey + ":v1"
+			: "bws:current:" + sessionKey + ":v1";
+		loadCachedJson(summaryCacheKey, summaryUrl, function (summary) {
+			if (!summary.isAttached && !workspaceKey) {
+				root.innerHTML = '<div class="bws-module-empty">This session is not attached to a workspace.</div>';
+				return;
+			}
+			if (!workspaceKey && summary.workspaceKey) {
+				history.replaceState(null, "", workspaceUrl(summary.workspaceKey, sessionKey));
+			}
 			var anchor = sessionKey || summary.currentSessionKey || (summary.sessions && summary.sessions[0] && summary.sessions[0].sessionKey) || "";
 			var pins = buildPins(summary, anchor);
 			var files = pins.concat(buildFiles(summary, anchor));

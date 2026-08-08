@@ -1,5 +1,11 @@
 # buffaly-workspace-module.js Change History
 
+## Session-Key Workbench Entry (2026-08-08)
+
+- Added workbench entry through `?sessionKey=...` so the lightweight Agent Next Workspace button can defer workspace identity resolution until navigation.
+- When `workspaceKey` is absent, the workbench loads `/api/web-modules/Workspace/current` once, updates the URL with the resolved workspace key, and renders that response without a duplicate summary request.
+- Existing direct `workspaceKey` workbench links and their `/Workspace/summary` loading behavior remain unchanged.
+
 ## Restored Polished Workbench Adapter (2026-08-02)
 
 - Changed the WebModule detail page adapter to feed `/api/web-modules/Workspace/summary` data into the polished `workspace-workbench` Web Component instead of rendering a minimal generic card/list shell.

@@ -1,5 +1,11 @@
 # buffaly-workspace-session-ui.js Change History
 
+## Deferred Workspace Resolution (2026-08-08)
+
+- Kept the existing Agent Next `sessionHeader.context` contribution and `.bws-chip` appearance, but reduced it to one `Workspace` navigation link.
+- The link carries only the active `sessionKey` to `/workspace/workbench.html`; Agent Next no longer requests the current workspace summary or hydrates workspace sessions and artifacts.
+- Design Decision: resolve the session's workspace only after the user opens the Workspace page, because ordinary Agent Next text sessions do not need workspace hierarchy data.
+
 ## Header Summary Browser Cache (2026-08-03)
 
 - Added a small `sessionStorage` cache for the current-session workspace summary so Agent Next header reloads can reuse the last known workspace link immediately.
