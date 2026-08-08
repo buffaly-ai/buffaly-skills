@@ -132,6 +132,7 @@ export default defineBackground(() => {
         if (existing && existing.port !== port) existing.port.disconnect();
         registration = { port, panelInstanceId: message.panelInstanceId, browserContextId: message.browserContextId, windowId: message.windowId! };
         boundToolPanels.set(registration.browserContextId, registration);
+        port.postMessage({ type: 'panel_registered', schemaVersion: 1 });
         publishBrowserContexts();
         return;
       }
@@ -187,7 +188,7 @@ export default defineBackground(() => {
 		  .then(async (connection) => {
 			const current = await getActiveServer();
 			const matchingCurrent = current?.Origin === connection.Origin ? current : null;
-			await saveServer({ ServerId: matchingCurrent?.ServerId || crypto.randomUUID(), Name: request.name || matchingCurrent?.Name || new URL(connection.Origin).hostname, Origin: connection.Origin, Connection: connection, ActiveConversation: matchingCurrent?.ActiveConversation || null, LastConnectedUtc: new Date().toISOString() }, true);
+			await saveServer({ ...matchingCurrent, ServerId: matchingCurrent?.ServerId || crypto.randomUUID(), Name: request.name || matchingCurrent?.Name || new URL(connection.Origin).hostname, Origin: connection.Origin, Connection: connection, ActiveConversation: matchingCurrent?.ActiveConversation || null, LastConnectedUtc: new Date().toISOString() }, true);
 			await chrome.storage.local.set({ BuffalyExtensionConnection: connection });
 			await startInstallationChannel();
           sendResponse({ ok: true, data: { Origin: connection.Origin } });
@@ -236,7 +237,9 @@ export default defineBackground(() => {
 					}));
 					const activeSessionKey = active.ActiveSessionKey && conversationsBySessionKey[active.ActiveSessionKey] ? active.ActiveSessionKey : '';
 					const activeConversation = activeSessionKey ? conversationsBySessionKey[activeSessionKey] : (isLegacyConversation(active.ActiveConversation) ? active.ActiveConversation : null);
-					active = await saveServer({ ...active, Connection: activeConnection, ActiveConversation: activeConversation, ActiveSessionKey: activeSessionKey, ConversationsBySessionKey: conversationsBySessionKey, ConversationsByBrowserContext: conversationsByBrowserContext }, true).then(() => ({ ...active!, Connection: activeConnection, ActiveConversation: activeConversation, ActiveSessionKey: activeSessionKey, ConversationsBySessionKey: conversationsBySessionKey, ConversationsByBrowserContext: conversationsByBrowserContext }));
+					const refreshed = { ...active, Connection: activeConnection, ActiveConversation: activeConversation, ActiveSessionKey: activeSessionKey, ConversationsBySessionKey: conversationsBySessionKey, ConversationsByBrowserContext: conversationsByBrowserContext };
+					if (JSON.stringify(refreshed) !== JSON.stringify(active)) await saveServer(refreshed, true);
+					active = refreshed;
 					servers = servers.map((server) => server.ServerId === active!.ServerId ? active! : server);
 				} catch (error) { conversationsStale = true; console.warn('Failed to refresh authoritative Buffaly conversations; retaining the last successful cache:', error); }
 			}

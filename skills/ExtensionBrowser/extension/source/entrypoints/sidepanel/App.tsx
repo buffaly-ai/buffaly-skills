@@ -128,13 +128,13 @@ export default function App() {
   }, [getBrowserContextId, refreshBrowserInstances, refreshServers, refreshStatus]);
 
   useEffect(() => {
-    getBrowserContextId().then((contextId) => Promise.all([
-      refreshServers(),
-      refreshBrowserInstances(),
-      chrome.runtime.sendMessage({ type: 'get_buffaly_conversation_bootstrap', browserContextId: contextId }),
-      chrome.storage.local.get([panelModeStorageKey]),
-    ])).then(([, , bootstrap, stored]) => {
-      if (bootstrap.ok && bootstrap.data) setConversation(bootstrap.data as ConversationBootstrap); void refreshBrowserInstances().catch(() => undefined);
+    getBrowserContextId().then(async (contextId) => {
+      const [, stored] = await Promise.all([refreshServers(), chrome.storage.local.get([panelModeStorageKey])]);
+      const bootstrap = await chrome.runtime.sendMessage({ type: 'get_buffaly_conversation_bootstrap', browserContextId: contextId }) as WorkerResponse<ConversationBootstrap> | undefined;
+      await refreshBrowserInstances();
+      return { bootstrap, stored };
+    }).then(({ bootstrap, stored }) => {
+      if (bootstrap?.ok && bootstrap.data) setConversation(bootstrap.data as ConversationBootstrap); void refreshBrowserInstances().catch(() => undefined);
       if (stored[panelModeStorageKey] === 'agent' || stored[panelModeStorageKey] === 'chat') setPanelMode(stored[panelModeStorageKey] as PanelMode);
     }).catch((reason) => setError(reason instanceof Error ? reason.message : String(reason)));
   }, [getBrowserContextId, refreshBrowserInstances, refreshServers]);
@@ -153,6 +153,7 @@ export default function App() {
     let boundToolPort: chrome.runtime.Port | null = null;
     let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
     let heartbeatTimer: ReturnType<typeof setInterval> | null = null;
+    let reconnectDelayMs = 1_000;
     let disposed = false;
     const connectBoundToolPort = () => {
       if (disposed || boundToolPort) return;
@@ -167,6 +168,7 @@ export default function App() {
       void registerPanel().catch((reason) => setError(reason instanceof Error ? reason.message : String(reason)));
       heartbeatTimer = setInterval(() => port.postMessage({ type: 'bound_tool_executor_heartbeat', panelInstanceId: panelInstanceId.current }), 20_000);
       port.onMessage.addListener((msg: { type: string; requestId: string; tool?: string; args?: Record<string, unknown>; identity?: BoundToolInvocationIdentity; windowId?: number }) => {
+        if (msg.type === 'panel_registered') { reconnectDelayMs = 1_000; return; }
         if (msg.type !== 'execute_bound_tool' || !msg.tool || !msg.identity) return;
         const contextualArgs = { ...(msg.args || {}), __boundWindowId: msg.windowId };
         handleToolCall(msg.tool, contextualArgs)
@@ -180,7 +182,11 @@ export default function App() {
         if (boundToolPort === port) boundToolPort = null;
         if (heartbeatTimer) clearInterval(heartbeatTimer);
         heartbeatTimer = null;
-        if (!disposed && !reconnectTimer) reconnectTimer = setTimeout(() => { reconnectTimer = null; connectBoundToolPort(); }, 250);
+        if (!disposed && !reconnectTimer) {
+          const delayMs = reconnectDelayMs;
+          reconnectDelayMs = Math.min(reconnectDelayMs * 2, 60_000);
+          reconnectTimer = setTimeout(() => { reconnectTimer = null; connectBoundToolPort(); }, delayMs);
+        }
       });
     };
     connectBoundToolPort();
@@ -300,7 +306,15 @@ export default function App() {
       const authorization = await chrome.runtime.sendMessage({ type: 'authorize_buffaly_installation', origin, name: serversStatus.ActiveServer?.Name || serverName }) as WorkerResponse<{ Origin: string }> | undefined;
       if (!authorization) throw new Error('The ExtensionBrowser service worker did not answer. Reload the extension and reopen the side panel.');
       if (!authorization.ok || !authorization.data) throw new Error(authorization.error || 'Buffaly authorization failed.');
-      await refreshServers();
+      const status = await refreshServers();
+      const activeServer = status.Servers.find((server) => server.ServerId === status.ActiveServer?.ServerId);
+      const existingConversation = activeServer?.Conversations.find((item) => 'SessionKey' in item && item.SessionKey === activeServer.ActiveSessionKey) || activeServer?.Conversations[0];
+      if (existingConversation) {
+        const existing = await chrome.runtime.sendMessage({ type: 'select_buffaly_conversation', conversationSelectionId: conversationSelectionId(existingConversation), browserContextId: await getBrowserContextId() }) as WorkerResponse<ConversationBootstrap> | undefined;
+        if (!existing?.ok || !existing.data) throw new Error(existing?.error || 'The existing Buffaly conversation could not be resumed.');
+        setConversation(existing.data);
+        return;
+      }
       const created = await chrome.runtime.sendMessage({ type: 'create_buffaly_conversation', browserContextId: await getBrowserContextId(), displayName: 'Chrome conversation' }) as WorkerResponse<ConversationBootstrap> | undefined;
       if (!created?.ok || !created.data) throw new Error(created?.error || 'The bound conversation could not be created.');
       setConversation(created.data as ConversationBootstrap);

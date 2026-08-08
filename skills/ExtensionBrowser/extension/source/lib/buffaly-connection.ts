@@ -261,6 +261,8 @@ export class InstallationChannel {
   private flushingCompletions: Promise<void> | null = null;
   private resumingInvocations: Promise<void> | null = null;
   private stopped = false;
+  private reconnectDelayMs = 2_000;
+  private static readonly MAX_RECONNECT_DELAY_MS = 60_000;
 
   constructor(private readonly connection: ExtensionConnection, private readonly invoke: (tool: string, args: Record<string, unknown>, identity: BoundToolInvocationIdentity) => Promise<ToolResult>, private readonly onConnected: () => void = () => {}) {}
 
@@ -295,6 +297,7 @@ export class InstallationChannel {
     socket.addEventListener('message', (event) => void this.handleMessage(socket, event.data));
     await new Promise<void>((resolve, reject) => {
       socket.addEventListener('open', () => {
+        this.reconnectDelayMs = 2_000;
         socket.send(JSON.stringify({ Type: 'extension_handshake', SchemaVersion: 1, InstallationRegistrationId: this.connection.InstallationRegistrationId, InstallationCredential: this.connection.InstallationCredential }));
         queueMicrotask(this.onConnected);
         this.startHeartbeat(socket);
@@ -317,10 +320,12 @@ export class InstallationChannel {
 
   private scheduleReconnect(): void {
     if (this.stopped || this.reconnectTimer) return;
+    const delayMs = this.reconnectDelayMs;
+    this.reconnectDelayMs = Math.min(this.reconnectDelayMs * 2, InstallationChannel.MAX_RECONNECT_DELAY_MS);
     this.reconnectTimer = setTimeout(() => {
       this.reconnectTimer = null;
       void this.start().catch(() => this.scheduleReconnect());
-    }, 2000);
+    }, delayMs);
   }
 
   private startHeartbeat(socket: WebSocket): void {
