@@ -6,6 +6,8 @@ const background = fs.readFileSync(new URL('../entrypoints/background.ts', impor
 const panel = fs.readFileSync(new URL('../entrypoints/sidepanel/App.tsx', import.meta.url), 'utf8');
 const servers = fs.readFileSync(new URL('../lib/buffaly-servers.ts', import.meta.url), 'utf8');
 const forbiddenCombinedLookup = new RegExp(['conversation', 'Identity'].join(''));
+const forbiddenPromptRevisionComparison = new RegExp(['binding\\.PromptPolicyRevision[\\s\\S]{0,180}< ', 'PROMPT_POLICY', '_REVISION'].join(''));
+const forbiddenLegacyNavigationToken = new RegExp(['open_buffaly_conversation_tab[\\s\\S]{0,620}', 'issueLegacy', 'NavigationToken'].join(''));
 
 assert.match(connection, /chrome\.identity\.launchWebAuthFlow/, 'installation authorization must be extension-owned');
 assert.match(connection, /InstallationCredential/, 'credential must be retained by the connection owner');
@@ -37,8 +39,7 @@ for (const messageType of ['tool_call', 'buffaly_connection_changed', 'grant_deb
   assert.match(background, new RegExp(`request\\.type === '${messageType}'[\\s\\S]{0,180}!isTrustedExtensionPage\\(sender\\)`), `${messageType} must use exact extension-origin trust`);
 }
 assert.match(background, /createDurableConversation\(connection, String\(request\.browserContextId \|\| ''\), request\.displayName \|\| 'Chrome conversation'\)/, 'service worker must create explicit new durable conversations only from create requests');
-assert.match(connection, /PROMPT_POLICY_REVISION/, 'extension must version its bound-conversation prompt policy');
-assert.doesNotMatch(background, /binding\.PromptPolicyRevision[\s\S]{0,180}< PROMPT_POLICY_REVISION/, 'service worker must not reject old prompt-policy pointers before same-session durable open');
+assert.doesNotMatch(background, forbiddenPromptRevisionComparison, 'service worker must not reject old prompt-policy pointers before same-session durable open');
 assert.doesNotMatch(background, /binding\.PromptPolicyRevision[\s\S]{0,260}createDurableConversation/, 'service worker must not create a replacement for obsolete prompt-policy pointers');
 assert.match(connection, /interface ConversationBinding[\s\S]{0,220}InstallationRegistrationId: string;[\s\S]{0,100}BrowserContextId: string/, 'stored conversation pointers must identify their owning installation and browser context');
 assert.match(background, /binding\.InstallationRegistrationId !== connection\.InstallationRegistrationId[\s\S]{0,260}refusing to create a replacement automatically/, 'service worker must reject other-owner pointers instead of silently replacing them');
@@ -55,7 +56,7 @@ assert.match(servers, /reconcileAuthoritativeConversations[\s\S]{0,900}\.\.\.cac
 assert.match(background, /reconcileAuthoritativeConversations[\s\S]{0,1600}retaining the last successful cache/, 'successful durable lists must be authoritative while failed lists retain the prior cache');
 assert.match(panel, /refreshServersInFlight[\s\S]{0,5000}document\.visibilityState === 'visible'[\s\S]{0,500}10_000/, 'visible side panels must refresh renamed conversations with in-flight suppression');
 assert.match(background, /open_buffaly_conversation_tab[\s\S]{0,520}ensureDurableConversation\(connection, binding, browserContextId\)[\s\S]{0,220}issueConversationNavigationToken\(connection, prepared\.SessionKey\)/, 'pop-out must normalize to durable and mint conversation tokens with SessionKey');
-assert.doesNotMatch(background, /open_buffaly_conversation_tab[\s\S]{0,620}issueLegacyNavigationToken/, 'pop-out must not use legacy navigation tokens in the new normal flow');
+assert.doesNotMatch(background, forbiddenLegacyNavigationToken, 'pop-out must not use legacy navigation tokens in the new normal flow');
 assert.match(panel, /web-modules\/ExtensionBrowser\/conversation/, 'iframe must use the package-owned token bootstrap route');
 assert.match(panel, /NavigationToken/, 'iframe navigation must carry the one-time token');
 assert.doesNotMatch(panel, /buffaly-connection/, 'panel must not import the credential-bearing connection module');
