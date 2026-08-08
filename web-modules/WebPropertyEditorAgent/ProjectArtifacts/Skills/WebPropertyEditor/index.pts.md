@@ -5,6 +5,7 @@
 - Retargeted every bound analytics, traffic, repository, preview, and publishing action to the skill root without changing facade calls or tool contracts.
 - Made the skill's `WebPropertyEditorFacade` assembly and `_sessionObject` dependency explicit so the profile no longer depends on the retired standalone `Imports.pts` file.
 - The owning Core Lite profile supplies distinct agent action/entity roots; business-specific implementations remain in Feeding Frenzy.
+- The owning agent profile uses local Ollama `glm-5.2` with medium reasoning for bound editor sessions.
 
 ## Initial Session-Bound Editor Service (2026-07-04)
 - Added `WebPropertyEditorService#Current` as a per-session ProtoScript service exposing only bound website editor methods.
