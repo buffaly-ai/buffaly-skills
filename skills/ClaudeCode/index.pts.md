@@ -6,6 +6,13 @@ One-shot prompt execution creates a retained invocation directory and resolves t
 
 `ToRunClaudePrompt` maps a nonpositive `timeoutSeconds` value to 3600 seconds before calling the generic process facade, whose own nonpositive default is only 60 seconds. This preserves the skill's documented long-running prompt behavior for repository analysis and other substantial Claude tasks.
 
+## 2026-08-08
+
+- Made Claude CLI discovery cross-platform by resolving `claude` or `claude.cmd` from `PATH`, with the guarded `%APPDATA%\npm\claude.cmd` fallback retained for Windows.
+- Replaced direct `$env:TEMP` assumptions with `.NET` platform temporary-directory resolution for invocation artifacts, scoped state, and turn counters.
+- Routed auth status, interactive login, one-shot prompts, and pass-through execution through the same resolved executable path.
+- Removed a stale diagnostic early return from the distributable one-shot prompt action so published packages execute Claude normally.
+
 ## 2026-07-18
 
 - Consolidated the retired `AnthropicAnt` aliases and action phrases into ClaudeCode so existing “Ant” language routes to the canonical Skill.
