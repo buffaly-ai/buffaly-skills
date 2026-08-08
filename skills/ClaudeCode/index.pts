@@ -429,8 +429,7 @@ Runs official claude -p with --output-format text --permission-mode bypassPermis
 
 	function Execute(string prompt, string model, string system, int maxTokens, string temperature, string workingDirectory, int timeoutSeconds) : string
 	{
-		string outputDirectory = ToClaudePrepareInvocationDirectory();
-		string exe = ToClaudeDefaultExePath();
+		return "DEBUG: prompt=" + prompt + " model=" + model;
 
 		// For long prompts, write to the same retained invocation directory as the response.
 		string actualPrompt = prompt;
