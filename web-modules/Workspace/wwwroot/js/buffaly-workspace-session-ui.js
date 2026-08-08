@@ -2,6 +2,7 @@
 	"use strict";
 
 	const stylesheetHref = "/web-modules/Workspace/css/buffaly-workspace-session-ui.css?v=0.1.1";
+	const identityBySessionKey = new Map();
 
 	function getNextExtensions() {
 		return window.BuffalyAgentNextExtensions;
@@ -29,14 +30,33 @@
 		return element;
 	}
 
-	function getWorkspaceUrl(sessionKey) {
-		return "/workspace/workbench.html?sessionKey=" + encodeURIComponent(sessionKey);
+	function getWorkspaceUrl(workspaceKey, sessionKey) {
+		return "/workspace/workbench.html?workspaceKey=" + encodeURIComponent(workspaceKey) + "&sessionKey=" + encodeURIComponent(sessionKey);
 	}
 
-	function mountWorkspace(context) {
+	function loadIdentity(sessionKey, signal) {
+		if (identityBySessionKey.has(sessionKey)) {
+			return Promise.resolve(identityBySessionKey.get(sessionKey));
+		}
+		return fetch("/api/web-modules/Workspace/identity?sessionKey=" + encodeURIComponent(sessionKey), {
+			headers: { "Accept": "application/json" },
+			cache: "no-store",
+			signal: signal
+		}).then(function (response) {
+			if (!response.ok) {
+				throw new Error("Workspace identity request failed with status " + response.status + ".");
+			}
+			return response.json();
+		}).then(function (identity) {
+			identityBySessionKey.set(sessionKey, identity);
+			return identity;
+		});
+	}
+
+	function mountWorkspace(context, identity) {
 		const root = createElement("span", "bws-root");
 		const trigger = createElement("a", "bws-chip", "Workspace");
-		trigger.href = getWorkspaceUrl(context.sessionKey);
+		trigger.href = getWorkspaceUrl(identity.workspaceKey, context.sessionKey);
 		trigger.setAttribute("aria-label", "Open workspace");
 		root.append(trigger);
 		context.slotElement.replaceChildren(root);
@@ -45,13 +65,25 @@
 
 	function mount(context) {
 		ensureStylesheet();
+		const abort = new AbortController();
 		if (!context.sessionKey) {
 			context.slotElement.replaceChildren();
-			return { dispose: function () {} };
+			return { dispose: function () { abort.abort(); } };
 		}
-		mountWorkspace(context);
+		context.slotElement.replaceChildren();
+		loadIdentity(context.sessionKey, abort.signal).then(function (identity) {
+			if (abort.signal.aborted || !identity.isAttached) {
+				return;
+			}
+			mountWorkspace(context, identity);
+		}).catch(function (error) {
+			if (error.name !== "AbortError") {
+				context.diagnostics.report({ Type: "workspace-identity-failed", Message: error.message });
+			}
+		});
 		return {
 			dispose: function () {
+				abort.abort();
 				context.slotElement.replaceChildren();
 			}
 		};

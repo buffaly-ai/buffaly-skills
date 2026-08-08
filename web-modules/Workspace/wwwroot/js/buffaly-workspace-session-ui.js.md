@@ -1,5 +1,11 @@
 # buffaly-workspace-session-ui.js Change History
 
+## Explicit Attachment Visibility (2026-08-08)
+
+- Changed the Agent Next header contribution to request only `/Workspace/identity` and render the existing `.bws-chip` when the current session has its own workspace link.
+- Unattached sessions render no Workspace button; identity responses are cached in memory for the current page to avoid repeat requests during header remounts.
+- The button links directly with both the resolved workspace key and active session key, while full workspace sessions and artifacts remain deferred to the workbench.
+
 ## Deferred Workspace Resolution (2026-08-08)
 
 - Kept the existing Agent Next `sessionHeader.context` contribution and `.bws-chip` appearance, but reduced it to one `Workspace` navigation link.
