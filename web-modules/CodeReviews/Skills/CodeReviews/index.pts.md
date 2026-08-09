@@ -1,5 +1,9 @@
 # CodeReviews ProtoScript tools
 
+## Compile the action-root contract with the lazy module (2026-08-09)
+- `index.pts` explicitly includes `Contracts.pts`, so lazy compilation resolves `GlobalCodeReviewsAgentAction` before compiling actions that inherit it.
+- Packaging the sibling contract file without including it was insufficient because the lazy ownership sidecar loads `index.pts` as the module entry point.
+
 The skill exposes source-grounded review readers and lifecycle completion actions. Attached turn-level review adds:
 
 - `ToAttachConfiguredCodeReviewAgent`, `ToDetachCodeReviewAgent`, and `ToGetCodeReviewAttachmentStatus`
