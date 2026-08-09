@@ -1,28 +1,24 @@
-include lazy "../LLM/index.pts";
-reference FeedingFrenzy.TrafficAnalysis.Web FeedingFrenzy.TrafficAnalysis.Web;
-import FeedingFrenzy.TrafficAnalysis.Web FeedingFrenzy.TrafficAnalysis.Web.TrafficAnalysisProtoScriptFacade TrafficAnalysisProtoScriptFacade;
-
 [SemanticProgram.InfinitivePhrase("to analyze a completed traffic analysis collector envelope")]
-prototype ToAnalyzeTrafficAnalysisCollector : OpsAction
+prototype ToAnalyzeTrafficAnalysisCollector : TrafficAnalysisSkillAction
 {
 	Description = @"Apply one bounded source-specific model pass to an already collected envelope without performing source acquisition.";
 	function Execute(string collectorEnvelopeJson) : string
 	{
 		if (!TrafficAnalysisProtoScriptFacade.ShouldAnalyzeCollector(collectorEnvelopeJson)) return collectorEnvelopeJson;
 		string prompt = TrafficAnalysisProtoScriptFacade.BuildCollectorAnalysisPrompt(collectorEnvelopeJson);
-		string modelResponseJson = ToAskModelViaBuffalyRuntime.Execute(prompt, "Return strict JSON only. Use only supplied source metrics and raw data. Do not invent numbers.", "", "", "", "[]");
+		string modelResponseJson = _opsAgent.AskModelViaRuntime(prompt, "Return strict JSON only. The summary property must be one non-empty JSON string, never an array or serialized JSON. Insights, anomalies, and recommendations must be JSON arrays. Use only supplied source metrics and raw data. Do not invent numbers.", "", "", "", "[]");
 		return TrafficAnalysisProtoScriptFacade.ApplyCollectorAnalysis(collectorEnvelopeJson, modelResponseJson);
 	}
 }
 
 [SemanticProgram.InfinitivePhrase("to aggregate traffic analysis for email rendering")]
-prototype ToAggregateTrafficAnalysis : OpsAction
+prototype ToAggregateTrafficAnalysis : TrafficAnalysisSkillAction
 {
 	Description = @"Aggregate collector envelopes using one bounded runtime LLM synthesis pass for cross-source narrative and prioritization.";
 	function Execute(string runId, string runSettingsJson, string collectorsJson) : string
 	{
 		string prompt = TrafficAnalysisProtoScriptFacade.BuildAggregateSynthesisPrompt(runSettingsJson, collectorsJson);
-		string modelResponseJson = ToAskModelViaBuffalyRuntime.Execute(prompt, "Return strict JSON only. Use only supplied metrics and collector analysis. Do not invent numbers.", "", "", "", "[]");
+		string modelResponseJson = _opsAgent.AskModelViaRuntime(prompt, "Return strict JSON only. Headline and executiveSummary must each be one non-empty JSON string, never arrays or serialized JSON. Actions and sections must be JSON arrays. Use only supplied metrics and collector analysis. Do not invent numbers.", "", "", "", "[]");
 		return TrafficAnalysisProtoScriptFacade.AggregateTrafficAnalysisWithSynthesis(runId, runSettingsJson, collectorsJson, modelResponseJson);
 	}
 }

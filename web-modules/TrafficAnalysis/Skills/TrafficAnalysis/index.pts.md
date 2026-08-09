@@ -48,3 +48,7 @@ The same native contract extends through all seven public `ToCollect*` actions b
 ## 2026-08-09
 - Removed `index.pts.lazy.json`; TrafficAnalysis is now installed as one normal OpsAgent skill because its provider and LLM symbols rely on the complete OpsAgent project graph and cannot compile as an isolated lazy module.
 - `index.pts` normally includes `Bridge.pts`, so `ToAnalyzeTrafficAnalysisCollector` and `ToAggregateTrafficAnalysis` are compiled with the rest of the TrafficAnalysis skill and remain directly callable through `run-proto-script-method` without a second project include.
+- Superseded the normal-load workaround by reducing the OpsAgent artifact to its correct external-application boundary: two bounded LLM methods plus the TrafficAnalysis skill roots.
+- Restored `index.pts.lazy.json`. The isolated module has no GA4, tracking-log, advertising, LinkedIn, or OpenAI-usage acquisition references; the standalone application owns those deterministic collectors.
+- The bridge calls the injected runtime host's `AskModelViaRuntime(...)` method directly, matching the canonical LLM action's thin typed boundary without importing the separate lazy LLM skill or duplicating its prototypes.
+- Strengthened the bridge system instructions so collector `summary` and aggregate `headline`/`executiveSummary` must be scalar JSON strings; list fields remain arrays.
