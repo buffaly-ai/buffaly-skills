@@ -1,3 +1,8 @@
+reference Buffaly.Agent.SkillManagement Buffaly.Agent.SkillManagement;
+import Buffaly.Agent.SkillManagement Buffaly.Agent.SkillManagement.GenerateLazySkillIndexResultContract GenerateLazySkillIndexResultContract;
+import Buffaly.Agent.SkillManagement Buffaly.Agent.SkillManagement.GenerateLazySkillIndexRequestContract GenerateLazySkillIndexRequestContract;
+import Buffaly.Agent.SkillManagement Buffaly.Agent.SkillManagement.SkillPublishingService SkillPublishingService;
+
 prototype ExtensionManagementSkillAction : OpsAction
 {
 	Description = "Base action type for extension creation, cataloging, publishing, installation, update, repair, validation, and release workflows.";
