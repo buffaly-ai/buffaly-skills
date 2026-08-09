@@ -1,7 +1,9 @@
 # WebPropertyEditor/index.pts Change History
 
-## Skill-Owned Callable Root (2026-08-09)
-- The agent profile now selects `WebPropertyEditorSkillAction` directly as its runtime action root. This exposes all 36 callable descendants instead of stopping at the intermediate skill root beneath the broader profile contract.
+## Explicit Skill And Agent Roots (2026-08-09)
+- The agent profile retains its restricted `WebPropertyEditorAgentActionRoot`, while all 36 callable actions explicitly inherit both `WebPropertyEditorSkillAction` and `WebPropertyEditorAgentActionRoot`.
+- This follows the established Action Learning pattern: skill ownership remains independently queryable, and runtime tool registration can enumerate each callable action directly beneath the restricted agent root.
+- The self-contained skill now declares the restricted action and entity roots it requires. This allows both the global generated skill index and the Core Lite profile to compile the same skill without depending on profile-local declarations.
 
 ## Core Lite Skill Ownership (2026-08-08)
 - Added `WebPropertyEditorSkill : SkillEntity` with `WebPropertyEditorSkillAction` as its action root.
