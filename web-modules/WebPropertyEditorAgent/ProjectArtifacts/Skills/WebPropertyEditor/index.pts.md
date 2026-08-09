@@ -1,5 +1,8 @@
 # WebPropertyEditor/index.pts Change History
 
+## Explicit Core Runtime Reference (2026-08-09)
+- Declared the name-based `Buffaly.Agent.Core` assembly reference used by the `SessionObject` import. Package-owned skills compile independently and must explicitly reference every imported assembly.
+
 ## Explicit Skill And Agent Roots (2026-08-09)
 - The agent profile retains its restricted `WebPropertyEditorAgentActionRoot`, while all 36 callable actions explicitly inherit both `WebPropertyEditorSkillAction` and `WebPropertyEditorAgentActionRoot`.
 - This follows the established Action Learning pattern: skill ownership remains independently queryable, and runtime tool registration can enumerate each callable action directly beneath the restricted agent root.
