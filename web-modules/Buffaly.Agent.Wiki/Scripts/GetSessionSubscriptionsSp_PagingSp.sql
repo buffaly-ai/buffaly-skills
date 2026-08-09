@@ -125,6 +125,7 @@ AS
 					) sub
 		where		
 					[SessionSubscriptionID] like '%' + @Search + '%' or
+					[SessionID] like '%' + @Search + '%' or
 					[SubscriptionIdentity] like '%' + @Search + '%' or
 					[SubscriberSessionKey] like '%' + @Search + '%' or
 					[EventType] like '%' + @Search + '%' or
