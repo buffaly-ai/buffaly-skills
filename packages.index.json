@@ -17884,13 +17884,16 @@
     {
       "PackageId": "FeedingFrenzy.WebPropertyEditorAgent",
       "PackageType": "WebModule",
-      "Title": "Web Property Editor Agent",
-      "Description": "Constrained WebProperty editor agent routes and tool surface for FeedingFrenzy.",
-      "Version": "0.3.43",
+      "Title": "Feeding Frenzy Web Property Editor Agent",
+      "Description": "Buffaly Web Module package for Feeding Frenzy Web Property Editor Agent.",
+      "Version": "0.3.44",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/WebPropertyEditorAgent",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/WebPropertyEditorAgent",
-      "Phrases": [],
+      "Phrases": [
+        "Feeding Frenzy Web Property Editor Agent",
+        "FeedingFrenzy.WebPropertyEditorAgent"
+      ],
       "Files": [
         {
           "Path": "Agents/web-property-editor-agent.agent.json",
@@ -18054,7 +18057,7 @@
         },
         {
           "Path": "FeedingFrenzy.WebPropertyEditorAgent.Tools.dll",
-          "Sha256": "d6d8fbdeff17d62fcf2f465b666ebae8f862d9a9f16dbda9ac6fdd75142e9b28"
+          "Sha256": "2d86c1b25a91606be8ec2941cb66375a0fffa0a2f2c195d2498f5af0a2fd9091"
         },
         {
           "Path": "kScript.dll",
@@ -18271,7 +18274,8 @@
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
       "RequiresRestart": true,
-      "RequiresPreStartInstall": true
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     }
   ]
 }
