@@ -1,3 +1,5 @@
+include "Bridge.pts";
+
 reference FeedingFrenzy.TrafficAnalysis.Web FeedingFrenzy.TrafficAnalysis.Web;
 import FeedingFrenzy.TrafficAnalysis.Web FeedingFrenzy.TrafficAnalysis.Web.TrafficAnalysisProtoScriptFacade TrafficAnalysisProtoScriptFacade;
 reference Buffaly.GoogleAds Buffaly.GoogleAds;

@@ -44,3 +44,7 @@ The same native contract extends through all seven public `ToCollect*` actions b
 - Added `ToAnalyzeTrafficAnalysisCollector` to the lazy-load manifest so remote `run-proto-script-method` calls can resolve and activate the module by prototype name.
 - Moved the two public remote LLM actions into `Bridge.pts`, a minimal lazy module that excludes every source-provider dependency and includes only the Buffaly LLM runtime plus the TrafficAnalysis validation facade.
 - This action accepts materialized envelope JSON while the existing internal analyzer retains its `StringRef` contract for large collector outputs. It performs no source acquisition and keeps the existing bounded model contract.
+
+## 2026-08-09
+- Removed `index.pts.lazy.json`; TrafficAnalysis is now installed as one normal OpsAgent skill because its provider and LLM symbols rely on the complete OpsAgent project graph and cannot compile as an isolated lazy module.
+- `index.pts` normally includes `Bridge.pts`, so `ToAnalyzeTrafficAnalysisCollector` and `ToAggregateTrafficAnalysis` are compiled with the rest of the TrafficAnalysis skill and remain directly callable through `run-proto-script-method` without a second project include.
