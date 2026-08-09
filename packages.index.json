@@ -6796,7 +6796,7 @@
       "PackageType": "WebModule",
       "Title": "Desktop Viewer",
       "Description": "Buffaly Web Module package for Desktop Viewer.",
-      "Version": "0.1.134",
+      "Version": "0.1.135",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/DesktopViewer",
       "SourceUrl": "",
@@ -6819,19 +6819,19 @@
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "88d3de483dc78b0aabf7c5145ed62ccec70f462e54e6d77cc8a3aea5d2e5422a"
+          "Sha256": "cefe2a752b28512eea944099f45fd24b59e0d7189f7465611bf2772882ae2742"
         },
         {
           "Path": "Buffaly.Agent.Core.dll",
-          "Sha256": "0155013c9c9205c1efd19bcf6539eef85849b1e97e55a5c18263764cdb4ef428"
+          "Sha256": "bab427728fe1670f802c0739382879779bd800163490e3e6564cd3981e4ca83c"
         },
         {
           "Path": "Buffaly.Agent.Runtime.Abstractions.dll",
-          "Sha256": "93f6ee3552fa2a660e8f75937f9ccaa03fca9e01d2305e2852f8379b1a9565ea"
+          "Sha256": "e0b1f4e9350c09468e1e1143bf61931846dc97ce47b98734c75a9459c0e05f2b"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "66e93f0b31b258882455b438eece4bbff90f1417e884826cfacde710ab7b6b02"
+          "Sha256": "54c27af9ed6f684c4b6852dade93f572e9905aabe4e9a9986c3c15a98e6bcd0a"
         },
         {
           "Path": "Buffaly.Common.dll",
@@ -6843,15 +6843,15 @@
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "1b49d48aa5fa8a2bfdd489e923bd58ff06a0d816ada18bc69fa55aeb30ed57f7"
+          "Sha256": "b65bc0790d9a9c8ad989e3ef44a58e073136b007469e558155dd3bf48ca5f422"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "8d15bb7bcbe4ca0114c2e3d82e1b6dc0a5697a2c3d29df6cb9cede2ee2cf0a8c"
+          "Sha256": "14702011f80ba702457c51bacf193e6bea64277ea4f9fb4d4a9f225d2fa1cca2"
         },
         {
           "Path": "Buffaly.DesktopAutomation.dll",
-          "Sha256": "8a85514b1b82ae8edc6bf6fa10e4583df445503e2be3d0eaac11bc688ea787a6"
+          "Sha256": "38a56b70c4b313a593dc4e917119b404bf12f625b80655ccbd71466415afb550"
         },
         {
           "Path": "Buffaly.DesktopViewer.Web.deps.json",
@@ -6859,11 +6859,11 @@
         },
         {
           "Path": "Buffaly.DesktopViewer.Web.dll",
-          "Sha256": "270186b46281120aaa40ea7e524a4d2b825e1bc5888fadf1ec06e3771e6ccf41"
+          "Sha256": "443ac575d5b1d07d90a764867d6cb2d7682e8158a075a37c40f4ad397c1337fc"
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "0698bc98d389383a72216ba0c0e79a51431a358ce2f927a2be11921fb29a2c6a"
+          "Sha256": "66ae0789bf944ba497ddc50070133ea08d78194ea9034a8ce03ba88e9f72d7b6"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -7512,6 +7512,10 @@
         {
           "Path": "Scripts/Sessions_GetArchivedSp_Sp_PagingSp.sql",
           "Sha256": "6c4b83ecacfff3c946f6e0ff52eeb0526c34e43beeb8c9bb10335820096d02a0"
+        },
+        {
+          "Path": "Scripts/Sessions_GetSidebarRootPageSp.sql",
+          "Sha256": "a9167e063f43eebb19ad98fc1097f853e03446f7caf081c86765a3de19d86b38"
         },
         {
           "Path": "Scripts/Sessions_ResetRunningRuntimeStatusOnWebStartupSp.sql",
