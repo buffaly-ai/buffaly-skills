@@ -26,3 +26,6 @@
 ## Use Typed Registered-Component Launch (2026-07-25)
 - Replaced package-owned shell reads and `String.Concat` JavaScript composition with `LaunchWebModuleComponent` and structured `StateJson`.
 - The browser now resolves the installed Google Ads component declaration and interactive screen allowlist from `web-module.json`; the domain builder retains ID, screen, and date validation only.
+
+## Guarded Ad Replacement Swap (2026-08-09)
+`ToSwapGoogleAdReplacement` validates and performs the reviewed handoff from one enabled responsive search ad to its paused replacement. It requires both ads in the same ad group, verifies the replacement's expected final URL, and applies enable-replacement plus pause-source as one non-partial mutation with explicit confirmation.

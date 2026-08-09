@@ -102,6 +102,16 @@ prototype ToCreatePausedGoogleAdReplacement : GoogleAdsWebSkillAction
 		return GoogleAdsWebService.CreatePausedAdReplacementJson(customerId, loginCustomerId, adGroupId, sourceAdId, headlinesJson, descriptionsJson, finalUrl, confirmCreatePaused);
 	}
 }
+
+[SemanticProgram.InfinitivePhrase("to swap a google ad replacement")]
+prototype ToSwapGoogleAdReplacement : GoogleAdsWebSkillAction
+{
+	Description = @"Validate or perform one guarded Google Ads replacement swap. Both ads must be responsive search ads in the same ad group; source must be ENABLED, replacement must be PAUSED, and replacement must have expectedFinalUrl. A real swap enables the replacement and pauses the source atomically. confirmSwap must be true when validateOnly is false.";
+	function Execute(string customerId, string loginCustomerId, string adGroupId, string sourceAdId, string replacementAdId, string expectedFinalUrl, bool validateOnly, bool confirmSwap) : string
+	{
+		return GoogleAdsWebService.SwapAdReplacementJson(customerId, loginCustomerId, adGroupId, sourceAdId, replacementAdId, expectedFinalUrl, validateOnly, confirmSwap);
+	}
+}
 prototype GoogleAdsInteractiveSiteLauncher
 {
 	function Execute(IAgentRuntimeHost opsAgent, string screen, string title, string customerId, string loginCustomerId, string dateRangePreset, string adId, int timeoutSeconds) : string
