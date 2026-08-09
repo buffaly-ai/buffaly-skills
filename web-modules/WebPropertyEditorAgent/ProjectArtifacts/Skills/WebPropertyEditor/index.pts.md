@@ -1,5 +1,8 @@
 # WebPropertyEditor/index.pts Change History
 
+## Skill-Owned Callable Root (2026-08-09)
+- The agent profile now selects `WebPropertyEditorSkillAction` directly as its runtime action root. This exposes all 36 callable descendants instead of stopping at the intermediate skill root beneath the broader profile contract.
+
 ## Core Lite Skill Ownership (2026-08-08)
 - Added `WebPropertyEditorSkill : SkillEntity` with `WebPropertyEditorSkillAction` as its action root.
 - Retargeted every bound analytics, traffic, repository, preview, and publishing action to the skill root without changing facade calls or tool contracts.
