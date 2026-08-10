@@ -20,7 +20,7 @@ prototype ToGenerateLazySkillSidecar : ExtensionManagementSkillAction
 {
 	Description = "Strictly compile one skill in the supplied project context and optionally write its lazy prototype-to-module sidecar. Normal runtime never generates sidecars.";
 
-	function Execute(String projectFilePath, String skillEntryPointPath, Boolean writeSidecar) : GenerateLazySkillIndexResultContract
+	function Execute(string projectFilePath, string skillEntryPointPath, bool writeSidecar) : GenerateLazySkillIndexResultContract
 	{
 		GenerateLazySkillIndexRequestContract request = new GenerateLazySkillIndexRequestContract();
 		request.ProjectFilePath = projectFilePath;
