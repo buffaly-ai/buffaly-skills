@@ -64,6 +64,8 @@ Run `npm ci` followed by `npm run build` in `lib` before publishing. The package
 
 The installed action path is always `Skills/CdpBrowser/lib/cdp_helper.bundle.js`; `cdp_helper.js` is authoring input only and must never be selected by a runtime action.
 
+Typed actions execute the bundled helper through the materializing `SystemOperations.RunPowerShell` path. The return parser normalizes Windows and Unix line endings, extracts stdout independently of stderr warnings, and converts empty or timed-out process results into an explicit diagnostic rather than returning no value.
+
 ## Security
 
 - CDP endpoint is localhost only (127.0.0.1)

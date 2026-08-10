@@ -18,23 +18,16 @@ include "PromptActions.pts";
 
 function ToCdpCleanOutput(string result) : string
 {
-	string content = result;
+	if (StringUtil.IsEmpty(result))
+		return "";
+	// SystemOperations uses the host platform's line endings. Normalize first so valid
+	// Windows RunPowerShell envelopes are parsed exactly like LF-only test output.
+	string content = result.Replace("\r\n", "\n").Replace("\r", "\n");
 	int outputIdx = content.IndexOf("Output:\n");
 	if (outputIdx >= 0)
 	{
-		content = content.Replace("Output:\n", "");
+		content = content.Substring(outputIdx + 8);
 		int exitIdx = content.IndexOf("Exit code: ");
-		if (exitIdx == 0)
-		{
-			int nlIdx = content.IndexOf("\n");
-			if (nlIdx >= 0)
-			{
-				string exitPrefix = content.Substring(0, nlIdx);
-				content = content.Replace(exitPrefix + "\n", "");
-			}
-			else
-				content = "";
-		}
 		int errorIdx = content.IndexOf("\nError:");
 		if (errorIdx >= 0)
 			content = content.Substring(0, errorIdx);
