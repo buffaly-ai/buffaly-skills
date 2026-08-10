@@ -1,6 +1,10 @@
 # AgreementTemplates.pts
 
-Reusable actions for listing/getting current Feeding Frenzy agreement templates and for the guarded handoff of Buffaly-authored Markdown to a lead signing Draft.
+Reusable actions for listing/getting current Feeding Frenzy agreement templates, registering new reusable agreement templates, and for the guarded handoff of Buffaly-authored Markdown to a lead signing Draft.
+
+Template registration includes:
+
+- `ToInsertFeedingFrenzyAgreementTemplate` for inserting one active or inactive reusable agreement template through the server-owned `agreement-templates/insert-agreement-template` route. It only registers template Markdown in `AgreementTemplates`; it does not create a signing request, send email, mint tokens, or attach anything to a lead.
 
 The signing-request lifecycle surface now includes:
 

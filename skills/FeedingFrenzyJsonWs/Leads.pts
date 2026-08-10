@@ -1,3 +1,17 @@
+﻿[SemanticProgram.InfinitivePhrase("to insert a feeding frenzy lead")]
+[SemanticProgram.InfinitivePhrase("to create a feeding frenzy lead")]
+prototype ToInsertFeedingFrenzyLead : FeedingFrenzyJsonWsGuardedWriteAction
+{
+	Description = @"Creates one Feeding Frenzy lead through the server-owned Leads.InsertLead route. Use only when no existing lead matches the intended person or company.";
+
+	function Execute(FeedingFrenzyJsonWsService service, string Company, string FirstName, string LastName, string Phone, string Email, string Address, string Address2, string City, string State, string ZipCode, int SourceID, int Priority, int LeadStatusID, int SalesRepresentativeID, string ImportKey, string Data) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["AccountID"] = null; args["LeadSubStatusID"] = null; args["FollowUpDate"] = null; args["Company"] = Company; args["FirstName"] = FirstName; args["LastName"] = LastName; args["Phone"] = Phone; args["Email"] = Email; args["Address"] = Address; args["Address2"] = Address2; args["City"] = City; args["State"] = State; args["ZipCode"] = ZipCode; args["SourceID"] = SourceID; args["LastContactedDate"] = null; args["Priority"] = Priority; args["LeadStatusID"] = LeadStatusID; args["OpportunitySize"] = null; args["Data"] = Data; args["SalesRepresentativeID"] = SalesRepresentativeID; args["ImportKey"] = ImportKey; args["GeneratedDate"] = null; args["CampaignID"] = null;
+		return service.CallBusinessRoute("leads/insert-lead", args);
+	}
+}
+
 prototype Leads_GetLead : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.GetLead(LeadID). Returns raw response JSON string.";

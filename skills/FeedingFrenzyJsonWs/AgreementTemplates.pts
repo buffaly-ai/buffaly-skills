@@ -21,6 +21,19 @@ prototype ToGetFeedingFrenzyAgreementTemplate : FeedingFrenzyJsonWsSkillAction
     }
 }
 
+[SemanticProgram.InfinitivePhrase("to insert a feeding frenzy agreement template")]
+[SemanticProgram.InfinitivePhrase("to register a feeding frenzy agreement template")]
+prototype ToInsertFeedingFrenzyAgreementTemplate : FeedingFrenzyJsonWsGuardedWriteAction
+{
+    Description = @"Registers one Feeding Frenzy agreement template through the server-owned AgreementTemplates insert route. This only inserts a reusable template; it does not create a signing request or send anything.";
+	function Execute(FeedingFrenzyJsonWsService service, string TemplateKey, string DisplayName, string TemplateDescription, string Category, string Cautions, string MarkdownContent, string SourceFileName, bool IsActive, int SortOrder, string Data) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["TemplateKey"] = TemplateKey; args["DisplayName"] = DisplayName; args["Description"] = TemplateDescription; args["Category"] = Category; args["Cautions"] = Cautions; args["MarkdownContent"] = MarkdownContent; args["SourceFileName"] = SourceFileName; args["IsActive"] = IsActive; args["SortOrder"] = SortOrder; args["Data"] = Data;
+		return service.CallBusinessRoute("agreement-templates/insert-agreement-template", args);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to create a feeding frenzy signing draft from markdown")]
 prototype ToCreateFeedingFrenzySigningDraftFromMarkdown : FeedingFrenzyJsonWsGuardedWriteAction
 {
