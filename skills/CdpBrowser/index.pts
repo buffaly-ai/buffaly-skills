@@ -71,7 +71,7 @@ function ToCdpRunCommand(string cmdJson, int timeoutSeconds, string label) : str
 	if (StringUtil.IsEmpty(helper))
 		return "Error: cdp_helper.bundle.js not found. Ensure the CdpBrowser skill is installed from a complete package.";
 	string script = "$ErrorActionPreference='Continue'; $tmp=[System.IO.Path]::GetTempFileName(); $err=[System.IO.Path]::GetTempFileName(); try { Set-Content -LiteralPath $tmp -Value '" + cmdJson.Replace("'", "''") + "' -Encoding utf8 -NoNewline; $stdout = (& node '" + helper.Replace("'", "''") + "' $tmp 2>$err | Out-String).Trim(); $exit=$LASTEXITCODE; $stderrText = if(Test-Path -LiteralPath $err){ Get-Content -LiteralPath $err -Raw -ErrorAction SilentlyContinue } else { '' }; $stderr = if($null -eq $stderrText){ '' } else { $stderrText.ToString().Trim() }; if(-not [string]::IsNullOrWhiteSpace($stdout)){ Write-Output $stdout } elseif(-not [string]::IsNullOrWhiteSpace($stderr)){ Write-Output ('Error: CdpBrowser helper returned no stdout (exit ' + $exit + '): ' + $stderr) } else { Write-Output ('Error: CdpBrowser helper returned no stdout (exit ' + $exit + ').') } } catch { Write-Output ('Error: CdpBrowser helper launch failed: ' + $_.Exception.Message) } finally { Remove-Item $tmp,$err -Force -ErrorAction SilentlyContinue }";
-	string result = SystemOperations.RunPowerShellStreamingToRuntimeUi(script, "", timeoutSeconds, _opsAgent, "", label);
+	string result = SystemOperations.RunPowerShell(script, timeoutSeconds);
 	string output = ToCdpCleanOutput(result);
 	if (StringUtil.IsEmpty(output))
 		return "Error: CdpBrowser helper produced no return value. The operation may have timed out before stdout was received.";

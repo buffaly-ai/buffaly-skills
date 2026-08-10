@@ -10,7 +10,7 @@ CDP browser automation skill that connects to the user's real Chrome instance vi
 
 - ProtoScript actions (52 total) in `index.pts`
 - Bundled Node.js CDP helper (`lib/cdp_helper.bundle.js`) containing the pinned `chrome-remote-interface` runtime dependency
-- Typed actions capture helper stdout separately from stderr, clean the runtime streaming envelope, and return either the non-empty helper JSON or an explicit launch/timeout/no-output diagnostic.
+- Typed actions use the materializing PowerShell execution path, capture helper stdout separately from stderr, clean the command envelope, and return either non-empty helper JSON or an explicit launch/timeout/no-output diagnostic. The runtime-UI streaming API is not used because some receiver runtimes stream output without materializing a method return value.
 - Session state stored in `/tmp/buffaly-cdp-sessions.json`
 - Approval grant stored in `<session-dir>/.cdp/grant.json`
 
