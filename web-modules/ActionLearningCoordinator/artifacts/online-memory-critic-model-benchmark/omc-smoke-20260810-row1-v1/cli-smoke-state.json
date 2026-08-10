@@ -1,0 +1,91 @@
+{
+  "SchemaVersion": 1,
+  "RunId": "omc-smoke-20260810-row1-v1",
+  "MaxSequence": 1,
+  "Status": "Completed",
+  "SourceSessionKey": "Ontology Learning 7-31",
+  "SourceTurnKey": "4e2a499a-d581-41fb-892e-239cccccebd7",
+  "UpdatedUtc": "2026-08-10T02:15:42.0531534Z",
+  "Lanes": [
+    {
+      "LaneId": "glm-52-medium",
+      "Owner": "OMC Smoke GLM 5.2 Medium 8-9",
+      "Worker": "OMC Smoke GLM 5.2 Medium 8-9-online-memory-critic",
+      "Sequence": 1,
+      "MessageKey": "omcbench:omc-smoke-20260810-row1-v1:glm-52-medium:0001",
+      "Status": "Completed",
+      "WorkerTurnKey": "5f37b599-becd-48be-ba1b-766b38c22766",
+      "Result": "Based on my search results, let me assess the candidates:\n\n1. **Sol critic worker** — No matching entity found. The searches returned generic coordinator entities but nothing named \"Sol.\" However, Sol is mentioned only by name in this turn with no session key, path, or other operational handle. It belongs to the evidence source session context, not the learning owner session.\n\n2. **Terra critic worker** — Same situation. No matching entity, no operational handle, belongs to evidence source session.\n\n3. **task-online-action-critic-model-benchmark.md** — A task artifact name from the evidence source session. No matching entity found. This artifact belongs to the evidence source session, not the learning owner session where I write.\n\n4. **Benchmark routing metadata** (BenchmarkRunId, LaneId, EvidenceSourceSessionKey) — This is critic mechanics metadata, which the prompt explicitly says not to remember.\n\n5. **Model lanes (GPT-5.5 medium, GPT-5.6 Sol medium, GPT-5.6 Terra max)** — No operational handles; reference-only.\n\nAll candidates are either from the evidence source session (not where I write), lack operational handles, or are critic mechanics. No writes are warranted.\n\nONLINE_MEMORY_CRITIC_RESULT online-memory-critic:Ontology Learning 7-31:4e2a499a-d581-41fb-892e-239cccccebd7\n- Candidates: Sol critic worker=reference-only; Terra critic worker=reference-only; task-online-action-critic-model-benchmark=reference-only; benchmark routing metadata=reference-only\n- Writes: 0\n- PrototypeNames: none\n- Reason: All entities in this turn belong to the evidence source session (Ontology Learning 7-31), not the learning owner session where memory is written. Sol and Terra workers are named without operational handles. The task artifact is a filename in the evidence source session. The benchmark routing metadata is critic mechanics. No durable, handle-bearing entity warrants a write to the learning owner session."
+    },
+    {
+      "LaneId": "glm-52-max",
+      "Owner": "OMC Smoke GLM 5.2 Max 8-9",
+      "Worker": "OMC Smoke GLM 5.2 Max 8-9-online-memory-critic",
+      "Sequence": 1,
+      "MessageKey": "omcbench:omc-smoke-20260810-row1-v1:glm-52-max:0001",
+      "Status": "Completed",
+      "WorkerTurnKey": "947e233f-a19c-4748-874f-c3760c037a49",
+      "Result": "The write succeeded. The benchmark run entity was created with four operational handles: BenchmarkRunId, LaneId, EvidenceSourceSessionKey, and TaskArtifactName. Sol, Terra, and the model lanes were folded into Notes as reference-only since they lack independent operational handles.\n\nONLINE_MEMORY_CRITIC_RESULT online-memory-critic:Ontology Learning 7-31:4e2a499a-d581-41fb-892e-239cccccebd7\n- Candidates: omc-smoke-20260810-row1-v1=new-create; Sol critic worker=reference-only; Terra critic worker=reference-only; model lanes GPT-5.5/Sol/Terra=reference-only; task-online-action-critic-model-benchmark.md=new-create (folded into benchmark run entity)\n- Writes: 1\n- PrototypeNames: OmSmokeBenchmarkRunRow1V1\n- Reason: The benchmark run ID, lane ID, evidence source session key, and task artifact name are stable operational handles that will reduce later routing and lookup errors in the learning owner session. Sol, Terra, and model lanes lack independent operational handles and were folded into Notes on the grounded benchmark run entity."
+    },
+    {
+      "LaneId": "gpt-55-medium",
+      "Owner": "OMC Smoke GPT 5.5 Medium 8-9",
+      "Worker": "OMC Smoke GPT 5.5 Medium 8-9-online-memory-critic",
+      "Sequence": 1,
+      "MessageKey": "omcbench:omc-smoke-20260810-row1-v1:gpt-55-medium:0001",
+      "Status": "Completed",
+      "WorkerTurnKey": "c567fabc-cd47-442a-8885-3694e8b0c0b6",
+      "Result": "ONLINE_MEMORY_CRITIC_RESULT online-memory-critic:Ontology Learning 7-31:4e2a499a-d581-41fb-892e-239cccccebd7\n- Candidates: task-online-action-critic-model-benchmark.md=new-create; Sol critic worker=reference-only; Terra Max critic worker=reference-only; omc-smoke-20260810-row1-v1=new-create; gpt-55-medium lane=reference-only; complete frozen corpus=reference-only; GPT-5.6 Sol medium lane=reference-only; GPT-5.6 Terra max lane=reference-only\n- Writes: 1\n- PrototypeNames: OnlineActionCriticModelBenchmarkTask\n- Reason: Wrote one path-backed benchmark task artifact in the learning-owner session with run id, lane id, and session-key handles; worker/lane state was folded into notes rather than creating handle-free worker nodes."
+    },
+    {
+      "LaneId": "gpt-56-sol-medium",
+      "Owner": "OMC Smoke GPT 5.6 Sol Medium 8-9",
+      "Worker": "OMC Smoke GPT 5.6 Sol Medium 8-9-online-memory-critic",
+      "Sequence": 1,
+      "MessageKey": "omcbench:omc-smoke-20260810-row1-v1:gpt-56-sol-medium:0001",
+      "Status": "Completed",
+      "WorkerTurnKey": "f9c4c8e2-ebe4-4754-96d4-80870dfc4cd5",
+      "Result": "ONLINE_MEMORY_CRITIC_RESULT online-memory-critic:Ontology Learning 7-31:4e2a499a-d581-41fb-892e-239cccccebd7\n- Candidates: smoke benchmark run omc-smoke-20260810-row1-v1=new-create; gpt-56-sol-medium lane=reference-only; Terra max critic worker=reference-only; task-online-action-critic-model-benchmark.md=reference-only\n- Writes: 1\n- PrototypeNames: OnlineCriticSmokeBenchmarkRun20260810Row1V1\n- Reason: The specific benchmark run is durable and grounded by its run ID, lane ID, routed session keys, and task path; worker identities and completion state were folded into that run rather than creating handle-free nodes."
+    },
+    {
+      "LaneId": "gpt-56-terra-medium",
+      "Owner": "OMC Smoke GPT 5.6 Terra Medium 8-9",
+      "Worker": "OMC Smoke GPT 5.6 Terra Medium 8-9-online-memory-critic",
+      "Sequence": 1,
+      "MessageKey": "omcbench:omc-smoke-20260810-row1-v1:gpt-56-terra-medium:0001",
+      "Status": "Completed",
+      "WorkerTurnKey": "cbe486f8-8f28-4a83-bb15-865de3c1a36a",
+      "Result": "ONLINE_MEMORY_CRITIC_RESULT online-memory-critic:Ontology Learning 7-31:4e2a499a-d581-41fb-892e-239cccccebd7\n- Candidates: benchmark run=deferred-uncertain; Sol critic worker=deferred-uncertain; Terra critic worker=deferred-uncertain\n- Writes: 0\n- PrototypeNames: none\n- Reason: Unable to complete the required source-ontology searches in the designated learning-owner session."
+    },
+    {
+      "LaneId": "gpt-56-terra-max",
+      "Owner": "OMC Smoke GPT 5.6 Terra Max 8-9",
+      "Worker": "OMC Smoke GPT 5.6 Terra Max 8-9-online-memory-critic",
+      "Sequence": 1,
+      "MessageKey": "omcbench:omc-smoke-20260810-row1-v1:gpt-56-terra-max:0001",
+      "Status": "Completed",
+      "WorkerTurnKey": "0bf2bacf-e017-4afe-a5b7-b1ddf645b087",
+      "Result": "ONLINE_MEMORY_CRITIC_RESULT online-memory-critic:Ontology Learning 7-31:4e2a499a-d581-41fb-892e-239cccccebd7\n- Candidates: gpt-56-terra-max benchmark lane=deferred-uncertain; benchmark run=deferred-uncertain; other named lanes=reference-only; frozen corpus=deferred-uncertain; benchmark task artifact=reference-only\n- Writes: 0\n- PrototypeNames: none\n- Reason: Additional required entity searches were submitted to the routed learning-owner session, but their results were not available in this execution; no memory was written without completed source-ontology resolution."
+    },
+    {
+      "LaneId": "gpt-56-luna-medium",
+      "Owner": "OMC Smoke GPT 5.6 Luna Medium 8-9",
+      "Worker": "OMC Smoke GPT 5.6 Luna Medium 8-9-online-memory-critic",
+      "Sequence": 1,
+      "MessageKey": "omcbench:omc-smoke-20260810-row1-v1:gpt-56-luna-medium:0001",
+      "Status": "Completed",
+      "WorkerTurnKey": "9af0c3ab-209d-4ff3-b532-6ad58d51c6da",
+      "Result": "ONLINE_MEMORY_CRITIC_RESULT online-memory-critic:Ontology Learning 7-31:4e2a499a-d581-41fb-892e-239cccccebd7\n- Candidates: OMC smoke benchmark run row 1 v1=new-create; gpt-56-luna-medium=existing-sufficient; Sol and Terra critic workers=reference-only; task-online-action-critic-model-benchmark.md=deferred-uncertain\n- Writes: 1\n- PrototypeNames: OmcSmokeBenchmarkRunRow1V1\n- Reason: Created a sparse owner-session benchmark-run entity with the confirmed BenchmarkRunId and LaneId handles; worker status and the evidence-session task artifact were not materialized in the learning-owner session."
+    },
+    {
+      "LaneId": "gpt-56-luna-max",
+      "Owner": "OMC Smoke GPT 5.6 Luna Max 8-9",
+      "Worker": "OMC Smoke GPT 5.6 Luna Max 8-9-online-memory-critic",
+      "Sequence": 1,
+      "MessageKey": "omcbench:omc-smoke-20260810-row1-v1:gpt-56-luna-max:0001",
+      "Status": "Completed",
+      "WorkerTurnKey": "658fb19b-d84a-4f2e-8048-43ddcc054cca",
+      "Result": "ONLINE_MEMORY_CRITIC_RESULT online-memory-critic:Ontology Learning 7-31:4e2a499a-d581-41fb-892e-239cccccebd7\n- Candidates: Sol critic worker=reference-only; Terra critic worker=reference-only; task-online-action-critic-model-benchmark.md=reference-only; omc-smoke-20260810-row1-v1 / gpt-56-luna-max=new-create\n- Writes: 1\n- PrototypeNames: OnlineActionCriticBenchmarkRun#OmcSmoke20260810Row1V1\n- Reason: Created one sparse learning-owner benchmark-run record with stable run, lane, session, turn, and task-artifact handles; worker runtime state and stale UI labels were transient."
+    }
+  ]
+}

@@ -18,7 +18,7 @@ import Buffaly.Agent.Host Buffaly.Agent.Host.SessionManagement.Sessions Sessions
 import ActionLearningCoordinator.Web ActionLearningCoordinator.Web.OntologyFoundryProposalProjection OntologyFoundryProposalProjection;
 import ActionLearningCoordinator.Web ActionLearningCoordinator.Web.ActionLearningCandidateProjection ActionLearningCandidateProjection;
 import ActionLearningCoordinator.Web ActionLearningCoordinator.Web.OnlineMemoryCriticBatchProjection OnlineMemoryCriticBatchProjection;
-import ActionLearningCoordinator.Web ActionLearningCoordinator.Web.OnlineMemoryCriticModelBenchmarkProjection OnlineMemoryCriticModelBenchmarkProjection;
+import ActionLearningCoordinator.Web ActionLearningCoordinator.Web.OnlineMemoryCriticModelBenchmarkRunner OnlineMemoryCriticModelBenchmarkRunner;
 import ActionLearningCoordinator.Web ActionLearningCoordinator.Web.OnlineActionCriticBatchProjection OnlineActionCriticBatchProjection;
 import ActionLearningCoordinator.Web ActionLearningCoordinator.Web.SessionWorkCoordinatorFile SessionWorkCoordinatorFile;
 
@@ -568,49 +568,19 @@ prototype ToInitializeOnlineMemoryCriticModelBenchmark : OnlineMemoryCriticBatch
 {
 	function Execute(string benchmarkRootPath, string runDefinitionJson, string corpusJson) : string
 	{
-		return OnlineMemoryCriticModelBenchmarkProjection.InitializeRun(Sessions.GetSessionsRootPath(), benchmarkRootPath, runDefinitionJson, corpusJson);
+		return OnlineMemoryCriticModelBenchmarkRunner.Initialize(Sessions.GetSessionsRootPath(), benchmarkRootPath, runDefinitionJson, corpusJson);
 	}
-	Description = @"Validates one fixed eight-lane topology and exact frozen 200-turn corpus, then creates a durable 1,600-row benchmark ledger without dispatching work or creating sessions.";
+	Description = @"Creates one deterministic run containing the fixed 200-row corpus, eight lane cursors, and no dispatched work.";
 }
 
-[SemanticProgram.InfinitivePhrase("to validate an online memory critic model benchmark")]
-prototype ToValidateOnlineMemoryCriticModelBenchmark : OnlineMemoryCriticBatchCoordinatorSkillAction
+[SemanticProgram.InfinitivePhrase("to start an online memory critic model benchmark")]
+prototype ToStartOnlineMemoryCriticModelBenchmark : OnlineMemoryCriticBatchCoordinatorSkillAction
 {
 	function Execute(string benchmarkRootPath, string runId) : string
 	{
-		return OnlineMemoryCriticModelBenchmarkProjection.ValidateRun(Sessions.GetSessionsRootPath(), benchmarkRootPath, runId);
+		return OnlineMemoryCriticModelBenchmarkRunner.Start(Sessions.GetSessionsRootPath(), benchmarkRootPath, runId);
 	}
-	Description = @"Validates immutable corpus, lane cardinality, and per-lane concurrency invariants.";
-}
-
-[SemanticProgram.InfinitivePhrase("to run an online memory critic model benchmark")]
-prototype ToRunOnlineMemoryCriticModelBenchmark : OnlineMemoryCriticBatchCoordinatorSkillAction
-{
-	function Execute(string benchmarkRootPath, string runId) : string
-	{
-		return OnlineMemoryCriticModelBenchmarkProjection.Run(Sessions.GetSessionsRootPath(), benchmarkRootPath, runId);
-	}
-	Description = @"Reconciles deterministic worker message keys and admits at most one pending corpus row per free lane without creating sessions or retrying terminal failures.";
-}
-
-[SemanticProgram.InfinitivePhrase("to pause an online memory critic model benchmark")]
-prototype ToPauseOnlineMemoryCriticModelBenchmark : OnlineMemoryCriticBatchCoordinatorSkillAction
-{
-	function Execute(string benchmarkRootPath, string runId) : string
-	{
-		return OnlineMemoryCriticModelBenchmarkProjection.Pause(Sessions.GetSessionsRootPath(), benchmarkRootPath, runId);
-	}
-	Description = @"Durably pauses new admissions while preserving already queued or running rows.";
-}
-
-[SemanticProgram.InfinitivePhrase("to resume an online memory critic model benchmark")]
-prototype ToResumeOnlineMemoryCriticModelBenchmark : OnlineMemoryCriticBatchCoordinatorSkillAction
-{
-	function Execute(string benchmarkRootPath, string runId) : string
-	{
-		return OnlineMemoryCriticModelBenchmarkProjection.Resume(Sessions.GetSessionsRootPath(), benchmarkRootPath, runId);
-	}
-	Description = @"Explicitly resumes one paused run without changing its topology, corpus, or model selections.";
+	Description = @"Starts or resumes the deterministic native runner. Each lane admits one keyed row at a time and advances only after its exact critic turn is terminal.";
 }
 
 [SemanticProgram.InfinitivePhrase("to get an online memory critic model benchmark status")]
@@ -618,29 +588,9 @@ prototype ToGetOnlineMemoryCriticModelBenchmarkStatus : OnlineMemoryCriticBatchC
 {
 	function Execute(string benchmarkRootPath, string runId) : string
 	{
-		return OnlineMemoryCriticModelBenchmarkProjection.GetStatus(Sessions.GetSessionsRootPath(), benchmarkRootPath, runId);
+		return OnlineMemoryCriticModelBenchmarkRunner.GetStatus(Sessions.GetSessionsRootPath(), benchmarkRootPath, runId);
 	}
-	Description = @"Returns compact durable per-lane and aggregate accounting without rebuilding worker history.";
-}
-
-[SemanticProgram.InfinitivePhrase("to reconcile an online memory critic model benchmark")]
-prototype ToReconcileOnlineMemoryCriticModelBenchmark : OnlineMemoryCriticBatchCoordinatorSkillAction
-{
-	function Execute(string benchmarkRootPath, string runId) : string
-	{
-		return OnlineMemoryCriticModelBenchmarkProjection.Reconcile(Sessions.GetSessionsRootPath(), benchmarkRootPath, runId);
-	}
-	Description = @"Reconciles only in-flight rows through deterministic worker message keys and dispatches no replacements.";
-}
-
-[SemanticProgram.InfinitivePhrase("to finalize an online memory critic model benchmark")]
-prototype ToFinalizeOnlineMemoryCriticModelBenchmark : OnlineMemoryCriticBatchCoordinatorSkillAction
-{
-	function Execute(string benchmarkRootPath, string runId) : string
-	{
-		return OnlineMemoryCriticModelBenchmarkProjection.BuildFinalResults(Sessions.GetSessionsRootPath(), benchmarkRootPath, runId);
-	}
-	Description = @"Requires all 1,600 canonical rows terminal and atomically writes final row-level results.";
+	Description = @"Returns the eight deterministic lane cursors and current in-flight sequence without evaluating memory quality.";
 }
 
 [SemanticProgram.InfinitivePhrase("to reconcile discovered online memory critic attachments")]

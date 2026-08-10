@@ -2456,10 +2456,10 @@
       "PackageType": "WebModule",
       "Title": "Action Learning Coordinator",
       "Description": "Buffaly Web Module package for Action Learning Coordinator.",
-      "Version": "0.1.107",
+      "Version": "0.1.108",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/ActionLearningCoordinator",
-      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/ActionLearningCoordinator",
+      "SourceUrl": "",
       "Phrases": [
         "Action Learning Coordinator",
         "ActionLearningCoordinator"
@@ -2471,11 +2471,11 @@
         },
         {
           "Path": "ActionLearningCoordinator.Web.dll",
-          "Sha256": "8932856ed0af28a36c074f853efce897c1630e3092c816792c0ecc9f0000684e"
+          "Sha256": "43ce51d75aebde4a744d173f47c6ba28fa89df256f268cab037af4053085e51d"
         },
         {
           "Path": "ActionLearningCoordinator.Web.staticwebassets.endpoints.json",
-          "Sha256": "874e88bd7583c7d5c485831f3ac7cb69b0fd08b662913c14e15b46739b94685b"
+          "Sha256": "d857339cecd8f22a61d65adfedb59cdd316bddca145b7352eb02fcb679320064"
         },
         {
           "Path": "Agents/action-learning-coordinator.agent.json",
@@ -2506,8 +2506,12 @@
           "Sha256": "27760e01aebc556d41d3766890e16df8a189d41bbca72449b5988a387aa1b0f1"
         },
         {
+          "Path": "artifacts/online-memory-critic-model-benchmark/omc-smoke-20260810-row1-v1/cli-smoke-state.json",
+          "Sha256": "f99dd44f720649b746fb9e59e301af2de66f6a9d408225126b349a63fc08fe3a"
+        },
+        {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "cefae65b0c93aa5b4a22d5d3d515eecd48390b0df26af41ee5a7cd19383d5926"
+          "Sha256": "29ec95265703a08a284225e8dcae0b5d7aeb360d4f43f3187ed859578cd3aeb4"
         },
         {
           "Path": "ProjectArtifacts/ContextPrompts/OntologyFoundryOrchestrator.prompt.md",
@@ -2543,15 +2547,15 @@
         },
         {
           "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/index.pts",
-          "Sha256": "cd3b7a2bcf224ae11453a866d0c5dd1e92ab1c5c59c400375e380905b88beab2"
+          "Sha256": "9378dbc6977ba951374e5fe8ee5d885ee3ac085cc809cb0ef43a9b4e59c382be"
         },
         {
           "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/index.pts.lazy.json",
-          "Sha256": "d137dcc829e0d5429f56f8e516bd9f476ed123778e7d4762b0aa1dec1d5460cd"
+          "Sha256": "ba17edb2f226ad4988d791ab72c33468222eb64b052f8d0e7de5f869f5d439c4"
         },
         {
           "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/index.pts.md",
-          "Sha256": "fcdc29190cd42511c1b672bc8c2db39982dcbb85eaf3ff7085508d4bd922c232"
+          "Sha256": "7c3f33c98ede673ef15faec58407e9ac71ac0ec685e102f8b441dab3c5f92498"
         },
         {
           "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/Prompts/ActionLearningCoordinator.md",
@@ -2563,7 +2567,7 @@
         },
         {
           "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/Prompts/OnlineMemoryCriticBatchCoordinator.md",
-          "Sha256": "142461547d2726eaf64ec4befe79c4aa6250f8fb3925b63ba00e448552b309fb"
+          "Sha256": "6be2362f04339b165dc5283b7a50886f9834fb9073f27cbd7c392d744dcdc7ed"
         },
         {
           "Path": "ProjectArtifacts/Skills/ActionLearningCoordinator/Prompts/OntologyFoundryCoordinator.md",
@@ -2711,51 +2715,51 @@
         },
         {
           "Path": "wwwroot/dashboard.css",
-          "Sha256": "7d58bd744a1f8e2c01a89a69798bb8870321577e921e7603849556bdca9bd060"
+          "Sha256": "852687330c76d109b4d18c628a38d5d3d40178808fb062c3295fe33e6c5dcda4"
         },
         {
           "Path": "wwwroot/dashboard.css.br",
-          "Sha256": "b8f65fa297ba7f53180e90b2e112c8c8a7e516c507b36439dc0c1b496edc6424"
+          "Sha256": "4475093e7c1f5584570564640710adf36842c9168c42c821b1d48317bce071bc"
         },
         {
           "Path": "wwwroot/dashboard.css.gz",
-          "Sha256": "c341f80cea97ee30e1e51381cfe6843c89e8713b2fd5268eca367bfca60c84dc"
+          "Sha256": "b25ed87c6cb4077424b0b43ab2bcd7c659d36ddb05702b08b2403667704fb2da"
         },
         {
           "Path": "wwwroot/dashboard.html",
-          "Sha256": "ef693da69bc1932363b1ac584f27a08fe3ce7843c253ef72e51bbf9d4755c7dd"
+          "Sha256": "1393c18b7cd27fbc4feff9a095225defd94f827453f6e528ff14a82333a45028"
         },
         {
           "Path": "wwwroot/dashboard.html.br",
-          "Sha256": "26e32c7902321f5504b09c335f37243685982102b70e46e35931575540b1edf2"
+          "Sha256": "b6401a096bcaac390a0f823c5c25f799600d443d544b98cdc988050e00597c3f"
         },
         {
           "Path": "wwwroot/dashboard.html.gz",
-          "Sha256": "9f97a45653ff32e6219098fd590459579c276cfc3301d15f64fd69fa285c0716"
+          "Sha256": "22d7df5f5def3b5ac142f1f28cea260878bb9cfb125a6d957f6e141d5d3ba31f"
         },
         {
           "Path": "wwwroot/dashboard.js",
-          "Sha256": "24aa367a6f51fef876440bebfc81dfa30527226ad8d437fbd9c4978ced396cc2"
+          "Sha256": "f3d28611b413c3cfc3c02a8510a5a5a84580d5e0c62ae2e4d24a0df07921a55a"
         },
         {
           "Path": "wwwroot/dashboard.js.br",
-          "Sha256": "ec37075a6a54fa81cdbb47fe94a0e9dbe690ef362724f1c699283681df5aa38e"
+          "Sha256": "1336339e22c4fe3a0b1a20a17711b0d0f0a80f9fb9da11018b94b32935d928ff"
         },
         {
           "Path": "wwwroot/dashboard.js.gz",
-          "Sha256": "dfe4bca07be20fe21c01d007b8663e75dce43c8a87f27689962958635e789e78"
+          "Sha256": "4a2006bf55e464ca8ccbaf6cf67f9a073471deca91f21b90e4850353cae9a74b"
         },
         {
           "Path": "wwwroot/workspaces.json",
-          "Sha256": "0610675c7718136fb929339b8f92e2a3e3647226a79da6109ccc7cde14c17baf"
+          "Sha256": "10f03d9d4c03ef0e076d5c76272626b4dafd8812afe06669d30dec855e473dad"
         },
         {
           "Path": "wwwroot/workspaces.json.br",
-          "Sha256": "4d44fbb050a404eb708ad11fcfb232a805aa908da80dfbc059a6b490ceb79df7"
+          "Sha256": "e1a753602be476a275871965a0c0886e9f5e123d0c74ce75972e8f8e7b712dae"
         },
         {
           "Path": "wwwroot/workspaces.json.gz",
-          "Sha256": "4ff7806220ddf630f3952abaf8a9dd26c1cbe10036ea81c32ce272f918f611e9"
+          "Sha256": "fa660e343e6fb78566f829a402ddc8a1c394fdbf69d0450665200f0e921b434a"
         }
       ],
       "ProjectArtifacts": [
