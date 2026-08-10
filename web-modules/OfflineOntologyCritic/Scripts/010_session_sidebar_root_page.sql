@@ -104,6 +104,12 @@ BEGIN
 		JOIN sessions child
 			ON child.parent_session_id = paged.root_session_id
 			AND child.is_archived = false
+			AND
+			(
+				COALESCE(p_search, '') = ''
+				OR COALESCE(child.session_key, '') ILIKE '%' || COALESCE(p_search, '') || '%'
+				OR COALESCE(child.session_name, '') ILIKE '%' || COALESCE(p_search, '') || '%'
+			)
 	)
 	SELECT row.session_id, row.session_key, row.parent_session_id, row.session_name,
 		row.agent_name, row.project_name, row.project_file_path, row.provider, row.model_name,

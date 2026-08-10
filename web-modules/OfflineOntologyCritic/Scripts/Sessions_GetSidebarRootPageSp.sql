@@ -126,6 +126,12 @@ AS
 		JOIN	dbo.Sessions child WITH (NOLOCK)
 		ON		child.ParentSessionID = pagedRoot.RootSessionID
 				AND ISNULL(child.IsArchived, 0) = 0
+				AND
+				(
+					ISNULL(@Search, '') = ''
+					OR child.SessionKey LIKE @SearchPattern
+					OR child.SessionName LIKE @SearchPattern
+				)
 	)
 	SELECT	SessionID,
 			SessionKey,
