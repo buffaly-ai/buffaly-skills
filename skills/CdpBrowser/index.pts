@@ -26,9 +26,19 @@ function ToCdpCleanOutput(string result) : string
 	int outputIdx = content.IndexOf("Output:\n");
 	if (outputIdx >= 0)
 	{
-		int outputStart = outputIdx + 8;
-		content = content.Substring(outputStart, content.Length - outputStart);
+		content = content.Replace("Output:\n", "");
 		int exitIdx = content.IndexOf("Exit code: ");
+		if (exitIdx == 0)
+		{
+			int nlIdx = content.IndexOf("\n");
+			if (nlIdx >= 0)
+			{
+				string exitPrefix = content.Substring(0, nlIdx);
+				content = content.Replace(exitPrefix + "\n", "");
+			}
+			else
+				content = "";
+		}
 		int errorIdx = content.IndexOf("\nError:");
 		if (errorIdx >= 0)
 			content = content.Substring(0, errorIdx);
