@@ -83,3 +83,31 @@ prototype ToUpdateFeedingFrenzySigningDraftFromMarkdown : FeedingFrenzyJsonWsGua
 		return service.CallBusinessRoute("lead-document-signing-requests/update-buffaly-signing-draft-as-automation", args);
 	}
 }
+
+[SemanticProgram.InfinitivePhrase("to prepare a feeding frenzy signing request to send")]
+[SemanticProgram.InfinitivePhrase("to create a signable feeding frenzy signing link")]
+prototype ToPrepareFeedingFrenzySigningRequestToSend : FeedingFrenzyJsonWsGuardedWriteAction
+{
+	Description = @"Runs the server-owned document signing preflight and prepares a Draft or outstanding request for delivery. This mints a signing token/link but does not send email.";
+	function Execute(FeedingFrenzyJsonWsService service, int LeadDocumentSigningRequestID, string Subject, string Message) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		if (StringUtil.IsEmpty(service.AutomationUserEmail)) return "Error: FeedingFrenzyJsonWsService.AutomationUserEmail is required for signing request preparation.";
+		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=service.AutomationUserEmail; args["LeadDocumentSigningRequestID"]=LeadDocumentSigningRequestID; args["Subject"]=Subject; args["Message"]=Message;
+		return service.CallBusinessRoute("lead-document-signing-requests/prepare-to-send-as-automation", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to send a prepared feeding frenzy signing email")]
+[SemanticProgram.InfinitivePhrase("to send a feeding frenzy signing request")]
+prototype ToSendPreparedFeedingFrenzySigningEmail : FeedingFrenzyJsonWsGuardedWriteAction
+{
+	Description = @"Sends the prepared document signing email through the server lifecycle owner and marks the request Sent. Requires a SigningUrl returned by prepare-to-send.";
+	function Execute(FeedingFrenzyJsonWsService service, int LeadDocumentSigningRequestID, string SigningUrl) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		if (StringUtil.IsEmpty(service.AutomationUserEmail)) return "Error: FeedingFrenzyJsonWsService.AutomationUserEmail is required for signing email delivery.";
+		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=service.AutomationUserEmail; args["LeadDocumentSigningRequestID"]=LeadDocumentSigningRequestID; args["SigningUrl"]=SigningUrl;
+		return service.CallBusinessRoute("lead-document-signing-requests/send-prepared-signing-email-as-automation", args);
+	}
+}

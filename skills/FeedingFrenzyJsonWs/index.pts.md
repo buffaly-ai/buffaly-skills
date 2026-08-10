@@ -1,5 +1,10 @@
 # FeedingFrenzyJsonWs ProtoScript Change History
 
+## Expose guarded writes through explicit skill root (2026-08-10)
+- Added `FeedingFrenzyAgentGuardedWriteSkill` / `FeedingFrenzyAgentGuardedWriteActionRoot` in the FeedingFrenzy agent root so mutating actions that inherit `FeedingFrenzyJsonWsGuardedWriteAction` can be intentionally discovered and loaded.
+- Preserved the default read-oriented `FeedingFrenzyJsonWsSkillAction` surface. Guarded writes are exposed through a separate explicit root rather than broadening the ordinary Feeding Frenzy agent action root.
+- This is required for high-risk document-signing lifecycle wrappers such as `ToPrepareFeedingFrenzySigningRequestToSend` and `ToSendPreparedFeedingFrenzySigningEmail`.
+
 ## Add secure file pre-sign action (2026-07-31)
 - Added `ToGetFeedingFrenzyFilePreSignedUrl` beside the existing Feeding Frenzy JsonWs file surface.
 - The server contract binds an enabled automation administrator, accepts a stable FileID or S3 key, refuses queried/expired URL input, and returns expiry plus host/path evidence.
