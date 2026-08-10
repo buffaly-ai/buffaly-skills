@@ -1,24 +1,29 @@
 {
-  "Name": "OfflineOntologyCritic",
-  "DisplayName": "OfflineCritic",
-  "Description": "Offline ontology critic feedback infrastructure.",
-  "LoadOrder": 850,
-  "Pages": [
-    {
-      "Name": "offline-ontology-critic",
-      "DisplayName": "OfflineCritic Feedback Infrastructure",
-      "Path": "/web-modules/OfflineOntologyCritic/critic",
-      "Description": "Diagnostics page for feedback-review infrastructure."
-    }
-  ],
-  "ProjectArtifacts": [
-    {
-      "ProjectName": "Skills/OfflineOntologyCritic",
-      "SourcePath": "ModulePackage/Skills/OfflineOntologyCritic/"
-    },
-    {
-      "ProjectName": "Profiles/OfflineOntologyCritic",
-      "SourcePath": "ProjectArtifacts/Profiles/OfflineOntologyCritic/"
-    }
-  ]
+  "Module": {
+    "Enabled": true,
+    "Name": "OfflineOntologyCritic",
+    "DisplayName": "OfflineCritic",
+    "Description": "Offline ontology critic feedback infrastructure.",
+    "AssemblyPath": "OfflineOntologyCritic/OfflineOntologyCritic.Web.dll",
+    "TypeName": "OfflineOntologyCritic.Web.OfflineOntologyCriticModule",
+    "LoadOrder": 850,
+    "Pages": [
+      {
+        "Name": "offline-ontology-critic",
+        "DisplayName": "OfflineCritic Feedback Infrastructure",
+        "Path": "/web-modules/OfflineOntologyCritic/critic",
+        "Description": "Diagnostics page for feedback-review infrastructure."
+      }
+    ],
+    "ProjectArtifacts": [
+      {
+        "ProjectName": "Skills/OfflineOntologyCritic",
+        "SourcePath": "ModulePackage/Skills/OfflineOntologyCritic/"
+      },
+      {
+        "ProjectName": "Profiles/OfflineOntologyCritic",
+        "SourcePath": "ProjectArtifacts/Profiles/OfflineOntologyCritic/"
+      }
+    ]
+  }
 }
