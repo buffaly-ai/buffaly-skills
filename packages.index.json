@@ -16912,7 +16912,7 @@
       "PackageType": "WebModule",
       "Title": "Wiki",
       "Description": "Buffaly Web Module package for Wiki.",
-      "Version": "0.1.125",
+      "Version": "0.1.126",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/Buffaly.Agent.Wiki",
       "SourceUrl": "",
@@ -16935,19 +16935,19 @@
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "ea8d20fb63f497c04223c0a172b9b568ef0b84213137de35b2061fff2740759e"
+          "Sha256": "eb8c74b975b2f11e2b966b172c19046caf7b4f710b5624f77e15faeb8ceae3a6"
         },
         {
           "Path": "Buffaly.Agent.Core.dll",
-          "Sha256": "9ac2e1eddd504dab3b7bed744db7d3ff5cdb0996f3283d6809603cce99752241"
+          "Sha256": "4e7f6d903a0cbb6f6e25388680a0e6a564b34285188cf4962f71dc6025fe3368"
         },
         {
           "Path": "Buffaly.Agent.Runtime.Abstractions.dll",
-          "Sha256": "2190271abc60509b645e95375bd8c3e6baa190b07b483eb1ae8b2bc5ea774c06"
+          "Sha256": "84006dc4f47ab72c52ededc628d0b131a31eaed693b45f4d480ae095c0b4d561"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "af0a974285fbfc4c9965d8082410bb3595d6e236868870355385e64127a20798"
+          "Sha256": "1e7d13c85cd2662ed32d0b49252ca21b1a3b9f0c024c0cdde91271ff9e5b6944"
         },
         {
           "Path": "Buffaly.Agent.Wiki.deps.json",
@@ -16955,19 +16955,19 @@
         },
         {
           "Path": "Buffaly.Agent.Wiki.dll",
-          "Sha256": "a1400c3e69f37876c03c14b6c615d6364e5fa2a663057503ad47b00f0ef4c463"
+          "Sha256": "f55217ce8501cb9c88135ee9376ad48e6d64f57d16e7970b65acfe2c1b2b1536"
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "b79d965c99e28210d3299c0b8b54b80463eb53acacb05878249d40905f0d7cd0"
+          "Sha256": "1c9b8594a52bdbd4976846f2d8aa8369dc3ad3057098fbeb14b877390a3a5366"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "4b380265c91feaa12356a28fbb70e5e60c503ebdc2e2c252a6055c5ffe933acd"
+          "Sha256": "76b52c733ea8895f7975642dc8b638491791140407082f862ec7a83d458005b2"
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "94d273818ab92392eee373b3364a69e7c62243aa64a9344ff4638f420c830aff"
+          "Sha256": "a044c5a32403bef08ab46dc9e0ca559b331881f0a3d0b3a75ca3e3f5c76d144a"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -17596,6 +17596,10 @@
         {
           "Path": "Scripts/Sessions_GetArchivedSp_Sp_PagingSp.sql",
           "Sha256": "6c4b83ecacfff3c946f6e0ff52eeb0526c34e43beeb8c9bb10335820096d02a0"
+        },
+        {
+          "Path": "Scripts/Sessions_GetSidebarRootPageSp.sql",
+          "Sha256": "1122144134532ea6992e5790f99d99456dde8f29d42584ae57df3e09ee32e56d"
         },
         {
           "Path": "Scripts/Sessions_ResetRunningRuntimeStatusOnWebStartupSp.sql",
