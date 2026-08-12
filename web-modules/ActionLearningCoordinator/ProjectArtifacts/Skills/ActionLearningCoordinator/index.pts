@@ -765,27 +765,3 @@ prototype ToRunOnlineActionCriticBatchOperation : OnlineActionCriticBatchCoordin
 	}
 	Description = @"Runs one selected-turn Online Action Critic batch operation against the actual critic child with event delivery disabled and concurrency one.";
 }
-
-[SemanticProgram.InfinitivePhrase("to shepherd one online memory critic")]
-prototype ToShepherdOneOnlineMemoryCritic : OnlineMemoryCriticBatchCoordinatorSkillAction
-{
-	function Execute(string sourceSessionKey, string workerSessionKey) : string
-	{
-		Sessions.ValidateSessionKey(sourceSessionKey);
-		Sessions.ValidateSessionKey(workerSessionKey);
-		return OnlineMemoryCriticBatchProjection.RunWorkerOperation(Sessions.GetSessionsRootPath(), sourceSessionKey, workerSessionKey, @"ToCatchUpOnlineMemoryCriticBatchTurns", @"");
-	}
-	Description = @"Uses the exact source and critic sessions to append only source turns after the persisted boundary and queue at most one next memory-critic turn.";
-}
-
-[SemanticProgram.InfinitivePhrase("to shepherd one online action critic")]
-prototype ToShepherdOneOnlineActionCritic : OnlineActionCriticBatchCoordinatorSkillAction
-{
-	function Execute(string sourceSessionKey, string workerSessionKey) : string
-	{
-		Sessions.ValidateSessionKey(sourceSessionKey);
-		Sessions.ValidateSessionKey(workerSessionKey);
-		return OnlineActionCriticBatchProjection.RunWorkerOperation(Sessions.GetSessionsRootPath(), sourceSessionKey, workerSessionKey, @"ToCatchUpOnlineActionCriticBatchTurns", @"");
-	}
-	Description = @"Uses the exact source and critic sessions to append only source turns after the persisted boundary and queue at most one next action-critic turn.";
-}
