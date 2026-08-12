@@ -9,7 +9,8 @@ This bundled infrastructure skill implements the minimal queued-message bridge b
 - `VoiceAgentDispatcher` is the dispatcher prompt-context prototype and supplemental action root; its specialized action is `ToSendMessageToVoiceAgent`.
 - The full-project `index.pts` includes the lightweight file and defines only that dispatcher-return action, keeping `ContextPrompt` infrastructure out of the Voice Agent entry.
 - Send actions call `SessionTools.SendToSessionTool` and return a truthful plain-text delivery signal that prevents model-driven duplicate sends; latest-turn recovery returns the existing `TurnSummaryContract`.
-- Targets come only from runtime-bound `VoiceAgent.DispatcherSessionKey` and `VoiceAgent.SourceSessionKey`.
+- Outbound Voice targets are resolved by `SessionTools` from the current runtime session: active session-bound Voice Agents use the server-owned binding parent, while standalone Voice Agents use their persisted private dispatcher pointer. The model-facing actions never accept a routing key.
+- Dispatcher returns continue to use runtime-bound `VoiceAgent.SourceSessionKey`.
 - Dispatcher returns begin with `[label: Voice Agent Dispatcher]`.
 
 No dispatch DTO, event, subscription, callback, polling loop, job store, or internal HTTP path is introduced.

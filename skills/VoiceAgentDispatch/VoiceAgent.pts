@@ -10,7 +10,7 @@ prototype VoiceAgentEntityRoot : SemanticEntityBase { EntityName = @"voice agent
 [SemanticProgram.InfinitivePhrase("to send instructions to the voice agent dispatcher")]
 prototype ToSendMessageToVoiceAgentDispatcher : VoiceAgentAction
 {
-	Description = @"instruction - self-contained work or follow-up to queue to the dispatcher bound in current Voice Agent user state. Queues without waiting and returns immediately using the established Level 2 end-cycle pattern.";
+	Description = @"instruction - self-contained work or follow-up to queue through the current Voice Agent's server-owned dispatch authority. Queues without waiting and returns immediately using the established Level 2 end-cycle pattern.";
 	function Execute(string instruction) : string
 	{
 		string queueItemId = SessionTools.SendToCurrentVoiceAgentDispatcherOncePerCurrentTurnTool(_opsAgent, "voice-to-dispatcher", instruction);
