@@ -226,28 +226,6 @@ prototype ToModifyGoogleWorkspaceMessageLabels : GoogleWorkspaceSkillAction
 	}
 }
 
-[SemanticProgram.InfinitivePhrase("to archive a gmail message")]
-prototype ToArchiveGoogleWorkspaceMessage : GoogleWorkspaceSkillAction
-{
-	Description = @"accountKey - authorized account key. scopePreset - defaults to gmail.modify when empty. messageId required. Archives by removing only INBOX; does not trash or delete. Returns JSON.";
-
-	function Execute(string accountKey, string scopePreset, string messageId) : string
-	{
-		if (StringUtil.IsEmpty(scopePreset))
-			scopePreset = "gmail.modify";
-
-		// Archive means remove the INBOX system label only. Leave all other labels/state intact.
-		return GoogleWorkspaceServiceHost.ModifyLabelsAsync(
-			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
-			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
-			messageId,
-			null,
-			StringUtil.Split("INBOX", ",", true),
-			false,
-			new CancellationToken(false));
-	}
-}
-
 [SemanticProgram.InfinitivePhrase("to trash a gmail message")]
 prototype ToTrashGoogleWorkspaceMessage : GoogleWorkspaceSkillAction
 {
