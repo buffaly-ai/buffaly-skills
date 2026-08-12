@@ -194,7 +194,7 @@
       "SkillName": "BuffalyMaintenance",
       "Title": "Buffaly Maintenance",
       "Description": "Buffaly skill package for Buffaly Maintenance.",
-      "Version": "0.1.8",
+      "Version": "0.1.9",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Buffaly Maintenance",
@@ -207,20 +207,20 @@
           "Sha256": "112ccc51ffa7e42bfc10611e9e00803892f7fc0b1adf8584f1bcef76e39502ac"
         },
         {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "74150370529a002e5c195b34aa9a610d6c1b35f4a9c1e626242bd8ec2013bb8e"
+        },
+        {
           "Path": "index.pts.md",
           "Sha256": "3ef9468ad7e7e0fd208eaf32112e81a05adfdd94d90a585ca6a173e7dcca0dc1"
         },
         {
           "Path": "lib/Buffaly.Agent.Provisioning.dll",
-          "Sha256": "b81f7c25af954b387ecbc062d2a72c70b6812d3e4022b26f093cfb67dec6e9d4"
+          "Sha256": "d33879a7920b6f939050df85ec377863c613cc98cfbf289caa05c4042b1464c2"
         },
         {
           "Path": "lib/Buffaly.Maintenance.Client.dll",
-          "Sha256": "de72ba94148b70ee3e2d9c0a2bd4dfd2d839cbf8f4bb21c9f29e096021e92712"
-        },
-        {
-          "Path": "index.pts.lazy.json",
-          "Sha256": "74150370529a002e5c195b34aa9a610d6c1b35f4a9c1e626242bd8ec2013bb8e"
+          "Sha256": "6ea354564a7a3c1b35e7acbad919dc7c71e44761495e24cc9bfaa0540c260e34"
         }
       ],
       "EntryPoint": "index.pts",
