@@ -476,7 +476,7 @@
       "PackageType": "ProviderModule",
       "Title": "LlamaCpp Provider",
       "Description": "Buffaly Provider Module package for LlamaCpp Provider.",
-      "Version": "0.1.4",
+      "Version": "0.1.5",
       "PackageKind": "BuffalyProviderModule",
       "SourcePath": "provider-modules/Buffaly.Provider.LlamaCpp",
       "SourceUrl": "",
@@ -495,23 +495,23 @@
         },
         {
           "Path": "BasicUtilities.dll",
-          "Sha256": "075f1ba43e7b74fee215106847a92407c24a08d65cdc5f1ba3dfd3d1f815b68d"
+          "Sha256": "fa69c35be9f802bfcdfb22d1a32e0bcaabe80c1ae79933adcd4380d6199ee023"
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "b33bcdf3b400e1fbdde1db8ccb3bd17a12d5d2da2413a9864937197a4399c431"
+          "Sha256": "9b7e51f058e12bc39756dbdcbae5ef0dc18c268bf1f3f8aec2c6b6ac5426fca5"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "54a1b7f0de8ab1f58eb1f71851b3d81350eae0ebd1e6e11ffcf0917053aca417"
+          "Sha256": "6e9a962197a088df104187b2a7bcfa4a03574761399561cc65521cda3def8651"
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "eec42f49e426c57116bc11bc39eb7ea322c0ffa381cdb250e16062180f453898"
+          "Sha256": "3b41063a904ebfdccdf85c154dd014cda2410f4e9bb0b5236e8a20ef74c10232"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "1511b1088f3add12aabb39f25a98da3275b4624d174b0ff947b96e7e30e8aaf9"
+          "Sha256": "36f666f332815b8803515b056d4f9fe8943de16be8705e49200f551f85fc68b0"
         },
         {
           "Path": "Buffaly.Provider.LlamaCpp.deps.json",
@@ -519,7 +519,7 @@
         },
         {
           "Path": "Buffaly.Provider.LlamaCpp.dll",
-          "Sha256": "e2dc832f22f161cda23364fa4df9285e6097b85ac272d4427bd475e446597c33"
+          "Sha256": "196f89f210fab4a7283ece67012e0a266606bab31c69ff9d10f739a1b298e509"
         },
         {
           "Path": "Buffaly.ProviderContracts.dll",
@@ -527,7 +527,7 @@
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "288b6994b376fd65207f2d0156c0b427ae7f101f7631750dd529170690c4ee93"
+          "Sha256": "71f88507f4be237c9e6c1d5898c40419947571141243d01cb73af15f79b281b2"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -647,15 +647,15 @@
         },
         {
           "Path": "RooTrax.Cache.dll",
-          "Sha256": "495304d8fac2b1843db6c923d8f6a16b5ac886cebc29dd5553dfcca2a4e4426c"
+          "Sha256": "770d3679453b9985a31c87efc1d7e2a56b684ce92c30692efb10445ee1fbe921"
         },
         {
           "Path": "RooTrax.Common.DB.dll",
-          "Sha256": "be009dcf690e95bef1b4d5ad3bbc49a79701c4ef64d9044a698febc25a84a35e"
+          "Sha256": "3f0768ed1251d90331b922fa829495e860bb2d477a5630cc55c5fb9f6acc572f"
         },
         {
           "Path": "RooTrax.Common.dll",
-          "Sha256": "ffe8313f657b9e2176012579bb2e22e33d9ab1a01fd387382b647510f8d8f7c1"
+          "Sha256": "ccfcfa47830c1468c513e5a8704c61fc9424813f74d26a726bc56fba50091a1a"
         },
         {
           "Path": "runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll",
@@ -923,11 +923,11 @@
         },
         {
           "Path": "Scripts/GetSessionSubscriptionsSp_CountSp.sql",
-          "Sha256": "3496f040aae3a351724834fd298dfdb3fb1ac9a764e107df51cc64b74be9ce94"
+          "Sha256": "7de61872f029bfb8fd23b7679f58ea5945d28b7af6472b356d50f8c68955e24b"
         },
         {
           "Path": "Scripts/GetSessionSubscriptionsSp_PagingSp.sql",
-          "Sha256": "f540161147c817cfff53d5d0c7348104ff04adaab30d05050bae7b200e451b4e"
+          "Sha256": "12e53c9149b29e6ae0f8cd242d8d20a44f205aa7748faa703a1461cc3fba3285"
         },
         {
           "Path": "Scripts/GetUsageDashboardDetailRowsSp.sql",
@@ -1148,6 +1148,10 @@
         {
           "Path": "Scripts/Sessions_GetArchivedSp_Sp_PagingSp.sql",
           "Sha256": "6c4b83ecacfff3c946f6e0ff52eeb0526c34e43beeb8c9bb10335820096d02a0"
+        },
+        {
+          "Path": "Scripts/Sessions_GetSidebarRootPageSp.sql",
+          "Sha256": "1122144134532ea6992e5790f99d99456dde8f29d42584ae57df3e09ee32e56d"
         },
         {
           "Path": "Scripts/Sessions_ResetRunningRuntimeStatusOnWebStartupSp.sql",
