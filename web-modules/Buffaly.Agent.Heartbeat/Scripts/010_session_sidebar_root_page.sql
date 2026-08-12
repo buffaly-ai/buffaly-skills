@@ -33,6 +33,51 @@ BEGIN
 		RAISE EXCEPTION 'NumRoots must be between 1 and 100.';
 	END IF;
 
+	IF COALESCE(p_search, '') <> '' THEN
+		RETURN QUERY
+		WITH RECURSIVE session_hierarchy AS
+		(
+			SELECT root.session_id, root.session_id AS root_session_id, 1 AS hierarchy_depth
+			FROM sessions root
+			WHERE root.parent_session_id IS NULL AND root.is_archived = false
+			UNION ALL
+			SELECT child.session_id, parent.root_session_id, parent.hierarchy_depth + 1
+			FROM session_hierarchy parent
+			JOIN sessions child ON child.parent_session_id = parent.session_id AND child.is_archived = false
+		),
+		matching_rows AS
+		(
+			SELECT hierarchy.session_id, hierarchy.root_session_id, hierarchy.hierarchy_depth, session_row.last_updated
+			FROM session_hierarchy hierarchy
+			JOIN sessions session_row ON session_row.session_id = hierarchy.session_id
+			WHERE COALESCE(session_row.session_key, '') ILIKE '%' || p_search || '%'
+				OR COALESCE(session_row.session_name, '') ILIKE '%' || p_search || '%'
+		),
+		ranked_roots AS
+		(
+			SELECT root_session_id, MAX(last_updated) AS effective_last_updated,
+				ROW_NUMBER() OVER (ORDER BY MAX(last_updated) DESC, root_session_id DESC)::integer AS root_ordinal,
+				COUNT(*) OVER ()::integer AS total_root_rows
+			FROM matching_rows GROUP BY root_session_id
+		),
+		paged_roots AS
+		(
+			SELECT root_session_id, root_ordinal, total_root_rows, COUNT(*) OVER ()::integer AS root_rows_returned
+			FROM ranked_roots WHERE root_ordinal BETWEEN p_skip_roots + 1 AND p_skip_roots + p_num_roots
+		)
+		SELECT session_row.session_id, session_row.session_key, session_row.parent_session_id, session_row.session_name,
+			session_row.agent_name, session_row.project_name, session_row.project_file_path, session_row.provider, session_row.model_name,
+			session_row.reasoning_level, session_row.prompt_context, session_row.data, session_row.date_created,
+			session_row.last_updated, session_row.last_updated, session_row.is_archived,
+			matching.root_session_id, paged.root_ordinal, matching.hierarchy_depth,
+			paged.root_rows_returned, paged.total_root_rows > p_skip_roots + p_num_roots
+		FROM matching_rows matching
+		JOIN paged_roots paged ON paged.root_session_id = matching.root_session_id
+		JOIN sessions session_row ON session_row.session_id = matching.session_id
+		ORDER BY matching.last_updated DESC, session_row.session_id DESC;
+		RETURN;
+	END IF;
+
 	RETURN QUERY
 	WITH root_activity AS
 	(
