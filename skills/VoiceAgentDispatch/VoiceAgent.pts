@@ -13,8 +13,7 @@ prototype ToSendMessageToVoiceAgentDispatcher : VoiceAgentAction
 	Description = @"instruction - self-contained work or follow-up to queue to the dispatcher bound in current Voice Agent user state. Queues without waiting and returns immediately using the established Level 2 end-cycle pattern.";
 	function Execute(string instruction) : string
 	{
-		string dispatcherSessionKey = UserState.GetStringOrNull("VoiceAgent.DispatcherSessionKey");
-		string queueItemId = SessionTools.SendToVoiceAgentDispatcherOncePerCurrentTurnTool(_opsAgent, "voice-to-dispatcher", dispatcherSessionKey, instruction);
+		string queueItemId = SessionTools.SendToCurrentVoiceAgentDispatcherOncePerCurrentTurnTool(_opsAgent, "voice-to-dispatcher", instruction);
 		return "Instruction queued for the Voice Agent Dispatcher. Queue ID: " + queueItemId + ". End cycle now.";
 	}
 }
@@ -25,8 +24,7 @@ prototype ToGetLatestVoiceAgentDispatcherTurn : VoiceAgentAction
 	Description = @"Returns the most recent turn summary from the bound dispatcher. Use once for missing detail, never for polling.";
 	function Execute() : TurnSummaryContract
 	{
-		string dispatcherSessionKey = UserState.GetStringOrNull("VoiceAgent.DispatcherSessionKey");
-		return SessionTools.GetMostRecentSessionTurnTool(dispatcherSessionKey);
+		return SessionTools.GetCurrentVoiceAgentDispatcherTurnTool(_opsAgent);
 	}
 }
 
