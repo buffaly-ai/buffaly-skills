@@ -9,6 +9,7 @@
       "FeedingFrenzy.TrafficAnalysis.Web/1.0.0": {
         "dependencies": {
           "Buffaly.Agent.Host": "1.0.0",
+          "Buffaly.Agent.Tools.Secrets": "1.0.0",
           "Buffaly.Agent.Web.Common": "1.0.0"
         },
         "runtime": {
@@ -567,17 +568,6 @@
           }
         }
       },
-      "Buffaly.Agent.Tools.Secrets/1.0.0": {
-        "dependencies": {
-          "Buffaly.Agent.Common": "1.0.0"
-        },
-        "runtime": {
-          "Buffaly.Agent.Tools.Secrets.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
-          }
-        }
-      },
       "Buffaly.Agent.Tools.SemanticDatabase/1.0.0": {
         "dependencies": {
           "Buffaly.Agent.Core": "1.0.0",
@@ -978,11 +968,6 @@
       "sha512": ""
     },
     "Buffaly.Agent.Tools.Process/1.0.0": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "Buffaly.Agent.Tools.Secrets/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
