@@ -64,17 +64,25 @@ BEGIN
 		(
 			SELECT root_session_id, root_ordinal, total_root_rows, COUNT(*) OVER ()::integer AS root_rows_returned
 			FROM ranked_roots WHERE root_ordinal BETWEEN p_skip_roots + 1 AND p_skip_roots + p_num_roots
+		),
+		ranked_matching_rows AS
+		(
+			SELECT matching.session_id, matching.root_session_id, matching.hierarchy_depth, matching.last_updated,
+				paged.root_ordinal, paged.total_root_rows, paged.root_rows_returned,
+				ROW_NUMBER() OVER (ORDER BY matching.last_updated DESC, matching.session_id DESC) AS search_result_ordinal
+			FROM matching_rows matching
+			JOIN paged_roots paged ON paged.root_session_id = matching.root_session_id
 		)
 		SELECT session_row.session_id, session_row.session_key, session_row.parent_session_id, session_row.session_name,
 			session_row.agent_name, session_row.project_name, session_row.project_file_path, session_row.provider, session_row.model_name,
 			session_row.reasoning_level, session_row.prompt_context, session_row.data, session_row.date_created,
 			session_row.last_updated, session_row.last_updated, session_row.is_archived,
-			matching.root_session_id, paged.root_ordinal, matching.hierarchy_depth,
-			paged.root_rows_returned, paged.total_root_rows > p_skip_roots + p_num_roots
-		FROM matching_rows matching
-		JOIN paged_roots paged ON paged.root_session_id = matching.root_session_id
-		JOIN sessions session_row ON session_row.session_id = matching.session_id
-		ORDER BY matching.last_updated DESC, session_row.session_id DESC;
+			ranked_matching.root_session_id, ranked_matching.root_ordinal, ranked_matching.hierarchy_depth,
+			ranked_matching.root_rows_returned, ranked_matching.total_root_rows > p_skip_roots + p_num_roots
+		FROM ranked_matching_rows ranked_matching
+		JOIN sessions session_row ON session_row.session_id = ranked_matching.session_id
+		WHERE ranked_matching.search_result_ordinal <= 200
+		ORDER BY ranked_matching.last_updated DESC, session_row.session_id DESC;
 		RETURN;
 	END IF;
 
