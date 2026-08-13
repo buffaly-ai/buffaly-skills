@@ -71,6 +71,24 @@ AS
 					COUNT(*) OVER () AS RootRowsReturned
 			FROM	RankedRoots
 			WHERE	RootOrdinal BETWEEN @SkipRoots + 1 AND @SkipRoots + @NumRoots
+		),
+		RankedMatchingRows AS
+		(
+			SELECT	matching.SessionID,
+					matching.RootSessionID,
+					matching.HierarchyDepth,
+					matching.LastUpdated,
+					pagedRoot.RootOrdinal,
+					pagedRoot.TotalRootRows,
+					pagedRoot.RootRowsReturned,
+					ROW_NUMBER() OVER
+					(
+						ORDER BY matching.LastUpdated DESC,
+								 matching.SessionID DESC
+					) AS SearchResultOrdinal
+			FROM	MatchingRows matching
+			JOIN	PagedRoots pagedRoot
+			ON		pagedRoot.RootSessionID = matching.RootSessionID
 		)
 		SELECT	sessionRow.SessionID,
 				sessionRow.SessionKey,
@@ -88,17 +106,16 @@ AS
 				sessionRow.LastUpdated AS OwnLastUpdated,
 				sessionRow.LastUpdated AS EffectiveLastUpdated,
 				sessionRow.IsArchived,
-				matching.RootSessionID,
-				CONVERT(int, pagedRoot.RootOrdinal) AS RootOrdinal,
-				matching.HierarchyDepth,
-				CONVERT(int, pagedRoot.RootRowsReturned) AS RootRowsReturned,
-				CONVERT(bit, CASE WHEN pagedRoot.TotalRootRows > @SkipRoots + @NumRoots THEN 1 ELSE 0 END) AS HasMoreRootRows
-		FROM	MatchingRows matching
-		JOIN	PagedRoots pagedRoot
-		ON		pagedRoot.RootSessionID = matching.RootSessionID
+				rankedMatching.RootSessionID,
+				CONVERT(int, rankedMatching.RootOrdinal) AS RootOrdinal,
+				rankedMatching.HierarchyDepth,
+				CONVERT(int, rankedMatching.RootRowsReturned) AS RootRowsReturned,
+				CONVERT(bit, CASE WHEN rankedMatching.TotalRootRows > @SkipRoots + @NumRoots THEN 1 ELSE 0 END) AS HasMoreRootRows
+		FROM	RankedMatchingRows rankedMatching
 		JOIN	dbo.Sessions sessionRow WITH (NOLOCK)
-		ON		sessionRow.SessionID = matching.SessionID
-		ORDER BY matching.LastUpdated DESC,
+		ON		sessionRow.SessionID = rankedMatching.SessionID
+		WHERE	rankedMatching.SearchResultOrdinal <= 200
+		ORDER BY rankedMatching.LastUpdated DESC,
 				sessionRow.SessionID DESC
 		OPTION (RECOMPILE, MAXRECURSION 100);
 		RETURN;
