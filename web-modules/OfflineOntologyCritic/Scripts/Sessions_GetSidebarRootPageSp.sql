@@ -21,6 +21,106 @@ AS
 
 	DECLARE @SearchPattern nvarchar(257) = '%' + ISNULL(@Search, '') + '%';
 
+	IF ISNULL(@Search, '') <> ''
+	BEGIN
+		;WITH SessionHierarchy AS
+		(
+			SELECT	root.SessionID,
+					root.SessionID AS RootSessionID,
+					1 AS HierarchyDepth
+			FROM	dbo.Sessions root WITH (NOLOCK)
+			WHERE	root.ParentSessionID IS NULL
+					AND ISNULL(root.IsArchived, 0) = 0
+
+			UNION ALL
+
+			SELECT	child.SessionID,
+					parent.RootSessionID,
+					parent.HierarchyDepth + 1
+			FROM	SessionHierarchy parent
+			JOIN	dbo.Sessions child WITH (NOLOCK)
+			ON		child.ParentSessionID = parent.SessionID
+					AND ISNULL(child.IsArchived, 0) = 0
+		),
+		MatchingRows AS
+		(
+			SELECT	hierarchy.SessionID,
+					hierarchy.RootSessionID,
+					hierarchy.HierarchyDepth,
+					sessionRow.LastUpdated
+			FROM	SessionHierarchy hierarchy
+			JOIN	dbo.Sessions sessionRow WITH (NOLOCK)
+			ON		sessionRow.SessionID = hierarchy.SessionID
+			WHERE	sessionRow.SessionKey LIKE @SearchPattern
+					OR sessionRow.SessionName LIKE @SearchPattern
+		),
+		RankedRoots AS
+		(
+			SELECT	RootSessionID,
+					MAX(LastUpdated) AS EffectiveLastUpdated,
+					ROW_NUMBER() OVER (ORDER BY MAX(LastUpdated) DESC, RootSessionID DESC) AS RootOrdinal,
+					COUNT(*) OVER () AS TotalRootRows
+			FROM	MatchingRows
+			GROUP BY RootSessionID
+		),
+		PagedRoots AS
+		(
+			SELECT	RootSessionID,
+					RootOrdinal,
+					TotalRootRows,
+					COUNT(*) OVER () AS RootRowsReturned
+			FROM	RankedRoots
+			WHERE	RootOrdinal BETWEEN @SkipRoots + 1 AND @SkipRoots + @NumRoots
+		),
+		RankedMatchingRows AS
+		(
+			SELECT	matching.SessionID,
+					matching.RootSessionID,
+					matching.HierarchyDepth,
+					matching.LastUpdated,
+					pagedRoot.RootOrdinal,
+					pagedRoot.TotalRootRows,
+					pagedRoot.RootRowsReturned,
+					ROW_NUMBER() OVER
+					(
+						ORDER BY matching.LastUpdated DESC,
+								 matching.SessionID DESC
+					) AS SearchResultOrdinal
+			FROM	MatchingRows matching
+			JOIN	PagedRoots pagedRoot
+			ON		pagedRoot.RootSessionID = matching.RootSessionID
+		)
+		SELECT	sessionRow.SessionID,
+				sessionRow.SessionKey,
+				sessionRow.ParentSessionID,
+				sessionRow.SessionName,
+				sessionRow.AgentName,
+				sessionRow.ProjectName,
+				sessionRow.ProjectFilePath,
+				sessionRow.Provider,
+				sessionRow.ModelName,
+				sessionRow.ReasoningLevel,
+				sessionRow.PromptContext,
+				sessionRow.Data,
+				sessionRow.DateCreated,
+				sessionRow.LastUpdated AS OwnLastUpdated,
+				sessionRow.LastUpdated AS EffectiveLastUpdated,
+				sessionRow.IsArchived,
+				rankedMatching.RootSessionID,
+				CONVERT(int, rankedMatching.RootOrdinal) AS RootOrdinal,
+				rankedMatching.HierarchyDepth,
+				CONVERT(int, rankedMatching.RootRowsReturned) AS RootRowsReturned,
+				CONVERT(bit, CASE WHEN rankedMatching.TotalRootRows > @SkipRoots + @NumRoots THEN 1 ELSE 0 END) AS HasMoreRootRows
+		FROM	RankedMatchingRows rankedMatching
+		JOIN	dbo.Sessions sessionRow WITH (NOLOCK)
+		ON		sessionRow.SessionID = rankedMatching.SessionID
+		WHERE	rankedMatching.SearchResultOrdinal <= 200
+		ORDER BY rankedMatching.LastUpdated DESC,
+				sessionRow.SessionID DESC
+		OPTION (RECOMPILE, MAXRECURSION 100);
+		RETURN;
+	END
+
 	;WITH RootActivity AS
 	(
 		SELECT		root.SessionID AS RootSessionID,
