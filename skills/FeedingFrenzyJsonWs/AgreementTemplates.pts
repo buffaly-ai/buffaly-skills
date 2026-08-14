@@ -111,3 +111,31 @@ prototype ToSendPreparedFeedingFrenzySigningEmail : FeedingFrenzyJsonWsGuardedWr
 		return service.CallBusinessRoute("lead-document-signing-requests/send-prepared-signing-email-as-automation", args);
 	}
 }
+
+[SemanticProgram.InfinitivePhrase("to cancel a feeding frenzy signing request")]
+[SemanticProgram.InfinitivePhrase("to retire a prepared feeding frenzy signing request")]
+prototype ToCancelFeedingFrenzySigningRequest : FeedingFrenzyJsonWsGuardedWriteAction
+{
+	Description = @"Cancels a non-terminal Feeding Frenzy document signing request through the server lifecycle owner. This invalidates active customer/provider signing tokens and does not send email.";
+	function Execute(FeedingFrenzyJsonWsService service, int LeadDocumentSigningRequestID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		if (StringUtil.IsEmpty(service.AutomationUserEmail)) return "Error: FeedingFrenzyJsonWsService.AutomationUserEmail is required for signing request cancellation.";
+		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=service.AutomationUserEmail; args["LeadDocumentSigningRequestID"]=LeadDocumentSigningRequestID;
+		return service.CallBusinessRoute("lead-document-signing-requests/cancel-signing-request-as-automation", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to update a feeding frenzy signing recipient")]
+[SemanticProgram.InfinitivePhrase("to change a signing request recipient email")]
+prototype ToUpdateFeedingFrenzySigningRecipient : FeedingFrenzyJsonWsGuardedWriteAction
+{
+	Description = @"Updates recipient name, title, and email on an unsigned, unsent Draft signing request. This invalidates any prepared customer token so the request must be prepared again before signing.";
+	function Execute(FeedingFrenzyJsonWsService service, int LeadDocumentSigningRequestID, string RecipientName, string RecipientTitle, string RecipientEmail) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		if (StringUtil.IsEmpty(service.AutomationUserEmail)) return "Error: FeedingFrenzyJsonWsService.AutomationUserEmail is required for signing recipient updates.";
+		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=service.AutomationUserEmail; args["LeadDocumentSigningRequestID"]=LeadDocumentSigningRequestID; args["RecipientName"]=RecipientName; args["RecipientTitle"]=RecipientTitle; args["RecipientEmail"]=RecipientEmail;
+		return service.CallBusinessRoute("lead-document-signing-requests/update-signing-recipient-as-automation", args);
+	}
+}
