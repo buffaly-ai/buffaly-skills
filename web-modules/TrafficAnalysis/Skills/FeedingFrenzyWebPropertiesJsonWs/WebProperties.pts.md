@@ -6,32 +6,23 @@ Thin pass-through actions for the generated `FeedingFrenzy.Admin.Business.WebPro
 
 ### `WebProperties_UpdateWebProperty`
 
-Calls `web-properties/update-web-property` with the complete generated contract:
+Calls `web-properties/update-web-property-google-analytics` with a narrow GA metadata contract:
 
 - `service`
-- `Data`
-- `Name`
-- `DomainName`
-- `WebsiteUrl`
+- `WebPropertyID`
 - `AnalyticsInstalled`
 - `GoogleAnalyticsMeasurementID`
 - `GoogleAnalyticsUrl`
-- `GoogleAdsUrl`
-- `FacebookBusinessUrl`
-- `RepositoryUrl`
-- `StagingUrl`
-- `ProductionUrl`
-- `TrackingHost`
-- `IsActive`
-- `WebPropertyID`
+- `GoogleAnalyticsAccountID`
+- `GoogleAnalyticsPropertyID`
 
-Read the exact environment-specific record through `WebProperties_GetWebProperty` first. Preserve every unrelated standard field and the complete `Data` document; the generated update contract replaces the full row rather than applying a partial patch. Re-read the same ID after the update and verify intended changes plus representative preserved fields.
+The authoritative C# facade reads the exact environment-specific row, preserves every unrelated standard field and the complete `Data` document, changes only GA metadata, writes, re-reads the same ID, and rejects a readback that does not contain the intended values and preserved fields.
 
 ### `WebProperties_InsertWebProperty`
 
-Calls `web-properties/insert-web-property` with the same complete metadata contract except `WebPropertyID`, which is assigned and returned by the application.
+Calls `web-properties/insert-web-property-if-canonical-domain-absent` with the complete create contract. The ID is assigned by the application and the created row is returned.
 
-Before insertion, inspect the complete target-environment inventory and match canonical domain, name, website URL, staging URL, and production URL to prevent duplicates. Local and production IDs are independent and must never be copied between environments. Immediately read back the returned ID and verify the complete record.
+The authoritative C# facade requires a canonical domain, rejects an existing canonical domain before mutation, inserts only when absent, immediately reads back the returned ID, and verifies canonical domain, name, and website URL. Local and production IDs are independent and must never be copied between environments.
 
 ## Authorization boundary
 
