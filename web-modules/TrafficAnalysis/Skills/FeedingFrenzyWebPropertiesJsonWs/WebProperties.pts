@@ -21,6 +21,38 @@ prototype WebProperties_GetWebProperty : FeedingFrenzyWebPropertiesJsonWsSkillAc
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to update a feeding frenzy web property")]
+prototype WebProperties_UpdateWebProperty : FeedingFrenzyWebPropertiesJsonWsSkillAction
+{
+	Description = @"Updates one WebProperty through the generated FeedingFrenzy.Admin.Business.WebProperties.UpdateWebProperty contract. Read the exact record first and pass every unrelated field back unchanged.";
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string Data, string Name, string DomainName, string WebsiteUrl, bool AnalyticsInstalled, string GoogleAnalyticsMeasurementID, string GoogleAnalyticsUrl, string GoogleAdsUrl, string FacebookBusinessUrl, string RepositoryUrl, string StagingUrl, string ProductionUrl, string TrackingHost, bool IsActive, int WebPropertyID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["Data"] = Data; args["Name"] = Name; args["DomainName"] = DomainName; args["WebsiteUrl"] = WebsiteUrl;
+		args["AnalyticsInstalled"] = AnalyticsInstalled; args["GoogleAnalyticsMeasurementID"] = GoogleAnalyticsMeasurementID; args["GoogleAnalyticsUrl"] = GoogleAnalyticsUrl;
+		args["GoogleAdsUrl"] = GoogleAdsUrl; args["FacebookBusinessUrl"] = FacebookBusinessUrl; args["RepositoryUrl"] = RepositoryUrl;
+		args["StagingUrl"] = StagingUrl; args["ProductionUrl"] = ProductionUrl; args["TrackingHost"] = TrackingHost; args["IsActive"] = IsActive; args["WebPropertyID"] = WebPropertyID;
+		return service.CallWebPropertiesRoute("web-properties/update-web-property", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to insert a feeding frenzy web property")]
+prototype WebProperties_InsertWebProperty : FeedingFrenzyWebPropertiesJsonWsSkillAction
+{
+	Description = @"Creates one WebProperty through the generated FeedingFrenzy.Admin.Business.WebProperties.InsertWebProperty contract and returns the new WebPropertyID. Check production inventory and canonical domain first to avoid duplicates.";
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string Data, string Name, string DomainName, string WebsiteUrl, bool AnalyticsInstalled, string GoogleAnalyticsMeasurementID, string GoogleAnalyticsUrl, string GoogleAdsUrl, string FacebookBusinessUrl, string RepositoryUrl, string StagingUrl, string ProductionUrl, string TrackingHost, bool IsActive) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["Data"] = Data; args["Name"] = Name; args["DomainName"] = DomainName; args["WebsiteUrl"] = WebsiteUrl;
+		args["AnalyticsInstalled"] = AnalyticsInstalled; args["GoogleAnalyticsMeasurementID"] = GoogleAnalyticsMeasurementID; args["GoogleAnalyticsUrl"] = GoogleAnalyticsUrl;
+		args["GoogleAdsUrl"] = GoogleAdsUrl; args["FacebookBusinessUrl"] = FacebookBusinessUrl; args["RepositoryUrl"] = RepositoryUrl;
+		args["StagingUrl"] = StagingUrl; args["ProductionUrl"] = ProductionUrl; args["TrackingHost"] = TrackingHost; args["IsActive"] = IsActive;
+		return service.CallWebPropertiesRoute("web-properties/insert-web-property", args);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to get feeding frenzy web property analytics summary")]
 prototype WebProperties_GetWebPropertyAnalyticsSummary : FeedingFrenzyWebPropertiesJsonWsSkillAction
 {

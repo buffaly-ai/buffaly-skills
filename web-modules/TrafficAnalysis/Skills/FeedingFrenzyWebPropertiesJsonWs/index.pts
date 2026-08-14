@@ -49,9 +49,9 @@ partial prototype FeedingFrenzyWebPropertiesJsonWsService#Remote : FeedingFrenzy
 [SemanticEntity("feeding frenzy local web properties json ws service")]
 partial prototype FeedingFrenzyWebPropertiesJsonWsService#Local : FeedingFrenzyWebPropertiesJsonWsService
 {
-	BaseUrl = "http://feedingfrenzy.local";
+	BaseUrl = "https://feedingfrenzy.local";
 	TokenKey = "FeedingFrenzy.Local.ApiKey";
-	Description = "Local Feeding Frenzy WebProperties JSON service binding.";
+	Description = "Local Feeding Frenzy WebProperties JSON service binding. HTTPS is required so the bearer Authorization header is not lost during an HTTP-to-HTTPS redirect. The token must be an unexpired Feeding Frenzy Authorizations API-key row stored in UserSecrets as FeedingFrenzy.Local.ApiKey.";
 }
 
 include "WebProperties.pts";
