@@ -22,8 +22,8 @@ CREATE TABLE IF NOT EXISTS messages (
 	turn_id text NOT NULL,
 	compaction_epoch_key text NULL
 );
-DROP INDEX IF EXISTS ux_messages_message_key;
-CREATE INDEX IF NOT EXISTS ix_messages_message_key ON messages(message_key);
+DROP INDEX IF EXISTS ix_messages_message_key;
+CREATE UNIQUE INDEX IF NOT EXISTS ux_messages_message_key ON messages(message_key);
 CREATE INDEX IF NOT EXISTS ix_messages_session_id_message_id ON messages(session_id, message_id);
 CREATE INDEX IF NOT EXISTS ix_messages_session_id_message_key ON messages(session_id, message_key);
 CREATE INDEX IF NOT EXISTS ix_messages_session_id_sequence_number ON messages(session_id, sequence_number, message_id);
