@@ -221,6 +221,39 @@ prototype ToGetGitHeadSha : GitHubSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to get git diff")]
+prototype ToGetGitDiff : GitHubSkillAction
+{
+	Description = @"startPath - path inside a git repository. target - revision to compare with, default HEAD. maxLines - maximum output lines, default 500.";
+
+	function Execute(string startPath, string target, int maxLines) : string
+	{
+		return GitHubSkillFacade.GetGitDiff(startPath, target, maxLines);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get git show")]
+prototype ToGetGitShow : GitHubSkillAction
+{
+	Description = @"startPath - path inside a git repository. commitSha - commit or revision to show. maxLines - maximum output lines, default 500.";
+
+	function Execute(string startPath, string commitSha, int maxLines) : string
+	{
+		return GitHubSkillFacade.GetGitShow(startPath, commitSha, maxLines);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get git log")]
+prototype ToGetGitLog : GitHubSkillAction
+{
+	Description = @"startPath - path inside a git repository. maxEntries - maximum commits, default 10 and maximum 100.";
+
+	function Execute(string startPath, int maxEntries) : string
+	{
+		return GitHubSkillFacade.GetGitLog(startPath, maxEntries);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to commit and push scoped changes")]
 prototype ToCommitAndPushScopedChanges : GitHubSkillAction
 {

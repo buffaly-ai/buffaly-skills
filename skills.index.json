@@ -1224,34 +1224,31 @@
     {
       "SkillName": "GitHub",
       "Title": "Git Hub",
-      "Description": "Buffaly OpsAgent skill package for GitHub.",
-      "Version": "0.1.1",
+      "Description": "Buffaly skill package for Git Hub.",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "Git Hub",
         "GitHub"
       ],
       "Path": "skills/GitHub",
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "8aba98ac1b4f3e275e10c8dc4ad4a6aa8d4ec733197cc7c8fceee05f11d0e8a2"
-        },
-        {
-          "Path": "index.pts.md",
-          "Sha256": "6c99edb76cbdade06eb668c9d1aeb653b2f3c821c23a6c79c450eef593a33651"
+          "Sha256": "4315eddcb6c3a991af0dce0e2ccd49c9070b57d649c071a14b712bab1319e8e9"
         },
         {
           "Path": "index.pts.lazy.json",
           "Sha256": "59a25b10aa29429812ffa7f24a579fe53882c09688faefb01244a1610d7e1a23"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "fad39644540c675dab7772495e707f3637dbedabdea7ddcb81c5154753fc992c"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "GoogleAnalytics",
