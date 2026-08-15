@@ -8,6 +8,18 @@ prototype ToListSqlDatabases : SqlServerSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to execute a sql query")]
+[SemanticProgram.InfinitivePhrase("to run a sql query and return rows json")]
+prototype ToExecuteSqlQuery : SqlServerSkillAction
+{
+	Description = @"connectionString - SQL Server connection string. query - read-only SELECT/CTE query. maxRows - maximum rows to return (default 100, max 1000). Returns JSON with columns, rows, and rowCount.";
+
+	function Execute(string connectionString, string query, int maxRows) : string
+	{
+		return SqlServerOperations.ExecuteQuery(connectionString, query, maxRows);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to run a read only sql query using a secret key")]
 prototype ToRunReadOnlySqlQuery : SqlServerSkillAction
 {
