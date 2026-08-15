@@ -72,6 +72,29 @@ prototype ToLaunchOrOpenFile : FileSystemSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to test whether a file exists")]
+[SemanticProgram.InfinitivePhrase("to check if a file or directory exists")]
+prototype ToTestFileExists : FileSystemSkillAction
+{
+	Description = @"filePath - absolute or relative file or directory path to test. Returns true or false.";
+
+	function Execute(string filePath) : string
+	{
+		return FileSystemTools.FileExists(filePath).ToString().ToLowerInvariant();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to copy a file")]
+prototype ToCopyFile : FileSystemSkillAction
+{
+	Description = @"sourcePath - source file path. destinationPath - destination file path or existing directory. overwrite - replace an existing destination when true; defaults false.";
+
+	function Execute(string sourcePath, string destinationPath, bool overwrite) : string
+	{
+		return FileSystemTools.CopyFile(sourcePath, destinationPath, overwrite);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to list files in a directory")]
 [SemanticProgram.InfinitivePhrase("to search for files in a directory")]
 prototype ToListFilesInDirectory : FileSystemSkillAction

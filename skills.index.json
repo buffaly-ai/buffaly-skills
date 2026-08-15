@@ -1195,21 +1195,22 @@
     {
       "SkillName": "FileSystem",
       "Title": "File System",
-      "Description": "Buffaly OpsAgent skill package for FileSystem.",
-      "Version": "0.1.0",
+      "Description": "Buffaly skill package for File System.",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "File System",
         "FileSystem"
       ],
       "Path": "skills/FileSystem",
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "b9d0345d93edd152e4bf634816109460b252a87baea42d293bd1d08bffd674b3"
+          "Sha256": "6b17ef33e66fc156f07902cd9f4ceffcc6bf5c53be647999e31c19db46abf4db"
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "f34468a18ab186f53910eb9ca9eb07e0eb9f23e403eaf38f5bd83f023cba80e8"
+          "Sha256": "a8a11e1d89f0b55b865de0435051b71ffb16c9079bff31dd896e843d2399f9be"
         },
         {
           "Path": "Prompts/ToSearchTextInDirectoryWithRipgrep.prompt.md",
@@ -1218,11 +1219,7 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "GitHub",
