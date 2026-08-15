@@ -1,5 +1,9 @@
 # index.pts Change History
 
+## Fix Working-Directory Action Description Indentation (2026-08-15)
+- Replaced two literal `\\t` prefixes with real indentation on the `Description` assignments for the working-directory fast PowerShell actions.
+- Validation: the staging ProtoScript Workbench had interpreted the literal prefixes as part of the field name and skipped the Process skill during project compilation.
+
 ## Add Fast PowerShell Process Actions (2026-04-21)
 - Added `ToExecuteFastPowerShellOperation` and `ToExecuteFastPowerShellOperationWithTimeout` so callers can opt into the in-process PowerShell host for lower startup overhead.
 - Added `ToExecuteFastPowerShellOperationInWorkingDirectory` and `ToExecuteFastPowerShellOperationInWorkingDirectoryWithTimeout` to expose the fast path with explicit working-directory control.

@@ -194,7 +194,7 @@ timeoutSeconds - maximum runtime in seconds (defaults to 60 when <= 0). Preserve
 [SemanticProgram.InfinitivePhrase("to execute a fast PowerShell script in a working directory and return the output")]
 prototype ToExecuteFastPowerShellOperationInWorkingDirectory : ProcessSkillAction
 {
-\tDescription = @"script - PowerShell script to execute through the managed PowerShell compatibility path
+	Description = @"script - PowerShell script to execute through the managed PowerShell compatibility path
 workingDirectory - working directory to apply before script execution. Preserves the fast PowerShell action contract while using manager-owned timeout/kill behavior. Before using this tool, search for a better typed or domain-native action that can accomplish the same task more directly and safely. Do not use this tool to call BuffalyAgentService evaluate endpoints; use typed session tools instead.";
 
 	function Execute(string script, string workingDirectory) : string
@@ -212,7 +212,7 @@ workingDirectory - working directory to apply before script execution. Preserves
 [SemanticProgram.InfinitivePhrase("to execute a fast PowerShell script in a working directory with a timeout and return the output")]
 prototype ToExecuteFastPowerShellOperationInWorkingDirectoryWithTimeout : ProcessSkillAction, CoreAction
 {
-\tDescription = @"script - PowerShell script to execute through the managed PowerShell compatibility path
+	Description = @"script - PowerShell script to execute through the managed PowerShell compatibility path
 workingDirectory - working directory to apply before script execution
 timeoutSeconds - maximum runtime in seconds (defaults to 120 when <= 0). Preserves the fast PowerShell action contract while using manager-owned timeout/kill behavior. Before using this tool, search for a better typed or domain-native action that can accomplish the same task more directly and safely. Do not use this tool to call BuffalyAgentService evaluate endpoints; use typed session tools instead.";
 
