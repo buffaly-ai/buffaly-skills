@@ -7,3 +7,4 @@
 ## Add Typed Git Read Actions (2026-08-15)
 - Added `ToGetGitDiff`, `ToGetGitShow`, and `ToGetGitLog` thin wrappers with bounded output parameters.
 - Design Decision: placed these actions in the existing GitHub skill because it already owns all local git discovery, mutation, and release operations.
+- Added all three prototypes to `index.pts.lazy.json` after live staging acceptance proved that compiled actions without lazy-module mappings could not be discovered or invoked in a fresh runtime session.
