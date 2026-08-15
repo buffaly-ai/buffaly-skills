@@ -1974,17 +1974,18 @@
     {
       "SkillName": "Process",
       "Title": "Process",
-      "Description": "Buffaly OpsAgent skill package for Process.",
-      "Version": "0.1.0",
+      "Description": "Buffaly skill package for Process.",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "Process",
         "Process"
       ],
       "Path": "skills/Process",
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "f821eb920090aa9f783fce5cfd0608218bd8238e01bc0e0d7ef200917c95f29d"
+          "Sha256": "4aca4507705ea358e34c4f1f495bf17f79a9e9077a1d5e6d3023378063865172"
         },
         {
           "Path": "index.pts.md",
@@ -1993,11 +1994,7 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": []
     },
     {
       "SkillName": "ProcessManagement",
