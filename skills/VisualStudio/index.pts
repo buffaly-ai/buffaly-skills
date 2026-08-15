@@ -1,5 +1,7 @@
 reference Buffaly.Development.Common Buffaly.Development.Common;
+reference Buffaly.Agent.Tools.VisualStudio Buffaly.Agent.Tools.VisualStudio;
 import Buffaly.Development.Common Buffaly.Development.Common.VisualStudioOntologyGenerator VisualStudioOntologyGenerator;
+import Buffaly.Agent.Tools.VisualStudio Buffaly.Agent.Tools.VisualStudio.DotNetProjects DotNetProjects;
 import Buffaly.Development.Common Buffaly.Development.Common.CSharpClassExposureGenerator CSharpClassExposureGenerator;
 import Buffaly.Development.Common Buffaly.Development.Common.Models.GenerateOrUpdateClassExposureFromCSharpRequest GenerateOrUpdateClassExposureFromCSharpRequest;
 import Buffaly.Development.Common Buffaly.Development.Common.Models.GenerateOrUpdateClassExposureFromCSharpResult GenerateOrUpdateClassExposureFromCSharpResult;

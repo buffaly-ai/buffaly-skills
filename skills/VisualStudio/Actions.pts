@@ -9,6 +9,42 @@ function ToTruncatedText(string value, int maxLength) : string
 	return value.Substring(0, maxLength) + "\n...[truncated]";
 }
 
+[SemanticProgram.InfinitivePhrase("to build a dotnet project")]
+[SemanticProgram.InfinitivePhrase("to build a .net project")]
+prototype ToBuildDotNetProject : VisualStudioSkillAction, CodingContext
+{
+	Description = @"projectPath - .csproj/.sln/.slnx file path or directory containing exactly one project/solution. configuration - build configuration (defaults to Debug). timeoutSeconds - command timeout in seconds (defaults to 120). Returns concise build summary and diagnostics.";
+
+	function Execute(string projectPath, string configuration, int timeoutSeconds) : string
+	{
+		return DotNetProjects.BuildProject(projectPath, configuration, timeoutSeconds);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to run dotnet tests")]
+[SemanticProgram.InfinitivePhrase("to test a .net project")]
+prototype ToRunDotNetTests : VisualStudioSkillAction, CodingContext
+{
+	Description = @"projectPath - .csproj/.sln/.slnx file path or directory containing exactly one project/solution. filter - optional dotnet test filter. timeoutSeconds - command timeout in seconds (defaults to 120). Returns concise pass/fail summary and failed test names.";
+
+	function Execute(string projectPath, string filter, int timeoutSeconds) : string
+	{
+		return DotNetProjects.RunTests(projectPath, filter, timeoutSeconds);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to publish a dotnet project")]
+[SemanticProgram.InfinitivePhrase("to publish a .net project")]
+prototype ToPublishDotNetProject : VisualStudioSkillAction, CodingContext
+{
+	Description = @"projectPath - .csproj/.sln/.slnx file path or directory containing exactly one project/solution. configuration - defaults Release. outputPath - optional publish output directory. timeoutSeconds - defaults 120. Returns concise publish status, outputs, and diagnostics.";
+
+	function Execute(string projectPath, string configuration, string outputPath, int timeoutSeconds) : string
+	{
+		return DotNetProjects.PublishProject(projectPath, configuration, outputPath, timeoutSeconds);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to update the dlls for a solution")]
 [SemanticProgram.InfinitivePhrase("to update dlls for the solution")]
 [SemanticProgram.InfinitivePhrase("to run update_dlls.bat for a solution")]
