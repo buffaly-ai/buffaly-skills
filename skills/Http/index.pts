@@ -1,0 +1,16 @@
+reference Buffaly.Agent.Tools.Http Buffaly.Agent.Tools.Http;
+import Buffaly.Agent.Tools.Http Buffaly.Agent.Tools.Http.WebRequests WebRequests;
+
+prototype HttpSkillAction : OpsAction
+{
+	Description = @"Base action type for bounded general HTTP operations.";
+}
+
+[SemanticEntity("http skill")]
+prototype HttpSkill : SkillEntity
+{
+	Description = "Bounded URL status, content, JSON POST, download, and multi-status operations.";
+	ActionRoot = HttpSkillAction;
+}
+
+include "Actions.pts";

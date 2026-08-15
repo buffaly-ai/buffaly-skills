@@ -1,0 +1,49 @@
+[SemanticProgram.InfinitivePhrase("to check a url status")]
+prototype ToCheckUrlStatus : HttpSkillAction
+{
+	Description = @"url - absolute HTTP/HTTPS URL. timeoutSeconds - defaults 10. followRedirects - defaults true. Returns JSON statusCode, isReachable, redirectUrl, and errorMessage.";
+	function Execute(string url, int timeoutSeconds, bool followRedirects) : string
+	{
+		return WebRequests.CheckUrlStatus(url, timeoutSeconds <= 0 ? 10 : timeoutSeconds, followRedirects);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to fetch url content")]
+prototype ToFetchUrlContent : HttpSkillAction
+{
+	Description = @"url - absolute HTTP/HTTPS URL. timeoutSeconds - defaults 15. maxContentLength - defaults 10000. headersJson - optional JSON object. Returns bounded content JSON.";
+	function Execute(string url, int timeoutSeconds, int maxContentLength, string headersJson) : string
+	{
+		return WebRequests.FetchUrlContent(url, timeoutSeconds, maxContentLength, headersJson);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to post json to a url")]
+prototype ToPostJsonToUrl : HttpSkillAction
+{
+	Description = @"url - absolute HTTP/HTTPS URL. body - JSON string. headersJson - optional JSON object. timeoutSeconds - defaults 15. Returns bounded response JSON.";
+	function Execute(string url, string body, string headersJson, int timeoutSeconds) : string
+	{
+		return WebRequests.PostJson(url, body, headersJson, timeoutSeconds);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to download a file from a url")]
+prototype ToDownloadFileFromUrl : HttpSkillAction
+{
+	Description = @"url - absolute HTTP/HTTPS URL. destinationPath - local file path. timeoutSeconds - defaults 30. overwrite - defaults true. Returns JSON filePath, bytesDownloaded, and statusCode.";
+	function Execute(string url, string destinationPath, int timeoutSeconds, bool overwrite) : string
+	{
+		return WebRequests.DownloadFile(url, destinationPath, timeoutSeconds <= 0 ? 30 : timeoutSeconds, overwrite);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to check multiple url statuses")]
+prototype ToCheckMultipleUrlStatuses : HttpSkillAction
+{
+	Description = @"urlsJson - JSON array of up to 100 URLs. timeoutSeconds - defaults 10 per URL. followRedirects - defaults true. Returns a JSON result array.";
+	function Execute(string urlsJson, int timeoutSeconds, bool followRedirects) : string
+	{
+		return WebRequests.CheckMultipleUrlStatuses(urlsJson, timeoutSeconds <= 0 ? 10 : timeoutSeconds, followRedirects);
+	}
+}

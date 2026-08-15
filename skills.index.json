@@ -3189,6 +3189,39 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": []
+    },
+    {
+      "SkillName": "Http",
+      "Title": "HTTP",
+      "Description": "Buffaly skill package for HTTP.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "HTTP",
+        "Http"
+      ],
+      "Path": "skills/Http",
+      "Files": [
+        {
+          "Path": "Actions.pts",
+          "Sha256": "e2e2de50406ec21ac64892f1ef45a96ea65b8ac050fd08425a09cd5ea027723f"
+        },
+        {
+          "Path": "Actions.pts.md",
+          "Sha256": "1fb0762e64396aa68872b758f7cd936b297a7824fcb158480b170e866650e19e"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "223fa8348f3ef7300ade2ad73902ac7f55a2c2be30a1a684551fca2f77173900"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "ef86873da75bf7b38d1ece3da20731fc7c9877079f1253e815249b7dedeb6461"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
     }
   ]
 }
