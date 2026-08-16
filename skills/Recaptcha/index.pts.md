@@ -31,3 +31,7 @@ Manages Google reCAPTCHA Enterprise keys and allowed domains via gcloud CLI.
 - Add/Remove domain operations use inline PowerShell for read-modify-write (avoids ProtoScript array/loop limitations)
 - Domain listing uses `--format=value()` to avoid JSON parsing in ProtoScript
 - 2026-07-15: Replaced interactive gcloud user auth with service-account auth. Added ToRecaptchaEnsureServiceAccount() helper that activates recaptcha-enterprise@intelligence-fac-1731098258626.iam.gserviceaccount.com from C:\drop\recaptcha-enterprise-sa.json. Granted roles/recaptchaenterprise.admin to the service account. Default project changed to intelligence-fac-1731098258626. All actions now call ToRecaptchaEnsureServiceAccount() before gcloud commands.
+
+- 2026-07-16: Added ToCreateRecaptchaKey action for creating new reCAPTCHA Enterprise web keys with display name, domains, and integration type (SCORE/CHECKBOX).
+
+2026-08-15: Added ToProvisionRecaptchaKey C# facade-backed action using RecaptchaEnterprise.ServiceAccountKey, leaving existing gcloud actions intact for compatibility.

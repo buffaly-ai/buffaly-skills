@@ -1,4 +1,7 @@
-// Recaptcha Skill - Google reCAPTCHA Enterprise key and domain management via gcloud CLI
+// Recaptcha Skill - Google reCAPTCHA Enterprise key and domain management
+reference Buffaly.Marketing Buffaly.Marketing;
+import Buffaly.Marketing Buffaly.Marketing.Recaptcha.RecaptchaProtoScriptFacade RecaptchaProtoScriptFacade;
+import Buffaly.Agent.Tools.Secrets Buffaly.Agent.Tools.Secrets.UserSecrets UserSecrets;
 
 // ===== Skill Entity =====
 [SemanticEntity("recaptcha skill")]
@@ -14,6 +17,20 @@ prototype RecaptchaSkill : SkillEntity
 prototype RecaptchaSkillAction : OpsAction
 {
 	Description = @"Base action type for reCAPTCHA Enterprise management tools.";
+}
+
+[SemanticProgram.InfinitivePhrase("to provision a recaptcha key")]
+[SemanticProgram.InfinitivePhrase("to create a recaptcha key with api")]
+[SemanticProgram.InfinitivePhrase("to create a recaptcha enterprise key with api")]
+prototype ToProvisionRecaptchaKey : RecaptchaSkillAction
+{
+	Description = @"projectId - Google Cloud project ID. displayName - human-readable key name. domainsCsv - comma-separated hostnames only. integrationType - score or checkbox. proofDirectoryPath - writable local proof directory checked before mutation. Creates or reuses a reCAPTCHA Enterprise web key and ensures required domains.";
+
+	function Execute(string projectId, string displayName, string domainsCsv, string integrationType, string proofDirectoryPath) : string
+	{
+		RecaptchaProtoScriptFacade.ConfigureServiceAccountCredentialJson(UserSecrets.GetSecret("RecaptchaEnterprise.ServiceAccountKey"));
+		return RecaptchaProtoScriptFacade.ProvisionWebKey(projectId, displayName, domainsCsv, integrationType, proofDirectoryPath);
+	}
 }
 
 // ===== Shared Helpers =====
@@ -53,6 +70,65 @@ function ToRecaptchaEscapeSingleQuoted(string value) : string
 		return "";
 	return value.Replace("'", "''");
 }
+
+// Validates a single hostname: no scheme, path, port, or whitespace
+function ToRecaptchaValidateHostname(string hostname) : bool
+{
+	if (StringUtil.IsEmpty(hostname))
+		return false;
+	// Reject whitespace, shell metacharacters, and URL components
+	if (hostname.Contains(" ") || hostname.Contains(";") || hostname.Contains("|") || hostname.Contains("'") || hostname.Contains('"') || hostname.Contains("@") || hostname.Contains(":") || hostname.Contains("/") || hostname.Contains("\n") || hostname.Contains("\r") || hostname.Contains("\t"))
+		return false;
+	// Reject uppercase letters
+	if (hostname.Contains("A") || hostname.Contains("B") || hostname.Contains("C") || hostname.Contains("D") || hostname.Contains("E") || hostname.Contains("F") || hostname.Contains("G") || hostname.Contains("H") || hostname.Contains("I") || hostname.Contains("J") || hostname.Contains("K") || hostname.Contains("L") || hostname.Contains("M") || hostname.Contains("N") || hostname.Contains("O") || hostname.Contains("P") || hostname.Contains("Q") || hostname.Contains("R") || hostname.Contains("S") || hostname.Contains("T") || hostname.Contains("U") || hostname.Contains("V") || hostname.Contains("W") || hostname.Contains("X") || hostname.Contains("Y") || hostname.Contains("Z"))
+		return false;
+	// Reject other special characters
+	if (hostname.Contains("!") || hostname.Contains("#") || hostname.Contains("$") || hostname.Contains("%") || hostname.Contains("&") || hostname.Contains("(") || hostname.Contains(")") || hostname.Contains("+") || hostname.Contains("=") || hostname.Contains("?") || hostname.Contains("[") || hostname.Contains("]") || hostname.Contains("{") || hostname.Contains("}") || hostname.Contains("<") || hostname.Contains(">") || hostname.Contains(",") || hostname.Contains("^") || hostname.Contains("~") || hostname.Contains("_") || hostname.Contains("`") || hostname.Contains("\\") || hostname.Contains("*"))
+		return false;
+	// Must not start or end with hyphen or dot
+	if (hostname.StartsWith("-") || hostname.StartsWith(".") || hostname.EndsWith("-") || hostname.EndsWith("."))
+		return false;
+	return true;
+}
+
+// Validates comma-separated domains: each must be a hostname-only value
+function ToRecaptchaValidateDomains(string domains) : bool
+{
+	if (StringUtil.IsEmpty(domains))
+		return false;
+	// Reject shell metacharacters and invalid characters (allow comma, dot, hyphen, lowercase, digits)
+	if (domains.Contains(" ") || domains.Contains(";") || domains.Contains("|") || domains.Contains("'") || domains.Contains('"') || domains.Contains("@") || domains.Contains(":") || domains.Contains("/") || domains.Contains("\n") || domains.Contains("\r") || domains.Contains("\t") || domains.Contains("!") || domains.Contains("#") || domains.Contains("$") || domains.Contains("%") || domains.Contains("&") || domains.Contains("(") || domains.Contains(")") || domains.Contains("+") || domains.Contains("=") || domains.Contains("?") || domains.Contains("[") || domains.Contains("]") || domains.Contains("{") || domains.Contains("}") || domains.Contains("<") || domains.Contains(">") || domains.Contains("^") || domains.Contains("~") || domains.Contains("_") || domains.Contains("`") || domains.Contains("\\") || domains.Contains("*"))
+		return false;
+	// Reject uppercase letters
+	if (domains.Contains("A") || domains.Contains("B") || domains.Contains("C") || domains.Contains("D") || domains.Contains("E") || domains.Contains("F") || domains.Contains("G") || domains.Contains("H") || domains.Contains("I") || domains.Contains("J") || domains.Contains("K") || domains.Contains("L") || domains.Contains("M") || domains.Contains("N") || domains.Contains("O") || domains.Contains("P") || domains.Contains("Q") || domains.Contains("R") || domains.Contains("S") || domains.Contains("T") || domains.Contains("U") || domains.Contains("V") || domains.Contains("W") || domains.Contains("X") || domains.Contains("Y") || domains.Contains("Z"))
+		return false;
+	// Must not start or end with comma, and must not have consecutive commas
+	if (domains.StartsWith(",") || domains.EndsWith(",") || domains.Contains(",,"))
+		return false;
+	return true;
+}
+
+// Validates Google Cloud project ID: lowercase letters, digits, hyphens, 6-30 chars, starts with letter
+function ToRecaptchaValidateProjectId(string projectId) : bool
+{
+	if (StringUtil.IsEmpty(projectId))
+		return false;
+	if (projectId.Length <= 5)
+		return false;
+	if (projectId.Length > 30)
+		return false;
+	// First character must be a lowercase letter (not digit or hyphen)
+	if (projectId.StartsWith("0") || projectId.StartsWith("1") || projectId.StartsWith("2") || projectId.StartsWith("3") || projectId.StartsWith("4") || projectId.StartsWith("5") || projectId.StartsWith("6") || projectId.StartsWith("7") || projectId.StartsWith("8") || projectId.StartsWith("9") || projectId.StartsWith("-"))
+		return false;
+	// Reject invalid characters: whitespace, shell metacharacters, special chars, dots, uppercase
+	if (projectId.Contains(" ") || projectId.Contains(";") || projectId.Contains("|") || projectId.Contains("'") || projectId.Contains('"') || projectId.Contains("@") || projectId.Contains(":") || projectId.Contains("/") || projectId.Contains(".") || projectId.Contains("_") || projectId.Contains("!") || projectId.Contains("#") || projectId.Contains("$") || projectId.Contains("%") || projectId.Contains("&") || projectId.Contains("(") || projectId.Contains(")") || projectId.Contains("+") || projectId.Contains("=") || projectId.Contains("?") || projectId.Contains("[") || projectId.Contains("]") || projectId.Contains("{") || projectId.Contains("}") || projectId.Contains("<") || projectId.Contains(">") || projectId.Contains(",") || projectId.Contains("^") || projectId.Contains("~") || projectId.Contains("`") || projectId.Contains("\\") || projectId.Contains("*") || projectId.Contains("\n") || projectId.Contains("\r") || projectId.Contains("\t"))
+		return false;
+	// Reject uppercase letters
+	if (projectId.Contains("A") || projectId.Contains("B") || projectId.Contains("C") || projectId.Contains("D") || projectId.Contains("E") || projectId.Contains("F") || projectId.Contains("G") || projectId.Contains("H") || projectId.Contains("I") || projectId.Contains("J") || projectId.Contains("K") || projectId.Contains("L") || projectId.Contains("M") || projectId.Contains("N") || projectId.Contains("O") || projectId.Contains("P") || projectId.Contains("Q") || projectId.Contains("R") || projectId.Contains("S") || projectId.Contains("T") || projectId.Contains("U") || projectId.Contains("V") || projectId.Contains("W") || projectId.Contains("X") || projectId.Contains("Y") || projectId.Contains("Z"))
+		return false;
+	return true;
+}
+
 
 function ToRecaptchaRunGcloud(string argumentLine, int timeoutSeconds, string label) : string
 {
@@ -163,6 +239,44 @@ prototype ToSetRecaptchaDomains : RecaptchaSkillAction
 			projectId = ToRecaptchaDefaultProjectId();
 
 		string script = "gcloud recaptcha keys update " + keyId + " --project=" + projectId + " --web --domains=\"" + domains + "\" --quiet 2>&1";
+		return SystemOperations.RunPowerShell(script, 60);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create a recaptcha key")]
+[SemanticProgram.InfinitivePhrase("to create a recaptcha enterprise key")]
+prototype ToCreateRecaptchaKey : RecaptchaSkillAction
+{
+	Description = @"displayName - human-readable name for the key (typically a site or app name). domains - comma-separated list of allowed domains (hostnames only, no scheme/path/port). integrationType - SCORE or CHECKBOX. projectId - Google Cloud project ID. If empty, uses the default. Creates a new reCAPTCHA Enterprise web key and returns JSON with the created key details.";
+
+	function Execute(string displayName, string domains, string integrationType, string projectId) : string
+	{
+		ToRecaptchaEnsureServiceAccount();
+		if (StringUtil.IsEmpty(projectId))
+			projectId = ToRecaptchaDefaultProjectId();
+
+		if (StringUtil.IsEmpty(integrationType))
+			integrationType = "score";
+
+		// Validate integrationType is a closed enum (score or checkbox)
+		if (!StringUtil.EqualNoCase(integrationType, "score") && !StringUtil.EqualNoCase(integrationType, "checkbox"))
+			throw new InvalidOperationException("integrationType must be 'score' or 'checkbox', got: " + integrationType);
+
+		// Validate domains: non-empty, hostname-only, no scheme/path/port/whitespace
+		if (!ToRecaptchaValidateDomains(domains))
+			throw new InvalidOperationException("domains must be a non-empty comma-separated list of hostnames (no scheme, path, port, or whitespace).");
+
+		// Validate projectId format
+		if (!ToRecaptchaValidateProjectId(projectId))
+			throw new InvalidOperationException("projectId must be 6-30 chars, lowercase letters, digits, and hyphens, starting with a letter.");
+
+		// Escape all interpolated values to prevent command injection
+		string safeDisplayName = ToRecaptchaEscapeSingleQuoted(displayName);
+		string safeDomains = ToRecaptchaEscapeSingleQuoted(domains);
+		string safeIntegrationType = ToRecaptchaEscapeSingleQuoted(integrationType);
+		string safeProjectId = ToRecaptchaEscapeSingleQuoted(projectId);
+
+		string script = "gcloud recaptcha keys create --display-name='" + safeDisplayName + "' --web --domains='" + safeDomains + "' --integration-type='" + safeIntegrationType + "' --project='" + safeProjectId + "' --format=json --quiet 2>&1";
 		return SystemOperations.RunPowerShell(script, 60);
 	}
 }
