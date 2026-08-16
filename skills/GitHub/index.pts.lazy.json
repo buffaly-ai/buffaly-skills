@@ -17,8 +17,8 @@
     "ToGetGitHubAuthStatus": "Skills/GitHub/index.pts",
     "ToGetGitHubCommitComments": "Skills/GitHub/index.pts",
     "ToGetGitHubIssue": "Skills/GitHub/index.pts",
-    "ToGetGitRepoRoot": "Skills/GitHub/index.pts",
     "ToGetGitLog": "Skills/GitHub/index.pts",
+    "ToGetGitRepoRoot": "Skills/GitHub/index.pts",
     "ToGetGitShow": "Skills/GitHub/index.pts",
     "ToGetGitStatusPorcelain": "Skills/GitHub/index.pts",
     "ToGitAddPathspec": "Skills/GitHub/index.pts",
@@ -29,5 +29,82 @@
     "ToListGitHubReposForOrg": "Skills/GitHub/index.pts",
     "ToRunGitTagReleaseInSolution": "Skills/GitHub/index.pts",
     "ToUpdateGitHubIssue": "Skills/GitHub/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToGetGitHubAuthStatus": [
+      "to get github auth status"
+    ],
+    "ToListGitHubReposForOrg": [
+      "to list github repositories for an organization"
+    ],
+    "ToCheckGitHubOrgAccess": [
+      "to check github organization access"
+    ],
+    "ToCreatePrivateGitHubRepoInOrg": [
+      "to create a private github repository in an organization"
+    ],
+    "ToGetGitHubCommitComments": [
+      "to get github commit comments"
+    ],
+    "ToAddGitHubCommitComment": [
+      "to add github commit comment"
+    ],
+    "ToCreateGitHubIssue": [
+      "to create github issue"
+    ],
+    "ToListGitHubIssues": [
+      "to list github issues"
+    ],
+    "ToGetGitHubIssue": [
+      "to get github issue"
+    ],
+    "ToUpdateGitHubIssue": [
+      "to update github issue"
+    ],
+    "ToAddGitHubIssueComment": [
+      "to add github issue comment"
+    ],
+    "ToCloseGitHubIssue": [
+      "to close github issue"
+    ],
+    "ToGetGitRepoRoot": [
+      "to get git repository root"
+    ],
+    "ToGetGitCurrentBranch": [
+      "to get git current branch"
+    ],
+    "ToGetGitStatusPorcelain": [
+      "to get git status porcelain"
+    ],
+    "ToGitAddPathspec": [
+      "to git add a pathspec"
+    ],
+    "ToGitCommit": [
+      "to git commit staged changes"
+    ],
+    "ToGitPushBranch": [
+      "to git push branch"
+    ],
+    "ToGetGitHeadSha": [
+      "to get git head sha"
+    ],
+    "ToGetGitDiff": [
+      "to get git diff"
+    ],
+    "ToGetGitShow": [
+      "to get git show"
+    ],
+    "ToGetGitLog": [
+      "to get git log"
+    ],
+    "ToCommitAndPushScopedChanges": [
+      "to commit and push scoped changes"
+    ],
+    "ToRunGitTagReleaseInSolution": [
+      "to run git tag release in solution"
+    ],
+    "ToInitializeAndPushSolutionRepository": [
+      "to initialize and push solution repository"
+    ]
   }
 }
