@@ -8,3 +8,5 @@
 - 2026-07-20: Corrected assembly-name resolution to the unquoted `reference Buffaly.Marketing Buffaly.Marketing;` form; quoted values are project-relative DLL paths in ProtoScript.
 
 - 2026-08-02: Configured the GA4 facade from `GoogleAnalytics.ServiceAccountKey` at each credential-dependent action boundary. This makes the documented UserSecrets contract executable instead of relying on uncalled static configuration or stale process state.
+
+2026-08-14: Added ToAddGoogleAnalyticsProperty thin action over the Buffaly.Marketing GA Admin provisioning facade.

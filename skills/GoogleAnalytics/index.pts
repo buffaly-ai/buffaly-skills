@@ -53,3 +53,17 @@ prototype ToRunMarketingAnalyticsReport : GoogleAnalyticsSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to add a google analytics property")]
+[SemanticProgram.InfinitivePhrase("to create a google analytics property")]
+[SemanticProgram.InfinitivePhrase("to provision a google analytics property")]
+prototype ToAddGoogleAnalyticsProperty : GoogleAnalyticsSkillAction
+{
+	Description = @"accountId - GA account ID. propertyDisplayName - GA4 property display name. webStreamDisplayName - web stream display name. defaultUri - canonical website URL. proofDirectoryPath - writable local proof directory checked before mutation. Creates or reuses the GA4 property and web stream, then returns the measurement ID.";
+
+	function Execute(string accountId, string propertyDisplayName, string webStreamDisplayName, string defaultUri, string proofDirectoryPath) : string
+	{
+		GoogleAnalyticsProtoScriptFacade.ConfigureServiceAccountCredentialJson(UserSecrets.GetSecret("GoogleAnalytics.ServiceAccountKey"));
+		return GoogleAnalyticsProtoScriptFacade.ProvisionPropertyWebStream(accountId, propertyDisplayName, webStreamDisplayName, defaultUri, proofDirectoryPath);
+	}
+}
+
