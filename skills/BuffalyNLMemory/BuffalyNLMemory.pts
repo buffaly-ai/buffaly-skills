@@ -47,6 +47,17 @@ prototype ToInterpretRuntimePrototypeDefinition : ProtoScriptAction, BuffalyNLMe
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to try to interpret a runtime prototype definition")]
+prototype ToTryInterpretRuntimePrototypeDefinition : ProtoScriptAction, BuffalyNLMemorySkillAction
+{
+	Description = @"prototypeDefinition - raw ProtoScript containing exactly one prototype definition. Returns structured JSON instead of throwing for expected runtime-memory validation failures.";
+
+	function Execute(string prototypeDefinition) : string
+	{
+		return BuffalyNlMemoryRuntimeTools.TryInterpretAndPersistRuntimePrototypeDefinitionAsJson(_runtime, _opsAgent, prototypeDefinition);
+	}
+}
+
 prototype ToInterpretRuntimePrototypeDefinitionWithProvenance : BuffalyNLMemorySkillAction
 {
 	Description = @"Internal source-session write action for a validated memory plus critic provenance.";

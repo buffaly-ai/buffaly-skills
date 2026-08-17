@@ -2,7 +2,7 @@
 
 Defines runtime prototype-memory services/actions, source-local Online Action Critic persistence actions, and the temporary-memory prompt action. Runtime initialization restores marker-free complete definitions from `artifacts/nl-memory/SessionMemory.pts` and critic-owned executable actions from `artifacts/online-action-critic/SessionActions.pts`. Online Action Critic writes expose create/update, exact-definition read, and start-fresh clear operations while the C# owner enforces same-name ownership and source-scoped phrase binding. The source write wrapper returns parser or interpretation failures as diagnostic text so a remote critic can correct its generated definition. Persisted writes use shared transactional ProtoScript authoring before live runtime mutation. Historical catch-up actions are intentionally absent.
 
-The manual `ToRestoreRuntimeMemoriesFromSessionArtifacts` action mirrors runtime initialization by restoring both NLMemory prototypes and Online Action Critic actions. It is safe for validation because restoration interprets and binds definitions but does not invoke learned actions.
+The manual `ToRestoreRuntimeMemoriesFromSessionArtifacts` action mirrors runtime initialization by restoring both NLMemory prototypes and Online Action Critic actions. It is safe for validation because restoration interprets and binds definitions but does not invoke learned actions. `ToTryInterpretRuntimePrototypeDefinition` is the caller-facing safe write path for memory agents: it returns structured JSON for expected runtime prototype validation failures, such as missing ontology bases, instead of allowing those failures to propagate as unhandled JsonWs errors.
 
 ## 2026-08-02
 
