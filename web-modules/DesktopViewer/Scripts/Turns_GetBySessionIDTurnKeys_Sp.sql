@@ -28,6 +28,7 @@ BEGIN
 		SELECT
 			m.TurnID AS TurnKey,
 			MIN(CASE WHEN m.Role = 'User' THEN m.MessageID END) AS UserMessageID,
+			MIN(CASE WHEN m.Role = 'User' THEN m.DateCreated END) AS UserMessageDateCreated,
 			MAX(CASE WHEN m.Role = 'Assistant' THEN m.MessageID END) AS AssistantMessageID
 		FROM Messages m WITH (NOLOCK)
 		INNER JOIN RequestedTurnKeys r
@@ -46,6 +47,7 @@ BEGIN
 	WHERE
 		UserMessageID IS NOT NULL
 	ORDER BY
+		UserMessageDateCreated ASC,
 		UserMessageID ASC
 END
 GO
