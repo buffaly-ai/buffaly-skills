@@ -26,6 +26,7 @@ AS
 		;WITH SessionHierarchy AS
 		(
 			SELECT	root.SessionID,
+					root.ParentSessionID,
 					root.SessionID AS RootSessionID,
 					1 AS HierarchyDepth
 			FROM	dbo.Sessions root WITH (NOLOCK)
@@ -35,6 +36,7 @@ AS
 			UNION ALL
 
 			SELECT	child.SessionID,
+					child.ParentSessionID,
 					parent.RootSessionID,
 					parent.HierarchyDepth + 1
 			FROM	SessionHierarchy parent
@@ -45,6 +47,7 @@ AS
 		MatchingRows AS
 		(
 			SELECT	hierarchy.SessionID,
+					hierarchy.ParentSessionID,
 					hierarchy.RootSessionID,
 					hierarchy.HierarchyDepth,
 					sessionRow.LastUpdated
@@ -75,6 +78,7 @@ AS
 		RankedMatchingRows AS
 		(
 			SELECT	matching.SessionID,
+					matching.ParentSessionID,
 					matching.RootSessionID,
 					matching.HierarchyDepth,
 					matching.LastUpdated,
@@ -83,12 +87,71 @@ AS
 					pagedRoot.RootRowsReturned,
 					ROW_NUMBER() OVER
 					(
+						PARTITION BY matching.RootSessionID
+						ORDER BY matching.LastUpdated DESC,
+								 matching.SessionID DESC
+					) AS SearchResultOrdinalWithinRoot,
+					ROW_NUMBER() OVER
+					(
 						ORDER BY matching.LastUpdated DESC,
 								 matching.SessionID DESC
 					) AS SearchResultOrdinal
 			FROM	MatchingRows matching
 			JOIN	PagedRoots pagedRoot
 			ON		pagedRoot.RootSessionID = matching.RootSessionID
+		),
+		CappedMatchingRows AS
+		(
+			SELECT	*
+			FROM	RankedMatchingRows
+			WHERE	SearchResultOrdinalWithinRoot <= CONVERT(int, CEILING(200.0 / NULLIF(RootRowsReturned, 0)))
+					AND SearchResultOrdinal <= 200
+		),
+		SearchRowsWithAncestors AS
+		(
+			SELECT	matching.SessionID,
+					matching.ParentSessionID,
+					matching.RootSessionID,
+					matching.HierarchyDepth,
+					matching.LastUpdated,
+					matching.RootOrdinal,
+					matching.TotalRootRows,
+					matching.RootRowsReturned,
+					matching.SearchResultOrdinal,
+					CONVERT(bit, 1) AS IsSearchMatch
+			FROM	CappedMatchingRows matching
+
+			UNION ALL
+
+			SELECT	parent.SessionID,
+					parent.ParentSessionID,
+					child.RootSessionID,
+					child.HierarchyDepth - 1,
+					parent.LastUpdated,
+					child.RootOrdinal,
+					child.TotalRootRows,
+					child.RootRowsReturned,
+					child.SearchResultOrdinal,
+					CONVERT(bit, 0) AS IsSearchMatch
+			FROM	SearchRowsWithAncestors child
+			JOIN	dbo.Sessions parent WITH (NOLOCK)
+			ON		parent.SessionID = child.ParentSessionID
+					AND ISNULL(parent.IsArchived, 0) = 0
+		),
+		DedupedSearchRows AS
+		(
+			SELECT	searchRow.SessionID,
+					searchRow.RootSessionID,
+					MIN(searchRow.HierarchyDepth) AS HierarchyDepth,
+					MAX(searchRow.LastUpdated) AS LastUpdated,
+					MIN(searchRow.RootOrdinal) AS RootOrdinal,
+					MAX(searchRow.TotalRootRows) AS TotalRootRows,
+					MAX(searchRow.RootRowsReturned) AS RootRowsReturned,
+					MIN(searchRow.SearchResultOrdinal) AS SearchResultOrdinal,
+					MAX(CONVERT(int, searchRow.IsSearchMatch)) AS IsSearchMatch
+			FROM	SearchRowsWithAncestors searchRow
+			GROUP BY searchRow.SessionID,
+					searchRow.RootSessionID
 		)
 		SELECT	sessionRow.SessionID,
 				sessionRow.SessionKey,
@@ -106,16 +169,18 @@ AS
 				sessionRow.LastUpdated AS OwnLastUpdated,
 				sessionRow.LastUpdated AS EffectiveLastUpdated,
 				sessionRow.IsArchived,
-				rankedMatching.RootSessionID,
-				CONVERT(int, rankedMatching.RootOrdinal) AS RootOrdinal,
-				rankedMatching.HierarchyDepth,
-				CONVERT(int, rankedMatching.RootRowsReturned) AS RootRowsReturned,
-				CONVERT(bit, CASE WHEN rankedMatching.TotalRootRows > @SkipRoots + @NumRoots THEN 1 ELSE 0 END) AS HasMoreRootRows
-		FROM	RankedMatchingRows rankedMatching
+				deduped.RootSessionID,
+				CONVERT(int, deduped.RootOrdinal) AS RootOrdinal,
+				deduped.HierarchyDepth,
+				CONVERT(int, deduped.RootRowsReturned) AS RootRowsReturned,
+				CONVERT(bit, CASE WHEN deduped.TotalRootRows > @SkipRoots + @NumRoots THEN 1 ELSE 0 END) AS HasMoreRootRows
+		FROM	DedupedSearchRows deduped
 		JOIN	dbo.Sessions sessionRow WITH (NOLOCK)
-		ON		sessionRow.SessionID = rankedMatching.SessionID
-		WHERE	rankedMatching.SearchResultOrdinal <= 200
-		ORDER BY rankedMatching.LastUpdated DESC,
+		ON		sessionRow.SessionID = deduped.SessionID
+		ORDER BY deduped.RootOrdinal,
+				deduped.HierarchyDepth,
+				deduped.SearchResultOrdinal,
+				deduped.LastUpdated DESC,
 				sessionRow.SessionID DESC
 		OPTION (RECOMPILE, MAXRECURSION 100);
 		RETURN;
