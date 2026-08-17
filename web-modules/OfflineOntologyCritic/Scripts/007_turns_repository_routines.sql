@@ -12,6 +12,7 @@ LANGUAGE sql AS $$
 			m.session_id AS session_id,
 			m.turn_id AS turn_key,
 			MIN(CASE WHEN m.role = 'User' THEN m.message_id END) AS user_message_id,
+			MIN(CASE WHEN m.role = 'User' THEN m.date_created END) AS user_message_date_created,
 			MAX(CASE WHEN m.role = 'Assistant' THEN m.message_id END) AS assistant_message_id
 		FROM messages m
 		WHERE NULLIF(BTRIM(m.turn_id), '') IS NOT NULL
@@ -24,7 +25,7 @@ LANGUAGE sql AS $$
 		assistant_message_id AS "AssistantMessageID"
 	FROM turn_rows
 	WHERE user_message_id IS NOT NULL
-	ORDER BY user_message_id DESC
+	ORDER BY user_message_date_created DESC,user_message_id DESC
 	OFFSET p_skip_rows
 	LIMIT p_num_rows;
 $$;
@@ -37,6 +38,7 @@ LANGUAGE sql AS $$
 		SELECT
 			m.turn_id AS turn_key,
 			MIN(CASE WHEN m.role = 'User' THEN m.message_id END) AS user_message_id,
+			MIN(CASE WHEN m.role = 'User' THEN m.date_created END) AS user_message_date_created,
 			MAX(CASE WHEN m.role = 'Assistant' THEN m.message_id END) AS assistant_message_id
 		FROM messages m
 		WHERE
@@ -50,7 +52,7 @@ LANGUAGE sql AS $$
 		assistant_message_id AS "AssistantMessageID"
 	FROM turn_rows
 	WHERE user_message_id IS NOT NULL
-	ORDER BY user_message_id DESC
+	ORDER BY user_message_date_created DESC,user_message_id DESC
 	OFFSET p_skip_rows
 	LIMIT p_num_rows;
 $$;
@@ -85,6 +87,7 @@ LANGUAGE sql AS $$
 		SELECT
 			m.turn_id AS turn_key,
 			MIN(CASE WHEN m.role = 'User' THEN m.message_id END) AS user_message_id,
+			MIN(CASE WHEN m.role = 'User' THEN m.date_created END) AS user_message_date_created,
 			MAX(CASE WHEN m.role = 'Assistant' THEN m.message_id END) AS assistant_message_id
 		FROM messages m
 		INNER JOIN requested_turn_keys r
@@ -100,7 +103,7 @@ LANGUAGE sql AS $$
 		assistant_message_id AS "AssistantMessageID"
 	FROM turn_rows
 	WHERE user_message_id IS NOT NULL
-	ORDER BY user_message_id ASC;
+	ORDER BY user_message_date_created ASC,user_message_id ASC;
 $$;
 
 SELECT record_schema_migration('007_turns_repository_routines');
