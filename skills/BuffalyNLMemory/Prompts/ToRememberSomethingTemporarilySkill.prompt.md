@@ -29,7 +29,7 @@ For each item:
    - Put all needed facts in existing string fields such as `Description`, or in new string fields declared by assignment when the runtime accepts them.
    - Do not use `Name is Base`, YAML-like blocks, JSON, markdown, or omitted semicolons.
 7. Call `ToValidateRuntimePrototypeDefinition` with the raw prototype definition.
-8. If valid, call `ToInterpretRuntimePrototypeDefinition` with the same raw prototype definition. This also registers the interpreted prototype in the active runtime memory store.
+8. If valid, call `ToTryInterpretRuntimePrototypeDefinition` with the same raw prototype definition. This returns structured validation feedback for expected memory-write failures and registers the interpreted prototype in the active runtime memory store on success.
 9. Verify with `ToGetPrototypeDetails`, `ToGetRuntimePrototypeDetails`, or `ToDumpRuntimeMemories`.
 10. Summarize what was remembered in natural language.
 
@@ -71,7 +71,7 @@ Input: one natural-language question about temporary memory.
 ## Useful runtime tools
 
 - `ToValidateRuntimePrototypeDefinition`
-- `ToInterpretRuntimePrototypeDefinition`
+- `ToTryInterpretRuntimePrototypeDefinition`
 - `ToGetRuntimePrototypeDetails`
 - `ToDumpRuntimeMemories`
 - `ToSearchRuntimeMemories`
