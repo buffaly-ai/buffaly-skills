@@ -35,6 +35,34 @@ prototype WebProperties_UpdateWebProperty : FeedingFrenzyWebPropertiesJsonWsSkil
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to update a feeding frenzy web property fully")]
+prototype WebProperties_UpdateWebPropertyFull : FeedingFrenzyWebPropertiesJsonWsSkillAction
+{
+	Description = @"Calls the generated WebProperties.UpdateWebProperty route with the full application contract. Callers must read the row first and preserve unrelated values.";
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string Data, string Name, string DomainName, string WebsiteUrl, bool AnalyticsInstalled, string GoogleAnalyticsMeasurementID, string GoogleAnalyticsUrl, string GoogleAdsUrl, string FacebookBusinessUrl, string RepositoryUrl, string StagingUrl, string ProductionUrl, string TrackingHost, bool IsActive, int WebPropertyID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["Data"] = Data; args["Name"] = Name; args["DomainName"] = DomainName; args["WebsiteUrl"] = WebsiteUrl;
+		args["AnalyticsInstalled"] = AnalyticsInstalled; args["GoogleAnalyticsMeasurementID"] = GoogleAnalyticsMeasurementID; args["GoogleAnalyticsUrl"] = GoogleAnalyticsUrl;
+		args["GoogleAdsUrl"] = GoogleAdsUrl; args["FacebookBusinessUrl"] = FacebookBusinessUrl; args["RepositoryUrl"] = RepositoryUrl;
+		args["StagingUrl"] = StagingUrl; args["ProductionUrl"] = ProductionUrl; args["TrackingHost"] = TrackingHost; args["IsActive"] = IsActive; args["WebPropertyID"] = WebPropertyID;
+		return service.CallWebPropertiesRoute("web-properties/update-web-property", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to update feeding frenzy web property data")]
+prototype WebProperties_UpdateWebPropertyData : FeedingFrenzyWebPropertiesJsonWsSkillAction
+{
+	Description = @"Calls the generated WebProperties.UpdateWebPropertyData route for Data JSON-only changes. Callers must preserve unrelated JSON members.";
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, int WebPropertyID, string Data) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["WebPropertyID"] = WebPropertyID; args["Data"] = Data;
+		return service.CallWebPropertiesRoute("web-properties/update-web-property-data", args);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to insert a feeding frenzy web property")]
 prototype WebProperties_InsertWebProperty : FeedingFrenzyWebPropertiesJsonWsSkillAction
 {

@@ -18,6 +18,14 @@ Calls `web-properties/update-web-property-google-analytics` with a narrow GA met
 
 The authoritative C# facade reads the exact environment-specific row, preserves every unrelated standard field and the complete `Data` document, changes only GA metadata, writes, re-reads the same ID, and rejects a readback that does not contain the intended values and preserved fields.
 
+### `WebProperties_UpdateWebPropertyFull`
+
+Calls the generated `web-properties/update-web-property` route with the complete generated update contract: `Data`, standard identity/URL fields, analytics fields, ad/social URLs, repository/staging/production/tracking fields, `IsActive`, and the environment-specific `WebPropertyID`. Callers must read the target row first, preserve unrelated values, and then re-read the same environment-specific ID.
+
+### `WebProperties_UpdateWebPropertyData`
+
+Calls the generated `web-properties/update-web-property-data` route for JSON metadata-only changes. Callers must parse and preserve the existing `Data` document, update only intended members, and verify via API readback.
+
 ### `WebProperties_InsertWebProperty`
 
 Calls `web-properties/insert-web-property-if-canonical-domain-absent` with the complete create contract. The ID is assigned by the application and the created row is returned.
