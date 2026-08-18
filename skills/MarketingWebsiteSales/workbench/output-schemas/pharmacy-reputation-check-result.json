@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://buffaly.local/schemas/marketing-website-sales/workbench/output/pharmacy-reputation-check-result.json",
+  "title": "Pharmacy Reputation Check Result",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["reputationReport"],
+  "properties": {
+    "reputationReport": { "type": "string", "description": "Completed pharmacy reputation and directory/profile checklist report." },
+    "reputationReportArtifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["artifactType", "path"],
+        "properties": {
+          "artifactType": { "type": "string" },
+          "path": { "type": "string" },
+          "mediaType": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://buffaly.local/schemas/marketing-website-sales/workbench/output/pharmacy-growth-proposal-deck-result.json",
+  "title": "Pharmacy Growth Proposal Deck Result",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["artifacts"],
+  "properties": {
+    "summary": { "type": "string", "description": "Evidence-labeled summary of findings." },
+    "artifacts": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["semanticKind", "path", "mediaType"],
+        "properties": {
+          "semanticKind": {
+            "type": "string",
+            "enum": [
+              "finalProposalHtml",
+              "finalProposalPdf",
+              "proposalRunProfile",
+              "proposalResearchPacket",
+              "evidenceSummary",
+              "marketEconomicsLedger",
+              "competitorComparisonLedger",
+              "visualQaContactSheet",
+              "supportingAsset"
+            ]
+          },
+          "path": { "type": "string", "description": "Session artifact-relative or package-relative path produced by the workflow." },
+          "mediaType": { "type": "string" },
+          "requiredForAcceptance": { "type": "boolean", "default": true }
+        }
+      },
+      "contains": {
+        "type": "object",
+        "required": ["semanticKind", "mediaType"],
+        "properties": {
+          "semanticKind": { "const": "finalProposalHtml" },
+          "mediaType": { "const": "text/html" }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "properties": {
+        "artifacts": {
+          "contains": {
+            "type": "object",
+            "required": ["semanticKind", "mediaType"],
+            "properties": {
+              "semanticKind": { "const": "finalProposalPdf" },
+              "mediaType": { "const": "application/pdf" }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

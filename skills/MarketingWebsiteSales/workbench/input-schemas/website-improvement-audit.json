@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://buffaly.local/schemas/marketing-website-sales/workbench/input/website-improvement-audit.json",
+  "title": "Website Improvement Audit Input",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "leadId": { "type": ["string", "integer"], "description": "Optional Feeding Frenzy lead identifier." },
+    "companyName": { "type": "string" },
+    "websiteUrl": { "type": "string", "format": "uri" },
+    "sessionKey": { "type": "string", "description": "Optional Buffaly session key for artifact placement and reuse." },
+    "sourceEvidencePaths": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Optional already-collected evidence paths scoped to the run/session."
+    }
+  },
+  "anyOf": [
+    { "required": ["websiteUrl"] },
+    { "required": ["leadId"] },
+    { "required": ["companyName"] }
+  ]
+}

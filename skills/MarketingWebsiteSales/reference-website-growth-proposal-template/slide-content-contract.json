@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "website-growth-proposal-slide-contract/v1",
+  "slideCount": 16,
+  "requiredSlides": [
+    {"slideNumber":1,"title":"Cover / Website Growth Proposal","requiredVisual":"hero or premium dark cover","purpose":"Open warmly with the customer's real offer and website growth theme."},
+    {"slideNumber":2,"title":"Current strengths","requiredVisual":"3 strengths or equivalent","purpose":"Lead with what the prospect already does well."},
+    {"slideNumber":3,"title":"Current homepage screenshot and issues","requiredVisual":"current homepage screenshot","purpose":"Show the first-screen issue and recommended improvement."},
+    {"slideNumber":4,"title":"Current service/key page screenshot and issues","requiredVisual":"current service/key page screenshot","purpose":"Show the patient/customer journey gap."},
+    {"slideNumber":5,"title":"Demo solution screenshot and action cards","requiredVisual":"demo homepage screenshot","purpose":"Make the improved direction tangible."},
+    {"slideNumber":6,"title":"Mobile conversion screenshot and action bar","requiredVisual":"mobile screenshot or primary action path","purpose":"Explain the mobile next-step system."},
+    {"slideNumber":7,"title":"Local SEO/service-page solution","requiredVisual":"service/page map","purpose":"Map priority pages from confirmed services and location facts."},
+    {"slideNumber":8,"title":"Competitive positioning: what competitors do better and where the prospect can win","requiredVisual":"3-part competitor positioning","purpose":"Compare honestly and give a clear position to own."},
+    {"slideNumber":9,"title":"Trust/social proof solution","requiredVisual":"trust/proof structure","purpose":"Show how verified people and proof build confidence."},
+    {"slideNumber":10,"title":"Content/blog-to-service solution","requiredVisual":"content migration flow","purpose":"Turn useful content into answer-first pages and remove leftovers."},
+    {"slideNumber":11,"title":"AI-search/LLM information quality solution","requiredVisual":"facts/gaps/fix structure","purpose":"Improve first-party interpretability without AI ranking promises."},
+    {"slideNumber":12,"title":"Technical/performance solution","requiredVisual":"crawl/cleanup/media/measure structure","purpose":"Explain technical cleanup with measured-claim discipline."},
+    {"slideNumber":13,"title":"Top rebuild fixes","requiredVisual":"prioritized sequence","purpose":"Prioritize the highest-impact fixes from the audit matrix."},
+    {"slideNumber":14,"title":"Monthly website growth layer in addition to base program","requiredVisual":"monthly value layer","purpose":"Explain ongoing value and price when requested."},
+    {"slideNumber":15,"title":"Recommended proposal","requiredVisual":"recommended scope sequence","purpose":"Make the recommended decision clear and low-friction."},
+    {"slideNumber":16,"title":"Next steps","requiredVisual":"3-step approval/start path","purpose":"Ask for specific confirmations and approval to start."}
+  ],
+  "forbiddenVisibleTerms": ["sales frame","pitch","sales rep","internal","audit score","task","workflow","validated prompt","demo direction","artifact","Workbench","matrix row","LLM score"],
+  "hardFailures": ["slideCountNot16","old22SlideTemplateUsed","missingScreenshotFile","pdfMissingOrOneSlideOnly","visibleInternalLanguage","unsupportedOutcomeClaim","unreadableStaticReview"]
+}
+

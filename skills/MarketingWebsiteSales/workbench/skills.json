@@ -1,0 +1,176 @@
+{
+  "schemaVersion": "workbench-skill-catalog/v1",
+  "ownerPackage": "MarketingWebsiteSales",
+  "catalogVersion": "1.0.3",
+  "ownerContract": {
+    "source": "Skills/MarketingWebsiteSales/index.pts and Skills/MarketingWebsiteSales/Prompts/CreatePharmacyGrowthProposalDeck.work.prompt.md",
+    "summary": "The catalog exposes independently attachable supported MarketingWebsiteSales workbench skills. The proposal deck workflow internally resolves reputation signals as part of its own research/output contract and conditionally runs or reuses ToAnalyzeExistingWebsiteForImprovementsSkill only when an official website is confirmed. ToCheckPharmacyReputationSkill is a cataloged attachable skill, not a ToCreatePharmacyGrowthProposalDeckSkill prerequisite."
+  },
+  "skills": [
+    {
+      "schemaVersion": "workbench-skill/v1",
+      "actionPrototype": "ToAnalyzeExistingWebsiteForImprovementsSkill",
+      "displayName": "Analyze Existing Website for Improvements",
+      "skillVersion": "1.2.0",
+      "executionAdapter": "validated-markdown-workflow/v1",
+      "workflowKey": "marketing-website-sales.analyze-existing-website-for-improvements",
+      "workPromptPath": "Skills/MarketingWebsiteSales/Prompts/AnalyzeExistingWebsiteForImprovements.work.prompt.md",
+      "validationPromptPath": "Skills/MarketingWebsiteSales/Prompts/AnalyzeExistingWebsiteForImprovements.validation.prompt.md",
+      "inputSchemaPath": "Skills/MarketingWebsiteSales/workbench/input-schemas/website-improvement-audit.json",
+      "outputSchemaPath": "Skills/MarketingWebsiteSales/workbench/output-schemas/website-improvement-audit-result.json",
+      "prerequisites": []
+    },
+    {
+      "schemaVersion": "workbench-skill/v1",
+      "actionPrototype": "ToCreateWebsiteGrowthProposalDeckSkill",
+      "displayName": "Create Website Growth Proposal Deck",
+      "skillVersion": "1.2.0",
+      "executionAdapter": "validated-markdown-workflow/v1",
+      "workflowKey": "marketing-website-sales.create-website-growth-proposal-deck",
+      "workPromptPath": "Skills/MarketingWebsiteSales/Prompts/CreateWebsiteGrowthProposalDeck.work.prompt.md",
+      "validationPromptPath": "Skills/MarketingWebsiteSales/Prompts/CreateWebsiteGrowthProposalDeck.validation.prompt.md",
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "Optional proposal guidance; the prior audit artifact remains available in the bound Buffaly session history."
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "prerequisites": []
+    },
+    {
+      "schemaVersion": "workbench-skill/v1",
+      "actionPrototype": "ToCreateClientFacingWebsiteReportSkill",
+      "displayName": "Create Client-Facing Website Report",
+      "skillVersion": "1.3.0",
+      "executionAdapter": "validated-markdown-workflow/v1",
+      "workflowKey": "marketing-website-sales.create-client-facing-website-report",
+      "workPromptPath": "Skills/MarketingWebsiteSales/Prompts/CreateClientFacingWebsiteReport.work.prompt.md",
+      "validationPromptPath": "Skills/MarketingWebsiteSales/Prompts/CreateClientFacingWebsiteReport.validation.prompt.md",
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "The completed website audit, evidence, and prior artifacts remain available in the bound Buffaly session history."
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "prerequisites": []
+    },
+    {
+      "schemaVersion": "workbench-skill/v1",
+      "actionPrototype": "ToCheckPharmacyReputationSkill",
+      "displayName": "Check Pharmacy Reputation",
+      "skillVersion": "1.0.0",
+      "executionAdapter": "prompt-workflow/v1",
+      "workflowKey": "marketing-website-sales.check-pharmacy-reputation",
+      "workPromptPath": "Skills/MarketingWebsiteSales/Prompts/CheckPharmacyReputation.prompt.md",
+      "inputSchemaPath": "Skills/MarketingWebsiteSales/workbench/input-schemas/pharmacy-reputation-check.json",
+      "outputSchemaPath": "Skills/MarketingWebsiteSales/workbench/output-schemas/pharmacy-reputation-check-result.json",
+      "prerequisites": []
+    },
+    {
+      "schemaVersion": "workbench-skill/v1",
+      "actionPrototype": "ToCreatePharmacyGrowthProposalDeckSkill",
+      "displayName": "Create Pharmacy Growth Proposal Deck",
+      "skillVersion": "3.8.0",
+      "executionAdapter": "validated-markdown-workflow/v1",
+      "workflowKey": "marketing-website-sales.create-pharmacy-growth-proposal-deck",
+      "workPromptPath": "Skills/MarketingWebsiteSales/Prompts/CreatePharmacyGrowthProposalDeck.work.prompt.md",
+      "validationPromptPath": "Skills/MarketingWebsiteSales/Prompts/CreatePharmacyGrowthProposalDeck.validation.prompt.md",
+      "inputSchemaPath": "Skills/MarketingWebsiteSales/workbench/input-schemas/pharmacy-growth-proposal-deck.json",
+      "outputSchemaPath": "Skills/MarketingWebsiteSales/workbench/output-schemas/pharmacy-growth-proposal-deck-result.json",
+      "internalResearchSignals": [
+        "reputation",
+        "directoryPresence",
+        "publicProfiles",
+        "reviews"
+      ],
+      "prerequisites": [
+        {
+          "skill": "ToAnalyzeExistingWebsiteForImprovementsSkill",
+          "kind": "conditional_required",
+          "condition": "facts.officialWebsite.status == 'confirmed official website'",
+          "reusePolicy": "identity_and_freshness_match",
+          "bindings": [
+            {
+              "from": "outputs.websiteAudit",
+              "to": "inputs.websiteAudit"
+            },
+            {
+              "from": "outputs.websiteAuditArtifacts",
+              "to": "inputs.websiteAuditArtifacts"
+            }
+          ]
+        }
+      ]
+    }
+    ,
+    {
+      "schemaVersion": "workbench-skill/v1",
+      "actionPrototype": "ToCreateWebsiteAnalysisSalesPacketSkill",
+      "displayName": "Create Website Analysis Sales Packet",
+      "aliases": [
+        "to create a website analysis sales packet",
+        "to create a sales packet for a website review",
+        "to package a website audit report proposal deck demo site and sales rep handoff"
+      ],
+      "skillVersion": "1.2.0",
+      "executionAdapter": "validated-markdown-workflow/v1",
+      "workflowKey": "marketing-website-sales.create-website-analysis-sales-packet",
+      "workPromptPath": "Skills/MarketingWebsiteSales/Prompts/CreateWebsiteAnalysisSalesPacket.work.prompt.md",
+      "validationPromptPath": "Skills/MarketingWebsiteSales/Prompts/CreateWebsiteAnalysisSalesPacket.validation.prompt.md",
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Identify the business to package. Prior audit, report, and deck artifacts remain available in the bound Buffaly session when those prerequisite skills have already run.",
+        "properties": {
+          "leadId": { "type": ["string", "integer"], "description": "Optional Feeding Frenzy lead identifier." },
+          "companyName": { "type": "string" },
+          "websiteUrl": { "type": "string", "format": "uri" },
+          "sessionKey": { "type": "string", "description": "Optional Buffaly session key for artifact placement and reuse." }
+        },
+        "anyOf": [
+          { "required": ["websiteUrl"] },
+          { "required": ["leadId"] },
+          { "required": ["companyName"] }
+        ]
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "Sales-packet manifest, landing page, ZIP, and packaged child-artifact references written under the Workbench node deliverable root."
+      },
+      "prerequisites": [
+        {
+          "skill": "ToAnalyzeExistingWebsiteForImprovementsSkill",
+          "kind": "required",
+          "reusePolicy": "identity_and_freshness_match",
+          "bindings": [
+            { "from": "outputs.websiteAudit", "to": "inputs.websiteAudit" },
+            { "from": "outputs.websiteAuditArtifacts", "to": "inputs.websiteAuditArtifacts" }
+          ]
+        },
+        {
+          "skill": "ToCreateClientFacingWebsiteReportSkill",
+          "kind": "required",
+          "reusePolicy": "identity_and_freshness_match",
+          "bindings": [
+            { "from": "outputs.clientFacingReport", "to": "inputs.clientFacingReport" }
+          ]
+        },
+        {
+          "skill": "ToCreateWebsiteGrowthProposalDeckSkill",
+          "kind": "required",
+          "reusePolicy": "identity_and_freshness_match",
+          "bindings": [
+            { "from": "outputs.proposalDeck", "to": "inputs.proposalDeck" }
+          ]
+        }
+      ]
+    }
+  ]
+}

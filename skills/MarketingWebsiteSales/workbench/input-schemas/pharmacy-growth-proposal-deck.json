@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://buffaly.local/schemas/marketing-website-sales/workbench/input/pharmacy-growth-proposal-deck.json",
+  "title": "Pharmacy Growth Proposal Deck Input",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "leadId": { "type": ["string", "integer"], "description": "Preferred Feeding Frenzy lead identifier." },
+    "companyName": { "type": "string", "description": "Fallback prospect/company name when LeadID is not supplied." },
+    "websiteUrl": { "type": "string", "format": "uri", "description": "Optional candidate or official website URL supplied by the user or CRM." },
+    "presenterMode": {
+      "type": "string",
+      "enum": ["IntelligenceFactoryDirect", "ClearSpanPartner"],
+      "default": "IntelligenceFactoryDirect"
+    },
+    "sessionKey": { "type": "string", "description": "Optional Buffaly session key for artifact placement and child-session correlation." },
+    "websiteAudit": { "type": "string", "description": "Bound canonical website audit result from the prerequisite when an official website is confirmed." },
+    "websiteAuditArtifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["artifactType", "path"],
+        "properties": {
+          "artifactType": { "type": "string" },
+          "path": { "type": "string" },
+          "mediaType": { "type": "string" }
+        }
+      }
+    }
+  },
+  "anyOf": [
+    { "required": ["leadId"] },
+    { "required": ["companyName"] }
+  ]
+}

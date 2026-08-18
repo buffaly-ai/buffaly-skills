@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://buffaly.local/schemas/marketing-website-sales/workbench/output/website-improvement-audit-result.json",
+  "title": "Website Improvement Audit Result",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["websiteAudit", "websiteAuditArtifacts"],
+  "properties": {
+    "websiteAudit": { "type": "string", "description": "Accepted canonical website audit summary or report content." },
+    "websiteAuditArtifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["artifactType", "path"],
+        "properties": {
+          "artifactType": { "type": "string" },
+          "path": { "type": "string" },
+          "mediaType": { "type": "string" }
+        }
+      }
+    }
+  }
+}

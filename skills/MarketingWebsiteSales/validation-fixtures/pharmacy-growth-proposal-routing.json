@@ -1,0 +1,179 @@
+{
+  "version": "1.3.0",
+  "cases": [
+    {
+      "id": "single-no-website-strong-social",
+      "profile": {
+        "locations": 1,
+        "website": "none",
+        "social": "strong",
+        "reputation": "strong",
+        "remoteCare": "meaningful"
+      },
+      "expectedCadence": "social-proof-first-two-path",
+      "requiredConcepts": [
+        "existing momentum",
+        "owned searchable home",
+        "website resolution branch",
+        "no official website found",
+        "website audit feeder skipped",
+        "public profile evidence",
+        "proposal research packet",
+        "sourced competitor comparison",
+        "patient-answer readiness",
+        "remote care",
+        "manageable patient group",
+        "all-slide rendered QA",
+        "remote-care proof period",
+        "Prove Remote Care for 90 Days",
+        "packaged template contract",
+        "remote-care-general proof period"
+      ],
+      "forbiddenConcepts": [
+        "website score",
+        "fabricated crawl finding",
+        "official website assumed",
+        "website audit feeder ran",
+        "per location",
+        "systemwide rollout",
+        "Antigravity",
+        "Claude",
+        "CCML",
+        "CCM-only proof period",
+        "unsupported no-lock-in pricing"
+      ]
+    },
+    {
+      "id": "single-weak-website",
+      "profile": {
+        "locations": 1,
+        "website": "weak",
+        "social": "developing",
+        "reputation": "strong",
+        "remoteCare": "limited"
+      },
+      "expectedCadence": "customer-actions-first-website",
+      "requiredConcepts": [
+        "customer actions",
+        "confirmed official website",
+        "website audit feeder ran or reused",
+        "proposal research packet",
+        "current-site evidence",
+        "local discovery",
+        "sourced competitor comparison",
+        "AI-answer clarity",
+        "practical fix",
+        "remote-care proof period",
+        "Prove Remote Care for 90 Days",
+        "packaged template contract"
+      ],
+      "forbiddenConcepts": [
+        "per location",
+        "systemwide rollout",
+        "operating motion",
+        "generic competitor categories",
+        "manual website audit prerequisite",
+        "CCML",
+        "CCM-only proof period",
+        "unsupported no-lock-in pricing"
+      ]
+    },
+    {
+      "id": "multi-location-operator",
+      "profile": {
+        "locations": 12,
+        "website": "weak",
+        "social": "developing",
+        "reputation": "strong",
+        "remoteCare": "meaningful"
+      },
+      "expectedCadence": "multi-location-two-path",
+      "requiredConcepts": [
+        "location pages",
+        "rollout sequencing",
+        "confirmed website or documented branch",
+        "website audit feeder ran or reused",
+        "sourced competitor comparison",
+        "patient-action dimensions",
+        "remote care",
+        "market size after workflow",
+        "remote-care proof period",
+        "Prove Remote Care for 90 Days",
+        "packaged template contract"
+      ],
+      "forbiddenConcepts": [
+        "not a 12-location leap",
+        "illustrative capture scenarios",
+        "external polish required",
+        "manual website audit prerequisite",
+        "CCML",
+        "CCM-only proof period",
+        "unsupported no-lock-in pricing"
+      ]
+    },
+    {
+      "id": "strong-website-remote-care-opportunity",
+      "profile": {
+        "locations": 1,
+        "website": "established",
+        "social": "strong",
+        "reputation": "strong",
+        "remoteCare": "meaningful"
+      },
+      "expectedCadence": "remote-care-forward",
+      "requiredConcepts": [
+        "shorten the website section",
+        "website audit feeder condensed into deck",
+        "introduce remote care earlier",
+        "patient check-ins",
+        "market size before economics",
+        "sourced competitor comparison",
+        "remote-care proof period",
+        "Prove Remote Care for 90 Days",
+        "packaged template contract",
+        "proof period before remote care opportunity",
+        "APCM and RTM visible"
+      ],
+      "forbiddenConcepts": [
+        "website rebuild",
+        "fabricated score",
+        "manual website audit prerequisite",
+        "remote care afterthought",
+        "weak generated mockup",
+        "CCML",
+        "CCM-only proof period",
+        "unsupported no-lock-in pricing"
+      ]
+    }
+  ],
+  "nonPharmacyEligibilityCases": [
+    {
+      "id": "authorized-pharmaceutical-healthcare-fit",
+      "runnerAction": "ToCreatePharmacyGrowthProposalDeckSkill",
+      "fixtureMode": "production-work-and-validation",
+      "userInput": "Create and validate the complete pharmacy/FairPath proposal for Medicure Inc. The user explicitly authorizes this framework. Medicure is verified as a pharmaceutical/healthcare company with pharmacy operations, not an independent pharmacy. Preserve that classification, include only applicable organization-level website, patient/provider, business-development, pharmacy-operations, and evidence-supported remote-care sections, and remove unsupported local-owner and retail-counter assumptions.",
+      "expectedRunnerStatus": "passed",
+      "requiredValidationDiagnostics": [
+        "pharmaceutical/healthcare",
+        "authorization and framework fit",
+        "independent-pharmacy"
+      ]
+    },
+    {
+      "id": "reject-pharmaceutical-independent-pharmacy-misclassification",
+      "runnerAction": "ToValidatePharmacyGrowthProposalDeckFixtureSkill",
+      "fixtureMode": "production-validation-only",
+      "stagedCandidatePath": "Skills/MarketingWebsiteSales/validation-fixtures/misclassified-medicure-proposal/index.html",
+      "stagedCandidateSha256": "553ea5f4b4b6712fa9aaf2fef9b8d698863f5500811363fc2ac2d50133d02e6f",
+      "userInput": "Validate the staged Medicure proposal at Skills/MarketingWebsiteSales/validation-fixtures/misclassified-medicure-proposal/index.html without correcting it. Required SHA-256: 553ea5f4b4b6712fa9aaf2fef9b8d698863f5500811363fc2ac2d50133d02e6f. Verified prospect type: pharmaceutical/healthcare company with pharmacy operations. Explicit authorization: present. Inspect the candidate file and sibling research packet, report the observed SHA-256, and validate the exact delivered content rather than this instruction text.",
+      "expectedRunnerStatus": "failed-validation",
+      "requiredValidationDiagnostics": [
+        "553ea5f4b4b6712fa9aaf2fef9b8d698863f5500811363fc2ac2d50133d02e6f",
+        "misclass",
+        "independent-pharmacy",
+        "local pharmacy owner",
+        "retail counter"
+      ]
+    }
+  ]
+}

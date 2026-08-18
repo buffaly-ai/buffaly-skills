@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://buffaly.local/schemas/marketing-website-sales/workbench/input/pharmacy-reputation-check.json",
+  "title": "Pharmacy Reputation Check Input",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "leadId": { "type": ["string", "integer"], "description": "Optional Feeding Frenzy lead identifier." },
+    "companyName": { "type": "string" },
+    "websiteUrl": { "type": "string", "format": "uri" },
+    "location": { "type": "string" },
+    "sessionKey": { "type": "string" }
+  },
+  "anyOf": [
+    { "required": ["leadId"] },
+    { "required": ["companyName"] }
+  ]
+}

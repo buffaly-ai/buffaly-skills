@@ -1,0 +1,285 @@
+{
+  "templateVersion": "intelligence-factory-direct-remote-care-first-pharmacy-growth-v1",
+  "presenterMode": "IntelligenceFactoryDirect",
+  "slideCount": 16,
+  "requiredArtifacts": [
+    "proposal-research-packet.md",
+    "evidence-summary.md",
+    "market-economics-ledger.json",
+    "render-qa/render-metrics.json"
+  ],
+  "conditionalArtifacts": [
+    "competitor-comparison-ledger.md",
+    "website/profile screenshots"
+  ],
+  "slides": [
+    {
+      "n": 1,
+      "visuals": [],
+      "title": "Cover",
+      "gather": [
+        "verified pharmacy identity",
+        "verified contact/title",
+        "market",
+        "month/year"
+      ],
+      "rules": [
+        "no CRM/tool metadata",
+        "no unverified title"
+      ]
+    },
+    {
+      "n": 2,
+      "visuals": [
+        "service chips"
+      ],
+      "title": "Value Proposition",
+      "gather": [
+        "proposal paths",
+        "remote-care services in scope",
+        "platform constraints"
+      ],
+      "rules": [
+        "show RPM CCM AWV RTM APCM",
+        "outcome-first"
+      ]
+    },
+    {
+      "n": 3,
+      "visuals": [
+        "90-day proof-period timeline",
+        "manageable first-group controls"
+      ],
+      "title": "Remote Care Proof Period",
+      "gather": [
+        "remote-care fit",
+        "first-group feasibility",
+        "30/60/90-day review plan",
+        "confirmed commercial terms if any"
+      ],
+      "rules": [
+        "remote-care-general, never CCM-only or CCML",
+        "start manageable and review at 30/60/90 days",
+        "keep control of the relationship",
+        "confirm terms before launch",
+        "no unsupported cancellation, fee, revenue-share, data-exit, or lock-in claims"
+      ]
+    },
+    {
+      "n": 4,
+      "visuals": [
+        "eligibility scoring screenshot",
+        "five program cards"
+      ],
+      "title": "Remote Care Opportunity",
+      "gather": [
+        "remote-care fit",
+        "service relevance",
+        "patient scoring/export feasibility"
+      ],
+      "rules": [
+        "show RPM CCM AWV RTM APCM",
+        "APCM and RTM prominent",
+        "scoring caveat",
+        "no reimbursement guarantee"
+      ]
+    },
+    {
+      "n": 5,
+      "visuals": [
+        "work queue screenshot"
+      ],
+      "title": "One Clear Remote-Care Workflow",
+      "gather": [
+        "platform capabilities",
+        "AI assistance scope",
+        "billing readiness scope"
+      ],
+      "rules": [
+        "priority queue -> patient context -> connect/document/confirm readiness",
+        "AI assists; people decide"
+      ]
+    },
+    {
+      "n": 6,
+      "visuals": [
+        "metric cards"
+      ],
+      "title": "Market Opportunity Size",
+      "gather": [
+        "population",
+        "Medicare estimate",
+        "physicians",
+        "clinics/offices",
+        "sources"
+      ],
+      "rules": [
+        "estimates labeled",
+        "match market ledger"
+      ]
+    },
+    {
+      "n": 7,
+      "visuals": [
+        "scenario table"
+      ],
+      "title": "Economics / Participation Examples",
+      "gather": [
+        "low/base/high patients",
+        "per-patient gross billing",
+        "annual gross totals"
+      ],
+      "rules": [
+        "gross billing only",
+        "not promise/forecast"
+      ]
+    },
+    {
+      "n": 8,
+      "visuals": [
+        "dominant current-site/profile screenshot"
+      ],
+      "title": "What Is Already Working",
+      "gather": [
+        "best website/profile/social proof",
+        "2-4 strengths"
+      ],
+      "rules": [
+        "lead positive",
+        "caption with evidence label"
+      ]
+    },
+    {
+      "n": 9,
+      "visuals": [
+        "dominant current-site/profile screenshot",
+        "consequence cards"
+      ],
+      "title": "The Practical Gap",
+      "gather": [
+        "best website/profile/social proof",
+        "top consequences",
+        "website branch"
+      ],
+      "rules": [
+        "use readable zoomed/clipped current evidence",
+        "lead constructive",
+        "no lost-revenue overclaim"
+      ]
+    },
+    {
+      "n": 10,
+      "visuals": [
+        "score panel",
+        "metric rows"
+      ],
+      "title": "Metric-Driven Website Score",
+      "gather": [
+        "confirmed website",
+        "validated audit feeder scores/statuses"
+      ],
+      "rules": [
+        "no fake scores",
+        "show SEO/local search and LLM/AI-answer readiness",
+        "no confirmed-site implication without confirmation"
+      ]
+    },
+    {
+      "n": 11,
+      "visuals": [
+        "service-content crops",
+        "opportunity cards"
+      ],
+      "title": "What the Website Adds",
+      "gather": [
+        "current service content",
+        "owned information and patient actions"
+      ],
+      "rules": [
+        "confirm services before promoting them",
+        "show durable searchable content and clear actions"
+      ]
+    },
+    {
+      "n": 12,
+      "visuals": [
+        "opportunity cards"
+      ],
+      "title": "Website and AI-Answer Opportunity",
+      "gather": [
+        "patient answer clarity",
+        "local search evidence",
+        "optional compact contrast"
+      ],
+      "rules": [
+        "AI readiness is public answer clarity, not ranking"
+      ]
+    },
+    {
+      "n": 13,
+      "visuals": [
+        "comparison table/cards"
+      ],
+      "title": "Sourced Competitor Comparison",
+      "gather": [
+        "named competitors/profiles",
+        "URLs/identifiers",
+        "patient-action facts"
+      ],
+      "rules": [
+        "not map-pack/ranking/review audit",
+        "no generic categories only"
+      ]
+    },
+    {
+      "n": 14,
+      "visuals": [
+        "three recap cards"
+      ],
+      "title": "Growth Recap / Control",
+      "gather": [
+        "paths included",
+        "approved proof metrics if any"
+      ],
+      "rules": [
+        "start fast without giving up control",
+        "no unsupported stats"
+      ]
+    },
+    {
+      "n": 15,
+      "visuals": [
+        "two timing cards"
+      ],
+      "title": "Two Clear Starting Paths",
+      "gather": [
+        "BAA/export needs",
+        "scoring timeline support",
+        "website access/content assumptions"
+      ],
+      "rules": [
+        "remote care today/5 days/30 days",
+        "website today/1 week/1 month",
+        "timing caveats"
+      ]
+    },
+    {
+      "n": 16,
+      "visuals": [
+        "decision rows",
+        "contact card"
+      ],
+      "title": "Choose a Starting Path",
+      "gather": [
+        "sales rep",
+        "path applicability",
+        "first action per path"
+      ],
+      "rules": [
+        "no false urgency",
+        "no ROI promises",
+        "no internal language"
+      ]
+    }
+  ]
+}

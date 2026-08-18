@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pharmacy Growth Proposal - 16-Slide Beautiful HTML Template | ClearSpan with FairPath</title>
+<style>
+/* ============ Brand tokens (source: brand-kit/tokens/brand-tokens.css) ============ */
+:root{
+  --purple:#6A00F5; --purple-deep:#5200C2; --violet:#9333EA;
+  --ink:#0F172A; --muted:#475569; --faint:#64748B;
+  --line:#E5E7EB; --soft:#F8FAFC; --lav:#F3F4FF; --lav-line:#D9D6FF;
+  --dark:#0B1020; --orange:#FF7300;
+  --green:#0E9F6E; --green-bg:#E7F6F0; --green-line:#BFE5D5;
+  --red:#DC2626; --red-bg:#FDEBEB; --red-line:#F6CDCD;
+  --amber:#B45309; --amber-bg:#FBF0DC; --amber-line:#EFD7A9;
+  --slate:#475569; --slate-bg:#EEF2F7; --slate-line:#D8E0EA;
+  --shadow-sm:0 8px 22px rgba(15,23,42,.05);
+  --shadow-md:0 12px 30px rgba(15,23,42,.07);
+}
+@font-face{font-family:"Glancyr";src:url("bvp-deck-assets/fonts/Glancyr-Regular.otf") format("opentype");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Glancyr";src:url("bvp-deck-assets/fonts/Glancyr-Medium.otf") format("opentype");font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:"Glancyr";src:url("bvp-deck-assets/fonts/Glancyr-SemiBold.otf") format("opentype");font-weight:600;font-style:normal;font-display:swap}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:#05070F;font-family:Inter,"Segoe UI",system-ui,Arial,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+
+/* ============ Stage: fixed 1280x720 canvas scaled to viewport ============ */
+#stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.deck{width:1280px;height:720px;position:relative;flex:none;transform-origin:center center}
+.slide{position:absolute;inset:0;padding:56px 64px 62px;overflow:hidden;opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity .45s ease,transform .45s ease,visibility .45s;display:flex;flex-direction:column;justify-content:center}
+.slide.top{justify-content:flex-start}
+.slide>*{flex:none}
+.slide.active{opacity:1;visibility:visible;transform:none}
+@media (prefers-reduced-motion:reduce){.slide{transition:none;transform:none}}
+
+/* backgrounds */
+.lt{background:radial-gradient(820px 520px at 100% -5%,rgba(106,0,245,.055),transparent 55%),radial-gradient(600px 420px at -8% 108%,rgba(106,0,245,.04),transparent 50%),#fff}
+.dk{background:radial-gradient(950px 620px at 86% -12%,rgba(106,0,245,.38),transparent 62%),radial-gradient(720px 520px at -12% 112%,rgba(82,0,194,.30),transparent 55%),var(--dark);color:#E5E7EB}
+.dk::after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);background-size:26px 26px;pointer-events:none}
+.dk>*{position:relative;z-index:1}
+
+/* ============ Chrome: logo, section rail, footer ============ */
+.chrome-logo{position:absolute;top:26px;left:64px;height:22px;display:flex;align-items:center}
+.chrome-logo img{height:22px;width:auto;display:block;opacity:.92}
+.clearspan-wordmark{gap:10px;color:#111827;font-size:22px;line-height:1;letter-spacing:-.035em}
+.clearspan-wordmark strong{font-weight:900}.clearspan-wordmark span{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#64748b}.clearspan-wordmark-dark{color:#fff}.clearspan-wordmark-dark span{color:#ddd}
+.s-meta{position:absolute;top:26px;right:64px;display:flex;align-items:center;gap:10px;height:22px}
+.s-sec{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#94A3B8}
+.dk .s-sec{color:rgba(229,231,235,.48)}
+.s-rule{width:1px;height:12px;background:rgba(15,23,42,.16)}
+.dk .s-rule{background:rgba(255,255,255,.2)}
+.s-num{font-size:11.5px;font-weight:700;letter-spacing:.06em;color:#94A3B8;font-variant-numeric:tabular-nums}
+.dk .s-num{color:rgba(229,231,235,.55)}
+.foot{position:absolute;left:64px;right:64px;bottom:20px;display:flex;justify-content:space-between;gap:24px;font-size:10.5px;line-height:1.45;color:#94A3B8;border-top:1px solid rgba(15,23,42,.08);padding-top:9px}
+.dk .foot{color:rgba(229,231,235,.5);border-top-color:rgba(255,255,255,.12)}
+.foot .fr{white-space:nowrap;font-weight:600;letter-spacing:.02em}
+
+/* ============ Type scale ============ */
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--purple);margin-bottom:10px}
+.dk .eyebrow{color:#B78AFF}
+h1{font-family:Glancyr,Inter,"Segoe UI",sans-serif;font-weight:600;font-size:46px;line-height:1.1;letter-spacing:-.01em}
+h2{font-family:Glancyr,Inter,"Segoe UI",sans-serif;font-weight:600;font-size:30px;line-height:1.14;letter-spacing:-.005em;color:var(--ink);margin-bottom:8px}
+.dk h2{color:#fff}
+h3{font-size:14.5px;font-weight:700;color:var(--ink);line-height:1.3}
+.dk h3{color:#fff}
+.lead{font-size:14.5px;line-height:1.55;color:var(--muted);max-width:940px}
+.dk .lead{color:rgba(229,231,235,.78)}
+.caveat{font-size:10.5px;line-height:1.5;color:var(--faint)}
+.dk .caveat{color:rgba(229,231,235,.55)}
+.accent{color:var(--purple)}
+.dk .accent{color:#B78AFF}
+
+/* ============ Evidence tag system (one vocabulary, used deck-wide) ============ */
+.etag{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;font-size:9.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;border:1px solid transparent;white-space:nowrap}
+.etag::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;flex:none}
+.et-verified{background:var(--green-bg);color:var(--green);border-color:var(--green-line)}
+.et-observed{background:var(--lav);color:var(--purple-deep);border-color:var(--lav-line)}
+.et-estimated{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-line)}
+.et-unverified{background:var(--slate-bg);color:var(--slate);border-color:var(--slate-line)}
+.et-gap{background:var(--red-bg);color:var(--red);border-color:var(--red-line)}
+.dk .et-observed{background:rgba(183,138,255,.16);color:#D6C3F5;border-color:rgba(183,138,255,.3)}
+.dk .et-estimated{background:rgba(180,83,9,.2);color:#F0C98A;border-color:rgba(240,201,138,.3)}
+
+/* legend */
+.legend{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px;padding:13px 16px;border:1px dashed var(--lav-line);border-radius:14px;background:rgba(243,244,255,.5)}
+.legend div{display:flex;flex-direction:column;align-items:flex-start;gap:5px}
+.legend p{font-size:10.5px;line-height:1.4;color:var(--faint)}
+
+/* ============ Cards ============ */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 17px 15px;box-shadow:var(--shadow-sm)}
+.dk .card{background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.14);box-shadow:none;backdrop-filter:blur(6px)}
+.card>.etag{margin-bottom:9px}
+.card h3+p{margin-top:5px}
+.card p{font-size:12.5px;line-height:1.5;color:var(--muted)}
+.dk .card p{color:rgba(229,231,235,.72)}
+.card p+p{margin-top:6px}
+
+/* decision cards */
+.dec{border-left:3px solid var(--purple);border-radius:4px 14px 14px 4px}
+.dec strong{display:block;font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:6px}
+.dec p{font-size:13.5px;line-height:1.5;color:var(--ink)}
+.dk .dec{border-left-color:#B78AFF}
+.dk .dec strong{color:#B78AFF}
+
+/* chips */
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:var(--lav);border:1px solid var(--lav-line);color:var(--purple-deep);font-size:11.5px;font-weight:600;margin:0 6px 8px 0}
+.dk .chip{background:rgba(183,138,255,.14);border-color:rgba(183,138,255,.3);color:#D6C3F5}
+
+/* ============ Tables ============ */
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;border-style:hidden;box-shadow:0 0 0 1px var(--line),var(--shadow-sm);font-size:12.5px}
+th{background:var(--lav);color:var(--purple-deep);font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;text-align:left;padding:9px 13px}
+td{padding:9px 13px;border-top:1px solid #EEF1F5;color:var(--ink);line-height:1.4;vertical-align:middle}
+tbody tr:nth-child(even){background:#FCFCFE}
+td.lbl{font-weight:700}
+td.num{font-variant-numeric:tabular-nums;text-align:right}
+th.num{text-align:right}
+td.hi{font-variant-numeric:tabular-nums;text-align:right;font-weight:700;color:var(--purple-deep)}
+
+/* ============ Metrics & scorecard ============ */
+.metric{font-family:Glancyr,Inter,sans-serif;font-weight:600;font-size:42px;line-height:1;color:var(--purple);letter-spacing:-.01em}
+.metric-word{font-family:Glancyr,Inter,sans-serif;font-weight:600;font-size:30px;line-height:1;color:var(--purple);letter-spacing:-.01em}
+.metric-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--faint);margin-top:8px}
+.score-panel{background:var(--lav);border:1px solid var(--lav-line);border-radius:18px;padding:24px 26px;display:flex;flex-direction:column;justify-content:center}
+.score-big{font-family:Glancyr,Inter,sans-serif;font-weight:600;font-size:74px;line-height:.95;color:var(--purple)}
+.score-big small{font-size:26px;color:var(--faint);font-weight:500}
+.bars{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px 22px;box-shadow:var(--shadow-sm)}
+.bar-row{display:grid;grid-template-columns:158px 1fr 40px;align-items:center;gap:12px;font-size:12.5px;color:var(--ink);padding:7px 0}
+.bar-row+.bar-row{border-top:1px solid #F1F4F8}
+.bar-track{height:8px;border-radius:99px;background:rgba(106,0,245,.1);overflow:hidden}
+.bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--purple),var(--violet))}
+.bar-fill.good{background:linear-gradient(90deg,var(--green),#34C39A)}
+.bar-val{font-weight:700;color:var(--purple-deep);text-align:right;font-variant-numeric:tabular-nums}
+
+/* ============ Product / evidence frames ============ */
+.frame{background:#fff;border-radius:14px;padding:7px;box-shadow:0 24px 60px rgba(2,6,23,.45);border:1px solid rgba(255,255,255,.22)}
+.frame img{display:block;width:100%;height:auto;border-radius:9px}
+.frame-cap{font-size:10.5px;line-height:1.45;color:#5B6B80;margin-top:8px;padding:0 2px}
+.shot{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow-md);display:flex;flex-direction:column}
+.shot .bar{display:flex;align-items:center;gap:6px;padding:9px 12px;background:var(--soft);border-bottom:1px solid var(--line)}
+.shot .bar i{width:8px;height:8px;border-radius:50%;background:#CBD5E1;display:block}
+.shot .url{margin-left:6px;font-size:10.5px;color:var(--faint);letter-spacing:.01em}
+.shot img{display:block;width:100%;height:auto}
+.shot .cap{padding:11px 14px 12px;font-size:11.5px;line-height:1.45;color:var(--muted);border-top:1px solid var(--line)}
+.shot .cap strong{display:block;font-size:13px;color:var(--ink);margin-bottom:3px}
+
+/* gap list */
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow-sm);overflow:hidden;display:flex;flex-direction:column}
+.panel-head{padding:12px 16px;background:var(--soft);border-bottom:1px solid var(--line)}
+.panel-head strong{display:block;font-size:13px;color:var(--ink)}
+.panel-head span{display:block;font-size:10.5px;color:var(--faint);margin-top:2px;line-height:1.4}
+.gap-list{padding:12px 16px 14px;display:grid;gap:9px;align-content:start}
+.gap-row{display:grid;grid-template-columns:74px 1fr;gap:12px;align-items:center;font-size:12.5px;line-height:1.35;color:var(--ink)}
+.gap-row .etag{justify-content:center}
+
+/* note block */
+.note{background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:16px 18px;font-size:12.5px;line-height:1.5;color:var(--muted)}
+.note strong{display:block;color:var(--ink);font-size:13px;margin-bottom:5px}
+.note ul{margin:8px 0 0;padding-left:16px;line-height:1.65}
+.strip{background:var(--lav);border:1px solid var(--lav-line);border-radius:12px;padding:11px 15px;font-size:11.5px;line-height:1.5;color:var(--purple-deep)}
+.dk .strip{background:rgba(183,138,255,.1);border-color:rgba(183,138,255,.25);color:#D6C3F5}
+
+/* competitive context -- labels stack above their description */
+.comp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.comp-node{border:1px solid var(--line);border-radius:14px;padding:15px 16px;background:#fff;box-shadow:var(--shadow-sm)}
+.comp-node b{display:block;font-size:14px;color:var(--ink);line-height:1.3;margin-bottom:6px}
+.comp-node span{display:block;font-size:12.5px;line-height:1.5;color:var(--muted)}
+.comp-win{margin-top:14px;padding:14px 16px;border-radius:14px;background:var(--lav);border:1px solid var(--lav-line);color:var(--purple-deep);font-size:13px;line-height:1.45}
+.comp-win b{color:var(--purple-deep)}
+
+/* timeline */
+.tl-row{display:grid;grid-template-columns:88px 1fr;gap:14px;align-items:start;padding:8px 0}
+.tl-when{font-family:Glancyr,Inter,sans-serif;font-weight:600;font-size:12px;color:var(--purple);letter-spacing:.04em;padding-top:15px;white-space:nowrap}
+.tl-row h3{font-size:13.5px;margin-bottom:2px}
+.tl-row p{font-size:12px;line-height:1.45;color:var(--muted)}
+
+/* pricing */
+.price-card{display:flex;flex-direction:column;padding:20px 20px 18px}
+.price-card p{flex:1}
+.price{font-family:Glancyr,Inter,sans-serif;font-weight:600;font-size:30px;color:var(--ink);letter-spacing:-.01em;margin-top:14px}
+.price-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--purple);margin-top:6px}
+
+/* next steps */
+.step-row{display:grid;grid-template-columns:60px 1fr;gap:16px;align-items:start;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+.step-row:last-child{border-bottom:0}
+.step-n{font-family:Glancyr,Inter,sans-serif;font-weight:600;font-size:28px;color:#B78AFF;line-height:1}
+.step-row h3{font-size:16px;margin-bottom:3px}
+.step-row p{font-size:13px;line-height:1.5;color:rgba(229,231,235,.72)}
+
+/* ============ Controls ============ */
+#progress{position:fixed;z-index:60;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--purple),var(--violet) 70%,var(--orange));transition:width .3s ease}
+#nav{position:fixed;z-index:60;right:16px;bottom:14px;display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:999px;background:rgba(11,16,32,.86);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(8px);transition:opacity .4s}
+body.idle #nav,body.idle #hint{opacity:0;pointer-events:none}
+#nav button{width:30px;height:30px;border:0;border-radius:50%;background:rgba(255,255,255,.1);color:#fff;font-size:15px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#nav button:hover{background:var(--purple)}
+#counter{font-size:11px;font-weight:600;color:rgba(255,255,255,.85);min-width:44px;text-align:center;font-variant-numeric:tabular-nums}
+#hint{position:fixed;z-index:59;left:16px;bottom:18px;font-size:10.5px;letter-spacing:.05em;color:rgba(255,255,255,.5);transition:opacity .4s}
+
+/* ============ Print ============ */
+@page{size:1280px 720px;margin:0}
+@media print{
+  body{background:#fff}
+  #stage{position:static;display:block;overflow:visible}
+  .deck{width:1280px;height:auto;transform:none !important}
+  .slide{position:relative;inset:auto;width:1280px;height:720px;opacity:1;visibility:visible;transform:none;transition:none;page-break-after:always;break-after:page;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .slide:last-of-type{page-break-after:auto;break-after:auto}
+  #progress,#nav,#hint{display:none !important}
+}
+
+    /* v3 readability QA patch: keep evidence tags and table headers legible at 1280x720 */
+    .etag{font-size:10.75px !important;line-height:1.05 !important;padding:4px 7px !important;letter-spacing:.045em !important}
+    th{font-size:10.75px !important;line-height:1.12 !important;letter-spacing:.035em !important}
+    .foot{font-size:11.5px !important}
+  </style>
+</head>
+<body>
+<div id="progress" aria-hidden="true"></div>
+<div id="hint">← → to navigate</div>
+<nav id="nav" aria-label="Slide navigation">
+  <button id="prev" type="button" aria-label="Previous slide">&#8592;</button>
+  <span id="counter">1 / 16</span>
+  <button id="next" type="button" aria-label="Next slide">&#8594;</button>
+</nav>
+
+<div id="stage"><div class="deck" id="deck">
+
+<!-- ============ 1 - Cover ============ -->
+<section class="slide dk active" aria-roledescription="slide" aria-label="Cover">
+  <div class="chrome-logo clearspan-wordmark clearspan-wordmark-dark"><strong>ClearSpan</strong><span>with FairPath</span></div>
+  <div class="s-meta"><span class="s-sec">Overview</span><span class="s-rule"></span><span class="s-num">1 / 16</span></div>
+
+  <div style="max-width:1000px">
+    <div class="eyebrow">Two-Part Growth Plan for {{PHARMACY_NAME}} - July {{YEAR}}</div>
+    <h1>You've already built a local pharmacy home.<br><span class="accent">Here are two ways to make it easier to find -- and easier to extend.</span></h1>
+    <p class="lead" style="margin-top:18px">Validate remote care with a manageable patient group. Then strengthen the verified website so patients and providers can find, trust, and act.</p>
+    <div style="margin-top:20px">
+      <span class="chip">Path 1 - Start remote care</span>
+      <span class="chip">Path 2 - Strengthen the website</span>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-top:44px;max-width:840px">
+    <div class="card">
+      <h3>Prepared for</h3>
+      <p><b>{{CONTACT_NAME}}</b><br>{{CONTACT_TITLE}} - {{PHARMACY_NAME}}<br>{{MARKET_NAME}}, North Carolina</p>
+    </div>
+    <div class="card">
+      <h3>Presented by</h3>
+      <p><b>{{SALES_REP_NAME}}</b><br>ClearSpan &middot; FairPath</p>
+    </div>
+  </div>
+
+  <div class="foot"><span>Evidence-labeled proposal for {{PHARMACY_NAME}}.</span><span class="fr">ClearSpan &middot; FairPath</span></div>
+</section>
+<section class="slide lt top" aria-roledescription="slide" aria-label="Value proposition">
+  <div class="chrome-logo clearspan-wordmark"><strong>ClearSpan</strong><span>with FairPath</span></div><div class="s-meta"><span class="s-sec">Why This Plan</span><span class="s-rule"></span><span class="s-num">2 / 16</span></div>
+  <div style="margin-top:52px"><div class="eyebrow">How We Help Pharmacies and Clinics Grow</div><h2 style="font-size:38px">Make more money. Cut costs. Save time.</h2><p class="lead">ClearSpan and FairPath help pharmacies and clinics launch new care programs, attract more patients, and reduce manual work through automation and one connected platform.</p></div>
+  <div class="grid3" style="margin-top:30px"><div class="card"><span class="etag et-estimated">New revenue</span><h3>Launch remote care</h3><p>{{REMOTE_CARE_REVENUE_OPPORTUNITY}}</p><div style="margin-top:12px"><span class="chip">RPM</span><span class="chip">CCM</span><span class="chip">AWV</span><span class="chip">RTM</span><span class="chip">APCM</span></div></div><div class="card"><span class="etag et-observed">More patients</span><h3>Attract patients</h3><p>{{WEBSITE_AND_LOCAL_DISCOVERY_OPPORTUNITY}}</p></div><div class="card"><span class="etag et-verified">Less manual work</span><h3>Automate one platform</h3><p>{{AUTOMATION_AND_PLATFORM_VALUE}}</p></div></div>
+  <div class="foot"><span>Growth can start with one clear path, then expand from what works.</span><span class="fr">ClearSpan &middot; FairPath</span></div>
+</section>
+<section class="slide dk" aria-roledescription="slide" aria-label="Remote Care Proof Period">
+  <div class="chrome-logo clearspan-wordmark clearspan-wordmark-dark"><strong>ClearSpan</strong><span>with FairPath</span></div>
+  <div class="s-meta"><span class="s-sec">Proof Period</span><span class="s-rule"></span><span class="s-num">3 / 16</span></div>
+
+  <div class="eyebrow">A Lower-Risk Way To Bring Remote Care Home</div>
+  <h2 style="font-size:40px;margin-bottom:12px">Prove it for 90 days</h2>
+  <p class="lead" style="max-width:850px">Use FairPath with a real first patient group. Keep going because the workflow is useful, measurable, and manageable for the team.</p>
+
+  <div style="display:grid;grid-template-columns:.55fr 1fr;gap:28px;margin-top:34px;align-items:stretch">
+    <div class="card" style="padding:34px 38px;border-color:rgba(183,138,255,.46);background:rgba(106,0,245,.26)">
+      <div style="font-family:Glancyr,Inter,sans-serif;font-size:86px;line-height:.95;font-weight:600;color:#fff">90</div>
+      <div class="eyebrow" style="margin-top:18px;color:#C9A8FF">Days to prove it works</div>
+      <p style="margin-top:28px;color:rgba(255,255,255,.82);font-size:15px;line-height:1.45">If the workflow is not ready to scale, pause with a clear record of what was tested, what worked, and what needs to change.</p>
+    </div>
+
+    <div style="display:grid;grid-template-rows:repeat(3,1fr);gap:14px">
+      <div class="card" style="display:grid;grid-template-columns:64px 1fr;gap:18px;align-items:center;background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.14)"><div style="font-size:38px;font-weight:800;color:#C9A8FF">1</div><div><h3 style="font-size:19px">Load the population fast</h3><p>Any export; the first patient group can be scored and prioritized within five business days after usable data is received.</p></div></div>
+      <div class="card" style="display:grid;grid-template-columns:64px 1fr;gap:18px;align-items:center;background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.14)"><div style="font-size:38px;font-weight:800;color:#C9A8FF">2</div><div><h3 style="font-size:19px">Train the people doing the work</h3><p>Role-based launch training plus scheduled workflow sessions for the first patient wave.</p></div></div>
+      <div class="card" style="display:grid;grid-template-columns:64px 1fr;gap:18px;align-items:center;background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.14)"><div style="font-size:38px;font-weight:800;color:#C9A8FF">3</div><div><h3 style="font-size:19px">Measure before you scale</h3><p>Review active patients, owners, exceptions, capacity, documentation, and billing readiness.</p></div></div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:22px;border:1px solid rgba(183,138,255,.32);border-radius:12px;overflow:hidden;background:rgba(255,255,255,.055)">
+    <div style="padding:13px 16px;text-align:center;font-weight:700;color:#D6C3F5">Start with a manageable group</div>
+    <div style="padding:13px 16px;text-align:center;font-weight:700;color:#D6C3F5;border-left:1px solid rgba(183,138,255,.24)">Review at 30 / 60 / 90 days</div>
+    <div style="padding:13px 16px;text-align:center;font-weight:700;color:#D6C3F5;border-left:1px solid rgba(183,138,255,.24)">Keep control of the relationship</div>
+    <div style="padding:13px 16px;text-align:center;font-weight:700;color:#D6C3F5;border-left:1px solid rgba(183,138,255,.24)">Confirm terms before launch</div>
+  </div>
+
+  <div class="foot"><span>Terms shown as template placeholders; confirm the final commercial terms before presenting.</span><span class="fr">ClearSpan &middot; FairPath</span></div>
+</section>
+<section class="slide dk" aria-roledescription="slide" aria-label="Remote Care Opportunity">
+  <div class="chrome-logo clearspan-wordmark clearspan-wordmark-dark"><strong>ClearSpan</strong><span>with FairPath</span></div>
+  <div class="s-meta"><span class="s-sec">Path 1 - Remote care</span><span class="s-rule"></span><span class="s-num">4 / 16</span></div>
+
+  <div style="display:grid;grid-template-columns:1fr .84fr;gap:28px;align-items:center">
+    <div>
+      <div class="eyebrow">Remote Care Growth Path</div>
+      <h2>Prove the first patient group before scaling</h2>
+      <p class="lead">The first step is not billing everyone. It is scoring the patient population, choosing the first manageable group, and proving the workflow over 90 days.</p>
+
+      <div class="grid3" style="margin-top:20px;gap:12px">
+        <div class="card" style="padding:14px"><h3>RPM</h3><p>Remote monitoring with connected devices.<br><span style="opacity:.75">CPT 99453 / 99454 / 99457</span></p></div>
+        <div class="card" style="padding:14px"><h3>CCM</h3><p>Monthly chronic care coordination.<br><span style="opacity:.75">CPT 99490</span></p></div>
+        <div class="card" style="padding:14px"><h3>AWV</h3><p>Annual wellness visits and risk review.<br><span style="opacity:.75">G0438 / G0439</span></p></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+        <div class="card" style="padding:16px;border-color:rgba(183,138,255,.48);background:rgba(183,138,255,.12)"><span class="etag et-estimated">High-potential path</span><h3 style="font-size:19px">APCM</h3><p>Ongoing care-plan support, patient communication, and follow-through for higher-need patients.<br><span style="opacity:.75">CPT 99424 / 99425 / 99426 / 99427</span></p></div>
+        <div class="card" style="padding:16px;border-color:rgba(183,138,255,.48);background:rgba(183,138,255,.12)"><span class="etag et-estimated">Service expansion</span><h3 style="font-size:19px">RTM</h3><p>Therapy adherence and patient-reported progress for musculoskeletal, respiratory, and related care paths.<br><span style="opacity:.75">CPT 98975 / 98976 / 98977 / 98980 / 98981</span></p></div>
+      </div>
+      <p class="caveat" style="margin-top:14px">Scoring supports staff review; it does not guarantee eligibility, enrollment, coverage, payment, or reimbursement.</p>
+    </div>
+
+    <div class="frame">
+      <img src="bvp-deck-assets/fairpath-eligibility-score.jpg" alt="FairPath eligibility scoring interface">
+      <div class="frame-cap">FairPath eligibility scoring - how a first patient group gets shortlisted.</div>
+    </div>
+  </div>
+
+  <div class="foot"><span>Start with a manageable patient group, then expand from evidence.</span><span class="fr">ClearSpan &middot; FairPath</span></div>
+</section>
+<section class="slide dk" aria-roledescription="slide" aria-label="One clear remote care workflow">
+  <div class="chrome-logo clearspan-wordmark clearspan-wordmark-dark"><strong>ClearSpan</strong><span>with FairPath</span></div>
+  <div class="s-meta"><span class="s-sec">FairPath Workflow</span><span class="s-rule"></span><span class="s-num">5 / 16</span></div>
+
+  <div style="display:grid;grid-template-columns:.92fr 1.08fr;gap:30px;align-items:center">
+    <div>
+      <div class="eyebrow">One Clear Remote-Care Workflow</div>
+      <h2>Know who to call first, what needs attention, and what is ready</h2>
+      <p class="lead">Less searching, fewer hand-built records, clearer handoffs, and earlier visibility into incomplete work.</p>
+      <div class="step-row"><div class="step-n">01</div><div><h3>Open the priority queue</h3><p>Start from the patients most likely to fit the first program wave.</p></div></div>
+      <div class="step-row"><div class="step-n">02</div><div><h3>See the patient context</h3><p>Review eligibility, payer signals, care gaps, and outreach history in one place.</p></div></div>
+      <div class="step-row"><div class="step-n">03</div><div><h3>Connect, document, confirm readiness</h3><p>Calls, notes, care-plan work, exceptions, and billing readiness stay with the patient.</p></div></div>
+      <div class="strip" style="margin-top:14px">AI helps the team see what needs attention next; people stay responsible for review, judgment, and care decisions.</div>
+    </div>
+    <div class="frame"><img src="bvp-deck-assets/fairpath-unified-work-queue.jpg" alt="FairPath unified work queue"><div class="frame-cap">One queue for outreach, documentation, and follow-through.</div></div>
+  </div>
+
+  <div class="foot"><span>One workflow keeps ownership, exceptions, and billing readiness visible.</span><span class="fr">ClearSpan &middot; FairPath</span></div>
+</section>
+<section class="slide lt" aria-roledescription="slide" aria-label="Local market and care need">
+  <div class="chrome-logo clearspan-wordmark"><strong>ClearSpan</strong><span>with FairPath</span></div>
+  <div class="s-meta"><span class="s-sec">Path 2 - Opportunity size</span><span class="s-rule"></span><span class="s-num">6 / 16</span></div>
+
+  <div class="eyebrow">Opportunity Size</div>
+  <h2>A rural service area where the pharmacy can stay close to patients</h2>
+  <p class="lead">Directional planning figures for sizing a first patient group -- a starting point for the conversation, not a forecast.</p>
+
+  <div class="grid3" style="margin-top:22px">
+    <div class="card">
+      <span class="etag et-estimated">Estimated</span>
+      <div class="metric">6,500</div>
+      <div class="metric-label">Service-area residents</div>
+      <p style="margin-top:10px">{{MARKET_NAME}} plus nearby rural communities in north {{COUNTY_OR_SERVICE_AREA}}.</p>
+    </div>
+    <div class="card">
+      <span class="etag et-estimated">Estimated</span>
+      <div class="metric">1,495</div>
+      <div class="metric-label">Medicare beneficiaries</div>
+      <p style="margin-top:10px">6,500 residents x 23% rural Medicare planning assumption.</p>
+    </div>
+    <div class="card">
+      <span class="etag et-estimated">Estimated</span>
+      <div class="metric">~4</div>
+      <div class="metric-label">Local physicians</div>
+      <p style="margin-top:10px">6,500 x 55 per 100,000, rounded; about 3 offices or clinics.</p>
+    </div>
+  </div>
+
+  <div class="strip" style="margin-top:18px">Fewer local prescribers means more of the follow-up falls between visits -- which is exactly where a pharmacy-led program can help.</div>
+
+  <p class="caveat" style="margin-top:12px">Population, Medicare share, and physician density are {{YEAR}} order-of-magnitude planning assumptions. They have not been validated against Census, CMS, or provider-directory data.</p>
+
+  <div class="foot"><span>Evidence-labeled proposal for {{PHARMACY_NAME}}.</span><span class="fr">ClearSpan &middot; FairPath</span></div>
+</section>
+<section class="slide lt" aria-roledescription="slide" aria-label="Illustrative economics">
+  <div class="chrome-logo clearspan-wordmark"><strong>ClearSpan</strong><span>with FairPath</span></div>
+  <div class="s-meta"><span class="s-sec">Path 2 - Remote care</span><span class="s-rule"></span><span class="s-num">7 / 16</span></div>
+
+  <div class="eyebrow">Illustrative Economics</div>
+  <h2>What patient participation could look like</h2>
+
+  <div class="strip" style="margin-top:14px;display:flex;align-items:center;gap:10px">
+    <span class="etag et-estimated">Illustrative</span>
+    <span>Estimated Medicare market &nbsp;x&nbsp; assumed share who join &nbsp;x&nbsp; illustrative gross billing per enrolled patient &nbsp;=&nbsp; illustrative annual gross billing.</span>
+  </div>
+
+  <table style="margin-top:16px">
+    <thead>
+      <tr>
+        <th>Starting point</th>
+        <th class="num">Share who join</th>
+        <th class="num">Patients</th>
+        <th class="num">Example per patient / year</th>
+        <th class="num">Example annual gross billing</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="lbl">A cautious start</td><td class="num">1.0% of 1,495</td><td class="num">15</td><td class="num">$1,200</td><td class="hi">$17,940</td></tr>
+      <tr><td class="lbl">Steady growth</td><td class="num">2.5% of 1,495</td><td class="num">37</td><td class="num">$1,200</td><td class="hi">$44,850</td></tr>
+      <tr><td class="lbl">Strong participation</td><td class="num">5.0% of 1,495</td><td class="num">75</td><td class="num">$1,200</td><td class="hi">$89,700</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note" style="margin-top:16px;padding:13px 16px">
+    <strong>Examples only -- not a promise.</strong>
+    Gross billing is not net revenue or profit. Payer rules, current rates, program mix, billable months, staffing, devices, denials, collections, compliance, and partner economics all still require validation.
+  </div>
+
+  <div class="foot"><span>Evidence-labeled proposal for {{PHARMACY_NAME}}.</span><span class="fr">ClearSpan &middot; FairPath</span></div>
+</section>
+<section class="slide lt" aria-roledescription="slide" aria-label="What is already working">
+  <div class="chrome-logo clearspan-wordmark"><strong>ClearSpan</strong><span>with FairPath</span></div>
+  <div class="s-meta"><span class="s-sec">Where you stand</span><span class="s-rule"></span><span class="s-num">8 / 16</span></div>
+
+  <div class="eyebrow">What's Already Working</div>
+  <h2>{{PHARMACY_NAME}} already has the foundation customers need</h2>
+  <p class="lead">The public site, CRM facts, and business-panel evidence all point to the same local pharmacy identity.</p>
+
+  <div class="grid3" style="margin-top:20px">
+    <div class="card">
+      <span class="etag et-verified">Verified</span>
+      <h3>Local identity aligns</h3>
+      <p>Company record, NPI, phone, email, and storefront address match across sources.</p>
+    </div>
+    <div class="card">
+      <span class="etag et-verified">Verified</span>
+      <h3>Live official website</h3>
+      <p>Homepage and contact page returned 200 over HTTPS, with a working page inventory.</p>
+    </div>
+    <div class="card">
+      <span class="etag et-observed">Observed</span>
+      <h3>Independent positioning</h3>
+      <p>The homepage describes an independent pharmacy set in the heart of {{MARKET_NAME}}, NC.</p>
+    </div>
+  </div>
+
+  <div class="strip" style="margin-top:16px"><b>This is a modernization plan, not a basic-presence rescue.</b> The starting point is stronger than most independents we review.</div>
+
+  <div class="legend" aria-label="How to read the evidence labels in this deck">
+    <div><span class="etag et-verified">Verified</span><p>Confirmed in more than one source.</p></div>
+    <div><span class="etag et-observed">Observed</span><p>Seen in a public page or audit sample.</p></div>
+    <div><span class="etag et-estimated">Estimated</span><p>Directional planning math, not a forecast.</p></div>
+    <div><span class="etag et-unverified">Not verified</span><p>Not checked yet -- no claim made.</p></div>
+  </div>
+
+  <div class="foot"><span>Evidence-labeled proposal for {{PHARMACY_NAME}}.</span><span class="fr">ClearSpan &middot; FairPath</span></div>
+</section>
+<section class="slide lt" aria-roledescription="slide" aria-label="The gap">
+  <div class="chrome-logo clearspan-wordmark"><strong>ClearSpan</strong><span>with FairPath</span></div>
+  <div class="s-meta"><span class="s-sec">Where you stand</span><span class="s-rule"></span><span class="s-num">9 / 16</span></div>
+
+  <div class="eyebrow">The Gap</div>
+  <h2>Make the next customer action obvious</h2>
+  <p class="lead">The current site is real and useful. The opportunity is in what search engines and AI assistants can't read from it yet: page structure, service facts, and clear next steps.</p>
+
+  <div style="display:grid;grid-template-columns:1.12fr 1fr;gap:20px;margin-top:18px;align-items:start">
+    <div class="shot">
+      <div class="bar"><i></i><i></i><i></i><span class="url">{{MARKET_NAME}}pharmacy.com</span></div>
+      <img src="website-growth-visuals/current-home-readable-crop.png" alt="Current {{PHARMACY_NAME}} homepage: green header with navigation, storefront photo, and the headline Healthcare Point">
+      <div class="cap"><strong>Keep this current-site proof</strong>Live local site, HTTPS, clear pharmacy identity, and {{MARKET_NAME}} location language already in place.</div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <strong>What the audit could not find</strong>
+        <span>Observed audit gaps from sampled pages -- not ranking or traffic claims.</span>
+      </div>
+      <div class="gap-list">
+        <div class="gap-row"><span class="etag et-gap">Missing</span><span>Meta descriptions on sampled pages</span></div>
+        <div class="gap-row"><span class="etag et-gap">Missing</span><span>Extracted H1s that state each page's purpose</span></div>
+        <div class="gap-row"><span class="etag et-gap">Missing</span><span>JSON-LD LocalBusiness / Pharmacy schema</span></div>
+        <div class="gap-row"><span class="etag et-estimated">Thin</span><span>Service detail and conversion CTAs</span></div>
+        <div class="gap-row"><span class="etag et-unverified">Unverified</span><span>Reviews, testimonials, and credential proof</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot"><span>Evidence-labeled proposal for {{PHARMACY_NAME}}.</span><span class="fr">ClearSpan &middot; FairPath</span></div>
+</section>
+<section class="slide lt" aria-roledescription="slide" aria-label="Audit scorecard">
+  <div class="chrome-logo clearspan-wordmark"><strong>ClearSpan</strong><span>with FairPath</span></div>
+  <div class="s-meta"><span class="s-sec">Where you stand</span><span class="s-rule"></span><span class="s-num">10 / 16</span></div>
+
+  <div class="eyebrow">Path 2 - Website Growth</div>
+  <h2>A practical modernization of the site you already have</h2>
+  <p class="lead">The audit scores each area of the existing site so the work can start where it moves the needle most -- no rebuild-everything pitch.</p>
+
+  <div style="display:grid;grid-template-columns:.62fr 1fr;gap:18px;margin-top:20px;align-items:stretch">
+    <div class="score-panel">
+      <span class="etag et-observed" style="align-self:flex-start;margin-bottom:12px">Observed</span>
+      <div class="score-big">5<small>/10</small></div>
+      <div class="metric-label">Local SEO foundation</div>
+      <p style="font-size:12px;line-height:1.5;color:var(--muted);margin-top:12px">Solid identity and crawlability, held back by missing on-page structure.</p>
+    </div>
+
+    <div class="bars">
+      <div class="bar-row"><span>Technical crawlability</span><div class="bar-track"><div class="bar-fill good" style="width:70%"></div></div><span class="bar-val">7/10</span></div>
+      <div class="bar-row"><span>Accessibility &amp; media</span><div class="bar-track"><div class="bar-fill good" style="width:60%"></div></div><span class="bar-val">6/10</span></div>
+      <div class="bar-row"><span>Conversion path</span><div class="bar-track"><div class="bar-fill" style="width:50%"></div></div><span class="bar-val">5/10</span></div>
+      <div class="bar-row"><span>Content quality</span><div class="bar-track"><div class="bar-fill" style="width:50%"></div></div><span class="bar-val">5/10</span></div>
+      <div class="bar-row"><span>Service coverage</span><div class="bar-track"><div class="bar-fill" style="width:40%"></div></div><span class="bar-val">4/10</span></div>
+      <div class="bar-row"><span>Trust proof</span><div class="bar-track"><div class="bar-fill" style="width:40%"></div></div><span class="bar-val">4/10</span></div>
+      <div class="bar-row"><span>AI-search readiness</span><div class="bar-track"><div class="bar-fill" style="width:40%"></div></div><span class="bar-val">4/10</span></div>
+    </div>
+  </div>
+
+  <p class="caveat" style="margin-top:14px">Audit scores are internal planning signals from a sampled crawl on {{YEAR}}-07-27. They are not traffic, ranking, or performance measurements.</p>
+
+  <div class="foot"><span>Evidence-labeled proposal for {{PHARMACY_NAME}}.</span><span class="fr">ClearSpan &middot; FairPath</span></div>
+</section>
+<section class="slide lt" aria-roledescription="slide" aria-label="What the website adds">
+  <div class="chrome-logo clearspan-wordmark"><strong>ClearSpan</strong><span>with FairPath</span></div>
+  <div class="s-meta"><span class="s-sec">Path 2 - Website</span><span class="s-rule"></span><span class="s-num">11 / 16</span></div>
+
+  <div class="eyebrow">What the Website Adds</div>
+  <h2>Turn the services page into pages that answer real questions</h2>
+
+  <div style="display:grid;grid-template-columns:1.06fr 1fr;gap:20px;margin-top:16px;align-items:start">
+    <div class="shot">
+      <div class="bar"><i></i><i></i><i></i><span class="url">{{MARKET_NAME}}pharmacy.com/services</span></div>
+      <img src="website-growth-visuals/current-services-top-crop.png" alt="Current services page: the heading Services of {{PHARMACY_NAME}} above an expanded Immunization Services section">
+      <div class="cap"><strong>The services page exists today</strong>Real content is already written -- it just all lives on one page.</div>
+    </div>
+
+    <div>
+      <div class="shot">
+        <img src="website-growth-visuals/current-services-accordion-crop.png" alt="Further down the same services page: collapsed toggles for Blister Packaging, Travel Vaccinations and Travel Medicine, and Our Medication Adherence Program" style="padding:6px 0">
+        <div class="cap"><strong>Further down the same page</strong>Three more real services sit collapsed behind "+" toggles, with no page of their own to be found by.</div>
+      </div>
+
+      <div class="note" style="margin-top:14px;padding:14px 16px">
+        <strong>Where it can go further</strong>
+        Confirm the services actually offered, then give each one a searchable home: service-specific titles, H1s and descriptions; FAQs and Pharmacy / LocalBusiness schema; and a call, visit, or directions CTA on every page.
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:16px">
+    <span class="chip">Owned source of truth</span>
+    <span class="chip">Better search snippets</span>
+    <span class="chip">Service confidence -- confirmed services only</span>
+  </div>
+
+  <div class="foot"><span>Evidence-labeled proposal for {{PHARMACY_NAME}}.</span><span class="fr">ClearSpan &middot; FairPath</span></div>
+</section>
+<section class="slide lt" aria-roledescription="slide" aria-label="Immediate opportunity">
+  <div class="chrome-logo clearspan-wordmark"><strong>ClearSpan</strong><span>with FairPath</span></div>
+  <div class="s-meta"><span class="s-sec">Path 2 - Website</span><span class="s-rule"></span><span class="s-num">12 / 16</span></div>
+
+  <div class="eyebrow">Immediate Opportunity</div>
+  <h2>Help more {{MARKET_NAME}} neighbors find you, trust you, and act</h2>
+  <p class="lead">Three jobs the site has to do. Each one has a specific, observed gap behind it.</p>
+
+  <div class="grid3" style="margin-top:26px">
+    <div class="card" style="padding:22px">
+      <div class="metric-word">Find</div>
+      <div class="metric-label">Discovery</div>
+      <p style="margin-top:12px">Missing descriptions, H1s, and schema make the site harder for search engines and AI assistants to summarize.</p>
+      <p style="margin-top:10px"><span class="etag et-observed">Observed</span></p>
+    </div>
+    <div class="card" style="padding:22px">
+      <div class="metric-word">Trust</div>
+      <div class="metric-label">Credibility</div>
+      <p style="margin-top:12px">Local positioning is already there. Approved proof -- credentials, team, community -- can make it more convincing.</p>
+      <p style="margin-top:10px"><span class="etag et-unverified">Proof not verified</span></p>
+    </div>
+    <div class="card" style="padding:22px">
+      <div class="metric-word">Act</div>
+      <div class="metric-label">Conversion</div>
+      <p style="margin-top:12px">Phone and contact details were found. Refill, transfer, and form workflows still need confirmation before we promote them.</p>
+      <p style="margin-top:10px"><span class="etag et-observed">Partly observed</span></p>
+    </div>
+  </div>
+
+  <div class="foot"><span>Evidence-labeled proposal for {{PHARMACY_NAME}}.</span><span class="fr">ClearSpan &middot; FairPath</span></div>
+</section>
+<section class="slide lt" aria-roledescription="slide" aria-label="Sourced competitor comparison">
+  <div class="chrome-logo clearspan-wordmark"><strong>ClearSpan</strong><span>with FairPath</span></div>
+  <div class="s-meta"><span class="s-sec">Path 2 - Website</span><span class="s-rule"></span><span class="s-num">13 / 16</span></div>
+
+  <div class="eyebrow">Sourced Competitor Comparison</div>
+  <h2>What nearby options show online</h2>
+  <p class="lead">A focused public check shows {{MARKET_NAME}} has a real official site -- and the clearest opportunity is to add the action language chains already make obvious.</p>
+
+  <div class="comp-grid" style="margin-top:18px">
+    <div class="comp-node">
+      <b>{{PHARMACY_NAME}}</b>
+      <span>Official site, services page, and contact page verified. Services page includes vaccines and prescription language; contact page matches {{PHARMACY_ADDRESS}} and (910) 652-6261.</span>
+    </div>
+    <div class="comp-node">
+      <b>Nearby independents</b>
+      <span>NPPES names Medical Center, Medical Park, Sandhills, and Birmingham Drug. In this pass, sites were coming-soon, for-sale, not found, or not confidently verified.</span>
+    </div>
+    <div class="comp-node">
+      <b>Chains in {{COMPETITOR_MARKET_1}}</b>
+      <span>CVS, Walgreens, and Walmart pages visibly emphasize refill, transfer, vaccines, store details, delivery/photo/clinic-style convenience, and app/account actions.</span>
+    </div>
+  </div>
+
+  <div class="comp-win">
+    <b>Where {{MARKET_NAME}} can win:</b> keep the local independent story, then make the official site as action-ready as the chain pages: verified services, hours, pharmacist/team proof, FAQs, refill/transfer guidance if supported, vaccines, directions, and contact actions.
+  </div>
+
+  <p class="caveat" style="margin-top:14px"><span class="etag et-observed">Sources checked</span> &nbsp;NPPES, {{MARKET_NAME}} official pages, Medical Center Pharmacy site, likely independent domains, and CVS/Walgreens/Walmart public pages. This is not a map-pack, ranking, or review audit.</p>
+
+  <div class="foot"><span>Evidence-labeled proposal for {{PHARMACY_NAME}}.</span><span class="fr">ClearSpan &middot; FairPath</span></div>
+</section>
+<section class="slide lt" aria-roledescription="slide" aria-label="Growth recap">
+  <div class="chrome-logo clearspan-wordmark"><strong>ClearSpan</strong><span>with FairPath</span></div>
+  <div class="s-meta"><span class="s-sec">Recap</span><span class="s-rule"></span><span class="s-num">14 / 16</span></div>
+
+  <div class="eyebrow">What This Plan Is Built To Do</div>
+  <h2>Start fast without giving up control</h2>
+  <p class="lead">The pharmacy keeps the patient relationship, the operating decision, and the ability to continue from evidence - while the plan connects new services, better discovery, and less manual coordination.</p>
+
+  <div class="grid3" style="margin-top:24px">
+    <div class="card" style="padding:22px"><span class="etag et-estimated">Make more money</span><h3 style="font-size:20px;margin-top:4px">Add remote care services</h3><p style="margin-top:8px;font-size:13.5px">Launch RPM, CCM, AWV, RTM, and APCM from a scored first patient group instead of guessing where to begin.</p></div>
+    <div class="card" style="padding:22px"><span class="etag et-observed">Attract patients</span><h3 style="font-size:20px;margin-top:4px">Make the pharmacy easier to find</h3><p style="margin-top:8px;font-size:13.5px">Improve the website, local discovery, service pages, reputation signals, SEO, and LLM-ready patient answers.</p></div>
+    <div class="card" style="padding:22px"><span class="etag et-verified">Cut costs / save time</span><h3 style="font-size:20px;margin-top:4px">Use automation and one platform</h3><p style="margin-top:8px;font-size:13.5px">Reduce handoffs with one workflow for scoring, outreach, documentation, billing support, reporting, and follow-through.</p></div>
+  </div>
+
+  <div class="strip" style="margin-top:22px">Prove value in the first 90 days, keep what works, and adjust what does not.</div>
+  <div class="foot"><span>Evidence-labeled proposal for {{PHARMACY_NAME}}.</span><span class="fr">ClearSpan &middot; FairPath</span></div>
+</section>
+<section class="slide lt" aria-roledescription="slide" aria-label="Two implementation paths">
+  <div class="chrome-logo clearspan-wordmark"><strong>ClearSpan</strong><span>with FairPath</span></div>
+  <div class="s-meta"><span class="s-sec">Two Paths</span><span class="s-rule"></span><span class="s-num">15 / 16</span></div>
+
+  <div class="eyebrow">Two Clear Starting Paths</div>
+  <h2>Start today, then show progress quickly</h2>
+  <p class="lead">The pharmacy can start with remote care, the website, or both together. Each path has a concrete first milestone.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:24px;align-items:start">
+    <div class="card" style="padding:24px;border-left:5px solid var(--purple)"><span class="etag et-estimated">Path 1 - Remote care</span><h3 style="font-size:22px;margin-top:6px">Score patients within five days</h3><div class="tl-row" style="grid-template-columns:78px 1fr;margin-top:14px"><div class="tl-when">Today</div><p>Agreement, BAA, export request, and owners named.</p></div><div class="tl-row" style="grid-template-columns:78px 1fr"><div class="tl-when">5 days</div><p>Population scored and the first priority outreach group selected.</p></div><div class="tl-row" style="grid-template-columns:78px 1fr"><div class="tl-when">30 days</div><p>First participating patients billing-ready or active when consent, documentation, payer, and operational fit are confirmed.</p></div></div>
+    <div class="card" style="padding:24px;border-left:5px solid var(--orange)"><span class="etag et-observed">Path 2 - Website growth</span><h3 style="font-size:22px;margin-top:6px">New website foundation by next week</h3><div class="tl-row" style="grid-template-columns:78px 1fr;margin-top:14px"><div class="tl-when">Today</div><p>Start the build from verified facts, services, current proof, and top patient actions.</p></div><div class="tl-row" style="grid-template-columns:78px 1fr"><div class="tl-when">1 week</div><p>Launch the new website foundation with improved SEO, LLM-ready answers, and integrated service pages.</p></div><div class="tl-row" style="grid-template-columns:78px 1fr"><div class="tl-when">1 month</div><p>Add reputation management, service campaigns, measurement, and ongoing improvements.</p></div></div>
+  </div>
+
+  <p class="caveat" style="margin-top:16px">Billing timing depends on eligibility, consent, services provided, documentation, payer rules, and operational readiness. Website timing depends on content approvals and access.</p>
+  <div class="foot"><span>Two paths can start separately or together.</span><span class="fr">ClearSpan &middot; FairPath</span></div>
+</section>
+<section class="slide dk" aria-roledescription="slide" aria-label="Choose a starting path">
+  <div class="chrome-logo clearspan-wordmark clearspan-wordmark-dark"><strong>ClearSpan</strong><span>with FairPath</span></div>
+  <div class="s-meta"><span class="s-sec">Next step</span><span class="s-rule"></span><span class="s-num">16 / 16</span></div>
+
+  <div style="display:grid;grid-template-columns:1fr .82fr;gap:34px;align-items:center">
+    <div>
+      <div class="eyebrow">Choose a Starting Path</div>
+      <h2 style="margin-bottom:14px">Which path should we start with?</h2>
+      <div class="step-row">
+        <div class="step-n">1</div>
+        <div><h3>Website first</h3><p>Confirm services and modernize the highest-impact pages.</p></div>
+      </div>
+      <div class="step-row">
+        <div class="step-n">2</div>
+        <div><h3>Remote care first</h3><p>Choose a manageable patient group and validate the fit.</p></div>
+      </div>
+      <div class="step-row">
+        <div class="step-n">3</div>
+        <div><h3>Both together</h3><p>Improve discovery while testing patient support between visits.</p></div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:24px">
+      <div class="clearspan-wordmark clearspan-wordmark-dark" style="position:static;height:30px;display:flex;align-items:center"><strong>ClearSpan</strong><span>with FairPath</span></div>
+      <h3 style="font-size:19px;margin-top:16px">{{SALES_REP_NAME}}</h3>
+      <p style="margin-top:6px;font-size:13px">ClearSpan</p>
+      <p style="margin-top:10px;font-size:13px">{{SALES_REP_EMAIL}}</p>
+      <p class="caveat" style="margin-top:14px">Contact details shown are our own. Any prospect email pattern referenced in supporting notes is observed and tentative until independently confirmed.</p>
+    </div>
+  </div>
+
+  <div class="foot"><span>Evidence-labeled proposal for {{PHARMACY_NAME}}.</span><span class="fr">ClearSpan &middot; FairPath</span></div>
+</section>
+
+</div></div>
+
+<script>
+(()=>{
+  const deck=document.getElementById('deck');
+  const slides=[...document.querySelectorAll('.slide')];
+  const counter=document.getElementById('counter');
+  const progress=document.getElementById('progress');
+  let cur=-1;
+
+  function fit(){
+    const s=Math.min(window.innerWidth/1280,window.innerHeight/720);
+    deck.style.transform=`scale(${s})`;
+  }
+  window.addEventListener('resize',fit);fit();
+
+  function go(i){
+    i=Math.max(0,Math.min(slides.length-1,i));
+    if(i===cur)return;
+    cur=i;
+    slides.forEach((s,idx)=>{
+      s.classList.toggle('active',idx===cur);
+      s.setAttribute('aria-hidden',idx===cur?'false':'true');
+    });
+    counter.textContent=`${cur+1} / ${slides.length}`;
+    progress.style.width=`${((cur+1)/slides.length)*100}%`;
+    if(history.replaceState)history.replaceState(null,'','#'+(cur+1));
+  }
+  document.getElementById('prev').addEventListener('click',()=>go(cur-1));
+  document.getElementById('next').addEventListener('click',()=>go(cur+1));
+  document.addEventListener('keydown',e=>{
+    if(e.altKey||e.ctrlKey||e.metaKey)return;
+    if(['ArrowRight','ArrowDown','PageDown'].includes(e.key)||(e.key===' '&&!e.shiftKey)){e.preventDefault();go(cur+1)}
+    else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)||(e.key===' '&&e.shiftKey)){e.preventDefault();go(cur-1)}
+    else if(e.key==='Home'){e.preventDefault();go(0)}
+    else if(e.key==='End'){e.preventDefault();go(slides.length-1)}
+  });
+  let tx=null;
+  document.addEventListener('touchstart',e=>{tx=e.changedTouches[0].clientX},{passive:true});
+  document.addEventListener('touchend',e=>{
+    if(tx===null)return;
+    const dx=e.changedTouches[0].clientX-tx;tx=null;
+    if(Math.abs(dx)>48)go(dx<0?cur+1:cur-1);
+  },{passive:true});
+
+  let idleTimer=null;
+  function wake(){
+    document.body.classList.remove('idle');
+    clearTimeout(idleTimer);
+    idleTimer=setTimeout(()=>document.body.classList.add('idle'),3500);
+  }
+  ['mousemove','mousedown','keydown','touchstart'].forEach(ev=>document.addEventListener(ev,wake,{passive:true}));
+  wake();
+
+  const h=parseInt((location.hash||'').replace('#',''),10);
+  go(isNaN(h)?0:h-1);
+})();
+</script>
+</body>
+</html>
