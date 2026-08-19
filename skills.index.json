@@ -1,4 +1,3231 @@
 {
   "SchemaVersion": 1,
-  "Skills": []
+  "Skills": [
+    {
+      "SkillName": "AipAdapter",
+      "Title": "AipAdapter",
+      "Description": "Buffaly skill package for AipAdapter.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "AipAdapter",
+        "AipAdapter"
+      ],
+      "Path": "skills/AipAdapter",
+      "Files": [
+        {
+          "Path": "AipCapability.pts",
+          "Sha256": "4a2a9aa79ac4e28b23f685fedf5312c6ba7d4f127d23d91736471ed5aa0baec4"
+        },
+        {
+          "Path": "AipCapability.pts.md",
+          "Sha256": "bad159bdc86e681f150c7c26a6317659fa7989fae704f0728e9d87d4f15c6845"
+        },
+        {
+          "Path": "AipDefinitions.ReadOnly.pts",
+          "Sha256": "d98dbbb3245243170e530384b3b585f734956517309425dc7c51cc98d65f56fe"
+        },
+        {
+          "Path": "AipDefinitions.ReadOnly.pts.md",
+          "Sha256": "2cd01f6fd84293e096e4b3406e76d864fd8caca92544623d4c4ed1a063f9efd8"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "46632a6819654b712dfb1c4c80237b889e5a071c5439b27dee8e56cca38b94c8"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "711244c4574f39b69a3bfea2d08cb847592cfa18c9369d7cc731382da6fbed45"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "a6b3269399ae6432bb6c3066de7e5748aa4e760d10597e3983c41a33b0cc77ae"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "Antigravity",
+      "Title": "Antigravity",
+      "Description": "Buffaly skill package for Antigravity.",
+      "Version": "0.1.12",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Antigravity",
+        "Antigravity"
+      ],
+      "Path": "skills/Antigravity",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "bc8f34ff0a633e2db4526745a74b59b6ea7d05dc85238181daba54e3639d0130"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "f98b8be1c36e96104c5bf34485721ab318e38ca97f9e84eb3287bbcfe8a222d8"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "ebf71376b6fbfb4192118ed7ff02021bddfe9b63d2934d87967a7d1b50f6126b"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "AudioTranscription",
+      "Title": "Audio Transcription",
+      "Description": "Buffaly skill package for Audio Transcription.",
+      "Version": "0.1.5",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Audio Transcription",
+        "AudioTranscription"
+      ],
+      "Path": "skills/AudioTranscription",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "ac25b8568e570fd1f9b7eae252a8e094a635414938c4a1a1d868748b1d8ea5ba"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "5757797c851c25ec5b2dcf2bf664b35f44b433afc2f43a44de2af7842937ded5"
+        },
+        {
+          "Path": "lib/Buffaly.Agent.AudioTranscription.dll",
+          "Sha256": "0504a3edc1463f06e233a36dc7000432eb6249274a01cd1a9a32672ca0682540"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "87d5aa8ac149b84b0bf8224748a6ddc322f7ddc267d3ded1c397d475f8a4a192"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "b66e492995b4509f9553e67b6119d1fb78018a589c7f3bae8d26709a798ad84a"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
+    },
+    {
+      "SkillName": "BrowserSession",
+      "Title": "Browser Session",
+      "Description": "Buffaly skill package for Browser Session.",
+      "Version": "0.1.5",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Browser Session",
+        "BrowserSession"
+      ],
+      "Path": "skills/BrowserSession",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "f0128c514377fb7739aca8a8393825b12c862d83764065c317ca4cc680f55396"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "11627ec1344272aaa10eee66dcb59652abc0f162e1b4d170f861c9a296efd4aa"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "576e46dcec59840ae93721e0288b273b9d8ebfd1f0b973ec5d8c6cdc863281b7"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "1893e8ede5496607e3b994e2263b39af55eb3da3c1d1336b44c5e305b5b32785"
+        },
+        {
+          "Path": "Prompts/UseBrowserSkill.prompt.md",
+          "Sha256": "753a9b6680a085d9b60abaa1c42568f1cdcf8589636ac466e2e6f05ea13d88f9"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "a6fc9250c95c9bc06f9d673f39d6c89d99326a2c96ceac5a457ccd411202f371"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "BuffalyCapabilityInspection",
+      "Title": "Buffaly Capability Inspection",
+      "Description": "Buffaly skill package for Buffaly Capability Inspection.",
+      "Version": "0.1.5",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Buffaly Capability Inspection",
+        "BuffalyCapabilityInspection"
+      ],
+      "Path": "skills/BuffalyCapabilityInspection",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "28f24387cdd0dd11e3dd6444660a76fb56fd8bf3c8b81ef35dc5da747af1b62f"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "9cc1b105e2de323870d1d6c5d526b6a4da0caeaf0ca149474a857f909f765088"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "a9604940535957d60eaa48a58e7230b0b6dbb1ae77762518103506dff52e6e46"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "02af03659f16203be2b28b39d26e43132ca40ce725d59afa894196e0a9c03d49"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "BuffalyMaintenance",
+      "Title": "Buffaly Maintenance",
+      "Description": "Buffaly skill package for Buffaly Maintenance.",
+      "Version": "0.1.25",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Buffaly Maintenance",
+        "BuffalyMaintenance"
+      ],
+      "Path": "skills/BuffalyMaintenance",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "112ccc51ffa7e42bfc10611e9e00803892f7fc0b1adf8584f1bcef76e39502ac"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "74150370529a002e5c195b34aa9a610d6c1b35f4a9c1e626242bd8ec2013bb8e"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "3ef9468ad7e7e0fd208eaf32112e81a05adfdd94d90a585ca6a173e7dcca0dc1"
+        },
+        {
+          "Path": "lib/Buffaly.Agent.Provisioning.dll",
+          "Sha256": "681ccfe70d3fdfa46b47a0d8e134c597067f1dc8312d732f7340ae56ee0c385b"
+        },
+        {
+          "Path": "lib/Buffaly.Maintenance.Client.dll",
+          "Sha256": "660e553f16d07a73de731118622117204fa4775dab22a0d7b4b007eca2060971"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "BuffalyNLMemory",
+      "Title": "Buffaly NL Memory",
+      "Description": "Buffaly skill package for Buffaly NL Memory.",
+      "Version": "0.2.49",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Buffaly NL Memory",
+        "BuffalyNLMemory"
+      ],
+      "Path": "skills/BuffalyNLMemory",
+      "Files": [
+        {
+          "Path": "BuffalyNLMemory.pts",
+          "Sha256": "b18a0fdf33e2da8df1da10f5b95b0fdb908ed7fdd8e94eeedb2327dc4cc7f4f8"
+        },
+        {
+          "Path": "BuffalyNLMemory.pts.md",
+          "Sha256": "855aaedf0f8e45370f66593377201fa88c488a5e10dc3fc0ddb5c839cfb7ae8e"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "0aba570d1eb601af24942cd6bc1e081c69c5a969a3cfca0f7ceae7282e0e2456"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "4da4f3c91d0e1381164bd3de62b6022ecbd5bac48c74cefbe1cfd491b1cb3b0f"
+        },
+        {
+          "Path": "lib/Buffaly.NLMemory.dll",
+          "Sha256": "e3742cc6ecc765b57a19546f40de7e464dd73367f2485e72196c9debd55fb56c"
+        },
+        {
+          "Path": "Prompts/ToRememberSomethingTemporarilySkill.prompt.md",
+          "Sha256": "6541b88b11e26d9abebf6356d163645d5de441cf3c4f1f029dba71e87eaa80b2"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "BuffalySelfManagement",
+      "Title": "Buffaly Self Management",
+      "Description": "Buffaly skill package for Buffaly Self Management.",
+      "Version": "0.1.2",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Buffaly Self Management",
+        "BuffalySelfManagement"
+      ],
+      "Path": "skills/BuffalySelfManagement",
+      "Files": [
+        {
+          "Path": "BuffalySelfManagement.pts",
+          "Sha256": "02adeec40fd7e115e98a3d18f45948bdf0e12f0441f15761ed3cd834a0c6cdce"
+        },
+        {
+          "Path": "BuffalySelfManagement.pts.md",
+          "Sha256": "d70ae0af0d55bdf60947e6b9d6274aa947eeffa3d542906d3d38a6ac0a129322"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "af53ff3b70d5f69964f9d2a0041b7d9e7b9bd7d42a9de5881a562b0c488b563c"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "d46144abe52192fba3ace90d15d64375c24ae33f299ca9a7744a47f4640d6e87"
+        },
+        {
+          "Path": "Prompts/AddDllBackedCapabilities.prompt.md",
+          "Sha256": "256308a9b40edc8ba25a2d486606d909f6ec3cc9ff016ed9330c4fa06f35504e"
+        },
+        {
+          "Path": "Prompts/CallProtoScriptMethodsFromBuffalyApi.prompt.md",
+          "Sha256": "9ce2025decc174b21e0a0f57f7329a79b6db6854f2789f966590f6ef7bd7f379"
+        },
+        {
+          "Path": "Prompts/CaptureTroubleshootingRetrospective.prompt.md",
+          "Sha256": "64961efd3d66ba4af2ff1196c506656ce243121fb25bc279950fbce51ab7fbfa"
+        },
+        {
+          "Path": "Prompts/CreateAutomaton.prompt.md",
+          "Sha256": "80e53f5be79dad00d04759a1ddb3eeda63b35d969a75548b60970a8e6566c5ba"
+        },
+        {
+          "Path": "Prompts/CreateDllBackedCapabilityFromScratch.prompt.md",
+          "Sha256": "ac538a8d380f0d186ad9385ac934b20c03477077785864d04b910a30239e6816"
+        },
+        {
+          "Path": "Prompts/CreateSubjectMatterExpertResearchBrief.prompt.md",
+          "Sha256": "bef829dfd23b8c02c24f6aff32aa81fcc8b5a48dc79cd79bf17ad44b20ab15fd"
+        },
+        {
+          "Path": "Prompts/CritiqueAgentSessionInteraction.prompt.md",
+          "Sha256": "dfd0aeff1dd47242829c6d146d4fb3138ad5227935289ebcc1abead20f46868d"
+        },
+        {
+          "Path": "Prompts/DesignBuffalyResultTypeRenderer.prompt.md",
+          "Sha256": "80f4877bd65724c590c53cf570da3655a1feea7b576724651ab89d0eaab82a04"
+        },
+        {
+          "Path": "Prompts/DesignProtoScriptPreviewGrid.prompt.md",
+          "Sha256": "ad8e7b02dd67281d765e4df2cc6bf137ee6556f46854042c3be98aa512eb31ba"
+        },
+        {
+          "Path": "Prompts/ImproveCodeQualityAndReduceRedundancy.prompt.md",
+          "Sha256": "d625a9dbfebed1e4f8771b5102a9f14415fb1060e6d410516989897064f22900"
+        },
+        {
+          "Path": "Prompts/ImproveOntologyQualityAndOrganization.prompt.md",
+          "Sha256": "9fd1fb4eb9a9bf2b7969389c17ce99afa5ed2d8dd215b16043ee687437e11b9d"
+        },
+        {
+          "Path": "Prompts/InstallExistingDllIntoProtoScript.prompt.md",
+          "Sha256": "d0718d963cc30f82fd61b7b1d0debf13e2535e4488bdc48543eedf619b8039e9"
+        },
+        {
+          "Path": "Prompts/RunModelQuorumWorkflow.prompt.md",
+          "Sha256": "8b7db1e6bf63895a42ae310e1b206cc28b9fdc897d32a3f0f7d08ae8d3c784c7"
+        },
+        {
+          "Path": "Prompts/ToExposeCSharpClassToProtoScriptSkill.prompt.md",
+          "Sha256": "46ebbe12219b6d80f52181d118050b8d3aa8c48b4456b8e77453054288f72dd6"
+        },
+        {
+          "Path": "Prompts/TroubleshootBuffalyAgentRuntime.prompt.md",
+          "Sha256": "483dd38c2de1253753b17bc431d96da272288b5ba1ee26cf801b28ced6b20a5c"
+        },
+        {
+          "Path": "Prompts/TroubleshootProtoScriptDllCompilation.prompt.md",
+          "Sha256": "74eb811cb25ad67bf473fb325f10a3c0b000243d962ab4ef9c368665456de85e"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "CareCascade",
+      "Title": "Care Cascade",
+      "Description": "CareCascade MedOnt ICD-10 and SNOMED API tools.",
+      "Version": "0.1.2",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [],
+      "Path": "skills/CareCascade",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "669acdcd762f40a93fb195d95c681fda89963451809a9ac18fa16147d8defdb5"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "51af255ee5d9a3c4cb145d0d1a8b43b8b0e2008bad1185737175fd8946c7c0ef"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "e6235f0fc1a4fe76f8028ed82777c129552eaacc46a37844c31135fb18a8220a"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "18275d8ba287c6509cf26da9e70464aa39b503741e4dba62bdfc0ac2ac768f9e"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
+    },
+    {
+      "SkillName": "CdpBrowser",
+      "Title": "CDP Browser",
+      "Description": "Buffaly skill package for CDP Browser.",
+      "Version": "1.0.15",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "CDP Browser",
+        "CdpBrowser"
+      ],
+      "Path": "skills/CdpBrowser",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "40582206485a6cc8bfd5fd34454a77b2270ad534c6cf950c97eabfc5b8e15fe0"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "460450726ee0ae4dd1c1da888a7b8cfb789a22d46fb9a8b876488cab48b53dea"
+        },
+        {
+          "Path": "lib/cdp_helper.bundle.js",
+          "Sha256": "45eac72a04b383d480d196ea5ec920d1147be44a01ce55a4b183372de788a38c"
+        },
+        {
+          "Path": "lib/cdp_helper.js",
+          "Sha256": "3ff13df3e1953e4b2acee2f45f9d2d011833d054db294cac036732b024170a37"
+        },
+        {
+          "Path": "lib/package-lock.json",
+          "Sha256": "8dec5bf2b16efafa54ad117e49ac7866c90cc1ac9d102e20b26179c7056b8e1d"
+        },
+        {
+          "Path": "lib/package.json",
+          "Sha256": "2c2bd6aea8aae7e36eb318c6688322b2fae4aff6d3103af40ad6fbaf585bb351"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "0c2aa13b4da9a59ebdb707172c4053f1e3a8b992c3f7d9e353c4e880e848db10"
+        },
+        {
+          "Path": "Prompts/UseCdpBrowserSkill.prompt.md",
+          "Sha256": "580a2edcfee79370fa98e33bd2a0f7a31c6e9d542c59fa88a897b366231b765a"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "2a6d427994f4c2726c334ea4e931ab7e3560bd43eab7961afe63d524732af3ec"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "ClaudeCode",
+      "Title": "Claude Code",
+      "Description": "Buffaly skill package for Claude Code.",
+      "Version": "0.1.22",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Claude Code",
+        "ClaudeCode"
+      ],
+      "Path": "skills/ClaudeCode",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "808b4c23db570ce761af9cf5b3f2a2a1bda89f87409b28f3b0327876c5958d27"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "1ed33d80ba91ebe024ba5d10efb0b5cf6ad4650e2f05912ef59af752646b13ba"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "6907739cad8e9d482014f589a76a7e25d1e420da13de8f1f15472af8f3b31607"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "73c2d9fe07431e165d8e8b6f60e1deb06adecf47eeb8c7385f8e63ea1d43a9d4"
+        },
+        {
+          "Path": "Test-ClaudeCodeStateScoping.ps1",
+          "Sha256": "5b822aaf7d51edce35a42f2d49e352b7a33cc1b9edb4a62be15fb728c31d4a55"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "Codex",
+      "Title": "Codex",
+      "Description": "Buffaly skill package for Codex.",
+      "Version": "0.1.2",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Codex",
+        "Codex"
+      ],
+      "Path": "skills/Codex",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "cd75eeffb1ffdabdb1f763f0cd6d77c7e105885565bd9778e84eda5ec58e587e"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "8e109d8c4bca10bdf2e9c8b5040d8f676cee33268a53cbf22604fd06d4510fc3"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "1bacc00cea96f40b9dcce6147cfa6c576c93c1a6826846d20344cdb7ad68cc3f"
+        },
+        {
+          "Path": "Prompts/BuildAndInstallLatestCodexEmbeddedInstaller.prompt.md",
+          "Sha256": "692aa031c2e8dbad939b426a986d0260f54e6dbdb54068856bb9b1e1d2de6785"
+        },
+        {
+          "Path": "Prompts/CoordinateCodexIncrementalEditAndValidate.prompt.md",
+          "Sha256": "e29f6c080a5d20e7cf3edc1ddb999bcfe7c76d2d3b4d0103f6c04ea9b2fc5924"
+        },
+        {
+          "Path": "Prompts/EditCodeViaCodex.prompt.md",
+          "Sha256": "2394b789381e3e5bf5867628da137f3e93b57199ccadc38c19f9146796de8113"
+        },
+        {
+          "Path": "Prompts/FindCodexThreadIdByName.prompt.md",
+          "Sha256": "45b16466ae0b3ab188bcdccc86db31c99d37b2550b1849bcfe9f8aee3d8bb88a"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "ComputerUse",
+      "Title": "Computer Use",
+      "Description": "Buffaly skill package for Computer Use.",
+      "Version": "0.1.4",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Computer Use",
+        "ComputerUse"
+      ],
+      "Path": "skills/ComputerUse",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "c6d653ac195406e2e11b279971d6df50501a71ecdab477221f1aac7416dba308"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "c1f9d71d36d3e14361d022b99ff2d506031e718a0947c611db9fcc3c465146db"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "7c09a21fd211f99c610a34c4059ab5e733aa969e503f1f3af71727f805e8ee28"
+        },
+        {
+          "Path": "Prompts/RunComputerUseTask.prompt.md",
+          "Sha256": "7e8f29903c6645f3b61e253e5f1f5211fa63d9d213098c46d41058e17be315fc"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "Desktop",
+      "Title": "Desktop",
+      "Description": "Buffaly skill package for Desktop.",
+      "Version": "0.1.4",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Desktop",
+        "Desktop"
+      ],
+      "Path": "skills/Desktop",
+      "Files": [
+        {
+          "Path": "Generated/JsonWs/Buffaly.DesktopAutomation.DesktopInteractiveSiteService.json",
+          "Sha256": "077990bd7569baa7bdb1c78def249e08b736a576c2951126b427d2c9571b6f58"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "adf137d15cf81a09dcdf9b9a6e08ce7614705ea0cadfdd425a116d25daf444b9"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "0d7d85368ba25ee27b0a03bd572b25d6ee6697676a7afe2bee31707e04257ad8"
+        },
+        {
+          "Path": "interactive-sites/desktop-login/site.css",
+          "Sha256": "10dcf461a0948acd1deba22dbca530c55819d4e1fbf6a5df276a8649f3573015"
+        },
+        {
+          "Path": "interactive-sites/desktop-login/site.html",
+          "Sha256": "b0b18a2e2804226c1c3f6d75eea3112a0310fb786925be1defe710824d03c355"
+        },
+        {
+          "Path": "interactive-sites/desktop-login/site.js",
+          "Sha256": "d09915149499e4b4bfbe0c02e52c4e940f061f1429feeb320b3409457d264f02"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "cb6dd7022d49a706fde3e466b9dc79ee83458676ef5058c418da8cab354f6078"
+        },
+        {
+          "Path": "Prompts/UseDesktopInteractionSkill.prompt.md",
+          "Sha256": "3a8204086c8233e1869f1f4debea40cf60e69f8e8e1b98fe745938fa2785c20a"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "3484e82d569722adf29bd286521d360bec365016a01a334e2365cb113551a83f"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "DispatchTree",
+      "Title": "Dispatch Tree",
+      "Description": "Buffaly skill package for Dispatch Tree.",
+      "Version": "0.1.36",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Dispatch Tree",
+        "DispatchTree"
+      ],
+      "Path": "skills/DispatchTree",
+      "Files": [
+        {
+          "Path": "Contracts.pts",
+          "Sha256": "5b6156ab9299f0547b29c01f3639e33bee966e4696cf3465b5f58b18b29b95fc"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "8ed5f1f9d41350eea86ed3b494546ff7b7dbd0bfd50cdd6b65294048b81f503f"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "0cf060d2583b33bc3439526a864c7f9441c6110fe93333467e7ab92d90e3f4d0"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "942f53902fa5d65ea80d0c012ee88fafd44db7b2f5333998a741145cd51cec90"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "DllEchoSample",
+      "Title": "DLL Echo Sample",
+      "Description": "Validates installation of a DLL-backed Buffaly skill from the official Skill Directory.",
+      "Version": "0.1.1",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "test dll backed skill",
+        "run dll echo sample",
+        "validate skill directory dll support"
+      ],
+      "Path": "skills/DllEchoSample",
+      "Files": [
+        {
+          "Path": "Actions.pts",
+          "Sha256": "58bfe71764c2ec931e2a879e7aeef8b3a36de1b13675bbd95c5b834498980a02"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "d3a36b0b8b2f3d80ffefdee2d1facafc767fe5b8b7ff798e8e3668582eecc605"
+        },
+        {
+          "Path": "lib/Buffaly.SkillSamples.dll",
+          "Sha256": "f4c73ab5488839e1975a4ccbc0275d3bbd6249232fee7a42c8d9af705431dd68"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [
+        "reference/skill-directory"
+      ],
+      "Prerequisites": [
+        "Buffaly Skill Directory enabled"
+      ],
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
+    },
+    {
+      "SkillName": "ErrorLogDiagnosis",
+      "Title": "Error Log Diagnosis",
+      "Description": "Buffaly skill package for Error Log Diagnosis.",
+      "Version": "0.1.6",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Error Log Diagnosis",
+        "ErrorLogDiagnosis"
+      ],
+      "Path": "skills/ErrorLogDiagnosis",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "0ca1855886c16fa7cf5973a91094ec945c1e5493aaa0781a7f4e8b648814ec02"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "0e8ef9bb85b7cf6a273b79b73f3cf2c5271b8a18505c61fc3723c88397e2c786"
+        },
+        {
+          "Path": "interactive-sites/error-log-diagnosis-settings/site.css",
+          "Sha256": "ffae5784f658211f2d4e619a92408040b8a0d67715ee5fcb6b0a4945aeb00fc6"
+        },
+        {
+          "Path": "interactive-sites/error-log-diagnosis-settings/site.html",
+          "Sha256": "593d44f6b1bea00928c5102cab390f6c1fb70bed313090160678b2ccc42b54e8"
+        },
+        {
+          "Path": "interactive-sites/error-log-diagnosis-settings/site.js",
+          "Sha256": "b0ab2c4efc1c551753ce1fd7a991b5c0cf095c03d0548d6f3d33ef710eeca674"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "dcb61634a35d7b43916a936acb2609baa57a90ecabe60c87031543ab53b1a916"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "ExtensionBrowser",
+      "Title": "Extension Browser",
+      "Description": "Buffaly skill package for Extension Browser.",
+      "Version": "0.2.79",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Extension Browser",
+        "ExtensionBrowser"
+      ],
+      "Path": "skills/ExtensionBrowser",
+      "Files": [
+        {
+          "Path": "docs/BROWSER-WORKSPACE-DESIGN.md",
+          "Sha256": "83b5f5540a789e08ab0ffb8c0ba982e93c7461a18ca867e2b8ae575a319c9174"
+        },
+        {
+          "Path": "docs/VALIDATION.md",
+          "Sha256": "fa5d5e2d1160d520bedf38e12dc652100c2e6e7f5b1fa4e2cba92c8de4d627bc"
+        },
+        {
+          "Path": "extension/release/Buffaly-Browser-Agent-0.2.60-chrome.zip",
+          "Sha256": "f294feece4518d060db3646dba1370827a544d6ceaf46a837a7fcc173d28059e"
+        },
+        {
+          "Path": "extension/source/.gitignore",
+          "Sha256": "4ebecb83fe6ce7a3fb15ecd0f44ba2bb918681dcdf8e0faf85b6c8465386f068"
+        },
+        {
+          "Path": "extension/source/entrypoints/background.ts",
+          "Sha256": "ea612d9d462a428e821cf107b627dbfc986fa7559b8e6365ae7d95a355edc10d"
+        },
+        {
+          "Path": "extension/source/entrypoints/content.ts",
+          "Sha256": "b57040cb2308136e7ee0ea25a8b4f47adf8fb4ec51d99194d4a68f13a37734c3"
+        },
+        {
+          "Path": "extension/source/entrypoints/sidepanel/App.tsx",
+          "Sha256": "81b2c2a1d32d3e12e9ce3a56d41cb8ec0205a710f40ba134ad2dcd61818598fb"
+        },
+        {
+          "Path": "extension/source/entrypoints/sidepanel/index.html",
+          "Sha256": "f2914ee6aea78a69bf0ff424d1244fd7b00151149d4b22a29a3a3a5849475417"
+        },
+        {
+          "Path": "extension/source/entrypoints/sidepanel/main.tsx",
+          "Sha256": "419617c2ce9d58cf5116f8e34941d1cb92d81023da4850e210f6bf7891c412f3"
+        },
+        {
+          "Path": "extension/source/entrypoints/sidepanel/style.css",
+          "Sha256": "ba26edcc48c05b532ec0f9349bd130ce7c089d74a5c51bf5895889875f49b8f6"
+        },
+        {
+          "Path": "extension/source/lib/buffaly-connection.ts",
+          "Sha256": "247e4ad279220423994bd15d0e0f5edf24b607b3ad4f43d7dc3a773860effe8b"
+        },
+        {
+          "Path": "extension/source/lib/buffaly-servers.ts",
+          "Sha256": "4cbb053ef02a2a2c0e7e925a2165382c37e0022af4a2496965f18763802dec26"
+        },
+        {
+          "Path": "extension/source/lib/debugger-session.ts",
+          "Sha256": "7d18e04ad0e8895d4d3d883ea79c976d1bc4aff1f53afb7c9674b1d41d610686"
+        },
+        {
+          "Path": "extension/source/lib/safety.ts",
+          "Sha256": "6fe06254fe0dbeff491e33c1de9e2c4294a28605e8add45bdb809f1df2123b71"
+        },
+        {
+          "Path": "extension/source/lib/tool-log.ts",
+          "Sha256": "d91510db0d683f671ba64a9c1eb679dd806bacaf7b1bbd3323b3f2fe5ba259e2"
+        },
+        {
+          "Path": "extension/source/lib/tool-router.ts",
+          "Sha256": "963f4e5c7bb366734c5f375a7ddabd1939539f27f340b119819a8072701155fb"
+        },
+        {
+          "Path": "extension/source/lib/types.ts",
+          "Sha256": "1c4f74e4e2e0044afdb7f0e6275ea0512f4d9119829a7da5edfd8a95573f6265"
+        },
+        {
+          "Path": "extension/source/package-lock.json",
+          "Sha256": "a74351e155e3cb0af4bd046e3b91fb830301f9196b6d591eb2890c94cf04180a"
+        },
+        {
+          "Path": "extension/source/package.json",
+          "Sha256": "2cd000217fe3b86219a5c5030f19c4ea2dea8f23c973130b8cf2f79bcf261588"
+        },
+        {
+          "Path": "extension/source/PRIVACY.md",
+          "Sha256": "dfccaecffddf61c29b7800bf795b965d7880888d79639cce7e7d4832d17f5f0f"
+        },
+        {
+          "Path": "extension/source/public/icon/128.png",
+          "Sha256": "c086408e6ab90dfd783dca27876700c16334338367004e8c758a8d2d96d3b6ba"
+        },
+        {
+          "Path": "extension/source/public/icon/16.png",
+          "Sha256": "623c94126e9653e192a441c478fbe22f8c3fa22ad3d34c0271c8b900e623869c"
+        },
+        {
+          "Path": "extension/source/public/icon/48.png",
+          "Sha256": "072f858adad418441e9c6b866bf718fcec600868b2adefb9a253d4079c051a19"
+        },
+        {
+          "Path": "extension/source/README.md",
+          "Sha256": "46b03294decbcfa9299e5dd3932d541b69e89a3c82e1de8dafdf0a1ae38fee6a"
+        },
+        {
+          "Path": "extension/source/scripts/verify-bound-lifecycle.mjs",
+          "Sha256": "2827090e104613618ac7762f433ca09fda2e30820532c5ef7bebde96dc39ca66"
+        },
+        {
+          "Path": "extension/source/scripts/verify-bound-lifecycle.mjs.md",
+          "Sha256": "f1f5e0048352a2472aa0ec52b24bed6bc71d3a9d413f01741d5895c2ca535b57"
+        },
+        {
+          "Path": "extension/source/scripts/verify-release.mjs",
+          "Sha256": "266651f8175fc54df3632dd6225fb85f9e2b9c6c9788d86e6d24053a640ace14"
+        },
+        {
+          "Path": "extension/source/tsconfig.json",
+          "Sha256": "b5abd4a6017f95812317735b9d62246ca9a6d0bdb537ff74f1d54cb8ed0905ea"
+        },
+        {
+          "Path": "extension/source/wxt.config.ts",
+          "Sha256": "6c93f9e4add5261b600d00411080739b0c684cc93dd20b2f42f06439b18481ab"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "4daea5086ea7e8deffec1cfbb593b5c954be3aed58e9af8b6ff54ed458eba9ba"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "2ab4563675eaaaad42ba426212ae41d3134eba320b7c4135bb11a4baf875f873"
+        },
+        {
+          "Path": "lib/bridge.js",
+          "Sha256": "252167ec7caae923f43cd3a6c3fe7fd77b9ec33366d56493ef138c0a69403bd8"
+        },
+        {
+          "Path": "lib/extension_helper.js",
+          "Sha256": "429748db9f38da3079e220e66edec573d90b5ed2832e616f146868f4c0314d2b"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "11540e14a5cbb95a9d5dbb6c337938372b1716bdfda03c6ec5dc45aac301e734"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "0da6139227592087f3ceb8d103f253271efc143d7a31318f9068e2a9a6e86b37"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "FFmpeg",
+      "Title": "FFmpeg Media Tools",
+      "Description": "Buffaly skill package for FFmpeg Media Tools.",
+      "Version": "0.1.2",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "FFmpeg Media Tools",
+        "FFmpeg"
+      ],
+      "Path": "skills/FFmpeg",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "995f8e6d3d484d496e6c5232ae526b4fb7af224ab3f526a5f0c19cc833332b35"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "9cba746b3515fb6206f35658c379dc3c572cff50ad1dbc84ecdd4127894aca8f"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "1d8a61f32ac44a70d5abbeee6b73fbdd9599d6d85fc643f1749e07712c3bcca8"
+        },
+        {
+          "Path": "Prompts/ToReconstructVisualStoryFromRawVideo.prompt.md",
+          "Sha256": "bb01abd77509f495464f386d21f7375740c6d8b2a6e034c2d06e8a5873c1dd85"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "bef98d230e0639362df0640ed1d10bc0968df5fbfdb32863c6fcc2dd5dae3088"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "FairPathJsonWs",
+      "Title": "Fair Path JsonWS",
+      "Description": "Buffaly skill package for Fair Path JsonWS.",
+      "Version": "0.1.2",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Fair Path JsonWS",
+        "FairPathJsonWs"
+      ],
+      "Path": "skills/FairPathJsonWs",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "fa89e7623f480a4fb787a53ee759ee743ffe3026a8d4b438437a70dac949c9d2"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "567d7893e330065a1025b8907e7826df4b8bcd9aebf05148b78786e50968ad97"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "e8860f44c843cd034bbaa0ecbc830796369a3f07c6522ec3d7dd716e7566a954"
+        },
+        {
+          "Path": "Organizations.pts",
+          "Sha256": "d68fe4d1cef3be0222c37c066ec839c112c074f66306edbb42a0b8c3d0bd3b20"
+        },
+        {
+          "Path": "Organizations.pts.md",
+          "Sha256": "fb2503ec4235c331908a7c73be0140326ccd40f29042f4aa76d942cd65b013d6"
+        },
+        {
+          "Path": "OrganizationStatuses.pts",
+          "Sha256": "3e7a5cbb3c333164315b1f072410a037bb866af28a9951cbcfd219b77d51c487"
+        },
+        {
+          "Path": "OrganizationStatuses.pts.md",
+          "Sha256": "0da8b8f729bbf7f21b18069a60a2869122ecccffd251973212672e0a14fc6fc0"
+        },
+        {
+          "Path": "PatientImportStatuses.pts",
+          "Sha256": "592ed7114c3a7a2ec58bab8929aacf0336c6510f481a19ff6d6c9f31380bf021"
+        },
+        {
+          "Path": "PatientStatuses.pts",
+          "Sha256": "99140e28a9c615bde8d7cf47457b4d8901e518ba7270ec1f92ee1acb6a5b3755"
+        },
+        {
+          "Path": "RoleLists.pts",
+          "Sha256": "57110593641365e06c495b7028ebd8c719dcb0c8ceed7d7f36073cf4052c2b32"
+        },
+        {
+          "Path": "Roles.pts",
+          "Sha256": "411ad03c274e9b7208e35c086cc44e620ef0613085749a61a340ca57768e76c7"
+        },
+        {
+          "Path": "Roles.pts.md",
+          "Sha256": "f557c7b4e87a43236c859aca4271fd07a766e8150584f38f06276e2490b0f044"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "8815c733ca4a8d65f1a438589df69059831903d6b7d3c1502c88042324056952"
+        },
+        {
+          "Path": "UserOrganization.pts",
+          "Sha256": "710ad2e37390107ff5953568a73233f13453c15da92554cfe972e094963600f7"
+        },
+        {
+          "Path": "Users.pts",
+          "Sha256": "954602e017d1cf2e23e59353af65e2493cfed747643ec5956ae634c30b80d6c9"
+        },
+        {
+          "Path": "Users.pts.md",
+          "Sha256": "f50b29f0571903ceaf8e5b079c1d9a86f5d555a2eb39b085fbc3029268328708"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "FeedingFrenzyJsonWs",
+      "Title": "Feeding Frenzy JsonWs",
+      "Description": "Buffaly skill package for Feeding Frenzy JsonWs.",
+      "Version": "0.1.16",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Feeding Frenzy JsonWs",
+        "FeedingFrenzyJsonWs"
+      ],
+      "Path": "skills/FeedingFrenzyJsonWs",
+      "Files": [
+        {
+          "Path": "AgreementTemplates.pts",
+          "Sha256": "71662b94afc8cdd4b0280f51e5d64a40c9212891f1e7e19b1b1930bba2e37c5c"
+        },
+        {
+          "Path": "AgreementTemplates.pts.md",
+          "Sha256": "ebcc7e1c5ebb0413c14a481aedc643a2c60ef53fe005761eec75bfc0c3bed25c"
+        },
+        {
+          "Path": "Calls.pts",
+          "Sha256": "f1ca482ae417728d840c8c9b0295031369c2ea1f1fedfe01ac841ab430194c4d"
+        },
+        {
+          "Path": "Calls.pts.md",
+          "Sha256": "6333fcac27520048a99e5473113dcd3ea97e413731bbd9b89ed377b1c1863561"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "4d97bed3d4de833aa7d83d0725a96981d5a27ae0d3cff4abd9a77d73d79b6ccc"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "7d127bfaee2d1153f1032ee43e170df2b90d2c3f03c4ee9b8f32a4c4fc457deb"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "ebfff44a9e807f35b6584f6059cb30297520dcbda8e8d730d986c4a01ce8ae8d"
+        },
+        {
+          "Path": "LeadAddresses.pts",
+          "Sha256": "6e6d4d78a73cff431a2b14e091d209d8f650ad2e7f6dda078948cf23f3268adc"
+        },
+        {
+          "Path": "LeadAddresses.pts.md",
+          "Sha256": "80d3a029bdf35a971ab4659b9e18924a1f678bd29ae2ab247e8a39ffd08cf3de"
+        },
+        {
+          "Path": "LeadAutomation.pts",
+          "Sha256": "bc49aab16cbe424f8a87307b7a962bd8e4e06b144f33d2904b10a9dd4bd6dc78"
+        },
+        {
+          "Path": "LeadAutomation.pts.md",
+          "Sha256": "b3f3ec5402307df757916fb3bbacc9ec2c5512d7c5d3c908ff0ceed448322531"
+        },
+        {
+          "Path": "LeadContacts.pts",
+          "Sha256": "1b67a94c11cb5fd4f274c3f9039df9b5863d6c94c401febb1a2f9d962184d801"
+        },
+        {
+          "Path": "LeadContacts.pts.md",
+          "Sha256": "c6e515b52769f5fa9095d2e93ac7b4276eea19296b8c709ee3b24f280df49ee2"
+        },
+        {
+          "Path": "LeadNotes.pts",
+          "Sha256": "dcc845cb1c4947b9f4c191bdd17fe1896205fd52232132254d7c984bf1fc78f0"
+        },
+        {
+          "Path": "LeadNotes.pts.md",
+          "Sha256": "f5ff0af2328132686caa8bb1b71c8fcb195153d50b2bf1c3a25b9692c0ad2c51"
+        },
+        {
+          "Path": "LeadNoteTypes.pts",
+          "Sha256": "a58b37ac9136e87df48f45863fb4a1b2545c5fcb35c862fc84fd42fa940d5938"
+        },
+        {
+          "Path": "LeadNoteTypes.pts.md",
+          "Sha256": "507b46966d5db3282e3b8b6680fc81ff6711e8b154ba74175bf6fa895ebd37d7"
+        },
+        {
+          "Path": "Leads.pts",
+          "Sha256": "42944b87c1b59de174b942063050a1c42df55a9bbb2ea586d29b3188cd36f597"
+        },
+        {
+          "Path": "Leads.pts.md",
+          "Sha256": "221ad41021a7fc21a28535af57249721ab2612c0c29f6e94021ea525850085f3"
+        },
+        {
+          "Path": "LeadsAdmin.pts",
+          "Sha256": "7b1a6180f418519bd865c33c7b1e720e638599736b26e8fb62a167066b027554"
+        },
+        {
+          "Path": "LeadsAdmin.pts.md",
+          "Sha256": "9050c6dd232bba5f43460c7c1eb6316bff9c2a87e0a54b65a1f3c9d3f8beb6fa"
+        },
+        {
+          "Path": "LeadStatuses.pts",
+          "Sha256": "cae4b9f3978c5edf20733756518d9c6e195412f4e13930b5ee031ea590ed4fe0"
+        },
+        {
+          "Path": "LeadStatuses.pts.md",
+          "Sha256": "da8704621ade55d256a4be167722c21aa26166fd8da791cafbb18ce5349388fe"
+        },
+        {
+          "Path": "LeadSubStatuses.pts",
+          "Sha256": "35262825fbbf62472aaf01c5f77f4ea4e03afa1e194fe7a50ce4ec145cb482fa"
+        },
+        {
+          "Path": "LeadSubStatuses.pts.md",
+          "Sha256": "1b4915a49abef6b0efe5caf185aa76a073ad72f0367c5a02cc1a97713807f805"
+        },
+        {
+          "Path": "LeadTags.pts",
+          "Sha256": "44b122f42b51828298b9e8ae571480d50c221e06fd7fd72e51a7f387e3033063"
+        },
+        {
+          "Path": "LeadTags.pts.md",
+          "Sha256": "78b4a4ba20cd3c6142e4f8d330ef857510aeacf6176d336b04a329e69e0756ab"
+        },
+        {
+          "Path": "SalesRepresentatives.pts",
+          "Sha256": "6f7c5e9dd692a91c99c4557e8cfc32cddb9684817d92fffbb820909ed067ed36"
+        },
+        {
+          "Path": "SalesRepresentatives.pts.md",
+          "Sha256": "6855c97f2b9419216d176d13ab7db785a7cbf8843b830a225dfa003815c7df67"
+        },
+        {
+          "Path": "SalesRepresentativesAdmin.pts",
+          "Sha256": "21c8859836582262766a8841b91dcf4b7d9ae99962626d050aab41de8097f050"
+        },
+        {
+          "Path": "SalesRepresentativesAdmin.pts.md",
+          "Sha256": "7be00d8715d1959793f4ba783d8a8c5744bdbce2a9421a2f4adb899ac7fcab70"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "12be9d1d1970494473aaf88ebd3796fcabf2bd86ef036f57f0e12fefb298bc84"
+        },
+        {
+          "Path": "Sources.pts",
+          "Sha256": "eaff3830858a208e63c095ddbdfaa886f9b352cc70a5033adee2df489836326f"
+        },
+        {
+          "Path": "Sources.pts.md",
+          "Sha256": "b6d9eea4dbf2b0b2b4d975858e897c3adfdd1612e620ed0580b67c11151e9d80"
+        },
+        {
+          "Path": "Tags.pts",
+          "Sha256": "04974be7e6c07a833d8369cf355e93ce7fa755d30d280525682fc801ad9bcd3c"
+        },
+        {
+          "Path": "Tags.pts.md",
+          "Sha256": "d51fb486facf38891f86f5128460e5172215a47c38480ed42008d1a9a0b9218b"
+        },
+        {
+          "Path": "Tasks.pts",
+          "Sha256": "87be2a5ccd47f5df99bbbffb4fc35c216b17e9e5910537ef445676b52f4dabcc"
+        },
+        {
+          "Path": "Tasks.pts.md",
+          "Sha256": "c5e5f9ca3db82256f5414035ffb9f21d78beb9bfe7bce71557bb3e9257877af2"
+        },
+        {
+          "Path": "UserAutomation.pts",
+          "Sha256": "b29cb087044b15d9811f3ed356e8f23ff5d0b346c8376304bd172eed4b1152e2"
+        },
+        {
+          "Path": "UserAutomation.pts.md",
+          "Sha256": "0228bd2fc5306932ad88635f5eb5ef0375af85033f419efdcfa0ec866efb7e56"
+        },
+        {
+          "Path": "Users.pts",
+          "Sha256": "74a9d0402111eaaf771c5c5bab905d4d440ee83513f01e21307b7c9cff51e2b0"
+        },
+        {
+          "Path": "Users.pts.md",
+          "Sha256": "d52bb9ca7da8f0bcdc222f1db2f922730a2bca62bc4dd977a8492dc7b8f05211"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "FileSystem",
+      "Title": "File System",
+      "Description": "Buffaly skill package for File System.",
+      "Version": "0.1.1",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "File System",
+        "FileSystem"
+      ],
+      "Path": "skills/FileSystem",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "6b17ef33e66fc156f07902cd9f4ceffcc6bf5c53be647999e31c19db46abf4db"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "a8a11e1d89f0b55b865de0435051b71ffb16c9079bff31dd896e843d2399f9be"
+        },
+        {
+          "Path": "Prompts/ToSearchTextInDirectoryWithRipgrep.prompt.md",
+          "Sha256": "612693b97a9e1b83d27ca1a96f3ac7cc9a1530627352dd9f29fbda2fd6ec77cf"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "GitHub",
+      "Title": "Git Hub",
+      "Description": "Buffaly skill package for Git Hub.",
+      "Version": "0.1.4",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Git Hub",
+        "GitHub"
+      ],
+      "Path": "skills/GitHub",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "4315eddcb6c3a991af0dce0e2ccd49c9070b57d649c071a14b712bab1319e8e9"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "e819056660c61b1249893798c685d4e07949ccefce35054b71f4ef0bec1f1b33"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "c273ff1a3c158ea481ae1c7bd8579d9d2c45096634a69a4d7dbf3b7166b55ab4"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "GoogleAnalytics",
+      "Title": "Google Analytics",
+      "Description": "Buffaly skill package for Google Analytics.",
+      "Version": "0.1.11",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Google Analytics",
+        "GoogleAnalytics"
+      ],
+      "Path": "skills/GoogleAnalytics",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "427353f45182d3094adbd76ba786e5ca0d4cc6a5d202a0abf5dbc444633b9628"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "22741a61a2fb50c74e1048915f472c714b79821601734f4149e070522192460b"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "fbd33a386298905be4410a285ebb004b5128701a259d421c137eb992e08ea840"
+        },
+        {
+          "Path": "lib/Buffaly.Marketing.dll",
+          "Sha256": "2c9231552398d819e88e3d1c754d3e717527c6fbd4df4cf6fd9a51839bd16b19"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "af922209c18def12037756083ef3e183a670e57488d355dde3bee407e0364393"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "GoogleMaps",
+      "Title": "Google Maps",
+      "Description": "Buffaly skill package for Google Maps.",
+      "Version": "0.1.1",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Google Maps",
+        "GoogleMaps"
+      ],
+      "Path": "skills/GoogleMaps",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "b0861fc4d7eec48684dc67031a939bfd93b87357ba68ee6945e85e4fb40ffe72"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "90a1da8e6c1e0298fcbddef8bf4dc3827f3185bf6017de082f31c646ade43d2d"
+        },
+        {
+          "Path": "README.md",
+          "Sha256": "e53bad8d3201247ea3cc4f6c3488502d651d8be077c342efd7173347b20644cd"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "GoogleTagManager",
+      "Title": "Google Tag Manager",
+      "Description": "Buffaly skill package for Google Tag Manager.",
+      "Version": "0.1.3",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Google Tag Manager",
+        "GoogleTagManager"
+      ],
+      "Path": "skills/GoogleTagManager",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "48e05fd891b7f4ad4d90b9ae5b6db3a5b3ff92061f6c4422ed65bc16d5724726"
+        },
+        {
+          "Path": "lib/Buffaly.Marketing.dll",
+          "Sha256": "76202805325e4e869569fdd51c87fb51db5cd5ec92531a88812d4653dedea961"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "2e0cce941254c963e0b71f3f9d2a00fb30c260e324377d98f750e4cdbd92ae30"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
+    },
+    {
+      "SkillName": "Heartbeat",
+      "Title": "Heartbeat",
+      "Description": "Buffaly OpsAgent skill package for Heartbeat.",
+      "Version": "0.1.1",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Heartbeat"
+      ],
+      "Path": "skills/Heartbeat",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "77c12542787506640fd6cbc0f3020f83780fdd4432e580e1252e935be8e6b051"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "d50b1bd9c58e650c124cc7f90fc9f4c9c96e7d60fa7eb7246a8ef57c5878fec4"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "5e71f2769e457d4b8800524ac11d4c72c4e84a2581c4b0ccb45fe2ad7f876048"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
+    },
+    {
+      "SkillName": "HelpAgent",
+      "Title": "Help Agent",
+      "Description": "Buffaly skill package for Help Agent.",
+      "Version": "0.1.5",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Help Agent",
+        "HelpAgent"
+      ],
+      "Path": "skills/HelpAgent",
+      "Files": [
+        {
+          "Path": "Contracts.pts",
+          "Sha256": "e7bfa274fdf6d834342d441029772530df1cdb3a6f5d5a6e9725b868054adaff"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "6a0e9fe34a0c758238973471675b5ba03d41155ec03043ffcaef10d470773d42"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "5794050311c41b6b2e06b6b90d3869920c7ce872c810e5c8057948bf9a2b0686"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "59f5d4d3b1d6349f4986ef8a7d898f974888ba95fb1c16eacd4de370bdf1b6e5"
+        },
+        {
+          "Path": "Prompts/ToCreateBasicCsvDownloadExportWalkthrough.prompt.md",
+          "Sha256": "953efa3d3edf14ba2e1e79f02836f3ea680e5df0e19d096fde4057b016432bcb"
+        },
+        {
+          "Path": "Prompts/ToCreateInMemoryDatabasePipelineWalkthrough.prompt.md",
+          "Sha256": "7c92d221ee8066bc865197365463b6575becefbeac6c2ed2050535cd66d4832d"
+        },
+        {
+          "Path": "Prompts/ToCreateInMemoryDataFilteringWalkthrough.prompt.md",
+          "Sha256": "53fc0d6614910fc13d9c4a3f87e64b916238c95e392b1ebb0aceb72c31967a40"
+        },
+        {
+          "Path": "Prompts/ToCreateMorningSystemHealthDashboardWalkthrough.prompt.md",
+          "Sha256": "5fe8a0c472ba650acb040da9ae067e70af072816e50208f9f7066aff018e2846"
+        },
+        {
+          "Path": "Prompts/ToCreateMorningSystemReportWalkthrough.prompt.md",
+          "Sha256": "0c0c1a08f2105f0c463fe42c2b67a93cc1ffd2f932a6cf9cd74a83cb4a816dad"
+        },
+        {
+          "Path": "Prompts/ToCreateNativeCSharpDataTableAnalyzerWalkthrough.prompt.md",
+          "Sha256": "06502ed388f436329c938cc597222cd5b099560dc36f0d6918cc64d6937e2001"
+        },
+        {
+          "Path": "Prompts/ToCreatePromptSkillInBuffalyWalkthrough.prompt.md",
+          "Sha256": "c77119f914382032f798ba1e42dd7fe5369a61d2b6acc66ce93666c04e49920a"
+        },
+        {
+          "Path": "Prompts/ToImportCodexCoworkConversationWalkthrough.prompt.md",
+          "Sha256": "dd08edf8017708ab68bd232c8c89c98dfc32982cf5361ad5b6ddd1462a1e8681"
+        },
+        {
+          "Path": "TabularData/index.pts",
+          "Sha256": "988e09cb7f674700c3b491b2c63822831a906750c49b5378c8fc320b82c98b96"
+        },
+        {
+          "Path": "TabularData/index.pts.lazy.json",
+          "Sha256": "8ebe3971c37ffeff4125fcab4d5a60f73a36a5c5b6864336311f399c3178c436"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "LLM",
+      "Title": "L L M",
+      "Description": "Buffaly skill package for L L M.",
+      "Version": "0.1.2",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "L L M",
+        "LLM"
+      ],
+      "Path": "skills/LLM",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "96374da02855422f3f25c35ddb552da296b4dc21517867a71d9fa72e6077484d"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "0d3394a817ad41da769ef8256b259837c8b63e082197b4ecb5aac7037549e996"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "9ef11d78f058236ce7b1fe1d37cf2112ce568f1fc01f0ef513dcb7dab2a2adab"
+        },
+        {
+          "Path": "LlmBase.pts",
+          "Sha256": "b05aa7aa3e634bee051a09fb37e0ff6cb45462f900d2eea2b49719b51ab6767f"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "3960a7d4980709f2634ae1a82251ca9708ec147d9073dda4cae0b9f976d6c277"
+        },
+        {
+          "Path": "Prompts/PrepareComprehensiveCodingInvestigationBrief.prompt.md",
+          "Sha256": "809c62ce90f06383c16c815c5cec6588861f461fe5667574a78fe19991fc2294"
+        },
+        {
+          "Path": "ProviderModelActions.pts",
+          "Sha256": "4e95d0d04de9bd47d331228a0b39f7c7ef0e0b578c0b1f377e455e98caa819c9"
+        },
+        {
+          "Path": "ProviderModelActions.pts.md",
+          "Sha256": "2ed05594b092ba39dac9032b35fa9f81d838bde7f03ddffdb5a20ad47111d746"
+        },
+        {
+          "Path": "ProviderModelOntology.pts",
+          "Sha256": "aae1f76291babe30246878e692ab383a718270b9733ce480fa4a7ffe21e758d4"
+        },
+        {
+          "Path": "RuntimeProfiles.pts",
+          "Sha256": "8074a9089eb24b7aded3538b60ca7de68d5db2113a853c5a48749b627f307cb9"
+        },
+        {
+          "Path": "RuntimeProfiles.pts.md",
+          "Sha256": "8577a81a6eab331f83e24e9bffe7774c64b372c65a6d18a59cd73e610ae39d47"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "Level2Watcher",
+      "Title": "Level2 Watcher",
+      "Description": "Buffaly skill package for Level2 Watcher.",
+      "Version": "0.1.1",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Level2 Watcher",
+        "Level2Watcher"
+      ],
+      "Path": "skills/Level2Watcher",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "c7f513d0b4373f41a01b243aa3e71306352d882d7b6ef149432c5a5e21f23b87"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "b80138267d8fb3c2cd28f924b9f3236b2f980d0d98ae6515a54a2f204f0ad842"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "2069223198f565d01f46e2e1ed31cc6b40b1070417ccc268428fb25c07fd5a01"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "LocalTask",
+      "Title": "Local Task",
+      "Description": "Buffaly skill package for Local Task.",
+      "Version": "0.1.2",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Local Task",
+        "LocalTask"
+      ],
+      "Path": "skills/LocalTask",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "0b1990d5df1d28e5a6a4c098f1d7d9d1609d5691dc7896a3d9f180db5710fa66"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "6d63a8085f393dedde571f39e48c2c1ef61c28f883b373f65091177bd49a8f8f"
+        },
+        {
+          "Path": "Prompts/ToCreateAndMaintainLocalTask.prompt.md",
+          "Sha256": "30839563f3eb5810fd72c472c7974d8cf101cab6ff0b1755d06c5336310b7400"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "MetabaseJsonWs",
+      "Title": "Metabase JsonWs",
+      "Description": "JSL1 JSONWS skill for RootTrax Metabase application, project, object, property, and materialization endpoints.",
+      "Version": "0.1.2",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "metabase jsonws",
+        "metabase json ws",
+        "roottrax metabase jsl1",
+        "roottrax metabase jsonws"
+      ],
+      "Path": "skills/MetabaseJsonWs",
+      "Files": [
+        {
+          "Path": "Applications.pts",
+          "Sha256": "94b822a1f06211dc04493205c9694de8fa740ccf2fa3020d8504b0c4aa439dd2"
+        },
+        {
+          "Path": "Databases.pts",
+          "Sha256": "a382cee1146880c1aea5be4483aacb402f61e3c60bad5744dcfc2c5eb4f4477a"
+        },
+        {
+          "Path": "Features.pts",
+          "Sha256": "810781541095b4dc1984cf3f55ad699a1aa1e9704a6516721bd6c522fa550349"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "b9ea0a463dbbb2595d987658fb224388284ece8d62b23280c9445c7babf85c2c"
+        },
+        {
+          "Path": "Links.pts",
+          "Sha256": "5a775a80dd6a9cfd3420b1d817998d7cd197defbb58b00a61259067ff7791ac5"
+        },
+        {
+          "Path": "ObjectDefinition.pts",
+          "Sha256": "939590a34ce5489d5c1c94814bdba8e7f67af1b8f76e7b74423ad914d41e8fc1"
+        },
+        {
+          "Path": "ObjectMethods.pts",
+          "Sha256": "d404baabd54cfe570c98e37665417872d83a8ebf8b57103723f1a813267bab8d"
+        },
+        {
+          "Path": "Objects.pts",
+          "Sha256": "3ee98fdf0e484f8233b3adb6931a8a40642a2024b48b951581c37e183e2dcbbe"
+        },
+        {
+          "Path": "Projects.pts",
+          "Sha256": "db1a41ea7eecb6d27663dff5721544b7e4d620017dc5c0b386447278701ab091"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "3fce38ed6ab6b621ce446c7f327909eeff477cc4d68f917227b88a3da35cf407"
+        },
+        {
+          "Path": "Prompts/AddRootTraxMetabasePropertiesJsonWs.prompt.md",
+          "Sha256": "e6cd4a252b8928e538da21b851c8e777948d0eb6e1f150fec9faef34fd615ef4"
+        },
+        {
+          "Path": "Prompts/CreateRootTraxMetabaseObjectJsonWs.prompt.md",
+          "Sha256": "d73b6b49c7098a1cfc32c212c14b44e4c66dd2e830571ef0a3cbbb362b44590a"
+        },
+        {
+          "Path": "Prompts/MaterializeRootTraxMetabaseCodeJsonWs.prompt.md",
+          "Sha256": "d7f128397485a7e1c7bc792337a0bc96a5bcbb5bbd942625d5a14666b021a8b3"
+        },
+        {
+          "Path": "Prompts/MaterializeRootTraxMetabaseDatabaseJsonWs.prompt.md",
+          "Sha256": "a791c1d470dfd549ac60c868ae0e6529ba0de4550331ea1e69a28496f4c03802"
+        },
+        {
+          "Path": "Prompts/RunRootTraxMetabaseJsonWsScaffoldWorkflow.prompt.md",
+          "Sha256": "3627b55afb1f504e668ff001304797f476c71d805e80d6b1af94f12d30eefc4a"
+        },
+        {
+          "Path": "Properties.pts",
+          "Sha256": "1f7da7a95045c0c4a9027a2270641d1e8195736a4ace963df225ca6b75eddcbc"
+        },
+        {
+          "Path": "README.md",
+          "Sha256": "5985e0e306056520e99d66ddee3d53ab84f228be5737389a19f05880c2107531"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "669dda73e94a0b22e10f0b443c1d019ae10708ac8d83b96773ab39af833933ea"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "3766ba65b07dec62f1160c8cde467516077d1aeee8a6f0a4da5a0ebd0eaf61fa"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [
+        "Running RootTrax Metabase web host, for example http://localhost:5197"
+      ],
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
+    },
+    {
+      "SkillName": "MetabaseRuntime",
+      "Title": "Metabase Runtime",
+      "Description": "DLL-backed RootTrax Metabase runtime skill for applications, projects, objects, and generation/materialization workflows.",
+      "Version": "0.1.1",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "metabase runtime",
+        "roottrax metabase runtime",
+        "dll backed metabase skill",
+        "roottrax vdb generation"
+      ],
+      "Path": "skills/MetabaseRuntime",
+      "Files": [
+        {
+          "Path": "Actions.pts",
+          "Sha256": "226db0a06fcec581c2b071ba8adf339e0fd2b0b8873783ec7a86f45d2e78edbf"
+        },
+        {
+          "Path": "Applications.pts",
+          "Sha256": "494849e59926b0be893b2237911d89dc4a653031555b0cc2ce7cea720cddec6e"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "c394082deb0400b139b75b9a9bdb9361c5da8572258b564e31325550724d6082"
+        },
+        {
+          "Path": "lib/Buffaly.Data.dll",
+          "Sha256": "be56dba8f5cde04ec597ca2464f9a3e35a9fdf14bfd2531edfddcb6167cca7c5"
+        },
+        {
+          "Path": "lib/Microsoft.SqlServer.ConnectionInfo.dll",
+          "Sha256": "829c560b19b03c4d9dec9a12cdc273f4aa75573cafb59fd55d22cefed8c01b2e"
+        },
+        {
+          "Path": "lib/Microsoft.SqlServer.Dmf.Common.dll",
+          "Sha256": "2dfd5ed46980a449baff04ed3893e82ca3ea3f36043729b9f124b8ad58f78332"
+        },
+        {
+          "Path": "lib/Microsoft.SqlServer.Management.Sdk.Sfc.dll",
+          "Sha256": "3462861851f26471c7f3d9ece92852d66edc326783d08dc1336350b360fb16a1"
+        },
+        {
+          "Path": "lib/Microsoft.SqlServer.ServiceBrokerEnum.dll",
+          "Sha256": "4785b3139e5e3b69be6e083e8f49496f668ef0b57abc4127fdba68ac7f42ef42"
+        },
+        {
+          "Path": "lib/Microsoft.SqlServer.Smo.dll",
+          "Sha256": "ed8214d54df8fb7bf67da8d1f510a5893066b5ab1769411261e049c1063de9db"
+        },
+        {
+          "Path": "lib/Microsoft.SqlServer.SqlEnum.dll",
+          "Sha256": "e87de8d5ae2ba4a4555ba2d92801df948fb5948fa75be0f2d1d35754af2ef508"
+        },
+        {
+          "Path": "lib/RooTrax.Common.DB.dll",
+          "Sha256": "e1c7916c4b3a1eaccc23b6e97b7b8599c70d1987b9b1ea31a0e8a49b2e5af4c3"
+        },
+        {
+          "Path": "lib/RooTrax.Common.dll",
+          "Sha256": "db652586a3d14ca7197dca7f8830b87b6fe28ecab258964531e94b235f625a54"
+        },
+        {
+          "Path": "lib/RooTrax.Creator.DB.dll",
+          "Sha256": "a578096162af10a827bd221d951341169852061a10ea1d2c8a8f3e42a717258e"
+        },
+        {
+          "Path": "lib/RooTrax.SqlGenerator.dll",
+          "Sha256": "d98d1a188d88607d3d1fafc104bc0475949b373ed53a14fdb099d9704ff339ba"
+        },
+        {
+          "Path": "lib/RooTrax.VDB.DB.dll",
+          "Sha256": "3314e93291935a979ce415d3a265076d5456ad26e356ee2823e22231eaf932cf"
+        },
+        {
+          "Path": "lib/RooTrax.VDB.dll",
+          "Sha256": "4f40e6ba3a968404d96d1c57ba36b9ad8bf146ba18045b41ba09372aac0ffd91"
+        },
+        {
+          "Path": "lib/RooTrax.VDB.UI.dll",
+          "Sha256": "210cccb267336141006132f4999483c98d7285718389e0e38b98819300858c5c"
+        },
+        {
+          "Path": "MetabaseSkillBacklog.md",
+          "Sha256": "0028cc5ce7596aec7c036c001fc6d18d60e10c3d7e953f027f874f2554c20573"
+        },
+        {
+          "Path": "MetabaseSystemOverview.md",
+          "Sha256": "94a115effdf9ebece55f694bdb55d9533e54dc9cbfcef0b46f4d0dff33aab7c9"
+        },
+        {
+          "Path": "Ontology.pts",
+          "Sha256": "c2fddce4c83254fc16a955b1e0827975a4c1ff6b74de5d52d9bde7167a3e5205"
+        },
+        {
+          "Path": "ProjectsAdmin.pts",
+          "Sha256": "57bc93b4f5e37f639b72887cbc5dfb6bd4710259b4978d1cc491abdae6fd9202"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "d8680965df62472767fe929982c75588083e6da3519582cbaec100d435d3c8ab"
+        },
+        {
+          "Path": "Prompts/AddRelatedObjectsTabToRootTraxDetailsPage.prompt.md",
+          "Sha256": "d7eb4aa8cc7846b1f1c7d179df91e9aa7ab2c8d9a78612c32e9cd77058ab8374"
+        },
+        {
+          "Path": "Prompts/LaunchLocalMetabase.prompt.md",
+          "Sha256": "22bb7d7283f4aa5d15e7145319d1c4ae3463d0dbce91229a125cad28a2be6893"
+        },
+        {
+          "Path": "Prompts/NLtoObjectSpec.md",
+          "Sha256": "a6ca1d19c5753c401810284d24b71852826e9c820864d2c1a2f7c1b96d7780bf"
+        },
+        {
+          "Path": "Prompts/RootTraxPortalArchitectureMasterGuide.prompt.md",
+          "Sha256": "a86618f94e891007b5f1ae9b110b9261408b9fe67395f4f4036b47310c37122d"
+        },
+        {
+          "Path": "Prompts/RunLocalRootTraxMetabaseJsonWsWorkflow.prompt.md",
+          "Sha256": "cfc1390e60dff5823a6be306056d93934b025906c845cbe2ac7093bea4aa3ba7"
+        },
+        {
+          "Path": "Prompts/UseMermaidDiagramArtifactWorkflow.prompt.md",
+          "Sha256": "abac323fbabafa91d7c145b271119036c2bff245bd32354f4387b8c34ee289ab"
+        },
+        {
+          "Path": "Prompts/UseRootTraxMetabase.prompt.md",
+          "Sha256": "b8d05ea2ff1f1085cdb5dd424481f1db1e511cb93e018a52061f57b126220693"
+        },
+        {
+          "Path": "README.md",
+          "Sha256": "15f00398574999b45ccc07bb7d0f9d006523cb430173156f78171bff2048024d"
+        },
+        {
+          "Path": "RootTraxMetabaseOntology.md",
+          "Sha256": "4a2e715e21e8af8d3c1632db3b4bcedb9d5f27be14854d69b7a5374228294a55"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "04b8e775cb5de630d5285f755797aa4bb6b4f526d7abc66940a65129b41eaeca"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [
+        "Local RooTrax Metabase runtime dependencies available",
+        "Use only for explicit Metabase Runtime work"
+      ],
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
+    },
+    {
+      "SkillName": "Onboarding",
+      "Title": "Onboarding",
+      "Description": "Buffaly skill package for Onboarding.",
+      "Version": "0.1.3",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Onboarding",
+        "Onboarding"
+      ],
+      "Path": "skills/Onboarding",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "eb2db10a86f4f25022e0bd8511918992bef2b826494aa1e8c6980450441eb3f1"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "e8045272782f1ba2a6c6e98b6a898dd2b01ae448f680b6deec90da454d04e7b3"
+        },
+        {
+          "Path": "Prompts/ToConnectFirstToolSkill.prompt.md",
+          "Sha256": "0098daf82c183855fbf22c8bcc346ee507d003cfd0a0457abd93b25eb2251c49"
+        },
+        {
+          "Path": "Prompts/ToConnectGitHubToBuffalySkill.prompt.md",
+          "Sha256": "431070f25c26cf9a4510cf6dcefce5cb635a8717e60c22ce1fb0c88c604b893e"
+        },
+        {
+          "Path": "Prompts/ToConnectGoogleWorkspaceToBuffalySkill.prompt.md",
+          "Sha256": "fcaacc20d6c94ee033032d258efa36b4992512bb2c3de841fba0cb997a1e82cc"
+        },
+        {
+          "Path": "Prompts/ToCreateCSharpSkillWalkthroughSkill.prompt.md",
+          "Sha256": "df616a0bff0197367be6cb434f50ca0db36c595402102da11e0f6dc11aa2eab1"
+        },
+        {
+          "Path": "Prompts/ToCreateFirstBuffalyTaskSkill.prompt.md",
+          "Sha256": "edfd8fca106294196d18e9094ffb37326e14b59f77e861a1b4fa05a7c8241218"
+        },
+        {
+          "Path": "Prompts/ToCreatePromptSkillWalkthroughSkill.prompt.md",
+          "Sha256": "5774621ed9a198b2d360193f56e049fb31af0a6ee88691fc823ba1abab60911f"
+        },
+        {
+          "Path": "Prompts/ToCreateProtoScriptSkillWalkthroughSkill.prompt.md",
+          "Sha256": "bd29341a1b4559c49f22ac1ab6199f7074b42a67b57abd6f1b2a12f72d2e46e8"
+        },
+        {
+          "Path": "Prompts/ToExplainBuffalySelfModificationSkill.prompt.md",
+          "Sha256": "0b0eca65acbf5d9e55ac75d163e9d601f39cad8d11ee63be252f28b3057a6aa4"
+        },
+        {
+          "Path": "Prompts/ToExposeBuffalyThroughTailscaleSkill.prompt.md",
+          "Sha256": "2e3290234b3289e3d1da9f355f416b670886b127fca6d6cdb3075512bbfb5b31"
+        },
+        {
+          "Path": "Prompts/ToSetUpCodexInsideBuffalySkill.prompt.md",
+          "Sha256": "5a352f8f41fc2a77904d697aa731aa7e87ccdc10a3631a594c9d98d29f7a19bb"
+        },
+        {
+          "Path": "Prompts/ToSetUpInitialOntologySkill.prompt.md",
+          "Sha256": "363d05abc53620d887a516555b2dafa78de5e0c79a5634597764040f4f11e8ac"
+        },
+        {
+          "Path": "Prompts/ToShowInstallCapabilitiesSkill.prompt.md",
+          "Sha256": "ea3bba8f6e04f57924af8fb65b313cf95876009fa2dd54ca8c6a473636049410"
+        },
+        {
+          "Path": "Prompts/ToTeachBuffalySomethingUsefulSkill.prompt.md",
+          "Sha256": "a5fd2d05447f6a0ef5272b4ea1854568b7e3fd1d0352dd2999a0a61541d4d5f2"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "aa63a3b80f043e43b6499f1ded917d76a7ff817c77b5c05c3eaa3d25bc496404"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "OnlineSessionMemoryCritic",
+      "Title": "Online Session Memory Critic",
+      "Description": "Buffaly skill package for Online Session Memory Critic.",
+      "Version": "0.3.2",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Online Session Memory Critic",
+        "OnlineSessionMemoryCritic"
+      ],
+      "Path": "skills/OnlineSessionMemoryCritic",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "f92e9565ac25c9976aa5739a76fa6cd498e4a6be2c29ee21e04fc006e05cc1d9"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "76024e86316ccb8c3e907569c8feeb1a93f1c5d4cb415d5ede09a4b7c28b47dc"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "OpenAIAdmin",
+      "Title": "OpenAI Administration",
+      "Description": "Buffaly skill package for OpenAI Administration.",
+      "Version": "0.1.3",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "OpenAI Administration",
+        "OpenAIAdmin"
+      ],
+      "Path": "skills/OpenAIAdmin",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "db6d0745d23ddad29f2f1306a721826259cf048881a813dd47b3f39155d5ff7c"
+        },
+        {
+          "Path": "OpenAiAdminAgentTools.pts",
+          "Sha256": "a0a3cdf9b23cb7a18da6591d5f270b2594ce1b889ccfad9e9bc0fe3ebcab1401"
+        },
+        {
+          "Path": "OpenAiAdminAgentTools.pts.md",
+          "Sha256": "b10293d910f6b19c84d94970f9316215dfd6709144c392ea1063f2c7fa43437c"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "182424acede2cb59b26ad8ae575fcfbad2c9f157e02b2cd4d18fc81839e7658a"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "8e92e104d706e57caf01b7a3b37729704e2efce469b489df4f55beb2c311f529"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "Process",
+      "Title": "Process",
+      "Description": "Buffaly skill package for Process.",
+      "Version": "0.1.2",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Process",
+        "Process"
+      ],
+      "Path": "skills/Process",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "a1dec56c749db8dc61d70d306a1c0819341ca1d561e6127359f44cccece926ed"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "d2d7e07cf3148f299c10334dda1fc9a82b312298f8b76698c50c021c80b6400b"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "ProcessManagement",
+      "Title": "Process Management",
+      "Description": "Buffaly skill package for Process Management.",
+      "Version": "0.1.2",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Process Management",
+        "ProcessManagement"
+      ],
+      "Path": "skills/ProcessManagement",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "c5a20e3f24cf7df797abd0a0d9d813459aa5953ef93eb33f88ecdd248ef8aaf0"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "0bef8d97340b592abf99582916a2fd934d8a97470dbe8785ee6beb7fa498912a"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "d62c7dc78afcb6db5ac4b3223e819f517a5bf84f5d568c8d8bd68d827a9b1a3d"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "13db2845b78bc4b0c0287b499e4c8d25560efe2f4dbc9722d22d101a9b193c44"
+        },
+        {
+          "Path": "Prompts/ToAddDeterministicScheduledTask.prompt.md",
+          "Sha256": "7bb9ffa495953889fef97d96d5e570ae8b3156ed0f77bed4ae752087c03a1bc0"
+        },
+        {
+          "Path": "Prompts/ToDiagnoseBuffalyProcessFailure.prompt.md",
+          "Sha256": "9eef9b9a99bde24bdc338ea90870d9a6710763367b51e4338df772e5a17fed35"
+        },
+        {
+          "Path": "Prompts/ToExplainHowToAddRecurringProcess.prompt.md",
+          "Sha256": "5741a4b466041d522b92f6a8c76be6cbdcc0376aaffc0b33352e4f67deefe65d"
+        },
+        {
+          "Path": "Prompts/ToExplainHowToAddScheduledTask.prompt.md",
+          "Sha256": "c0f8f6498c382b54471d533f52427079989d6f59340c83d8e8b3f86049e5a229"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "d555e1699882850c6f66d4196d90e679b9699c948fec5612803bd917e179fcba"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "Recaptcha",
+      "Title": "Recaptcha",
+      "Description": "Buffaly skill package for Recaptcha.",
+      "Version": "0.1.2",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Recaptcha",
+        "Recaptcha"
+      ],
+      "Path": "skills/Recaptcha",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "42ada89e40f421f11e7fd9cd95a5bd77cf6ea7b9c015e580f5a7f395ad108ad6"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "58b0733504240d47266397d6a315f7b78d6e290ce97454b2799baaa43f06b2d3"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "45a3a8c977af587d88b8328659f0de311e2dc34e48273b1da494dedb19d8c7a6"
+        },
+        {
+          "Path": "lib/Buffaly.Marketing.dll",
+          "Sha256": "2c9231552398d819e88e3d1c754d3e717527c6fbd4df4cf6fd9a51839bd16b19"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "4fdf435d8b6c458806afa80bea95654f421ff30d3de010e8cad1be2813732a56"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "Services",
+      "Title": "Services",
+      "Description": "Buffaly skill package for Services.",
+      "Version": "0.1.2",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Services",
+        "Services"
+      ],
+      "Path": "skills/Services",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "e882aaa1f590c2bd22a81e043ca226a291255049c047e01c4d6a648ffefb1fb8"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "a33b2240830cbc6571aea6bef80854e8cadf6f57a8e489b83ca02eb6c7373b00"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "5787871032893180c67d6b5acf6422a8a807574765d430b7dc1c66edb5386f16"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "SessionHistory",
+      "Title": "Session History",
+      "Description": "Buffaly OpsAgent skill package for SessionHistory.",
+      "Version": "0.1.1",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "SessionHistory"
+      ],
+      "Path": "skills/SessionHistory",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "7dddf13f9e2027eaf5e6df442aeae5d1216606781051b17ff12c04d61d36c00f"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "936bdd2ec7bdb7245184e38418562cbc1da938e97a6ee8ed8cedb49682c0e6fd"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "bccb0cf67ea135ba38971bbe06ab8a6cb31a413c941d428029349c5c5572fc01"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
+    },
+    {
+      "SkillName": "SessionManagement",
+      "Title": "Session Management",
+      "Description": "Buffaly skill package for Session Management.",
+      "Version": "0.1.6",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Session Management",
+        "SessionManagement"
+      ],
+      "Path": "skills/SessionManagement",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "15dbe43803bd29036e9bfa9065f798526253184e55fcc13f3e62bd181d058e98"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "9f106f355e7087c0d639d3b3e61868c5f9c4ac250d7b64133e0ca18c5b3b6968"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "3a406ed586930b0607878340d84f092e015900390c0b650b3344c855191d5a10"
+        },
+        {
+          "Path": "PromptActions.pts.md",
+          "Sha256": "841a0041ba5ddd44bd47f78387243c27b5128a2b22a9cad5c71734f7c166fba4"
+        },
+        {
+          "Path": "Prompts/AnalyzeAndImproveEntitiesWithinSession.prompt.md",
+          "Sha256": "8990c63603fef73175b5bbb7dbb4b25b45e5e84349e4a2f9db6827f2aa78ec40"
+        },
+        {
+          "Path": "Prompts/ToBootstrapWebhookTimelineEvent.prompt.md",
+          "Sha256": "b933bacfff50dd79ab6f853a823c63117d3653fa1dc2613ab35e757fecf4aca5"
+        },
+        {
+          "Path": "Prompts/ToPassUserStateToABuffalyAgent.prompt.md",
+          "Sha256": "e17bfde607b253d096370b1f9e893ded102aea9ebb8c0ece70b0594fe4f78063"
+        },
+        {
+          "Path": "Prompts/ToResolveTopCandidateAndRun.prompt.md",
+          "Sha256": "e34f716ff8d55a60f11554e463e70a709a1eff83c3a8b5c6550c100440dea604"
+        },
+        {
+          "Path": "ToNormalizePossiblyStringRefHandleToString.troubleshooting.md",
+          "Sha256": "6e296d30ba3bd836d01a6e28c5c840522fb95b1e041a78789730bfaf4865fbb4"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "SessionSync",
+      "Title": "Session Sync",
+      "Description": "Buffaly skill package for Session Sync.",
+      "Version": "0.1.1",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Session Sync",
+        "SessionSync"
+      ],
+      "Path": "skills/SessionSync",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "ac107dbf8a8c6830d0847137972063a4e625959ee3a550de804fcfa284215d1f"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "ee26b9c26e3d3db67020d4fcac5fa1ebd20e28a2407353df5a6e8a279a79041f"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "64b35dbe9a98895ca320906cb6295ebe599d0d7197ba39e494e5f41f98b2a6b9"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "ec6c715f980687e5a8e98325e86176ab65b398beb2b6d657872f3e2c6709bfd0"
+        },
+        {
+          "Path": "PromptActions.pts.md",
+          "Sha256": "c48edda6a0453b5e74b4eafa70e925f3e21b21b8b31b761915cde348824472ec"
+        },
+        {
+          "Path": "Prompts/SearchPreviousSessions.prompt.md",
+          "Sha256": "4564f761b3b4d66c0792bbdae2084b88cb1dfd08e839db5ece43b1d8dbbf43d3"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "SkillDirectory",
+      "Title": "Skill Directory",
+      "Description": "Buffaly skill package for Skill Directory.",
+      "Version": "0.1.5",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Skill Directory",
+        "SkillDirectory"
+      ],
+      "Path": "skills/SkillDirectory",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "1515d667a75996959f7c8a1dec4826ddd5a20b71f22ee0dec3e0ddf0be62e1e1"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "50bc18bd5b5776bae8efa917abe891c2979af974b1612635a76058c0febb7b1e"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "1cfec67bad43f66ab5c936bc991eb0d4a214a57a55d746c8256145d1219ba332"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "7dfbf79eded99cee15d1e5667e50fdf57ac978f1e617066243be28bee2c191bb"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "SkillPublishingSmokeTest",
+      "Title": "Skill Publishing Smoke Test",
+      "Description": "SkillPublishing Smoke Test",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [],
+      "Path": "skills/SkillPublishingSmokeTest",
+      "Files": [
+        {
+          "Path": "Actions.pts",
+          "Sha256": "eb7608a40ceaa6a5538c1bf60cb7784bda498cb7f7df00c45c97718233643705"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "d374bd6ab3bb9dfac080a1d20c4e0fcf91442b8a3dfe96b282c07bdbf7cf7156"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "3aaf3e38a5d1bbab2bc77743a769e06d90935689fc6b23814c200bdd5b8f775f"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
+    },
+    {
+      "SkillName": "SqlServer",
+      "Title": "Sql Server",
+      "Description": "Buffaly skill package for Sql Server.",
+      "Version": "0.1.2",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Sql Server",
+        "SqlServer"
+      ],
+      "Path": "skills/SqlServer",
+      "Files": [
+        {
+          "Path": "Actions.pts",
+          "Sha256": "e52eede7d6048d40f0b189ba583e2b26dadc6986c94c1a23b2be8894a65dbaa6"
+        },
+        {
+          "Path": "Actions.pts.md",
+          "Sha256": "8c9a82b47dbddc048c362b905e9a0032661a60f974174b91fe1951982921e67f"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "4e9adb5c13edacd4ddb16cfb268a505a8997aa86e6496e152d73de0d46b436b2"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "bbca88ff934025aa07c992eebc5f37a13063bf05d897a3c611dfec93bb25224b"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "1849e15209a77ce82409d4741670e916fa0f9e80b6884dcedcfddc8a8d219e7c"
+        },
+        {
+          "Path": "Prompts/AccessLocalSqlServer.prompt.md",
+          "Sha256": "abe5b5a9c38b3a1facdac2f8486d8ab917cf5fdf579582df57371fe8c560bf51"
+        },
+        {
+          "Path": "Prompts/ToSetupSqlServer2025ExpressSkill.prompt.md",
+          "Sha256": "3eeddf983db597a0d33a6aab1e9226bf939a4bb401458d7187df60688600ea6c"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "TabularData",
+      "Title": "Tabular Data",
+      "Description": "Buffaly skill package for Tabular Data.",
+      "Version": "0.1.4",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Tabular Data",
+        "TabularData"
+      ],
+      "Path": "skills/TabularData",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "cf57caf1d12f6dc7dedf09124b205f7284218b043d405f1306a6f95a47b6eee9"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "5a256d77bbdc13eeb3528f8c3996d8a933bf91f50d72b9bdc0301ff33cd0c4e3"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "3a097298e78cb7c1dd3c099c9568cd3b0af3f1e4ef1b9e05d4e57b10ce368351"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "6b1fd03c6563624016819d0a532f38654f863ebd8f3900e50e81e5bdcc16912d"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "TailscaleExposure",
+      "Title": "Tailscale Exposure",
+      "Description": "Guide and validation helpers for exposing a Buffaly instance through Tailscale.",
+      "Version": "0.1.1",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "expose Buffaly through Tailscale",
+        "set up Tailscale",
+        "make Buffaly reachable",
+        "plan Tailscale exposure"
+      ],
+      "Path": "skills/TailscaleExposure",
+      "Files": [
+        {
+          "Path": "Actions.pts",
+          "Sha256": "a413b8883e812d6c839a91eaeb597a939b00976f7f9bd76d9bc884851bd11bf2"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "674f865a612ec54eaa8acc32d7b2faf90bdc045d794422c1f44706ad25adb3c6"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "037fef4af751b555e2259b4fad152fcf33c07e139eede7f059750ba98e19c53c"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [
+        "how-to/tailscale-exposure"
+      ],
+      "Prerequisites": [
+        "Tailscale account",
+        "Tailscale installed on the Buffaly host"
+      ],
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
+    },
+    {
+      "SkillName": "TebraDesktop",
+      "Title": "TebraDesktop",
+      "Description": "Buffaly skill package for TebraDesktop.",
+      "Version": "0.1.4",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "TebraDesktop",
+        "TebraDesktop"
+      ],
+      "Path": "skills/TebraDesktop",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "41666936eff8d5e1065a24470bca39117d2c604c9541b64348c4f4f4aa6304eb"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "0a419f4d4446fc5bdf590222def4d4dba761772a25ab36af6d62538eb0d0bd3b"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "5dc8e13e70adeb96566f76fd3016ddf2169889d0a488543ea93da93c5ab7219c"
+        },
+        {
+          "Path": "lib/FlaUI.Core.dll",
+          "Sha256": "1696c344d2ff54598fb5ae869e9cbcf363c0be3ebff744cc50ba834056b43b6f"
+        },
+        {
+          "Path": "lib/FlaUI.UIA3.dll",
+          "Sha256": "d00fa5203c56b9d1c7b0bc624cffa84d599d6b8dfa6f27c0324e3059f343754c"
+        },
+        {
+          "Path": "lib/Interop.UIAutomationClient.dll",
+          "Sha256": "dcea43a1f5a2114b7bcc9e41cc1377064307611d0caa50f1ec203b887f4c20bb"
+        },
+        {
+          "Path": "lib/System.Configuration.ConfigurationManager.dll",
+          "Sha256": "f7ea3a9618aca48fb57fd06e9102b327ab66468ceb78c96d56f7d2eee2945983"
+        },
+        {
+          "Path": "lib/System.Diagnostics.EventLog.dll",
+          "Sha256": "3f8064e2499f13a8948ad2da0c6040d12683a9a90aaab786dbd6b653f17ac9cc"
+        },
+        {
+          "Path": "lib/System.Diagnostics.PerformanceCounter.dll",
+          "Sha256": "27571769f43067be4a0473916b6682c3f19443e83b4f884b69104ab6152fc58a"
+        },
+        {
+          "Path": "lib/System.Drawing.Common.dll",
+          "Sha256": "9da16df4486b8cffcd96d784521217b7823b9768ccdcb493fb099c8c79a21426"
+        },
+        {
+          "Path": "lib/System.Management.dll",
+          "Sha256": "c5f69a258fc609d42e6d50903e9b4449027f4d332faa8daec04bdc3cb9286d4b"
+        },
+        {
+          "Path": "lib/Tebra.UIAutomation.Core.dll",
+          "Sha256": "f6be725868d735d5accbe4332244e75a9707194d12bdce7957b92c5fa8edf561"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "b9004acf9e1793bcefa179867baff7fe7391188374eccd49edcd60b033c09775"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "TebraWeb",
+      "Title": "Tebra Web",
+      "Description": "Buffaly skill package for Tebra Web.",
+      "Version": "0.1.4",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Tebra Web",
+        "TebraWeb"
+      ],
+      "Path": "skills/TebraWeb",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "21c4e879ae0e4eae41e348470da2ce49996d254f7d94d5f20666329c049fe28d"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "ab22ab5bd31eb3f48ce01c25bede0cd4bed7634749977285f5baf3bf9329cf06"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "f52ea5c8cbeb948d8fa1bdec97e1e320814930fe2f2052f29e3ce12d4da55fb1"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "9e9fd6202cf3067408ada240d688c0feda0961cb3b53479cf762d0e8763bb786"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "Twilio",
+      "Title": "Twilio",
+      "Description": "Buffaly skill package for Twilio.",
+      "Version": "0.1.3",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Twilio",
+        "Twilio"
+      ],
+      "Path": "skills/Twilio",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "2b1d06783c7c5bd2d744691d61591d50cf9875b0c783b96a8f0c8be21e4182c5"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "d06554cac6f793b5b5543b3e0dcae9a7b88d926e81c9fdd6edf3708974dd52cb"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "c790e763ede480ad44a9b300d556e2bba3b46c6abd79491ffc7562b08a7d3063"
+        },
+        {
+          "Path": "Prompts/AttachTwilioNumberToMessagingService.prompt.md",
+          "Sha256": "a6010886e1867610b78e9698c572dd23c4f9e05d81e29e115e1131c952affdc7"
+        },
+        {
+          "Path": "Prompts/BuyAndConfigureTwilioPhoneNumber.prompt.md",
+          "Sha256": "f59fdac5d91a7ac2d1820bb540f102aed610a0483c5b46adbdab485d9061797c"
+        },
+        {
+          "Path": "Prompts/SendSmsViaTwilioMessagingService.prompt.md",
+          "Sha256": "6bc935352b7de84c8dab58a946dfa07ca5f261cf99e5b2a34d9a7bc9d1c68389"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "df40b0307f4cf0bedf3fee9d0a7217444cf3ce29b12c39082f2b9f6625fcc290"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "TwitterXApi",
+      "Title": "Twitter X Api",
+      "Description": "Buffaly skill package for Twitter X Api.",
+      "Version": "0.1.2",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Twitter X Api",
+        "TwitterXApi"
+      ],
+      "Path": "skills/TwitterXApi",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "3f6ddde15315434f3bb2f0fc8dad615bc7bce8ba0813949ade77f969fdb1ee8a"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "e2e3a90dc8e0456c37ca0afc9042b9a4f40c9228a5788714dc3651c09ef67c2b"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "49250bee1ad8a2cbfe6656d80c170da1d89519666e7779c8b9ea66f66151167d"
+        },
+        {
+          "Path": "PromptActions.pts.md",
+          "Sha256": "3f422adc29f465473d921da5b1b28a09d9b47970e3749d6d56d71699d79f2172"
+        },
+        {
+          "Path": "Prompts/SetupTwitterXOAuth2Authorization.prompt.md",
+          "Sha256": "d8a58280daf331b2d0060283e3946fb99593d79f7d38a9ff98466fb6964a4dd2"
+        },
+        {
+          "Path": "Prompts/SetupTwitterXOAuth2Authorization.prompt.md.md",
+          "Sha256": "98457d26fb6a08ae863aaf1ae4e955460a707f0abeeb770f852baccd4a7977ab"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "3692edb5ed0912a6ed68fb210a4442660aeeab13834cd2cafa71a46648ec284f"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "bd063c359f2cbfe1130a3275e1ebe30f0d6a689fe2baba04c4a83a4191998bc9"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
+    },
+    {
+      "SkillName": "Unity",
+      "Title": "Unity",
+      "Description": "Buffaly skill package for Unity.",
+      "Version": "0.1.4",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Unity",
+        "Unity"
+      ],
+      "Path": "skills/Unity",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "a93af4f0c628dd05c3d2afdc8a26520e3a5c22cca36387bc817000296a28837a"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "e6479448d07660620e2740c4c6ca9e42f07eed09bb310a9057224f4fc15e7be5"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "aba861cdca813705f43e36cbe868ab16c795e5331c71bd38d12ba2522873a50e"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "6c0a94d9a16724a122af9d8bf4cb07a5074dff0a953c8dc6a263564258e773ea"
+        },
+        {
+          "Path": "unity-host-client.ps1",
+          "Sha256": "f46dae7c5ebd89e308beffc0397d138e8718ab9fe3744195d1adfe64e4c99eff"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "UserSecrets",
+      "Title": "User Secrets",
+      "Description": "Buffaly skill package for User Secrets.",
+      "Version": "0.1.7",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "User Secrets",
+        "UserSecrets"
+      ],
+      "Path": "skills/UserSecrets",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "1a92f3750b5e1e1a7a570706f1b354bb70713729ef8a3c34a2eaa98690aae7c2"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "1fe514c81327090f868e006cf3639d28f221004618294c274ca605b1f3a5c35f"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "d1f6c12c7156b02b032c74229c7d71c19abd3dfb441f091ff26960b0d6918d04"
+        },
+        {
+          "Path": "interactive-sites/user-secret-collector/site.css",
+          "Sha256": "7302103725057ad360e6f62c9bd35711147b1fb9ac2bc6155b8398c0a4fb83c3"
+        },
+        {
+          "Path": "interactive-sites/user-secret-collector/site.html",
+          "Sha256": "902eb32caf930014f518b30f3e14d453abd29f8a2762d8c61a02a6fda3ded253"
+        },
+        {
+          "Path": "interactive-sites/user-secret-collector/site.js",
+          "Sha256": "d36f5938c2f4886794d057ba433d9cf8915ac316e9f89db7c6d8c43a001ed3d8"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "ValidatedPrompt",
+      "Title": "Validated Prompt",
+      "Description": "Buffaly skill package for Validated Prompt.",
+      "Version": "0.1.6",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Validated Prompt",
+        "ValidatedPrompt"
+      ],
+      "Path": "skills/ValidatedPrompt",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "0b82a47d3c54b14fe2441c6267c6d953d629c3febf72a157e34c265e6c401731"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "0ad1df682bffc3358fee75c4ce2e4855ae4ff997ef05f2b6682cff52ab3a21e9"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "848cab413bb91bdcab4309955809f966ed8ee1a00b09a4efe96a85973986119c"
+        },
+        {
+          "Path": "Prompts/SummarizeTextInOneSentence.validation.prompt.md",
+          "Sha256": "9323fb87fdbb1ef0a30ed9d02b591cdc41b577ba6a3964070a22d42a95c3ffc7"
+        },
+        {
+          "Path": "Prompts/SummarizeTextInOneSentence.work.prompt.md",
+          "Sha256": "bfba5641a4ccc4a224d84cc9e8a0370c3a921fda0a4aec2fb9ce2c705874aa02"
+        },
+        {
+          "Path": "WorkflowReport/Prompts/GenerateWorkflowReportNarrative.prompt.md",
+          "Sha256": "1aaf11fe159aeed55866bb0b61f94fa2d62c73cee2733e95d01d9dd2c59e5031"
+        },
+        {
+          "Path": "WorkflowReport/Prompts/ValidateWorkflowReportNarrative.prompt.md",
+          "Sha256": "0c3df2e73877c6055874998f61a2682fbccfa46d411e6543c13bf0919815ac01"
+        },
+        {
+          "Path": "WorkflowReport/workflow-report-schema.v1.md",
+          "Sha256": "cd1d7bc0be344eb14e7a5a64192c592a957f6ec68c03bf3b2b74bd4ecb52a7d4"
+        },
+        {
+          "Path": "WorkflowReport/workflow-report-viewer.html",
+          "Sha256": "588e4f64c470f5e4eba57f4227bd6144e5d8ff25c3d24f6df41121f9c4e49dbd"
+        },
+        {
+          "Path": "WorkflowReport/workflow-report-viewer.html.md",
+          "Sha256": "d0c8673924d40c16ed8801f5500117153fec9e418a28e9109bf665fe090afa02"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "VisualStudio",
+      "Title": "Visual Studio",
+      "Description": "Buffaly skill package for Visual Studio.",
+      "Version": "0.1.5",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Visual Studio",
+        "VisualStudio"
+      ],
+      "Path": "skills/VisualStudio",
+      "Files": [
+        {
+          "Path": "Actions.pts",
+          "Sha256": "f99600dbd8f961eb5546487b3cd8609bf407263731e1aff6fec2a1f5ca8b7081"
+        },
+        {
+          "Path": "Actions.pts.md",
+          "Sha256": "fce7f020dc7e5854993704bdd857e322e625526b300928493bf2dee6d5519f6d"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "988247f9cd74767ca0b170d6dda787645fa798135f00e7a7878676780bb8147e"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "538b7548ba6d0569518454edd7e7465e6570f0695c0f3139be18403281f4ff78"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "b9bf2afdd4cb20c1ac4fdd31741fdb869bff234ccab76c9b7a6ae776cd0a0001"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "Path": "PromptActions.pts.md",
+          "Sha256": "17b94d2557f1418608e131f2472bbd51500d5726beca026c5d02b2fa0ff4b81e"
+        },
+        {
+          "Path": "VisualStudioOntologyGenerator.pts",
+          "Sha256": "1b9e8015a30361b8cc5a5288484fcf40ab894fdfae2c5fc64de7edd5e93b6117"
+        },
+        {
+          "Path": "VisualStudioOntologyGenerator.pts.md",
+          "Sha256": "a27d7c19f87ec26d35a100eac746773e5977a4592356987fd0ddad9f20ce03c2"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "VoiceAgentDispatch",
+      "Title": "Voice Agent Dispatch",
+      "Description": "Buffaly skill package for Voice Agent Dispatch.",
+      "Version": "0.1.14",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Voice Agent Dispatch",
+        "VoiceAgentDispatch"
+      ],
+      "Path": "skills/VoiceAgentDispatch",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "64d08aa4643255eb40f547c5810cf678ed59a051d72bd429cf782af3d4fae103"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "5e837c4ddc2fd6d63f588ac41d7e5417a8c7b59aa29cd20b55cddc778dc16cfd"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "6434dea6977ecfbbd97eaac191005510c6c3fb6654ee856fea798cc779441adb"
+        },
+        {
+          "Path": "VoiceAgent.pts",
+          "Sha256": "5973b8aea28f64b9889c7c8ea02431550f314ca0b5029bcd00e36c9004cce62d"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "Wiki",
+      "Title": "Wiki",
+      "Description": "Buffaly skill package for Wiki.",
+      "Version": "0.1.2",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Wiki",
+        "Wiki"
+      ],
+      "Path": "skills/Wiki",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "09bb11b36c49d208287aaa9470e5803b53c6874bd267c172fbd91b93a68a5657"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "e664b34fb10b9f097863d7772e3fa8efa3c1816b2f388ce9eaa1f81dad57f1c7"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "190459c111473baf26c84032ce9b8550e477b605386457621c80e1903fd4cbe7"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "c8b7be6d5b468399ecbd79a9855915b065f97c41f89e274a110da5bac5a99356"
+        },
+        {
+          "Path": "PromptActions.pts.md",
+          "Sha256": "3eb25a6a9ed05809436201bc0d9db4c2b7785573079303a3c8acfe0ae2f0b805"
+        },
+        {
+          "Path": "Prompts/AuditWikiCoverage.prompt.md",
+          "Sha256": "c47b4072e018775bddec5c0f850392f670090b950d411332894602fbb3783603"
+        },
+        {
+          "Path": "Prompts/CreateWikiArticle.prompt.md",
+          "Sha256": "5a7e9743494a9aac9254d0e3f9948b0d1bafc110ce55a695c477f05b116ec3cd"
+        },
+        {
+          "Path": "Prompts/EditWikiArticle.prompt.md",
+          "Sha256": "bbc274bb319c109fe7c40c4b9f527a6168eeb0bd9ea9b691aad3a3fb48ac1c0f"
+        },
+        {
+          "Path": "Prompts/InsertWikiArticle.prompt.md",
+          "Sha256": "9e6796a59ddd96af84864b09c803797a6192f3a77bbb63b707ba2a06f52eb98b"
+        },
+        {
+          "Path": "Prompts/RefreshWikiArticle.prompt.md",
+          "Sha256": "e908eb671c73b4a33ee136716e375c771283aad178fab4d895906ddeebeddd6d"
+        },
+        {
+          "Path": "Prompts/RepairWikiCrossLinks.prompt.md",
+          "Sha256": "a0308222ab92d3780011a598a400865f359f7831598b72a3b92878f87429a80e"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "Workspace",
+      "Title": "Workspace",
+      "Description": "Buffaly skill package for Workspace.",
+      "Version": "0.1.23",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Workspace",
+        "Workspace"
+      ],
+      "Path": "skills/Workspace",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "7c2d847feccb4799e6ab7389bc4b34369f2507ccc93782e0b68a7dc24b28bd34"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "ddb7755337557645b0d17738802dee8e1bafc0499c4f70dea3c1b2d43a03132c"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "4733cb8c9712efb3885aeed4983160381f29ac8d0de7e086fd2caf9d7847eae7"
+        },
+        {
+          "Path": "lib/Buffaly.Agent.Workspaces.dll",
+          "Sha256": "f0c7982ddbab38a4e2ce2c8b54defe6bc9e91d2bb8d231503d23f091d52d763d"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/skills/XSearch",
+      "Title": "X Search",
+      "Path": "skills/XSearch",
+      "Phrases": [
+        "search X",
+        "search twitter",
+        "search posts on X",
+        "what happened on X",
+        "X search",
+        "twitter search",
+        "brief what happened on X",
+        "map public opinion on X"
+      ],
+      "Description": "Search X (Twitter) via the xAI Responses API x_search hosted tool. The x_search tool runs server-side in Grok's agentic sampler loop. Requires XAI.HostedTools = x_search in the xAI provider feature settings.",
+      "Version": "0.1.1",
+      "SkillName": "XSearch",
+      "Files": [
+        {
+          "Path": "SKILL.md",
+          "Sha256": "c59701cb06070695f2efe35d90d16d99faaed734b55a57e80b965804c6e32747"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "c2d5c2bd2b90b48843ee045bd9a690d26803e8261afbafd35979fbf748499442"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "b6251f0a02824945ceb5b730ce9f79e490fe5e05bddcc7d47c774975bfd2f381"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "IsInstalled": false,
+      "HasPackageReceipt": false,
+      "IsOutdated": false,
+      "InstalledVersion": ""
+    },
+    {
+      "SkillName": "SourceViewer",
+      "Title": "Source Viewer",
+      "Description": "Buffaly skill package for Source Viewer.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Source Viewer",
+        "SourceViewer"
+      ],
+      "Path": "skills/SourceViewer",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "fa5157e531ca03f0a4f8c569933c12ead23813fbc55fc8e2fe197b7b5f5307c9"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "1d071c671da7bbefb000bd2ad90d8aaff8da8c91f66082880c58e96259d165c0"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "45ba9b999772135e81da5635c0b704dfdbaafd5c2ccd39e3b33f4c36a54e25a3"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "ReleaseOps",
+      "Title": "ReleaseOps",
+      "Description": "Buffaly skill package for ReleaseOps.",
+      "Version": "0.1.38",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "ReleaseOps",
+        "ReleaseOps"
+      ],
+      "Path": "skills/ReleaseOps",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "506d1e928a41e09b9d8cb616e40f2464f430138c69681cfb5035bb0882b0fd96"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "a9ec18730420851199ba0e252515ece76513e840ccc380ca4460299eff664204"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "3dd2a849ec17b6de51b0a72e86b6919742a3f0cd8a5ce321c13a1672edacbf0c"
+        },
+        {
+          "Path": "lib/Buffaly.ReleaseOps.Client.dll",
+          "Sha256": "98c47b935d7c8738559829a522807fccb10294b770f826079d2eeed2e8d674f9"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "ChatGPTPro",
+      "Title": "ChatGPT Pro",
+      "Description": "Buffaly skill package for ChatGPT Pro.",
+      "Version": "0.1.1",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "ChatGPT Pro",
+        "ChatGPTPro"
+      ],
+      "Path": "skills/ChatGPTPro",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "5b693888949a9642d89943d03ccdec7f9795fcb1dbe5a574be93debd5486a44a"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "34660aeec11fe3c21e3955142934588a605a7e753cd569caad1e703b6e5954c8"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "6b59f7acc98bf86b0314b5115c9e15355cd40637a95388d5a9437c8fd332d73d"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "Office365",
+      "Title": "Office 365",
+      "Description": "Buffaly skill package for Office 365.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Office 365",
+        "Office365"
+      ],
+      "Path": "skills/Office365",
+      "Files": [
+        {
+          "Path": "Auth.pts",
+          "Sha256": "047cb309170bb891b321f28ab0ae1dee3ca3650837e75b7467052032b31e4798"
+        },
+        {
+          "Path": "Calendar.pts",
+          "Sha256": "0cc3d78cc202f3cd103d02abe28a21ad22492a64e0692dee572e9ebe43d45e1c"
+        },
+        {
+          "Path": "Calendar.pts.md",
+          "Sha256": "d123f4745a29c6a3380aa2afd4cedbd70ef4aceff7190b7eb586adfc199d2d1c"
+        },
+        {
+          "Path": "Common.pts",
+          "Sha256": "0e80a0709b4ae20a1e75a562f2e988eb4e00a407fac57bd21a476d14bfdb809d"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "80cadd1ec63024693e603e8554f81f55de88e515e2f897abff6e6d63c97b9351"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "d304ffb5ba2b5c709e1a6dae2b274678edf8870c8f9ee414c7c2068e96228905"
+        },
+        {
+          "Path": "Mail.pts",
+          "Sha256": "965296a4148d59a88d84a74a7815172c11447d11858fb4b4ab36595bf28f3897"
+        },
+        {
+          "Path": "Mail.pts.md",
+          "Sha256": "4298cdd1b3beeffbd4c150476c8348123c1cad74135d203d58fa65993cf73aa7"
+        },
+        {
+          "Path": "Office365Service.pts",
+          "Sha256": "a27741260b55a207db927c3dc55df83f2360d6946be321d32c7ba40cbf01cbf8"
+        },
+        {
+          "Path": "Office365Service.pts.md",
+          "Sha256": "8525b225d96c478e955a84c3aa878c51f0abb88ac2a916c4f1243be9b5e84037"
+        },
+        {
+          "Path": "OneDrive.pts",
+          "Sha256": "bb2abf17c0e66d717e90bde0828edb61a8b3bf790b9e1721c02e17e2a49710ae"
+        },
+        {
+          "Path": "OneDrive.pts.md",
+          "Sha256": "70c70a87395ca6a5de3e7426667f97cd2519c6f2e4db1dfaceafc1bcf8375ce8"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "846f186b00172683bc2bb5f848ff8f0e12fe72fc2e2edcfa754fd19c8d079be7"
+        },
+        {
+          "Path": "Teams.pts",
+          "Sha256": "69e68f06b172309df3c45f67631f1a7781940f3befedfbcc33559d5b212f3050"
+        },
+        {
+          "Path": "Teams.pts.md",
+          "Sha256": "617486437be6526599bfba6e1857c94bb99b1ddc65631fe9428fa614c8128273"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "RedditAds",
+      "Title": "Reddit Ads API",
+      "Description": "Buffaly skill package for Reddit Ads API.",
+      "Version": "0.1.2",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Reddit Ads API",
+        "RedditAds"
+      ],
+      "Path": "skills/RedditAds",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "61d16df0cb901b6ba5f8a9683c67e10a1f618dd8ccf84b3bf3562733603162d9"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "926df4698f0bfc9b243009c3f439f068998d87253809f812ba73f6d2ad1c45b0"
+        },
+        {
+          "Path": "PromptActions.pts",
+          "Sha256": "cc4853c5cca36083b38c3d3b5799a86a54d944c489ad031c780309572e81524c"
+        },
+        {
+          "Path": "Prompts/AuditRedditAdAccount.prompt.md",
+          "Sha256": "574f8849daac34d6ac2578da40ad85611b02be25d6ad8a7f580fa0ce7b37a1ce"
+        },
+        {
+          "Path": "Prompts/CreatePausedRedditCampaign.prompt.md",
+          "Sha256": "143d89917a498b432408cd76791f48ab931de032efdf0950f1ef585ecfaebe9d"
+        },
+        {
+          "Path": "Prompts/PlanRedditCampaign.prompt.md",
+          "Sha256": "5c4e4276503e14f4a5598738edf60f1b96512ffc5100f37ff10d27baff2e558f"
+        },
+        {
+          "Path": "Prompts/RecommendRedditAdsOptimizations.prompt.md",
+          "Sha256": "327fa6e3576c59e7da29bb52382667f61e20b016b50123de9dc5fe3be9ec1ab5"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "7ffcc6b5ade8399d9558b8cb5ecf849d48e3f0aec3190ab6c4bcd526b8cdfeb1"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    },
+    {
+      "SkillName": "Http",
+      "Title": "HTTP",
+      "Description": "Buffaly skill package for HTTP.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "HTTP",
+        "Http"
+      ],
+      "Path": "skills/Http",
+      "Files": [
+        {
+          "Path": "Actions.pts",
+          "Sha256": "e2e2de50406ec21ac64892f1ef45a96ea65b8ac050fd08425a09cd5ea027723f"
+        },
+        {
+          "Path": "Actions.pts.md",
+          "Sha256": "1fb0762e64396aa68872b758f7cd936b297a7824fcb158480b170e866650e19e"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "223fa8348f3ef7300ade2ad73902ac7f55a2c2be30a1a684551fca2f77173900"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "ef86873da75bf7b38d1ece3da20731fc7c9877079f1253e815249b7dedeb6461"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
+    }
+  ]
 }
