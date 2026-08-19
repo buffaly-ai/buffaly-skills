@@ -1,0 +1,17 @@
+{
+  "Module": {
+    "Name": "RealtimeVoice",
+    "LoadOrder": 1300,
+    "AssemblyPath": "RealtimeVoice/Buffaly.RealtimeVoice.WebModule.dll",
+    "Description": "Global and session-bound OpenAI Realtime Voice layered over authoritative Buffaly Voice Agent sessions.",
+    "Enabled": true,
+    "AgentScripts": [
+      "/web-modules/RealtimeVoice/js/realtime-voice-agent.js?v=20260812.1"
+    ],
+    "TypeName": "Buffaly.RealtimeVoice.RealtimeVoiceWebModule",
+    "DisplayName": "Realtime Voice",
+    "ClientConfig": {
+      "RealtimeVoiceBaseUrl": "/web-modules/RealtimeVoice"
+    }
+  }
+}
