@@ -47,6 +47,28 @@ prototype ToCreateFeedingFrenzySigningDraftFromMarkdown : FeedingFrenzyJsonWsGua
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to create a feeding frenzy signing draft from uploaded markdown file")]
+prototype ToCreateFeedingFrenzySigningDraftFromUploadedMarkdownFile : FeedingFrenzyJsonWsGuardedWriteAction
+{
+    Description = @"Uploads the exact local Markdown file to Feeding Frenzy first, then creates the signing Draft from the uploaded file reference. The full agreement body is never passed as a JsonWs MarkdownContent argument. Does not send email.";
+    function Execute(FeedingFrenzyJsonWsService service, int LeadID, string DocumentName, string LocalMarkdownFilePath, string CustomerLegalName, string RecipientName, string RecipientEmail, string ExpirationDate, int ReminderIntervalDays, string SourceFileName, string AgreementTemplateKey) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		if (StringUtil.IsEmpty(service.AutomationUserEmail)) return "Error: FeedingFrenzyJsonWsService.AutomationUserEmail is required for signing Draft creation.";
+		if (StringUtil.IsEmpty(LocalMarkdownFilePath)) return "Error: LocalMarkdownFilePath is required.";
+		if (!File.Exists(LocalMarkdownFilePath)) return "Error: LocalMarkdownFilePath does not exist: " + LocalMarkdownFilePath;
+		if (!StringUtil.EqualNoCase(Path.GetExtension(LocalMarkdownFilePath), ".md")) return "Error: LocalMarkdownFilePath must be a .md file.";
+
+		string fileName = StringUtil.IsEmpty(SourceFileName) ? Path.GetFileName(LocalMarkdownFilePath) : Path.GetFileName(SourceFileName);
+		JsonObject uploadArgs = new JsonObject(); uploadArgs["strFolder"]="agreement-draft-sources/lead_" + LeadID; uploadArgs["fileName"]=fileName; uploadArgs["lstData"]=File.ReadAllBytes(LocalMarkdownFilePath); uploadArgs["mimeType"]="text/markdown";
+		string uploadedMarkdownFileUrl = service.CallBusinessRoute("lead-documents/upload-file-to-s-3", uploadArgs);
+		if (StringUtil.IsEmpty(uploadedMarkdownFileUrl)) return "Error: Feeding Frenzy did not return an uploaded Markdown file URL.";
+
+		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=service.AutomationUserEmail; args["LeadID"]=LeadID; args["DocumentName"]=DocumentName; args["UploadedMarkdownFileUrl"]=uploadedMarkdownFileUrl; args["CustomerLegalName"]=CustomerLegalName; args["RecipientName"]=RecipientName; args["RecipientEmail"]=RecipientEmail; args["ExpirationDate"]=ExpirationDate; args["ReminderIntervalDays"]=ReminderIntervalDays; args["SourceFileName"]=fileName; args["AgreementTemplateKey"]=AgreementTemplateKey;
+		return service.CallBusinessRoute("lead-document-signing-requests/create-buffaly-signing-draft-from-uploaded-markdown-as-automation", args);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to list feeding frenzy signing requests for a lead")]
 [SemanticProgram.InfinitivePhrase("to list signing drafts for a lead")]
 [SemanticProgram.InfinitivePhrase("to inventory document signing drafts for a lead")]
