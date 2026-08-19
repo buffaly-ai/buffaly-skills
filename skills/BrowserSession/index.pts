@@ -57,7 +57,7 @@ prototype ToOpenManagedCdpBrowserSession : BrowserSessionSkillAction
 {
 	Description = @"Atomically resolves a registered managed CDP browser, restores its approved endpoint when unavailable, and opens an absolute URL. An empty browserKey uses Browser Feature DefaultManagedBrowserKey. The caller never supplies a launcher, profile, executable, or port.";
 
-	function Execute(string url, string browserKey = "") : string
+	function Execute(string browserKey, string url) : string
 	{
 		return BrowserTools.ManagedBrowserOpenTool(_opsAgent, browserKey, url);
 	}
