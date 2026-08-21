@@ -18238,7 +18238,7 @@
       "PackageType": "WebModule",
       "Title": "Feeding Frenzy Agent",
       "Description": "Buffaly Web Module package for Feeding Frenzy Agent.",
-      "Version": "0.1.5",
+      "Version": "0.1.6",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/FeedingFrenzyAgent",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/FeedingFrenzyAgent",
@@ -18385,7 +18385,7 @@
         },
         {
           "Path": "FeedingFrenzy.Agent.Tools.dll",
-          "Sha256": "2dc717d54fe6ba7626bb2b259c8896decebcf6ae730678ff53938040e2803aee"
+          "Sha256": "966b0210e1836bfc48c430bf7cd1353564141d27d85f828dda534c0b41f906e8"
         },
         {
           "Path": "kScript.dll",
@@ -18801,7 +18801,7 @@
         },
         {
           "Path": "web-module.json",
-          "Sha256": "03a05c2e353c076050c20c23576067ebdf465bcfe625d56bf45c3e7100dc048a"
+          "Sha256": "c2c1aa58ebaf31a8cb12749b5bcea23f25c78ebba29d4f5e9819b9d88c35ed31"
         },
         {
           "Path": "WebAppUtilities.dll",
@@ -18810,8 +18810,24 @@
       ],
       "ProjectArtifacts": [
         {
-          "ProjectName": "FeedingFrenzyAgent",
-          "SourcePath": "ProjectArtifacts/FeedingFrenzyAgent/"
+          "ProjectName": "Agents",
+          "SourcePath": "ProjectArtifacts/FeedingFrenzyAgent/Agents/"
+        },
+        {
+          "ProjectName": "Prompts",
+          "SourcePath": "ProjectArtifacts/FeedingFrenzyAgent/Prompts/"
+        },
+        {
+          "ProjectName": "ContextPrompts",
+          "SourcePath": "ProjectArtifacts/FeedingFrenzyAgent/ContextPrompts/"
+        },
+        {
+          "ProjectName": "Skills/FeedingFrenzyJsonWs",
+          "SourcePath": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/"
+        },
+        {
+          "ProjectName": "Skills/FeedingFrenzyAgent",
+          "SourcePath": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyAgent/"
         }
       ],
       "Dependencies": [],
