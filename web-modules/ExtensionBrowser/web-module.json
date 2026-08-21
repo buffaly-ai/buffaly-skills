@@ -2,15 +2,15 @@
   "Module": {
     "Enabled": true,
     "Name": "ExtensionBrowser",
-    "DisplayName": "Extension Browser",
-    "Description": "Authenticated regular-Chrome installation, session default instance, legacy binding compatibility, side-panel bootstrap, and tool channel.",
+    "DisplayName": "Buffaly Chrome Extension",
+    "Description": "Install, connect, and diagnose the Buffaly Browser Agent extension for Google Chrome.",
     "AssemblyPath": "ExtensionBrowser/ExtensionBrowser.WebModule.dll",
     "TypeName": "ExtensionBrowser.WebModule.ExtensionBrowserWebModule",
     "LoadOrder": 1340,
     "AgentScripts": [
       "/web-modules/ExtensionBrowser/js/extension-browser-page-context.js?v=1eda9555c8eb99e3"
     ],
-    "Pages": [{"Name":"extension-browser-health","DisplayName":"Extension Browser Health","Path":"/web-modules/ExtensionBrowser/health","Description":"Inspect secret-free ExtensionBrowser module health."}],
+    "Pages": [{"Name":"buffaly-chrome-extension","DisplayName":"Buffaly Chrome Extension","Path":"/web-modules/ExtensionBrowser/chrome-extension","Description":"Install and connect the Buffaly Browser Agent Chrome extension."}],
     "ProjectArtifacts": [
       {"ProjectName":"Skills/ExtensionBrowserBound","SourcePath":"ProjectArtifacts/Skills/ExtensionBrowserBound/"},
       {"ProjectName":"ContextPrompts","SourcePath":"ProjectArtifacts/ContextPrompts/"}
