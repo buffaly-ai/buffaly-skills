@@ -18932,6 +18932,65 @@
       "RequiresRestart": true,
       "RequiresPreStartInstall": true,
       "PreStartCleanupPaths": []
+    },
+    {
+      "PackageId": "RealtimeVoice",
+      "PackageType": "WebModule",
+      "Title": "Realtime Voice",
+      "Description": "Buffaly Web Module package for Realtime Voice.",
+      "Version": "0.1.0",
+      "PackageKind": "BuffalyWebModule",
+      "SourcePath": "web-modules/RealtimeVoice",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/RealtimeVoice",
+      "Phrases": [
+        "Realtime Voice",
+        "RealtimeVoice"
+      ],
+      "Files": [
+        {
+          "Path": "Buffaly.RealtimeVoice.WebModule.deps.json",
+          "Sha256": "2a8a7bb0e49f485802722d45400a890867d2bc3730bde802bf708db715ce43db"
+        },
+        {
+          "Path": "Buffaly.RealtimeVoice.WebModule.dll",
+          "Sha256": "55a59f7f6c3fabfeff32ea17ba9c64bbf2303269e178bb4a962a9c08baa62554"
+        },
+        {
+          "Path": "web-module.json",
+          "Sha256": "6721e7a9c63f16b69acde4b93802327a0be173a4b3c449bce10e9b7eddbe43e0"
+        },
+        {
+          "Path": "wwwroot/css/realtime-voice.css",
+          "Sha256": "a9e95e3e786d3c48ea24b3db44d24b45d786c5da832af7b24c07b4cb516938be"
+        },
+        {
+          "Path": "wwwroot/js/realtime-voice-agent.js",
+          "Sha256": "d7fc2d2e3d57020a480866d54d66ccc35c7edb3dcbe3cf24167d08fb5a5f7062"
+        },
+        {
+          "Path": "wwwroot/js/realtime-voice-media-lane.js",
+          "Sha256": "9fa9ded7d33b84b3fad2c3f6e48c572e69b30e61cfabd0871e21af9cac66fead"
+        },
+        {
+          "Path": "wwwroot/js/realtime-voice-update-window.js",
+          "Sha256": "1dfa358352b46415340dd61d0e18944ac19a1656cf622c65574af6e15c9eda44"
+        },
+        {
+          "Path": "wwwroot/js/realtime-voice.js",
+          "Sha256": "7e4373e16ea6511e4122698102b1a200d40d4cf54042ad39abba6c8d6391f7d3"
+        },
+        {
+          "Path": "wwwroot/realtime-voice.html",
+          "Sha256": "4f3a75e8a60c1faa9cabee19b41927e1edeac6d954a23f2e6ea3e5c496e5abdf"
+        }
+      ],
+      "ProjectArtifacts": [],
+      "Dependencies": [],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "RequiresRestart": true,
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     }
   ]
 }
