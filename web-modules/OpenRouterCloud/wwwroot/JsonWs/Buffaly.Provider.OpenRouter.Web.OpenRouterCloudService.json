@@ -1,0 +1,38 @@
+{
+	"Assembly": "Buffaly.Provider.OpenRouter.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+	"Type": "Buffaly.Provider.OpenRouter.Web.OpenRouterCloudService",
+	"KebabName": "open-router-cloud-service",
+	"Methods": [
+		{
+			"IsStatic": "true",
+			"IsReturnTypeArray": "true",
+			"KebabName": "get-cloud-models",
+			"Parameters": [ { "Type": "String", "IsNullable": "true", "Name": "apiKeySecretName", "IsArray": "false", "IsEnum": "false" } ],
+			"ReturnType": "OpenRouterCloudModelContract",
+			"UrlName": null,
+			"Name": "GetCloudModels",
+			"DataObject": {}
+		},
+		{
+			"IsStatic": "true",
+			"IsReturnTypeArray": "false",
+			"KebabName": "validate-api-key",
+			"Parameters": [ { "Type": "String", "IsNullable": "false", "Name": "apiKey", "IsArray": "false", "IsEnum": "false" } ],
+			"ReturnType": "Boolean",
+			"UrlName": null,
+			"Name": "ValidateApiKey",
+			"DataObject": {}
+		},
+		{
+			"IsStatic": "true",
+			"IsReturnTypeArray": "false",
+			"KebabName": "get-default-endpoint",
+			"Parameters": [],
+			"ReturnType": "OpenRouterCloudEndpointDefaultsContract",
+			"UrlName": null,
+			"Name": "GetDefaultEndpoint",
+			"DataObject": {}
+		}
+	],
+	"Namespace": "Buffaly.Provider.OpenRouter.Web"
+}

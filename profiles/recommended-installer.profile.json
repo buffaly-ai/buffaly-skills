@@ -439,6 +439,15 @@
     },
     {
       "PackageType": "WebModule",
+      "PackageId": "OpenRouterCloud",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "WebModule",
       "PackageId": "OpenAIImageGeneration",
       "Platforms": [
         "windows",
@@ -494,6 +503,15 @@
     {
       "PackageType": "ProviderModule",
       "PackageId": "Buffaly.Provider.OpenAi",
+      "Platforms": [
+        "windows",
+        "linux",
+        "mac"
+      ]
+    },
+    {
+      "PackageType": "ProviderModule",
+      "PackageId": "Buffaly.Provider.OpenRouter",
       "Platforms": [
         "windows",
         "linux",
