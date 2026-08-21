@@ -19,11 +19,11 @@ The canonical bootstrap is:
 
 ## Workflow
 
-1. Resolve the target Buffaly origin and Chrome profile from the request, current session/browser context, remembered environment entities, or available inspection tools. If the user says “this instance,” bind to the current Buffaly origin. Ask one targeted question only when multiple consequential targets remain after discovery.
+1. Resolve the target Buffaly origin and Chrome profile from the request, current session/browser context, remembered environment entities, or available inspection tools. If the user says "this instance," bind to the current Buffaly origin. Ask one targeted question only when multiple consequential targets remain after discovery.
 2. Verify `<origin>/web-modules/ExtensionBrowser/health` is reachable and reports `ChromeExtensionVersion` and `ChromeExtensionSha256`. If the WebModule is missing or pending activation, install/activate that package through the typed extension-management workflow before continuing. Never patch core or an installed WebModule copy.
 3. Open `<origin>/web-modules/ExtensionBrowser/install` for a visible, user-auditable entry point.
 4. On Windows, run the origin-rendered bootstrap script through the approved local execution path. It must download from that same origin, verify the pinned SHA-256, validate the manifest name/version, and extract to `%LOCALAPPDATA%\Buffaly\ChromeExtensions\BuffalyBrowserAgent\<version>`.
-5. Do not edit Chrome `Preferences`/`Secure Preferences`, synthesize extension registrations, or bypass Chrome’s confirmation. Use direct computer-interaction tools in the requested real Chrome profile to open `chrome://extensions`, enable Developer mode if necessary, click **Load unpacked**, and select the prepared version folder. If direct interaction is unavailable or the user has not approved interaction with the main Chrome profile, present the exact prepared folder and the single remaining confirmation instead.
+5. Do not edit Chrome `Preferences`/`Secure Preferences`, synthesize extension registrations, or bypass Chrome's confirmation. Use direct computer-interaction tools in the requested real Chrome profile to open `chrome://extensions`, enable Developer mode if necessary, click **Load unpacked**, and select the prepared version folder. If direct interaction is unavailable or the user has not approved interaction with the main Chrome profile, present the exact prepared folder and the single remaining confirmation instead.
 6. Open the extension side panel. Add the target origin and complete its normal authorization redirect. Do not copy installation credentials or storage from another profile/instance.
 7. Verify all available evidence:
    - Chrome shows **Buffaly Browser Agent** at the expected version;
