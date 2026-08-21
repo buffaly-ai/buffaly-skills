@@ -23,39 +23,51 @@ AS
 
 	IF ISNULL(@Search, '') <> ''
 	BEGIN
-		;WITH SessionHierarchy AS
+		;WITH MatchingSessions AS
 		(
-			SELECT	root.SessionID,
-					root.ParentSessionID,
-					root.SessionID AS RootSessionID,
-					1 AS HierarchyDepth
-			FROM	dbo.Sessions root WITH (NOLOCK)
-			WHERE	root.ParentSessionID IS NULL
-					AND ISNULL(root.IsArchived, 0) = 0
+			SELECT	sessionRow.SessionID,
+					sessionRow.ParentSessionID,
+					sessionRow.LastUpdated
+			FROM	dbo.Sessions sessionRow WITH (NOLOCK)
+			WHERE	ISNULL(sessionRow.IsArchived, 0) = 0
+					AND
+					(
+						sessionRow.SessionKey LIKE @SearchPattern
+						OR sessionRow.SessionName LIKE @SearchPattern
+					)
+		),
+		MatchAncestors AS
+		(
+			SELECT	matching.SessionID,
+					matching.ParentSessionID,
+					matching.SessionID AS MatchSessionID,
+					matching.LastUpdated,
+					1 AS DistanceFromMatch
+			FROM	MatchingSessions matching
 
 			UNION ALL
 
-			SELECT	child.SessionID,
-					child.ParentSessionID,
-					parent.RootSessionID,
-					parent.HierarchyDepth + 1
-			FROM	SessionHierarchy parent
-			JOIN	dbo.Sessions child WITH (NOLOCK)
-			ON		child.ParentSessionID = parent.SessionID
-					AND ISNULL(child.IsArchived, 0) = 0
+			SELECT	parent.SessionID,
+					parent.ParentSessionID,
+					child.MatchSessionID,
+					child.LastUpdated,
+					child.DistanceFromMatch + 1
+			FROM	MatchAncestors child
+			JOIN	dbo.Sessions parent WITH (NOLOCK)
+			ON		parent.SessionID = child.ParentSessionID
+					AND ISNULL(parent.IsArchived, 0) = 0
 		),
 		MatchingRows AS
 		(
-			SELECT	hierarchy.SessionID,
-					hierarchy.ParentSessionID,
-					hierarchy.RootSessionID,
-					hierarchy.HierarchyDepth,
-					sessionRow.LastUpdated
-			FROM	SessionHierarchy hierarchy
-			JOIN	dbo.Sessions sessionRow WITH (NOLOCK)
-			ON		sessionRow.SessionID = hierarchy.SessionID
-			WHERE	sessionRow.SessionKey LIKE @SearchPattern
-					OR sessionRow.SessionName LIKE @SearchPattern
+			SELECT	matching.SessionID,
+					matching.ParentSessionID,
+					root.SessionID AS RootSessionID,
+					root.DistanceFromMatch AS HierarchyDepth,
+					matching.LastUpdated
+			FROM	MatchingSessions matching
+			JOIN	MatchAncestors root
+			ON		root.MatchSessionID = matching.SessionID
+					AND root.ParentSessionID IS NULL
 		),
 		RankedRoots AS
 		(
@@ -182,7 +194,7 @@ AS
 				deduped.SearchResultOrdinal,
 				deduped.LastUpdated DESC,
 				sessionRow.SessionID DESC
-		OPTION (RECOMPILE, MAXRECURSION 100);
+		OPTION (MAXRECURSION 100);
 		RETURN;
 	END
 
@@ -324,5 +336,4 @@ AS
 			HierarchyDepth,
 			OwnLastUpdated DESC,
 			SessionID DESC
-	OPTION (RECOMPILE);
 GO
