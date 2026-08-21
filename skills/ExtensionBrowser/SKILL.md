@@ -7,10 +7,11 @@ Extension Browser is the Buffaly skill package for the **Buffaly Browser Agent**
 ## Package contents
 
 - `index.pts` and `PromptActions.pts`: ProtoScript skill and discovery phrases.
+- `Prompts/InstallChromeExtension.prompt.md`: canonical end-to-end workflow for installing and authorizing the real Chrome extension from a target Buffaly instance.
 - `lib/bridge.js`: persistent bridge with bounded extension-worker recovery.
 - `lib/extension_helper.js`: direct helper used by raw and diagnostic actions.
 - `extension/source`: reproducible Buffaly Browser Agent source maintained with this skill.
-- `extension/release/Buffaly-Browser-Agent-0.2.49-chrome.zip`: Chrome Web Store upload artifact produced by `npm run release:check`.
+- `extension/release/Buffaly-Browser-Agent-0.2.60-chrome.zip`: validated Chrome package produced by `npm run release:check` and distributed through the ExtensionBrowser WebModule installer.
 - `docs/VALIDATION.md`: executed publication-gate evidence and remaining store-hosting requirements.
 
 ## Runtime requirements
@@ -33,4 +34,4 @@ npm ci
 npm run release:check
 ```
 
-The generated archive must match version 0.2.49 and pass `scripts/verify-release.mjs` before staging the indexed release artifact. Saved servers have an explicit settings surface for viewing state/version/authorization, renaming, changing origins, and removal. Changing an origin never transfers the old server credential or conversation authority. Save server validates origins inside the service worker's asynchronous response path and acknowledges persisted state before health or channel work, so malformed input reports an error while authorized-but-offline servers remain editable. Persisted conversation pointers identify their owning installation registration; reconnect never restores a conversation pointer owned by another installation. Every Send and Steer page-context snapshot includes URL, title, active tab ID, and capture timestamp. The extension-owned side panel captures microphone audio after a direct user grant and supplies the trusted conversation iframe with a short-lived live track; the iframe receives neither extension authority nor a reusable credential, and the obsolete server-origin setup-tab flow must not return.
+The generated archive must match version 0.2.60 and pass `scripts/verify-release.mjs` before staging the indexed release artifact. Saved servers have an explicit settings surface for viewing state/version/authorization, renaming, changing origins, and removal. Changing an origin never transfers the old server credential or conversation authority. Save server validates origins inside the service worker's asynchronous response path and acknowledges persisted state before health or channel work, so malformed input reports an error while authorized-but-offline servers remain editable. Persisted conversation pointers identify their owning installation registration; reconnect never restores a conversation pointer owned by another installation. Every Send and Steer page-context snapshot includes URL, title, active tab ID, and capture timestamp. The extension-owned side panel captures microphone audio after a direct user grant and supplies the trusted conversation iframe with a short-lived live track; the iframe receives neither extension authority nor a reusable credential, and the obsolete server-origin setup-tab flow must not return.

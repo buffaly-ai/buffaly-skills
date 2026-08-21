@@ -1,3 +1,16 @@
+[SemanticProgram.InfinitivePhrase("to install the Chrome extension")]
+[SemanticProgram.InfinitivePhrase("to install the Buffaly Browser Agent")]
+[SemanticProgram.InfinitivePhrase("to set up the Buffaly Chrome extension")]
+[SemanticProgram.InfinitivePhrase("to add the browser extension to Chrome")]
+prototype ToInstallExtensionBrowserChromeExtensionSkill : PromptAction, ExtensionBrowserSkillAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Skills/ExtensionBrowser/Prompts/InstallChromeExtension.prompt.md";
+	Description = @"Install and authorize the Buffaly Browser Agent in a requested real Chrome profile using the target Buffaly instance's verified ExtensionBrowser installer.";
+}
+
 [SemanticProgram.InfinitivePhrase("to use extension browser")]
 [SemanticProgram.InfinitivePhrase("to control a browser via extension")]
 [SemanticProgram.InfinitivePhrase("to automate a web page via extension")]
