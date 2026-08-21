@@ -1,0 +1,655 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "FeedingFrenzy.Agent.Tools/1.0.0": {
+        "dependencies": {
+          "BasicUtilities": "1.0.0.0",
+          "Buffaly.Agent.Common": "1.0.0.0",
+          "Buffaly.Agent.Host": "1.0.0.0",
+          "Buffaly.Agent.Tools.Secrets": "1.0.0.0",
+          "Buffaly.Agent.Web.Common": "1.0.0.0",
+          "WebAppUtilities": "1.0.0.0"
+        },
+        "runtime": {
+          "FeedingFrenzy.Agent.Tools.dll": {}
+        }
+      },
+      "BasicUtilities/1.0.0.0": {
+        "runtime": {
+          "BasicUtilities.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Agent.Common/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agent.Common.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Agent.Host/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agent.Host.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Agent.Tools.Secrets/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agent.Tools.Secrets.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Agent.Web.Common/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agent.Web.Common.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "WebAppUtilities/1.0.0.0": {
+        "runtime": {
+          "WebAppUtilities.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Microsoft.Data.SqlClient/6.0.0.0": {
+        "runtime": {
+          "Microsoft.Data.SqlClient.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.11.25226.3"
+          }
+        }
+      },
+      "Buffaly.Agent.Core/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agent.Core.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Agent.Runtime.Abstractions/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agent.Runtime.Abstractions.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Agent.ProtoScript.Runtime/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agent.ProtoScript.Runtime.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Agent.SemanticDatabase/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agent.SemanticDatabase.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Agent.Tools.SemanticDatabase/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agent.Tools.SemanticDatabase.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "ProtoScript.Interpretter/1.0.0.0": {
+        "runtime": {
+          "ProtoScript.Interpretter.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Ontology/1.0.0.0": {
+        "runtime": {
+          "Ontology.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.DB.Core/1.0.0.0": {
+        "runtime": {
+          "Buffaly.DB.Core.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.ProviderContracts/1.0.0.0": {
+        "runtime": {
+          "Buffaly.ProviderContracts.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Sessions.DB/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Sessions.DB.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Agent.Tools.Mcp/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agent.Tools.Mcp.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Sessions.DB.PostGres/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Sessions.DB.PostGres.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.DB.Hybrid/1.0.0.0": {
+        "runtime": {
+          "Buffaly.DB.Hybrid.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "RooTrax.Common.DB/1.0.0.0": {
+        "runtime": {
+          "RooTrax.Common.DB.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Agent.Tools.Platform/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agent.Tools.Platform.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Ontology.Simulation/1.0.0.0": {
+        "runtime": {
+          "Ontology.Simulation.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Agent.Tools.Process/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agent.Tools.Process.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.DB.SqlServer/1.0.0.0": {
+        "runtime": {
+          "Buffaly.DB.SqlServer.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.DB.Postgres/1.0.0.0": {
+        "runtime": {
+          "Buffaly.DB.Postgres.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Business/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Business.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Microsoft.Identity.Client/4.73.1.0": {
+        "runtime": {
+          "Microsoft.Identity.Client.dll": {
+            "assemblyVersion": "4.73.1.0",
+            "fileVersion": "4.73.1.0"
+          }
+        }
+      },
+      "RooTrax.Cache/1.0.0.0": {
+        "runtime": {
+          "RooTrax.Cache.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "ProtoScript/1.0.0.0": {
+        "runtime": {
+          "ProtoScript.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "ProtoScript.Parsers/1.0.0.0": {
+        "runtime": {
+          "ProtoScript.Parsers.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Agent.SemanticDatabase.DB/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agent.SemanticDatabase.DB.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.AIProviderAPI/1.0.0.0": {
+        "runtime": {
+          "Buffaly.AIProviderAPI.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "RooTrax.Common/1.0.0.0": {
+        "runtime": {
+          "RooTrax.Common.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Agent.ProtoScriptAuthoring/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agent.ProtoScriptAuthoring.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "RooTrax.Git/1.0.0.0": {
+        "runtime": {
+          "RooTrax.Git.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Data/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Data.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "kScript/1.0.0.0": {
+        "runtime": {
+          "kScript.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "ProtoScript.CLI.Validation/1.0.0.0": {
+        "runtime": {
+          "ProtoScript.CLI.Validation.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Agent.CSharpSkill/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agent.CSharpSkill.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "ProtoScript.Workbench.Api/1.0.0.0": {
+        "runtime": {
+          "ProtoScript.Workbench.Api.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "CSharp/1.0.0.0": {
+        "runtime": {
+          "CSharp.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "CSharp.Extensions/1.0.0.0": {
+        "runtime": {
+          "CSharp.Extensions.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "CSharp.Parsers/1.0.0.0": {
+        "runtime": {
+          "CSharp.Parsers.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Agents/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agents.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.SemanticDB.Data/1.0.0.0": {
+        "runtime": {
+          "Buffaly.SemanticDB.Data.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.Development.Common/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Development.Common.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.SemanticDB/1.0.0.0": {
+        "runtime": {
+          "Buffaly.SemanticDB.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "FeedingFrenzy.Agent.Tools/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "BasicUtilities/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Agent.Common/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Agent.Host/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Agent.Tools.Secrets/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Agent.Web.Common/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "WebAppUtilities/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Microsoft.Data.SqlClient/6.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Agent.Core/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Agent.Runtime.Abstractions/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Agent.ProtoScript.Runtime/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Agent.SemanticDatabase/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Agent.Tools.SemanticDatabase/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ProtoScript.Interpretter/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Ontology/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.DB.Core/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.ProviderContracts/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Sessions.DB/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Agent.Tools.Mcp/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Sessions.DB.PostGres/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.DB.Hybrid/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "RooTrax.Common.DB/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Agent.Tools.Platform/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Ontology.Simulation/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Agent.Tools.Process/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.DB.SqlServer/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.DB.Postgres/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Business/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Microsoft.Identity.Client/4.73.1.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "RooTrax.Cache/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ProtoScript/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ProtoScript.Parsers/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Agent.SemanticDatabase.DB/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.AIProviderAPI/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "RooTrax.Common/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Agent.ProtoScriptAuthoring/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "RooTrax.Git/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Data/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "kScript/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ProtoScript.CLI.Validation/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Agent.CSharpSkill/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ProtoScript.Workbench.Api/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "CSharp/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "CSharp.Extensions/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "CSharp.Parsers/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Agents/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.SemanticDB.Data/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Development.Common/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.SemanticDB/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
