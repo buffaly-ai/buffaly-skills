@@ -1,0 +1,65 @@
+import Buffaly.Agent.Host Buffaly.Agent.Host.McpServiceHost McpServiceHost;
+
+prototype McpService : Service
+{
+	String BindingKey = new String();
+	String TransportKind = "streamable-http";
+	String ServerUrl = new String();
+	String Command = new String();
+	String ArgumentsJson = "[]";
+	String WorkingDirectory = new String();
+	String BearerTokenSecretKey = new String();
+	Int TimeoutSeconds = 30;
+	Bool Insecure = false;
+	Bool Stream = false;
+	AutoInitialize = false;
+
+	ServiceName = "McpService";
+	Scope = "per-binding";
+	Description = @"Generic MCP service configured by ProtoScript service instance properties.";
+
+	function Initialize() : JsonObject
+	{
+		return McpServiceHost.Initialize(this.BindingKey, this.TransportKind, this.ServerUrl, this.Command, this.ArgumentsJson, this.WorkingDirectory, this.BearerTokenSecretKey, this.TimeoutSeconds, this.Insecure, this.Stream);
+	}
+
+	function ToPing() : string
+	{
+		return McpServiceHost.Ping(this.BindingKey, this.TransportKind, this.ServerUrl, this.Command, this.ArgumentsJson, this.WorkingDirectory, this.BearerTokenSecretKey, this.TimeoutSeconds, this.Insecure, this.Stream);
+	}
+
+	function ToListServerTools() : string
+	{
+		return McpServiceHost.ListTools(this.BindingKey, this.TransportKind, this.ServerUrl, this.Command, this.ArgumentsJson, this.WorkingDirectory, this.BearerTokenSecretKey, this.TimeoutSeconds, this.Insecure, this.Stream);
+	}
+
+	function ToListResources() : string
+	{
+		return McpServiceHost.ListResources(this.BindingKey, this.TransportKind, this.ServerUrl, this.Command, this.ArgumentsJson, this.WorkingDirectory, this.BearerTokenSecretKey, this.TimeoutSeconds, this.Insecure, this.Stream);
+	}
+
+	function ToReadResource(string resourceUri) : string
+	{
+		return McpServiceHost.ReadResource(this.BindingKey, this.TransportKind, this.ServerUrl, this.Command, this.ArgumentsJson, this.WorkingDirectory, this.BearerTokenSecretKey, this.TimeoutSeconds, this.Insecure, this.Stream, resourceUri);
+	}
+
+	function ToListPrompts() : string
+	{
+		return McpServiceHost.ListPrompts(this.BindingKey, this.TransportKind, this.ServerUrl, this.Command, this.ArgumentsJson, this.WorkingDirectory, this.BearerTokenSecretKey, this.TimeoutSeconds, this.Insecure, this.Stream);
+	}
+
+	function ToGetPrompt(string promptName, JsonObject arguments) : string
+	{
+		return McpServiceHost.GetPrompt(this.BindingKey, this.TransportKind, this.ServerUrl, this.Command, this.ArgumentsJson, this.WorkingDirectory, this.BearerTokenSecretKey, this.TimeoutSeconds, this.Insecure, this.Stream, promptName, arguments);
+	}
+
+	function ToCallTool(string toolName, JsonObject arguments) : string
+	{
+		return McpServiceHost.CallTool(this.BindingKey, this.TransportKind, this.ServerUrl, this.Command, this.ArgumentsJson, this.WorkingDirectory, this.BearerTokenSecretKey, this.TimeoutSeconds, this.Insecure, this.Stream, toolName, arguments);
+	}
+
+	function ToCallTextTool(string toolName, JsonObject arguments) : string
+	{
+		return McpServiceHost.CallToolText(this.BindingKey, this.TransportKind, this.ServerUrl, this.Command, this.ArgumentsJson, this.WorkingDirectory, this.BearerTokenSecretKey, this.TimeoutSeconds, this.Insecure, this.Stream, toolName, arguments);
+	}
+}

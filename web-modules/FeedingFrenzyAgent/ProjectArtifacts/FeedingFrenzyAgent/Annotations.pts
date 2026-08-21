@@ -1,0 +1,15 @@
+﻿reference Buffaly.Agent.Tools.SemanticDatabase Buffaly.Agent.Tools.SemanticDatabase;
+import Buffaly.Agent.Tools.SemanticDatabase Buffaly.Agent.Tools.SemanticDatabase.SemanticDatabase SemanticDatabase;
+
+prototype SemanticProgram
+{
+	function InfinitivePhrase(Prototype prototype, string infinitive) : void
+	{
+		SemanticDatabase.InsertSemanticProgram(_runtime, prototype.PrototypeName, infinitive);
+	}
+}
+
+function SemanticEntity(Prototype prototype, string semanticEntity) : void
+{
+	SemanticDatabase.InsertSemanticEntity(_runtime, prototype.PrototypeName, semanticEntity);
+}

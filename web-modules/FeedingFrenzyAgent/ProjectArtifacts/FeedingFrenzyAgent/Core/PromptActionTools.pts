@@ -1,0 +1,151 @@
+reference "../lib/Buffaly.Agent.Host.dll" Buffaly.Agent.Tools;
+import Buffaly.Agent.Tools.Platform Buffaly.Agent.Tools.Platform.CoreOntologyTools CoreOntologyTools;
+
+[SemanticProgram.InfinitivePhrase("to insert or update a prototype definition")]
+[SemanticProgram.InfinitivePhrase("to upsert a prototype definition")]
+prototype ToInsertOrUpdatePrototypeDefinition : ProtoScriptAction
+{
+	Description = @"fileName - target .pts file name relative to the Buffaly Agent project root.
+prototypeDefinition - complete valid ProtoScript prototype block text to parse and upsert.
+This is a low-level typed ProtoScript editing tool. Do not edit `.pts` files directly when this tool can perform the change.
+For ontology memory facts/preferences/objects, prefer `ToRememberOntologyObjectSkill` first so placement and prototype shape are chosen correctly.
+For procedural memory, prompt workflows, or repeatable operational knowledge, prefer `ToRememberHowToDoSomethingSkill` first.
+For prompt-action + prompt file combined updates, prefer `ToUpsertPromptActionArtifacts` with explicit project-relative paths. For normal remembered/local/user/workspace/project-specific content, target an organized location under `Nodes/Personal/...`. Everything outside `Nodes/Personal` is system-owned for normal agent authoring and should not be written unless the user explicitly asks for that target.
+The prototypeDefinition must use valid ProtoScript syntax, for example:
+[SemanticEntity(""example"")]
+prototype ExampleThing : SemanticEntityBase
+{
+	EntityName = ""example thing"";
+}
+Parses first, returns parse/upsert errors, then inserts or updates the prototype by name.";
+	Notes = @"Use this tool only after the correct prototype shape and placement are already known.
+Do not write ProtoScript with JSON/object-literal syntax. Use ProtoScript syntax:
+- `prototype` or `partial prototype`
+- field assignments with `=`
+- valid annotations such as `[SemanticEntity(""..."")]`
+If the task is remembering a fact, preference, contact, or environment detail, load and follow `ToRememberOntologyObjectSkill` first.
+If the task is remembering a workflow or procedure, load and follow `ToRememberHowToDoSomethingSkill` first.
+Within `Nodes/Personal`, organize intentionally: search existing personal nodes, choose the closest natural home, and create a new personal subfolder only when no existing personal node fits and the concept is durable enough to deserve its own home. Do not perform broad personal-node refactors unless the user asks.
+For ProtoScript syntax guidance, follow `ProtoScript.Minimum.md` in the project root.";
+
+	function Execute(string fileName, string prototypeDefinition) : string
+	{
+		// Parse and upsert a single prototype definition into the current configured Ops project.
+		if (_opsAgent != null)
+			return CoreOntologyTools.InsertOrUpdatePrototypeDefinitionInCurrentProject(_opsAgent, fileName, prototypeDefinition);
+
+		return "Error: _opsAgent runtime is not available.";
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to import a dll into a skill")]
+[SemanticProgram.InfinitivePhrase("to add a dll reference to a skill")]
+prototype ToImportDllIntoSkill : ProtoScriptAction
+{
+	Description = @"skillFolder - skill folder path (for example: Skills/Wiki).
+targetPtsFile - target .pts path relative to project root to receive reference/import lines.
+dllSourcePathsJson - JSON array string of source DLL file paths to copy.
+importsToEnsureJson - JSON array string of import/reference lines to append when missing.
+failOnMissingDependencies - if true, sibling dependency warnings are treated as failure.";
+
+	function Execute(string skillFolder, string targetPtsFile, string dllSourcePathsJson, string importsToEnsureJson, bool failOnMissingDependencies) : string
+	{
+		if (_opsAgent != null)
+			return CoreOntologyTools.ImportDllArtifactsInCurrentProject(_opsAgent, skillFolder, targetPtsFile, dllSourcePathsJson, importsToEnsureJson, failOnMissingDependencies);
+
+		return "Error: _opsAgent runtime is not available.";
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to upsert prompt action artifacts")]
+[SemanticProgram.InfinitivePhrase("to create or update a prompt action and prompt file")]
+prototype ToUpsertPromptActionArtifacts : ProtoScriptAction
+{
+	Description = @"promptActionsFileName - project-relative .pts file path for the PromptAction prototype registration, for example Nodes/Personal/Coding/PromptActions.pts.
+prototypeDefinition - full prompt-action prototype definition text.
+prototypeDefinition must inherit PromptAction, include PromptPath matching promptFileName, and include at least one [SemanticProgram.InfinitivePhrase(""..."")] annotation or legacy InfinitivePhrase assignment. Legacy InfinitivePhrase and EntityName assignments are canonicalized into semantic annotations.
+promptFileName - project-relative markdown prompt path, for example Nodes/Personal/Coding/Prompts/MyAction.prompt.md.
+promptText - full markdown prompt text to write.
+This tool is decoupled from storage location. For normal remembered/local/user/workspace/project-specific prompt actions, choose an organized location under Nodes/Personal.
+Everything outside Nodes/Personal is system-owned for normal agent authoring and should not be written unless the user explicitly asks for that target.
+Inside Nodes/Personal, organize intentionally: search existing personal nodes, choose the closest natural home, and create a new personal subfolder only when no existing personal node fits and the concept is durable enough to deserve its own home.
+Do not perform broad personal-node refactors unless the user asks.";
+
+	function Execute(string promptActionsFileName, string prototypeDefinition, string promptFileName, string promptText) : string
+	{
+		if (_opsAgent != null)
+			return CoreOntologyTools.UpsertPromptActionArtifactsInCurrentProject(_opsAgent, promptActionsFileName, prototypeDefinition, promptFileName, promptText);
+
+		return "Error: _opsAgent runtime is not available.";
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to add an infinitive phrase to an action")]
+[SemanticProgram.InfinitivePhrase("to annotate an action with an infinitive phrase")]
+prototype ToAddInfinitivePhraseToAction : ProtoScriptAction
+{
+	Description = @"fileName - target .pts file name relative to project root.
+actionPrototypeName - prototype name to annotate.
+infinitivePhrase - phrase value for [SemanticProgram.InfinitivePhrase(""..."")].";
+
+	function Execute(string fileName, string actionPrototypeName, string infinitivePhrase) : string
+	{
+		if (_opsAgent != null)
+			return CoreOntologyTools.AddInfinitivePhraseToActionInCurrentProject(_opsAgent, fileName, actionPrototypeName, infinitivePhrase);
+
+		return "Error: _opsAgent runtime is not available.";
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to add a semantic entity name to a prototype")]
+[SemanticProgram.InfinitivePhrase("to annotate a prototype with a semantic entity")]
+prototype ToAddSemanticEntityNameToPrototype : ProtoScriptAction
+{
+	Description = @"fileName - target .pts file name relative to project root.
+prototypeName - prototype name to annotate.
+semanticEntityName - value for [SemanticEntity(""..."")].";
+
+	function Execute(string fileName, string prototypeName, string semanticEntityName) : string
+	{
+		if (_opsAgent != null)
+			return CoreOntologyTools.AddSemanticEntityNameToPrototypeInCurrentProject(_opsAgent, fileName, prototypeName, semanticEntityName);
+
+		return "Error: _opsAgent runtime is not available.";
+	}
+}
+
+
+[SemanticProgram.InfinitivePhrase("to remove redundant prototype parents in a file")]
+[SemanticProgram.InfinitivePhrase("to normalize prototype inheritance parents")]
+[SemanticProgram.InfinitivePhrase("to clean redundant baseobject parent declarations")]
+prototype ToRemoveRedundantPrototypeParentsInFile : ProtoScriptAction
+{
+	Description = @"fileName - target .pts file path relative to project root.
+includePartials - when true, also normalize partial prototype declarations.
+Removes transitive redundant parents (for example `: Parent, BaseObject` where Parent already inherits BaseObject) and writes updates back to file.";
+
+	function Execute(string fileName, bool includePartials) : string
+	{
+		if (_opsAgent != null)
+			return CoreOntologyTools.RemoveRedundantPrototypeParentsInCurrentProject(_opsAgent, fileName, includePartials);
+
+		return "Error: _opsAgent runtime is not available.";
+	}
+}
+[SemanticProgram.InfinitivePhrase("to search the web with an llm")]
+prototype ToSearchTheWebWithAnLLM : ProtoScriptAction
+{
+	function Execute(string question) : string
+	{
+		return LLMs.ExecuteWebSearch(question);
+	}
+	Description = @"
+		question - the question to research using web search. Uses the fixed internal web-search model; callers cannot choose or override the model.";
+}
+
+
+
+
+
+
+

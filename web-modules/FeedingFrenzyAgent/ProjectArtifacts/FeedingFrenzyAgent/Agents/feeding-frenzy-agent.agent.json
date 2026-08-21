@@ -1,0 +1,20 @@
+{
+  "AgentName": "feeding-frenzy-agent",
+  "DisplayName": "Feeding Frenzy Agent",
+  "Aliases": [
+    "feeding frenzy",
+    "feeding frenzy agent",
+    "ff agent"
+  ],
+  "PromptFile": "Prompts/FeedingFrenzyAgent.prompt.md",
+  "PromptContext": "feeding-frenzy-agent",
+  "RootActionPrototypeName": "CoreAction",
+  "RootEntityPrototypeName": "FeedingFrenzyAgentEntityRoot",
+  "DefaultModelName": "gpt-5.4-mini",
+  "DefaultReasoningLevel": "medium",
+  "UiPage": "/buffaly-agent.html",
+  "IsReadOnly": false,
+  "IsHidden": false,
+  "CanChangeModel": true,
+  "DisableLevel2AutoAttach": true
+}

@@ -18232,6 +18232,706 @@
       "RequiresRestart": true,
       "RequiresPreStartInstall": true,
       "PreStartCleanupPaths": []
+    },
+    {
+      "PackageId": "FeedingFrenzyAgent",
+      "PackageType": "WebModule",
+      "Title": "Feeding Frenzy Agent",
+      "Description": "Buffaly Web Module package for Feeding Frenzy Agent.",
+      "Version": "0.1.0",
+      "PackageKind": "BuffalyWebModule",
+      "SourcePath": "web-modules/FeedingFrenzyAgent",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/FeedingFrenzyAgent",
+      "Phrases": [
+        "Feeding Frenzy Agent",
+        "FeedingFrenzyAgent"
+      ],
+      "Files": [
+        {
+          "Path": "Azure.Core.dll",
+          "Sha256": "224d09cb39eae4d8c30272a0c49beb19d873c87347eae9487f0ddd859d752b56"
+        },
+        {
+          "Path": "Azure.Identity.dll",
+          "Sha256": "af18f20be25b2895c912f3ba0a9f2901a82dda823edcad76e6a19eac9886a40f"
+        },
+        {
+          "Path": "BasicUtilities.dll",
+          "Sha256": "09d8f850383647719051683b7bddf030d2296c5901138179906d3f5064da42e0"
+        },
+        {
+          "Path": "Buffaly.Agent.Common.dll",
+          "Sha256": "a5dc33eccce0991df782576eb6d2b6dff3f57f8b62c44cd72378ae60b29ae3a7"
+        },
+        {
+          "Path": "Buffaly.Agent.Core.dll",
+          "Sha256": "0f5086d4e728899e4ee403a044fc7fdf1f8d0c6da3fbdea5176f6e1ef69342f0"
+        },
+        {
+          "Path": "Buffaly.Agent.CSharpSkill.dll",
+          "Sha256": "6c00014ab1e8d887793f25aef667c14143a8dcb3ac19a6541d21e20fc5660baf"
+        },
+        {
+          "Path": "Buffaly.Agent.Host.dll",
+          "Sha256": "e724344e52113386f0e4bc34f2e3e157f838525b672aefc6deb51d5d44448610"
+        },
+        {
+          "Path": "Buffaly.Agent.ProtoScript.Runtime.dll",
+          "Sha256": "2fb56c16c736366d7450e4af722b391ee316cdeb4f251f70dc59cf4456fc70ee"
+        },
+        {
+          "Path": "Buffaly.Agent.ProtoScriptAuthoring.dll",
+          "Sha256": "63bf2d818aa0d331642304e6a7d9de099138ed998abfd5e28e907b28453a9a2b"
+        },
+        {
+          "Path": "Buffaly.Agent.Runtime.Abstractions.dll",
+          "Sha256": "46edeec30d91af8cb608241be7530f746bacefccf7542321042693464831fc59"
+        },
+        {
+          "Path": "Buffaly.Agent.SemanticDatabase.DB.dll",
+          "Sha256": "08f2b49648a43cb2897c260c7cda5b5502bdf02140a1ad034d14c0188901a015"
+        },
+        {
+          "Path": "Buffaly.Agent.SemanticDatabase.dll",
+          "Sha256": "652d18d36e023cd220fac33184be82c2c472a8e0cfc5640215a80e8772b07f2e"
+        },
+        {
+          "Path": "Buffaly.Agent.Tools.CodeSearch.dll",
+          "Sha256": "1b657c335f3602a65af989cfc66789a00046afdfa3ccce88738163e963ec33ea"
+        },
+        {
+          "Path": "Buffaly.Agent.Tools.Http.dll",
+          "Sha256": "8f47553d2cfbdfe379c604ed133199c39d3a677d051d3a034dc741a23a068e42"
+        },
+        {
+          "Path": "Buffaly.Agent.Tools.Mcp.dll",
+          "Sha256": "a841683f4e5cdbf6f9142b0cf96cbdff875da4e9858b4aa417b3dd6feca06315"
+        },
+        {
+          "Path": "Buffaly.Agent.Tools.Platform.dll",
+          "Sha256": "d21af64b645807b799c01f4e5255e2bb526a58b6eae2c4b50204fbd1e7a9a9c1"
+        },
+        {
+          "Path": "Buffaly.Agent.Tools.Process.dll",
+          "Sha256": "ecf77ea0204ea9cd5b6691e3a2cba6b704a238fc4215b3abcc5f2180dccb5a43"
+        },
+        {
+          "Path": "Buffaly.Agent.Tools.Secrets.dll",
+          "Sha256": "6c4ccd41db53c06f3bdbb42c6a51c289594aa131f927eb4864cf2ac8646f5918"
+        },
+        {
+          "Path": "Buffaly.Agent.Tools.SemanticDatabase.dll",
+          "Sha256": "37c32eac580cff5b9846e757bca1e8fc423647a4cc7f26f43c1a01848dc5f1d0"
+        },
+        {
+          "Path": "Buffaly.Agent.Web.Common.dll",
+          "Sha256": "b129b070456284ee52c4d66a92eb7148f2a9a997862d368cd4c28acdb2b59e39"
+        },
+        {
+          "Path": "Buffaly.Agents.dll",
+          "Sha256": "505d15b4194a3357353ce5554ecfe115bf227814c1258e0c18ae38124e54ad88"
+        },
+        {
+          "Path": "Buffaly.AIProviderAPI.dll",
+          "Sha256": "c7fd14e052d073905f0e40234f1d117090dae4d3cd698cbe2feea2706d443aab"
+        },
+        {
+          "Path": "Buffaly.Business.dll",
+          "Sha256": "ec7efac305ac15804ec05cf02829008577ec8c826b35790d9f4b1bb52d9500f9"
+        },
+        {
+          "Path": "Buffaly.Data.dll",
+          "Sha256": "63e55cf6a647002f08c84da4845b833da6c64efc5defb3d7149ffab4b584a216"
+        },
+        {
+          "Path": "Buffaly.DB.Core.dll",
+          "Sha256": "dcf85e5f5982256fb81cf22e29877c67a5fe366e4c67e251bbc855f0cf63a83c"
+        },
+        {
+          "Path": "Buffaly.DB.Hybrid.dll",
+          "Sha256": "4055a00cc451883ff66be538f5bef9ed1513d30a3556024daed34f111348e97d"
+        },
+        {
+          "Path": "Buffaly.DB.Postgres.dll",
+          "Sha256": "efbd39344aa8036975a905dafb9e0260354cb092298e36a568da46fa98606f8c"
+        },
+        {
+          "Path": "Buffaly.DB.SqlServer.dll",
+          "Sha256": "44fed252915ab2a2885ab910bad238cef0fea9b1c1bb08326d24313e21975db5"
+        },
+        {
+          "Path": "Buffaly.Development.Common.dll",
+          "Sha256": "48629cd8d5e5aa073a98cc2bff39d74450c9eb2a9391ef7a18111f2e9437528c"
+        },
+        {
+          "Path": "Buffaly.ProviderContracts.dll",
+          "Sha256": "ff21e668e3e1f0519a276532235815c3621b2609f882da5b8d4ebd70ac62989d"
+        },
+        {
+          "Path": "Buffaly.SemanticDB.Data.dll",
+          "Sha256": "ee10ff6403e459f4add33cd3b258fed109378c6773fa5da79ae76cbc88e1f459"
+        },
+        {
+          "Path": "Buffaly.SemanticDB.dll",
+          "Sha256": "2446e5ea3c0f61529f82df1987a61910c1031da8cd0d662b0ea52810b774ccb5"
+        },
+        {
+          "Path": "Buffaly.Sessions.DB.dll",
+          "Sha256": "63e7be74aa4cdceee34acf25e25216a0c9ec5e86ca510197bce6ce8b61303e69"
+        },
+        {
+          "Path": "Buffaly.Sessions.DB.PostGres.dll",
+          "Sha256": "63993d42fe8187f9abd19934d2717873d64090c0db6042de8fa55d39a024d57f"
+        },
+        {
+          "Path": "CSharp.dll",
+          "Sha256": "9d18eaef122218e852e7fd7e5aef8c889d4bc7655f88212f2d335440efd2ff8c"
+        },
+        {
+          "Path": "CSharp.Extensions.dll",
+          "Sha256": "431cb4c5cec1d4f09444f4520fc6bacb7ca9353c039a983a7e8181486baca382"
+        },
+        {
+          "Path": "CSharp.Parsers.dll",
+          "Sha256": "356dbcc749389d17a2d8dd15345bd03d050317167f901ea2e68eb7bb5b094e47"
+        },
+        {
+          "Path": "FeedingFrenzy.Agent.Tools.deps.json",
+          "Sha256": "af865b7753005358158105c7fb3a061361b49c3ce7e21a0c596ba21c0919e5a2"
+        },
+        {
+          "Path": "FeedingFrenzy.Agent.Tools.dll",
+          "Sha256": "1f398725aad780665576df7fdc009a720d0ee21d50c840a395a09b274b0313cc"
+        },
+        {
+          "Path": "kScript.dll",
+          "Sha256": "d025baf818a71f75bed0f9d3c8a53f8d7a3448f1aa931544301d03b33b9cee1e"
+        },
+        {
+          "Path": "Microsoft.Bcl.AsyncInterfaces.dll",
+          "Sha256": "136d5965cf4768e8420b547a8bddea882921f426c371833d558a858a2f0c235a"
+        },
+        {
+          "Path": "Microsoft.Bcl.Cryptography.dll",
+          "Sha256": "009a27b8e3093fdd2960bba63e4acd48eab05c4f8f8a6d9fe8c24b4657f44c4f"
+        },
+        {
+          "Path": "Microsoft.Data.SqlClient.dll",
+          "Sha256": "5a34e2fa3479b1508dbc20fbeb2c9172f18c3868bdb147a185213a446645b400"
+        },
+        {
+          "Path": "Microsoft.Extensions.Caching.Abstractions.dll",
+          "Sha256": "001baee94c7cac0cac5b4a49accce3a1e9d21053ea99abe42f871710d96640ad"
+        },
+        {
+          "Path": "Microsoft.Extensions.Caching.Memory.dll",
+          "Sha256": "b2205b4ce4ca238a3d36ab36cd312d59e5189c581c5f5af5775b9853150cb871"
+        },
+        {
+          "Path": "Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+          "Sha256": "190142694ee938f5ecd88edb959238968e68cf976a80a6e65ddd488af49f7442"
+        },
+        {
+          "Path": "Microsoft.Extensions.Logging.Abstractions.dll",
+          "Sha256": "f8422575f5591b25a70f4d32a606c0997fe3b0d0348a814ce6e51547b5446da6"
+        },
+        {
+          "Path": "Microsoft.Extensions.Options.dll",
+          "Sha256": "cee3a3432a2e7e0328d49cba4bfa57d81ca05b0b14826cefbcf6b1984153e1ad"
+        },
+        {
+          "Path": "Microsoft.Extensions.Primitives.dll",
+          "Sha256": "e84ec5f6625612d65c9d91914f8ceaf4e7fa8896c98c0f66f15a59ff9c6b0984"
+        },
+        {
+          "Path": "Microsoft.Identity.Client.dll",
+          "Sha256": "10d59df4170053ea9597e3c20adc9607ad17318ad5d8747eda3d930a5a4b463a"
+        },
+        {
+          "Path": "Microsoft.Identity.Client.Extensions.Msal.dll",
+          "Sha256": "9c1f736b16cacd318afe07d3b9d707a4b4b56def5e403b0aff471c1af413aaf0"
+        },
+        {
+          "Path": "Microsoft.IdentityModel.Abstractions.dll",
+          "Sha256": "27af0812016ee6bb9a22beef2b8697a9d1eda96913f11335878458fff79a717f"
+        },
+        {
+          "Path": "Microsoft.IdentityModel.JsonWebTokens.dll",
+          "Sha256": "e6add69ec50664469f739c527fb74c37fbffa072c36e889d91e058faa64542b1"
+        },
+        {
+          "Path": "Microsoft.IdentityModel.Logging.dll",
+          "Sha256": "4eb68fb71d38d86e93e0c9145620ea3e528fc49333d82c923140f9868f1ea426"
+        },
+        {
+          "Path": "Microsoft.IdentityModel.Protocols.dll",
+          "Sha256": "4e81eb0584e24d6274916a6f470c990ac3aaa924c2f10255e64679c1a032f0e2"
+        },
+        {
+          "Path": "Microsoft.IdentityModel.Protocols.OpenIdConnect.dll",
+          "Sha256": "8e845988a113b5c146f1392e993e8f554a34756d37563a85c64bb399e45a4c0b"
+        },
+        {
+          "Path": "Microsoft.IdentityModel.Tokens.dll",
+          "Sha256": "07d46c63c931f8792e932cc131dc9580dd4575e0872cae92878d26847c9f248e"
+        },
+        {
+          "Path": "Microsoft.SqlServer.Server.dll",
+          "Sha256": "a9dca1b42bc875f966b78b2c0880e62b838f0ed6567166d7f1f07ae4b76ec4bf"
+        },
+        {
+          "Path": "Npgsql.dll",
+          "Sha256": "5406d26e745aff267098f30fb0da5b1507a13080b2066ee9003b071163d887c2"
+        },
+        {
+          "Path": "Ontology.dll",
+          "Sha256": "14593ae213ef7f0ce67918d1a5a942db38582023f9cb059cfdd69ce9400d8cfb"
+        },
+        {
+          "Path": "Ontology.Simulation.dll",
+          "Sha256": "a30a78cd2eff61890145c826e113d3d6543caf35043a5bf90032bfb4aacf9b34"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Agents/feeding-frenzy-agent.agent.json",
+          "Sha256": "5e161cfffc37d0f3b31f1d0b2a8c2eccccc0c43d3dfd72b3dab9809bce9d1681"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Annotations.pts",
+          "Sha256": "5e32b10d7e7de8a17ebbca64ce25305daf9a5222add65101b7af60522fe78335"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/ContextPrompts/BrowserContext.prompt.md",
+          "Sha256": "60cda6f97319950175d6c518d3face4696ab754773528d15e34e57694cbe9bbf"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/ContextPrompts/CodingContext.prompt.md",
+          "Sha256": "4d35bbbe9ca59272d8d7293232003968dc39cc24e61956a84ba5ad17c3171018"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/ContextPrompts/CodingContext.prompt.personalization.md",
+          "Sha256": "2e56414edf199b1c63e4032feaa42eb4976275f9badce69ebc62528a52424efe"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/ContextPrompts/ContextPromptDefinition.prompt.md",
+          "Sha256": "3f11fd89a4167d633c47412def1bb6f604fb1bca1ce20c0efe735c166c40b7ec"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/ContextPrompts/EmailSummaryHandler.prompt.md",
+          "Sha256": "2e58c3eeb6ef3ed60fb9bee79093af0b68e1f31d35c984ef25a819c214f13998"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/ContextPrompts/EmailWritingContext.prompt.md",
+          "Sha256": "494942682b3176fcbf135f169156ba70ee93fd85d66313fe11d75def40ee2126"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/ContextPrompts/ErrorLogHandler.prompt.md",
+          "Sha256": "aee7db9a218883c868b5ccfdbfbc7b11e10c26d4765d56a3f699154df55ee24f"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/ContextPrompts/FeedingFrenzyWebsiteCheckupAnalysis.prompt.md",
+          "Sha256": "31563df638e20f33bfb12fe90a8488cd28c10901f27ffad94a5371b80e762a18"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/ContextPrompts/HelpAgentContext.prompt.md",
+          "Sha256": "d7fd44ad12bfb174602af2a8faa685374a3259401a0194a8ed859c23a58ba44f"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/ContextPrompts/index.pts",
+          "Sha256": "dfa7a7192d5e6d9eecc918a1e9a0cb2b23dacf27fb84b1ce79a27761896291ce"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/ContextPrompts/index.pts.md",
+          "Sha256": "7b66e3593312c17c0ae696127922e32e0df76cf9f5994ce094fcdb141e3cf524"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/ContextPrompts/ProductionAlarmHandler.prompt.md",
+          "Sha256": "b1f68ba5f713d5581700f9409e72e24ac784f88ae197a7576e4c3d9366f9b5c5"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/ContextPrompts/RealtimeCallContext.prompt.md",
+          "Sha256": "d6691b1d61af38add8c33ffcbf9ae69694a6ee08765055df0f61e0487370977d"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/ContextPrompts/WikiContext.prompt.md",
+          "Sha256": "d1cf2b5c4acf5a0113da4cd0283b2c0f9fa53839bb226cafa3da4eb55751d064"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/CodingActions.pts",
+          "Sha256": "9ed29722acb191e7626ed135108b40d672564d6321588558e5cd4ed3b7cca8fd"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/CodingActions.pts.md",
+          "Sha256": "d1a25e52d7605c972dfb88d0a4badc9e142ac63b80cbfb4aa61e726bf1a9e6f3"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/CoreActions.pts",
+          "Sha256": "1e99a67f95ac56831abc41a0bf7a6069f57dfba94b20ad1f5548fd222246ea88"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/CoreActions.pts.md",
+          "Sha256": "6fa359641bd8004c3f04482ee89130292baffcc0313608e02e86630cd6124e52"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/CoreOntology.pts",
+          "Sha256": "4748d3eb7426fe393f1f156ad4ac120a2e465201d15ad6039ec8bb132bc678a5"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/index.pts",
+          "Sha256": "cd786691f3a7ccf43ccd2725ead62e6a8e1da441f05454cb77eaafec7dccb184"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/McpService.pts",
+          "Sha256": "cf602a9378115b05b2cea93c5ce8e928cb83317d80251fd31b4f413546bf54ea"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/McpService.pts.md",
+          "Sha256": "53477e3a888a70aa948b7016003a90d3b11a40563a6272b9c2611b50ba1c59a7"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/Memory.pts",
+          "Sha256": "3d78041163052d03d5769f074c7e2e3f48cd78ef07e4598f3ae8802d631bd53a"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/Memory.pts.md",
+          "Sha256": "7cc6ac284448789f8f7ba5aacb2ea77a3d4ef0983144e03cc8ec65b9764c89b6"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/PromptActionTools.pts",
+          "Sha256": "643e028fafebb6687d1130545275db95d168c49af7b4b2c09f313188a6f86004"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/PromptActionTools.pts.md",
+          "Sha256": "acf1527326515825de0a29e095abd95136c084df1e2bca3e268c2985521e6fbe"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/Prompts/CreateProtoScriptAction.prompt.md",
+          "Sha256": "430a00586edd1ec1a13d5d6d86264ab025cda5ed3427f7e39188a777bee6294b"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/Prompts/CreateSkillPrototype.prompt.md",
+          "Sha256": "0dbfd351cb3483ecb5edc81ebfc7815561d5eba3d4cd17f72ebfdc3bd24e6f09"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/Prompts/RememberHowToDoSomething.prompt.md",
+          "Sha256": "e7756c419cc3b4744590251868c2aa905343887f66abe62d2e2a0c517f5ce0cb"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/Prompts/RememberOntologyObject.prompt.md",
+          "Sha256": "c0fda83397263d4e988d36fb42374e02e572c9058a9ff82f8f2b05387b5514d3"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/Prompts/WriteProtoScriptCode.prompt.md",
+          "Sha256": "17945e95288f99823d7c411f79363ec74fe1bb833157d097953b60e6783a3d26"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/Service.pts",
+          "Sha256": "8f4b48613cbc1b179d29217b02eb1f458f8d7851b9784297ff62c20978e2b107"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/UserSecretsService.pts",
+          "Sha256": "023eced4078032d4573e32b8790d196cea09e5f3d85cb011d96e068cd047beea"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Imports.pts",
+          "Sha256": "96d40505fff58ccd2ee40083cc14a4847e90754d4444c23cf232fe215342d62f"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Imports.pts.md",
+          "Sha256": "f487ac2f990ab452d0ef41c6ca1b1159661a80484752bd8fb8011de27c13b079"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Project.pts",
+          "Sha256": "708ee8d6c4fd262ff633e52d053252cb04ad920cce850c862762c1e3a0707592"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Prompts/FeedingFrenzyAgent.prompt.md",
+          "Sha256": "87babc5e8f3a65bb71d5f51426c103335b8436ae46ad02fd31b2d19d16548761"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/ProtoScript.Minimum.md",
+          "Sha256": "50780a0a019d289319a91a9b2af1379d38fb064b78ef671e40a24fc684074db9"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/README.md",
+          "Sha256": "c356a093a016501ea1cb2e9fbca28b03a03efc4e44c154f84b6f8116459ff5d0"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyAgent/index.pts",
+          "Sha256": "698edaee692e4c888e458c4dfc126b8e43f27b5b4da270245e4a5a5082bba606"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/AgreementTemplates.pts",
+          "Sha256": "1381e159ad760bb7e49eee3d17241d906537ba766dbf10b1e2f06bcfbb6b95e4"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/AgreementTemplates.pts.md",
+          "Sha256": "ebcc7e1c5ebb0413c14a481aedc643a2c60ef53fe005761eec75bfc0c3bed25c"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Calls.pts",
+          "Sha256": "f1ca482ae417728d840c8c9b0295031369c2ea1f1fedfe01ac841ab430194c4d"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Calls.pts.md",
+          "Sha256": "6333fcac27520048a99e5473113dcd3ea97e413731bbd9b89ed377b1c1863561"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/index.pts",
+          "Sha256": "150394250a54caa14824a7076af349a7311d44d80a1a5c06ad8133d8b36bde31"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/index.pts.lazy.json",
+          "Sha256": "7d127bfaee2d1153f1032ee43e170df2b90d2c3f03c4ee9b8f32a4c4fc457deb"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/index.pts.md",
+          "Sha256": "ab50dabc66569721993d4d29f9249d5c622a0af3afffad53474393cd1700d45e"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadAddresses.pts",
+          "Sha256": "6e6d4d78a73cff431a2b14e091d209d8f650ad2e7f6dda078948cf23f3268adc"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadAddresses.pts.md",
+          "Sha256": "80d3a029bdf35a971ab4659b9e18924a1f678bd29ae2ab247e8a39ffd08cf3de"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadAutomation.pts",
+          "Sha256": "bc49aab16cbe424f8a87307b7a962bd8e4e06b144f33d2904b10a9dd4bd6dc78"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadAutomation.pts.md",
+          "Sha256": "b3f3ec5402307df757916fb3bbacc9ec2c5512d7c5d3c908ff0ceed448322531"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadContacts.pts",
+          "Sha256": "1b67a94c11cb5fd4f274c3f9039df9b5863d6c94c401febb1a2f9d962184d801"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadContacts.pts.md",
+          "Sha256": "c6e515b52769f5fa9095d2e93ac7b4276eea19296b8c709ee3b24f280df49ee2"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadNotes.pts",
+          "Sha256": "dcc845cb1c4947b9f4c191bdd17fe1896205fd52232132254d7c984bf1fc78f0"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadNotes.pts.md",
+          "Sha256": "f5ff0af2328132686caa8bb1b71c8fcb195153d50b2bf1c3a25b9692c0ad2c51"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadNoteTypes.pts",
+          "Sha256": "a58b37ac9136e87df48f45863fb4a1b2545c5fcb35c862fc84fd42fa940d5938"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadNoteTypes.pts.md",
+          "Sha256": "507b46966d5db3282e3b8b6680fc81ff6711e8b154ba74175bf6fa895ebd37d7"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Leads.pts",
+          "Sha256": "42944b87c1b59de174b942063050a1c42df55a9bbb2ea586d29b3188cd36f597"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Leads.pts.md",
+          "Sha256": "221ad41021a7fc21a28535af57249721ab2612c0c29f6e94021ea525850085f3"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadsAdmin.pts",
+          "Sha256": "7b1a6180f418519bd865c33c7b1e720e638599736b26e8fb62a167066b027554"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadsAdmin.pts.md",
+          "Sha256": "9050c6dd232bba5f43460c7c1eb6316bff9c2a87e0a54b65a1f3c9d3f8beb6fa"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadStatuses.pts",
+          "Sha256": "cae4b9f3978c5edf20733756518d9c6e195412f4e13930b5ee031ea590ed4fe0"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadStatuses.pts.md",
+          "Sha256": "da8704621ade55d256a4be167722c21aa26166fd8da791cafbb18ce5349388fe"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadSubStatuses.pts",
+          "Sha256": "35262825fbbf62472aaf01c5f77f4ea4e03afa1e194fe7a50ce4ec145cb482fa"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadSubStatuses.pts.md",
+          "Sha256": "1b4915a49abef6b0efe5caf185aa76a073ad72f0367c5a02cc1a97713807f805"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadTags.pts",
+          "Sha256": "44b122f42b51828298b9e8ae571480d50c221e06fd7fd72e51a7f387e3033063"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadTags.pts.md",
+          "Sha256": "78b4a4ba20cd3c6142e4f8d330ef857510aeacf6176d336b04a329e69e0756ab"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/SalesRepresentatives.pts",
+          "Sha256": "6f7c5e9dd692a91c99c4557e8cfc32cddb9684817d92fffbb820909ed067ed36"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/SalesRepresentatives.pts.md",
+          "Sha256": "6855c97f2b9419216d176d13ab7db785a7cbf8843b830a225dfa003815c7df67"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/SalesRepresentativesAdmin.pts",
+          "Sha256": "21c8859836582262766a8841b91dcf4b7d9ae99962626d050aab41de8097f050"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/SalesRepresentativesAdmin.pts.md",
+          "Sha256": "7be00d8715d1959793f4ba783d8a8c5744bdbce2a9421a2f4adb899ac7fcab70"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/SKILL.md",
+          "Sha256": "12be9d1d1970494473aaf88ebd3796fcabf2bd86ef036f57f0e12fefb298bc84"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Sources.pts",
+          "Sha256": "eaff3830858a208e63c095ddbdfaa886f9b352cc70a5033adee2df489836326f"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Sources.pts.md",
+          "Sha256": "b6d9eea4dbf2b0b2b4d975858e897c3adfdd1612e620ed0580b67c11151e9d80"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Tags.pts",
+          "Sha256": "04974be7e6c07a833d8369cf355e93ce7fa755d30d280525682fc801ad9bcd3c"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Tags.pts.md",
+          "Sha256": "d51fb486facf38891f86f5128460e5172215a47c38480ed42008d1a9a0b9218b"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Tasks.pts",
+          "Sha256": "87be2a5ccd47f5df99bbbffb4fc35c216b17e9e5910537ef445676b52f4dabcc"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Tasks.pts.md",
+          "Sha256": "c5e5f9ca3db82256f5414035ffb9f21d78beb9bfe7bce71557bb3e9257877af2"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/UserAutomation.pts",
+          "Sha256": "b29cb087044b15d9811f3ed356e8f23ff5d0b346c8376304bd172eed4b1152e2"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/UserAutomation.pts.md",
+          "Sha256": "0228bd2fc5306932ad88635f5eb5ef0375af85033f419efdcfa0ec866efb7e56"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Users.pts",
+          "Sha256": "74a9d0402111eaaf771c5c5bab905d4d440ee83513f01e21307b7c9cff51e2b0"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Users.pts.md",
+          "Sha256": "d52bb9ca7da8f0bcdc222f1db2f922730a2bca62bc4dd977a8492dc7b8f05211"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/index.pts",
+          "Sha256": "4aef76109da7c282a32f3c554a5fd7eb3b911a2eafb88f6fd901e3a49dd0ee7e"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/LocalTask/index.pts",
+          "Sha256": "0b1990d5df1d28e5a6a4c098f1d7d9d1609d5691dc7896a3d9f180db5710fa66"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/LocalTask/PromptActions.pts",
+          "Sha256": "6d63a8085f393dedde571f39e48c2c1ef61c28f883b373f65091177bd49a8f8f"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/LocalTask/Prompts/ToCreateAndMaintainLocalTask.prompt.md",
+          "Sha256": "30839563f3eb5810fd72c472c7974d8cf101cab6ff0b1755d06c5336310b7400"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/LocalTask/Prompts/ToUpdateExistingLocalTask.prompt.md",
+          "Sha256": "796996fdea32483af91263ec4b0311a6692dd56cecc49ea6ea07e241953279a0"
+        },
+        {
+          "Path": "ProtoScript.CLI.Validation.dll",
+          "Sha256": "a2c81a13054363d2ee792cfdccc06dd84f2b55767a1097627f6906933790a302"
+        },
+        {
+          "Path": "ProtoScript.dll",
+          "Sha256": "3a5d82fcd36b92ea66476d9e9cbd62ba67aeb70713b0d65765cf12c2c6f69fc1"
+        },
+        {
+          "Path": "ProtoScript.Interpretter.dll",
+          "Sha256": "4f725d35467b6b1729870d5b0604393894a7c911678cf5048aedcd7d475f96a1"
+        },
+        {
+          "Path": "ProtoScript.Parsers.dll",
+          "Sha256": "7ac62318b618fbf0d5913c967a028f8cb5fb1b378b2ba0837493e0dcda48f7e3"
+        },
+        {
+          "Path": "ProtoScript.Workbench.Api.dll",
+          "Sha256": "3376a9ff80122eedc45ffd65353b34638588b6ec2da393efe97c39dfa73f53c8"
+        },
+        {
+          "Path": "RooTrax.Cache.dll",
+          "Sha256": "9503a02c23a51dc9d3732671166d3b40490243383796202189380caed0ea12f8"
+        },
+        {
+          "Path": "RooTrax.Common.DB.dll",
+          "Sha256": "57194e362e9bafcb3eb64b69ee858c4fa65e6ef0b8df759cfe38821e6613dfba"
+        },
+        {
+          "Path": "RooTrax.Common.dll",
+          "Sha256": "0edfa785e58025884844b1ba46a30e604c2caeab43aec33b52deb737e4c7ac79"
+        },
+        {
+          "Path": "RooTrax.Git.dll",
+          "Sha256": "e1eb663d2e40c260ba460e67bc9ea5d52420ebfed98a1a31998b7fde24a283d6"
+        },
+        {
+          "Path": "System.ClientModel.dll",
+          "Sha256": "ce44a4fae4c4787c12475700e19a365fc2f388ae5d0f6182557ce5ea175be7f6"
+        },
+        {
+          "Path": "System.Configuration.ConfigurationManager.dll",
+          "Sha256": "08b618461d62fe65451bdac4dbc25f8ac8ab16a914a687f2dbe3923bf0e8b3e7"
+        },
+        {
+          "Path": "System.Diagnostics.EventLog.dll",
+          "Sha256": "df5c292e44872ddbf657e393a4cef4259825d2db573e6e6db794bbf1157b41d0"
+        },
+        {
+          "Path": "System.IdentityModel.Tokens.Jwt.dll",
+          "Sha256": "8027f6bfe795fd5718b1c7bbb3951af064ba29cb92ee965bbe237f6808cfd28c"
+        },
+        {
+          "Path": "System.Memory.Data.dll",
+          "Sha256": "bae79a4ff6e8fcfb65a3d88eb53d281898e699e5471ebd780843e5616753f0c3"
+        },
+        {
+          "Path": "System.Security.Cryptography.Pkcs.dll",
+          "Sha256": "dfa1ee60ca07b74f7c4de24e3b9a93a302cb0f0e67813801562ffdf2fb89f219"
+        },
+        {
+          "Path": "System.Security.Cryptography.ProtectedData.dll",
+          "Sha256": "02321322ec85e0a68f28ad33e549213b1dbf3de0e66c3f7803f9ae32c0d00ffd"
+        },
+        {
+          "Path": "web-module.json",
+          "Sha256": "4fae09da9a00a277b4b0c2e623d8db214b110e3a0446279afeccbc8768ce3bdf"
+        },
+        {
+          "Path": "WebAppUtilities.dll",
+          "Sha256": "335967df11f698a811b0b25cd3564a4fd11db2585ea25603ea96d826b0b26050"
+        }
+      ],
+      "ProjectArtifacts": [
+        {
+          "ProjectName": "FeedingFrenzyAgent",
+          "SourcePath": "ProjectArtifacts/FeedingFrenzyAgent/"
+        }
+      ],
+      "Dependencies": [],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "RequiresRestart": true,
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     }
   ]
 }

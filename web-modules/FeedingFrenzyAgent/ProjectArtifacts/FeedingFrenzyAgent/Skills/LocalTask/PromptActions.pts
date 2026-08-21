@@ -1,0 +1,30 @@
+prototype LocalTaskPromptAction : PromptAction
+{
+    Description = "Base action type for LocalTask prompt workflows.";
+}
+
+[SemanticProgram.InfinitivePhrase("to create a local task in session artifacts")]
+[SemanticProgram.InfinitivePhrase("to create and maintain a local task file")]
+[SemanticProgram.InfinitivePhrase("to write a detailed local markdown task")]
+[SemanticProgram.InfinitivePhrase("to track work in a local task artifact")]
+prototype ToCreateAndMaintainLocalTask : LocalTaskPromptAction
+{
+    IsPromptAction = true;
+    SkillKind = "prompt";
+    SkillVersion = "1.0.0";
+    PromptPath = @"Skills/LocalTask/Prompts/ToCreateAndMaintainLocalTask.prompt.md";
+    Description = "Canonical prompt skill for creating, updating, resuming, blocking, superseding, or closing a durable local markdown task artifact in the current session directory. Distinct from creating a GitHub ticket.";
+}
+
+[SemanticProgram.InfinitivePhrase("to update an existing local task artifact")]
+[SemanticProgram.InfinitivePhrase("to update a local task in session artifacts")]
+[SemanticProgram.InfinitivePhrase("to append progress to a local task file")]
+[SemanticProgram.InfinitivePhrase("to maintain an existing local task")]
+prototype ToUpdateExistingLocalTask : LocalTaskPromptAction
+{
+    IsPromptAction = true;
+    SkillKind = "prompt";
+    SkillVersion = "1.0.0";
+    PromptPath = @"Skills/LocalTask/Prompts/ToCreateAndMaintainLocalTask.prompt.md";
+    Description = "Compatibility alias for ToCreateAndMaintainLocalTask. Use the canonical LocalTask prompt for creating, updating, resuming, blocking, superseding, or closing a durable local task artifact.";
+}

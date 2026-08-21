@@ -1,0 +1,130 @@
+prototype BaseObject
+{
+	String DefinitionPromptPath = new String();
+	String Notes = new String();
+}
+
+prototype SemanticEntityBase : BaseObject
+{
+	String EntityName = new String();
+  	String Description = "";
+}
+
+prototype ProtoScriptAction : BaseObject
+{
+	String InfinitivePhrase = new String();
+	String Description = new String();
+	String ResponseFormat = "text";
+	String ResponseResultType = "display message";
+	String TroubleshootingNotes = new String();
+	String AuthoringContract = @"
+- ProtoScript actions are glue; keep `.pts` logic minimal.
+- Prefer C# facade/helper methods for validation, coalescing, and complex behavior.
+- For cross-action chaining of complex native objects, return `Prototype` (NativeValuePrototype path), not pre-formatted strings.
+- Convert to string only in explicit formatter/boundary actions.
+";
+}
+
+[SemanticEntity("prompt action")]
+[SemanticEntity("prompt skill")]
+prototype PromptAction : ProtoScriptAction
+{
+  	Description = "A prompt action is a text based prompt that can be used as high level instructions";
+  
+	Bool IsPromptAction = true;
+	String SkillKind = new String();
+	String PromptPath = new String();
+	String SkillVersion = new String();
+
+	function Execute() : string
+	{
+		if (_opsAgent == null)
+			return "Error: _opsAgent runtime is not available.";
+
+		// Prefix trusted prompt text with explicit execution guidance for the model.
+		String promptText = _opsAgent.LoadTrustedPromptText(PromptPath);
+		String instructionHeader =
+			"## Prompt Skill Instructions\n"
+			+ "These are instructions to follow to accomplish the task.\n"
+			+ "This action returns guidance text, not task results.\n"
+			+ "Avoid calling the same prompt action again in this turn unless new context is provided.\n"
+			+ "Prompt source: " + PromptPath + "\n\n";
+
+		return instructionHeader + promptText;
+	}
+}
+
+[SemanticEntity("context prompt")]
+[SemanticEntity("situational prompt")]
+[SemanticEntity("behavioral context prompt")]
+prototype ContextPrompt : Level2ObserverEntityRoot
+{
+	Description = @"A ContextPrompt is a situational behavior prompt that modifies how the agent should operate for a given context.";
+	String ContextPhrase = new String();
+	String PromptPath = new String();
+	DefinitionPromptPath = @"ContextPrompts/ContextPromptDefinition.prompt.md";
+}
+
+[SemanticEntity("ops action")]
+prototype OpsAction : ProtoScriptAction
+{
+	Description = @"
+	An OpsAction is a ProtoScriptAction that represents an executable operation or tool within the agent. These are typically
+	loaded dynamically based on discovery or need, and can be called directly once loaded. They should be thin wrappers
+	or simple functionality and rely on C# code via Assemblies to accomplish most of the work.";
+}
+
+
+[SemanticEntity("core action")]
+prototype CoreAction : ProtoScriptAction
+{
+	Description = @"Default-loaded action base for this project. Do not inherit new skills/actions from CoreAction automatically.";
+}
+
+[SemanticEntity("core skill")]
+prototype CoreSkill : ProtoScriptAction
+{
+	Description = @"Default-loaded skill base for this project. These skills are added up front, not discovered dynamically. Do not use CoreSkill as the default base for new skills.";
+}
+
+[SemanticEntity("core entity")]
+prototype CoreEntity : SemanticEntityBase
+{
+	Description = @"Default-loaded entity base for this project. These entities are included up front, not discovered dynamically. Do not use CoreEntity as the default base for new entities.";
+}
+
+[SemanticEntity("level2 observer action root")]
+prototype Level2ObserverActionRoot : OpsAction
+{
+	Description = @"Action root used by implicit Level2 watcher sessions to scope their tool surface.";
+}
+
+[SemanticEntity("level2 observer entity root")]
+prototype Level2ObserverEntityRoot : SemanticEntityBase
+{
+	Description = @"Entity root used by implicit Level2 watcher sessions to scope their ontology surface.";
+}
+
+
+
+[SemanticEntity("skill")]
+prototype SkillEntity : Level2ObserverEntityRoot
+{
+	Prototype ActionRoot = null;
+	Description = @"A skill is a collection of actions related to a specific domain or capability. The ActionRoot prototype defines the base action type for all actions within the skill, allowing for organized discovery and loading of related tools.";
+}
+
+
+
+
+
+[SemanticEntity("you")]
+[SemanticEntity("buffaly")]
+prototype OpsAgent : BaseObject
+{
+	String CurrentDirectoryEntity = @"BuffalyDevelopmentSourceRoot#New";
+}
+
+
+
+

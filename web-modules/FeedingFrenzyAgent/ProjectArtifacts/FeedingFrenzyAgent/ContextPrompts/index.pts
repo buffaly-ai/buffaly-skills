@@ -1,0 +1,77 @@
+prototype CodingContextPrompt : ContextPrompt
+{
+	EntityName = "coding context prompt";
+	ContextPhrase = "when writing or modifying computer code";
+	PromptPath = @"ContextPrompts/CodingContext.prompt.md";
+	DefinitionPromptPath = @"ContextPrompts/ContextPromptDefinition.prompt.md";
+}
+prototype RealtimeCallContextPrompt : ContextPrompt
+{
+	EntityName = "realtime call context prompt";
+	ContextPhrase = "when responding to a real time call";
+	PromptPath = @"ContextPrompts/RealtimeCallContext.prompt.md";
+	DefinitionPromptPath = @"ContextPrompts/ContextPromptDefinition.prompt.md";
+}
+
+prototype EmailWritingContextPrompt : ContextPrompt
+{
+	EntityName = "email writing context prompt";
+	ContextPhrase = "when composing or editing an email";
+	PromptPath = @"ContextPrompts/EmailWritingContext.prompt.md";
+	DefinitionPromptPath = @"ContextPrompts/ContextPromptDefinition.prompt.md";
+}
+
+prototype BrowserContextPrompt : ContextPrompt
+{
+	EntityName = "browser context prompt";
+	ContextPhrase = "when using browser tools for web navigation and UI automation";
+	PromptPath = @"ContextPrompts/BrowserContext.prompt.md";
+	DefinitionPromptPath = @"ContextPrompts/ContextPromptDefinition.prompt.md";
+}
+
+prototype WikiContextPrompt : ContextPrompt
+{
+	EntityName = "wiki context prompt";
+	ContextPhrase = "when editing one wiki or article file";
+	PromptPath = @"ContextPrompts/WikiContext.prompt.md";
+	DefinitionPromptPath = @"ContextPrompts/ContextPromptDefinition.prompt.md";
+}
+
+prototype HelpAgentContext : ContextPrompt
+{
+	EntityName = "help agent context prompt";
+	ContextPhrase = "when running the Buffaly Help Agent";
+	PromptPath = @"ContextPrompts/HelpAgentContext.prompt.md";
+	DefinitionPromptPath = @"ContextPrompts/ContextPromptDefinition.prompt.md";
+}
+
+
+prototype ErrorLogHandlerContextPrompt : ContextPrompt
+{
+	EntityName = "error log handler context prompt";
+	ContextPhrase = "when diagnosing scheduled Buffaly log errors";
+	PromptPath = @"ContextPrompts/ErrorLogHandler.prompt.md";
+	DefinitionPromptPath = @"ContextPrompts/ContextPromptDefinition.prompt.md";
+}
+prototype EmailSummaryHandlerContextPrompt : ContextPrompt
+{
+	EntityName = "email summary handler context prompt";
+	ContextPhrase = "when summarizing scheduled daily emails";
+	PromptPath = @"ContextPrompts/EmailSummaryHandler.prompt.md";
+	DefinitionPromptPath = @"ContextPrompts/ContextPromptDefinition.prompt.md";
+}
+
+prototype ProductionAlarmHandlerContextPrompt : ContextPrompt
+{
+	EntityName = "ProductionAlarmHandler, production alarm handler context";
+	PromptPath = @"ContextPrompts/ProductionAlarmHandler.prompt.md";
+	DefinitionPromptPath = @"ContextPrompts/ContextPromptDefinition.prompt.md";
+}
+
+prototype FeedingFrenzyWebsiteCheckupAnalysisContextPrompt : ContextPrompt
+{
+	EntityName = "Feeding Frenzy website checkup analysis context prompt";
+	ContextPhrase = "when running a Feeding Frenzy public website checkup analysis";
+	PromptPath = @"ContextPrompts/FeedingFrenzyWebsiteCheckupAnalysis.prompt.md";
+	DefinitionPromptPath = @"ContextPrompts/ContextPromptDefinition.prompt.md";
+}

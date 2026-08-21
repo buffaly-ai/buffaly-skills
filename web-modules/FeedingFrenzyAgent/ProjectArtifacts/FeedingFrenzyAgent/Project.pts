@@ -1,0 +1,21 @@
+include Imports.pts;
+include "Annotations.pts";
+include "Core/index.pts";
+include "Skills/index.pts";
+
+function GetDescendantsAsDistance(Prototype prototype) : Prototype
+{
+	Collection colChildren = prototype.GetDescendants();
+	Prototype colResult = prototype.ShallowClone();
+
+	foreach (Prototype protoChild in colChildren)
+	{
+		Prototype protoChild2 = GetDescendantsAsDistance(protoChild);
+		colResult.Children.Add(protoChild2);
+	}
+
+	PrototypeLogging.IncludeLexemes = true;
+	PrototypeLogging.IncludePrototypeIDs = false;
+
+	return colResult;
+}

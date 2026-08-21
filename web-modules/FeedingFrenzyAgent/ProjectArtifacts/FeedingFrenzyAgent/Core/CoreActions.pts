@@ -1,0 +1,697 @@
+reference "../lib/Buffaly.Agent.Host.dll" Buffaly.Agent.Tools;
+import Buffaly.Agent.Tools.Platform Buffaly.Agent.Tools.Platform.CoreOntologyTools CoreOntologyTools;
+import Buffaly.Agent.Tools.Platform Buffaly.Agent.Tools.Platform.LocalTaskManagementService LocalTaskManagementService;
+import Buffaly.Agent.Tools.Platform Buffaly.Agent.Tools.Platform.SessionPlanManagementService SessionPlanManagementService;
+import Buffaly.Agent.Tools.Platform Buffaly.Agent.Tools.Platform.WorkspaceBackupSnapshot WorkspaceBackupSnapshot;
+import Buffaly.Agent.Tools.Platform Buffaly.Agent.Tools.Platform.WorkspaceBackupRestoreResult WorkspaceBackupRestoreResult;
+[SemanticProgram.InfinitivePhrase("to list available skills")]
+[SemanticProgram.InfinitivePhrase("to list registered skills")]
+prototype ToListSkills : CoreAction, Level2ObserverActionRoot
+{
+	Description = @"
+	List all top level skills available that can be used. A skill is a collection of actions / tools that can be used. To
+	find the actions available within a skill use [ToListSkillActions]
+	";
+
+	function Execute() : Collection
+	{
+		// Return skill prototypes directly so runtime serialization can preserve structure.
+		return SkillEntity.GetDescendants();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list actions for a skill")]
+[SemanticProgram.InfinitivePhrase("to list tools for a skill")]
+prototype ToListSkillActions : CoreAction, Level2ObserverActionRoot
+{
+	Description = @"
+	List all actions available within the specified skill [SkillEntity]. These are tools that can be used 
+	once loaded.
+	";
+
+	function Execute(SkillEntity skill) : Collection
+	{
+		// Return action prototypes directly so runtime serialization can preserve structure.
+		if (skill == null || skill.ActionRoot == null)
+		{
+			return new Collection();
+		}
+
+		return skill.ActionRoot.GetDescendants();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to search candidate actions")]
+[SemanticProgram.InfinitivePhrase("to find candidate actions")]
+prototype ToSearchCandidateActions : CoreAction, Level2ObserverActionRoot
+{
+	Description = @"
+	Use `ToSearchCandidateActions` to discover the right action prototype by semantic similarity.
+
+	**MANDATORY QUERY FORMAT:**
+	Each call MUST be a **single clean infinitive phrase** in the exact style of registered InfinitivePhrase values: 'to <verb> <object>'.
+
+	**FORBIDDEN:**
+	- Do NOT chain multiple intents with 'or', 'and', 'or dispatch', 'or send', etc.
+	- Do NOT use natural-language sentences or compound queries.
+
+	**GOOD EXAMPLES:**
+	- 'to queue an instruction to a session'
+	- 'to send a message to a child session'
+	- 'to deploy a site to production'
+	- 'to list available skills'
+
+	**BAD EXAMPLE (will produce weak or wrong matches):**
+	- 'send message to child session or dispatch instruction to child agent'
+
+	If your intent is compound, **split it into separate calls** to `ToSearchCandidateActions`.
+
+	Search for the operation, not the entity binding. Keep queries focused on the verb + direct object. Search candidate entities separately when you need a target.
+
+	Each candidate includes `loadState`:
+	- `auto_loaded`: runtime loaded the top match for you.
+	- `already_loaded`: tool is already callable now.
+	- `manual_load_required`: call `ToLoadProtoScriptActionTool` before execution.
+
+	Auto-load is controlled by one runtime setting: `OpsAgent.AutoLoadActions.MinSimilarity` (0-1). Set it to `1` to effectively keep auto-load off.
+
+	On weak or empty results the host may return a `message` field with guidance. Read that message.
+	";
+
+	function Execute(string semanticQuery, int maxResults = 5) : string
+	{
+		return CoreOntologyTools.SearchCandidateActions(_opsAgent, semanticQuery, maxResults);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to search candidate entities")]
+[SemanticProgram.InfinitivePhrase("to find candidate entities")]
+prototype ToSearchCandidateEntities : CoreAction, Level2ObserverActionRoot
+{
+	Description = @"
+	Use `ToSearchCandidateEntities` when you need to identify the right domain entity before taking an action.
+
+	It finds likely entity prototypes by semantic similarity, so you can call it repeatedly while narrowing the target. Write queries in natural language that describe the thing you are looking for (for example: ""Google Workspace account for finance team"" or ""deployment environment for staging website"").
+	Keep entity searches focused. Search exact target names or aliases separately from type/category searches, then reconcile the results. For example, search ""Buffaly.Web"" separately from ""public website"" or ""Visual Studio solution"" instead of combining all terms with the task wording in one query.
+
+	If results are broad, add specific business context and search again. Once you have the right entity, use it as input for the next action/tool call.
+	";
+
+	function Execute(string semanticQuery, int maxResults = 8, bool includeParentType = true) : string
+	{
+		return CoreOntologyTools.SearchCandidateEntities(_opsAgent, semanticQuery, maxResults, includeParentType);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to load a protoscript action tool")]
+[SemanticProgram.InfinitivePhrase("to load a protoscript action")]
+prototype ToLoadProtoScriptActionTool : OpsAction, CoreAction
+{
+	Description = @"
+	Use `ToLoadProtoScriptActionTool` after you have identified the action you want and need to make it callable in the current session.
+
+	Think of it as activating an action so you can run it next. If you are not sure the right action is loaded yet, search first, then load. If needed, you can load multiple actions in one turn sequence.
+
+	`prototypeName` must be the canonical prototype name only (for example `ToCompileProtoScriptProject`), not a decorated display string from friendly output.
+	Entry method is fixed to `Execute`; this action does not accept a method-name parameter.
+	When `ToSearchCandidateActions` returns `LoadPrototypeName`, use that value directly.
+
+	After loading, call the returned tool name directly to perform the user's requested work.
+	";
+
+	function Execute(string prototypeName) : string
+	{
+		return CoreOntologyTools.LoadProtoScriptActionTool(_opsAgent, prototypeName);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list loaded protoscript action tools")]
+[SemanticProgram.InfinitivePhrase("to list loaded protoscript tools")]
+prototype ToListLoadedProtoScriptActionTools : OpsAction, CoreAction
+{
+	Description = @"
+	Use `ToListLoadedProtoScriptActionTools` to see what actions are already available in the current session.
+
+	Call it when you want to avoid reloading tools, verify that a previous load succeeded, or debug why a planned action call is not working. It gives you a quick inventory of loaded action tools so you can decide whether to execute immediately or load another one first.
+
+	This is especially useful in longer sessions where multiple actions may have been loaded over time.
+	";
+
+	function Execute() : string
+	{
+		return CoreOntologyTools.ListLoadedProtoScriptActionTools(_opsAgent);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to reset protoscript environment")]
+[SemanticProgram.InfinitivePhrase("to rebuild the runtime tools")]
+[SemanticProgram.InfinitivePhrase("to recreate the full session runtime environment")]
+[SemanticProgram.InfinitivePhrase("to reload the session environment")]
+[SemanticProgram.InfinitivePhrase("to rebuild the full runtime environment")]
+prototype ToResetProtoScriptEnvironment : OpsAction
+{
+	Description = @"
+	Use `ToResetProtoScriptEnvironment` only when you need to recreate the current session runtime environment.
+
+	This is not a lightweight tool-list refresh.
+	It rebuilds/cuts over the full session runtime and then rehydrates session snapshot state.
+	Use it after larger project/prototype changes when in-session activation is not sufficient.
+	";
+
+	function Execute() : string
+	{
+		return _opsAgent.RunReloadToolsUserTool();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create a backup")]
+[SemanticProgram.InfinitivePhrase("to create a workspace backup")]
+prototype ToCreateBackupOfProtoscriptEnvironment : OpsAction
+{
+	Description = @"Create a snapshot backup of ProtoScript environment files for the current session before file edits. This is not a general workspace backup. Run once per edit batch; do not run again unless ProtoScript files changed or the user explicitly requests another backup.";
+
+	function Execute() : WorkspaceBackupSnapshot
+	{
+		return CoreOntologyTools.RunCreateBackupUserTool(_opsAgent);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to restore a backup")]
+[SemanticProgram.InfinitivePhrase("to restore a workspace backup")]
+[SemanticProgram.InfinitivePhrase("to restore from backup")]
+prototype ToRestoreBackupOfProtoscriptEnvironment : OpsAction
+{
+	Description = @"Restore ProtoScript environment files from the latest ProtoScript-environment backup snapshot. This is not a general workspace restore.";
+
+	function Execute() : WorkspaceBackupRestoreResult
+	{
+		return CoreOntologyTools.RunRestoreBackupUserTool(_opsAgent);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set a user secret")]
+[SemanticProgram.InfinitivePhrase("to store a user secret")]
+prototype ToSetUserSecret : OpsAction
+{
+	Description = @"key - logical secret name. value - secret credential value (password, API key, OAuth token, client secret, bearer token, connection secret). Use only for sensitive auth/credential material in UserSecrets. Do not store general notes or non-secret facts here; use ToRememberOntologyObjectSkill (to remember something) instead.";
+
+	function Execute(string key, string value) : string
+	{
+		return UserSecrets.SetSecret(key, value);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get a user secret")]
+[SemanticProgram.InfinitivePhrase("to read a user secret")]
+prototype ToGetUserSecret : OpsAction, CoreAction
+{
+	Description = @"key - logical secret name for sensitive auth/credential material stored in UserSecrets (password, API key, OAuth token, client secret, bearer token, connection secret). Returns the secret value. For non-secret facts or preferences, use ToRememberOntologyObjectSkill (to remember something) instead of UserSecrets.";
+
+	function Execute(string key) : stringref
+	{
+		return UserSecrets.GetSecret(key);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get the details of a prototype")]
+prototype ToGetPrototypeDetails : CoreAction, Level2ObserverActionRoot
+{
+	Description = @"prototype - prototype reference to format and return.";
+
+	function Execute(Prototype prototype) : string
+	{
+		// Format the prototype and return it as a string.
+		if (prototype == null)
+		{
+			return "Prototype is null.";
+		}
+
+		Prototype protoBaseObject = prototype;
+		return PrototypeLogging.ToFriendlyString(protoBaseObject).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to remember something")]
+[SemanticProgram.InfinitivePhrase("to remember something in the ontology")]
+[SemanticProgram.InfinitivePhrase("to persist memory as an ontology prototype")]
+[SemanticProgram.InfinitivePhrase("to update or create a memory prototype")]
+[SemanticProgram.InfinitivePhrase("to remember a user preference")]
+[SemanticProgram.InfinitivePhrase("to remember a fact about the user")]
+prototype ToRememberOntologyObjectSkill : PromptAction, CoreAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Core/Prompts/RememberOntologyObject.prompt.md";
+	Description = @"Choose or create the correct ontology base for a fact, preference, contact, environment detail, or other remembered object, then store it as a queryable prototype instance in the correct Buffaly Agent node location.";
+}
+
+[SemanticProgram.InfinitivePhrase("to remember how to do something")]
+[SemanticProgram.InfinitivePhrase("to remember an operational procedure")]
+[SemanticProgram.InfinitivePhrase("to store procedural memory")]
+[SemanticProgram.InfinitivePhrase("to decide between prompt action and opsaction memory")]
+[SemanticProgram.InfinitivePhrase("to remember a repeatable workflow")]
+prototype ToRememberHowToDoSomethingSkill : PromptAction, CoreAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Core/Prompts/RememberHowToDoSomething.prompt.md";
+	Description = @"Capture repeatable operational knowledge as reusable Buffaly Agent memory by deciding whether it belongs as prompt guidance, executable ProtoScript action(s), or both, and then storing it through the typed authoring tools.";
+}
+
+[SemanticProgram.InfinitivePhrase("to load a context prompt")]
+[SemanticProgram.InfinitivePhrase("to load a situational behavior prompt")]
+prototype ToLoadContextPrompt : OpsAction
+{
+	Description = @"contextPromptPrototype - prototype reference/name for a ContextPrompt (for example: CodingContextPrompt).
+Returns trusted context prompt markdown with a short header that this is a situational behavior overlay, not a task result.";
+
+	function Execute(string contextPromptPrototype) : string
+	{
+		if (_opsAgent == null)
+			return "Error: _opsAgent runtime is not available.";
+
+		string prototypeName = contextPromptPrototype.Trim();
+		if (StringUtil.IsEmpty(prototypeName))
+			return "Error: contextPromptPrototype is required.";
+
+		ContextPrompt resolvedContextPrompt = null;
+		Collection contextPrompts = ContextPrompt.GetDescendants();
+		foreach (Prototype candidatePrototype in contextPrompts)
+		{
+			if (candidatePrototype.PrototypeName == prototypeName)
+			{
+				if (candidatePrototype typeof ContextPrompt)
+					resolvedContextPrompt = candidatePrototype;
+			}
+		}
+
+		if (resolvedContextPrompt == null)
+			return "Error: ContextPrompt prototype not found: " + prototypeName;
+
+		if (StringUtil.IsEmpty(resolvedContextPrompt.PromptPath))
+			return "Error: ContextPrompt PromptPath is empty for: " + prototypeName;
+
+		string promptText = _opsAgent.LoadTrustedPromptText(resolvedContextPrompt.PromptPath);
+		string instructionHeader =
+			"## Context Prompt Instructions\n"
+			+ "This is a context prompt.\n"
+			+ "Apply it as a behavioral overlay for the current turn.\n"
+			+ "Do not treat this as task completion.\n"
+			+ "Context source: " + resolvedContextPrompt.PromptPath + "\n\n";
+
+		return instructionHeader + promptText;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to resolve a string reference")]
+[SemanticProgram.InfinitivePhrase("to materialize a stringref value")]
+prototype ToResolveStringReference : OpsAction
+{
+	Description = @"Accepts StringRef handle text or string input and returns normalized string content at the return boundary.";
+	TroubleshootingNotes = @"ToResolveStringReference.troubleshooting.md";
+
+	function Execute(StringRef value) : string
+	{
+		return value;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create a new ops action")]
+[SemanticProgram.InfinitivePhrase("to create a new semantic program")]
+[SemanticProgram.InfinitivePhrase("to create a new tool in opsagent")]
+[SemanticProgram.InfinitivePhrase("to add a new agent capability")]
+[SemanticProgram.InfinitivePhrase("to create a new protoscript action")]
+[SemanticProgram.InfinitivePhrase("to design a new ops capability")]
+prototype ToCreateProtoScriptActionSkill : PromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Core/Prompts/CreateProtoScriptAction.prompt.md";
+	Description = @"Loads the trusted workflow for creating a ProtoScript-based action/tool with strong descriptions and infinitive phrase routing.";
+}
+
+[SemanticProgram.InfinitivePhrase("to write protoscript code")]
+[SemanticProgram.InfinitivePhrase("to edit protoscript code safely")]
+[SemanticProgram.InfinitivePhrase("to follow opsagent protoscript authoring contract")]
+[SemanticProgram.InfinitivePhrase("to preserve native typed value flow in protoscript")]
+prototype ToWriteProtoScriptCodeSkill : PromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Core/Prompts/WriteProtoScriptCode.prompt.md";
+	Description = @"Loads the canonical workflow for writing and editing ProtoScript in OpsAgent with thin wrappers and native typed chaining boundaries.";
+}
+
+[SemanticProgram.InfinitivePhrase("to create a skill prototype")]
+[SemanticProgram.InfinitivePhrase("to structure skills and actions like browser skill")]
+[SemanticProgram.InfinitivePhrase("to reorganize a skill using skill entity and action root")]
+prototype ToCreateSkillPrototypeSkill : PromptAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Core/Prompts/CreateSkillPrototype.prompt.md";
+	Description = @"Loads the trusted workflow for organizing skills around SkillEntity + ActionRoot with To* action prototypes and clear core-vs-skill boundaries.";
+}
+
+[SemanticProgram.InfinitivePhrase("to list the first level descendants of a prototype")]
+[SemanticProgram.InfinitivePhrase("to get direct descendants of a prototype")]
+
+[SemanticProgram.InfinitivePhrase("to get the notes of a prototype")]
+[SemanticProgram.InfinitivePhrase("to get prototype notes")]
+[SemanticProgram.InfinitivePhrase("to read prototype notes")]
+prototype ToGetPrototypeNotes : Level2ObserverActionRoot
+{
+	Description = @"prototype - prototype reference to inspect. Returns the Notes property value when present; otherwise returns an empty string.";
+
+	function Execute(Prototype prototype) : string
+	{
+		// This helper is for memory workflows that need a quick read of unstructured prototype notes.
+		// It intentionally returns only the Notes field (when present) rather than the full prototype dump.
+		if (prototype == null)
+		{
+			return "";
+		}
+
+		string details = PrototypeLogging.ToFriendlyString(prototype).ToString();
+		if (StringUtil.IsEmpty(details))
+		{
+			return "";
+		}
+
+		string marker = "Notes = ";
+		int notesStart = details.IndexOf(marker);
+		if (notesStart < 0)
+		{
+			return "";
+		}
+
+		string value = details.Substring(notesStart).Trim();
+		if (value.StartsWith(marker))
+		{
+			value = value.Replace(marker, "");
+		}
+
+		int newLine = value.IndexOf("\n");
+		if (newLine >= 0)
+		{
+			value = value.Substring(0, newLine).Trim();
+		}
+
+		if (value.StartsWith("\"") && value.EndsWith("\"") && value.Length >= 2)
+		{
+			// Keep quotes for now to avoid arithmetic parser edge cases on slice lengths.
+			return value;
+		}
+
+		return value;
+	}
+}
+prototype ToListPrototypeFirstLevelDescendants : CoreAction, Level2ObserverActionRoot
+{
+	Description = @"
+	Return the first level descendants of the specified prototype.
+	This returns only direct descendants (one level), not recursive descendants.
+	";
+
+	function Execute(Prototype prototype) : Collection
+	{
+		// Return direct descendant prototypes so runtime serialization preserves prototype structure.
+		if (prototype == null)
+		{
+			return new Collection();
+		}
+
+		return prototype.GetDescendants();
+	}
+}
+
+function ToGetCurrentSessionDirectorySafe() : string
+{
+	// Resolve the active session directory from runtime host and ensure it exists.
+	if (_opsAgent == null)
+	{
+		return "";
+	}
+
+	string sessionDirectory = _opsAgent.GetCurrentSessionDirectory();
+	if (StringUtil.IsEmpty(sessionDirectory))
+	{
+		return "";
+	}
+
+	string escapedSessionDirectory = sessionDirectory.Replace("'", "''");
+	string ensureDirectoryScript =
+		"$path='" + escapedSessionDirectory + "'\n" +
+		"if (-not (Test-Path -LiteralPath $path)) { New-Item -ItemType Directory -Path $path -Force | Out-Null }";
+	SystemOperations.RunPowerShell(ensureDirectoryScript);
+
+	return sessionDirectory;
+}
+
+function ToDefaultScratchMarkdown() : string
+{
+	// Return the default markdown scaffold for Scratch.md.
+	return
+		"# Scratch\n\n" +
+		"## Now\n" +
+		"- \n\n" +
+		"## Next\n" +
+		"- \n\n" +
+		"## Waiting On\n" +
+		"- \n\n" +
+		"## Blocked\n" +
+		"- \n\n" +
+		"## Done (Recent)\n" +
+		"- \n\n" +
+		"## Notes\n" +
+		"- \n";
+}
+
+[SemanticProgram.InfinitivePhrase("to initialize session plan and scratch")]
+[SemanticProgram.InfinitivePhrase("to initialize session planning files")]
+prototype ToInitializeSessionPlanAndScratch : OpsAction, CoreAction
+{
+	Description = @"Creates Plan.md and Scratch.md in the current session directory when missing. If they already exist, leaves them unchanged and returns a status summary. IMPORTANT: This is the recovery entry point after provider compaction. Callers must also read the most recent user message or snapshot to re-anchor the current task if Plan.md is stale.";
+
+	function Execute() : string
+	{
+		// Initialize Plan.md and Scratch.md once for the active session directory.
+		if (_opsAgent == null)
+		{
+			return "Error: _opsAgent runtime is not available.";
+		}
+
+		string sessionDirectory = ToGetCurrentSessionDirectorySafe();
+		if (StringUtil.IsEmpty(sessionDirectory))
+		{
+			return "Error: current session directory is unavailable.";
+		}
+
+		return SessionPlanManagementService.InitializePlanAndScratch(_opsAgent, ToDefaultScratchMarkdown());
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get the session plan")]
+[SemanticProgram.InfinitivePhrase("to read session plan markdown")]
+prototype ToGetSessionPlan : CoreAction, Level2ObserverActionRoot
+{
+	Description = @"Reads Plan.md from the current session directory. If missing, creates it from the authoritative structured template and returns the full content as StringRef.";
+
+	function Execute() : string
+	{
+		// Load Plan.md through the host plan service so one format owns rendering.
+		if (_opsAgent == null)
+		{
+			return "Error: _opsAgent runtime is not available.";
+		}
+
+		string sessionDirectory = ToGetCurrentSessionDirectorySafe();
+		if (StringUtil.IsEmpty(sessionDirectory))
+		{
+			return "Error: current session directory is unavailable.";
+		}
+
+		return SessionPlanManagementService.GetSessionPlanMarkdown(_opsAgent);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set the session plan explanation")]
+[SemanticProgram.InfinitivePhrase("to update plan routing context")]
+prototype ToSetSessionPlanExplanation : OpsAction, CoreAction
+{
+	Description = @"explanation - one short routing summary for the current plan. Replaces the Explanation section in Plan.md.";
+
+	function Execute(string explanation) : string
+	{
+		return SessionPlanManagementService.SetSessionPlanExplanation(_opsAgent, explanation);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to add a pending plan step")]
+prototype ToAddSessionPlanStep : OpsAction, CoreAction
+{
+	Description = @"stepText - the exact new plan step text to add as pending. note - optional short note explaining why the step was added.";
+
+	function Execute(string stepText, string note = "") : string
+	{
+		return SessionPlanManagementService.AddSessionPlanStep(_opsAgent, stepText, note);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to start a session plan step")]
+[SemanticProgram.InfinitivePhrase("to mark a plan step in progress")]
+prototype ToStartSessionPlanStep : OpsAction, CoreAction
+{
+	Description = @"stepText - exact existing plan step text. note - optional short progress note. Marks that step as in_progress.";
+
+	function Execute(string stepText, string note = "") : string
+	{
+		return SessionPlanManagementService.StartSessionPlanStep(_opsAgent, stepText, note);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to complete a session plan step")]
+[SemanticProgram.InfinitivePhrase("to mark a plan step done")]
+prototype ToCompleteSessionPlanStep : OpsAction, CoreAction
+{
+	Description = @"stepText - exact existing plan step text. note - optional short completion note. Marks that step as completed.";
+
+	function Execute(string stepText, string note = "") : string
+	{
+		return SessionPlanManagementService.CompleteSessionPlanStep(_opsAgent, stepText, note);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to block a session plan step")]
+[SemanticProgram.InfinitivePhrase("to mark a plan step blocked")]
+prototype ToBlockSessionPlanStep : OpsAction, CoreAction
+{
+	Description = @"stepText - exact existing plan step text. note - optional short blocker note. Marks that step as blocked.";
+
+	function Execute(string stepText, string note = "") : string
+	{
+		return SessionPlanManagementService.BlockSessionPlanStep(_opsAgent, stepText, note);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list local tasks")]
+[SemanticProgram.InfinitivePhrase("to list all local task statuses")]
+prototype ToListLocalTasks : OpsAction, CoreAction
+{
+	Description = @"Lists root-level task-*.md files in the current session with FileName, Title, and Status. Includes closed and superseded tasks.";
+
+	function Execute() : string
+	{
+		return LocalTaskManagementService.ListLocalTasks(_opsAgent, true);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list active local tasks")]
+[SemanticProgram.InfinitivePhrase("to list open local task statuses")]
+prototype ToListActiveLocalTasks : OpsAction, CoreAction
+{
+	Description = @"Lists root-level task-*.md files in the current session whose status is not Closed or Superseded.";
+
+	function Execute() : string
+	{
+		return LocalTaskManagementService.ListActiveLocalTasks(_opsAgent);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set local task status")]
+[SemanticProgram.InfinitivePhrase("to mark a local task open blocked superseded or closed")]
+prototype ToSetLocalTaskStatus : OpsAction, CoreAction
+{
+	Description = @"taskFileName - root-level task-*.md file name. status - Open, Blocked, Superseded, or Closed. statusReason - short reason/evidence to record with the status change.";
+
+	function Execute(string taskFileName, string status, string statusReason = "") : string
+	{
+		return LocalTaskManagementService.SetLocalTaskStatus(_opsAgent, taskFileName, status, statusReason);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get the session scratch")]
+[SemanticProgram.InfinitivePhrase("to read session scratch markdown")]
+prototype ToGetSessionScratch : CoreAction, Level2ObserverActionRoot
+{
+	Description = @"Reads Scratch.md from the current session directory. If missing, creates it from the default template and returns the full content as StringRef.";
+
+	function Execute() : string
+	{
+		// Load Scratch.md through the platform service so session markdown file I/O uses bounded retries.
+		return SessionPlanManagementService.GetSessionScratchMarkdown(_opsAgent, ToDefaultScratchMarkdown());
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to append to session scratch")]
+[SemanticProgram.InfinitivePhrase("to add a timestamped scratch entry")]
+prototype ToAppendSessionScratch : OpsAction, CoreAction
+{
+	Description = @"markdownEntry - markdown content to append as a new timestamped section in Scratch.md. Creates Scratch.md from template when missing.";
+
+	function Execute(string markdownEntry) : string
+	{
+		// Append Scratch.md through the platform service so session markdown file I/O uses bounded retries.
+		return SessionPlanManagementService.AppendSessionScratchMarkdown(_opsAgent, markdownEntry, ToDefaultScratchMarkdown());
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set the session scratch")]
+[SemanticProgram.InfinitivePhrase("to write session scratch markdown")]
+prototype ToSetSessionScratch : OpsAction, CoreAction
+{
+	Description = @"markdown - full Scratch.md markdown content. Validates non-empty input and writes Scratch.md atomically in the current session directory.";
+
+	function Execute(string markdown) : string
+	{
+		// Replace Scratch.md through the platform service so session markdown file I/O uses bounded retries.
+		return SessionPlanManagementService.SetSessionScratchMarkdown(_opsAgent, markdown);
+	}
+}
+
+
+[SemanticProgram.InfinitivePhrase("to compile the protoscript project")]
+[SemanticProgram.InfinitivePhrase("to parse and compile the protoscript project")]
+[SemanticProgram.InfinitivePhrase("to run compile project diagnostics")]
+prototype ToCompileProtoScriptProject : OpsAction
+{
+	Description = @"Runs the shared compile_project manual tool for the current session and returns diagnostics.";
+
+	function Execute() : string
+	{
+		// Execute compile_project through the shared manual-tool contract for the active session.
+		if (_opsAgent == null)
+		{
+			return "Error: _opsAgent runtime is not available.";
+		}
+
+		return CoreOntologyTools.RunCompileProjectUserTool(_opsAgent);
+	}
+}
+
+
+[SemanticProgram.InfinitivePhrase("to list the ProtoScript files available to the ops agent")]
+prototype ToListOpsAgentProtoScriptFiles : OpsAction
+{
+	Description = @"Returns the .pts files from the OpsAgent project directory.";
+
+	function Execute() : string
+	{
+		// List .pts file names from the OpsAgent project directory using PowerShell.
+		string projectDirectory = _opsAgent.GetCurrentProjectDirectory();
+		if (StringUtil.IsEmpty(projectDirectory))
+		{
+			return "Error: current project directory is unavailable.";
+		}
+
+		string escapedProjectDirectory = projectDirectory.Replace("'", "''");
+		String script = "Get-ChildItem -Path '" + escapedProjectDirectory + "' -Filter \"*.pts\" | Select-Object -ExpandProperty Name";
+		return SystemOperations.RunPowerShell(script);
+	}
+}
+

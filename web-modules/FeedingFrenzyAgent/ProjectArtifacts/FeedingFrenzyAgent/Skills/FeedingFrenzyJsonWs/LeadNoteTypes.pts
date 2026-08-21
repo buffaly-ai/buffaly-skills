@@ -1,0 +1,40 @@
+[SemanticProgram.InfinitivePhrase("to get feeding frenzy lead note type by id")]
+prototype LeadNoteTypes_GetLeadNoteType : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"service - required FeedingFrenzyJsonWsService binding. LeadNoteTypeID - numeric lead note type id.";
+
+	function Execute(FeedingFrenzyJsonWsService service, int LeadNoteTypeID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["LeadNoteTypeID"] = LeadNoteTypeID;
+		return service.CallBusinessRoute("lead-note-types/get-lead-note-type", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get feeding frenzy lead note type by name")]
+prototype LeadNoteTypes_GetLeadNoteTypeByLeadNoteTypeName : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"service - required FeedingFrenzyJsonWsService binding. LeadNoteTypeName - lead note type name.";
+
+	function Execute(FeedingFrenzyJsonWsService service, string LeadNoteTypeName) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["LeadNoteTypeName"] = LeadNoteTypeName;
+		return service.CallBusinessRoute("lead-note-types/get-lead-note-type-by-lead-note-type-name", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list feeding frenzy lead note types")]
+prototype LeadNoteTypes_GetLeadNoteTypes : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"service - required FeedingFrenzyJsonWsService binding. Returns all lead note type rows.";
+
+	function Execute(FeedingFrenzyJsonWsService service) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		return service.CallBusinessRoute("lead-note-types/get-lead-note-types", args);
+	}
+}

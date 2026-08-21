@@ -1,0 +1,41 @@
+prototype LeadSubStatuses_GetLeadSubStatus : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int LeadSubStatusID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["LeadSubStatusID"] = LeadSubStatusID;
+		return service.CallBusinessRoute("lead-sub-statuses/get-lead-sub-status", args);
+	}
+}
+
+prototype LeadSubStatuses_GetLeadSubStatuses : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		return service.CallBusinessRoute("lead-sub-statuses/get-lead-sub-statuses", new JsonObject());
+	}
+}
+
+prototype LeadSubStatuses_GetLeadSubStatusBySubStatusName : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, string SubStatusName) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["SubStatusName"] = SubStatusName;
+		return service.CallBusinessRoute("lead-sub-statuses/get-lead-sub-status-by-sub-status-name", args);
+	}
+}
+
+prototype LeadSubStatuses_GetLeadSubStatusesByLeadStatusID : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int LeadStatusID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject();
+		args["LeadStatusID"] = LeadStatusID;
+		return service.CallBusinessRoute("lead-sub-statuses/get-lead-sub-statuses-by-lead-status-id", args);
+	}
+}

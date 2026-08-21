@@ -1,0 +1,91 @@
+reference Buffaly.Development.Common Buffaly.Development.Common;
+reference "../lib/Buffaly.Agent.Host.dll" Buffaly.Agent.Tools;
+import Buffaly.Development.Common Buffaly.Development.Common.SmartPatch SmartPatch;
+
+// Root for coding-oriented core tools.
+prototype CodingContext;
+
+[SemanticProgram.InfinitivePhrase("to apply a smart patch to a project file")]
+[SemanticProgram.InfinitivePhrase("to update a project file with smart patch")]
+[SemanticProgram.InfinitivePhrase("to make a small file edit without codex")]
+prototype ToApplySmartPatchToProjectFile : OpsAction, CodingContext
+{
+	Description = @"
+Use ToApplySmartPatchToProjectFile as the preferred small non-Codex fallback for non-ProtoScript file edits under the current Buffaly agent root directory only.
+
+Inputs:
+- relativePath: existing file path relative to the current Buffaly agent root directory.
+- patchText: stripped-down Codex-style update-only patch document for that file.
+
+Rules:
+- Relative path only.
+- Path must stay under the current Buffaly agent root directory.
+- Exactly one update section.
+- No add, delete, or rename operations.
+- Use anchors and context lines instead of line numbers.
+- The patch must use exactly one `*** Update File:` section.
+- The `*** Update File:` path must exactly match the provided `relativePath`.
+- Use `@@` chunks with surrounding context lines from the existing file.
+- Every `@@` chunk must contain at least one changed line beginning with `+` or `-`.
+- Do not emit unified-diff headers like `---`, `+++`, or line-number hunks such as `@@ -1,3 +1,4 @@`.
+
+Patch shape:
+*** Begin Patch
+*** Update File: path/relative/to/root.ext
+@@
+-old line
++new line
+ context line
+*** End Patch
+
+This tool reads the file, applies the patch, writes the file, and returns a status string.
+";
+
+	function Execute(string relativePath, string patchText) : string
+	{
+		return SmartPatch.ApplyToFileUnderRoot(_opsAgent.GetCurrentProjectDirectory(), relativePath, patchText);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to apply a smart patch to a file under an explicit root directory")]
+[SemanticProgram.InfinitivePhrase("to update a file with smart patch under a specified root")]
+[SemanticProgram.InfinitivePhrase("to apply a smart patch anywhere under a chosen root directory")]
+prototype ToApplySmartPatchToFileUnderRoot : OpsAction, CodingContext
+{
+	Description = @"
+Use ToApplySmartPatchToFileUnderRoot when you need the same update-only SmartPatch behavior outside the Buffaly agent root directory.
+
+Inputs:
+- rootDirectory: existing root directory that scopes the allowed patch target.
+- relativePath: existing file path relative to rootDirectory.
+- patchText: stripped-down Codex-style update-only patch document for that file.
+
+Rules:
+- rootDirectory must exist.
+- relativePath must stay under rootDirectory.
+- Exactly one update section.
+- No add, delete, or rename operations.
+- Use anchors and context lines instead of line numbers.
+- The patch must use exactly one `*** Update File:` section.
+- The `*** Update File:` path must exactly match the provided `relativePath`.
+- Use `@@` chunks with surrounding context lines from the existing file.
+- Every `@@` chunk must contain at least one changed line beginning with `+` or `-`.
+- Do not emit unified-diff headers like `---`, `+++`, or line-number hunks such as `@@ -1,3 +1,4 @@`.
+
+Patch shape:
+*** Begin Patch
+*** Update File: path/relative/to/root.ext
+@@
+-old line
++new line
+ context line
+*** End Patch
+
+This tool reads the file, applies the patch, writes the file, and returns a status string.
+";
+
+	function Execute(string rootDirectory, string relativePath, string patchText) : string
+	{
+		return SmartPatch.ApplyToFileUnderRoot(rootDirectory, relativePath, patchText);
+	}
+}

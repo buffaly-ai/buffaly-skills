@@ -1,0 +1,83 @@
+reference System.Data System.Data;
+// External/runtime assemblies
+reference mscorlib mscorlib;
+
+// Base ProtoScript/platform libraries
+reference Ontology Ontology;
+reference Ontology.Simulation Ontology.Simulation;
+reference ProtoScript.Interpretter ProtoScript.Interpretter;
+reference BasicUtilities BasicUtilities;
+reference WebAppUtilities WebAppUtilities;
+reference Buffaly.Business Buffaly.Business;
+reference "lib/Buffaly.Agent.Host.dll" Buffaly.Agent.Host;
+reference "lib/Buffaly.Agent.Runtime.Abstractions.dll" Buffaly.Agent.Runtime.Abstractions;
+reference "lib/Buffaly.Agent.ProtoScript.Runtime.dll" Buffaly.Agent.ProtoScript.Runtime;
+reference "lib/Buffaly.Agent.ProtoScriptAuthoring.dll" Buffaly.Agent.ProtoScriptAuthoring;
+reference Buffaly.Agent.SkillManagement Buffaly.Agent.SkillManagement;
+
+// Remaining shared tool libraries
+reference Buffaly.Agent.Tools.Browser Buffaly.Agent.Tools.Browser;
+reference Buffaly.Agent.Tools.TebraWeb Buffaly.Agent.Tools.TebraWeb;
+reference Buffaly.Agent.Tools.Codex Buffaly.Agent.Tools.Codex;
+reference "lib/Buffaly.Agent.Tools.FileSystem.dll" Buffaly.Agent.Tools.FileSystem;
+reference "lib/Buffaly.Agent.Tools.Http.dll" Buffaly.Agent.Tools.Http;
+reference "lib/Buffaly.Agent.Tools.Llm.dll" Buffaly.Agent.Tools.Llm;
+reference "lib/Buffaly.Agent.Tools.Platform.dll" Buffaly.Agent.Tools.Platform;
+reference "lib/Buffaly.Agent.Tools.Process.dll" Buffaly.Agent.Tools.Process;
+reference "lib/Buffaly.Agent.Tools.Secrets.dll" Buffaly.Agent.Tools.Secrets;
+reference "lib/Buffaly.Agent.Tools.Sessions.dll" Buffaly.Agent.Tools.Sessions;
+reference Buffaly.Agent.Tools.TabularData Buffaly.Agent.Tools.TabularData;
+reference Buffaly.Agent.Wiki Buffaly.Agent.Wiki;
+
+// External/runtime imports
+import mscorlib System.Collections.Generic.List`1 List;
+import mscorlib System.IO.Path Path;
+import mscorlib System.IO.File File;
+import mscorlib System.Convert Convert;
+import mscorlib System.DateTime DateTime;
+import mscorlib System.Threading.CancellationToken CancellationToken;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Tools.RuntimeInstallRootFeature RuntimeInstallRootFeature;
+
+// Base ProtoScript/platform imports
+import Ontology Ontology.Collection Collection;
+import Ontology Ontology.Prototype Prototype;
+import Ontology Ontology.Prototypes Prototypes;
+import Ontology Ontology.PrototypeLogging PrototypeLogging;
+import Ontology.Simulation Ontology.Simulation.StringWrapper String;
+import Ontology.Simulation Ontology.Simulation.IntWrapper Int;
+import Ontology.Simulation Ontology.Simulation.BoolWrapper Bool;
+import ProtoScript.Interpretter ProtoScript.Interpretter.SimpleInterpretter SimpleInterpretter;
+import BasicUtilities BasicUtilities.StringUtil StringUtil;
+import BasicUtilities BasicUtilities.FileUtil FileUtil;
+import BasicUtilities BasicUtilities.JsonObject JsonObject;
+import BasicUtilities BasicUtilities.JsonArray JsonArray;
+import BasicUtilities BasicUtilities.JsonValue JsonValue;
+import BasicUtilities BasicUtilities.JsonUtil JsonUtil;
+import BasicUtilities BasicUtilities.DateUtil DateUtil;
+import BasicUtilities Logs Logs;
+import WebAppUtilities HttpUtil HttpUtil;
+
+// Remaining shared tool imports
+import Buffaly.Agent.Host Buffaly.Agent.Host.BuffalyAgentService BuffalyAgentService;
+import Buffaly.Agent.Host Buffaly.Agent.Host.Tools.ToolExecutionPolicyManager ToolExecutionPolicyManager;
+import Buffaly.Agent.SkillManagement Buffaly.Agent.SkillManagement.ProtoScriptCapabilityInspection ProtoScriptCapabilityInspection;
+import System.Data System.Data.DataTable DataTable;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.IAgentRuntimeHost IAgentRuntimeHost;
+import Buffaly.Agent.ProtoScript.Runtime Buffaly.Agent.ProtoScript.Runtime.ProtoScriptRuntime ProtoScriptRuntime;
+import Buffaly.Agent.Tools.Browser Buffaly.Agent.Tools.Browser.BrowserTools BrowserTools;
+import Buffaly.Agent.Tools.Codex Buffaly.Agent.Tools.Codex.CodexTools CodexTools;
+import Buffaly.Agent.Tools.FileSystem Buffaly.Agent.Tools.FileSystem.FileSystemTools FileSystemTools;
+import Buffaly.Agent.Tools.FileSystem Buffaly.Agent.Tools.FileSystem.RipGrepTools RipGrepTools;
+import Buffaly.Agent.Tools.Http Buffaly.Agent.Tools.Http.JsonWsHelper JsonWsHelper;
+import Buffaly.Agent.Tools.Llm Buffaly.Agent.Tools.Llm.LLMs LLMs;
+import Buffaly.Agent.Tools.Platform Buffaly.Agent.Tools.Platform.CoreOntologyTools CoreOntologyTools;
+import Buffaly.Agent.Tools.Process Buffaly.Agent.Tools.Process.SystemOperations SystemOperations;
+import Buffaly.Agent.Tools.Secrets Buffaly.Agent.Tools.Secrets.UserSecrets UserSecrets;
+import Buffaly.Agent.Tools.Secrets Buffaly.Agent.Tools.Secrets.SecureTokenHelper SecureTokenHelper;
+import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.SessionTools SessionTools;
+
+// Host-provided state
+extern IAgentRuntimeHost _opsAgent;
+extern ProtoScriptRuntime _runtime;
+extern JsonObject UserState;
+reference OfflineOntologyCritic.Web OfflineOntologyCritic.Web;

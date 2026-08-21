@@ -1,0 +1,23 @@
+[SemanticProgram.InfinitivePhrase("to insert or update a prompt action prompt file")]
+[SemanticProgram.InfinitivePhrase("to upsert a prompt action prompt file")]
+prototype ToInsertOrUpdatePromptActionPromptFile : ProtoScriptAction
+{
+	Description = @"promptFileName - project-relative markdown prompt path, for example Nodes/Personal/Coding/Prompts/MySkill.prompt.md.
+promptText - full markdown prompt text to write.
+Creates or updates the prompt file at the explicit project-relative path.
+Prefer `ToUpsertPromptActionArtifacts` when also updating PromptAction prototype registration.
+For normal remembered/local/user/workspace/project-specific prompt files, choose an organized location under Nodes/Personal. Everything outside Nodes/Personal is system-owned unless the user explicitly asks for that target.";
+
+	function Execute(string promptFileName, string promptText) : string
+	{
+		string normalizedPromptFileName = promptFileName.Trim();
+		if (StringUtil.IsEmpty(normalizedPromptFileName))
+			return "Error: promptFileName is required.";
+
+		// Upsert one prompt markdown file in the current configured Ops project using an explicit project-relative path.
+		if (_opsAgent != null)
+			return CoreOntologyTools.InsertOrUpdatePromptFileInCurrentProject(_opsAgent, normalizedPromptFileName, promptText);
+
+		return "Error: _opsAgent runtime is not available.";
+	}
+}
