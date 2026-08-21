@@ -36,7 +36,7 @@ export interface LegacyConversationBinding extends ConversationBase {
 
 export type SavedConversation = DurableConversation | LegacyConversationBinding;
 export type ConversationBinding = SavedConversation;
-export type ConversationBootstrap = (DurableConversation | LegacyConversationBinding) & { Origin: string; NavigationToken: string };
+export type ConversationBootstrap = (DurableConversation | LegacyConversationBinding) & { Origin: string };
 export interface LegacyConversationMigrationResult { SessionKey: string; InstallationRegistrationId: string; DisplayName: string; PromptPolicyRevision: number }
 export interface ExtensionBrowserConversationSummary extends LegacyConversationMigrationResult { DateCreatedUtc: string; UpdatedUtc: string; LastFinalMessageUtc: string; MessageCount: number; IsRunning: boolean }
 
@@ -222,26 +222,19 @@ export async function migrateLegacyConversation(connection: ExtensionConnection,
 }
 
 export async function createDurableConversation(connection: ExtensionConnection, browserContextId: string, displayName: string): Promise<ConversationBootstrap> {
-  const created = await readJson<{ SessionKey: string; DisplayName: string; PromptPolicyRevision: number; NavigationToken: string }>(await fetch(new URL('/web-modules/ExtensionBrowser/api/conversations/create', connection.Origin), {
+  const created = await readJson<{ SessionKey: string; DisplayName: string; PromptPolicyRevision: number }>(await fetch(new URL('/web-modules/ExtensionBrowser/api/conversations/create', connection.Origin), {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential, BrowserContextId: browserContextId, DisplayName: displayName }),
   }));
-  return { Kind: 'durable', Origin: connection.Origin, SessionKey: created.SessionKey, InstallationRegistrationId: connection.InstallationRegistrationId, BrowserContextId: browserContextId, DisplayName: created.DisplayName, PromptPolicyRevision: created.PromptPolicyRevision, NavigationToken: created.NavigationToken };
+  return { Kind: 'durable', Origin: connection.Origin, SessionKey: created.SessionKey, InstallationRegistrationId: connection.InstallationRegistrationId, BrowserContextId: browserContextId, DisplayName: created.DisplayName, PromptPolicyRevision: created.PromptPolicyRevision };
 }
 
 export async function openDurableConversation(connection: ExtensionConnection, sessionKey: string, browserContextId: string): Promise<ConversationBootstrap> {
-  const opened = await readJson<{ SessionKey: string; DisplayName: string; PromptPolicyRevision: number; NavigationToken: string }>(await fetch(new URL('/web-modules/ExtensionBrowser/api/conversations/open', connection.Origin), {
+  const opened = await readJson<{ SessionKey: string; DisplayName: string; PromptPolicyRevision: number }>(await fetch(new URL('/web-modules/ExtensionBrowser/api/conversations/open', connection.Origin), {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential, SessionKey: sessionKey, BrowserContextId: browserContextId }),
   }));
-  return { Kind: 'durable', Origin: connection.Origin, SessionKey: opened.SessionKey, InstallationRegistrationId: connection.InstallationRegistrationId, BrowserContextId: browserContextId, DisplayName: opened.DisplayName, PromptPolicyRevision: opened.PromptPolicyRevision, NavigationToken: opened.NavigationToken };
-}
-
-export async function issueConversationNavigationToken(connection: ExtensionConnection, sessionKey: string): Promise<{ NavigationToken: string }> {
-  return readJson<{ NavigationToken: string }>(await fetch(new URL('/web-modules/ExtensionBrowser/api/conversations/navigation-token', connection.Origin), {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ InstallationRegistrationId: connection.InstallationRegistrationId, InstallationCredential: connection.InstallationCredential, SessionKey: sessionKey }),
-  }));
+  return { Kind: 'durable', Origin: connection.Origin, SessionKey: opened.SessionKey, InstallationRegistrationId: connection.InstallationRegistrationId, BrowserContextId: browserContextId, DisplayName: opened.DisplayName, PromptPolicyRevision: opened.PromptPolicyRevision };
 }
 
 export function toCompletion(invocation: ToolInvocation, result: ToolResult): ToolCompletion {

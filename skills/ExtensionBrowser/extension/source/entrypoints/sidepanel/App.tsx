@@ -11,7 +11,7 @@ interface ConversationBase { InstallationRegistrationId: string; BrowserContextI
 interface DurableConversation extends ConversationBase { Kind?: 'durable'; SessionKey: string }
 interface LegacyConversationBinding extends ConversationBase { Kind?: 'legacy'; ConversationSlotId: string; SessionBindingId: string }
 type SavedConversation = DurableConversation | LegacyConversationBinding;
-type ConversationBootstrap = SavedConversation & { Origin: string; NavigationToken: string }
+type ConversationBootstrap = SavedConversation & { Origin: string }
 interface WorkerResponse<T> { ok: boolean; data?: T; error?: string }
 type ServerState = 'Ready' | 'SignInRequired' | 'Unavailable' | 'WebModuleMissing';
 type ConversationSummary = SavedConversation
@@ -41,7 +41,10 @@ function conversationOptionLabel(conversation: SavedConversation): string {
 function conversationUrl(bootstrap: ConversationBootstrap): string {
   const url = new URL('/web-modules/ExtensionBrowser/conversation', bootstrap.Origin);
   url.searchParams.set('presentation', 'sidepanel');
-  url.searchParams.set('navigationToken', bootstrap.NavigationToken);
+  if (!('SessionKey' in bootstrap) || !bootstrap.SessionKey) throw new Error('Selected Buffaly conversation does not have a durable session key.');
+  if (!bootstrap.InstallationRegistrationId) throw new Error('Selected Buffaly conversation does not have an installation registration id.');
+  url.searchParams.set('sessionKey', bootstrap.SessionKey);
+  url.searchParams.set('installationRegistrationId', bootstrap.InstallationRegistrationId);
   return url.toString();
 }
 

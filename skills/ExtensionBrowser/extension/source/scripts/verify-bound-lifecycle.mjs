@@ -58,6 +58,8 @@ assert.match(servers, /ConversationsByBrowserContext\?\.\[browserContextId\] \|\
 assert.match(connection, /migrateLegacyConversation[\s\S]{0,260}api\/migrations\/session-binding/, 'legacy selections must call the authenticated migration endpoint before durable open');
 assert.match(background, /async function ensureDurableConversation[\s\S]{0,520}migrateLegacyConversation\(connection, binding\.SessionBindingId\)/, 'legacy entries must migrate to an actual SessionKey before durable open');
 assert.match(background, /async function openPreparedConversation[\s\S]{0,520}openDurableConversation\(connection, prepared\.SessionKey, browserContextId\)/, 'prepared conversations must open by durable SessionKey');
+assert.match(panel, /url\.searchParams\.set\('installationRegistrationId', bootstrap\.InstallationRegistrationId\)/, 'side-panel durable session navigation must include its installation catalog owner');
+assert.match(background, /url\.searchParams\.set\('installationRegistrationId', prepared\.InstallationRegistrationId\)/, 'pop-out durable session navigation must include its installation catalog owner');
 assert.doesNotMatch(background, forbiddenCombinedLookup, 'service worker must not use a combined binding/session identity helper');
 assert.doesNotMatch(fs.readFileSync(new URL('../lib/buffaly-servers.ts', import.meta.url), 'utf8'), forbiddenCombinedLookup, 'server storage must distinguish durable SessionKey from legacy selection id');
 assert.match(servers, /reconcileAuthoritativeConversations[\s\S]{0,900}\.\.\.cached, \.\.\.serverConversation[\s\S]{0,220}BrowserContextId: cached\?\.BrowserContextId \|\| ''/, 'server conversation metadata must replace stale cached names while preserving browser-context convenience state');
@@ -68,10 +70,11 @@ assert.match(panel, /getBrowserContextId\(\)\.then\(async \(contextId\) => \{[\s
 assert.match(panel, /const status = await refreshServers\(\)[\s\S]{0,520}activeServer\?\.Conversations\.find[\s\S]{0,520}select_buffaly_conversation[\s\S]{0,700}create_buffaly_conversation/, 'authorization must reuse an authoritative saved conversation before creating a new conversation');
 assert.match(panel, /refreshServersInFlight[\s\S]{0,5000}document\.visibilityState === 'visible'[\s\S]{0,500}10_000/, 'visible side panels must refresh renamed conversations with in-flight suppression');
 assert.match(background, /open_buffaly_conversation_tab[\s\S]{0,900}ensureDurableConversation\(connection, binding, browserContextId\)/, 'pop-out must normalize its selected conversation to durable');
-assert.match(background, /open_buffaly_conversation_tab[\s\S]{0,1400}issueConversationNavigationToken\(connection, prepared\.SessionKey\)/, 'pop-out must mint conversation tokens with SessionKey');
+assert.match(background, /open_buffaly_conversation_tab[\s\S]{0,1400}url\.searchParams\.set\('sessionKey', prepared\.SessionKey\)/, 'pop-out must open by durable SessionKey');
 assert.doesNotMatch(background, forbiddenLegacyNavigationToken, 'pop-out must not use legacy navigation tokens in the new normal flow');
-assert.match(panel, /web-modules\/ExtensionBrowser\/conversation/, 'iframe must use the package-owned token bootstrap route');
-assert.match(panel, /NavigationToken/, 'iframe navigation must carry the one-time token');
+assert.match(panel, /web-modules\/ExtensionBrowser\/conversation/, 'iframe must use the package-owned session bootstrap route');
+assert.match(panel, /url\.searchParams\.set\('sessionKey', bootstrap\.SessionKey\)/, 'iframe navigation must carry the durable SessionKey');
+assert.doesNotMatch(panel, /NavigationToken|navigationToken/, 'iframe navigation must not carry a one-time token');
 assert.doesNotMatch(panel, /buffaly-connection/, 'panel must not import the credential-bearing connection module');
 assert.doesNotMatch(panel, /loadConnection|authorizeInstallation|createConversation|issueNavigationToken|redeemNavigation/, 'panel must not call credentialed connection APIs');
 assert.doesNotMatch(panel, /InstallationCredential|ExtensionConnection/, 'panel state and navigation must contain no installation credential or credential-bearing connection');

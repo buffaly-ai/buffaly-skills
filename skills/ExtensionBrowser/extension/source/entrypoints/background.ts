@@ -1,7 +1,7 @@
 import { handleToolCall, grantDebuggerConsent, revokeDebuggerConsent } from '../lib/tool-router';
 import { detachDebugger, isAttached } from '../lib/debugger-session';
 import { getLogEntries, getLogVersion } from '../lib/tool-log';
-import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, authorizeInstallation, conversationFromBootstrap, createDurableConversation, isLegacyConversation, issueConversationNavigationToken, listBrowserInstances, listDurableConversations, loadBoundToolResult, loadConnection, migrateLegacyConversation, openDurableConversation, type ConversationBinding, type DurableConversation } from '../lib/buffaly-connection';
+import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, authorizeInstallation, conversationFromBootstrap, createDurableConversation, isLegacyConversation, listBrowserInstances, listDurableConversations, loadBoundToolResult, loadConnection, migrateLegacyConversation, openDurableConversation, type ConversationBinding, type DurableConversation } from '../lib/buffaly-connection';
 import { activateConversation, activateServer, canonicalServerOrigin, conversationForContext, getActiveServer, loadServers, reconcileAuthoritativeConversations, removeServer, saveServer, summarizeServers, updateActiveServer, updateActiveServerConversation, type SavedBuffalyServer, type ServerState } from '../lib/buffaly-servers';
 import type { BoundToolInvocationIdentity } from '../lib/types';
 
@@ -325,10 +325,10 @@ export default defineBackground(() => {
           const browserContextId = String(request.browserContextId || '');
           const prepared = await ensureDurableConversation(connection, binding, browserContextId);
           await updateActiveServerConversation(browserContextId, prepared, isLegacyConversation(binding) ? binding : undefined);
-          const navigation = await issueConversationNavigationToken(connection, prepared.SessionKey);
           const url = new URL('/web-modules/ExtensionBrowser/conversation', connection.Origin);
           url.searchParams.set('presentation', 'standard');
-          url.searchParams.set('navigationToken', navigation.NavigationToken);
+          url.searchParams.set('sessionKey', prepared.SessionKey);
+          url.searchParams.set('installationRegistrationId', prepared.InstallationRegistrationId);
           await chrome.tabs.create({ url: url.toString(), active: true });
           return { Opened: true };
         })

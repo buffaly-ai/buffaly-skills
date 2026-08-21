@@ -56,9 +56,9 @@ Validated 2026-07-26 on Windows Google Chrome:
 - Live workers race the normal port reply against the same durable result journal, with replacement-worker recovery as fallback: PASS
 - New conversation creates a distinct conversation slot: PASS
 - Same-owner child-agent actions resolve browser authority through bounded canonical ancestry and Release A default-instance metadata: PASS
-- Credentialed authorization, binding creation, and navigation-token issuance are service-worker-owned: PASS
-- Side-panel source and production bundle contain no credential-bearing connection object or durable session key: PASS
-- Iframe navigation uses the package-owned bootstrap route with `presentation=sidepanel` and a single-use `navigationToken`: PASS
+- Credentialed authorization and binding creation are service-worker-owned: PASS
+- Side-panel source and production bundle contain no credential-bearing connection object: PASS
+- Iframe navigation uses the package-owned bootstrap route with `presentation=sidepanel` and durable `sessionKey`; normal side-panel navigation does not use one-time `navigationToken`: PASS
 
 The source gates above do not substitute for the required isolated staging WebModule deployment and regular-Chrome conversation acceptance.
 
@@ -71,7 +71,7 @@ The source gates above do not substitute for the required isolated staging WebMo
 Release A introduces discoverable ExtensionBrowser service instances while retaining legacy session-binding routes and frames for the compatibility period.
 
 - `InstanceId` equals `InstallationRegistrationId`.
-- New WebModule APIs: `/api/instances`, `/api/migrations/session-binding`, `/api/conversations/create`, `/api/conversations/open`, and `/api/conversations/navigation-token`.
+- New WebModule APIs: `/api/instances`, `/api/migrations/session-binding`, `/api/conversations/create`, and `/api/conversations/open`. Navigation-token APIs remain compatibility-only and are not used by normal side-panel navigation.
 - Server-owned migration writes `ExtensionBrowser.DefaultInstanceId` and `ExtensionBrowser.BrowserContextId` to the original session, preserves the legacy `ExtensionBrowser.SessionBindingId` pointer through the Release A compatibility period, and records durable migration files under `instance-routing-migrations`.
 - Exact WebModule executable regression command: `dotnet run --project .\ExtensionBrowser.WebModule.Tests\ExtensionBrowser.WebModule.Tests.csproj -c Release`.
 - Old-session acceptance: `Chrome-58547ef3f66c4c46875567f5baec96dd` must continue browsing through `ExtensionBrowser.DefaultInstanceId` without replacement after package acceptance.
