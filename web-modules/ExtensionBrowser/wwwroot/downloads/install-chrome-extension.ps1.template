@@ -1,0 +1,41 @@
+param(
+    [string]$InstallRoot = (Join-Path $env:LOCALAPPDATA 'Buffaly\ChromeExtensions\BuffalyBrowserAgent'),
+    [switch]$DoNotOpenChrome
+)
+$ErrorActionPreference = 'Stop'
+$version = '__EXTENSION_VERSION__'
+$expectedSha256 = '__EXTENSION_SHA256__'
+$serverOrigin = '__SERVER_ORIGIN__'
+$archiveUri = "$serverOrigin/web-modules/ExtensionBrowser/downloads/Buffaly-Browser-Agent-$version-chrome.zip"
+$versionRoot = Join-Path $InstallRoot $version
+$archivePath = Join-Path ([IO.Path]::GetTempPath()) "Buffaly-Browser-Agent-$version-$([Guid]::NewGuid().ToString('N')).zip"
+try {
+    Invoke-WebRequest -Uri $archiveUri -OutFile $archivePath -UseBasicParsing
+    $actualSha256 = (Get-FileHash -LiteralPath $archivePath -Algorithm SHA256).Hash.ToLowerInvariant()
+    if ($actualSha256 -ne $expectedSha256) { throw "Downloaded extension hash mismatch. Expected $expectedSha256; received $actualSha256." }
+    if (Test-Path -LiteralPath $versionRoot) { Remove-Item -LiteralPath $versionRoot -Recurse -Force }
+    New-Item -ItemType Directory -Force -Path $versionRoot | Out-Null
+    Expand-Archive -LiteralPath $archivePath -DestinationPath $versionRoot -Force
+    $manifestPath = Join-Path $versionRoot 'manifest.json'
+    if (-not (Test-Path -LiteralPath $manifestPath -PathType Leaf)) { throw 'The extracted extension does not contain manifest.json.' }
+    $manifest = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
+    if ($manifest.name -ne 'Buffaly Browser Agent' -or $manifest.version -ne $version) { throw "Unexpected extension manifest: $($manifest.name) $($manifest.version)." }
+    Set-Content -LiteralPath (Join-Path $InstallRoot 'current.txt') -Value $versionRoot -Encoding utf8NoBOM
+    try { Set-Clipboard -Value $versionRoot } catch { }
+    Write-Host ''
+    Write-Host 'Buffaly Browser Agent is ready to load.' -ForegroundColor Green
+    Write-Host "Extension folder: $versionRoot"
+    Write-Host 'The folder path has been copied to the clipboard.'
+    Write-Host ''
+    Write-Host 'In Chrome: enable Developer mode, click Load unpacked, and select that folder.'
+    Write-Host "Then open the side panel and add this Buffaly server: $serverOrigin"
+    if (-not $DoNotOpenChrome) {
+        $chrome = Get-Command chrome.exe -ErrorAction SilentlyContinue
+        if ($chrome) { Start-Process -FilePath $chrome.Source -ArgumentList 'chrome://extensions' }
+        else { Start-Process 'chrome://extensions' }
+        Start-Process explorer.exe -ArgumentList @('/select,', $manifestPath)
+    }
+}
+finally {
+    Remove-Item -LiteralPath $archivePath -Force -ErrorAction SilentlyContinue
+}
