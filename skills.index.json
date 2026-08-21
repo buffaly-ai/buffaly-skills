@@ -736,7 +736,7 @@
       "SkillName": "ExtensionBrowser",
       "Title": "Extension Browser",
       "Description": "Buffaly skill package for Extension Browser.",
-      "Version": "0.2.81",
+      "Version": "0.2.82",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Extension Browser",
@@ -866,7 +866,7 @@
         },
         {
           "Path": "index.pts.lazy.json",
-          "Sha256": "2ab4563675eaaaad42ba426212ae41d3134eba320b7c4135bb11a4baf875f873"
+          "Sha256": "f1b82d0d043388145bf52bcf88ad68823f29a181ca1ad2fcb64206181ecb932b"
         },
         {
           "Path": "lib/bridge.js",
@@ -879,6 +879,10 @@
         {
           "Path": "PromptActions.pts",
           "Sha256": "254dd18826111bb89c71e32bf73e6bf0b119a05f2453b92ac349cc04af75a09e"
+        },
+        {
+          "Path": "Prompts/InstallChromeExtension.prompt.md",
+          "Sha256": "696f90ae9707ac97f0a7fb0110edb685204574836b29e2d10d2900aacce4ad52"
         },
         {
           "Path": "SKILL.md",
