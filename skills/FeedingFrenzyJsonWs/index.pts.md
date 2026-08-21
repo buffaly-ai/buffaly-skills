@@ -1,5 +1,11 @@
 # FeedingFrenzyJsonWs ProtoScript Change History
 
+## Fix FileID 0-sentinel in pre-signed URL skill (2026-08-20)
+- Updated `ToGetFeedingFrenzyFilePreSignedUrl` to use the established 0-sentinel pattern from `Tasks.pts`: `if (FileID > 0) args["FileID"]=FileID; else args["FileID"]=null`.
+- The ProtoScript runtime tool schema exposes only non-nullable integers, so `int FileID` defaults to 0 when the agent has no FileID. Previously, 0 was sent directly to the API method `GetFilePreSignedUrlAsAutomation`, which declares `int? FileID` and branches on `HasValue`. Since `0.HasValue == true`, the `FileKey` fallback was unreachable and the call reached `FilesRepository.Get(0)`, triggering a low-level `InvalidDataTypeException`.
+- This caused 3 production error-log alarms (2026-08-12, 2026-08-14, 2026-08-20) where the agent had a valid `FileKey` but no `FileID`. The validator correctly rejected 0, but the `FileKey` fallback never executed.
+- The API method now also explicitly rejects `FileID <= 0` with a clear `JsonWsException` before calling `FilesRepository.Get`, so any caller sending 0 through any path gets an actionable error message.
+
 ## Expose guarded writes through explicit skill root (2026-08-10)
 - Added `FeedingFrenzyAgentGuardedWriteSkill` / `FeedingFrenzyAgentGuardedWriteActionRoot` in the FeedingFrenzy agent root so mutating actions that inherit `FeedingFrenzyJsonWsGuardedWriteAction` can be intentionally discovered and loaded.
 - Preserved the default read-oriented `FeedingFrenzyJsonWsSkillAction` surface. Guarded writes are exposed through a separate explicit root rather than broadening the ordinary Feeding Frenzy agent action root.

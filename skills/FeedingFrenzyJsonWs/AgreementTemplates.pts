@@ -60,8 +60,8 @@ prototype ToCreateFeedingFrenzySigningDraftFromUploadedMarkdownFile : FeedingFre
 		if (!StringUtil.EqualNoCase(Path.GetExtension(LocalMarkdownFilePath), ".md")) return "Error: LocalMarkdownFilePath must be a .md file.";
 
 		string fileName = StringUtil.IsEmpty(SourceFileName) ? Path.GetFileName(LocalMarkdownFilePath) : Path.GetFileName(SourceFileName);
-		JsonObject uploadArgs = new JsonObject(); uploadArgs["strFolder"]="agreement-draft-sources/lead_" + LeadID; uploadArgs["fileName"]=fileName; uploadArgs["lstData"]=File.ReadAllBytes(LocalMarkdownFilePath); uploadArgs["mimeType"]="text/markdown";
-		string uploadedMarkdownFileUrl = service.CallBusinessRoute("lead-documents/upload-file-to-s-3", uploadArgs);
+		JsonObject uploadArgs = new JsonObject(); uploadArgs["AutomationUserEmail"]=service.AutomationUserEmail; uploadArgs["LeadID"]=LeadID; uploadArgs["FileName"]=fileName; uploadArgs["Data"]=File.ReadAllBytes(LocalMarkdownFilePath);
+		string uploadedMarkdownFileUrl = service.CallBusinessRoute("lead-documents/upload-agreement-draft-source-markdown-as-automation", uploadArgs);
 		if (StringUtil.IsEmpty(uploadedMarkdownFileUrl)) return "Error: Feeding Frenzy did not return an uploaded Markdown file URL.";
 
 		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=service.AutomationUserEmail; args["LeadID"]=LeadID; args["DocumentName"]=DocumentName; args["UploadedMarkdownFileUrl"]=uploadedMarkdownFileUrl; args["CustomerLegalName"]=CustomerLegalName; args["RecipientName"]=RecipientName; args["RecipientEmail"]=RecipientEmail; args["ExpirationDate"]=ExpirationDate; args["ReminderIntervalDays"]=ReminderIntervalDays; args["SourceFileName"]=fileName; args["AgreementTemplateKey"]=AgreementTemplateKey;
