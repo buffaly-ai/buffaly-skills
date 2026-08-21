@@ -30,6 +30,7 @@ prototype FeedingFrenzyJsonWsService : Service
 	String CallCenterApiPrefix = "api/feedingfrenzy.callcenter";
 	String UiApiPrefix = "api/feedingfrenzy.admin.ui";
 	String TokenKey = "FeedingFrenzy.ApiKey";
+	Bool TokenIsAuthorizationToken = false;
 	String AutomationUserEmail = new String();
 
 	function Initialize() : string
@@ -39,22 +40,41 @@ prototype FeedingFrenzyJsonWsService : Service
 		return "FeedingFrenzyJsonWsService initialized (BaseUrl = " + this.BaseUrl + ").";
 	}
 
+	function ConfigureAuthorization(string BaseUrl, string AuthorizationToken) : string
+	{
+		if (StringUtil.IsEmpty(BaseUrl))
+			return "Error: BaseUrl is required.";
+		if (StringUtil.IsEmpty(AuthorizationToken))
+			return "Error: AuthorizationToken is required.";
+
+		this.BaseUrl = BaseUrl;
+		this.TokenKey = AuthorizationToken;
+		this.TokenIsAuthorizationToken = true;
+		return "Feeding Frenzy authorization configured for this session.";
+	}
+
 	function CallBusinessRoute(string routePath, JsonObject args) : string
 	{
 		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
-		return JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.BusinessApiPrefix, routePath, this.TokenKey, normalizedArgs);
+		return this.TokenIsAuthorizationToken
+			? JsonWsHelper.CallJsonRoute(this.BaseUrl, this.BusinessApiPrefix, routePath, this.TokenKey, normalizedArgs)
+			: JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.BusinessApiPrefix, routePath, this.TokenKey, normalizedArgs);
 	}
 
 	function CallCallCenterRoute(string routePath, JsonObject args) : string
 	{
 		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
-		return JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.CallCenterApiPrefix, routePath, this.TokenKey, normalizedArgs);
+		return this.TokenIsAuthorizationToken
+			? JsonWsHelper.CallJsonRoute(this.BaseUrl, this.CallCenterApiPrefix, routePath, this.TokenKey, normalizedArgs)
+			: JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.CallCenterApiPrefix, routePath, this.TokenKey, normalizedArgs);
 	}
 
 	function CallUiRoute(string routePath, JsonObject args) : string
 	{
 		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
-		return JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.UiApiPrefix, routePath, this.TokenKey, normalizedArgs);
+		return this.TokenIsAuthorizationToken
+			? JsonWsHelper.CallJsonRoute(this.BaseUrl, this.UiApiPrefix, routePath, this.TokenKey, normalizedArgs)
+			: JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.UiApiPrefix, routePath, this.TokenKey, normalizedArgs);
 	}
 }
 

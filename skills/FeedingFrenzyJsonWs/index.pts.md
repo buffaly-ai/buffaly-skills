@@ -1,5 +1,10 @@
 # FeedingFrenzyJsonWs ProtoScript Change History
 
+## Configure one session-owned user authorization (2026-08-21)
+- Added `ConfigureAuthorization(BaseUrl, AuthorizationToken)` so the Buffaly web module can initialize the existing service instance inside one user's live ProtoScript session without persisting the token or writing it to UserSecrets.
+- Added `TokenIsAuthorizationToken`; configured embedded sessions call the existing direct `JsonWsHelper.CallJsonRoute(...)` transport with the supplied Bearer token, while untouched `#Remote` and `#Local` bindings preserve their existing `CallJsonRouteSecure(...)` secret-key behavior.
+- Kept every Feeding Frenzy action prototype unchanged so standalone and embedded agents continue to use one shared skill and tool surface.
+
 ## Fix FileID 0-sentinel in pre-signed URL skill (2026-08-20)
 - Updated `ToGetFeedingFrenzyFilePreSignedUrl` to use the established 0-sentinel pattern from `Tasks.pts`: `if (FileID > 0) args["FileID"]=FileID; else args["FileID"]=null`.
 - The ProtoScript runtime tool schema exposes only non-nullable integers, so `int FileID` defaults to 0 when the agent has no FileID. Previously, 0 was sent directly to the API method `GetFilePreSignedUrlAsAutomation`, which declares `int? FileID` and branches on `HasValue`. Since `0.HasValue == true`, the `FileKey` fallback was unreachable and the call reached `FilesRepository.Get(0)`, triggering a low-level `InvalidDataTypeException`.
