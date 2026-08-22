@@ -144,10 +144,9 @@ prototype ToRevokeCdpAdvancedActions : CdpBrowserSkillAction
 
 [SemanticProgram.InfinitivePhrase("to open a CDP browser session")]
 [SemanticProgram.InfinitivePhrase("to connect to a running Chrome browser")]
-[SemanticProgram.InfinitivePhrase("to start a CDP browser session")]
 prototype ToOpenCdpBrowserSession : CdpBrowserSkillAction
 {
-	Description = @"[Tier 1] Connects to Chrome via CDP through the packaged lib/cdp_helper.bundle.js, creates a new tab, enables Page/Runtime/DOM/Input domains, optionally navigates to URL. Always returns helper JSON or an explicit error string. Success returns { cdpSessionId, tabId, tabUrl, port, title }.";
+	Description = @"[Tier 1, explicit diagnostic] Connects to an already-running Chrome endpoint on a caller-selected port through the packaged lib/cdp_helper.bundle.js, creates a new tab, enables Page/Runtime/DOM/Input domains, and optionally navigates. It never launches or recovers Chrome. Do not use for registered persistent/default or existing-login browsers; use ToOpenManagedCdpBrowserSession instead. Always returns helper JSON or an explicit error string. Success returns { cdpSessionId, tabId, tabUrl, port, title }.";
 
 	function Execute(int port, string url) : string
 	{
@@ -465,12 +464,12 @@ prototype ToFillCdpPasswordWithSecret : CdpBrowserSkillAction
 	}
 }
 
-// ===== Tier 2: Chrome Lifecycle =====
+// ===== Tier 2: Explicit Chrome Lifecycle Diagnostics =====
 
-[SemanticProgram.InfinitivePhrase("to launch CDP Chrome")]
+[SemanticProgram.InfinitivePhrase("to diagnostically launch Chrome on a custom CDP port")]
 prototype ToLaunchCdpChrome : CdpBrowserSkillAction
 {
-	Description = @"[Tier 2 - Privileged] Launches Chrome with --remote-debugging-port and non-default --user-data-dir. Requires approval: call ToApproveCdpAdvancedActions first.";
+	Description = @"[Tier 2 - Privileged diagnostic] Launches Chrome using a caller-selected remote-debugging port and profile directory. Use only for explicit low-level diagnostics or unmanaged custom endpoints. Never use for normal, persistent/default, existing-login, or registered managed browser startup/recovery; ToOpenManagedCdpBrowserSession owns that pre-approved recovery path. Requires approval: call ToApproveCdpAdvancedActions first.";
 
 	function Execute(int port, string profileDir) : string
 	{
@@ -482,10 +481,10 @@ prototype ToLaunchCdpChrome : CdpBrowserSkillAction
 	}
 }
 
-[SemanticProgram.InfinitivePhrase("to check CDP Chrome")]
+[SemanticProgram.InfinitivePhrase("to diagnostically check a custom CDP port")]
 prototype ToCheckCdpChrome : CdpBrowserSkillAction
 {
-	Description = @"[Tier 2 - Privileged] Checks if CDP endpoint is active. Requires approval.";
+	Description = @"[Tier 2 - Privileged diagnostic] Checks a caller-selected CDP endpoint. Do not use it as managed-browser health or recovery; ToOpenManagedCdpBrowserSession owns that flow. Requires approval.";
 
 	function Execute(int port) : string
 	{

@@ -7,13 +7,15 @@ Use this prompt skill only when the user explicitly asks to use, control, inspec
 - `UseCdpBrowserSkill` is the prompt/routing entry point for CDP-based browser automation.
 - `CdpBrowserSkill` is the deterministic browser primitive surface backed by `chrome-remote-interface` and the user's real Chrome.
 - Generic browser requests route to `UseBrowserSkill` / Browser Skill instead of CdpBrowser. CdpBrowser remains an explicit CDP/real-Chrome alternative until the C# CDP default-browser migration is complete.
-- Connects to a running Chrome instance with `--remote-debugging-port=9222 --user-data-dir=<debug-profile>`.
+- Connects to an already-running caller-selected Chrome CDP endpoint. It does not own registered managed-browser recovery.
 - Creates a new dedicated tab (does not touch user's existing tabs).
 - Uses trusted CDP input events (`isTrusted=true`) for all Tier 1 interactions.
 
 ## When to use CdpBrowser vs Browser Skill
 
 Use `UseBrowserSkill` for unqualified browser requests. Use CdpBrowser only when the request or evidence explicitly points to CDP/Chrome DevTools Protocol, real Chrome, existing login/cookies, browser extensions, anti-bot detection, or trusted CDP input.
+
+If the intended browser is registered as a persistent/default or existing-login managed browser, route to `UseBrowserSkill` and `ToOpenManagedCdpBrowserSession` even when CDP is involved. That action owns approved launcher recovery and does not require Tier 2 approval. CdpBrowser's raw port/profile lifecycle actions are only for explicit unmanaged diagnostics.
 
 ### Use CdpBrowser when:
 - The site has anti-bot detection (Cloudflare, reCAPTCHA, etc.)
@@ -46,11 +48,11 @@ Use `UseBrowserSkill` for unqualified browser requests. Use CdpBrowser only when
 
 ## Chrome setup
 
-Before using CdpBrowser, Chrome must be running with remote debugging enabled:
+Before using raw CdpBrowser actions against an unmanaged custom endpoint, Chrome must already be running with remote debugging enabled:
 
 `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome --remote-debugging-port=9222 --user-data-dir=~/.buffaly/chrome-debug-profile --no-first-run --no-default-browser-check`
 
-Or use `ToLaunchCdpChrome` (Tier 2, requires approval) to launch Chrome automatically.
+Use `ToLaunchCdpChrome` only when the user explicitly requests a caller-selected custom port/profile diagnostic and approves Tier 2. Never use it to recover a registered persistent/default browser; call `ToOpenManagedCdpBrowserSession` instead.
 
 ## Session lifecycle
 
@@ -72,5 +74,6 @@ Use `ToGetUserSecret` to obtain a `StringRef` secret handle. Pass that value dir
 
 ## Never use:
 - Browser web-module URLs, internal ports, JsonWs routes for normal browser automation
+- `ToLaunchCdpChrome`, `ToCheckCdpChrome`, or raw `ToOpenCdpBrowserSession` as substitutes for registered managed-browser startup or recovery
 - Synthetic JS click/type when trusted CDP events are available (Tier 1)
 - Tier 2 actions without explicit user approval

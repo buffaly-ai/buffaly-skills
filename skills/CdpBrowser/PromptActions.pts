@@ -10,5 +10,5 @@ prototype UseCdpBrowserSkill : PromptAction, CdpBrowserSkillAction
 	SkillKind = "prompt";
 	SkillVersion = "1.0.0";
 	PromptPath = @"Skills/CdpBrowser/Prompts/UseCdpBrowserSkill.prompt.md";
-	Description = @"Prompt/routing skill for explicit CDP browser automation. Use only when the user asks for CDP, Chrome DevTools Protocol, real Chrome via CDP, existing login preservation, or trusted CDP input. Generic browser requests route to UseBrowserSkill.";
+	Description = @"Prompt/routing skill for explicit unmanaged CDP diagnostics and trusted-input actions against an already-running caller-selected endpoint. Registered persistent/default and existing-login browsers route to UseBrowserSkill and ToOpenManagedCdpBrowserSession for automatic approved recovery. Generic browser requests route to UseBrowserSkill.";
 }
