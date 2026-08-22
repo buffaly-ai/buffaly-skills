@@ -1,4 +1,4 @@
-prototype LeadSubStatuses_GetLeadSubStatus : FeedingFrenzyJsonWsAdminAction
+prototype LeadSubStatuses_GetLeadSubStatus : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, int LeadSubStatusID) : string
 	{
@@ -9,7 +9,7 @@ prototype LeadSubStatuses_GetLeadSubStatus : FeedingFrenzyJsonWsAdminAction
 	}
 }
 
-prototype LeadSubStatuses_GetLeadSubStatuses : FeedingFrenzyJsonWsAdminAction
+prototype LeadSubStatuses_GetLeadSubStatuses : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
 {
 	function Execute(FeedingFrenzyJsonWsService service) : string
 	{
@@ -18,7 +18,7 @@ prototype LeadSubStatuses_GetLeadSubStatuses : FeedingFrenzyJsonWsAdminAction
 	}
 }
 
-prototype LeadSubStatuses_GetLeadSubStatusBySubStatusName : FeedingFrenzyJsonWsAdminAction
+prototype LeadSubStatuses_GetLeadSubStatusBySubStatusName : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, string SubStatusName) : string
 	{
@@ -29,7 +29,7 @@ prototype LeadSubStatuses_GetLeadSubStatusBySubStatusName : FeedingFrenzyJsonWsA
 	}
 }
 
-prototype LeadSubStatuses_GetLeadSubStatusesByLeadStatusID : FeedingFrenzyJsonWsAdminAction
+prototype LeadSubStatuses_GetLeadSubStatusesByLeadStatusID : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, int LeadStatusID) : string
 	{

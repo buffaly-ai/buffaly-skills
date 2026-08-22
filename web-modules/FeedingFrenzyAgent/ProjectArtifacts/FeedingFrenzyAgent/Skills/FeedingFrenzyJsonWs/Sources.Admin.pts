@@ -1,4 +1,4 @@
-prototype Sources_GetSource : FeedingFrenzyJsonWsAdminAction
+prototype Sources_GetSource : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, int SourceID) : string
 	{
@@ -9,7 +9,7 @@ prototype Sources_GetSource : FeedingFrenzyJsonWsAdminAction
 	}
 }
 
-prototype Sources_GetSources : FeedingFrenzyJsonWsAdminAction
+prototype Sources_GetSources : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
 {
 	function Execute(FeedingFrenzyJsonWsService service) : string
 	{
@@ -18,7 +18,7 @@ prototype Sources_GetSources : FeedingFrenzyJsonWsAdminAction
 	}
 }
 
-prototype Sources_GetSourceBySourceName : FeedingFrenzyJsonWsAdminAction
+prototype Sources_GetSourceBySourceName : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, string SourceName) : string
 	{

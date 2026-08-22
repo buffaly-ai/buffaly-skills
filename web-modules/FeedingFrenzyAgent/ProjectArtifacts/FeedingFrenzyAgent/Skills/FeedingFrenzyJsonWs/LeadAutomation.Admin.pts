@@ -1,7 +1,7 @@
 [SemanticProgram.InfinitivePhrase("to search feeding frenzy leads")]
 [SemanticProgram.InfinitivePhrase("to search feeding frenzy leads by name")]
 [SemanticProgram.InfinitivePhrase("to find feeding frenzy lead")]
-prototype LeadAutomation_GetLeadsBySearch : FeedingFrenzyJsonWsAdminAction
+prototype LeadAutomation_GetLeadsBySearch : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.LeadAutomation.GetLeadsBySearch(Search). Returns raw response JSON string.";
 
@@ -14,7 +14,7 @@ prototype LeadAutomation_GetLeadsBySearch : FeedingFrenzyJsonWsAdminAction
 	}
 }
 
-prototype LeadAutomation_GetLeadsByTagName : FeedingFrenzyJsonWsAdminAction
+prototype LeadAutomation_GetLeadsByTagName : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.LeadAutomation.GetLeadsByTagName(TagName, Search, SortColumn, SortAscending, SkipRows, NumRows). Returns raw response JSON string.";
 
@@ -34,7 +34,7 @@ prototype LeadAutomation_GetLeadsByTagName : FeedingFrenzyJsonWsAdminAction
 
 [SemanticProgram.InfinitivePhrase("to get feeding frenzy lead and notes as markdown")]
 [SemanticProgram.InfinitivePhrase("to get feeding frenzy lead context")]
-prototype LeadAutomation_GetLeadAndNotesAsMarkdown : FeedingFrenzyJsonWsAdminAction
+prototype LeadAutomation_GetLeadAndNotesAsMarkdown : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.LeadAutomation.GetLeadAndNotesAsMarkdown(LeadID). Returns raw response JSON string.";
 

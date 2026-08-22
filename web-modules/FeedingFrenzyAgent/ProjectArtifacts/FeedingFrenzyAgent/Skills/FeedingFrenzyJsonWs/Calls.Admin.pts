@@ -1,7 +1,7 @@
 [SemanticProgram.InfinitivePhrase("to start an observation call")]
 [SemanticProgram.InfinitivePhrase("to originate a monitored feeding frenzy call")]
 [SemanticProgram.InfinitivePhrase("to begin observing an outbound call")]
-prototype ToStartObservationCall : FeedingFrenzyJsonWsAdminGuardedWriteAction
+prototype ToStartObservationCall : FeedingFrenzyJsonWsAdminGuardedWriteAction, FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"Starts a direct-dial observation call through Feeding Frenzy. service - required remote or local FeedingFrenzyJsonWsService binding. ToPhone - required lead destination. FromPhone - optional configured Twilio caller ID. Record - whether FF requests dual-channel recording. BaseUrl - optional FF callback/driver base URL. DeskPhone - optional by contract but currently rejected by FF until API-originated screening is proven. Returns JSON with CallID, CallKey, DriverUrl, and Status. This action can place a billable external call and must be used only with explicit operator approval.";
 
@@ -21,7 +21,7 @@ prototype ToStartObservationCall : FeedingFrenzyJsonWsAdminGuardedWriteAction
 [SemanticProgram.InfinitivePhrase("to cancel an observation call")]
 [SemanticProgram.InfinitivePhrase("to hang up a feeding frenzy call")]
 [SemanticProgram.InfinitivePhrase("to stop a monitored outbound call")]
-prototype ToCancelObservationCall : FeedingFrenzyJsonWsAdminGuardedWriteAction
+prototype ToCancelObservationCall : FeedingFrenzyJsonWsAdminGuardedWriteAction, FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"Requests idempotent cancellation of an active Feeding Frenzy observation call. service - required remote or local FeedingFrenzyJsonWsService binding. CallID - numeric call identifier. Returns JSON distinguishing an already-terminal call from a newly requested Twilio hangup. The caller must continue polling ToGetCallTranscript until terminal status is confirmed.";
 
@@ -35,7 +35,7 @@ prototype ToCancelObservationCall : FeedingFrenzyJsonWsAdminGuardedWriteAction
 }
 
 [SemanticProgram.InfinitivePhrase("to get feeding frenzy calls by date range")]
-prototype Calls_GetCallsByDateRange : FeedingFrenzyJsonWsAdminAction
+prototype Calls_GetCallsByDateRange : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. StartDate and EndDate should be ISO-like date strings accepted by Feeding Frenzy JsonWs DateTime binding.";
 
@@ -50,7 +50,7 @@ prototype Calls_GetCallsByDateRange : FeedingFrenzyJsonWsAdminAction
 }
 
 [SemanticProgram.InfinitivePhrase("to get feeding frenzy calls by date range as markdown")]
-prototype Calls_GetCallsByDateRangeAsMarkdown : FeedingFrenzyJsonWsAdminAction
+prototype Calls_GetCallsByDateRangeAsMarkdown : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. StartDate and EndDate should be ISO-like date strings accepted by Feeding Frenzy JsonWs DateTime binding. Returns a markdown call summary when available.";
 
@@ -66,7 +66,7 @@ prototype Calls_GetCallsByDateRangeAsMarkdown : FeedingFrenzyJsonWsAdminAction
 
 [SemanticProgram.InfinitivePhrase("to get active transcribed calls")]
 [SemanticProgram.InfinitivePhrase("to discover active observation calls")]
-prototype ToGetActiveTranscribedCalls : FeedingFrenzyJsonWsAdminAction
+prototype ToGetActiveTranscribedCalls : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"Discovers active transcribed Feeding Frenzy calls from the last 12 hours. service - required remote or local FeedingFrenzyJsonWsService binding. Returns a JSON array of compact call objects with CallID, CallKey, CallStatus, Duration, TranscriptVersion, and LastUpdated. Filters to nonterminal, streamed, realtime-transcribed calls. Capped at 100, newest first. Use this for passive call discovery before polling individual transcripts.";
 
@@ -80,7 +80,7 @@ prototype ToGetActiveTranscribedCalls : FeedingFrenzyJsonWsAdminAction
 
 [SemanticProgram.InfinitivePhrase("to update buffaly observer state")]
 [SemanticProgram.InfinitivePhrase("to write buffaly call observation state")]
-prototype ToUpdateBuffalyObserverState : FeedingFrenzyJsonWsAdminGuardedWriteAction
+prototype ToUpdateBuffalyObserverState : FeedingFrenzyJsonWsAdminGuardedWriteAction, FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"Writes a bounded Buffaly observer state snapshot to the Feeding Frenzy call row DataObject['BuffalyObserver']. service - required remote or local FeedingFrenzyJsonWsService binding. CallID - numeric call identifier. Sequence - monotonically increasing write sequence; equal or older sequences are ignored. Lifecycle - one of RINGING, IN_PROGRESS, DONE, FAILED, CANCELLED. Category - one of Unknown, HumanAnswered, IVR, Voicemail, InvalidNumber, Screening, DeadAir. Confidence - 0 to 1. Reason - bounded text explanation (max 500 chars). LastTranscriptVersion - transcript version this snapshot is based on. Returns JSON with Accepted (bool) and Sequence (int). This is a guarded write because it modifies FF call data, but it only writes the namespaced BuffalyObserver object and never overwrites native AICallOutcome fields or unrelated DataObject properties.";
 

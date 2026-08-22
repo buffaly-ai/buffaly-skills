@@ -1,5 +1,5 @@
 [SemanticProgram.InfinitivePhrase("to get feeding frenzy user summary")]
-prototype UserAutomation_GetUserSummary : FeedingFrenzyJsonWsAdminAction
+prototype UserAutomation_GetUserSummary : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. UserID - numeric user id. bForceRefresh controls whether Feeding Frenzy should refresh the summary.";
 
@@ -14,7 +14,7 @@ prototype UserAutomation_GetUserSummary : FeedingFrenzyJsonWsAdminAction
 }
 
 [SemanticProgram.InfinitivePhrase("to chat with feeding frenzy user info")]
-prototype UserAutomation_ChatWithUserInfo : FeedingFrenzyJsonWsAdminAction
+prototype UserAutomation_ChatWithUserInfo : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. UserID, Prompt, and bIncludeDocuments map to FeedingFrenzy.Admin.Business.UserAutomation.ChatWithUserInfo.";
 
