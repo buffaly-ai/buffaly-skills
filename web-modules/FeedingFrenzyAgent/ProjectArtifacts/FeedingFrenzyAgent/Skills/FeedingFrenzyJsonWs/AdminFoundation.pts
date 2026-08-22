@@ -1,9 +1,18 @@
-prototype FeedingFrenzyJsonWsAdminAction : FeedingFrenzyJsonWsSkillAction
+prototype FeedingFrenzyJsonWsAdminRootAction : OpsAction
+{
+	Description = @"Action root for the complete administrator Feeding Frenzy tool surface.";
+}
+
+prototype FeedingFrenzyJsonWsSkillAction : FeedingFrenzyJsonWsAdminRootAction
+{
+}
+
+prototype FeedingFrenzyJsonWsAdminAction : FeedingFrenzyJsonWsAdminRootAction
 {
 	Description = @"Base action type for administrator-only Feeding Frenzy JSON WS tools.";
 }
 
-prototype FeedingFrenzyJsonWsAdminGuardedWriteAction : FeedingFrenzyJsonWsGuardedWriteAction
+prototype FeedingFrenzyJsonWsAdminGuardedWriteAction : FeedingFrenzyJsonWsAdminRootAction
 {
 	Description = @"Base action type for administrator-only Feeding Frenzy JSON WS write tools.";
 }
