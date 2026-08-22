@@ -1,4 +1,9 @@
-prototype FeedingFrenzyJsonWsSkillAction : OpsAction
+prototype FeedingFrenzyJsonWsAdminRootAction : OpsAction
+{
+	Description = @"Action root for the complete administrator Feeding Frenzy tool surface.";
+}
+
+prototype FeedingFrenzyJsonWsSkillAction : FeedingFrenzyJsonWsAdminRootAction
 {
 	Description = @"Base action type for read-oriented Feeding Frenzy JSON WS service tools.";
 }
