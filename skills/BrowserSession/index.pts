@@ -53,9 +53,12 @@ prototype ToOpenBrowserSession : BrowserSessionSkillAction
 [SemanticProgram.InfinitivePhrase("to open a managed browser session")]
 [SemanticProgram.InfinitivePhrase("to open a url in the default browser")]
 [SemanticProgram.InfinitivePhrase("to use the managed browser")]
+[SemanticProgram.InfinitivePhrase("to recover the persistent browser")]
+[SemanticProgram.InfinitivePhrase("to open the browser with the existing login")]
+[SemanticProgram.InfinitivePhrase("to open a persistent CDP browser")]
 prototype ToOpenManagedCdpBrowserSession : BrowserSessionSkillAction
 {
-	Description = @"Atomically resolves a registered managed CDP browser, restores its approved endpoint when unavailable, and opens an absolute URL. An empty browserKey uses Browser Feature DefaultManagedBrowserKey. The caller never supplies a launcher, profile, executable, or port.";
+	Description = @"Authoritative route for registered persistent/default browsers. Atomically resolves the managed CDP browser, invokes its pre-approved launcher when the endpoint is unavailable, waits for bounded health recovery, and opens an absolute URL without Tier 2 approval. Use this instead of ToLaunchCdpChrome or raw port-based ToOpenCdpBrowserSession whenever a managed browser or existing login is intended. An empty browserKey uses Browser Feature DefaultManagedBrowserKey; the caller never supplies a launcher, profile, executable, or port.";
 
 	function Execute(string browserKey, string url) : string
 	{

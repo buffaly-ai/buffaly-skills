@@ -9,7 +9,7 @@ prototype UseBrowserSkill : PromptAction, BrowserSessionSkillAction
 	SkillKind = "prompt";
 	SkillVersion = "1.0.0";
 	PromptPath = @"Skills/BrowserSession/Prompts/UseBrowserSkill.prompt.md";
-	Description = @"Prompt/routing skill for the canonical default C# CDP Browser Skill. Generic browser requests route here; Playwright and domain-specific workflows remain explicit.";
+	Description = @"Prompt/routing skill for the canonical default C# CDP Browser Skill. Generic and persistent existing-login browser requests route here; registered managed browsers recover through ToOpenManagedCdpBrowserSession without Tier 2 approval. Playwright and raw caller-selected CDP diagnostics remain explicit.";
 }
 
 [SemanticProgram.InfinitivePhrase("to use Playwright")]

@@ -30,13 +30,15 @@ Use `ToRunBrowserScript` only when you specifically need JavaScript evaluated in
 ## Routing rules
 
 1. Use `BrowserSkill` for unqualified browser automation. The default backend is C# CDP.
-2. Use `PlaywrightBrowserSkill`, `ToOpenPlaywrightBrowserSession`, and `ToRunPlaywrightScript` only when the user explicitly asks for Playwright or an isolated browser context.
-3. Use `ToRunBrowserScript` for page JavaScript; it runs against the selected Browser Skill session.
-4. Do not provide, infer, probe, or depend on Browser web-module URLs, internal ports, `BaseUrl`, `WorkerFeature.InternalBaseUrl`, or JsonWs routes for normal browser automation. Direct BrowserSession tools call `BrowserTools` in process.
-5. Do not revive or route normal requests to the removed autonomous Browser Workbench runner.
-6. Use a domain skill for known workflows such as Tebra note insertion; do not encode Tebra-specific logic in generic browser tools.
-7. Every mutation must be followed by deterministic verification using URL, selector text/value, DOM state, console diagnostics, or screenshot evidence.
-8. Screenshots are audit evidence, not the sole source of truth.
+2. For a registered persistent/default browser, existing-login browser, or unavailable managed CDP endpoint, call `ToOpenManagedCdpBrowserSession(browserKey, url)` first. It owns approved launcher invocation and bounded endpoint recovery; this managed recovery does not require Tier 2 approval.
+3. Never substitute `ToLaunchCdpChrome`, `ToCheckCdpChrome`, or raw port-based `ToOpenCdpBrowserSession` for a registered managed browser. Those CdpBrowser actions are explicit low-level diagnostics for caller-selected ports/profiles and may require approval; they are not normal startup or recovery routes.
+4. Use `PlaywrightBrowserSkill`, `ToOpenPlaywrightBrowserSession`, and `ToRunPlaywrightScript` only when the user explicitly asks for Playwright or an isolated browser context.
+5. Use `ToRunBrowserScript` for page JavaScript; it runs against the selected Browser Skill session.
+6. Do not provide, infer, probe, or depend on Browser web-module URLs, internal ports, `BaseUrl`, `WorkerFeature.InternalBaseUrl`, or JsonWs routes for normal browser automation. Direct BrowserSession tools call `BrowserTools` in process.
+7. Do not revive or route normal requests to the removed autonomous Browser Workbench runner.
+8. Use a domain skill for known workflows such as Tebra note insertion; do not encode Tebra-specific logic in generic browser tools.
+9. Every mutation must be followed by deterministic verification using URL, selector text/value, DOM state, console diagnostics, or screenshot evidence.
+10. Screenshots are audit evidence, not the sole source of truth.
 
 ## Secret handling
 
