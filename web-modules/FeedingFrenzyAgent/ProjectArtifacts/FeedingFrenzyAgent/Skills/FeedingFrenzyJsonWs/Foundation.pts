@@ -3,7 +3,7 @@ prototype FeedingFrenzyJsonWsSkillAction : OpsAction
 	Description = @"Base action type for read-oriented Feeding Frenzy JSON WS service tools.";
 }
 
-prototype FeedingFrenzyJsonWsGuardedWriteAction : OpsAction
+prototype FeedingFrenzyJsonWsGuardedWriteAction : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"Base action type for narrow Feeding Frenzy JSON WS write tools.";
 }
