@@ -18,6 +18,31 @@ prototype ToSearchGoogleWorkspaceMessages : GoogleWorkspaceSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to process dmarc aggregate reports")]
+prototype ToProcessDmarcAggregateReportsDeterministically : GoogleWorkspaceSkillAction
+{
+	Description = @"Processes bounded Gmail DMARC XML/XML.GZ/ZIP aggregate-report attachments, writes a manifest, and archives only messages whose report attachment parsed successfully by removing INBOX. accountKey and outputDirectory required; query defaults to broad Inbox DMARC coverage.";
+
+	function Execute(string accountKey, string scopePreset, string query, string outputDirectory, int maxMessages) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "gmail.modify";
+		if (StringUtil.IsEmpty(query))
+			query = "in:inbox newer_than:7d (DMARC OR dmarc OR dmark OR \"aggregate report\" OR \"Report domain\" OR \"Report Domain\")";
+		if (maxMessages <= 0)
+			maxMessages = 50;
+
+		return GoogleWorkspaceServiceHost.ProcessDmarcAggregateReportsAsync(
+			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
+			query,
+			outputDirectory,
+			maxMessages,
+			false,
+			new CancellationToken(false));
+	}
+}
+
 prototype ToSearchGoogleWorkspaceMessagesRaw : GoogleWorkspaceSkillAction
 {
 	Description = @"accountKey - authorized account key. scopePreset - defaults to gmail.read when empty. query - Gmail query string. maxResults - 1..500. Returns JSON.";
