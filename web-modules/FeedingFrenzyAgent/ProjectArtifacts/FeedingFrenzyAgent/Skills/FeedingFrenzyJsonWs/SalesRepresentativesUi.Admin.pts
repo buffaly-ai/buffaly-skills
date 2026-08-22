@@ -1,4 +1,4 @@
-prototype SalesRepresentativesAdmin_GetDetails : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype SalesRepresentativesAdmin_GetDetails : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, string SalesRepresentativeID) : string
 	{
@@ -9,7 +9,7 @@ prototype SalesRepresentativesAdmin_GetDetails : FeedingFrenzyJsonWsAdminAction,
 	}
 }
 
-prototype SalesRepresentativesAdmin_GetDropDown : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype SalesRepresentativesAdmin_GetDropDown : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, string Name, string Value, string FieldName, string PreOptions) : string
 	{
@@ -23,7 +23,7 @@ prototype SalesRepresentativesAdmin_GetDropDown : FeedingFrenzyJsonWsAdminAction
 	}
 }
 
-prototype SalesRepresentativesAdmin_GetEdit : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype SalesRepresentativesAdmin_GetEdit : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, string SalesRepresentativeID) : string
 	{
@@ -34,7 +34,7 @@ prototype SalesRepresentativesAdmin_GetEdit : FeedingFrenzyJsonWsAdminAction, Fe
 	}
 }
 
-prototype SalesRepresentativesAdmin_GetGrid : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype SalesRepresentativesAdmin_GetGrid : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, string Search, string SortColumn, string SortAscending, string SkipRows, string NumRows) : string
 	{
@@ -49,7 +49,7 @@ prototype SalesRepresentativesAdmin_GetGrid : FeedingFrenzyJsonWsAdminAction, Fe
 	}
 }
 
-prototype SalesRepresentativesAdmin_GetGridBySalesRepresentativeTypeID : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype SalesRepresentativesAdmin_GetGridBySalesRepresentativeTypeID : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, string SalesRepresentativeTypeID, string Search, string SortColumn, string SortAscending, string SkipRows, string NumRows) : string
 	{
@@ -65,7 +65,7 @@ prototype SalesRepresentativesAdmin_GetGridBySalesRepresentativeTypeID : Feeding
 	}
 }
 
-prototype SalesRepresentativesAdmin_GetGridBySalesRepresentativeTypeIDCount : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype SalesRepresentativesAdmin_GetGridBySalesRepresentativeTypeIDCount : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, string SalesRepresentativeTypeID, string Search) : string
 	{
@@ -77,7 +77,7 @@ prototype SalesRepresentativesAdmin_GetGridBySalesRepresentativeTypeIDCount : Fe
 	}
 }
 
-prototype SalesRepresentativesAdmin_GetGridBySalesRepresentativeTypeIDHtml : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype SalesRepresentativesAdmin_GetGridBySalesRepresentativeTypeIDHtml : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, string SalesRepresentativeTypeID, string Search, string SortColumn, string SortAscending, string SkipRows, string NumRows) : string
 	{
@@ -93,7 +93,7 @@ prototype SalesRepresentativesAdmin_GetGridBySalesRepresentativeTypeIDHtml : Fee
 	}
 }
 
-prototype SalesRepresentativesAdmin_GetGridCount : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype SalesRepresentativesAdmin_GetGridCount : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, string Search) : string
 	{
@@ -104,7 +104,7 @@ prototype SalesRepresentativesAdmin_GetGridCount : FeedingFrenzyJsonWsAdminActio
 	}
 }
 
-prototype SalesRepresentativesAdmin_GetGridHtml : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype SalesRepresentativesAdmin_GetGridHtml : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, string Search, string SortColumn, string SortAscending, string SkipRows, string NumRows) : string
 	{
@@ -119,7 +119,7 @@ prototype SalesRepresentativesAdmin_GetGridHtml : FeedingFrenzyJsonWsAdminAction
 	}
 }
 
-prototype SalesRepresentativesAdmin_GetInsert : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype SalesRepresentativesAdmin_GetInsert : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service) : string
 	{
@@ -128,7 +128,7 @@ prototype SalesRepresentativesAdmin_GetInsert : FeedingFrenzyJsonWsAdminAction, 
 	}
 }
 
-prototype SalesRepresentativesAdmin_Initialize : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype SalesRepresentativesAdmin_Initialize : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service) : string
 	{

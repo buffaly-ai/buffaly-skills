@@ -1,5 +1,5 @@
 [SemanticProgram.InfinitivePhrase("to get feeding frenzy user by id")]
-prototype Users_GetUser : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype Users_GetUser : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. UserID - numeric user id.";
 
@@ -13,7 +13,7 @@ prototype Users_GetUser : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSki
 }
 
 [SemanticProgram.InfinitivePhrase("to get feeding frenzy user by email")]
-prototype FeedingFrenzyJsonWs_Users_GetUserByEmail : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype FeedingFrenzyJsonWs_Users_GetUserByEmail : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. Email - user email address.";
 
@@ -27,7 +27,7 @@ prototype FeedingFrenzyJsonWs_Users_GetUserByEmail : FeedingFrenzyJsonWsAdminAct
 }
 
 [SemanticProgram.InfinitivePhrase("to search feeding frenzy users")]
-prototype Users_GetUsersSp_PagingSp : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype Users_GetUsersSp_PagingSp : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. Search, SortColumn, SortAscending, SkipRows, NumRows map to FeedingFrenzy.Admin.Business.Users.GetUsersSp_PagingSp.";
 

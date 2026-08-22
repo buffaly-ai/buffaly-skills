@@ -1,5 +1,5 @@
 [SemanticProgram.InfinitivePhrase("to get a feeding frenzy task")]
-prototype Tasks_GetTask : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype Tasks_GetTask : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	Description = @"Gets one task through FeedingFrenzy.Admin.Business.Tasks.GetTask.";
 	function Execute(FeedingFrenzyJsonWsService service, int TaskID) : string
@@ -12,7 +12,7 @@ prototype Tasks_GetTask : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSki
 }
 
 [SemanticProgram.InfinitivePhrase("to list feeding frenzy tasks")]
-prototype Tasks_GetTasks : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype Tasks_GetTasks : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	Description = @"Lists tasks through FeedingFrenzy.Admin.Business.Tasks.GetTasks.";
 	function Execute(FeedingFrenzyJsonWsService service) : string
@@ -23,7 +23,7 @@ prototype Tasks_GetTasks : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSk
 }
 
 [SemanticProgram.InfinitivePhrase("to list feeding frenzy tasks by status")]
-prototype Tasks_GetTasksByTaskStatusID : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype Tasks_GetTasksByTaskStatusID : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	Description = @"Lists tasks for one TaskStatusID through the generated Tasks JsonWs route.";
 	function Execute(FeedingFrenzyJsonWsService service, int TaskStatusID) : string
@@ -36,7 +36,7 @@ prototype Tasks_GetTasksByTaskStatusID : FeedingFrenzyJsonWsAdminAction, Feeding
 }
 
 [SemanticProgram.InfinitivePhrase("to get a feeding frenzy task status")]
-prototype TaskStatuses_GetTaskStatus : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype TaskStatuses_GetTaskStatus : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	Description = @"Gets one task status through FeedingFrenzy.Admin.Business.TaskStatuses.GetTaskStatus.";
 	function Execute(FeedingFrenzyJsonWsService service, int TaskStatusID) : string
@@ -49,7 +49,7 @@ prototype TaskStatuses_GetTaskStatus : FeedingFrenzyJsonWsAdminAction, FeedingFr
 }
 
 [SemanticProgram.InfinitivePhrase("to list feeding frenzy task statuses")]
-prototype TaskStatuses_GetTaskStatuses : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype TaskStatuses_GetTaskStatuses : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	Description = @"Lists task statuses through FeedingFrenzy.Admin.Business.TaskStatuses.GetTaskStatuses.";
 	function Execute(FeedingFrenzyJsonWsService service) : string
@@ -60,7 +60,7 @@ prototype TaskStatuses_GetTaskStatuses : FeedingFrenzyJsonWsAdminAction, Feeding
 }
 
 [SemanticProgram.InfinitivePhrase("to get a feeding frenzy task status by name")]
-prototype TaskStatuses_GetTaskStatusByTaskStatusName : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype TaskStatuses_GetTaskStatusByTaskStatusName : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	Description = @"Gets one task status by exact TaskStatusName through the generated TaskStatuses JsonWs route.";
 	function Execute(FeedingFrenzyJsonWsService service, string TaskStatusName) : string
@@ -73,7 +73,7 @@ prototype TaskStatuses_GetTaskStatusByTaskStatusName : FeedingFrenzyJsonWsAdminA
 }
 
 [SemanticProgram.InfinitivePhrase("to create a feeding frenzy task")]
-prototype Tasks_InsertTask : FeedingFrenzyJsonWsAdminGuardedWriteAction, FeedingFrenzyJsonWsSkillAction
+prototype Tasks_InsertTask : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
 	Description = @"Creates a task through generated Tasks.InsertTask. AssignToUserID 0 means unassigned and is sent as null. DueDate is an ISO-like string; pass an empty string for no due date. Data must contain only approved task metadata.";
 	function Execute(FeedingFrenzyJsonWsService service, string TaskDescription, int TaskStatusID, int AssignToUserID, int CreatedByUserID, string Data, string DueDate, string Notes) : string
@@ -93,7 +93,7 @@ prototype Tasks_InsertTask : FeedingFrenzyJsonWsAdminGuardedWriteAction, Feeding
 }
 
 [SemanticProgram.InfinitivePhrase("to update a feeding frenzy task")]
-prototype Tasks_UpdateTask : FeedingFrenzyJsonWsAdminGuardedWriteAction, FeedingFrenzyJsonWsSkillAction
+prototype Tasks_UpdateTask : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
 	Description = @"Updates a task through generated Tasks.UpdateTask. AssignToUserID 0 means unassigned and is sent as null. DueDate is an ISO-like string; pass an empty string for no due date.";
 	function Execute(FeedingFrenzyJsonWsService service, int TaskID, string TaskDescription, int TaskStatusID, int AssignToUserID, int CreatedByUserID, string Data, string DueDate, string Notes) : string
@@ -114,7 +114,7 @@ prototype Tasks_UpdateTask : FeedingFrenzyJsonWsAdminGuardedWriteAction, Feeding
 }
 
 [SemanticProgram.InfinitivePhrase("to update feeding frenzy task data")]
-prototype Tasks_UpdateTaskData : FeedingFrenzyJsonWsAdminGuardedWriteAction, FeedingFrenzyJsonWsSkillAction
+prototype Tasks_UpdateTaskData : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
 	Description = @"Updates only a task's Data JSON through generated Tasks.UpdateTaskData.";
 	function Execute(FeedingFrenzyJsonWsService service, int TaskID, string Data) : string
@@ -128,7 +128,7 @@ prototype Tasks_UpdateTaskData : FeedingFrenzyJsonWsAdminGuardedWriteAction, Fee
 }
 
 [SemanticProgram.InfinitivePhrase("to remove a feeding frenzy task")]
-prototype Tasks_RemoveTask : FeedingFrenzyJsonWsAdminGuardedWriteAction, FeedingFrenzyJsonWsSkillAction
+prototype Tasks_RemoveTask : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
 	Description = @"Removes one task through generated Tasks.RemoveTask.";
 	function Execute(FeedingFrenzyJsonWsService service, int TaskID) : string

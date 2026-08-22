@@ -1,5 +1,5 @@
 [SemanticProgram.InfinitivePhrase("to list feeding frenzy agreement templates")]
-prototype ToListFeedingFrenzyAgreementTemplates : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype ToListFeedingFrenzyAgreementTemplates : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
     Description = @"Lists active current agreement templates that Buffaly may retrieve and customize.";
     function Execute(FeedingFrenzyJsonWsService service) : string
@@ -10,7 +10,7 @@ prototype ToListFeedingFrenzyAgreementTemplates : FeedingFrenzyJsonWsAdminAction
 }
 
 [SemanticProgram.InfinitivePhrase("to get a feeding frenzy agreement template")]
-prototype ToGetFeedingFrenzyAgreementTemplate : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype ToGetFeedingFrenzyAgreementTemplate : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
     Description = @"Gets one active current agreement template, including Markdown, by TemplateKey.";
     function Execute(FeedingFrenzyJsonWsService service, string TemplateKey) : string
@@ -23,7 +23,7 @@ prototype ToGetFeedingFrenzyAgreementTemplate : FeedingFrenzyJsonWsAdminAction, 
 
 [SemanticProgram.InfinitivePhrase("to insert a feeding frenzy agreement template")]
 [SemanticProgram.InfinitivePhrase("to register a feeding frenzy agreement template")]
-prototype ToInsertFeedingFrenzyAgreementTemplate : FeedingFrenzyJsonWsAdminGuardedWriteAction, FeedingFrenzyJsonWsSkillAction
+prototype ToInsertFeedingFrenzyAgreementTemplate : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
     Description = @"Registers one Feeding Frenzy agreement template through the server-owned AgreementTemplates insert route. This only inserts a reusable template; it does not create a signing request or send anything.";
 	function Execute(FeedingFrenzyJsonWsService service, string TemplateKey, string DisplayName, string TemplateDescription, string Category, string Cautions, string MarkdownContent, string SourceFileName, bool IsActive, int SortOrder, string Data) : string
@@ -35,7 +35,7 @@ prototype ToInsertFeedingFrenzyAgreementTemplate : FeedingFrenzyJsonWsAdminGuard
 }
 
 [SemanticProgram.InfinitivePhrase("to create a feeding frenzy signing draft from markdown")]
-prototype ToCreateFeedingFrenzySigningDraftFromMarkdown : FeedingFrenzyJsonWsAdminGuardedWriteAction, FeedingFrenzyJsonWsSkillAction
+prototype ToCreateFeedingFrenzySigningDraftFromMarkdown : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
     Description = @"Attaches completed Markdown to a lead and creates the ordinary document-signing request in Draft. Does not send it.";
     function Execute(FeedingFrenzyJsonWsService service, int LeadID, string DocumentName, string MarkdownContent, string CustomerLegalName, string RecipientName, string RecipientEmail, string ExpirationDate, int ReminderIntervalDays, int ProviderSignerUserID, string SourceFileName, string AgreementTemplateKey) : string
@@ -48,7 +48,7 @@ prototype ToCreateFeedingFrenzySigningDraftFromMarkdown : FeedingFrenzyJsonWsAdm
 }
 
 [SemanticProgram.InfinitivePhrase("to create a feeding frenzy signing draft from uploaded markdown file")]
-prototype ToCreateFeedingFrenzySigningDraftFromUploadedMarkdownFile : FeedingFrenzyJsonWsAdminGuardedWriteAction, FeedingFrenzyJsonWsSkillAction
+prototype ToCreateFeedingFrenzySigningDraftFromUploadedMarkdownFile : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
     Description = @"Uploads the exact local Markdown file to Feeding Frenzy first, then creates the signing Draft from the uploaded file reference. The full agreement body is never passed as a JsonWs MarkdownContent argument. Does not send email.";
     function Execute(FeedingFrenzyJsonWsService service, int LeadID, string DocumentName, string LocalMarkdownFilePath, string CustomerLegalName, string RecipientName, string RecipientEmail, string ExpirationDate, int ReminderIntervalDays, string SourceFileName, string AgreementTemplateKey) : string
@@ -72,7 +72,7 @@ prototype ToCreateFeedingFrenzySigningDraftFromUploadedMarkdownFile : FeedingFre
 [SemanticProgram.InfinitivePhrase("to list feeding frenzy signing requests for a lead")]
 [SemanticProgram.InfinitivePhrase("to list signing drafts for a lead")]
 [SemanticProgram.InfinitivePhrase("to inventory document signing drafts for a lead")]
-prototype ToListFeedingFrenzySigningRequestsForLead : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype ToListFeedingFrenzySigningRequestsForLead : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	Description = @"Lists a bounded, redacted inventory of signing requests for one authorized lead and reports duplicate Draft hints. Read-only; never sends or returns token secrets.";
 	function Execute(FeedingFrenzyJsonWsService service, int LeadID, string StatusFilter, int MaxRows) : string
@@ -84,7 +84,7 @@ prototype ToListFeedingFrenzySigningRequestsForLead : FeedingFrenzyJsonWsAdminAc
 
 [SemanticProgram.InfinitivePhrase("to get a feeding frenzy signing request")]
 [SemanticProgram.InfinitivePhrase("to inspect a document signing request")]
-prototype ToGetFeedingFrenzySigningRequest : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype ToGetFeedingFrenzySigningRequest : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	Description = @"Gets one authorized signing-request read model. Token values and signed document bytes are never returned; Markdown is included only when IncludeMarkdown is true.";
 	function Execute(FeedingFrenzyJsonWsService service, int LeadDocumentSigningRequestID, int LeadID, bool IncludeMarkdown) : string
@@ -96,7 +96,7 @@ prototype ToGetFeedingFrenzySigningRequest : FeedingFrenzyJsonWsAdminAction, Fee
 
 [SemanticProgram.InfinitivePhrase("to update a feeding frenzy signing draft from markdown")]
 [SemanticProgram.InfinitivePhrase("to revise an unsent document signing draft")]
-prototype ToUpdateFeedingFrenzySigningDraftFromMarkdown : FeedingFrenzyJsonWsAdminGuardedWriteAction, FeedingFrenzyJsonWsSkillAction
+prototype ToUpdateFeedingFrenzySigningDraftFromMarkdown : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
 	Description = @"Updates exactly one pristine unsent signing Draft through the server lifecycle owner. Requires expected version/hash, never sends email or mints signing tokens, and returns updated version/hash proof.";
 	function Execute(FeedingFrenzyJsonWsService service, int LeadDocumentSigningRequestID, string ExpectedDocumentVersion, string ExpectedMarkdownHash, string DocumentName, string MarkdownContent, string CustomerLegalName, string RecipientName, string RecipientTitle, string RecipientEmail, string ExpirationDate, int ReminderIntervalDays, string Subject, string Message, bool SendCompletedCopyToCustomer, bool SendCompletedCopyToProvider, int ProviderSignerUserID) : string
@@ -108,7 +108,7 @@ prototype ToUpdateFeedingFrenzySigningDraftFromMarkdown : FeedingFrenzyJsonWsAdm
 
 [SemanticProgram.InfinitivePhrase("to prepare a feeding frenzy signing request to send")]
 [SemanticProgram.InfinitivePhrase("to create a signable feeding frenzy signing link")]
-prototype ToPrepareFeedingFrenzySigningRequestToSend : FeedingFrenzyJsonWsAdminGuardedWriteAction, FeedingFrenzyJsonWsSkillAction
+prototype ToPrepareFeedingFrenzySigningRequestToSend : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
 	Description = @"Runs the server-owned document signing preflight and prepares a Draft or outstanding request for delivery. This mints a signing token/link but does not send email.";
 	function Execute(FeedingFrenzyJsonWsService service, int LeadDocumentSigningRequestID, string Subject, string Message) : string
@@ -122,7 +122,7 @@ prototype ToPrepareFeedingFrenzySigningRequestToSend : FeedingFrenzyJsonWsAdminG
 
 [SemanticProgram.InfinitivePhrase("to send a prepared feeding frenzy signing email")]
 [SemanticProgram.InfinitivePhrase("to send a feeding frenzy signing request")]
-prototype ToSendPreparedFeedingFrenzySigningEmail : FeedingFrenzyJsonWsAdminGuardedWriteAction, FeedingFrenzyJsonWsSkillAction
+prototype ToSendPreparedFeedingFrenzySigningEmail : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
 	Description = @"Sends the prepared document signing email through the server lifecycle owner and marks the request Sent. Requires a SigningUrl returned by prepare-to-send.";
 	function Execute(FeedingFrenzyJsonWsService service, int LeadDocumentSigningRequestID, string SigningUrl) : string
@@ -136,7 +136,7 @@ prototype ToSendPreparedFeedingFrenzySigningEmail : FeedingFrenzyJsonWsAdminGuar
 
 [SemanticProgram.InfinitivePhrase("to cancel a feeding frenzy signing request")]
 [SemanticProgram.InfinitivePhrase("to retire a prepared feeding frenzy signing request")]
-prototype ToCancelFeedingFrenzySigningRequest : FeedingFrenzyJsonWsAdminGuardedWriteAction, FeedingFrenzyJsonWsSkillAction
+prototype ToCancelFeedingFrenzySigningRequest : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
 	Description = @"Cancels a non-terminal Feeding Frenzy document signing request through the server lifecycle owner. This invalidates active customer/provider signing tokens and does not send email.";
 	function Execute(FeedingFrenzyJsonWsService service, int LeadDocumentSigningRequestID) : string
@@ -150,7 +150,7 @@ prototype ToCancelFeedingFrenzySigningRequest : FeedingFrenzyJsonWsAdminGuardedW
 
 [SemanticProgram.InfinitivePhrase("to update a feeding frenzy signing recipient")]
 [SemanticProgram.InfinitivePhrase("to change a signing request recipient email")]
-prototype ToUpdateFeedingFrenzySigningRecipient : FeedingFrenzyJsonWsAdminGuardedWriteAction, FeedingFrenzyJsonWsSkillAction
+prototype ToUpdateFeedingFrenzySigningRecipient : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
 	Description = @"Updates recipient name, title, and email on an unsigned, unsent Draft signing request. This invalidates any prepared customer token so the request must be prepared again before signing.";
 	function Execute(FeedingFrenzyJsonWsService service, int LeadDocumentSigningRequestID, string RecipientName, string RecipientTitle, string RecipientEmail) : string

@@ -1,6 +1,6 @@
 [SemanticProgram.InfinitivePhrase("to insert a feeding frenzy lead")]
 [SemanticProgram.InfinitivePhrase("to create a feeding frenzy lead")]
-prototype ToInsertFeedingFrenzyLead : FeedingFrenzyJsonWsAdminGuardedWriteAction, FeedingFrenzyJsonWsSkillAction
+prototype ToInsertFeedingFrenzyLead : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
 	Description = @"Creates one Feeding Frenzy lead through the server-owned Leads.InsertLead route. Use only when no existing lead matches the intended person or company.";
 
@@ -12,7 +12,7 @@ prototype ToInsertFeedingFrenzyLead : FeedingFrenzyJsonWsAdminGuardedWriteAction
 	}
 }
 
-prototype Leads_GetLeadsByCampaignID : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype Leads_GetLeadsByCampaignID : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.GetLeadsByCampaignID(CampaignID). Returns raw response JSON string.";
 
@@ -25,7 +25,7 @@ prototype Leads_GetLeadsByCampaignID : FeedingFrenzyJsonWsAdminAction, FeedingFr
 	}
 }
 
-prototype Leads_GetLeadsBySourceID : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype Leads_GetLeadsBySourceID : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.GetLeadsBySourceID(SourceID). Returns raw response JSON string.";
 
@@ -38,7 +38,7 @@ prototype Leads_GetLeadsBySourceID : FeedingFrenzyJsonWsAdminAction, FeedingFren
 	}
 }
 
-prototype Leads_GetLeadsByImportKey : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype Leads_GetLeadsByImportKey : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.GetLeadsByImportKey(ImportKey). Returns raw response JSON string.";
 
@@ -51,7 +51,7 @@ prototype Leads_GetLeadsByImportKey : FeedingFrenzyJsonWsAdminAction, FeedingFre
 	}
 }
 
-prototype Leads_GetLeadsByLeadStatusID : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype Leads_GetLeadsByLeadStatusID : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.GetLeadsByLeadStatusID(LeadStatusID). Returns raw response JSON string.";
 
@@ -64,7 +64,7 @@ prototype Leads_GetLeadsByLeadStatusID : FeedingFrenzyJsonWsAdminAction, Feeding
 	}
 }
 
-prototype Leads_GetLeadsByLeadSubStatusID : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype Leads_GetLeadsByLeadSubStatusID : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.GetLeadsByLeadSubStatusID(LeadSubStatusID). Returns raw response JSON string.";
 
@@ -77,7 +77,7 @@ prototype Leads_GetLeadsByLeadSubStatusID : FeedingFrenzyJsonWsAdminAction, Feed
 	}
 }
 
-prototype Leads_Leads_GetUnassigned_Sp_PagingSp : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype Leads_Leads_GetUnassigned_Sp_PagingSp : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.Leads_GetUnassigned_Sp_PagingSp(SalesRepresentativeID, Search, SortColumn, SortAscending, SkipRows, NumRows). Returns raw response JSON string.";
 
@@ -95,7 +95,7 @@ prototype Leads_Leads_GetUnassigned_Sp_PagingSp : FeedingFrenzyJsonWsAdminAction
 	}
 }
 
-prototype Leads_Leads_GetUnassigned_Sp_CountSp : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype Leads_Leads_GetUnassigned_Sp_CountSp : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.Leads_GetUnassigned_Sp_CountSp(SalesRepresentativeID, Search). Returns raw response JSON string.";
 
@@ -109,7 +109,7 @@ prototype Leads_Leads_GetUnassigned_Sp_CountSp : FeedingFrenzyJsonWsAdminAction,
 	}
 }
 
-prototype Leads_GetPotentialDuplicates : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype Leads_GetPotentialDuplicates : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.GetPotentialDuplicates(rowLead), adapted to accept leadID and resolve the row through the published GetLead route before calling the duplicate route. Returns raw response JSON string.";
 
@@ -131,7 +131,7 @@ prototype Leads_GetPotentialDuplicates : FeedingFrenzyJsonWsAdminAction, Feeding
 	}
 }
 
-prototype LeadsAdmin_GetDetails : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype LeadsAdmin_GetDetails : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, int LeadID) : string
 	{
@@ -142,7 +142,7 @@ prototype LeadsAdmin_GetDetails : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJ
 	}
 }
 
-prototype LeadsAdmin_GetGrid : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype LeadsAdmin_GetGrid : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
 	{
@@ -157,7 +157,7 @@ prototype LeadsAdmin_GetGrid : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJson
 	}
 }
 
-prototype LeadsAdmin_GetGridCount : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype LeadsAdmin_GetGridCount : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, string Search) : string
 	{
@@ -168,7 +168,7 @@ prototype LeadsAdmin_GetGridCount : FeedingFrenzyJsonWsAdminAction, FeedingFrenz
 	}
 }
 
-prototype LeadsAdmin_GetUnassignedGridCount : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype LeadsAdmin_GetUnassignedGridCount : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, string Search) : string
 	{
@@ -179,7 +179,7 @@ prototype LeadsAdmin_GetUnassignedGridCount : FeedingFrenzyJsonWsAdminAction, Fe
 	}
 }
 
-prototype LeadsAdmin_GetMessagesByPhone : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype LeadsAdmin_GetMessagesByPhone : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, string Phone) : string
 	{
@@ -190,7 +190,7 @@ prototype LeadsAdmin_GetMessagesByPhone : FeedingFrenzyJsonWsAdminAction, Feedin
 	}
 }
 
-prototype LeadsAdmin_GetGridBySalesRepresentativeID : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype LeadsAdmin_GetGridBySalesRepresentativeID : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeID, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
 	{
@@ -206,7 +206,7 @@ prototype LeadsAdmin_GetGridBySalesRepresentativeID : FeedingFrenzyJsonWsAdminAc
 	}
 }
 
-prototype LeadsAdmin_GetGridBySalesRepresentativeIDHtml : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype LeadsAdmin_GetGridBySalesRepresentativeIDHtml : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeID, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
 	{
@@ -222,7 +222,7 @@ prototype LeadsAdmin_GetGridBySalesRepresentativeIDHtml : FeedingFrenzyJsonWsAdm
 	}
 }
 
-prototype LeadsAdmin_GetGridByStatusID : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype LeadsAdmin_GetGridByStatusID : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, int LeadStatusID, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
 	{
@@ -238,7 +238,7 @@ prototype LeadsAdmin_GetGridByStatusID : FeedingFrenzyJsonWsAdminAction, Feeding
 	}
 }
 
-prototype LeadsAdmin_GetGridByStatusIDHtml : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype LeadsAdmin_GetGridByStatusIDHtml : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, int LeadStatusID, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
 	{
@@ -254,7 +254,7 @@ prototype LeadsAdmin_GetGridByStatusIDHtml : FeedingFrenzyJsonWsAdminAction, Fee
 	}
 }
 
-prototype LeadsAdmin_GetGridByTagID : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype LeadsAdmin_GetGridByTagID : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, int TagID, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
 	{
@@ -270,7 +270,7 @@ prototype LeadsAdmin_GetGridByTagID : FeedingFrenzyJsonWsAdminAction, FeedingFre
 	}
 }
 
-prototype LeadsAdmin_GetGridByTagIDHtml : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype LeadsAdmin_GetGridByTagIDHtml : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, int TagID, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
 	{
@@ -286,7 +286,7 @@ prototype LeadsAdmin_GetGridByTagIDHtml : FeedingFrenzyJsonWsAdminAction, Feedin
 	}
 }
 
-prototype LeadsAdmin_GetGridByStatusIDSalesRepresentativeIDHtml : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype LeadsAdmin_GetGridByStatusIDSalesRepresentativeIDHtml : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, int LeadStatusID, int SalesRepresentativeID, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
 	{
@@ -303,7 +303,7 @@ prototype LeadsAdmin_GetGridByStatusIDSalesRepresentativeIDHtml : FeedingFrenzyJ
 	}
 }
 
-prototype LeadsAdmin_GetGridByTagIDSalesRepresentativeIDHtml : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype LeadsAdmin_GetGridByTagIDSalesRepresentativeIDHtml : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, int TagID, int SalesRepresentativeID, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
 	{
@@ -320,7 +320,7 @@ prototype LeadsAdmin_GetGridByTagIDSalesRepresentativeIDHtml : FeedingFrenzyJson
 	}
 }
 
-prototype LeadsAdmin_GetGridByTagIDStatusIDSalesRepresentativeIDHtml : FeedingFrenzyJsonWsAdminAction, FeedingFrenzyJsonWsSkillAction
+prototype LeadsAdmin_GetGridByTagIDStatusIDSalesRepresentativeIDHtml : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, int TagID, int LeadStatusID, int SalesRepresentativeID, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
 	{
