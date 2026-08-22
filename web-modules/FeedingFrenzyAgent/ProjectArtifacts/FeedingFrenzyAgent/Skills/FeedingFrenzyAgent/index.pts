@@ -1,9 +1,9 @@
-prototype FeedingFrenzyAgentActionRoot : CoreAction, FeedingFrenzyJsonWsSkillAction, LocalTaskPromptAction
+prototype FeedingFrenzyAgentActionRoot : FeedingFrenzyJsonWsSkillAction
 {
-	Description = @"Constrained action root for the unified Feeding Frenzy agent. Includes Buffaly session continuity tools, LocalTask prompt workflows, and FeedingFrenzy JsonWs tools in this separate project.";
+	Description = @"Constrained action root for the unified Feeding Frenzy agent. Only Feeding Frenzy JSON-WS tools loaded by this dedicated project are available.";
 }
 
-prototype FeedingFrenzyAgentGuardedWriteActionRoot : CoreAction, FeedingFrenzyJsonWsGuardedWriteAction
+prototype FeedingFrenzyAgentGuardedWriteActionRoot : FeedingFrenzyJsonWsGuardedWriteAction
 {
 	Description = @"Explicit guarded-write action root for high-risk Feeding Frenzy mutations and document-signing lifecycle operations. Use only when a caller intentionally loads a specific write action; this is separate from the default read-oriented FeedingFrenzy agent root.";
 }

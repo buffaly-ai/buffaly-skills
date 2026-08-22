@@ -2,7 +2,7 @@ import Buffaly.Agent.Tools.Http Buffaly.Agent.Tools.Http.JsonWsHelper JsonWsHelp
 import BasicUtilities BasicUtilities.JsonObject JsonObject;
 import BasicUtilities BasicUtilities.StringUtil StringUtil;
 
-prototype FeedingFrenzyJsonWsSkillAction : OpsAction, CoreAction
+prototype FeedingFrenzyJsonWsSkillAction : OpsAction
 {
 	Description = @"Base action type for read-oriented Feeding Frenzy JSON WS service tools exposed to the default Feeding Frenzy agent.";
 }

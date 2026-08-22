@@ -1,5 +1,9 @@
 # Imports.pts Change History
 
+## Restrict the dedicated Feeding Frenzy project (2026-08-22)
+- Replaced the copied OpsAgent import surface with only the assemblies and symbols used by the standalone FeedingFrenzyAgent project: ontology/runtime primitives, `BasicUtilities.JsonObject` and string helpers, HTTP `JsonWsHelper`, and semantic annotation storage.
+- Browser, Codex, filesystem, process execution, secrets, sessions, ProtoScript authoring, skill management, platform tools, and unrelated host imports are intentionally absent. The dedicated `Project.pts` include graph is the embedded session's capability boundary.
+
 ## Import JsonUtil For Runtime Selection Tool (2026-05-29)
 - Added the `JsonUtil` import so ProtoScript tools can serialize typed C# service contract results directly when needed.
 - Design decision: keep service-return payloads typed in C# and perform only boundary serialization in ProtoScript.
