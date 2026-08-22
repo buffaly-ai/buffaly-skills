@@ -1,9 +1,5 @@
 # Gmail.pts Change History
 
-## Add deterministic DMARC aggregate-report processor (2026-08-22)
-- Added `ToProcessDmarcAggregateReportsDeterministically` for interval processes that cannot depend on prompt-child dispatch.
-- The action delegates bounded attachment parsing and archive-after-success behavior to the Google Workspace service and removes only `INBOX` for successfully parsed report messages.
-
 ## Add Gmail Archive Action (2026-08-12)
 - Added `ToArchiveGoogleWorkspaceMessage` for DMARC cleanup and other safe inbox-removal workflows.
 - The action calls `ModifyLabelsAsync` with `removeLabelIds` set to only `INBOX` via `StringUtil.Split("INBOX", ",", true)`.
