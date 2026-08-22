@@ -1,5 +1,5 @@
 [SemanticProgram.InfinitivePhrase("to get feeding frenzy lead note type by id")]
-prototype LeadNoteTypes_GetLeadNoteType : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
+prototype LeadNoteTypes_GetLeadNoteType : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. LeadNoteTypeID - numeric lead note type id.";
 
@@ -13,7 +13,7 @@ prototype LeadNoteTypes_GetLeadNoteType : FeedingFrenzyJsonWsSkillAction, Feedin
 }
 
 [SemanticProgram.InfinitivePhrase("to get feeding frenzy lead note type by name")]
-prototype LeadNoteTypes_GetLeadNoteTypeByLeadNoteTypeName : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
+prototype LeadNoteTypes_GetLeadNoteTypeByLeadNoteTypeName : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. LeadNoteTypeName - lead note type name.";
 
@@ -27,7 +27,7 @@ prototype LeadNoteTypes_GetLeadNoteTypeByLeadNoteTypeName : FeedingFrenzyJsonWsS
 }
 
 [SemanticProgram.InfinitivePhrase("to list feeding frenzy lead note types")]
-prototype LeadNoteTypes_GetLeadNoteTypes : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
+prototype LeadNoteTypes_GetLeadNoteTypes : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. Returns all lead note type rows.";
 

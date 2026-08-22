@@ -1,5 +1,5 @@
 [SemanticProgram.InfinitivePhrase("to get feeding frenzy lead address by id")]
-prototype LeadAddresses_GetLeadAddress : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
+prototype LeadAddresses_GetLeadAddress : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. LeadAddressID - numeric lead address id.";
 
@@ -13,7 +13,7 @@ prototype LeadAddresses_GetLeadAddress : FeedingFrenzyJsonWsSkillAction, Feeding
 }
 
 [SemanticProgram.InfinitivePhrase("to get feeding frenzy lead addresses by lead id")]
-prototype LeadAddresses_GetLeadAddressesByLeadID : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
+prototype LeadAddresses_GetLeadAddressesByLeadID : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. LeadID - numeric lead id.";
 

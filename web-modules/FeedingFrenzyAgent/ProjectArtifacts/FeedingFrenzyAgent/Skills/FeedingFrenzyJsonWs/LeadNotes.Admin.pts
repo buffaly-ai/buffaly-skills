@@ -1,5 +1,5 @@
 [SemanticProgram.InfinitivePhrase("to get feeding frenzy follow up by lead id")]
-prototype LeadNotes_GetFollowUpByLeadID : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
+prototype LeadNotes_GetFollowUpByLeadID : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. LeadID - numeric lead id.";
 
@@ -13,7 +13,7 @@ prototype LeadNotes_GetFollowUpByLeadID : FeedingFrenzyJsonWsSkillAction, Feedin
 }
 
 [SemanticProgram.InfinitivePhrase("to get feeding frenzy appointments")]
-prototype LeadNotes_GetAppointments : FeedingFrenzyJsonWsSkillAction, FeedingFrenzyJsonWsAdminAction
+prototype LeadNotes_GetAppointments : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. StartDate and StopDate should be ISO-like date strings accepted by Feeding Frenzy JsonWs DateTime binding.";
 
