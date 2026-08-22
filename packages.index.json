@@ -18238,7 +18238,7 @@
       "PackageType": "WebModule",
       "Title": "Feeding Frenzy Agent",
       "Description": "Buffaly Web Module package for Feeding Frenzy Agent.",
-      "Version": "0.1.7",
+      "Version": "0.1.8",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/FeedingFrenzyAgent",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/FeedingFrenzyAgent",
@@ -18473,7 +18473,7 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/CodingActions.pts",
-          "Sha256": "9ed29722acb191e7626ed135108b40d672564d6321588558e5cd4ed3b7cca8fd"
+          "Sha256": "bc1b74b9691b24bf4cee81d356a104ab9a6bd6426f0470c28f514f9491cb6b84"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/CodingActions.pts.md",
@@ -18481,7 +18481,7 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/CoreActions.pts",
-          "Sha256": "1e99a67f95ac56831abc41a0bf7a6069f57dfba94b20ad1f5548fd222246ea88"
+          "Sha256": "2e1cd16d43c6a66eca5736d0882fc10352eb6562cf2bb860b19c94279248fa49"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/CoreActions.pts.md",
@@ -18513,7 +18513,7 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/PromptActionTools.pts",
-          "Sha256": "643e028fafebb6687d1130545275db95d168c49af7b4b2c09f313188a6f86004"
+          "Sha256": "0aa0b606a9ba7295b78c71455eea7e49290cfe31351b4bf337c910d56dbf6723"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Core/PromptActionTools.pts.md",
@@ -18549,7 +18549,7 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Imports.pts",
-          "Sha256": "96d40505fff58ccd2ee40083cc14a4847e90754d4444c23cf232fe215342d62f"
+          "Sha256": "f506dcc3b83e830518853b08398036aa0368f32dfb9e138de86f65dea0d51a23"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Imports.pts.md",
@@ -18842,7 +18842,7 @@
       "PackageType": "WebModule",
       "Title": "Realtime Voice",
       "Description": "Buffaly Web Module package for Realtime Voice.",
-      "Version": "0.1.28",
+      "Version": "0.1.29",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/RealtimeVoice",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/RealtimeVoice",
@@ -18851,6 +18851,18 @@
         "RealtimeVoice"
       ],
       "Files": [
+        {
+          "Path": "Azure.Core.dll",
+          "Sha256": "224d09cb39eae4d8c30272a0c49beb19d873c87347eae9487f0ddd859d752b56"
+        },
+        {
+          "Path": "Azure.Identity.dll",
+          "Sha256": "af18f20be25b2895c912f3ba0a9f2901a82dda823edcad76e6a19eac9886a40f"
+        },
+        {
+          "Path": "Npgsql.dll",
+          "Sha256": "5406d26e745aff267098f30fb0da5b1507a13080b2066ee9003b071163d887c2"
+        },
         {
           "Path": "Buffaly.RealtimeVoice.WebModule.deps.json",
           "Sha256": "2a8a7bb0e49f485802722d45400a890867d2bc3730bde802bf708db715ce43db"

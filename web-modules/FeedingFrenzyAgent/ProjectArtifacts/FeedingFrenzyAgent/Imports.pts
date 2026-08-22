@@ -9,23 +9,23 @@ reference ProtoScript.Interpretter ProtoScript.Interpretter;
 reference BasicUtilities BasicUtilities;
 reference WebAppUtilities WebAppUtilities;
 reference Buffaly.Business Buffaly.Business;
-reference "lib/Buffaly.Agent.Host.dll" Buffaly.Agent.Host;
-reference "lib/Buffaly.Agent.Runtime.Abstractions.dll" Buffaly.Agent.Runtime.Abstractions;
-reference "lib/Buffaly.Agent.ProtoScript.Runtime.dll" Buffaly.Agent.ProtoScript.Runtime;
-reference "lib/Buffaly.Agent.ProtoScriptAuthoring.dll" Buffaly.Agent.ProtoScriptAuthoring;
+reference Buffaly.Agent.Host Buffaly.Agent.Host;
+reference Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions;
+reference Buffaly.Agent.ProtoScript.Runtime Buffaly.Agent.ProtoScript.Runtime;
+reference Buffaly.Agent.ProtoScriptAuthoring Buffaly.Agent.ProtoScriptAuthoring;
 reference Buffaly.Agent.SkillManagement Buffaly.Agent.SkillManagement;
 
 // Remaining shared tool libraries
 reference Buffaly.Agent.Tools.Browser Buffaly.Agent.Tools.Browser;
 reference Buffaly.Agent.Tools.TebraWeb Buffaly.Agent.Tools.TebraWeb;
 reference Buffaly.Agent.Tools.Codex Buffaly.Agent.Tools.Codex;
-reference "lib/Buffaly.Agent.Tools.FileSystem.dll" Buffaly.Agent.Tools.FileSystem;
-reference "lib/Buffaly.Agent.Tools.Http.dll" Buffaly.Agent.Tools.Http;
-reference "lib/Buffaly.Agent.Tools.Llm.dll" Buffaly.Agent.Tools.Llm;
-reference "lib/Buffaly.Agent.Tools.Platform.dll" Buffaly.Agent.Tools.Platform;
-reference "lib/Buffaly.Agent.Tools.Process.dll" Buffaly.Agent.Tools.Process;
-reference "lib/Buffaly.Agent.Tools.Secrets.dll" Buffaly.Agent.Tools.Secrets;
-reference "lib/Buffaly.Agent.Tools.Sessions.dll" Buffaly.Agent.Tools.Sessions;
+reference Buffaly.Agent.Tools.FileSystem Buffaly.Agent.Tools.FileSystem;
+reference Buffaly.Agent.Tools.Http Buffaly.Agent.Tools.Http;
+reference Buffaly.Agent.Tools.Llm Buffaly.Agent.Tools.Llm;
+reference Buffaly.Agent.Tools.Platform Buffaly.Agent.Tools.Platform;
+reference Buffaly.Agent.Tools.Process Buffaly.Agent.Tools.Process;
+reference Buffaly.Agent.Tools.Secrets Buffaly.Agent.Tools.Secrets;
+reference Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions;
 reference Buffaly.Agent.Tools.TabularData Buffaly.Agent.Tools.TabularData;
 reference Buffaly.Agent.Wiki Buffaly.Agent.Wiki;
 
