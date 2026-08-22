@@ -1,0 +1,21 @@
+{
+  "AgentName": "feeding-frenzy-administrator",
+  "DisplayName": "Feeding Frenzy Administrator",
+  "Aliases": [
+    "feeding frenzy admin",
+    "feeding frenzy administrator"
+  ],
+  "ProjectFilePath": "Administrator.pts",
+  "PromptFile": "Prompts/FeedingFrenzyAgent.prompt.md",
+  "PromptContext": "feeding-frenzy-agent",
+  "RootActionPrototypeName": "FeedingFrenzyJsonWsSkillAction",
+  "RootEntityPrototypeName": "FeedingFrenzyAgentEntityRoot",
+  "DefaultProviderName": "openai",
+  "DefaultModelName": "gpt-5.5",
+  "DefaultReasoningLevel": "medium",
+  "UiPage": "/buffaly-agent.html",
+  "IsReadOnly": false,
+  "IsHidden": false,
+  "CanChangeModel": true,
+  "DisableLevel2AutoAttach": true
+}

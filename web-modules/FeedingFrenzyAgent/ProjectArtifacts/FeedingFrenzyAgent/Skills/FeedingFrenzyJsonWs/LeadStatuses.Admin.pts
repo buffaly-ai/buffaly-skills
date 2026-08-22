@@ -1,4 +1,4 @@
-prototype LeadStatuses_GetLeadStatus : FeedingFrenzyJsonWsSkillAction
+prototype LeadStatuses_GetLeadStatus : FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, int LeadStatusID) : string
 	{
@@ -9,7 +9,7 @@ prototype LeadStatuses_GetLeadStatus : FeedingFrenzyJsonWsSkillAction
 	}
 }
 
-prototype LeadStatuses_GetLeadStatuses : FeedingFrenzyJsonWsSkillAction
+prototype LeadStatuses_GetLeadStatuses : FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service) : string
 	{
@@ -18,7 +18,7 @@ prototype LeadStatuses_GetLeadStatuses : FeedingFrenzyJsonWsSkillAction
 	}
 }
 
-prototype LeadStatuses_GetLeadStatusByStatusName : FeedingFrenzyJsonWsSkillAction
+prototype LeadStatuses_GetLeadStatusByStatusName : FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, string StatusName) : string
 	{

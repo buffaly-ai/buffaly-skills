@@ -1,0 +1,21 @@
+{
+  "AgentName": "feeding-frenzy-sales-representative",
+  "DisplayName": "Feeding Frenzy Sales Representative",
+  "Aliases": [
+    "feeding frenzy sales",
+    "feeding frenzy sales representative"
+  ],
+  "ProjectFilePath": "SalesRepresentative.pts",
+  "PromptFile": "Prompts/FeedingFrenzyAgent.prompt.md",
+  "PromptContext": "feeding-frenzy-agent",
+  "RootActionPrototypeName": "FeedingFrenzyJsonWsSkillAction",
+  "RootEntityPrototypeName": "FeedingFrenzyAgentEntityRoot",
+  "DefaultProviderName": "openai",
+  "DefaultModelName": "gpt-5.5",
+  "DefaultReasoningLevel": "medium",
+  "UiPage": "/buffaly-agent.html",
+  "IsReadOnly": false,
+  "IsHidden": false,
+  "CanChangeModel": true,
+  "DisableLevel2AutoAttach": true
+}

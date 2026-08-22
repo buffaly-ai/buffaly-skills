@@ -1,0 +1,15 @@
+{
+  "DefaultAgentName": "feeding-frenzy-sales-representative",
+  "Bindings": [
+    {
+      "RoleKey": "Administrator",
+      "AgentName": "feeding-frenzy-administrator",
+      "Priority": 100
+    },
+    {
+      "RoleKey": "Sales Representative",
+      "AgentName": "feeding-frenzy-sales-representative",
+      "Priority": 10
+    }
+  ]
+}

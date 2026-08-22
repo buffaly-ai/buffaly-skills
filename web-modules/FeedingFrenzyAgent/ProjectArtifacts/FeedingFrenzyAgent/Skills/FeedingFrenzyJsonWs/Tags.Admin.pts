@@ -1,4 +1,4 @@
-prototype Tags_GetTag : FeedingFrenzyJsonWsSkillAction
+prototype Tags_GetTag : FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, int TagID) : string
 	{
@@ -9,7 +9,7 @@ prototype Tags_GetTag : FeedingFrenzyJsonWsSkillAction
 	}
 }
 
-prototype Tags_GetTags : FeedingFrenzyJsonWsSkillAction
+prototype Tags_GetTags : FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service) : string
 	{
@@ -18,7 +18,7 @@ prototype Tags_GetTags : FeedingFrenzyJsonWsSkillAction
 	}
 }
 
-prototype Tags_GetTagByTagName : FeedingFrenzyJsonWsSkillAction
+prototype Tags_GetTagByTagName : FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, string TagName) : string
 	{
@@ -29,7 +29,7 @@ prototype Tags_GetTagByTagName : FeedingFrenzyJsonWsSkillAction
 	}
 }
 
-prototype Tags_GetTagsBySalesRepresentativeID : FeedingFrenzyJsonWsSkillAction
+prototype Tags_GetTagsBySalesRepresentativeID : FeedingFrenzyJsonWsAdminAction
 {
 	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeID) : string
 	{
