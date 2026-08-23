@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Ontology PreFlight Workbench</title>
-	<link rel="icon" type="image/png" href="/images/bf_logo_fav_Large.png?v=20260601.1">
+	<link rel="icon" type="image/png" href="/images/bf_logo_fav_Large.png?v=20260823.2">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 	<link rel="stylesheet" href="/js/plugins/codemirror/lib/codemirror.css?v=20260412.2">
 	<link rel="stylesheet" href="/custom_css/buffaly-navigation.css?v=20260530.4">
@@ -227,6 +227,7 @@
 		.os-learning-field { display:grid; gap:.25rem; margin:.45rem 0; font-size:.72rem; color:var(--muted); }
 		.os-learning-field input,.os-learning-field select { width:100%; border:1px solid var(--border); border-radius:6px; padding:.42rem; background:var(--panel); color:var(--text); }
 		.os-learning-preview { margin:.7rem 0 0; padding:.65rem; border-radius:7px; background:#111827; color:#d1fae5; white-space:pre-wrap; font:11px/1.45 ui-monospace,SFMono-Regular,Consolas,monospace; }
+		.os-build-version { margin-top:.25rem; color:var(--muted); font:600 .65rem/1.2 ui-monospace,SFMono-Regular,Consolas,monospace; letter-spacing:.02em; }
 		@media(max-width:760px){.os-learning-grid{grid-template-columns:1fr}}
 		body.has-results .os-hero { flex:0 0 auto; justify-content:flex-start; padding:.35rem 1rem .9rem; }
 		body.has-results .os-wordmark { flex-direction:row; gap:.5rem; }
@@ -249,6 +250,7 @@
 				<div>
 					<div class="os-kicker" style="font-size:.72rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--blue);">Session ontology</div>
 					<div id="sessionLabel" class="os-session">Session: (none)</div>
+					<div id="workbenchBuildVersion" class="os-build-version">Workbench build 2026.08.23.5</div>
 				</div>
 			</div>
 			<buffaly-navigation-launcher label="Navigation" variant="strip" current-href="/buffaly-agent-ontology-search.html"></buffaly-navigation-launcher>
@@ -352,8 +354,9 @@
 	<script src="/js/buffaly-agent-session-context.js?v=20260820.1"></script>
 	<script src="/JsonWs/Buffaly.Agent.SkillManagement.ProtoScriptCatalogService.ashx.js?v=20260601.1"></script>
 	<script src="/JsonWs/Buffaly.Agent.Host.BuffalyAgentService.ashx.js?v=20260820.1"></script>
+	<script src="/JsonWs/Buffaly.Agent.Host.ProviderCatalogService.ashx.js?v=20260823.1"></script>
 	<script src="/web-modules/OntologyWorkbench/JsonWs/Buffaly.OntologyWorkbench.OntologyWorkbenchService.ashx.js?v=1"></script>
-	<script src="/web-modules/OntologyWorkbench/harness-adapter.js"></script>
+	<script src="/web-modules/OntologyWorkbench/harness-adapter.js?v=20260823.2"></script>
 	<script>
 		(function () {
 			"use strict";
@@ -364,7 +367,6 @@
 			const PREFLIGHT_PROVIDER = "openai";
 			const PREFLIGHT_MODEL = "gpt-5.6-sol";
 			const PREFLIGHT_REASONING = "medium";
-			const PREFLIGHT_CATALOG_ACTION = "ToGetBuffalyProviderModelCatalog";
 			const PREFLIGHT_POLL_INTERVAL_MS = 2000;
 			const PREFLIGHT_POLL_TIMEOUT_MS = 600000;
 			// A fresh child session ensures each run uses the current specialist prompt and has isolated evidence history.
@@ -379,55 +381,15 @@
 			}
 			const EXAMPLES = ["session ontology", "Buffaly install", "prompt action"];
 			const CATALOG_ROOTS = ["BaseObject", "SemanticEntityBase", "CoreEntity", "SkillEntity", "Service"];
-			const NER_SYSTEM = [
-				"Extract ontology-mention candidates from the user text.",
-				"Return JSON only, no markdown.",
-				"Use a spans array of objects with text and kind (object, action, or other).",
-				"Each text MUST be an exact verbatim substring of the user text.",
-				"Include specific names, products, pages, sessions, skills, paths, Type#Instance, and also feature/action nouns or verbs that could become ontology items or actions (for example extract, search, dispatch, critic).",
-				"Unknown candidates are expected and valuable — still return them so the UI can mark them with ?.",
-				"Skip pure grammar/process filler only: a, an, the, and, or, to, of, on, in, for, with, from, this, that, these, those, is, are, be, been, being, do, does, did, can, could, should, would, will, just, like, normal, somehow, really, very.",
-				"Prefer longest useful phrases (Ontology Search page over Search).",
-				"Do not bind prototypes. Do not invent aliases. Do not explain."
-			].join(" ");
 			const NER_PROVIDER = "openai";
 			const NER_MODEL = "gpt-5.6-luna";
 			const NER_REASONING = "low";
 			const ORGANIZE_PROVIDER = "openai";
 			const ORGANIZE_MODEL = "gpt-5.6-luna";
 			const ORGANIZE_REASONING = "low";
-			const ORGANIZE_SYSTEM = [
-				"You organize Wave-1 ontology extract chips into a hierarchy.",
-				"Return JSON only, no markdown.",
-				"Input already has mention spans and optional top ontology binds. Do NOT invent new mention spans. Do NOT re-run NER.",
-				"Use only spanId values from the input chips.",
-				"Schema: {\"anchors\":[{\"spanId\":\"\",\"prototype\":\"\",\"score\":0}],\"nodes\":[{\"spanId\":\"\",\"text\":\"\",\"parentSpanId\":null,\"role\":\"page|section|control|feature|claim|noise|object\",\"structureConfidence\":0.0,\"identity\":{\"verdict\":\"keep|reject-top|unknown|replace-with-proposal\",\"rejectPrototypes\":[]},\"note\":\"\"}],\"merges\":[{\"keepSpanId\":\"\",\"dropSpanIds\":[]}],\"claims\":[{\"text\":\"\",\"aboutSpanIds\":[]}],\"noise\":[\"spanId\"]}",
-				"Rules:",
-				"- Prefer one strong product/system anchor when Wave-1 has a bound chip >= 0.75.",
-				"- Attach pages under products, sections under pages when the paragraph supports it.",
-				"- Phrases like X inside Y or X page in Y mean X is under Y.",
-				"- Reject wrong-family global binds (for example SessionArtifacts for a product UI section) with identity.verdict=reject-top.",
-				"- Missing but real UI objects stay unknown under the correct parent.",
-				"- Merge near-duplicate spans (attachments area + attachments section).",
-				"- Bare words like screenshot/section/card are usually noise unless clearly a named control.",
-				"- UX complaints are claims, not ontology nodes.",
-				"- structureConfidence is about parent attachment, not global ontology identity.",
-				"- Every non-noise chip should appear once in nodes or noise or merges.dropSpanIds."
-			].join(" ");
 			// >75% green bind, 50-75% unsure, <50% unknown/?
 			const BIND_MIN_SIMILARITY = 0.75;
 			const UNSURE_MIN_SIMILARITY = 0.60;
-			// Luna sometimes drops short feature/action mentions. Keep these when present so unknown can show ?.
-			const FALLBACK_SEED_TERMS = [
-				"extract",
-				"ontology search page",
-				"ontology search",
-				"search ui",
-				"dispatch tree",
-				"online memory critic",
-				"composer",
-				"catch up"
-			];
 			const LEDGER_KEY = "BuffalyOntologyExtract.Ledger";
 			const LEDGER_CAP = 500;
 			const state = {
@@ -1777,25 +1739,60 @@
 			function normalizeGroundingProposal(raw) {
 				const p = raw || {};
 				const evidence = p.Evidence || p.evidence;
-				return { DocumentId:p.DocumentId || p.documentId, ExpectedRevision:p.ExpectedRevision ?? p.expectedRevision, AnnotationId:p.AnnotationId || p.annotationId, Evidence:evidence ? { Type:evidence.Type || evidence.type || "", Location:evidence.Location || evidence.location || "", Label:evidence.Label || evidence.label || "", Explanation:evidence.Explanation || evidence.explanation || "" } : null, RecommendedPrimary:normalizePrototypeCandidate(p.RecommendedPrimary || p.recommendedPrimary), Alternatives:(p.Alternatives || p.alternatives || []).map(normalizePrototypeCandidate), Explanation:p.Explanation || p.explanation || "" };
+				return { DocumentId:p.DocumentId || p.documentId, ExpectedRevision:p.ExpectedRevision ?? p.expectedRevision, AnnotationId:p.AnnotationId || p.annotationId, Evidence:evidence ? { Type:evidence.Type || evidence.type || "", Location:evidence.Location || evidence.location || "", Label:evidence.Label || evidence.label || "", Explanation:evidence.Explanation || evidence.explanation || "" } : null, RecommendedPrimary:normalizePrototypeCandidate(p.RecommendedPrimary || p.recommendedPrimary), Alternatives:(p.Alternatives || p.alternatives || []).map(normalizePrototypeCandidate), Explanation:p.Explanation || p.explanation || "", GroundedGrammar:p.GroundedGrammar || p.groundedGrammar || "" };
+			}
+			function groundingCandidateSets() {
+				const sets = {};
+				(state.annotatedDocument.Annotations || []).forEach(function (item) {
+					const values = [];
+					if (item.DisplayedPrototype) values.push(item.DisplayedPrototype);
+					alternativesFor(item.AnnotationId).forEach(function (candidate) {
+						if (!values.some(existing => existing.Prototype === candidate.Prototype)) values.push(candidate);
+					});
+					sets[item.AnnotationId] = values;
+				});
+				return sets;
 			}
 			async function groundActiveAnnotation() {
 				if (!state.annotatedDocument) throw new Error("Prepare the text first.");
 				const annotation = annotationBySpanId(state.activeSpanId);
 				if (!annotation) throw new Error("Select an annotation to ground.");
-				const request = { DocumentId:state.annotatedDocument.DocumentId, ExpectedRevision:state.annotatedDocument.Revision, SourceText:state.annotatedDocument.SourceText, Annotation:annotation, Alternatives:alternativesFor(annotation.AnnotationId), Relationships:state.annotatedDocument.Research.Relationships };
-				let proposal;
-				if (typeof OntologyWorkbenchService.GroundAnnotationAsync === "function") {
-					proposal = normalizeGroundingProposal(await OntologyWorkbenchService.GroundAnnotationAsync(request));
-				} else {
-					const instruction = ["Ground exactly one ontology annotation using semantic lookup, prototype inspection, and available read-only physical lookup tools.", "Do not regenerate mentions or return Frame v2. Do not resolve identity automatically.", "Return JSON only with DocumentId, ExpectedRevision, AnnotationId, Evidence, RecommendedPrimary, Alternatives, and Explanation.", JSON.stringify(request)].join("\n\n");
-					proposal = normalizeGroundingProposal(extractEnvelopeFromAgentResult(await evaluateAndPollPreflightAgent(instruction, PREFLIGHT_POLL_TIMEOUT_MS)));
+				const runtime = selectedPreflightRuntime();
+				const startedAt = Date.now();
+				const originalButtonText = els.btnRunPreflight ? els.btnRunPreflight.textContent : "";
+				let progressTimer = null;
+				if (els.btnRunPreflight) {
+					els.btnRunPreflight.disabled = true;
+					els.btnRunPreflight.textContent = "Grounding “" + annotation.Text + "” (0s)…";
 				}
-				state.annotatedDocument = normalizeAnnotationDocument(await runPreparationService("ApplyGroundingProposal", { Document:state.annotatedDocument, Proposal:proposal }));
-				await renderBoundPrompt();
-				syncSpansFromDocument();
-				activateSpan(annotation.AnnotationId);
-				setStatus(proposal.Explanation || "Grounding research applied without resolving identity.", false);
+				setStatus("Starting Ontology PreFlight research for “" + annotation.Text + "” with " + runtime.provider + "/" + runtime.model + ". This can take several minutes…", false);
+				progressTimer = window.setInterval(function () {
+					const seconds = Math.floor((Date.now() - startedAt) / 1000);
+					if (els.btnRunPreflight) els.btnRunPreflight.textContent = "Grounding “" + annotation.Text + "” (" + seconds + "s)…";
+					setStatus("Ontology PreFlight is researching “" + annotation.Text + "” in real objects · " + seconds + "s elapsed…", false);
+				}, 1000);
+				const request = { DocumentId:state.annotatedDocument.DocumentId, ExpectedRevision:state.annotatedDocument.Revision, TargetAnnotationId:annotation.AnnotationId, GrammarInput:text(state.renderedText && (state.renderedText.Text || state.renderedText.text)), Annotations:state.annotatedDocument.Annotations, CandidateSetsByAnnotationId:groundingCandidateSets(), Relationships:state.annotatedDocument.Research.Relationships, Claims:state.annotatedDocument.Research.Claims || [], ParentSessionKey:state.sessionKey, Provider:runtime.provider, ModelName:runtime.model, ReasoningLevel:runtime.reasoning };
+				try {
+					let proposal;
+					if (typeof OntologyWorkbenchService.GroundAnnotationAsync === "function") {
+						proposal = normalizeGroundingProposal(await OntologyWorkbenchService.GroundAnnotationAsync(request));
+					} else {
+						const instruction = ["Ground only annotation " + annotation.AnnotationId + " in the complete grammar-based user directive below.", "Preserve every user-resolved binding. Use all supplied candidate sets and make the target coherent with surrounding objects. Research unknown objects through normal read-only ontology and physical/domain tools.", "Return JSON only with DocumentId, ExpectedRevision, AnnotationId, Evidence, RecommendedPrimary, Alternatives, Explanation, and the complete GroundedGrammar.", request.GrammarInput].join("\n\n");
+						proposal = normalizeGroundingProposal(extractEnvelopeFromAgentResult(await evaluateAndPollPreflightAgent(instruction, PREFLIGHT_POLL_TIMEOUT_MS)));
+					}
+					state.annotatedDocument = normalizeAnnotationDocument(await runPreparationService("ApplyGroundingProposal", { Document:state.annotatedDocument, Proposal:proposal }));
+					await renderBoundPrompt();
+					syncSpansFromDocument();
+					activateSpan(annotation.AnnotationId);
+					const elapsed = Math.round((Date.now() - startedAt) / 1000);
+					setStatus("Grounding completed in " + elapsed + "s. " + (proposal.Explanation || "Research applied without resolving identity."), false);
+				} finally {
+					if (progressTimer != null) window.clearInterval(progressTimer);
+					if (els.btnRunPreflight) {
+						els.btnRunPreflight.disabled = false;
+						els.btnRunPreflight.textContent = originalButtonText || "Ground active entity in real objects";
+					}
+				}
 			}
 			async function applyAnnotationEdit(edit) {
 				if (!state.annotatedDocument) throw new Error("Prepare the text first.");
@@ -1903,7 +1900,8 @@
 				fillSelect(els.preflightModel, [{ value: PREFLIGHT_MODEL, label: PREFLIGHT_MODEL }], PREFLIGHT_MODEL);
 				fillSelect(els.preflightReasoning, [{ value: PREFLIGHT_REASONING, label: PREFLIGHT_REASONING }], PREFLIGHT_REASONING);
 				try {
-					const catalog = await runSessionMethod(PREFLIGHT_CATALOG_ACTION, { sessionKey: state.sessionKey });
+					if (typeof ProviderCatalogService === "undefined" || typeof ProviderCatalogService.GetProviderCatalogObjectAsync !== "function") throw new Error("ProviderCatalogService.GetProviderCatalog is not available.");
+					const catalog = await ProviderCatalogService.GetProviderCatalogObjectAsync({ sessionKey:state.sessionKey, clientVersion:"ontology-workbench-v1" });
 					if (!catalog || !Array.isArray(catalog.Providers)) throw new Error("Provider catalog did not return Providers.");
 					state.preflightCatalog = catalog;
 					const providers = catalog.Providers.filter(function (provider) { return provider && provider.IsEnabled !== false && provider.IsConfigured !== false && visibleCatalogModels(provider).length; });
@@ -2099,67 +2097,6 @@ async function runPreflightMethod(prototypeName, argsObject) {
 				if (!env || typeof env !== "object") return null;
 				return env.frame || env.Frame || env.interpretation || env.Interpretation || null;
 			}
-						async function enrichFrameBindsOnSearchSession(frame, token) {
-							if (!frame || !Array.isArray(frame.frames)) return frame;
-							const maxResults = clampMaxResults(els.maxResults && els.maxResults.value);
-							let bound = 0;
-							let failed = 0;
-							for (let i = 0; i < frame.frames.length; i++) {
-								if (token !== state.preflightRunToken) return frame;
-								const fr = frame.frames[i] || {};
-								const q = text(fr.text || fr.Text).trim();
-								if (!q) continue;
-								if (!fr.bind || typeof fr.bind !== "object") fr.bind = {};
-								const bind = fr.bind;
-								try {
-									setStatus("Preflight Frame · binding \"" + q + "\" on Ontology Search Page (" + (i + 1) + "/" + frame.frames.length + ")\u2026", false);
-									const raw = await runSessionMethod("ToSearchCandidateEntities", {
-										semanticQuery: q,
-										maxResults: maxResults,
-										includeParentType: true
-									});
-									const cands = normalizeSearchCandidates(raw);
-									if (!cands.length) {
-										bind.status = bind.status || "unbound";
-										bind.query = q;
-										if (!Array.isArray(bind.candidates)) bind.candidates = [];
-										bind.error = text(bind.error) || "No candidates from Ontology Search Page";
-										frame.frames[i] = fr;
-										failed++;
-										continue;
-									}
-									const ranked = cands.slice().sort(function (a, b) { return candidateSimilarity(b) - candidateSimilarity(a); });
-									const top = ranked[0];
-									const second = ranked.length > 1 ? ranked[1] : null;
-									const topName = candidateName(top);
-									const sim = candidateSimilarity(top);
-									if (!bind.provisionalPrototype) bind.provisionalPrototype = text(bind.topPrototype || "");
-									bind.status = topName ? "bound" : "unbound";
-									bind.query = q;
-									bind.candidates = ranked;
-									bind.topPrototype = topName;
-									bind.topScore = sim;
-									bind.secondPrototype = second ? candidateName(second) : "";
-									bind.secondScore = second ? candidateSimilarity(second) : 0;
-									if (topName) bind.acceptedPrototype = topName;
-									bind.error = "";
-									fr.status = "ready";
-									frame.frames[i] = fr;
-									if (topName) bound++;
-									else failed++;
-								} catch (bindErr) {
-									failed++;
-									console.warn("enrich bind failed for", q, bindErr);
-									bind.error = formatErr(bindErr);
-									fr.bind = bind;
-									frame.frames[i] = fr;
-								}
-							}
-							if (!frame.meta || typeof frame.meta !== "object") frame.meta = {};
-							frame.meta.searchBindBound = bound;
-							frame.meta.searchBindFailed = failed;
-							return frame;
-						}
 						async function reviseFrameIdentities(frame) {
 							// Intentionally NO product-specific rebinds (e.g. Feeding Frenzy website -> VisualStudioSolution).
 							// Identity stays whatever bind/search returned. Family adjudication belongs in real grounding
@@ -3536,56 +3473,6 @@ function parseNerJson(raw) {
 					const contained = kept.some(prev => span.start >= prev.start && span.end <= prev.end);
 					if (contained) return;
 					if (!kept.some(prev => prev.id === span.id)) kept.push(span);
-				});
-				return kept.slice(0, 12);
-			}
-			function spansOverlap(a, b) {
-				return a.start < b.end && b.start < a.end;
-			}
-			function makeSpan(actual, start, kind) {
-				return {
-					id: "s" + start + "-" + (start + actual.length),
-					text: actual,
-					kind: kind === "action" ? "action" : "object",
-					start: start,
-					end: start + actual.length,
-					status: "pending",
-					candidates: [],
-					error: "",
-					decisions: {}
-				};
-			}
-			function mergeFallbackSpans(source, spans) {
-				const src = text(source);
-				const srcLower = src.toLowerCase();
-				const merged = Array.isArray(spans) ? spans.slice() : [];
-				FALLBACK_SEED_TERMS.forEach(function (term) {
-					const needle = text(term).trim().toLowerCase();
-					if (!needle) return;
-					let from = 0;
-					while (from < srcLower.length) {
-						const hit = srcLower.indexOf(needle, from);
-						if (hit < 0) break;
-						const before = hit === 0 ? "" : srcLower.charAt(hit - 1);
-						const after = hit + needle.length >= srcLower.length ? "" : srcLower.charAt(hit + needle.length);
-						const boundaryOk = !/[a-z0-9]/i.test(before) && !/[a-z0-9]/i.test(after);
-						if (boundaryOk) {
-							const actual = src.slice(hit, hit + needle.length);
-							const candidate = makeSpan(actual, hit, looksLikeInfinitive(actual) ? "action" : "object");
-							const covered = merged.some(function (prev) {
-								return spansOverlap(prev, candidate) || (candidate.start >= prev.start && candidate.end <= prev.end);
-							});
-							if (!covered) merged.push(candidate);
-						}
-						from = hit + Math.max(1, needle.length);
-					}
-				});
-				merged.sort(function (a, b) { return a.start - b.start || (b.end - b.start) - (a.end - a.start); });
-				const kept = [];
-				merged.forEach(function (span) {
-					const contained = kept.some(function (prev) { return span.start >= prev.start && span.end <= prev.end; });
-					if (contained) return;
-					if (!kept.some(function (prev) { return prev.id === span.id; })) kept.push(span);
 				});
 				return kept.slice(0, 12);
 			}
