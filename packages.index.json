@@ -20058,6 +20058,62 @@
       "RequiresRestart": true,
       "RequiresPreStartInstall": true,
       "PreStartCleanupPaths": []
+    },
+    {
+      "PackageId": "OntologyWorkbench",
+      "PackageType": "WebModule",
+      "Title": "Ontology Workbench",
+      "Description": "Buffaly Web Module package for Ontology Workbench.",
+      "Version": "0.1.0",
+      "PackageKind": "BuffalyWebModule",
+      "SourcePath": "web-modules/OntologyWorkbench",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/OntologyWorkbench",
+      "Phrases": [
+        "Ontology Workbench",
+        "OntologyWorkbench"
+      ],
+      "Files": [
+        {
+          "Path": "Buffaly.OntologyWorkbench.WebModule.deps.json",
+          "Sha256": "52ad45160f6f60ad37566da701d583b51c927bf179892b8a98359d7d1c3cc99b"
+        },
+        {
+          "Path": "Buffaly.OntologyWorkbench.WebModule.dll",
+          "Sha256": "a46a9bdc30e465c0a8e12e0201ae6637007e2bf5312a1d5d6b027965d3c00992"
+        },
+        {
+          "Path": "Skills/OntologyWorkbench/index.pts",
+          "Sha256": "35665690541e7c16936c96406c4c6e52457dc24121de3ba93fd2b7773d1e4ff0"
+        },
+        {
+          "Path": "web-module.json",
+          "Sha256": "18748ec8fa98053a4ffd2c30b78a117ac0eea6749ae8a260bef36e76748419bd"
+        },
+        {
+          "Path": "wwwroot/harness-adapter.js",
+          "Sha256": "36cf39d0351ffdd665d942c562f747a8417a0929f1350417e0779b9cd801e237"
+        },
+        {
+          "Path": "wwwroot/index.html",
+          "Sha256": "9c0cac822e729359ffd55aaf4bde1691da40c69606be15dbbf8da04b08a9b681"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.OntologyWorkbench.OntologyWorkbenchService.ashx.js",
+          "Sha256": "928e1d03ff43fe56ba8f84917e62ba41bdd6b23c1d06934229d1e47f9e7e1bf7"
+        }
+      ],
+      "ProjectArtifacts": [
+        {
+          "ProjectName": "Skills/OntologyWorkbench",
+          "SourcePath": "Skills/OntologyWorkbench/"
+        }
+      ],
+      "Dependencies": [],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "RequiresRestart": true,
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     }
   ]
 }

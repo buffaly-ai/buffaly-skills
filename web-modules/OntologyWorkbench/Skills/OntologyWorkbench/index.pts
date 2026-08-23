@@ -1,0 +1,44 @@
+reference Buffaly.OntologyWorkbench.WebModule;
+import Buffaly.OntologyWorkbench.WebModule Buffaly.OntologyPreparation.OntologyPreparationFacade OntologyPreparationFacade;
+
+prototype OntologyWorkbenchSkillAction : OpsAction
+{
+    Description = "Base action for ontology mention extraction, semantic candidate lookup, and contextual organization.";
+}
+
+[SemanticEntity("ontology workbench skill")]
+prototype OntologyWorkbenchSkill : SkillEntity
+{
+    Description = "Ontology workbench preparation actions packaged with the OntologyWorkbench web module.";
+    ActionRoot = OntologyWorkbenchSkillAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to extract and bind ontology mentions")]
+prototype ToExtractAndBindOntologyText : OntologyWorkbenchSkillAction
+{
+    Description = "Extract verbatim mentions and retrieve semantic candidates concurrently; candidates remain hypotheses.";
+    function Execute(string sourceText, string provider = "openai", string model = "gpt-5.6-luna", string reasoningLevel = "low") : string
+    {
+        return OntologyPreparationFacade.ExtractAndBind(_opsAgent, sourceText, provider, model, reasoningLevel);
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to organize extracted ontology mentions")]
+prototype ToOrganizeOntologyText : OntologyWorkbenchSkillAction
+{
+    Description = "Organize prepared mentions using contextual anchors, containment, merges, claims, and noise without accepting candidate identity.";
+    function Execute(string preparedResultJson, string provider = "openai", string model = "gpt-5.6-luna", string reasoningLevel = "low") : string
+    {
+        return OntologyPreparationFacade.Organize(_opsAgent, preparedResultJson, provider, model, reasoningLevel);
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to prepare all ontology mentions")]
+prototype ToExtractBindAndOrganizeOntologyText : OntologyWorkbenchSkillAction
+{
+    Description = "Run extraction, semantic candidate lookup, and contextual organization in one call. Physical PreFlight grounding remains separate.";
+    function Execute(string sourceText, string provider = "openai", string model = "gpt-5.6-luna", string reasoningLevel = "low") : string
+    {
+        return OntologyPreparationFacade.ExtractBindAndOrganize(_opsAgent, sourceText, provider, model, reasoningLevel);
+    }
+}
