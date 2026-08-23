@@ -1,5 +1,10 @@
 # index.pts Change History
 
+## Define Canonical Turn Paging Semantics (2026-08-22)
+- Clarified that recent turns are the newest canonical turns returned chronologically for display.
+- Defined `skipTurns` as a newest-edge turn offset and documented exhaustive continuation by increasing it by the returned turn count.
+- Defined `HasMore` as older canonical turns remaining, not message rows or cursor state.
+
 ## Preserve Cross-Session Sender Identity (2026-07-22)
 - Updated `ToSendToSession` to pass `_opsAgent` into the typed session facade so queued instructions carry authoritative source-session and agent identity.
 - Kept the ProtoScript action as thin glue; persistence and validation remain in the C# contracts and services.

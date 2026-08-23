@@ -192,7 +192,7 @@ prototype ToGetMostRecentSessionTurn : SessionManagementSkillAction
 [SemanticProgram.InfinitivePhrase("to get recent child session progress")]
 prototype ToGetRecentSessionTurns : SessionManagementSkillAction
 {
-	Description = @"sessionKey - target existing session key. maxTurns - small bounded count of recent turn summaries, default 5 and capped in C#. Prefer ToGetMostRecentSessionTurn first for routine inspection; use this when a few recent turns are needed. Does not return raw tool result rows.";
+	Description = @"sessionKey - target existing session key. maxTurns - small bounded count of the newest canonical turn summaries, default 5 and capped in C#. Results are chronological for display and HasMore indicates older canonical turns remain. Prefer ToGetMostRecentSessionTurn first for routine inspection; use this when a few recent turns are needed. Does not return raw tool result rows.";
 
 	function Execute(string sessionKey, int maxTurns = 5) : GetSessionTurnBootstrapResponse
 	{
@@ -205,7 +205,7 @@ prototype ToGetRecentSessionTurns : SessionManagementSkillAction
 [SemanticProgram.InfinitivePhrase("to inspect older turn summaries")]
 prototype ToGetSessionTurnPage : SessionManagementSkillAction
 {
-	Description = @"sessionKey - target existing session key. skipTurns - number of newest turns to skip. maxTurns - small bounded count, default 5 and capped in C#. Use after ToGetMostRecentSessionTurn or ToGetRecentSessionTurns when older summary turns are needed.";
+	Description = @"sessionKey - target existing session key. skipTurns - exact number of newest canonical turns to exclude before selecting the next older page. maxTurns - small bounded count, default 5 and capped in C#. Results are chronological within each page; HasMore is true only when older canonical turns remain. Use skipTurns += returned turn count to exhaust history without overlaps or gaps.";
 
 	function Execute(string sessionKey, int skipTurns, int maxTurns = 5) : GetSessionTurnPageResponse
 	{
