@@ -1,0 +1,9 @@
+prototype FeedingFrenzyJsonWsAdminAction : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"Base action type for administrator-only Feeding Frenzy JSON WS tools.";
+}
+
+prototype FeedingFrenzyJsonWsAdminGuardedWriteAction : FeedingFrenzyJsonWsGuardedWriteAction
+{
+	Description = @"Base action type for administrator-only Feeding Frenzy JSON WS write tools.";
+}

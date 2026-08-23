@@ -1,5 +1,5 @@
 [SemanticProgram.InfinitivePhrase("to add a tag to a Feeding Frenzy lead")]
-prototype LeadTags_InsertOrUpdateLeadTag : FeedingFrenzyJsonWsGuardedWriteAction
+prototype LeadTags_InsertOrUpdateLeadTag : FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
 	Description = @"Adds or updates one tag on a Feeding Frenzy lead. This mutates lead data and is intentionally outside the default read-oriented action root.";
 

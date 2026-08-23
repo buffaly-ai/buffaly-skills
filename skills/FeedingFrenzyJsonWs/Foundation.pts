@@ -1,0 +1,94 @@
+prototype FeedingFrenzyJsonWsSkillAction : OpsAction
+{
+	Description = @"Base action type for read-oriented Feeding Frenzy JSON WS service tools.";
+}
+
+prototype FeedingFrenzyJsonWsGuardedWriteAction : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"Base action type for narrow Feeding Frenzy JSON WS write tools.";
+}
+
+[SemanticEntity("feeding frenzy json ws skill")]
+prototype FeedingFrenzyJsonWsSkill : SkillEntity
+{
+	Description = "Feeding Frenzy JSON web service skill exposed through role-composed ProtoScript entry points.";
+	ActionRoot = FeedingFrenzyJsonWsSkillAction;
+}
+
+prototype FeedingFrenzyJsonWsService : Service
+{
+	ServiceName = "FeedingFrenzyJsonWsService";
+	Scope = "per-binding";
+	Description = @"Feeding Frenzy route-based JSON service. Remote and Local bindings are provided as partials. Token is auto-resolved from TokenKey.";
+
+	String BaseUrl = new String();
+	String BusinessApiPrefix = "api/feedingfrenzy.admin.business";
+	String CallCenterApiPrefix = "api/feedingfrenzy.callcenter";
+	String UiApiPrefix = "api/feedingfrenzy.admin.ui";
+	String TokenKey = "FeedingFrenzy.ApiKey";
+	Bool TokenIsAuthorizationToken = false;
+	String AutomationUserEmail = new String();
+
+	function Initialize() : string
+	{
+		if (StringUtil.IsEmpty(this.BaseUrl))
+			return "Error: FeedingFrenzyJsonWsService.BaseUrl must be set on the binding.";
+		return "FeedingFrenzyJsonWsService initialized (BaseUrl = " + this.BaseUrl + ").";
+	}
+
+	function ConfigureAuthorization(string BaseUrl, string AuthorizationToken) : string
+	{
+		if (StringUtil.IsEmpty(BaseUrl))
+			return "Error: BaseUrl is required.";
+		if (StringUtil.IsEmpty(AuthorizationToken))
+			return "Error: AuthorizationToken is required.";
+
+		this.BaseUrl = BaseUrl;
+		this.TokenKey = AuthorizationToken;
+		this.TokenIsAuthorizationToken = true;
+		return "Feeding Frenzy authorization configured for this session.";
+	}
+
+	function CallBusinessRoute(string routePath, JsonObject args) : string
+	{
+		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
+		return this.TokenIsAuthorizationToken
+			? JsonWsHelper.CallJsonRoute(this.BaseUrl, this.BusinessApiPrefix, routePath, this.TokenKey, normalizedArgs)
+			: JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.BusinessApiPrefix, routePath, this.TokenKey, normalizedArgs);
+	}
+
+	function CallCallCenterRoute(string routePath, JsonObject args) : string
+	{
+		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
+		return this.TokenIsAuthorizationToken
+			? JsonWsHelper.CallJsonRoute(this.BaseUrl, this.CallCenterApiPrefix, routePath, this.TokenKey, normalizedArgs)
+			: JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.CallCenterApiPrefix, routePath, this.TokenKey, normalizedArgs);
+	}
+
+	function CallUiRoute(string routePath, JsonObject args) : string
+	{
+		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
+		return this.TokenIsAuthorizationToken
+			? JsonWsHelper.CallJsonRoute(this.BaseUrl, this.UiApiPrefix, routePath, this.TokenKey, normalizedArgs)
+			: JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.UiApiPrefix, routePath, this.TokenKey, normalizedArgs);
+	}
+}
+
+[SemanticEntity("feeding frenzy remote json ws service")]
+[SemanticEntity("remote feeding frenzy json ws")]
+partial prototype FeedingFrenzyJsonWsService#Remote : FeedingFrenzyJsonWsService
+{
+	BaseUrl = "https://ff.medek.ai";
+	TokenKey = "FeedingFrenzy.ApiKey";
+	AutomationUserEmail = "matt+buffaly@intelligencefactory.ai";
+	Description = "Remote Feeding Frenzy JSON service binding.";
+}
+
+[SemanticEntity("feeding frenzy local json ws service")]
+[SemanticEntity("local feeding frenzy json ws")]
+partial prototype FeedingFrenzyJsonWsService#Local : FeedingFrenzyJsonWsService
+{
+	BaseUrl = "http://feedingfrenzy.local";
+	TokenKey = "FeedingFrenzy.Local.ApiKey";
+	Description = "Local Feeding Frenzy JSON service binding.";
+}

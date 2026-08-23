@@ -25,3 +25,25 @@ prototype LeadContacts_GetLeadContactsByLeadID : FeedingFrenzyJsonWsSkillAction
 		return service.CallBusinessRoute("lead-contacts/get-lead-contacts-by-lead-id", args);
 	}
 }
+
+[SemanticProgram.InfinitivePhrase("to add a feeding frenzy lead contact")]
+prototype ToAddFeedingFrenzyLeadContact : FeedingFrenzyJsonWsGuardedWriteAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int LeadID, string Name, string Title, string Phone, string Email, string Data) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["LeadID"] = LeadID; args["Name"] = Name; args["Title"] = Title; args["Phone"] = Phone; args["Email"] = Email; args["Data"] = Data;
+		return service.CallBusinessRoute("lead-contacts/insert-lead-contact", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to update a feeding frenzy lead contact")]
+prototype ToUpdateFeedingFrenzyLeadContact : FeedingFrenzyJsonWsGuardedWriteAction
+{
+	function Execute(FeedingFrenzyJsonWsService service, int LeadContactID, int LeadID, string Name, string Title, string Phone, string Email, string Data) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["LeadContactID"] = LeadContactID; args["LeadID"] = LeadID; args["Name"] = Name; args["Title"] = Title; args["Phone"] = Phone; args["Email"] = Email; args["Data"] = Data;
+		return service.CallBusinessRoute("lead-contacts/update-lead-contact", args);
+	}
+}

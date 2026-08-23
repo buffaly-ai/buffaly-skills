@@ -1015,7 +1015,7 @@
       "SkillName": "FeedingFrenzyJsonWs",
       "Title": "Feeding Frenzy JsonWs",
       "Description": "Buffaly skill package for Feeding Frenzy JsonWs.",
-      "Version": "0.1.19",
+      "Version": "0.1.20",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Feeding Frenzy JsonWs",
@@ -1024,24 +1024,40 @@
       "Path": "skills/FeedingFrenzyJsonWs",
       "Files": [
         {
-          "Path": "AgreementTemplates.pts",
-          "Sha256": "1381e159ad760bb7e49eee3d17241d906537ba766dbf10b1e2f06bcfbb6b95e4"
+          "Path": "AdminFoundation.pts",
+          "Sha256": "443827bfa68f17e7075af0eae0694824743217f78c0cfc0d36ae33f1850c0410"
+        },
+        {
+          "Path": "Administrator.pts",
+          "Sha256": "55384cde82cbd478143e37c2c8984f575f909ab47be5f59098ca16a879a5e31c"
+        },
+        {
+          "Path": "AgreementTemplates.Admin.pts",
+          "Sha256": "8229480c16e43ace6727e0d6c776064a2f2adf5e1f151dd17700cf7aead30941"
         },
         {
           "Path": "AgreementTemplates.pts.md",
           "Sha256": "ebcc7e1c5ebb0413c14a481aedc643a2c60ef53fe005761eec75bfc0c3bed25c"
         },
         {
+          "Path": "Calls.Admin.pts",
+          "Sha256": "5115c9009b0d45ae5c9f3d402f35ef2a85a59029d6e1cb619345e1a1f460e3ea"
+        },
+        {
           "Path": "Calls.pts",
-          "Sha256": "f1ca482ae417728d840c8c9b0295031369c2ea1f1fedfe01ac841ab430194c4d"
+          "Sha256": "e9deb919202d64562dfcb9f6dcea86a364b99d747622e330350e22c27426ad27"
         },
         {
           "Path": "Calls.pts.md",
           "Sha256": "6333fcac27520048a99e5473113dcd3ea97e413731bbd9b89ed377b1c1863561"
         },
         {
+          "Path": "Foundation.pts",
+          "Sha256": "66cc07f0c52d3e698f7b37465b6bdab893fc979aae8470c46846824306d43ab4"
+        },
+        {
           "Path": "index.pts",
-          "Sha256": "150394250a54caa14824a7076af349a7311d44d80a1a5c06ad8133d8b36bde31"
+          "Sha256": "35bf50626de9257da75934c490bacc47f4337b6eaddfdcbbb4c191d34fff1fd5"
         },
         {
           "Path": "index.pts.lazy.json",
@@ -1052,7 +1068,7 @@
           "Sha256": "ab50dabc66569721993d4d29f9249d5c622a0af3afffad53474393cd1700d45e"
         },
         {
-          "Path": "LeadAddresses.pts",
+          "Path": "LeadAddresses.Admin.pts",
           "Sha256": "6e6d4d78a73cff431a2b14e091d209d8f650ad2e7f6dda078948cf23f3268adc"
         },
         {
@@ -1060,7 +1076,7 @@
           "Sha256": "80d3a029bdf35a971ab4659b9e18924a1f678bd29ae2ab247e8a39ffd08cf3de"
         },
         {
-          "Path": "LeadAutomation.pts",
+          "Path": "LeadAutomation.Admin.pts",
           "Sha256": "bc49aab16cbe424f8a87307b7a962bd8e4e06b144f33d2904b10a9dd4bd6dc78"
         },
         {
@@ -1069,22 +1085,26 @@
         },
         {
           "Path": "LeadContacts.pts",
-          "Sha256": "1b67a94c11cb5fd4f274c3f9039df9b5863d6c94c401febb1a2f9d962184d801"
+          "Sha256": "065b666aac71d756ca1cb77186843aed5788bdcc6cb4973701132560d7794bce"
         },
         {
           "Path": "LeadContacts.pts.md",
           "Sha256": "c6e515b52769f5fa9095d2e93ac7b4276eea19296b8c709ee3b24f280df49ee2"
         },
         {
+          "Path": "LeadNotes.Admin.pts",
+          "Sha256": "4333a8854341a2251e14c5e77699ba7545efcfc489a6296f6bc7e8264fa0cd09"
+        },
+        {
           "Path": "LeadNotes.pts",
-          "Sha256": "dcc845cb1c4947b9f4c191bdd17fe1896205fd52232132254d7c984bf1fc78f0"
+          "Sha256": "d49642168225ae098f1091146f5b977dc1b681ce7576e6b32d2eb662a814848b"
         },
         {
           "Path": "LeadNotes.pts.md",
           "Sha256": "f5ff0af2328132686caa8bb1b71c8fcb195153d50b2bf1c3a25b9692c0ad2c51"
         },
         {
-          "Path": "LeadNoteTypes.pts",
+          "Path": "LeadNoteTypes.Admin.pts",
           "Sha256": "a58b37ac9136e87df48f45863fb4a1b2545c5fcb35c862fc84fd42fa940d5938"
         },
         {
@@ -1092,23 +1112,23 @@
           "Sha256": "507b46966d5db3282e3b8b6680fc81ff6711e8b154ba74175bf6fa895ebd37d7"
         },
         {
+          "Path": "Leads.Admin.pts",
+          "Sha256": "ff75a75273a930bef71553a1cfad01039315b53901c206bfd8a6b6ab38c77b10"
+        },
+        {
           "Path": "Leads.pts",
-          "Sha256": "42944b87c1b59de174b942063050a1c42df55a9bbb2ea586d29b3188cd36f597"
+          "Sha256": "24e8c8cf3d9e7164fbf0271b405a1e59101737364a5b1e0896b805271c2c5ee1"
         },
         {
           "Path": "Leads.pts.md",
           "Sha256": "221ad41021a7fc21a28535af57249721ab2612c0c29f6e94021ea525850085f3"
         },
         {
-          "Path": "LeadsAdmin.pts",
-          "Sha256": "7b1a6180f418519bd865c33c7b1e720e638599736b26e8fb62a167066b027554"
-        },
-        {
           "Path": "LeadsAdmin.pts.md",
           "Sha256": "9050c6dd232bba5f43460c7c1eb6316bff9c2a87e0a54b65a1f3c9d3f8beb6fa"
         },
         {
-          "Path": "LeadStatuses.pts",
+          "Path": "LeadStatuses.Admin.pts",
           "Sha256": "cae4b9f3978c5edf20733756518d9c6e195412f4e13930b5ee031ea590ed4fe0"
         },
         {
@@ -1116,7 +1136,7 @@
           "Sha256": "da8704621ade55d256a4be167722c21aa26166fd8da791cafbb18ce5349388fe"
         },
         {
-          "Path": "LeadSubStatuses.pts",
+          "Path": "LeadSubStatuses.Admin.pts",
           "Sha256": "35262825fbbf62472aaf01c5f77f4ea4e03afa1e194fe7a50ce4ec145cb482fa"
         },
         {
@@ -1124,35 +1144,39 @@
           "Sha256": "1b4915a49abef6b0efe5caf185aa76a073ad72f0367c5a02cc1a97713807f805"
         },
         {
-          "Path": "LeadTags.pts",
-          "Sha256": "44b122f42b51828298b9e8ae571480d50c221e06fd7fd72e51a7f387e3033063"
+          "Path": "LeadTags.Admin.pts",
+          "Sha256": "bd817c775cd95c5e2119166bd7584913c6b8c10ba7329690edf89d922d3cf644"
         },
         {
           "Path": "LeadTags.pts.md",
           "Sha256": "78b4a4ba20cd3c6142e4f8d330ef857510aeacf6176d336b04a329e69e0756ab"
         },
         {
-          "Path": "SalesRepresentatives.pts",
-          "Sha256": "6f7c5e9dd692a91c99c4557e8cfc32cddb9684817d92fffbb820909ed067ed36"
+          "Path": "SalesRepresentative.pts",
+          "Sha256": "afcf8965d767fb2cd1a4c6982fb042f97ba0b4dd8e81d8599dc31acabef86971"
+        },
+        {
+          "Path": "SalesRepresentatives.Admin.pts",
+          "Sha256": "4f8332255129db0837e8067d693ae7ff13db8674a7dbbbd83614b7955d1fa277"
         },
         {
           "Path": "SalesRepresentatives.pts.md",
           "Sha256": "6855c97f2b9419216d176d13ab7db785a7cbf8843b830a225dfa003815c7df67"
         },
         {
-          "Path": "SalesRepresentativesAdmin.pts",
-          "Sha256": "21c8859836582262766a8841b91dcf4b7d9ae99962626d050aab41de8097f050"
-        },
-        {
           "Path": "SalesRepresentativesAdmin.pts.md",
           "Sha256": "7be00d8715d1959793f4ba783d8a8c5744bdbce2a9421a2f4adb899ac7fcab70"
+        },
+        {
+          "Path": "SalesRepresentativesUi.Admin.pts",
+          "Sha256": "21c8859836582262766a8841b91dcf4b7d9ae99962626d050aab41de8097f050"
         },
         {
           "Path": "SKILL.md",
           "Sha256": "12be9d1d1970494473aaf88ebd3796fcabf2bd86ef036f57f0e12fefb298bc84"
         },
         {
-          "Path": "Sources.pts",
+          "Path": "Sources.Admin.pts",
           "Sha256": "eaff3830858a208e63c095ddbdfaa886f9b352cc70a5033adee2df489836326f"
         },
         {
@@ -1160,7 +1184,7 @@
           "Sha256": "b6d9eea4dbf2b0b2b4d975858e897c3adfdd1612e620ed0580b67c11151e9d80"
         },
         {
-          "Path": "Tags.pts",
+          "Path": "Tags.Admin.pts",
           "Sha256": "04974be7e6c07a833d8369cf355e93ce7fa755d30d280525682fc801ad9bcd3c"
         },
         {
@@ -1168,15 +1192,15 @@
           "Sha256": "d51fb486facf38891f86f5128460e5172215a47c38480ed42008d1a9a0b9218b"
         },
         {
-          "Path": "Tasks.pts",
-          "Sha256": "87be2a5ccd47f5df99bbbffb4fc35c216b17e9e5910537ef445676b52f4dabcc"
+          "Path": "Tasks.Admin.pts",
+          "Sha256": "195d614ceba3f19e5cf0fcfae31be11b4bd85e786cafe2788184284d18651998"
         },
         {
           "Path": "Tasks.pts.md",
           "Sha256": "c5e5f9ca3db82256f5414035ffb9f21d78beb9bfe7bce71557bb3e9257877af2"
         },
         {
-          "Path": "UserAutomation.pts",
+          "Path": "UserAutomation.Admin.pts",
           "Sha256": "b29cb087044b15d9811f3ed356e8f23ff5d0b346c8376304bd172eed4b1152e2"
         },
         {
@@ -1184,7 +1208,7 @@
           "Sha256": "0228bd2fc5306932ad88635f5eb5ef0375af85033f419efdcfa0ec866efb7e56"
         },
         {
-          "Path": "Users.pts",
+          "Path": "Users.Admin.pts",
           "Sha256": "74a9d0402111eaaf771c5c5bab905d4d440ee83513f01e21307b7c9cff51e2b0"
         },
         {
