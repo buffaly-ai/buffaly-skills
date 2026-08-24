@@ -12,6 +12,7 @@ DECLARE
     mapping record;
     source_oid oid;
     source_args text;
+    source_identity_args text;
     source_result text;
     call_args text;
     call_sql text;
@@ -170,6 +171,7 @@ BEGIN
     ('UpdateSessionArtifactSp', 'update_session_artifact_sp'),
     ('UpdateSessionDataSp', 'update_session_data_sp'),
     ('UpdateSessionDateCreatedSp', 'update_session_date_created_sp'),
+	('UpdateSessionCompactionProviderSp', 'update_session_compaction_provider_sp'),
     ('UpdateSessionNameSp', 'update_session_name_sp'),
     ('UpdateSessionParentSessionIDSp', 'update_session_parent_session_id_sp'),
     ('UpdateSessionProviderSelectionSp', 'update_session_provider_selection_sp'),
@@ -181,8 +183,9 @@ BEGIN
     LOOP
         SELECT p.oid,
                pg_catalog.pg_get_function_arguments(p.oid),
+               pg_catalog.pg_get_function_identity_arguments(p.oid),
                pg_catalog.pg_get_function_result(p.oid)
-          INTO source_oid, source_args, source_result
+          INTO source_oid, source_args, source_identity_args, source_result
           FROM pg_catalog.pg_proc p
           JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
          WHERE n.nspname = 'public'
@@ -212,8 +215,12 @@ BEGIN
             call_sql := format('SELECT %I(%s)', mapping.source_name, call_args);
         END IF;
 
+        -- PostgreSQL cannot CREATE OR REPLACE a function when its OUT/TABLE
+        -- columns change. Drop the exact-signature compatibility wrapper first
+        -- so schema projection additions propagate deterministically.
+        EXECUTE format('DROP FUNCTION IF EXISTS %I(%s)', mapping.canonical_name, source_identity_args);
         EXECUTE format(
-            'CREATE OR REPLACE FUNCTION %I(%s) RETURNS %s LANGUAGE sql AS %L',
+            'CREATE FUNCTION %I(%s) RETURNS %s LANGUAGE sql AS %L',
             mapping.canonical_name,
             source_args,
             source_result,

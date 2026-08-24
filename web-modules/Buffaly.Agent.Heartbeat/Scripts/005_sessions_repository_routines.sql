@@ -13,9 +13,26 @@ CREATE TABLE IF NOT EXISTS sessions (
 	data text NULL,
 	session_name text NULL,
 	parent_session_id integer NULL REFERENCES sessions(session_id),
-	is_archived boolean NOT NULL DEFAULT false
+	is_archived boolean NOT NULL DEFAULT false,
+	compaction_provider text NULL
 );
+ALTER TABLE sessions ADD COLUMN IF NOT EXISTS compaction_provider text NULL;
 CREATE INDEX IF NOT EXISTS ix_sessions_parent_session_id ON sessions(parent_session_id);
+
+-- Session projection columns are part of each function's PostgreSQL return type.
+-- Drop projection-dependent routines before adding columns so both old installs
+-- and repeated repair runs can recreate the complete contract deterministically.
+DROP FUNCTION IF EXISTS get_session_sp(integer);
+DROP FUNCTION IF EXISTS get_session_by_session_key_sp(text);
+DROP FUNCTION IF EXISTS get_sessions_sp();
+DROP FUNCTION IF EXISTS get_sessions_by_parent_session_id_sp(integer);
+DROP FUNCTION IF EXISTS get_sessions_sp_paging_sp(text,text,boolean,integer,integer);
+DROP FUNCTION IF EXISTS sessions_get_all_sp();
+DROP FUNCTION IF EXISTS sessions_get_all_sp_paging_sp(text,text,boolean,integer,integer);
+DROP FUNCTION IF EXISTS sessions_get_archived_sp_sp();
+DROP FUNCTION IF EXISTS sessions_get_archived_sp_sp_paging_sp(text,text,boolean,integer,integer);
+DROP FUNCTION IF EXISTS get_sessions_by_parent_session_idsp_paging_sp(integer,text,text,boolean,integer,integer);
+DROP FUNCTION IF EXISTS get_session_rows();
 
 CREATE OR REPLACE FUNCTION insert_session_sp(p_session_key text,p_agent_name text,p_project_name text,p_project_file_path text,p_provider text,p_model_name text,p_reasoning_level text,p_prompt_context text,p_data text,p_session_name text,p_parent_session_id integer,p_is_archived boolean)
 RETURNS TABLE ("SessionID" integer) LANGUAGE sql AS $$ INSERT INTO sessions(session_key,agent_name,project_name,project_file_path,provider,model_name,reasoning_level,prompt_context,date_created,last_updated,data,session_name,parent_session_id,is_archived) VALUES(p_session_key,p_agent_name,p_project_name,p_project_file_path,p_provider,p_model_name,p_reasoning_level,p_prompt_context,now(),now(),p_data,p_session_name,p_parent_session_id,p_is_archived) RETURNING session_id; $$;
@@ -23,13 +40,14 @@ CREATE OR REPLACE FUNCTION update_session_sp(p_session_id integer,p_session_key 
 CREATE OR REPLACE FUNCTION remove_session_sp(p_session_id integer) RETURNS void LANGUAGE sql AS $$ DELETE FROM sessions WHERE session_id=p_session_id; $$;
 CREATE OR REPLACE FUNCTION copy_session_sp(p_session_id integer) RETURNS TABLE ("SessionID" integer) LANGUAGE sql AS $$ INSERT INTO sessions(session_key,agent_name,project_name,project_file_path,provider,model_name,reasoning_level,prompt_context,date_created,last_updated,data,session_name,parent_session_id,is_archived) SELECT session_key || ' - Copy',agent_name,project_name,project_file_path,provider,model_name,reasoning_level,prompt_context,now(),now(),data,session_name,parent_session_id,is_archived FROM sessions WHERE session_id=p_session_id RETURNING session_id; $$;
 
-CREATE OR REPLACE FUNCTION get_session_rows() RETURNS TABLE ("SessionID" integer,"SessionKey" text,"AgentName" text,"ProjectName" text,"ProjectFilePath" text,"Provider" text,"ModelName" text,"ReasoningLevel" text,"PromptContext" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"SessionName" text,"ParentSessionID" integer,"IsArchived" boolean) LANGUAGE sql AS $$ SELECT session_id,session_key,agent_name,project_name,project_file_path,provider,model_name,reasoning_level,prompt_context,date_created,last_updated,data,session_name,parent_session_id,is_archived FROM sessions; $$;
-CREATE OR REPLACE FUNCTION get_session_sp(p_session_id integer) RETURNS TABLE ("SessionID" integer,"SessionKey" text,"AgentName" text,"ProjectName" text,"ProjectFilePath" text,"Provider" text,"ModelName" text,"ReasoningLevel" text,"PromptContext" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"SessionName" text,"ParentSessionID" integer,"IsArchived" boolean) LANGUAGE sql AS $$ SELECT * FROM get_session_rows() WHERE "SessionID"=p_session_id; $$;
-CREATE OR REPLACE FUNCTION get_session_by_session_key_sp(p_session_key text) RETURNS TABLE ("SessionID" integer,"SessionKey" text,"AgentName" text,"ProjectName" text,"ProjectFilePath" text,"Provider" text,"ModelName" text,"ReasoningLevel" text,"PromptContext" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"SessionName" text,"ParentSessionID" integer,"IsArchived" boolean) LANGUAGE sql AS $$ SELECT * FROM get_session_rows() WHERE "SessionKey"=p_session_key; $$;
-CREATE OR REPLACE FUNCTION get_sessions_sp() RETURNS TABLE ("SessionID" integer,"SessionKey" text,"AgentName" text,"ProjectName" text,"ProjectFilePath" text,"Provider" text,"ModelName" text,"ReasoningLevel" text,"PromptContext" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"SessionName" text,"ParentSessionID" integer,"IsArchived" boolean) LANGUAGE sql AS $$ SELECT * FROM get_session_rows(); $$;
-CREATE OR REPLACE FUNCTION get_sessions_by_parent_session_id_sp(p_parent_session_id integer) RETURNS TABLE ("SessionID" integer,"SessionKey" text,"AgentName" text,"ProjectName" text,"ProjectFilePath" text,"Provider" text,"ModelName" text,"ReasoningLevel" text,"PromptContext" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"SessionName" text,"ParentSessionID" integer,"IsArchived" boolean) LANGUAGE sql AS $$ SELECT * FROM get_session_rows() WHERE ((p_parent_session_id IS NULL AND "ParentSessionID" IS NULL) OR "ParentSessionID"=p_parent_session_id); $$;
+CREATE OR REPLACE FUNCTION get_session_rows() RETURNS TABLE ("SessionID" integer,"SessionKey" text,"AgentName" text,"ProjectName" text,"ProjectFilePath" text,"Provider" text,"ModelName" text,"ReasoningLevel" text,"PromptContext" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"SessionName" text,"ParentSessionID" integer,"IsArchived" boolean,"CompactionProvider" text) LANGUAGE sql AS $$ SELECT session_id,session_key,agent_name,project_name,project_file_path,provider,model_name,reasoning_level,prompt_context,date_created,last_updated,data,session_name,parent_session_id,is_archived,compaction_provider FROM sessions; $$;
+CREATE OR REPLACE FUNCTION get_session_sp(p_session_id integer) RETURNS TABLE ("SessionID" integer,"SessionKey" text,"AgentName" text,"ProjectName" text,"ProjectFilePath" text,"Provider" text,"ModelName" text,"ReasoningLevel" text,"PromptContext" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"SessionName" text,"ParentSessionID" integer,"IsArchived" boolean,"CompactionProvider" text) LANGUAGE sql AS $$ SELECT * FROM get_session_rows() WHERE "SessionID"=p_session_id; $$;
+CREATE OR REPLACE FUNCTION get_session_by_session_key_sp(p_session_key text) RETURNS TABLE ("SessionID" integer,"SessionKey" text,"AgentName" text,"ProjectName" text,"ProjectFilePath" text,"Provider" text,"ModelName" text,"ReasoningLevel" text,"PromptContext" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"SessionName" text,"ParentSessionID" integer,"IsArchived" boolean,"CompactionProvider" text) LANGUAGE sql AS $$ SELECT * FROM get_session_rows() WHERE "SessionKey"=p_session_key; $$;
+CREATE OR REPLACE FUNCTION get_sessions_sp() RETURNS TABLE ("SessionID" integer,"SessionKey" text,"AgentName" text,"ProjectName" text,"ProjectFilePath" text,"Provider" text,"ModelName" text,"ReasoningLevel" text,"PromptContext" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"SessionName" text,"ParentSessionID" integer,"IsArchived" boolean,"CompactionProvider" text) LANGUAGE sql AS $$ SELECT * FROM get_session_rows(); $$;
+CREATE OR REPLACE FUNCTION get_sessions_by_parent_session_id_sp(p_parent_session_id integer) RETURNS TABLE ("SessionID" integer,"SessionKey" text,"AgentName" text,"ProjectName" text,"ProjectFilePath" text,"Provider" text,"ModelName" text,"ReasoningLevel" text,"PromptContext" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"SessionName" text,"ParentSessionID" integer,"IsArchived" boolean,"CompactionProvider" text) LANGUAGE sql AS $$ SELECT * FROM get_session_rows() WHERE ((p_parent_session_id IS NULL AND "ParentSessionID" IS NULL) OR "ParentSessionID"=p_parent_session_id); $$;
 CREATE OR REPLACE FUNCTION get_sessions_sp_count_sp(p_search text) RETURNS TABLE ("Total" integer) LANGUAGE sql AS $$ SELECT COUNT(*)::integer FROM sessions WHERE session_id::text LIKE '%'||COALESCE(p_search,'')||'%' OR session_key LIKE '%'||COALESCE(p_search,'')||'%' OR agent_name LIKE '%'||COALESCE(p_search,'')||'%' OR project_name LIKE '%'||COALESCE(p_search,'')||'%' OR provider LIKE '%'||COALESCE(p_search,'')||'%' OR model_name LIKE '%'||COALESCE(p_search,'')||'%' OR session_name LIKE '%'||COALESCE(p_search,'')||'%'; $$;
-CREATE OR REPLACE FUNCTION get_sessions_sp_paging_sp(p_search text,p_sort_column text,p_sort_ascending boolean,p_skip_rows integer,p_num_rows integer) RETURNS TABLE ("SessionID" integer,"SessionKey" text,"AgentName" text,"ProjectName" text,"ProjectFilePath" text,"Provider" text,"ModelName" text,"ReasoningLevel" text,"PromptContext" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"SessionName" text,"ParentSessionID" integer,"IsArchived" boolean) LANGUAGE sql AS $$ SELECT * FROM get_session_rows() WHERE "SessionKey" LIKE '%'||COALESCE(p_search,'')||'%' OR "AgentName" LIKE '%'||COALESCE(p_search,'')||'%' OR "SessionName" LIKE '%'||COALESCE(p_search,'')||'%' ORDER BY CASE WHEN p_sort_column='SessionID' AND p_sort_ascending THEN "SessionID" END ASC, CASE WHEN p_sort_column='SessionID' AND NOT p_sort_ascending THEN "SessionID" END DESC, CASE WHEN p_sort_column='SessionKey' AND p_sort_ascending THEN "SessionKey" END ASC, CASE WHEN p_sort_column='SessionKey' AND NOT p_sort_ascending THEN "SessionKey" END DESC OFFSET p_skip_rows LIMIT p_num_rows; $$;
+DROP FUNCTION IF EXISTS get_sessions_sp_paging_sp(text,text,boolean,integer,integer);
+CREATE OR REPLACE FUNCTION get_sessions_sp_paging_sp(p_search text,p_sort_column text,p_sort_ascending boolean,p_skip_rows integer,p_num_rows integer) RETURNS TABLE ("SessionID" integer,"SessionKey" text,"AgentName" text,"ProjectName" text,"ProjectFilePath" text,"Provider" text,"ModelName" text,"ReasoningLevel" text,"PromptContext" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"SessionName" text,"ParentSessionID" integer,"IsArchived" boolean,"CompactionProvider" text) LANGUAGE sql AS $$ SELECT * FROM get_session_rows() WHERE "SessionKey" LIKE '%'||COALESCE(p_search,'')||'%' OR "AgentName" LIKE '%'||COALESCE(p_search,'')||'%' OR "SessionName" LIKE '%'||COALESCE(p_search,'')||'%' ORDER BY CASE WHEN p_sort_column='SessionID' AND p_sort_ascending THEN "SessionID" END ASC, CASE WHEN p_sort_column='SessionID' AND NOT p_sort_ascending THEN "SessionID" END DESC, CASE WHEN p_sort_column='SessionKey' AND p_sort_ascending THEN "SessionKey" END ASC, CASE WHEN p_sort_column='SessionKey' AND NOT p_sort_ascending THEN "SessionKey" END DESC OFFSET p_skip_rows LIMIT p_num_rows; $$;
 CREATE OR REPLACE FUNCTION mark_session_as_archived_sp(p_session_id integer) RETURNS void LANGUAGE sql AS $$ UPDATE sessions SET is_archived=true,last_updated=now() WHERE session_id=p_session_id; $$;
 CREATE OR REPLACE FUNCTION mark_session_as_not_archived_sp(p_session_id integer) RETURNS void LANGUAGE sql AS $$ UPDATE sessions SET is_archived=false,last_updated=now() WHERE session_id=p_session_id; $$;
 CREATE OR REPLACE FUNCTION update_session_data_sp(p_session_id integer,p_data text) RETURNS void LANGUAGE sql AS $$ UPDATE sessions SET data=p_data,last_updated=now() WHERE session_id=p_session_id; $$;
@@ -37,6 +55,7 @@ CREATE OR REPLACE FUNCTION update_session_name_sp(p_session_id integer,p_session
 CREATE OR REPLACE FUNCTION update_session_parent_session_id_sp(p_session_id integer,p_parent_session_id integer) RETURNS void LANGUAGE sql AS $$ UPDATE sessions SET parent_session_id=p_parent_session_id,last_updated=now() WHERE session_id=p_session_id; $$;
 CREATE OR REPLACE FUNCTION update_session_provider_selection_sp(p_session_id integer,p_provider text,p_model_name text,p_reasoning_level text,p_data text) RETURNS void LANGUAGE sql AS $$ UPDATE sessions SET provider=p_provider,model_name=p_model_name,reasoning_level=p_reasoning_level,data=p_data,last_updated=now() WHERE session_id=p_session_id; $$;
 CREATE OR REPLACE FUNCTION update_session_prompt_context_sp(p_session_id integer,p_prompt_context text) RETURNS void LANGUAGE sql AS $$ UPDATE sessions SET prompt_context=p_prompt_context,last_updated=now() WHERE session_id=p_session_id; $$;
+CREATE OR REPLACE FUNCTION update_session_compaction_provider_sp(p_session_id integer,p_compaction_provider text) RETURNS void LANGUAGE sql AS $$ UPDATE sessions SET compaction_provider=p_compaction_provider,last_updated=now() WHERE session_id=p_session_id; $$;
 CREATE OR REPLACE FUNCTION sessions_reset_running_runtime_status_on_web_startup_sp() RETURNS void LANGUAGE sql AS $$ SELECT NULL::void; $$;
 
 
@@ -65,8 +84,9 @@ RETURNS timestamp LANGUAGE sql AS $$
 	GROUP BY p.last_updated;
 $$;
 
+DROP FUNCTION IF EXISTS sessions_get_all_sp();
 CREATE OR REPLACE FUNCTION sessions_get_all_sp()
-RETURNS TABLE ("SessionID" integer,"SessionKey" text,"AgentName" text,"ProjectName" text,"ProjectFilePath" text,"Provider" text,"ModelName" text,"ReasoningLevel" text,"PromptContext" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"SessionName" text,"ParentSessionID" integer,"IsArchived" boolean) LANGUAGE sql AS $$
+RETURNS TABLE ("SessionID" integer,"SessionKey" text,"AgentName" text,"ProjectName" text,"ProjectFilePath" text,"Provider" text,"ModelName" text,"ReasoningLevel" text,"PromptContext" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"SessionName" text,"ParentSessionID" integer,"IsArchived" boolean,"CompactionProvider" text) LANGUAGE sql AS $$
 	SELECT * FROM get_session_rows() WHERE "IsArchived" = false;
 $$;
 
@@ -75,9 +95,10 @@ RETURNS TABLE ("Total" integer) LANGUAGE sql AS $$
 	SELECT COUNT(*)::integer FROM sessions s WHERE s.is_archived = false AND session_matches_search(s, p_search);
 $$;
 
+DROP FUNCTION IF EXISTS sessions_get_all_sp_paging_sp(text,text,boolean,integer,integer);
 CREATE OR REPLACE FUNCTION sessions_get_all_sp_paging_sp(p_search text,p_sort_column text,p_sort_ascending boolean,p_skip_rows integer,p_num_rows integer)
-RETURNS TABLE ("SessionID" integer,"SessionKey" text,"AgentName" text,"ProjectName" text,"ProjectFilePath" text,"Provider" text,"ModelName" text,"ReasoningLevel" text,"PromptContext" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"SessionName" text,"ParentSessionID" integer,"IsArchived" boolean) LANGUAGE sql AS $$
-	SELECT s.session_id,s.session_key,s.agent_name,s.project_name,s.project_file_path,s.provider,s.model_name,s.reasoning_level,s.prompt_context,s.date_created,sessions_get_effective_last_updated(s.session_id,false),s.data,s.session_name,s.parent_session_id,s.is_archived
+RETURNS TABLE ("SessionID" integer,"SessionKey" text,"AgentName" text,"ProjectName" text,"ProjectFilePath" text,"Provider" text,"ModelName" text,"ReasoningLevel" text,"PromptContext" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"SessionName" text,"ParentSessionID" integer,"IsArchived" boolean,"CompactionProvider" text) LANGUAGE sql AS $$
+	SELECT s.session_id,s.session_key,s.agent_name,s.project_name,s.project_file_path,s.provider,s.model_name,s.reasoning_level,s.prompt_context,s.date_created,sessions_get_effective_last_updated(s.session_id,false),s.data,s.session_name,s.parent_session_id,s.is_archived,s.compaction_provider
 	FROM sessions s
 	WHERE s.is_archived = false AND session_matches_search(s, p_search)
 	ORDER BY
@@ -92,8 +113,9 @@ RETURNS TABLE ("SessionID" integer,"SessionKey" text,"AgentName" text,"ProjectNa
 	OFFSET p_skip_rows LIMIT p_num_rows;
 $$;
 
+DROP FUNCTION IF EXISTS sessions_get_archived_sp_sp();
 CREATE OR REPLACE FUNCTION sessions_get_archived_sp_sp()
-RETURNS TABLE ("SessionID" integer,"SessionKey" text,"AgentName" text,"ProjectName" text,"ProjectFilePath" text,"Provider" text,"ModelName" text,"ReasoningLevel" text,"PromptContext" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"SessionName" text,"ParentSessionID" integer,"IsArchived" boolean) LANGUAGE sql AS $$
+RETURNS TABLE ("SessionID" integer,"SessionKey" text,"AgentName" text,"ProjectName" text,"ProjectFilePath" text,"Provider" text,"ModelName" text,"ReasoningLevel" text,"PromptContext" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"SessionName" text,"ParentSessionID" integer,"IsArchived" boolean,"CompactionProvider" text) LANGUAGE sql AS $$
 	SELECT * FROM get_session_rows() WHERE "IsArchived" = true;
 $$;
 
@@ -102,9 +124,10 @@ RETURNS TABLE ("Total" integer) LANGUAGE sql AS $$
 	SELECT COUNT(*)::integer FROM sessions s WHERE s.is_archived = true AND session_matches_search(s, p_search);
 $$;
 
+DROP FUNCTION IF EXISTS sessions_get_archived_sp_sp_paging_sp(text,text,boolean,integer,integer);
 CREATE OR REPLACE FUNCTION sessions_get_archived_sp_sp_paging_sp(p_search text,p_sort_column text,p_sort_ascending boolean,p_skip_rows integer,p_num_rows integer)
-RETURNS TABLE ("SessionID" integer,"SessionKey" text,"AgentName" text,"ProjectName" text,"ProjectFilePath" text,"Provider" text,"ModelName" text,"ReasoningLevel" text,"PromptContext" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"SessionName" text,"ParentSessionID" integer,"IsArchived" boolean) LANGUAGE sql AS $$
-	SELECT s.session_id,s.session_key,s.agent_name,s.project_name,s.project_file_path,s.provider,s.model_name,s.reasoning_level,s.prompt_context,s.date_created,sessions_get_effective_last_updated(s.session_id,true),s.data,s.session_name,s.parent_session_id,s.is_archived
+RETURNS TABLE ("SessionID" integer,"SessionKey" text,"AgentName" text,"ProjectName" text,"ProjectFilePath" text,"Provider" text,"ModelName" text,"ReasoningLevel" text,"PromptContext" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"SessionName" text,"ParentSessionID" integer,"IsArchived" boolean,"CompactionProvider" text) LANGUAGE sql AS $$
+	SELECT s.session_id,s.session_key,s.agent_name,s.project_name,s.project_file_path,s.provider,s.model_name,s.reasoning_level,s.prompt_context,s.date_created,sessions_get_effective_last_updated(s.session_id,true),s.data,s.session_name,s.parent_session_id,s.is_archived,s.compaction_provider
 	FROM sessions s
 	WHERE s.is_archived = true AND session_matches_search(s, p_search)
 	ORDER BY
@@ -124,8 +147,9 @@ RETURNS TABLE ("Total" integer) LANGUAGE sql AS $$
 	SELECT COUNT(*)::integer FROM sessions s WHERE s.parent_session_id = p_parent_session_id AND session_matches_search(s, p_search);
 $$;
 
+DROP FUNCTION IF EXISTS get_sessions_by_parent_session_idsp_paging_sp(integer,text,text,boolean,integer,integer);
 CREATE OR REPLACE FUNCTION get_sessions_by_parent_session_idsp_paging_sp(p_parent_session_id integer,p_search text,p_sort_column text,p_sort_ascending boolean,p_skip_rows integer,p_num_rows integer)
-RETURNS TABLE ("SessionID" integer,"SessionKey" text,"AgentName" text,"ProjectName" text,"ProjectFilePath" text,"Provider" text,"ModelName" text,"ReasoningLevel" text,"PromptContext" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"SessionName" text,"ParentSessionID" integer,"IsArchived" boolean) LANGUAGE sql AS $$
+RETURNS TABLE ("SessionID" integer,"SessionKey" text,"AgentName" text,"ProjectName" text,"ProjectFilePath" text,"Provider" text,"ModelName" text,"ReasoningLevel" text,"PromptContext" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"SessionName" text,"ParentSessionID" integer,"IsArchived" boolean,"CompactionProvider" text) LANGUAGE sql AS $$
 	SELECT * FROM get_session_rows() r
 	WHERE r."ParentSessionID" = p_parent_session_id AND EXISTS (SELECT 1 FROM sessions s WHERE s.session_id = r."SessionID" AND session_matches_search(s, p_search))
 	ORDER BY
