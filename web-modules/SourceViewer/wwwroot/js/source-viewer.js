@@ -30,11 +30,11 @@
 			path.textContent = model.path;
 			kind.textContent = language.label;
 			kind.title = language.name;
-			document.title = model.name + " — Source Viewer";
+			document.title = model.name + " - Source Viewer";
 			editor = CodeMirror.fromTextArea(document.getElementById("source"), { mode: language.mode, lineNumbers: true, readOnly: true, lineWrapping: false });
 			editor.setValue(model.text);
 			copy.disabled = false;
-			status.textContent = model.length.toLocaleString() + " bytes · " + language.name + " · Read only";
+			status.textContent = model.length.toLocaleString() + " bytes | " + language.name + " | Read only";
 		} catch (error) { fail(error.message); }
 	}
 
