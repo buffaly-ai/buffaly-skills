@@ -6,6 +6,7 @@
 	const languages = Object.freeze({
 		javascript: Object.freeze({ mode: "javascript", kind: "JS" }),
 		csharp: Object.freeze({ mode: "text/x-csharp", kind: "C#" }),
+		protoscript: Object.freeze({ mode: null, kind: "PTS" }),
 		text: Object.freeze({ mode: null, kind: "TXT" })
 	});
 	const language = languages[requestedLanguage] || languages.text;

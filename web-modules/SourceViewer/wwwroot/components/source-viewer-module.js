@@ -1,7 +1,7 @@
 const API = "/api/buffaly.source-viewer/source-file";
 const BASE = "/web-modules/SourceViewer/";
 const SCREENS = Object.freeze({ file: true });
-const LANGUAGES = Object.freeze({ javascript: { mode: "javascript", kind: "JS" }, csharp: { mode: "text/x-csharp", kind: "C#" }, text: { mode: null, kind: "TXT" } });
+const LANGUAGES = Object.freeze({ javascript: { mode: "javascript", kind: "JS" }, csharp: { mode: "text/x-csharp", kind: "C#" }, protoscript: { mode: null, kind: "PTS" }, text: { mode: null, kind: "TXT" } });
 let assetsPromise;
 
 function escapeHtml(value) { return String(value == null ? "" : value).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]); }
