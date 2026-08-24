@@ -1,3 +1,3 @@
-# source-viewer-module.js
+# SourceViewer interactive component
 
-Self-contained registered Web Component entry for the read-only `file` screen. It loads the module-owned CodeMirror assets, calls the canonical source-file endpoint for the explicitly supplied local path, renders the exact returned file, and optionally focuses a one-based line or highlights the first exact text match. ProtoScript is presented in readable plain-text CodeMirror mode with a distinct `PTS` label. It exposes `configure()`, `start()`, and `dispose()` for the shared interactive host and emits the standard ready/error events. It contains no browsing or mutation behavior.
+Self-contained registered Web Component for the read-only `file` screen. It loads the module-owned CodeMirror core and shared language map, reads the canonical file through the SourceViewer API, detects language from the returned opened path, and lazily loads only bundled mode dependencies. It retains exact path/byte display, line focus/highlight, lifecycle events, read-only behavior, and light/dark system-theme support. It contains no browsing or mutation behavior.

@@ -18,4 +18,14 @@ body { margin: 0; font-family: Inter, "Segoe UI", system-ui, sans-serif; color: 
 .cm-s-default .cm-def, .cm-s-default .cm-variable-2 { color: #2b91af; }
 .cm-s-default .cm-string { color: #a31515; }
 .cm-s-default .cm-comment { color: #008000; }
+@media (prefers-color-scheme: dark) {
+	:root { color-scheme: dark; --border: #334155; --muted: #94a3b8; --blue: #3b82f6; }
+	body { color: #e2e8f0; background: #0f172a; }
+	.source-viewer__header, .source-viewer button, .CodeMirror { background: #111827; color: #e2e8f0; }
+	.source-viewer button { border-color: #475569; color: #93c5fd; }
+	.cm-s-default .cm-keyword { color: #c084fc; }
+	.cm-s-default .cm-def, .cm-s-default .cm-variable-2 { color: #67e8f9; }
+	.cm-s-default .cm-string { color: #fca5a5; }
+	.cm-s-default .cm-comment { color: #86efac; }
+}
 @media (max-width: 640px) { .source-viewer__header { align-items: flex-start; } .source-viewer__kind { display: none; } .source-viewer__actions { flex-direction: column; } }

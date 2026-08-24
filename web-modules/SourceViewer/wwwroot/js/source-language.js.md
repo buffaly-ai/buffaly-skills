@@ -1,0 +1,3 @@
+# Source language detection
+
+Shared browser mapping for both SourceViewer entry points. It detects presentation from the canonical opened filename returned by the API, maps known source extensions case-insensitively to a language label and CodeMirror mode, and declares the ordered local mode assets required by each language. Unknown or extensionless text falls back to plain text; no network assets are used.

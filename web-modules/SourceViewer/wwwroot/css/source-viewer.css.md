@@ -1,3 +1,3 @@
-# source-viewer.css
+# SourceViewer styles
 
-Owns the standalone Source Viewer shell and CodeMirror token presentation. No styles are loaded into Agent Next or the timeline renderer.
+Owns the standalone SourceViewer shell and CodeMirror token presentation. It preserves full-height scrolling, source badges, actions, and responsive behavior, and follows the operating-system light/dark preference without changing source text or editor behavior.

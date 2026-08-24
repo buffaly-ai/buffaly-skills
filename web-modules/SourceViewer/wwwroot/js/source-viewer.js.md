@@ -1,3 +1,3 @@
-# source-viewer.js
+# Standalone SourceViewer script
 
-Loads one explicitly supplied local source file through `/api/buffaly.source-viewer/source-file`, initializes CodeMirror read-only with `javascript`, `text/x-csharp`, or plain text mode, and supports copy/close only. ProtoScript uses readable plain-text mode with a distinct `PTS` label because SourceViewer does not own a ProtoScript CodeMirror mode. The API returns the canonical opened path and exact source text using camelCase JSON serialization; configured-root membership is not part of the request policy.
+Loads one explicitly supplied local source file through `/api/buffaly.source-viewer/source-file`, detects the language from the canonical opened `model.path`, lazily loads the required bundled CodeMirror modes, and initializes a read-only editor with line numbers. Copy writes the editor's exact source text, not rendered markup. Close, path, byte count, explicit-local-path behavior, and text fallback remain unchanged.

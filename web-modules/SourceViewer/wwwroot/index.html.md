@@ -1,3 +1,3 @@
-# Source Viewer page
+# SourceViewer standalone page
 
-A separate, read-only CodeMirror page owned by the SourceViewer WebModule. It selects JavaScript, C#, or plain-text presentation from the launch provider's explicit `language` query parameter and reads source through the module-owned endpoint.
+Read-only CodeMirror page owned by the SourceViewer WebModule. The page loads only local CodeMirror core and the shared source-language detector initially; language-specific modes are loaded after the canonical opened filename is returned by the API. The header badge, editor mode, and status language therefore reflect the same file identity.
