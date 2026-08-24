@@ -1,44 +1,26 @@
 reference Buffaly.OntologyWorkbench.WebModule;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.IAgentRuntimeHost IAgentRuntimeHost;
 import Buffaly.OntologyWorkbench.WebModule Buffaly.OntologyPreparation.OntologyPreparationFacade OntologyPreparationFacade;
+import Buffaly.OntologyWorkbench.WebModule Buffaly.OntologyPreparation.ExtractAndBindResult ExtractAndBindResult;
 
 prototype OntologyWorkbenchSkillAction : OpsAction
 {
-    Description = "Base action for ontology mention extraction, semantic candidate lookup, and contextual organization.";
+    Description = "Base action for extracting ontology grammar and semantic candidate text.";
 }
 
 [SemanticEntity("ontology workbench skill")]
 prototype OntologyWorkbenchSkill : SkillEntity
 {
-    Description = "Ontology workbench preparation actions packaged with the OntologyWorkbench web module.";
+    Description = "Ontology Workbench grammar extraction and candidate binding actions.";
     ActionRoot = OntologyWorkbenchSkillAction;
 }
 
-[SemanticProgram.InfinitivePhrase("to extract and bind ontology mentions")]
-prototype ToExtractAndBindOntologyText : OntologyWorkbenchSkillAction
+[SemanticProgram.InfinitivePhrase("to extract and bind ontology workbench text")]
+prototype ToWorkbenchExtractAndBindOntologyText : OntologyWorkbenchSkillAction
 {
-    Description = "Extract verbatim mentions and retrieve semantic candidates concurrently; candidates remain hypotheses.";
-    function Execute(string sourceText, string provider = "openai", string model = "gpt-5.6-luna", string reasoningLevel = "low") : string
+    Description = "Return the complete annotated grammar and a separate plain-text candidate list for a user directive.";
+    function Execute(IAgentRuntimeHost opsAgent, string sourceText, string provider = "openai", string model = "gpt-5.6-luna", string reasoningLevel = "low") : ExtractAndBindResult
     {
-        return OntologyPreparationFacade.ExtractAndBind(_opsAgent, sourceText, provider, model, reasoningLevel);
-    }
-}
-
-[SemanticProgram.InfinitivePhrase("to organize extracted ontology mentions")]
-prototype ToOrganizeOntologyText : OntologyWorkbenchSkillAction
-{
-    Description = "Organize prepared mentions using contextual anchors, containment, merges, claims, and noise without accepting candidate identity.";
-    function Execute(string preparedResultJson, string provider = "openai", string model = "gpt-5.6-luna", string reasoningLevel = "low") : string
-    {
-        return OntologyPreparationFacade.Organize(_opsAgent, preparedResultJson, provider, model, reasoningLevel);
-    }
-}
-
-[SemanticProgram.InfinitivePhrase("to prepare all ontology mentions")]
-prototype ToExtractBindAndOrganizeOntologyText : OntologyWorkbenchSkillAction
-{
-    Description = "Run extraction, semantic candidate lookup, and contextual organization in one call. Physical PreFlight grounding remains separate.";
-    function Execute(string sourceText, string provider = "openai", string model = "gpt-5.6-luna", string reasoningLevel = "low") : string
-    {
-        return OntologyPreparationFacade.ExtractBindAndOrganize(_opsAgent, sourceText, provider, model, reasoningLevel);
+        return OntologyPreparationFacade.ExtractAndBind(opsAgent, sourceText, provider, model, reasoningLevel);
     }
 }

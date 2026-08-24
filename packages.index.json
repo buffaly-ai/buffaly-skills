@@ -20100,10 +20100,10 @@
       "PackageType": "WebModule",
       "Title": "Ontology Workbench",
       "Description": "Buffaly Web Module package for Ontology Workbench.",
-      "Version": "0.1.1",
+      "Version": "0.1.2",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/OntologyWorkbench",
-      "SourceUrl": "",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/OntologyWorkbench",
       "Phrases": [
         "Ontology Workbench",
         "OntologyWorkbench"
@@ -20115,27 +20115,31 @@
         },
         {
           "Path": "Buffaly.OntologyWorkbench.WebModule.dll",
-          "Sha256": "90f15a574b92d5dddca286b924a56e4f2b82465764226336cc67ebb77c88da9a"
+          "Sha256": "fcf2606e13de32cf4c1b2213b49057ea1dc901f0257eb8708087fc955e088e5c"
+        },
+        {
+          "Path": "settings/ontology-workbench-prompts.json",
+          "Sha256": "ac84049184a42d726777f21d01f24610202a4336662140813cbda3381ab5490d"
         },
         {
           "Path": "Skills/OntologyWorkbench/index.pts",
-          "Sha256": "35665690541e7c16936c96406c4c6e52457dc24121de3ba93fd2b7773d1e4ff0"
+          "Sha256": "d7d2b64a90266f6cb0af25e0f7d73cde3d285e71e159a30e653d714f5e9a17a8"
         },
         {
           "Path": "web-module.json",
-          "Sha256": "18748ec8fa98053a4ffd2c30b78a117ac0eea6749ae8a260bef36e76748419bd"
+          "Sha256": "e817ddbf8afb5174dea16c621f34bcab03051791efac39af77187c05bd37e4f5"
         },
         {
           "Path": "wwwroot/harness-adapter.js",
-          "Sha256": "b3e48ff03d5fff377323214d46148a2708114bd55a0fd11b423c880742a6cbf5"
+          "Sha256": "5e16ad1f6dcbaf72179006191b96cbb798ec0195f122c4a56d37f0ba585cb2bc"
         },
         {
           "Path": "wwwroot/index.html",
-          "Sha256": "2d09820192b8ebab7d3abb171573ba3c72766bf3c693ec1e54f0c6ed48c01845"
+          "Sha256": "a17bb0170ca4236ce17154f5612ff06bf6fcbb233e1bc18e2fb51cd5e344d6b0"
         },
         {
           "Path": "wwwroot/JsonWs/Buffaly.OntologyWorkbench.OntologyWorkbenchService.ashx.js",
-          "Sha256": "928e1d03ff43fe56ba8f84917e62ba41bdd6b23c1d06934229d1e47f9e7e1bf7"
+          "Sha256": "e71d0427619b6e2a89985076deddfcf72c635655e9e9859b32cf8889dc98b3bc"
         }
       ],
       "ProjectArtifacts": [
