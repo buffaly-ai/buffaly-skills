@@ -23,7 +23,7 @@
         return sessionKey;
     }
 
-    async function dispatch(button) {
+    function openWorkbench() {
         if (!harnessBaseUrl) {
             throw new Error("Ontology Workbench HarnessBaseUrl is not configured.");
         }
@@ -33,31 +33,13 @@
             throw new Error("Type a message before using Ontology Workbench.");
         }
 
-        button.disabled = true;
-        button.classList.add("is-processing");
-        button.title = "Ontology Workbench is extracting and binding this message";
-        try {
-            const response = await fetch(harnessBaseUrl + "/harness/api/dispatch-message", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ sessionKey: requireSessionKey(), message: message })
-            });
-            const text = await response.text();
-            if (!response.ok) {
-                throw new Error(text || ("Ontology Workbench returned HTTP " + response.status + "."));
-            }
-            const result = JSON.parse(text);
-            if (!result.grammar || !result.childSessionKey) {
-                throw new Error("Ontology Workbench returned an incomplete response.");
-            }
-            composer.value = result.grammar;
-            composer.dispatchEvent(new window.Event("input", { bubbles: true }));
-            composer.focus();
-            composer.setSelectionRange(composer.value.length, composer.value.length);
-            button.title = "Applied by " + result.childSessionKey;
-        } finally {
-            button.disabled = false;
-            button.classList.remove("is-processing");
+        const workbenchSessionKey = requireSessionKey() + " - Ontology Workbench";
+        const url = new URL(harnessBaseUrl + "/harness/");
+        url.searchParams.set("sessionKey", workbenchSessionKey);
+        url.searchParams.set("message", message);
+        const opened = window.open(url.toString(), "_blank", "noopener");
+        if (!opened) {
+            throw new Error("The browser blocked the Ontology Workbench tab.");
         }
     }
 
@@ -74,16 +56,18 @@
         button.id = "btnOntologyWorkbenchComposer";
         button.type = "button";
         button.className = "ops-v2-upload-btn ontology-workbench-composer-btn";
-        button.title = "Extract and bind composer text in Ontology Workbench";
+        button.title = "Open composer text in Ontology Workbench";
         button.setAttribute("aria-label", button.title);
         button.innerHTML = '<i class="bi bi-diagram-3" aria-hidden="true"></i><span class="visually-hidden">Ontology Workbench</span>';
         button.style.color = "#7c3aed";
         button.style.marginRight = "0.45rem";
         button.addEventListener("click", function () {
-            dispatch(button).catch(function (error) {
+            try {
+                openWorkbench();
+            } catch (error) {
                 button.title = error.message;
                 window.alert(error.message);
-            });
+            }
         });
         actions.insertBefore(button, center);
     }

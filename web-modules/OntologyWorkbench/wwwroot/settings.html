@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ontology Workbench Settings</title>
+  <style>
+    :root{font-family:Inter,Segoe UI,Arial,sans-serif;color:#202124;background:#f8fafc;--blue:#1a73e8;--border:#dadce0;--muted:#5f6368}
+    *{box-sizing:border-box}body{margin:0}main{max-width:760px;margin:42px auto;padding:0 20px}
+    h1{margin-bottom:8px}.intro{color:var(--muted);margin-bottom:25px;line-height:1.45}
+    .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px}
+    label{display:grid;gap:6px;font-size:13px;color:var(--muted);font-weight:750;letter-spacing:.04em;text-transform:uppercase}
+    input{width:100%;padding:11px 12px;border:1px solid var(--border);border-radius:8px;background:#fff;font:14px ui-monospace,Consolas,monospace;color:#202124}
+    .hint{margin:10px 0 0;color:var(--muted);font-size:13px;font-weight:500;letter-spacing:0;text-transform:none}
+    .actions{display:flex;gap:12px;align-items:center;margin-top:22px;flex-wrap:wrap}
+    button{border:0;border-radius:8px;font-weight:800;padding:11px 18px;cursor:pointer}
+    .save{background:var(--blue);color:#fff}.save:disabled{opacity:.5}
+    .secondary{background:#e8eaed;color:#202124}.secondary:disabled{opacity:.5}
+    .status{color:var(--muted);min-height:1.2em}
+    .status.error{color:#d93025}
+  </style>
+</head>
+<body>
+  <header data-ontology-workbench-header data-page="settings"></header>
+  <script src="/web-modules/OntologyWorkbench/ontology-workbench-header.js"></script>
+  <main>
+    <h1>Buffaly agent service</h1>
+    <p class="intro">Set the origin the standalone harness uses for JsonWs clients and agent API calls. Ontology Search loads <code>/JsonWs</code> from this host through the harness, then posts to <code>/api/buffaly.agent.host</code> on the same origin so HTTPS pages can reach an HTTP agent.</p>
+    <section class="card">
+      <label for="agentBaseUrl">Agent base URL
+        <input id="agentBaseUrl" type="url" placeholder="http://127.0.0.1:58177" autocomplete="off" spellcheck="false">
+        <span class="hint">Example: http://127.0.0.1:58177 or http://127.0.0.1:5017. Do not include a path.</span>
+      </label>
+    </section>
+    <div class="actions">
+      <button id="save" class="save" disabled>Save</button>
+      <button id="test" class="secondary" disabled>Test connection</button>
+      <span id="status" class="status">Loading settings...</span>
+    </div>
+  </main>
+  <script>
+    const apiBase = location.pathname.startsWith('/harness/') ? '/harness/api' : '/web-modules/OntologyWorkbench/api';
+    const value = (object, name) => object?.[name] ?? object?.[name[0].toLowerCase() + name.slice(1)];
+    const status = (message, error = false) => {
+      const el = document.getElementById('status');
+      el.textContent = message;
+      el.className = 'status' + (error ? ' error' : '');
+    };
+    async function request(method, body) {
+      const response = await fetch(apiBase + '/settings', {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: method === 'GET' ? undefined : JSON.stringify(body)
+      });
+      const text = await response.text();
+      if (!response.ok) throw new Error(text || response.statusText);
+      return text ? JSON.parse(text) : {};
+    }
+    async function load() {
+      try {
+        const snapshot = await request('GET');
+        document.getElementById('agentBaseUrl').value = value(snapshot, 'AgentBaseUrl') || '';
+        document.getElementById('save').disabled = false;
+        document.getElementById('test').disabled = false;
+        status('Settings loaded.');
+      } catch (error) {
+        status(error.message, true);
+      }
+    }
+    async function save() {
+      const agentBaseUrl = document.getElementById('agentBaseUrl').value.trim();
+      document.getElementById('save').disabled = true;
+      status('Saving agent base URL...');
+      try {
+        const snapshot = await request('PUT', { AgentBaseUrl: agentBaseUrl });
+        document.getElementById('agentBaseUrl').value = value(snapshot, 'AgentBaseUrl') || agentBaseUrl;
+        status('Saved. JsonWs and /api calls now use this origin.');
+      } catch (error) {
+        status(error.message, true);
+      } finally {
+        document.getElementById('save').disabled = false;
+      }
+    }
+    async function test() {
+      const agentBaseUrl = document.getElementById('agentBaseUrl').value.trim();
+      document.getElementById('test').disabled = true;
+      status('Testing agent connection...');
+      try {
+        const response = await fetch(apiBase + '/settings/test', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ AgentBaseUrl: agentBaseUrl })
+        });
+        const text = await response.text();
+        if (!response.ok) throw new Error(text || response.statusText);
+        const snapshot = text ? JSON.parse(text) : {};
+        status('Reachable: ' + (value(snapshot, 'AgentBaseUrl') || agentBaseUrl));
+      } catch (error) {
+        status(error.message, true);
+      } finally {
+        document.getElementById('test').disabled = false;
+      }
+    }
+    document.getElementById('save').onclick = save;
+    document.getElementById('test').onclick = test;
+    load();
+  </script>
+</body>
+</html>

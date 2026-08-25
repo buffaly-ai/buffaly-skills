@@ -6,6 +6,6 @@ Adds the Ontology Workbench action beside the Agent Next composer controls throu
 
 ## Behavior
 
-The button reads the authoritative active key from `BuffalyAgentSessionContext.getActiveSessionKey()` and the current value from `#txtOpsV2Prompt`. It posts `{ sessionKey, message }` to the configured standalone harness `/harness/api/dispatch-message` endpoint. On success, it replaces the composer text with the returned ontology grammar, dispatches the normal `input` event so draft state remains consistent, and leaves the result in the composer for review rather than submitting it automatically.
+The button reads the authoritative active key from `BuffalyAgentSessionContext.getActiveSessionKey()` and the current value from `#txtOpsV2Prompt`. It derives the stable Workbench key `<active session key> - Ontology Workbench`, URL-encodes that key plus the complete composer message as `sessionKey` and `message` query parameters, and opens the configured standalone `/harness/` page in a new tab.
 
-The remote endpoint owns deterministic child naming and returns the child key. Errors remain visible through the button title and an alert; the original composer value is preserved when a request fails.
+The button does not call an API, create a remote session, run extraction, or modify the source composer. The Workbench page binds the query values into its Attached session and User directive fields; subsequent warmup or extraction remains an explicit Workbench-page action. Errors remain visible through the button title and an alert.
