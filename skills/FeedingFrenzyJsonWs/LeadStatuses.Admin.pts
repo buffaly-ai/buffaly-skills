@@ -1,30 +1,27 @@
 prototype LeadStatuses_GetLeadStatus : FeedingFrenzyJsonWsSkillAction
 {
-	function Execute(FeedingFrenzyJsonWsService service, int LeadStatusID) : string
+	function Execute(int LeadStatusID) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["LeadStatusID"] = LeadStatusID;
-		return service.CallBusinessRoute("lead-statuses/get-lead-status", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-statuses/get-lead-status", args);
 	}
 }
 
 prototype LeadStatuses_GetLeadStatuses : FeedingFrenzyJsonWsSkillAction
 {
-	function Execute(FeedingFrenzyJsonWsService service) : string
+	function Execute() : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
-		return service.CallBusinessRoute("lead-statuses/get-lead-statuses", new JsonObject());
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-statuses/get-lead-statuses", new JsonObject());
 	}
 }
 
 prototype LeadStatuses_GetLeadStatusByStatusName : FeedingFrenzyJsonWsSkillAction
 {
-	function Execute(FeedingFrenzyJsonWsService service, string StatusName) : string
+	function Execute(string StatusName) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["StatusName"] = StatusName;
-		return service.CallBusinessRoute("lead-statuses/get-lead-status-by-status-name", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-statuses/get-lead-status-by-status-name", args);
 	}
 }

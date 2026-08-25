@@ -3,12 +3,11 @@ prototype Calls_GetCall : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. CallID - numeric call id.";
 
-	function Execute(FeedingFrenzyJsonWsService service, int CallID) : string
+	function Execute(int CallID) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["CallID"] = CallID;
-		return service.CallBusinessRoute("calls/get-call", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("calls/get-call", args);
 	}
 }
 
@@ -17,12 +16,11 @@ prototype Calls_GetCallAsMarkdown : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. CallID - numeric call id. Returns call metadata/transcription in markdown when available.";
 
-	function Execute(FeedingFrenzyJsonWsService service, int CallID) : string
+	function Execute(int CallID) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["CallID"] = CallID;
-		return service.CallBusinessRoute("calls/get-call-as-markdown", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("calls/get-call-as-markdown", args);
 	}
 }
 
@@ -33,12 +31,11 @@ prototype ToGetCallTranscript : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"Gets one structured observation-call snapshot from Feeding Frenzy. service - required remote or local FeedingFrenzyJsonWsService binding. CallID - numeric call identifier. Returns JSON containing CallID, CallStatus, Duration, IsTerminal, TranscriptVersion, Turns (TranscriptionCombined array with TurnID, Role, Text, PreviewText, Start, Stop, Length, IsFinal, FinalTranscriptionFailed), TranscriptInbound, TranscriptOutbound, TranscriptCombined, PartialParticipantA, PartialParticipantB, AICallOutcome, BuffalyObserver, TranscriptionError, and LastUpdated. Poll this read-only action for incremental observation state. Skip processing when TranscriptVersion is unchanged.";
 
-	function Execute(FeedingFrenzyJsonWsService service, int CallID) : string
+	function Execute(int CallID) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["CallID"] = CallID;
-		return service.CallBusinessRoute("lead-calls/get-call-transcript", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-calls/get-call-transcript", args);
 	}
 }
 
@@ -47,11 +44,10 @@ prototype Calls_GetCallByCallKey : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. CallKey - external/stable call key.";
 
-	function Execute(FeedingFrenzyJsonWsService service, string CallKey) : string
+	function Execute(string CallKey) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["CallKey"] = CallKey;
-		return service.CallCallCenterRoute("calls/get-call-by-call-key", args);
+		return FeedingFrenzyJsonWsService#Current.CallCallCenterRoute("calls/get-call-by-call-key", args);
 	}
 }

@@ -1,30 +1,27 @@
 prototype Sources_GetSource : FeedingFrenzyJsonWsSkillAction
 {
-	function Execute(FeedingFrenzyJsonWsService service, int SourceID) : string
+	function Execute(int SourceID) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["SourceID"] = SourceID;
-		return service.CallBusinessRoute("sources/get-source", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("sources/get-source", args);
 	}
 }
 
 prototype Sources_GetSources : FeedingFrenzyJsonWsSkillAction
 {
-	function Execute(FeedingFrenzyJsonWsService service) : string
+	function Execute() : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
-		return service.CallBusinessRoute("sources/get-sources", new JsonObject());
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("sources/get-sources", new JsonObject());
 	}
 }
 
 prototype Sources_GetSourceBySourceName : FeedingFrenzyJsonWsSkillAction
 {
-	function Execute(FeedingFrenzyJsonWsService service, string SourceName) : string
+	function Execute(string SourceName) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["SourceName"] = SourceName;
-		return service.CallBusinessRoute("sources/get-source-by-source-name", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("sources/get-source-by-source-name", args);
 	}
 }

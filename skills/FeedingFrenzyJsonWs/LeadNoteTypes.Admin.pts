@@ -3,12 +3,11 @@ prototype LeadNoteTypes_GetLeadNoteType : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. LeadNoteTypeID - numeric lead note type id.";
 
-	function Execute(FeedingFrenzyJsonWsService service, int LeadNoteTypeID) : string
+	function Execute(int LeadNoteTypeID) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["LeadNoteTypeID"] = LeadNoteTypeID;
-		return service.CallBusinessRoute("lead-note-types/get-lead-note-type", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-note-types/get-lead-note-type", args);
 	}
 }
 
@@ -17,12 +16,11 @@ prototype LeadNoteTypes_GetLeadNoteTypeByLeadNoteTypeName : FeedingFrenzyJsonWsS
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. LeadNoteTypeName - lead note type name.";
 
-	function Execute(FeedingFrenzyJsonWsService service, string LeadNoteTypeName) : string
+	function Execute(string LeadNoteTypeName) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["LeadNoteTypeName"] = LeadNoteTypeName;
-		return service.CallBusinessRoute("lead-note-types/get-lead-note-type-by-lead-note-type-name", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-note-types/get-lead-note-type-by-lead-note-type-name", args);
 	}
 }
 
@@ -31,10 +29,9 @@ prototype LeadNoteTypes_GetLeadNoteTypes : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. Returns all lead note type rows.";
 
-	function Execute(FeedingFrenzyJsonWsService service) : string
+	function Execute() : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
-		return service.CallBusinessRoute("lead-note-types/get-lead-note-types", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-note-types/get-lead-note-types", args);
 	}
 }

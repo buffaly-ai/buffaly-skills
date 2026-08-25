@@ -3,12 +3,11 @@ prototype Users_GetUser : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. UserID - numeric user id.";
 
-	function Execute(FeedingFrenzyJsonWsService service, int UserID) : string
+	function Execute(int UserID) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject getUserArgs = new JsonObject();
 		getUserArgs["UserID"] = UserID;
-		return service.CallBusinessRoute("users/get-user", getUserArgs);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("users/get-user", getUserArgs);
 	}
 }
 
@@ -17,12 +16,11 @@ prototype FeedingFrenzyJsonWs_Users_GetUserByEmail : FeedingFrenzyJsonWsSkillAct
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. Email - user email address.";
 
-	function Execute(FeedingFrenzyJsonWsService service, string Email) : string
+	function Execute(string Email) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject getUserByEmailArgs = new JsonObject();
 		getUserByEmailArgs["Email"] = Email;
-		return service.CallBusinessRoute("users/get-user-by-email", getUserByEmailArgs);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("users/get-user-by-email", getUserByEmailArgs);
 	}
 }
 
@@ -31,15 +29,14 @@ prototype Users_GetUsersSp_PagingSp : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. Search, SortColumn, SortAscending, SkipRows, NumRows map to FeedingFrenzy.Admin.Business.Users.GetUsersSp_PagingSp.";
 
-	function Execute(FeedingFrenzyJsonWsService service, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
+	function Execute(string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject getUsersPagingArgs = new JsonObject();
 		getUsersPagingArgs["Search"] = Search;
 		getUsersPagingArgs["SortColumn"] = SortColumn;
 		getUsersPagingArgs["SortAscending"] = SortAscending;
 		getUsersPagingArgs["SkipRows"] = SkipRows;
 		getUsersPagingArgs["NumRows"] = NumRows;
-		return service.CallBusinessRoute("users/get-users-sp-_-paging-sp", getUsersPagingArgs);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("users/get-users-sp-_-paging-sp", getUsersPagingArgs);
 	}
 }

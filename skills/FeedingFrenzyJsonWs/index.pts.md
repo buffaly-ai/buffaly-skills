@@ -59,3 +59,7 @@
 - Added `CallCenterApiPrefix` and `CallCallCenterRoute(...)` so call wrappers target `/api/feedingfrenzy.callcenter/...` instead of the business JsonWs route prefix.
 - Updated the local service binding to use `FeedingFrenzy.Local.ApiKey`, matching the authenticated local Feeding Frenzy JsonWs surface used during staging validation.
 - Validation note: staging direct `run-proto-script-method` calls loaded `FeedingFrenzyAgent` and successfully returned distinct lead data for LeadID 1220 and LeadID 1219; call range tools reached the CallCenter API and returned empty results for the tested date range instead of login HTML.
+
+## Bind embedded tools to Current service (2026-08-25)
+- Added fail-closed `FeedingFrenzyJsonWsService#Current` and explicit `#Medek`, `#Affinity`, and `#Local` diagnostic bindings.
+- Embedded profile actions now call `#Current` directly instead of accepting a caller-selected `FeedingFrenzyJsonWsService` parameter.
