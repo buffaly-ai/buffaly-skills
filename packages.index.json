@@ -20100,7 +20100,7 @@
       "PackageType": "WebModule",
       "Title": "Ontology Workbench",
       "Description": "Buffaly Web Module package for Ontology Workbench.",
-      "Version": "0.1.2",
+      "Version": "0.1.3",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/OntologyWorkbench",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/OntologyWorkbench",
@@ -20115,7 +20115,7 @@
         },
         {
           "Path": "Buffaly.OntologyWorkbench.WebModule.dll",
-          "Sha256": "fcf2606e13de32cf4c1b2213b49057ea1dc901f0257eb8708087fc955e088e5c"
+          "Sha256": "082c10d765978c58d4614b428e31618aba3a47c6742c1a92df7c489e5310636a"
         },
         {
           "Path": "settings/ontology-workbench-prompts.json",
@@ -20123,11 +20123,15 @@
         },
         {
           "Path": "Skills/OntologyWorkbench/index.pts",
-          "Sha256": "d7d2b64a90266f6cb0af25e0f7d73cde3d285e71e159a30e653d714f5e9a17a8"
+          "Sha256": "8eb776bd5a39b6b0f674204d2604ca3cd2f0d96c19265db595fd7941d9a8d87f"
         },
         {
           "Path": "web-module.json",
-          "Sha256": "e817ddbf8afb5174dea16c621f34bcab03051791efac39af77187c05bd37e4f5"
+          "Sha256": "0e963bd1f952ba7292b43e55f2c3d0b3dae6c32bb7225b3e51c4e72a37fbc2fe"
+        },
+        {
+          "Path": "wwwroot/critic-settings.html",
+          "Sha256": "8b5b465d655dac6e226e3688cbd467877a35905180cbb517a5358fcfa73830d8"
         },
         {
           "Path": "wwwroot/harness-adapter.js",
@@ -20135,11 +20139,35 @@
         },
         {
           "Path": "wwwroot/index.html",
-          "Sha256": "a17bb0170ca4236ce17154f5612ff06bf6fcbb233e1bc18e2fb51cd5e344d6b0"
+          "Sha256": "2996d4063d427108c6efec16e44410547607e39203729dd12a836e52721f5316"
         },
         {
           "Path": "wwwroot/JsonWs/Buffaly.OntologyWorkbench.OntologyWorkbenchService.ashx.js",
           "Sha256": "e71d0427619b6e2a89985076deddfcf72c635655e9e9859b32cf8889dc98b3bc"
+        },
+        {
+          "Path": "wwwroot/method-runner.html",
+          "Sha256": "92c24bcc12b7d1349872d7136982d1d675cc10aa174c5abfbc744d41f13034f2"
+        },
+        {
+          "Path": "wwwroot/ontology-search.html",
+          "Sha256": "550c48ce4f585d449813318f6a660ec5c94458eb195043a977537e4e086c9f22"
+        },
+        {
+          "Path": "wwwroot/ontology-workbench-composer.js",
+          "Sha256": "afb351e3e98dee5403cb6aadaac595dd8918dda6d42700234947f08e1232eaef"
+        },
+        {
+          "Path": "wwwroot/ontology-workbench-composer.js.md",
+          "Sha256": "ed3b6dda6bf0bb27929c96dffc4fab1b5b7761f7612b89f0f2554ce664a9b7b8"
+        },
+        {
+          "Path": "wwwroot/ontology-workbench-header.css",
+          "Sha256": "d70381b31ba6172122616058fbb9084e5e4288470f1ac7c9cd904d335c3073c5"
+        },
+        {
+          "Path": "wwwroot/ontology-workbench-header.js",
+          "Sha256": "9160b991853694b6ef606269cbf818c4b489e013eebf8148e5c3c3f8e6ac7900"
         }
       ],
       "ProjectArtifacts": [

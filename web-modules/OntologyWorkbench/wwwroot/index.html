@@ -9,7 +9,7 @@
   </style>
 </head>
 <body><main class="shell">
-  <div class="topbar"><div class="brand"><div class="mark">O</div><strong>Ontology Workbench</strong></div><span class="build">Workbench build 2026.08.23.11</span></div>
+  <div class="topbar"><div class="brand"><div class="mark">O</div><strong>Ontology Workbench</strong></div><div style="display:flex;align-items:center;gap:16px"><a href="ontology-search" style="color:#1a73e8;font-weight:750;text-decoration:none">Ontology search</a><a href="method-runner" style="color:#1a73e8;font-weight:750;text-decoration:none">Method runner</a><span class="build">Workbench build 2026.08.25.5</span></div></div>
   <div class="hero"><h1>Resolve natural language into a grounded frame</h1><p>Extract mentions, bind ontology candidates, and locate physical objects without leaving the grammar.</p></div>
   <div class="grid">
     <section class="card"><div class="card-title"><h2>User directive</h2><span class="hint">Grammar text is the only annotation contract</span></div><textarea id="source" class="source" placeholder="Describe what the agent should understand and act on…"></textarea><div class="row"><div><label for="session">Attached session</label><input id="session" value=""></div><div><label for="model">Extraction model</label><input id="model" value="gpt-5.6-luna"></div><div><label for="reasoning">Reasoning</label><select id="reasoning"><option>low</option><option>medium</option><option>high</option></select></div></div><div class="actions"><button id="extract">Extract + bind</button><button id="ground" class="secondary">Ground grammar</button><div class="legend"><span><i class="dot u"></i>Unresolved</span><span><i class="dot b"></i>Bound</span><span><i class="dot g"></i>Grounded</span></div></div></section>
@@ -18,7 +18,8 @@
   </div><div id="status" class="status" role="status" aria-live="polite"></div>
 </main><script>
 const byId=id=>document.getElementById(id), status=(message,error=false)=>{byId('status').textContent=message;byId('status').className='status'+(error?' error':'')};
-const defaultSession=()=>`Ontology Workbench Harness ${new Date().toISOString().replace(/[-:.TZ]/g,'').slice(0,14)}`;
+const sessionStorageKey='ontology-workbench-session-key';
+const defaultSession=()=>localStorage.getItem(sessionStorageKey)||'Ontology Workbench Session';
 const apiBase=location.pathname.startsWith('/harness/')?'/harness/api':'/web-modules/OntologyWorkbench/api';
 async function post(path,body,wantsText=false,timeoutMs=360000){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeoutMs);try{const response=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:controller.signal});const text=await response.text();if(!response.ok)throw new Error(text||`${response.status} ${response.statusText}`);return wantsText?text:JSON.parse(text)}catch(error){if(error.name==='AbortError')throw new Error(`Request timed out after ${Math.round(timeoutMs/60000)} minutes. The server did not return a result.`);throw error}finally{clearTimeout(timer)}}
 function beginProgress(message){const started=Date.now();const update=()=>{const seconds=Math.floor((Date.now()-started)/1000),elapsed=seconds<60?`${seconds}s`:`${Math.floor(seconds/60)}m ${seconds%60}s`;byId('status').innerHTML=`${escapeHtml(message)} <strong>${elapsed}</strong><span class="status-detail">The model and semantic searches can take several minutes. This page will report a timeout or server error.</span>`};update();return setInterval(update,1000)}
@@ -26,17 +27,20 @@ const escapeHtml=value=>value.replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;',
 function renderGrammar(){const grammar=byId('grammar').value||'';let html='',cursor=0,counts={unresolved:0,bound:0,grounded:0};const token=/\[([^\]\r\n]+)\]\{unresolved;\s*(grounding=needed|grounded=(\[\[[^\]]+\]\]))\}|\[\[([a-z][a-z0-9-]*):([^|\]]+)\|([^\]]+)\]\]/gi;for(const match of grammar.matchAll(token)){html+=escapeHtml(grammar.slice(cursor,match.index));if(match[1]){const grounded=match[2].startsWith('grounded=');const label=match[1];counts[grounded?'grounded':'unresolved']++;html+=`<span class="annotation ${grounded?'grounded':'unresolved'}" title="${escapeHtml(match[2])}">${escapeHtml(label)}<span class="tag">${grounded?'grounded':'unresolved'}</span></span>`}else{const kind=match[4],target=match[5],label=match[6];const grounded=kind.toLowerCase()!=='protoscript';counts[grounded?'grounded':'bound']++;html+=`<span class="annotation ${grounded?'grounded':'bound'}" title="${escapeHtml(kind+':'+target)}">${escapeHtml(label)}<span class="tag">${grounded?'grounded':'bound'}</span></span>`}cursor=match.index+match[0].length}html+=escapeHtml(grammar.slice(cursor));byId('annotated').innerHTML=html||'Run Extract + bind to annotate the directive.';byId('summary').innerHTML=`<span class="pill grounded">${counts.grounded} grounded</span><span class="pill bound">${counts.bound} bound</span><span class="pill unresolved">${counts.unresolved} unresolved</span>`}
 async function warmAttachedSession(){
   const input=byId('session');
+  const extract=byId('extract');
   if(!input.value.trim()) input.value=defaultSession();
   const sessionKey=input.value;
   const started=performance.now();
+  extract.disabled=true;
   status('Creating and warming attached session…');
   try{
     await post(apiBase+'/warm-session',{SessionKey:sessionKey},false,120000);
-    if(input.value===sessionKey) status(`Attached session ready in ${Math.round(performance.now()-started)} ms.`);
+    if(input.value===sessionKey){status(`Attached session ready in ${Math.round(performance.now()-started)} ms.`);extract.disabled=false}
   }catch(error){
     if(input.value===sessionKey) status('Session warmup failed: '+error.message,true);
   }
 }
+byId('session').addEventListener('change',()=>{const input=byId('session'),sessionKey=input.value.trim();if(!sessionKey){input.value=defaultSession();status('Session name is required.',true);return}input.value=sessionKey;localStorage.setItem(sessionStorageKey,sessionKey);warmAttachedSession()});
 byId('grammar').addEventListener('input',renderGrammar);
 byId('extract').onclick=async()=>{const button=byId('extract');button.disabled=true;const progress=beginProgress('Extracting and binding…');try{const result=await post(apiBase+'/extract-and-bind',{SessionKey:byId('session').value,SourceText:byId('source').value,Provider:'openai',Model:byId('model').value,ReasoningLevel:byId('reasoning').value});byId('grammar').value=result.Grammar||result.grammar||'';byId('candidates').value=result.Candidates||result.candidates||'';renderGrammar();status('Grammar and candidates ready.')}catch(error){status(error.message,true)}finally{clearInterval(progress);button.disabled=false}};
 byId('ground').onclick=async()=>{const button=byId('ground');button.disabled=true;const progress=beginProgress('Grounding grammar…');try{byId('grammar').value=await post(apiBase+'/ground',{Grammar:byId('grammar').value,Candidates:byId('candidates').value,ParentSessionKey:byId('session').value,Provider:'openai',Model:byId('model').value,ReasoningLevel:byId('reasoning').value},true);renderGrammar();status('Grounded grammar ready.')}catch(error){status(error.message,true)}finally{clearInterval(progress);button.disabled=false}};

@@ -1,1 +1,38 @@
-{"Module":{"Enabled":true,"Name":"OntologyWorkbench","DisplayName":"Ontology Workbench","Description":"Extract a user directive into ontology grammar plus separate semantic candidate text, then ground the grammar.","AssemblyPath":"OntologyWorkbench/Buffaly.OntologyWorkbench.WebModule.dll","TypeName":"Buffaly.OntologyWorkbench.OntologyWorkbenchWebModule","LoadOrder":1360,"ProjectArtifacts":[{"ProjectName":"Skills/OntologyWorkbench","SourcePath":"Skills/OntologyWorkbench/"}],"Pages":[{"Name":"ontology-workbench","DisplayName":"Ontology Workbench","Path":"/web-modules/OntologyWorkbench/workbench","Description":"Extract and bind grammar, review candidate text, and ground the grammar."}]}}
+{
+  "Module": {
+    "Enabled": true,
+    "Name": "OntologyWorkbench",
+    "DisplayName": "Ontology Workbench",
+    "Description": "Extract a user directive into ontology grammar plus separate semantic candidate text, then ground the grammar.",
+    "AssemblyPath": "OntologyWorkbench/Buffaly.OntologyWorkbench.WebModule.dll",
+    "TypeName": "Buffaly.OntologyWorkbench.OntologyWorkbenchWebModule",
+    "LoadOrder": 1360,
+    "AgentScripts": [
+      "/api/web-modules/OntologyWorkbench/config.js",
+      "/web-modules/OntologyWorkbench/ontology-workbench-composer.js?v=20260825.1"
+    ],
+    "ClientConfig": {
+      "HarnessBaseUrl": "https://win.tailf78e41.ts.net:5320"
+    },
+    "ProjectArtifacts": [
+      {
+        "ProjectName": "Skills/OntologyWorkbench",
+        "SourcePath": "Skills/OntologyWorkbench/"
+      }
+    ],
+    "Pages": [
+      {
+        "Name": "ontology-workbench",
+        "DisplayName": "Ontology Workbench",
+        "Path": "/web-modules/OntologyWorkbench/workbench",
+        "Description": "Extract and bind grammar, review candidate text, and ground the grammar."
+      },
+      {
+        "Name": "ontology-critic-settings",
+        "DisplayName": "Ontology Critics",
+        "Path": "/web-modules/OntologyWorkbench/critic-settings",
+        "Description": "Enable or disable ontology critics and change their provider, model, and reasoning defaults."
+      }
+    ]
+  }
+}

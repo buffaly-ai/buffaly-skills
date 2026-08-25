@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ontology Method Runner</title>
+  <style>
+    :root{font-family:Inter,Segoe UI,Arial,sans-serif;color:#202124;background:#f8fafc}*{box-sizing:border-box}body{margin:0}.shell{max-width:980px;margin:0 auto;padding:30px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}.top a{color:#1a73e8;text-decoration:none}.card{background:#fff;border:1px solid #dadce0;border-radius:16px;padding:22px;box-shadow:0 1px 4px rgba(32,33,36,.12);margin-bottom:16px}h1{margin:0 0 6px;font-size:32px}p{color:#5f6368;margin:0 0 20px}.row{display:grid;grid-template-columns:1.2fr 1fr .65fr;gap:12px}.field{margin-bottom:15px}label{display:block;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#5f6368;margin-bottom:6px}input,select,textarea{width:100%;border:1px solid #dadce0;border-radius:10px;padding:11px 12px;font:inherit;background:#fff}textarea{min-height:190px;resize:vertical}button{border:0;border-radius:999px;padding:11px 20px;background:#1a73e8;color:#fff;font-weight:750;cursor:pointer}button:disabled{opacity:.5}.status{display:inline-block;margin-left:12px;color:#1a73e8;font-weight:700}.status.error{color:#d93025}.result{min-height:120px;line-height:1.55;white-space:normal}.result pre{white-space:pre-wrap;background:#f1f3f4;border-radius:10px;padding:12px}.result code{background:#f1f3f4;border-radius:4px;padding:2px 4px}.result h1,.result h2,.result h3{margin-top:1.1em}.muted{color:#5f6368}@media(max-width:760px){.row{grid-template-columns:1fr}.shell{padding:18px}}
+  </style>
+</head>
+<body><main class="shell">
+  <div class="top"><strong>Ontology Workbench <span class="muted">build 2026.08.25.4</span></strong><span><a href="ontology-search">Ontology search</a> &nbsp; <a href="index.html">Grammar workbench</a></span></div>
+  <section class="card"><h1>Run an ontology method</h1><p>Use a named session as a lightweight chat workspace, then run the selected prompt method with one concept or instruction.</p>
+    <div class="field"><label for="method">Method</label><select id="method"><option value="ToProposeOntologyNeighborhoodSkill">ToProposeOntologyNeighborhoodSkill</option></select></div>
+    <div class="field"><label for="instruction">Concept or instruction</label><textarea id="instruction" placeholder="Enter the real-world concept to expand..."></textarea></div>
+    <div class="row"><div class="field"><label for="session">Bound session</label><input id="session"></div><div class="field"><label for="model">Model</label><input id="model" value="gpt-5.6-luna"></div><div class="field"><label for="reasoning">Reasoning</label><select id="reasoning"><option>low</option><option selected>medium</option><option>high</option></select></div></div>
+    <button id="run">Run method</button><span id="status" class="status" role="status"></span>
+  </section>
+  <section class="card"><label>Result</label><div id="result" class="result muted">The method result will appear here as Markdown.</div></section>
+</main><script>
+const byId=id=>document.getElementById(id);
+const sessionStorageKey='ontology-method-runner-session-key';
+const apiBase=location.pathname.startsWith('/harness/')?'/harness/api':'/web-modules/OntologyWorkbench/api';
+byId('session').value=localStorage.getItem(sessionStorageKey)||'Ontology Neighborhood Workbench';
+const escapeHtml=value=>value.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function renderMarkdown(markdown){let html=escapeHtml(markdown);html=html.replace(/^### (.+)$/gm,'<h3>$1</h3>').replace(/^## (.+)$/gm,'<h2>$1</h2>').replace(/^# (.+)$/gm,'<h1>$1</h1>').replace(/```[a-z]*\n([\s\S]*?)```/g,'<pre><code>$1</code></pre>').replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/^[-*] (.+)$/gm,'<li>$1</li>').replace(/(?:<li>.*<\/li>\n?)+/g,m=>'<ul>'+m+'</ul>').replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>');return '<p>'+html+'</p>'}
+async function post(path,body){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),660000);try{const response=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:controller.signal});const text=await response.text();if(!response.ok)throw new Error(text||`${response.status} ${response.statusText}`);return text}finally{clearTimeout(timer)}}
+byId('run').onclick=async()=>{const button=byId('run'),session=byId('session').value,instruction=byId('instruction').value;if(!session.trim()||!instruction.trim()){byId('status').textContent='Session and concept are required.';byId('status').className='status error';return}localStorage.setItem(sessionStorageKey,session);button.disabled=true;byId('status').textContent='Running method...';byId('status').className='status';byId('result').className='result muted';byId('result').textContent='Working in the bound session. This can take several minutes.';try{const result=await post(apiBase+'/run-method',{SessionKey:session,PrototypeName:byId('method').value,Instruction:instruction,Provider:'openai',Model:byId('model').value,ReasoningLevel:byId('reasoning').value});byId('result').className='result';byId('result').innerHTML=renderMarkdown(result);byId('status').textContent='Complete.'}catch(error){byId('status').textContent=error.name==='AbortError'?'Method timed out.':error.message;byId('status').className='status error';byId('result').textContent='No result returned.'}finally{button.disabled=false}};
+</script></body></html>

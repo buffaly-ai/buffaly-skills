@@ -19,8 +19,8 @@ prototype OntologyWorkbenchSkill : SkillEntity
 prototype ToWorkbenchExtractAndBindOntologyText : OntologyWorkbenchSkillAction
 {
     Description = "Return the complete annotated grammar and a separate plain-text candidate list for a user directive.";
-    function Execute(IAgentRuntimeHost opsAgent, string sourceText, string provider = "openai", string model = "gpt-5.6-luna", string reasoningLevel = "low") : ExtractAndBindResult
+    function Execute(string sourceText, string provider = "openai", string model = "gpt-5.6-luna", string reasoningLevel = "low") : ExtractAndBindResult
     {
-        return OntologyPreparationFacade.ExtractAndBind(opsAgent, sourceText, provider, model, reasoningLevel);
+        return OntologyPreparationFacade.ExtractAndBind(_opsAgent, sourceText, provider, model, reasoningLevel);
     }
 }
