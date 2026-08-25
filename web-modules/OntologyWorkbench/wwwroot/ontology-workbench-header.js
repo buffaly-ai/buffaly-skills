@@ -28,5 +28,5 @@
   }
 
   host.className = 'owb-header';
-  host.innerHTML = `<div class="owb-header__inner"><a class="owb-header__brand" href="${routes.grammar}"><span class="owb-header__mark" aria-hidden="true">O</span><span>Ontology Workbench</span></a><nav class="owb-header__nav" aria-label="Ontology Workbench"><div class="owb-header__links">${items.map(([key, label]) => `<a href="${routes[key]}"${key === active ? ' class="is-active" aria-current="page"' : ''}>${label}</a>`).join('')}</div><span class="owb-header__build">Workbench build 2026.08.25.11</span></nav></div>`;
+  host.innerHTML = `<div class="owb-header__inner"><a class="owb-header__brand" href="${routes.grammar}"><span class="owb-header__mark" aria-hidden="true">O</span><span>Ontology Workbench</span></a><nav class="owb-header__nav" aria-label="Ontology Workbench"><div class="owb-header__links">${items.map(([key, label]) => `<a href="${routes[key]}"${key === active ? ' class="is-active" aria-current="page"' : ''}>${label}</a>`).join('')}</div><span class="owb-header__build">Workbench build 2026.08.25.12</span></nav></div>`;
 })();
