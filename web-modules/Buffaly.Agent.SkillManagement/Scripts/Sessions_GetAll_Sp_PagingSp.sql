@@ -86,6 +86,7 @@ AS
 					s.ModelName,
 					s.ReasoningLevel,
 					s.PromptContext,
+					s.CompactionProvider,
 					-- HACK: this paging projection reuses DateCreated to carry the row's own LastUpdated.
 					-- The generated SessionsRow has no spare projection fields; LastUpdated below remains effective activity for ordering compatibility.
 					s.LastUpdated AS DateCreated,
