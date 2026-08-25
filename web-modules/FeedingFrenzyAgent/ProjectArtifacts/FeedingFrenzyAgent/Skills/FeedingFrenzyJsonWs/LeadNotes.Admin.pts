@@ -3,12 +3,11 @@ prototype LeadNotes_GetFollowUpByLeadID : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. LeadID - numeric lead id.";
 
-	function Execute(FeedingFrenzyJsonWsService service, int LeadID) : string
+	function Execute(int LeadID) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["LeadID"] = LeadID;
-		return service.CallBusinessRoute("lead-notes/get-follow-up-by-lead-id", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-notes/get-follow-up-by-lead-id", args);
 	}
 }
 
@@ -17,12 +16,11 @@ prototype LeadNotes_GetAppointments : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. StartDate and StopDate should be ISO-like date strings accepted by Feeding Frenzy JsonWs DateTime binding.";
 
-	function Execute(FeedingFrenzyJsonWsService service, string StartDate, string StopDate) : string
+	function Execute(string StartDate, string StopDate) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["StartDate"] = StartDate;
 		args["StopDate"] = StopDate;
-		return service.CallBusinessRoute("lead-notes/get-appointments", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-notes/get-appointments", args);
 	}
 }

@@ -10,3 +10,6 @@ Runtime deployments copy this project into Buffaly instances as needed, for exam
 - `C:\inetpub\wwwroot\staging.buffaly.local3\content\projects\FeedingFrenzyAgent`
 
 Do not edit the runtime copies as the durable source. Runtime copies may contain environment-owned `lib` folders and configuration/secrets that are not stored here.
+
+## Multi-tenant embedded Buffaly implementation (2026-08-25)
+- Added required InstallationKey launch validation, tenant-qualified session keys, Buffaly-owned installation binding checks, fail-closed Current JsonWs service binding, and prompt guidance that tenant routing is not model-selected.

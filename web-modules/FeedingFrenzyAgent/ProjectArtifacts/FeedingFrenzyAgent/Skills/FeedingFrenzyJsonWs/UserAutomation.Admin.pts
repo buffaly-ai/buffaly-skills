@@ -3,13 +3,12 @@ prototype UserAutomation_GetUserSummary : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. UserID - numeric user id. bForceRefresh controls whether Feeding Frenzy should refresh the summary.";
 
-	function Execute(FeedingFrenzyJsonWsService service, int UserID, bool bForceRefresh) : string
+	function Execute(int UserID, bool bForceRefresh) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["UserID"] = UserID;
 		args["bForceRefresh"] = bForceRefresh;
-		return service.CallBusinessRoute("user-automation/get-user-summary", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("user-automation/get-user-summary", args);
 	}
 }
 
@@ -18,13 +17,12 @@ prototype UserAutomation_ChatWithUserInfo : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. UserID, Prompt, and bIncludeDocuments map to FeedingFrenzy.Admin.Business.UserAutomation.ChatWithUserInfo.";
 
-	function Execute(FeedingFrenzyJsonWsService service, int UserID, string Prompt, bool bIncludeDocuments) : string
+	function Execute(int UserID, string Prompt, bool bIncludeDocuments) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["UserID"] = UserID;
 		args["Prompt"] = Prompt;
 		args["bIncludeDocuments"] = bIncludeDocuments;
-		return service.CallBusinessRoute("user-automation/chat-with-user-info", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("user-automation/chat-with-user-info", args);
 	}
 }

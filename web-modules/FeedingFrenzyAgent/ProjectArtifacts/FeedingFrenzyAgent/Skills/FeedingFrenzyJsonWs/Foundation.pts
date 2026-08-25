@@ -19,21 +19,23 @@ prototype FeedingFrenzyJsonWsService : Service
 {
 	ServiceName = "FeedingFrenzyJsonWsService";
 	Scope = "per-binding";
-	Description = @"Feeding Frenzy route-based JSON service. Remote and Local bindings are provided as partials. Token is auto-resolved from TokenKey.";
+	Description = @"Feeding Frenzy route-based JSON service. Current is configured by authenticated embedded launch. Explicit tenant bindings are for separately authorized diagnostics.";
 
 	String BaseUrl = new String();
 	String BusinessApiPrefix = "api/feedingfrenzy.admin.business";
 	String CallCenterApiPrefix = "api/feedingfrenzy.callcenter";
 	String UiApiPrefix = "api/feedingfrenzy.admin.ui";
-	String TokenKey = "FeedingFrenzy.ApiKey";
+	String TokenKey = new String();
 	Bool TokenIsAuthorizationToken = false;
 	String AutomationUserEmail = new String();
 
 	function Initialize() : string
 	{
 		if (StringUtil.IsEmpty(this.BaseUrl))
-			return "Error: FeedingFrenzyJsonWsService.BaseUrl must be set on the binding.";
-		return "FeedingFrenzyJsonWsService initialized (BaseUrl = " + this.BaseUrl + ").";
+			return "Error: FeedingFrenzyJsonWsService.BaseUrl must be configured.";
+		if (StringUtil.IsEmpty(this.TokenKey))
+			return "Error: FeedingFrenzyJsonWsService authorization must be configured.";
+		return "Feeding Frenzy service binding initialized.";
 	}
 
 	function ConfigureAuthorization(string BaseUrl, string AuthorizationToken) : string
@@ -51,6 +53,8 @@ prototype FeedingFrenzyJsonWsService : Service
 
 	function CallBusinessRoute(string routePath, JsonObject args) : string
 	{
+		if (StringUtil.IsEmpty(this.BaseUrl) || StringUtil.IsEmpty(this.TokenKey))
+			return "Error: Current Feeding Frenzy session binding is not configured.";
 		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
 		return this.TokenIsAuthorizationToken
 			? JsonWsHelper.CallJsonRoute(this.BaseUrl, this.BusinessApiPrefix, routePath, this.TokenKey, normalizedArgs)
@@ -59,6 +63,8 @@ prototype FeedingFrenzyJsonWsService : Service
 
 	function CallCallCenterRoute(string routePath, JsonObject args) : string
 	{
+		if (StringUtil.IsEmpty(this.BaseUrl) || StringUtil.IsEmpty(this.TokenKey))
+			return "Error: Current Feeding Frenzy session binding is not configured.";
 		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
 		return this.TokenIsAuthorizationToken
 			? JsonWsHelper.CallJsonRoute(this.BaseUrl, this.CallCenterApiPrefix, routePath, this.TokenKey, normalizedArgs)
@@ -67,6 +73,8 @@ prototype FeedingFrenzyJsonWsService : Service
 
 	function CallUiRoute(string routePath, JsonObject args) : string
 	{
+		if (StringUtil.IsEmpty(this.BaseUrl) || StringUtil.IsEmpty(this.TokenKey))
+			return "Error: Current Feeding Frenzy session binding is not configured.";
 		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
 		return this.TokenIsAuthorizationToken
 			? JsonWsHelper.CallJsonRoute(this.BaseUrl, this.UiApiPrefix, routePath, this.TokenKey, normalizedArgs)
@@ -74,14 +82,29 @@ prototype FeedingFrenzyJsonWsService : Service
 	}
 }
 
+[SemanticEntity("current feeding frenzy session service")]
+partial prototype FeedingFrenzyJsonWsService#Current : FeedingFrenzyJsonWsService
+{
+	Description = "Current Feeding Frenzy installation configured by authenticated embedded session launch.";
+}
+
+[SemanticEntity("MEDEK feeding frenzy service")]
 [SemanticEntity("feeding frenzy remote json ws service")]
 [SemanticEntity("remote feeding frenzy json ws")]
-partial prototype FeedingFrenzyJsonWsService#Remote : FeedingFrenzyJsonWsService
+partial prototype FeedingFrenzyJsonWsService#Medek : FeedingFrenzyJsonWsService
 {
 	BaseUrl = "https://ff.medek.ai";
-	TokenKey = "FeedingFrenzy.ApiKey";
+	TokenKey = "FeedingFrenzy.Medek.ApiKey";
 	AutomationUserEmail = "matt+buffaly@intelligencefactory.ai";
-	Description = "Remote Feeding Frenzy JSON service binding.";
+	Description = "Explicit MEDEK production binding for separately authorized diagnostics and automation.";
+}
+
+[SemanticEntity("Affinity feeding frenzy service")]
+partial prototype FeedingFrenzyJsonWsService#Affinity : FeedingFrenzyJsonWsService
+{
+	BaseUrl = "https://affinity.feedingfrenzy.ai";
+	TokenKey = "FeedingFrenzy.Affinity.ApiKey";
+	Description = "Explicit Affinity production binding for separately authorized diagnostics and automation.";
 }
 
 [SemanticEntity("feeding frenzy local json ws service")]
@@ -90,5 +113,5 @@ partial prototype FeedingFrenzyJsonWsService#Local : FeedingFrenzyJsonWsService
 {
 	BaseUrl = "http://feedingfrenzy.local";
 	TokenKey = "FeedingFrenzy.Local.ApiKey";
-	Description = "Local Feeding Frenzy JSON service binding.";
+	Description = "Explicit local development binding for separately authorized diagnostics and automation.";
 }

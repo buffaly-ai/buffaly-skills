@@ -3,12 +3,11 @@ prototype LeadAddresses_GetLeadAddress : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. LeadAddressID - numeric lead address id.";
 
-	function Execute(FeedingFrenzyJsonWsService service, int LeadAddressID) : string
+	function Execute(int LeadAddressID) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["LeadAddressID"] = LeadAddressID;
-		return service.CallBusinessRoute("lead-addresses/get-lead-address", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-addresses/get-lead-address", args);
 	}
 }
 
@@ -17,11 +16,10 @@ prototype LeadAddresses_GetLeadAddressesByLeadID : FeedingFrenzyJsonWsSkillActio
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. LeadID - numeric lead id.";
 
-	function Execute(FeedingFrenzyJsonWsService service, int LeadID) : string
+	function Execute(int LeadID) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["LeadID"] = LeadID;
-		return service.CallBusinessRoute("lead-addresses/get-lead-addresses-by-lead-id", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-addresses/get-lead-addresses-by-lead-id", args);
 	}
 }

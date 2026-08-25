@@ -4,9 +4,8 @@ prototype FeedingFrenzyWiki_SearchHelp : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"SearchText - the user's help question or how-to topic. Returns up to five ranked Feeding Frenzy wiki articles with titles, viewer links, and grounded snippets. Use GetHelpArticle when a result needs full procedural detail.";
 
-	function Execute(FeedingFrenzyJsonWsService service, string SearchText) : string
+	function Execute(string SearchText) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		if (StringUtil.IsEmpty(SearchText)) return "Error: SearchText is required.";
 
 		JsonObject request = new JsonObject();
@@ -15,7 +14,7 @@ prototype FeedingFrenzyWiki_SearchHelp : FeedingFrenzyJsonWsSkillAction
 		request["SnippetLength"] = 320;
 		JsonObject args = new JsonObject();
 		args["request"] = request;
-		return service.CallBusinessRoute("wiki-service/search", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("wiki-service/search", args);
 	}
 }
 
@@ -25,15 +24,14 @@ prototype FeedingFrenzyWiki_GetHelpArticle : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"Slug - exact article slug returned by SearchHelp, for example commerce/creating-a-product. Returns full wiki Markdown for a grounded help answer.";
 
-	function Execute(FeedingFrenzyJsonWsService service, string Slug) : string
+	function Execute(string Slug) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		if (StringUtil.IsEmpty(Slug)) return "Error: Slug is required.";
 
 		JsonObject request = new JsonObject();
 		request["Slug"] = Slug;
 		JsonObject args = new JsonObject();
 		args["request"] = request;
-		return service.CallBusinessRoute("wiki-service/get-article", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("wiki-service/get-article", args);
 	}
 }

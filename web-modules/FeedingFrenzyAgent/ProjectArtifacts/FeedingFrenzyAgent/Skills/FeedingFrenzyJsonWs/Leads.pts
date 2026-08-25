@@ -2,12 +2,11 @@ prototype Leads_GetLead : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.GetLead(LeadID). Returns raw response JSON string.";
 
-	function Execute(FeedingFrenzyJsonWsService service, int LeadID) : string
+	function Execute(int LeadID) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["LeadID"] = LeadID;
-		return service.CallBusinessRoute("leads/get-lead", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("leads/get-lead", args);
 	}
 }
 
@@ -15,12 +14,11 @@ prototype Leads_GetLeadsBySalesRepresentativeID : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.GetLeadsBySalesRepresentativeID(SalesRepresentativeID). Returns raw response JSON string.";
 
-	function Execute(FeedingFrenzyJsonWsService service, int SalesRepresentativeID) : string
+	function Execute(int SalesRepresentativeID) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["SalesRepresentativeID"] = SalesRepresentativeID;
-		return service.CallBusinessRoute("leads/get-leads-by-sales-representative-id", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("leads/get-leads-by-sales-representative-id", args);
 	}
 }
 
@@ -28,12 +26,11 @@ prototype Leads_GetLeadsByEmail : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.GetLeadsByEmail(Email). Returns raw response JSON string.";
 
-	function Execute(FeedingFrenzyJsonWsService service, string Email) : string
+	function Execute(string Email) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["Email"] = Email;
-		return service.CallBusinessRoute("leads/get-leads-by-email", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("leads/get-leads-by-email", args);
 	}
 }
 
@@ -41,12 +38,11 @@ prototype Leads_GetLeadsByPhone : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.Leads.GetLeadsByPhone(Phone). Returns raw response JSON string.";
 
-	function Execute(FeedingFrenzyJsonWsService service, string Phone) : string
+	function Execute(string Phone) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["Phone"] = Phone;
-		return service.CallBusinessRoute("leads/get-leads-by-phone", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("leads/get-leads-by-phone", args);
 	}
 }
 
@@ -55,12 +51,11 @@ prototype ToAddFeedingFrenzyLead : FeedingFrenzyJsonWsGuardedWriteAction
 {
 	Description = @"Adds one lead through the authenticated Feeding Frenzy Leads.InsertLead route.";
 
-	function Execute(FeedingFrenzyJsonWsService service, string Company, string FirstName, string LastName, string Phone, string Email, string Address, string Address2, string City, string State, string ZipCode, int SourceID, int Priority, int LeadStatusID, int SalesRepresentativeID, string Data) : string
+	function Execute(string Company, string FirstName, string LastName, string Phone, string Email, string Address, string Address2, string City, string State, string ZipCode, int SourceID, int Priority, int LeadStatusID, int SalesRepresentativeID, string Data) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["AccountID"] = null; args["LeadSubStatusID"] = null; args["FollowUpDate"] = null; args["Company"] = Company; args["FirstName"] = FirstName; args["LastName"] = LastName; args["Phone"] = Phone; args["Email"] = Email; args["Address"] = Address; args["Address2"] = Address2; args["City"] = City; args["State"] = State; args["ZipCode"] = ZipCode; args["SourceID"] = SourceID; args["LastContactedDate"] = null; args["Priority"] = Priority; args["LeadStatusID"] = LeadStatusID; args["OpportunitySize"] = null; args["Data"] = Data; args["SalesRepresentativeID"] = SalesRepresentativeID; args["ImportKey"] = null; args["GeneratedDate"] = null; args["CampaignID"] = null;
-		return service.CallBusinessRoute("leads/insert-lead", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("leads/insert-lead", args);
 	}
 }
 
@@ -69,11 +64,10 @@ prototype ToUpdateFeedingFrenzyLead : FeedingFrenzyJsonWsGuardedWriteAction
 {
 	Description = @"Updates one lead through the authenticated Feeding Frenzy Leads.UpdateLead route.";
 
-	function Execute(FeedingFrenzyJsonWsService service, int LeadID, string Company, string FirstName, string LastName, string Phone, string Email, string Address, string Address2, string City, string State, string ZipCode, int SourceID, int Priority, int LeadStatusID, int SalesRepresentativeID, string Data) : string
+	function Execute(int LeadID, string Company, string FirstName, string LastName, string Phone, string Email, string Address, string Address2, string City, string State, string ZipCode, int SourceID, int Priority, int LeadStatusID, int SalesRepresentativeID, string Data) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["AccountID"] = null; args["LeadSubStatusID"] = null; args["FollowUpDate"] = null; args["LeadID"] = LeadID; args["Company"] = Company; args["FirstName"] = FirstName; args["LastName"] = LastName; args["Phone"] = Phone; args["Email"] = Email; args["Address"] = Address; args["Address2"] = Address2; args["City"] = City; args["State"] = State; args["ZipCode"] = ZipCode; args["SourceID"] = SourceID; args["LastContactedDate"] = null; args["Priority"] = Priority; args["LeadStatusID"] = LeadStatusID; args["OpportunitySize"] = null; args["Data"] = Data; args["SalesRepresentativeID"] = SalesRepresentativeID; args["ImportKey"] = null; args["GeneratedDate"] = null; args["CampaignID"] = null;
-		return service.CallBusinessRoute("leads/update-lead", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("leads/update-lead", args);
 	}
 }

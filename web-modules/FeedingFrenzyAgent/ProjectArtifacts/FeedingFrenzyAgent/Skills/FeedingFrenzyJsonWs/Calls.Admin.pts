@@ -5,16 +5,15 @@ prototype ToStartObservationCall : FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
 	Description = @"Starts a direct-dial observation call through Feeding Frenzy. service - required remote or local FeedingFrenzyJsonWsService binding. ToPhone - required lead destination. FromPhone - optional configured Twilio caller ID. Record - whether FF requests dual-channel recording. BaseUrl - optional FF callback/driver base URL. DeskPhone - optional by contract but currently rejected by FF until API-originated screening is proven. Returns JSON with CallID, CallKey, DriverUrl, and Status. This action can place a billable external call and must be used only with explicit operator approval.";
 
-	function Execute(FeedingFrenzyJsonWsService service, string ToPhone, string FromPhone, bool Record, string BaseUrl, string DeskPhone) : string
+	function Execute(string ToPhone, string FromPhone, bool Record, string BaseUrl, string DeskPhone) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["ToPhone"] = ToPhone;
 		args["FromPhone"] = FromPhone;
 		args["Record"] = Record;
 		args["BaseUrl"] = BaseUrl;
 		args["DeskPhone"] = DeskPhone;
-		return service.CallBusinessRoute("twilio-admin/start-observation-call", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("twilio-admin/start-observation-call", args);
 	}
 }
 
@@ -25,12 +24,11 @@ prototype ToCancelObservationCall : FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
 	Description = @"Requests idempotent cancellation of an active Feeding Frenzy observation call. service - required remote or local FeedingFrenzyJsonWsService binding. CallID - numeric call identifier. Returns JSON distinguishing an already-terminal call from a newly requested Twilio hangup. The caller must continue polling ToGetCallTranscript until terminal status is confirmed.";
 
-	function Execute(FeedingFrenzyJsonWsService service, int CallID) : string
+	function Execute(int CallID) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["CallID"] = CallID;
-		return service.CallBusinessRoute("twilio-admin/cancel-call", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("twilio-admin/cancel-call", args);
 	}
 }
 
@@ -39,13 +37,12 @@ prototype Calls_GetCallsByDateRange : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. StartDate and EndDate should be ISO-like date strings accepted by Feeding Frenzy JsonWs DateTime binding.";
 
-	function Execute(FeedingFrenzyJsonWsService service, string StartDate, string EndDate) : string
+	function Execute(string StartDate, string EndDate) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["StartDate"] = StartDate;
 		args["EndDate"] = EndDate;
-		return service.CallCallCenterRoute("calls/get-calls-by-date-range", args);
+		return FeedingFrenzyJsonWsService#Current.CallCallCenterRoute("calls/get-calls-by-date-range", args);
 	}
 }
 
@@ -54,13 +51,12 @@ prototype Calls_GetCallsByDateRangeAsMarkdown : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"service - required FeedingFrenzyJsonWsService binding. StartDate and EndDate should be ISO-like date strings accepted by Feeding Frenzy JsonWs DateTime binding. Returns a markdown call summary when available.";
 
-	function Execute(FeedingFrenzyJsonWsService service, string StartDate, string EndDate) : string
+	function Execute(string StartDate, string EndDate) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["StartDate"] = StartDate;
 		args["EndDate"] = EndDate;
-		return service.CallCallCenterRoute("calls/get-calls-by-date-range-as-markdown", args);
+		return FeedingFrenzyJsonWsService#Current.CallCallCenterRoute("calls/get-calls-by-date-range-as-markdown", args);
 	}
 }
 
@@ -70,11 +66,10 @@ prototype ToGetActiveTranscribedCalls : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"Discovers active transcribed Feeding Frenzy calls from the last 12 hours. service - required remote or local FeedingFrenzyJsonWsService binding. Returns a JSON array of compact call objects with CallID, CallKey, CallStatus, Duration, TranscriptVersion, and LastUpdated. Filters to nonterminal, streamed, realtime-transcribed calls. Capped at 100, newest first. Use this for passive call discovery before polling individual transcripts.";
 
-	function Execute(FeedingFrenzyJsonWsService service) : string
+	function Execute() : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
-		return service.CallCallCenterRoute("calls/get-active-transcribed-calls", args);
+		return FeedingFrenzyJsonWsService#Current.CallCallCenterRoute("calls/get-active-transcribed-calls", args);
 	}
 }
 
@@ -84,9 +79,8 @@ prototype ToUpdateBuffalyObserverState : FeedingFrenzyJsonWsAdminGuardedWriteAct
 {
 	Description = @"Writes a bounded Buffaly observer state snapshot to the Feeding Frenzy call row DataObject['BuffalyObserver']. service - required remote or local FeedingFrenzyJsonWsService binding. CallID - numeric call identifier. Sequence - monotonically increasing write sequence; equal or older sequences are ignored. Lifecycle - one of RINGING, IN_PROGRESS, DONE, FAILED, CANCELLED. Category - one of Unknown, HumanAnswered, IVR, Voicemail, InvalidNumber, Screening, DeadAir. Confidence - 0 to 1. Reason - bounded text explanation (max 500 chars). LastTranscriptVersion - transcript version this snapshot is based on. Returns JSON with Accepted (bool) and Sequence (int). This is a guarded write because it modifies FF call data, but it only writes the namespaced BuffalyObserver object and never overwrites native AICallOutcome fields or unrelated DataObject properties.";
 
-	function Execute(FeedingFrenzyJsonWsService service, int CallID, int Sequence, string Lifecycle, string Category, double Confidence, string Reason, int LastTranscriptVersion) : string
+	function Execute(int CallID, int Sequence, string Lifecycle, string Category, double Confidence, string Reason, int LastTranscriptVersion) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["CallID"] = CallID;
 		args["Sequence"] = Sequence;
@@ -95,6 +89,6 @@ prototype ToUpdateBuffalyObserverState : FeedingFrenzyJsonWsAdminGuardedWriteAct
 		args["Confidence"] = Confidence;
 		args["Reason"] = Reason;
 		args["LastTranscriptVersion"] = LastTranscriptVersion;
-	return service.CallCallCenterRoute("calls/update-buffaly-observer-state", args);
+	return FeedingFrenzyJsonWsService#Current.CallCallCenterRoute("calls/update-buffaly-observer-state", args);
 	}
 }

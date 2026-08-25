@@ -2,10 +2,9 @@
 prototype ToListFeedingFrenzyAgreementTemplates : FeedingFrenzyJsonWsSkillAction
 {
     Description = @"Lists active current agreement templates that Buffaly may retrieve and customize.";
-    function Execute(FeedingFrenzyJsonWsService service) : string
+    function Execute() : string
     {
-        if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
-        return service.CallBusinessRoute("agreement-templates/get-active-agreement-templates", new JsonObject());
+        return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("agreement-templates/get-active-agreement-templates", new JsonObject());
     }
 }
 
@@ -13,11 +12,10 @@ prototype ToListFeedingFrenzyAgreementTemplates : FeedingFrenzyJsonWsSkillAction
 prototype ToGetFeedingFrenzyAgreementTemplate : FeedingFrenzyJsonWsSkillAction
 {
     Description = @"Gets one active current agreement template, including Markdown, by TemplateKey.";
-    function Execute(FeedingFrenzyJsonWsService service, string TemplateKey) : string
+    function Execute(string TemplateKey) : string
     {
-        if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
         JsonObject args = new JsonObject(); args["TemplateKey"] = TemplateKey;
-        return service.CallBusinessRoute("agreement-templates/get-active-agreement-template", args);
+        return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("agreement-templates/get-active-agreement-template", args);
     }
 }
 
@@ -26,11 +24,10 @@ prototype ToGetFeedingFrenzyAgreementTemplate : FeedingFrenzyJsonWsSkillAction
 prototype ToInsertFeedingFrenzyAgreementTemplate : FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
     Description = @"Registers one Feeding Frenzy agreement template through the server-owned AgreementTemplates insert route. This only inserts a reusable template; it does not create a signing request or send anything.";
-	function Execute(FeedingFrenzyJsonWsService service, string TemplateKey, string DisplayName, string TemplateDescription, string Category, string Cautions, string MarkdownContent, string SourceFileName, bool IsActive, int SortOrder, string Data) : string
+	function Execute(string TemplateKey, string DisplayName, string TemplateDescription, string Category, string Cautions, string MarkdownContent, string SourceFileName, bool IsActive, int SortOrder, string Data) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject(); args["TemplateKey"] = TemplateKey; args["DisplayName"] = DisplayName; args["Description"] = TemplateDescription; args["Category"] = Category; args["Cautions"] = Cautions; args["MarkdownContent"] = MarkdownContent; args["SourceFileName"] = SourceFileName; args["IsActive"] = IsActive; args["SortOrder"] = SortOrder; args["Data"] = Data;
-		return service.CallBusinessRoute("agreement-templates/insert-agreement-template", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("agreement-templates/insert-agreement-template", args);
 	}
 }
 
@@ -38,12 +35,11 @@ prototype ToInsertFeedingFrenzyAgreementTemplate : FeedingFrenzyJsonWsAdminGuard
 prototype ToCreateFeedingFrenzySigningDraftFromMarkdown : FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
     Description = @"Attaches completed Markdown to a lead and creates the ordinary document-signing request in Draft. Does not send it.";
-    function Execute(FeedingFrenzyJsonWsService service, int LeadID, string DocumentName, string MarkdownContent, string CustomerLegalName, string RecipientName, string RecipientEmail, string ExpirationDate, int ReminderIntervalDays, int ProviderSignerUserID, string SourceFileName, string AgreementTemplateKey) : string
+    function Execute(int LeadID, string DocumentName, string MarkdownContent, string CustomerLegalName, string RecipientName, string RecipientEmail, string ExpirationDate, int ReminderIntervalDays, int ProviderSignerUserID, string SourceFileName, string AgreementTemplateKey) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
-		if (StringUtil.IsEmpty(service.AutomationUserEmail)) return "Error: FeedingFrenzyJsonWsService.AutomationUserEmail is required for signing Draft creation.";
-		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=service.AutomationUserEmail; args["LeadID"]=LeadID; args["DocumentName"]=DocumentName; args["MarkdownContent"]=MarkdownContent; args["CustomerLegalName"]=CustomerLegalName; args["RecipientName"]=RecipientName; args["RecipientEmail"]=RecipientEmail; args["ExpirationDate"]=ExpirationDate; args["ReminderIntervalDays"]=ReminderIntervalDays; args["ProviderSignerUserID"]=ProviderSignerUserID; args["SourceFileName"]=SourceFileName; args["AgreementTemplateKey"]=AgreementTemplateKey;
-		return service.CallBusinessRoute("lead-document-signing-requests/create-buffaly-signing-draft-as-automation", args);
+		if (StringUtil.IsEmpty(FeedingFrenzyJsonWsService#Current.AutomationUserEmail)) return "Error: FeedingFrenzyJsonWsFeedingFrenzyJsonWsService#Current.AutomationUserEmail is required for signing Draft creation.";
+		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=FeedingFrenzyJsonWsService#Current.AutomationUserEmail; args["LeadID"]=LeadID; args["DocumentName"]=DocumentName; args["MarkdownContent"]=MarkdownContent; args["CustomerLegalName"]=CustomerLegalName; args["RecipientName"]=RecipientName; args["RecipientEmail"]=RecipientEmail; args["ExpirationDate"]=ExpirationDate; args["ReminderIntervalDays"]=ReminderIntervalDays; args["ProviderSignerUserID"]=ProviderSignerUserID; args["SourceFileName"]=SourceFileName; args["AgreementTemplateKey"]=AgreementTemplateKey;
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-document-signing-requests/create-buffaly-signing-draft-as-automation", args);
 	}
 }
 
@@ -51,21 +47,20 @@ prototype ToCreateFeedingFrenzySigningDraftFromMarkdown : FeedingFrenzyJsonWsAdm
 prototype ToCreateFeedingFrenzySigningDraftFromUploadedMarkdownFile : FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
     Description = @"Uploads the exact local Markdown file to Feeding Frenzy first, then creates the signing Draft from the uploaded file reference. The full agreement body is never passed as a JsonWs MarkdownContent argument. Does not send email.";
-    function Execute(FeedingFrenzyJsonWsService service, int LeadID, string DocumentName, string LocalMarkdownFilePath, string CustomerLegalName, string RecipientName, string RecipientEmail, string ExpirationDate, int ReminderIntervalDays, string SourceFileName, string AgreementTemplateKey) : string
+    function Execute(int LeadID, string DocumentName, string LocalMarkdownFilePath, string CustomerLegalName, string RecipientName, string RecipientEmail, string ExpirationDate, int ReminderIntervalDays, string SourceFileName, string AgreementTemplateKey) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
-		if (StringUtil.IsEmpty(service.AutomationUserEmail)) return "Error: FeedingFrenzyJsonWsService.AutomationUserEmail is required for signing Draft creation.";
+		if (StringUtil.IsEmpty(FeedingFrenzyJsonWsService#Current.AutomationUserEmail)) return "Error: FeedingFrenzyJsonWsFeedingFrenzyJsonWsService#Current.AutomationUserEmail is required for signing Draft creation.";
 		if (StringUtil.IsEmpty(LocalMarkdownFilePath)) return "Error: LocalMarkdownFilePath is required.";
 		if (!File.Exists(LocalMarkdownFilePath)) return "Error: LocalMarkdownFilePath does not exist: " + LocalMarkdownFilePath;
 		if (!StringUtil.EqualNoCase(Path.GetExtension(LocalMarkdownFilePath), ".md")) return "Error: LocalMarkdownFilePath must be a .md file.";
 
 		string fileName = StringUtil.IsEmpty(SourceFileName) ? Path.GetFileName(LocalMarkdownFilePath) : Path.GetFileName(SourceFileName);
-		JsonObject uploadArgs = new JsonObject(); uploadArgs["AutomationUserEmail"]=service.AutomationUserEmail; uploadArgs["LeadID"]=LeadID; uploadArgs["FileName"]=fileName; uploadArgs["Data"]=File.ReadAllBytes(LocalMarkdownFilePath);
-		string uploadedMarkdownFileUrl = service.CallBusinessRoute("lead-documents/upload-agreement-draft-source-markdown-as-automation", uploadArgs);
+		JsonObject uploadArgs = new JsonObject(); uploadArgs["AutomationUserEmail"]=FeedingFrenzyJsonWsService#Current.AutomationUserEmail; uploadArgs["LeadID"]=LeadID; uploadArgs["FileName"]=fileName; uploadArgs["Data"]=File.ReadAllBytes(LocalMarkdownFilePath);
+		string uploadedMarkdownFileUrl = FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-documents/upload-agreement-draft-source-markdown-as-automation", uploadArgs);
 		if (StringUtil.IsEmpty(uploadedMarkdownFileUrl)) return "Error: Feeding Frenzy did not return an uploaded Markdown file URL.";
 
-		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=service.AutomationUserEmail; args["LeadID"]=LeadID; args["DocumentName"]=DocumentName; args["UploadedMarkdownFileUrl"]=uploadedMarkdownFileUrl; args["CustomerLegalName"]=CustomerLegalName; args["RecipientName"]=RecipientName; args["RecipientEmail"]=RecipientEmail; args["ExpirationDate"]=ExpirationDate; args["ReminderIntervalDays"]=ReminderIntervalDays; args["SourceFileName"]=fileName; args["AgreementTemplateKey"]=AgreementTemplateKey;
-		return service.CallBusinessRoute("lead-document-signing-requests/create-buffaly-signing-draft-from-uploaded-markdown-as-automation", args);
+		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=FeedingFrenzyJsonWsService#Current.AutomationUserEmail; args["LeadID"]=LeadID; args["DocumentName"]=DocumentName; args["UploadedMarkdownFileUrl"]=uploadedMarkdownFileUrl; args["CustomerLegalName"]=CustomerLegalName; args["RecipientName"]=RecipientName; args["RecipientEmail"]=RecipientEmail; args["ExpirationDate"]=ExpirationDate; args["ReminderIntervalDays"]=ReminderIntervalDays; args["SourceFileName"]=fileName; args["AgreementTemplateKey"]=AgreementTemplateKey;
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-document-signing-requests/create-buffaly-signing-draft-from-uploaded-markdown-as-automation", args);
 	}
 }
 
@@ -75,10 +70,10 @@ prototype ToCreateFeedingFrenzySigningDraftFromUploadedMarkdownFile : FeedingFre
 prototype ToListFeedingFrenzySigningRequestsForLead : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"Lists a bounded, redacted inventory of signing requests for one authorized lead and reports duplicate Draft hints. Read-only; never sends or returns token secrets.";
-	function Execute(FeedingFrenzyJsonWsService service, int LeadID, string StatusFilter, int MaxRows) : string
+	function Execute(int LeadID, string StatusFilter, int MaxRows) : string
 	{
-		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=service.AutomationUserEmail; args["LeadID"]=LeadID; args["StatusFilter"]=StatusFilter; args["MaxRows"]=MaxRows;
-		return service.CallBusinessRoute("lead-document-signing-requests/list-buffaly-signing-requests-for-lead-as-automation", args);
+		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=FeedingFrenzyJsonWsService#Current.AutomationUserEmail; args["LeadID"]=LeadID; args["StatusFilter"]=StatusFilter; args["MaxRows"]=MaxRows;
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-document-signing-requests/list-buffaly-signing-requests-for-lead-as-automation", args);
 	}
 }
 
@@ -87,10 +82,10 @@ prototype ToListFeedingFrenzySigningRequestsForLead : FeedingFrenzyJsonWsSkillAc
 prototype ToGetFeedingFrenzySigningRequest : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"Gets one authorized signing-request read model. Token values and signed document bytes are never returned; Markdown is included only when IncludeMarkdown is true.";
-	function Execute(FeedingFrenzyJsonWsService service, int LeadDocumentSigningRequestID, int LeadID, bool IncludeMarkdown) : string
+	function Execute(int LeadDocumentSigningRequestID, int LeadID, bool IncludeMarkdown) : string
 	{
-		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=service.AutomationUserEmail; args["LeadDocumentSigningRequestID"]=LeadDocumentSigningRequestID; args["LeadID"]=LeadID; args["IncludeMarkdown"]=IncludeMarkdown;
-		return service.CallBusinessRoute("lead-document-signing-requests/get-buffaly-signing-request-as-automation", args);
+		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=FeedingFrenzyJsonWsService#Current.AutomationUserEmail; args["LeadDocumentSigningRequestID"]=LeadDocumentSigningRequestID; args["LeadID"]=LeadID; args["IncludeMarkdown"]=IncludeMarkdown;
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-document-signing-requests/get-buffaly-signing-request-as-automation", args);
 	}
 }
 
@@ -99,10 +94,10 @@ prototype ToGetFeedingFrenzySigningRequest : FeedingFrenzyJsonWsSkillAction
 prototype ToUpdateFeedingFrenzySigningDraftFromMarkdown : FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
 	Description = @"Updates exactly one pristine unsent signing Draft through the server lifecycle owner. Requires expected version/hash, never sends email or mints signing tokens, and returns updated version/hash proof.";
-	function Execute(FeedingFrenzyJsonWsService service, int LeadDocumentSigningRequestID, string ExpectedDocumentVersion, string ExpectedMarkdownHash, string DocumentName, string MarkdownContent, string CustomerLegalName, string RecipientName, string RecipientTitle, string RecipientEmail, string ExpirationDate, int ReminderIntervalDays, string Subject, string Message, bool SendCompletedCopyToCustomer, bool SendCompletedCopyToProvider, int ProviderSignerUserID) : string
+	function Execute(int LeadDocumentSigningRequestID, string ExpectedDocumentVersion, string ExpectedMarkdownHash, string DocumentName, string MarkdownContent, string CustomerLegalName, string RecipientName, string RecipientTitle, string RecipientEmail, string ExpirationDate, int ReminderIntervalDays, string Subject, string Message, bool SendCompletedCopyToCustomer, bool SendCompletedCopyToProvider, int ProviderSignerUserID) : string
 	{
-		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=service.AutomationUserEmail; args["LeadDocumentSigningRequestID"]=LeadDocumentSigningRequestID; args["ExpectedDocumentVersion"]=ExpectedDocumentVersion; args["ExpectedMarkdownHash"]=ExpectedMarkdownHash; args["DocumentName"]=DocumentName; args["MarkdownContent"]=MarkdownContent; args["CustomerLegalName"]=CustomerLegalName; args["RecipientName"]=RecipientName; args["RecipientTitle"]=RecipientTitle; args["RecipientEmail"]=RecipientEmail; args["ExpirationDate"]=ExpirationDate; args["ReminderIntervalDays"]=ReminderIntervalDays; args["Subject"]=Subject; args["Message"]=Message; args["SendCompletedCopyToCustomer"]=SendCompletedCopyToCustomer; args["SendCompletedCopyToProvider"]=SendCompletedCopyToProvider; args["ProviderSignerUserID"]=ProviderSignerUserID;
-		return service.CallBusinessRoute("lead-document-signing-requests/update-buffaly-signing-draft-as-automation", args);
+		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=FeedingFrenzyJsonWsService#Current.AutomationUserEmail; args["LeadDocumentSigningRequestID"]=LeadDocumentSigningRequestID; args["ExpectedDocumentVersion"]=ExpectedDocumentVersion; args["ExpectedMarkdownHash"]=ExpectedMarkdownHash; args["DocumentName"]=DocumentName; args["MarkdownContent"]=MarkdownContent; args["CustomerLegalName"]=CustomerLegalName; args["RecipientName"]=RecipientName; args["RecipientTitle"]=RecipientTitle; args["RecipientEmail"]=RecipientEmail; args["ExpirationDate"]=ExpirationDate; args["ReminderIntervalDays"]=ReminderIntervalDays; args["Subject"]=Subject; args["Message"]=Message; args["SendCompletedCopyToCustomer"]=SendCompletedCopyToCustomer; args["SendCompletedCopyToProvider"]=SendCompletedCopyToProvider; args["ProviderSignerUserID"]=ProviderSignerUserID;
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-document-signing-requests/update-buffaly-signing-draft-as-automation", args);
 	}
 }
 
@@ -111,12 +106,11 @@ prototype ToUpdateFeedingFrenzySigningDraftFromMarkdown : FeedingFrenzyJsonWsAdm
 prototype ToPrepareFeedingFrenzySigningRequestToSend : FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
 	Description = @"Runs the server-owned document signing preflight and prepares a Draft or outstanding request for delivery. This mints a signing token/link but does not send email.";
-	function Execute(FeedingFrenzyJsonWsService service, int LeadDocumentSigningRequestID, string Subject, string Message) : string
+	function Execute(int LeadDocumentSigningRequestID, string Subject, string Message) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
-		if (StringUtil.IsEmpty(service.AutomationUserEmail)) return "Error: FeedingFrenzyJsonWsService.AutomationUserEmail is required for signing request preparation.";
-		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=service.AutomationUserEmail; args["LeadDocumentSigningRequestID"]=LeadDocumentSigningRequestID; args["Subject"]=Subject; args["Message"]=Message;
-		return service.CallBusinessRoute("lead-document-signing-requests/prepare-to-send-as-automation", args);
+		if (StringUtil.IsEmpty(FeedingFrenzyJsonWsService#Current.AutomationUserEmail)) return "Error: FeedingFrenzyJsonWsFeedingFrenzyJsonWsService#Current.AutomationUserEmail is required for signing request preparation.";
+		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=FeedingFrenzyJsonWsService#Current.AutomationUserEmail; args["LeadDocumentSigningRequestID"]=LeadDocumentSigningRequestID; args["Subject"]=Subject; args["Message"]=Message;
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-document-signing-requests/prepare-to-send-as-automation", args);
 	}
 }
 
@@ -125,12 +119,11 @@ prototype ToPrepareFeedingFrenzySigningRequestToSend : FeedingFrenzyJsonWsAdminG
 prototype ToSendPreparedFeedingFrenzySigningEmail : FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
 	Description = @"Sends the prepared document signing email through the server lifecycle owner and marks the request Sent. Requires a SigningUrl returned by prepare-to-send.";
-	function Execute(FeedingFrenzyJsonWsService service, int LeadDocumentSigningRequestID, string SigningUrl) : string
+	function Execute(int LeadDocumentSigningRequestID, string SigningUrl) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
-		if (StringUtil.IsEmpty(service.AutomationUserEmail)) return "Error: FeedingFrenzyJsonWsService.AutomationUserEmail is required for signing email delivery.";
-		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=service.AutomationUserEmail; args["LeadDocumentSigningRequestID"]=LeadDocumentSigningRequestID; args["SigningUrl"]=SigningUrl;
-		return service.CallBusinessRoute("lead-document-signing-requests/send-prepared-signing-email-as-automation", args);
+		if (StringUtil.IsEmpty(FeedingFrenzyJsonWsService#Current.AutomationUserEmail)) return "Error: FeedingFrenzyJsonWsFeedingFrenzyJsonWsService#Current.AutomationUserEmail is required for signing email delivery.";
+		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=FeedingFrenzyJsonWsService#Current.AutomationUserEmail; args["LeadDocumentSigningRequestID"]=LeadDocumentSigningRequestID; args["SigningUrl"]=SigningUrl;
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-document-signing-requests/send-prepared-signing-email-as-automation", args);
 	}
 }
 
@@ -139,12 +132,11 @@ prototype ToSendPreparedFeedingFrenzySigningEmail : FeedingFrenzyJsonWsAdminGuar
 prototype ToCancelFeedingFrenzySigningRequest : FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
 	Description = @"Cancels a non-terminal Feeding Frenzy document signing request through the server lifecycle owner. This invalidates active customer/provider signing tokens and does not send email.";
-	function Execute(FeedingFrenzyJsonWsService service, int LeadDocumentSigningRequestID) : string
+	function Execute(int LeadDocumentSigningRequestID) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
-		if (StringUtil.IsEmpty(service.AutomationUserEmail)) return "Error: FeedingFrenzyJsonWsService.AutomationUserEmail is required for signing request cancellation.";
-		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=service.AutomationUserEmail; args["LeadDocumentSigningRequestID"]=LeadDocumentSigningRequestID;
-		return service.CallBusinessRoute("lead-document-signing-requests/cancel-signing-request-as-automation", args);
+		if (StringUtil.IsEmpty(FeedingFrenzyJsonWsService#Current.AutomationUserEmail)) return "Error: FeedingFrenzyJsonWsFeedingFrenzyJsonWsService#Current.AutomationUserEmail is required for signing request cancellation.";
+		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=FeedingFrenzyJsonWsService#Current.AutomationUserEmail; args["LeadDocumentSigningRequestID"]=LeadDocumentSigningRequestID;
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-document-signing-requests/cancel-signing-request-as-automation", args);
 	}
 }
 
@@ -153,11 +145,10 @@ prototype ToCancelFeedingFrenzySigningRequest : FeedingFrenzyJsonWsAdminGuardedW
 prototype ToUpdateFeedingFrenzySigningRecipient : FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
 	Description = @"Updates recipient name, title, and email on an unsigned, unsent Draft signing request. This invalidates any prepared customer token so the request must be prepared again before signing.";
-	function Execute(FeedingFrenzyJsonWsService service, int LeadDocumentSigningRequestID, string RecipientName, string RecipientTitle, string RecipientEmail) : string
+	function Execute(int LeadDocumentSigningRequestID, string RecipientName, string RecipientTitle, string RecipientEmail) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
-		if (StringUtil.IsEmpty(service.AutomationUserEmail)) return "Error: FeedingFrenzyJsonWsService.AutomationUserEmail is required for signing recipient updates.";
-		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=service.AutomationUserEmail; args["LeadDocumentSigningRequestID"]=LeadDocumentSigningRequestID; args["RecipientName"]=RecipientName; args["RecipientTitle"]=RecipientTitle; args["RecipientEmail"]=RecipientEmail;
-		return service.CallBusinessRoute("lead-document-signing-requests/update-signing-recipient-as-automation", args);
+		if (StringUtil.IsEmpty(FeedingFrenzyJsonWsService#Current.AutomationUserEmail)) return "Error: FeedingFrenzyJsonWsFeedingFrenzyJsonWsService#Current.AutomationUserEmail is required for signing recipient updates.";
+		JsonObject args = new JsonObject(); args["AutomationUserEmail"]=FeedingFrenzyJsonWsService#Current.AutomationUserEmail; args["LeadDocumentSigningRequestID"]=LeadDocumentSigningRequestID; args["RecipientName"]=RecipientName; args["RecipientTitle"]=RecipientTitle; args["RecipientEmail"]=RecipientEmail;
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-document-signing-requests/update-signing-recipient-as-automation", args);
 	}
 }

@@ -18274,10 +18274,10 @@
       "PackageType": "WebModule",
       "Title": "Feeding Frenzy Agent",
       "Description": "Buffaly Web Module package for Feeding Frenzy Agent.",
-      "Version": "0.1.28",
+      "Version": "0.1.29",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/FeedingFrenzyAgent",
-      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/FeedingFrenzyAgent",
+      "SourceUrl": "",
       "Phrases": [
         "Feeding Frenzy Agent",
         "FeedingFrenzyAgent"
@@ -18289,7 +18289,7 @@
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "369d4307ed5618682ad88ef282b94c959b7a66f9de687209a746c7875fe4932e"
+          "Sha256": "e15c55a52d72486e90e668805fe47cc0abec14b8bd864ad742f0a94e54db3071"
         },
         {
           "Path": "Buffaly.Agent.Core.dll",
@@ -18337,7 +18337,7 @@
         },
         {
           "Path": "Buffaly.Agent.Tools.Secrets.dll",
-          "Sha256": "cea83cebd9b940abbe25934a06b1b6ed355b7efd52ccc94284bacf18fe945593"
+          "Sha256": "4eeca6214e5013aead3baa4c7a5aa734ac7e01a82d00761362806bc2d7272dcb"
         },
         {
           "Path": "Buffaly.Agent.Tools.SemanticDatabase.dll",
@@ -18345,7 +18345,7 @@
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "bac61ca0f7e607b88fd7eef132af338ad57fe9b6ce4cee8e14da6231cb2f179b"
+          "Sha256": "4a6cc8795d0799653304bd414846cb600164b5d5859aecb427881ee3b8a24fc0"
         },
         {
           "Path": "Buffaly.Agents.dll",
@@ -18417,11 +18417,19 @@
         },
         {
           "Path": "FeedingFrenzy.Agent.Tools.deps.json",
-          "Sha256": "9eed56523ec912bba6055b06c761cb24a33694c799ac89eb717704e9825c7021"
+          "Sha256": "d7c00e3bbc125d3c787227dfc3acd86a49d9722ecef7229ff9fdfb7d429feed7"
         },
         {
           "Path": "FeedingFrenzy.Agent.Tools.dll",
-          "Sha256": "41976f1c65835636c90750596bf1ede5a0d266d618288624c9fbde6d78129e82"
+          "Sha256": "db41aeee44a08f9be10784fcebd82c8f6c0c0665ba877c155095e86e07ff82fa"
+        },
+        {
+          "Path": "FeedingFrenzy.Common.dll",
+          "Sha256": "28b0b56fff28cf1e57cca94e45821df842a4371d535c73f7286a529e8f2b5b1a"
+        },
+        {
+          "Path": "HtmlAgilityPack.dll",
+          "Sha256": "e01bd209a4efadd6357ad3a2bb1b7e2aa0951abed37c9a713fdb658f34309dcc"
         },
         {
           "Path": "kScript.dll",
@@ -18613,7 +18621,7 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Prompts/FeedingFrenzyAgent.prompt.md",
-          "Sha256": "87babc5e8f3a65bb71d5f51426c103335b8436ae46ad02fd31b2d19d16548761"
+          "Sha256": "b60860b6753fe072716e816d12b108d12edd67c7e872e588e122838c6bb76bdd"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/ProtoScript.Minimum.md",
@@ -18621,7 +18629,7 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/README.md",
-          "Sha256": "0a83649b678169c8796907eaad40fd951df08d87e9d7d29d7819ab3218e1b24b"
+          "Sha256": "e37907fc6720ecdbeaa184f6ec67476854e204456706a803ffb05b7b9e133df8"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/SalesRepresentative.pts",
@@ -18641,7 +18649,7 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/AgreementTemplates.Admin.pts",
-          "Sha256": "8229480c16e43ace6727e0d6c776064a2f2adf5e1f151dd17700cf7aead30941"
+          "Sha256": "0866db6291957f6df3be3485f7b6cb5c16a1c1f4ae245ef28942d9608b5bfc9a"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/AgreementTemplates.pts.md",
@@ -18649,11 +18657,11 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Calls.Admin.pts",
-          "Sha256": "5115c9009b0d45ae5c9f3d402f35ef2a85a59029d6e1cb619345e1a1f460e3ea"
+          "Sha256": "31ebeade7f5827a9a8e372471e9071baa8f418508f90b074ebcedd775305b323"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Calls.pts",
-          "Sha256": "e9deb919202d64562dfcb9f6dcea86a364b99d747622e330350e22c27426ad27"
+          "Sha256": "e32743e83a6a543c44778f34a36ef9d6682b50917b4a39e53073abd29c8a6aa0"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Calls.pts.md",
@@ -18661,7 +18669,7 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Foundation.pts",
-          "Sha256": "66cc07f0c52d3e698f7b37465b6bdab893fc979aae8470c46846824306d43ab4"
+          "Sha256": "e64151cc3c839935bb6671c5354618d2e738c5962a312bf15827d2eae6a7ccc0"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/index.pts",
@@ -18669,15 +18677,15 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/index.pts.lazy.json",
-          "Sha256": "7d127bfaee2d1153f1032ee43e170df2b90d2c3f03c4ee9b8f32a4c4fc457deb"
+          "Sha256": "0f4fa355ecc499f6e77997def421372fcd90cbb1cf759a752c0ca52a0c778369"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/index.pts.md",
-          "Sha256": "ab50dabc66569721993d4d29f9249d5c622a0af3afffad53474393cd1700d45e"
+          "Sha256": "d8dbc0615719f63f61d5b56f1684af1e3ef4c00e5eaddacfbcb0c920e8e4668b"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadAddresses.Admin.pts",
-          "Sha256": "6e6d4d78a73cff431a2b14e091d209d8f650ad2e7f6dda078948cf23f3268adc"
+          "Sha256": "75686f0bff57215912f27627aa9bc768092ef69bc66f3688c4dc49ee449ea563"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadAddresses.pts.md",
@@ -18685,7 +18693,7 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadAutomation.Admin.pts",
-          "Sha256": "bc49aab16cbe424f8a87307b7a962bd8e4e06b144f33d2904b10a9dd4bd6dc78"
+          "Sha256": "29b953ddc4de6fb58e3a29c4f3fe9d78988d4efd59e2692131831e67c5c2ae0a"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadAutomation.pts.md",
@@ -18693,7 +18701,7 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadContacts.pts",
-          "Sha256": "065b666aac71d756ca1cb77186843aed5788bdcc6cb4973701132560d7794bce"
+          "Sha256": "a4260668f1288a54c6729d5f58b58b3adba295e947f2d146308cdc612fb15b06"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadContacts.pts.md",
@@ -18701,11 +18709,11 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadNotes.Admin.pts",
-          "Sha256": "4333a8854341a2251e14c5e77699ba7545efcfc489a6296f6bc7e8264fa0cd09"
+          "Sha256": "46a59dae47ee4bee4e0d48924b29fa84548fd9f3f612a14210255576c0baebcd"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadNotes.pts",
-          "Sha256": "d49642168225ae098f1091146f5b977dc1b681ce7576e6b32d2eb662a814848b"
+          "Sha256": "338cb4142336bf2f3dcadb5d45f917cfdf1f1936d00f0052af0c42eb110ba838"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadNotes.pts.md",
@@ -18713,7 +18721,7 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadNoteTypes.Admin.pts",
-          "Sha256": "a58b37ac9136e87df48f45863fb4a1b2545c5fcb35c862fc84fd42fa940d5938"
+          "Sha256": "7aac294698894b7d29e70efd929da5dc60653099ae0113d410f982b6d049651a"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadNoteTypes.pts.md",
@@ -18721,11 +18729,11 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Leads.Admin.pts",
-          "Sha256": "ff75a75273a930bef71553a1cfad01039315b53901c206bfd8a6b6ab38c77b10"
+          "Sha256": "ec9f2f8fb51b40a4d8f917e475944fd5337f7d0978220911a16d2f3c133a723c"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Leads.pts",
-          "Sha256": "24e8c8cf3d9e7164fbf0271b405a1e59101737364a5b1e0896b805271c2c5ee1"
+          "Sha256": "11b9c784dd0de7a01e622b61626478013e84bdea9128ec9ca8d1ae98038b728c"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Leads.pts.md",
@@ -18737,7 +18745,7 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadStatuses.Admin.pts",
-          "Sha256": "cae4b9f3978c5edf20733756518d9c6e195412f4e13930b5ee031ea590ed4fe0"
+          "Sha256": "1b0eec1f4ff2e1dab74a92ff1f6bd0edbc292c753b19a77eb6b1998640d4cd60"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadStatuses.pts.md",
@@ -18745,7 +18753,7 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadSubStatuses.Admin.pts",
-          "Sha256": "35262825fbbf62472aaf01c5f77f4ea4e03afa1e194fe7a50ce4ec145cb482fa"
+          "Sha256": "f08e209e3a78f3ad868965039b56fc19f2ca326a6979cadb3b2d8eae97a5d0f0"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadSubStatuses.pts.md",
@@ -18753,7 +18761,7 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadTags.Admin.pts",
-          "Sha256": "bd817c775cd95c5e2119166bd7584913c6b8c10ba7329690edf89d922d3cf644"
+          "Sha256": "e8470d5c3ae8786dee2978c979ded3b6b8cbc5dfcbde7ce53bf6db0e29da3023"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/LeadTags.pts.md",
@@ -18765,7 +18773,7 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/SalesRepresentatives.Admin.pts",
-          "Sha256": "4f8332255129db0837e8067d693ae7ff13db8674a7dbbbd83614b7955d1fa277"
+          "Sha256": "ba8b521d5f93e6e0b6c323013143969d45210f0a33f652e8ef84742ff0671797"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/SalesRepresentatives.pts.md",
@@ -18777,7 +18785,7 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/SalesRepresentativesUi.Admin.pts",
-          "Sha256": "21c8859836582262766a8841b91dcf4b7d9ae99962626d050aab41de8097f050"
+          "Sha256": "4ea6e4f854d6759b8c6212b898ff849b8f8cb73743e9c85f1f1a1db344168d4f"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/SKILL.md",
@@ -18785,7 +18793,7 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Sources.Admin.pts",
-          "Sha256": "eaff3830858a208e63c095ddbdfaa886f9b352cc70a5033adee2df489836326f"
+          "Sha256": "c7cc92deba1efa3ed5bf92df1e7cac9a246e62f4a36063b54dc44202ccf0b7c9"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Sources.pts.md",
@@ -18793,7 +18801,7 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Tags.Admin.pts",
-          "Sha256": "04974be7e6c07a833d8369cf355e93ce7fa755d30d280525682fc801ad9bcd3c"
+          "Sha256": "94283d04af4e959daa5cc85953729a0f0012bcf6d3dfef6b443aab0c9e03f990"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Tags.pts.md",
@@ -18801,7 +18809,7 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Tasks.Admin.pts",
-          "Sha256": "195d614ceba3f19e5cf0fcfae31be11b4bd85e786cafe2788184284d18651998"
+          "Sha256": "a4f43c912236d87aea14343c2fd86643d2eaf4087b11b41985e85c51522f99de"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Tasks.pts.md",
@@ -18809,7 +18817,7 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/UserAutomation.Admin.pts",
-          "Sha256": "b29cb087044b15d9811f3ed356e8f23ff5d0b346c8376304bd172eed4b1152e2"
+          "Sha256": "11eeb2b05ff4e0516beef1ac67edad87d0389ce53f7519cf086070490752357e"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/UserAutomation.pts.md",
@@ -18817,7 +18825,7 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Users.Admin.pts",
-          "Sha256": "74a9d0402111eaaf771c5c5bab905d4d440ee83513f01e21307b7c9cff51e2b0"
+          "Sha256": "907ff938022333c4f573effd62d98648697f30554f0b0971f80c4565218d7caf"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Users.pts.md",
@@ -18825,7 +18833,7 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/WikiHelp.pts",
-          "Sha256": "0295cc6597d8da00d51c22d71be2e166c2bc6690e74defaca94a687b2acf29d2"
+          "Sha256": "fab53927252fd0c0da3802c5e3ad9ed54c41cb9fc157224c7f6948dc496a29ef"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/WikiHelp.pts.md",
@@ -18872,6 +18880,10 @@
           "Sha256": "4b2745777ed34dcc4dbc65c8414532ae0ae4404516c90a51744f021002d23aee"
         },
         {
+          "Path": "ReverseMarkdown.dll",
+          "Sha256": "77032d47ba216c592bc31c6211f53df0b2b019338a929fbc14ba796955d9eca8"
+        },
+        {
           "Path": "RooTrax.Cache.dll",
           "Sha256": "9503a02c23a51dc9d3732671166d3b40490243383796202189380caed0ea12f8"
         },
@@ -18886,6 +18898,26 @@
         {
           "Path": "RooTrax.Git.dll",
           "Sha256": "e1eb663d2e40c260ba460e67bc9ea5d52420ebfed98a1a31998b7fde24a283d6"
+        },
+        {
+          "Path": "System.Configuration.ConfigurationManager.dll",
+          "Sha256": "9a86cb996532ef37395fac0d64cb93350997a79d7db4d663c0f04c1d309ec5c2"
+        },
+        {
+          "Path": "System.Data.OleDb.dll",
+          "Sha256": "03476f5d5cb94f231285bebb83fec79c08b3575503f0cb24ede0e4b9ec7ca301"
+        },
+        {
+          "Path": "System.Diagnostics.EventLog.dll",
+          "Sha256": "7ebcf9c9bd0271b5d7a18828bb84623dd5bc5e80fd7d37df044f7951f043d874"
+        },
+        {
+          "Path": "System.Diagnostics.PerformanceCounter.dll",
+          "Sha256": "b197a2c107a1a04d64268efcc69b9b27c818cd1cb4a68392a34f039774836d68"
+        },
+        {
+          "Path": "System.Security.Cryptography.ProtectedData.dll",
+          "Sha256": "e82875c8fdc739b3636fc1926012fa335bb706a7eefe05621b848f997a9b49e9"
         },
         {
           "Path": "web-module.json",

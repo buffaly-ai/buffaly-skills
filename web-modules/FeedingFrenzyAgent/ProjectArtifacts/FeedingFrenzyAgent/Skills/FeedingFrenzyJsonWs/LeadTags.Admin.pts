@@ -3,12 +3,11 @@ prototype LeadTags_InsertOrUpdateLeadTag : FeedingFrenzyJsonWsAdminGuardedWriteA
 {
 	Description = @"Adds or updates one tag on a Feeding Frenzy lead. This mutates lead data and is intentionally outside the default read-oriented action root.";
 
-	function Execute(FeedingFrenzyJsonWsService service, int LeadID, string TagName) : string
+	function Execute(int LeadID, string TagName) : string
 	{
-		if (service == null) return "Error: FeedingFrenzyJsonWsService binding is required.";
 		JsonObject args = new JsonObject();
 		args["LeadID"] = LeadID;
 		args["TagName"] = TagName;
-		return service.CallBusinessRoute("lead-tags/insert-or-update-lead-tag", args);
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-tags/insert-or-update-lead-tag", args);
 	}
 }
