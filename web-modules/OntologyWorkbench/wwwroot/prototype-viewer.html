@@ -123,7 +123,10 @@
 			}
 
 			function isPromptAction(data) {
-				return String(data && data.type || "").split(",").some(type => type.trim() === "PromptAction");
+				return String(data && data.type || "").split(",").some(type => {
+					const name = type.trim();
+					return name === "PromptAction" || name === "ValidatedPromptAction" || name === "ValidatedPromptSkillAction";
+				});
 			}
 
 			const timelineRenderer = (() => {
