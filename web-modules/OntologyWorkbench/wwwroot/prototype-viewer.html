@@ -4,10 +4,9 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1">
 	<title>Prototype Viewer · Ontology Workbench</title>
-	<link rel="stylesheet" href="/custom_css/timeline-card-session-renderer-bundle.css?v=20260723.2">
-	<link rel="stylesheet" href="/custom_css/timeline-card-session-renderer-cards.css?v=20260724.3">
+	<link rel="stylesheet" href="/js/plugins/codemirror/lib/codemirror.css">
 	<style>
-		:root{--bg:#f8fafc;--panel:#fff;--border:#dadce0;--muted:#5f6368;--text:#202124;--blue:#1a73e8;--chip:#e8f0fe;--red:#d93025;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--text);background:var(--bg)}*{box-sizing:border-box}body{margin:0;background:var(--bg)}.shell{max-width:1180px;margin:0 auto;padding:28px 28px 60px}.viewer-status{margin:0 0 14px;color:var(--muted);font-size:14px}.viewer-status.error{color:var(--red);font-weight:700}.os-card{border:1px solid var(--border);border-radius:12px;background:var(--panel);overflow:hidden}.os-card.expanded{border-color:var(--blue);box-shadow:0 0 0 2px rgba(26,115,232,.18)}.os-card-head{display:flex;gap:13px;align-items:flex-start;width:100%;text-align:left;border:0;border-radius:0;background:transparent;color:var(--text);padding:16px 17px}.os-card-rank{flex:0 0 34px;height:34px;border-radius:999px;background:var(--chip);color:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}.os-card-main{flex:1;min-width:0}.os-card-title{font-size:18px;font-weight:700;line-height:1.25}.os-card-proto{display:block;margin-top:3px;font-size:12px;color:var(--muted);word-break:break-all;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.os-card-snippet{display:block;margin:7px 0 0;color:var(--text);font-size:14px}.os-card-meta{display:block;margin-top:7px;color:var(--muted);font-size:12px}.os-badges{display:flex;gap:5px;margin-top:7px}.os-badge{border-radius:999px;padding:3px 8px;font-size:11px;font-weight:800;background:#e6f4ea;color:#137333}.os-expand{font-size:18px;color:var(--blue)}.os-card-body{border-top:1px solid var(--border);padding:15px 17px 17px}.os-description{font-size:15px;line-height:1.45;margin:0 0 16px}.os-section{margin-top:18px}.os-section-head{display:flex;justify-content:space-between;align-items:center}.os-section-title,.os-semantic-title{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;color:#3c4043}.os-section-note{font-size:12px;color:var(--muted);margin:4px 0 8px}.os-prompt-content{max-height:560px;overflow:auto;margin:8px 0 0;padding:16px;border:1px solid var(--border);border-radius:12px;background:#f8fafc;color:var(--text);white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}.os-semantic-row{display:flex;gap:7px;flex-wrap:wrap}.os-semantic-chip,.os-neighborhood-chip{border:1px solid #aecbfa;background:#f3f7ff;color:var(--blue);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700}.os-neighborhood{border:1px solid var(--border);border-radius:13px;background:#f8fafc;padding:14px;text-align:center}.os-neighborhood-label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase}.os-neighborhood-current{display:inline-block;border:2px solid var(--blue);border-radius:999px;padding:4px 10px;color:var(--blue);font-weight:800;margin:7px}.decision-button{border:1px solid var(--border);border-radius:4px;padding:6px 12px;background:#fff;color:var(--text);font-size:12px;cursor:pointer}.os-props-toolbar{display:flex;gap:8px;align-items:center;margin:9px 0}.os-props-filter{flex:1;border:1px solid var(--border);border-radius:10px;padding:11px 12px;font:inherit;color:var(--text);background:var(--panel)}.os-props-count{font-size:12px;color:var(--muted);white-space:nowrap}.os-props-table{border:1px solid var(--border);border-radius:12px;overflow:hidden}.os-prop-row{display:grid;grid-template-columns:220px 1fr;border-top:1px solid var(--border)}.os-prop-row:first-child{border-top:0}.os-prop-name{padding:10px 13px;font-weight:800;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px}.os-prop-value{padding:10px 13px;white-space:pre-wrap;overflow-wrap:anywhere}.os-prop-unset{color:var(--muted);font-style:italic}@media(max-width:850px){.shell{padding:18px}.os-prop-row{grid-template-columns:1fr}.os-prop-name{padding-bottom:0}}
+		:root{--bg:#f8fafc;--panel:#fff;--border:#dadce0;--muted:#5f6368;--text:#202124;--blue:#1a73e8;--chip:#e8f0fe;--red:#d93025;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--text);background:var(--bg)}*{box-sizing:border-box}body{margin:0;background:var(--bg)}.shell{max-width:1180px;margin:0 auto;padding:28px 28px 60px}.viewer-status{margin:0 0 14px;color:var(--muted);font-size:14px}.viewer-status.error{color:var(--red);font-weight:700}.os-card{border:1px solid var(--border);border-radius:12px;background:var(--panel);overflow:hidden}.os-card.expanded{border-color:var(--blue);box-shadow:0 0 0 2px rgba(26,115,232,.18)}.os-card-head{display:flex;gap:13px;align-items:flex-start;width:100%;text-align:left;border:0;border-radius:0;background:transparent;color:var(--text);padding:16px 17px}.os-card-rank{flex:0 0 34px;height:34px;border-radius:999px;background:var(--chip);color:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}.os-card-main{flex:1;min-width:0}.os-card-title{font-size:18px;font-weight:700;line-height:1.25}.os-card-proto{display:block;margin-top:3px;font-size:12px;color:var(--muted);word-break:break-all;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.os-card-snippet{display:block;margin:7px 0 0;color:var(--text);font-size:14px}.os-card-meta{display:block;margin-top:7px;color:var(--muted);font-size:12px}.os-badges{display:flex;gap:5px;margin-top:7px}.os-badge{border-radius:999px;padding:3px 8px;font-size:11px;font-weight:800;background:#e6f4ea;color:#137333}.os-expand{font-size:18px;color:var(--blue)}.os-card-body{border-top:1px solid var(--border);padding:15px 17px 17px}.os-description{font-size:15px;line-height:1.45;margin:0 0 16px}.os-section{margin-top:18px}.os-section-head{display:flex;justify-content:space-between;align-items:center}.os-section-title,.os-semantic-title{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;color:#3c4043}.os-section-note{font-size:12px;color:var(--muted);margin:4px 0 8px}.os-prompt-content{max-height:560px;overflow:auto;margin:8px 0 0;padding:20px;border:1px solid #dbe3f2;border-radius:12px;background:#fff;color:#1f2937;line-height:1.5}.os-prompt-content pre{background:#f3f6fc;border:1px solid #dbe3f2;border-radius:8px;padding:12px;overflow-x:auto}.os-prompt-content code{font-family:Consolas,"Courier New",monospace}.os-prompt-content table{width:100%;margin:1rem 0;border-collapse:separate;border-spacing:0;border:1px solid #dbe3f2;border-radius:10px;overflow:hidden}.os-prompt-content th,.os-prompt-content td{padding:.55rem .7rem;border-bottom:1px solid #e5edf8;border-right:1px solid #e5edf8;vertical-align:top;text-align:left}.os-prompt-content th{background:#f8fbff;font-weight:700}.os-semantic-row{display:flex;gap:7px;flex-wrap:wrap}.os-semantic-chip,.os-neighborhood-chip{border:1px solid #aecbfa;background:#f3f7ff;color:var(--blue);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700}.os-neighborhood{border:1px solid var(--border);border-radius:13px;background:#f8fafc;padding:14px;text-align:center}.os-neighborhood-label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase}.os-neighborhood-current{display:inline-block;border:2px solid var(--blue);border-radius:999px;padding:4px 10px;color:var(--blue);font-weight:800;margin:7px}.decision-button{border:1px solid var(--border);border-radius:4px;padding:6px 12px;background:#fff;color:var(--text);font-size:12px;cursor:pointer}.os-props-toolbar{display:flex;gap:8px;align-items:center;margin:9px 0}.os-props-filter{flex:1;border:1px solid var(--border);border-radius:10px;padding:11px 12px;font:inherit;color:var(--text);background:var(--panel)}.os-props-count{font-size:12px;color:var(--muted);white-space:nowrap}.os-props-table{border:1px solid var(--border);border-radius:12px;overflow:hidden}.os-prop-row{display:grid;grid-template-columns:220px 1fr;border-top:1px solid var(--border)}.os-prop-row:first-child{border-top:0}.os-prop-name{padding:10px 13px;font-weight:800;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px}.os-prop-value{padding:10px 13px;white-space:pre-wrap;overflow-wrap:anywhere}.os-prop-unset{color:var(--muted);font-style:italic}@media(max-width:850px){.shell{padding:18px}.os-prop-row{grid-template-columns:1fr}.os-prop-name{padding-bottom:0}}
 	</style>
 </head>
 <body>
@@ -15,10 +14,10 @@
 	<script src="/web-modules/OntologyWorkbench/ontology-workbench-header.js"></script>
 	<script src="/js/kcs/buffaly-standalone-foundation.js?v=20260411.1"></script>
 	<script src="/JsonWs/Buffaly.Agent.Host.BuffalyAgentService.ashx.js?v=20260826.1"></script>
-	<script src="/js/timeline-card-shared-highlighting.bundle.js?v=20260719.1"></script>
-	<script src="/js/timeline-card-contract.js?v=20260629.1"></script>
-	<script src="/js/timeline-card-render-core.js?v=20260722.1"></script>
-	<script src="/js/timeline-card-builtins.js?v=20260724.3"></script>
+	<script src="/js/plugins/marked/marked.min.js"></script>
+	<script src="/js/plugins/codemirror/lib/codemirror.js"></script>
+	<script src="/js/plugins/codemirror/addon/runmode/runmode.js?v=20260412.2"></script>
+	<script src="/js/buffaly-markdown-code-blocks.js?v=20260703.1"></script>
 	<main class="shell">
 		<div id="viewerStatus" class="viewer-status" role="status" aria-live="polite">Loading prototype…</div>
 		<article id="prototypeCard" class="os-card expanded" tabindex="-1">
@@ -129,17 +128,31 @@
 				});
 			}
 
-			const timelineRenderer = (() => {
-				const core = window.BuffalyTimelineCardRenderCore, builtins = window.BuffalyTimelineCardBuiltins;
-				if (!core || !builtins) throw new Error("The shared Buffaly timeline Markdown renderer did not load.");
-				const environment = core.createTimelineRenderEnvironment({ services: { logger: console, notices: {} } });
-				builtins.register(environment);
-				return { render(markdown, host) {
-					const row = { Role: "Assistant", Phase: "final_answer", Format: "markdown", Content: markdown, MessageKey: "prototype-prompt", TurnKey: "prototype-prompt" };
-					const node = core.normalizeTimelineRow(row, "session", environment, "", 0);
-					host.replaceChildren(core.renderTimelineNode(node, environment).root);
-				} };
-			})();
+			function renderMarkdownViewerContent(markdown, host) {
+				if (!window.marked || typeof window.marked.parse !== "function") throw new Error("The Buffaly Markdown Viewer parser did not load.");
+				host.innerHTML = window.marked.parse(normalizeMarkdownViewerTables(markdown));
+				if (window.BuffalyMarkdownCodeBlocks && typeof window.BuffalyMarkdownCodeBlocks.renderHighlightedMarkdownCodeBlocks === "function") {
+					window.BuffalyMarkdownCodeBlocks.renderHighlightedMarkdownCodeBlocks(host);
+				}
+			}
+
+			function normalizeMarkdownViewerTables(markdown) {
+				const lines = String(markdown || "").replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n");
+				let inFence = false;
+				for (let index = 0; index < lines.length; index += 1) {
+					const trimmed = lines[index].trim();
+					if (/^(```|~~~)/.test(trimmed)) { inFence = !inFence; continue; }
+					const current = lines[index].replace(/^ {4}/, "").replace(/^\t/, "");
+					const next = index + 1 < lines.length ? lines[index + 1].replace(/^ {4}/, "").replace(/^\t/, "") : "";
+					if (!inFence && /^( {4,}|\t)/.test(lines[index]) && /^\|.*\|$/.test(current.trim()) && /^\|(?:\s*:?-{3,}:?\s*\|)+$/.test(next.trim())) {
+						while (index < lines.length && /^( {4,}|\t)/.test(lines[index]) && /^\|.*\|$/.test(lines[index].replace(/^ {4}/, "").replace(/^\t/, "").trim())) {
+							lines[index] = lines[index].replace(/^ {4}/, "").replace(/^\t/, ""); index += 1;
+						}
+						index -= 1;
+					}
+				}
+				return lines.join("\n");
+			}
 
 			function renderPromptContent(body, promptText) {
 				const section = document.createElement("section");
@@ -152,7 +165,7 @@
 				note.textContent = "Resolved by executing this PromptAction in the already-loaded source session runtime.";
 				const content = document.createElement("div");
 				content.className = "os-prompt-content";
-				timelineRenderer.render(decodeTextResult(promptText), content);
+				renderMarkdownViewerContent(decodeTextResult(promptText), content);
 				section.append(title, note, content);
 				body.appendChild(section);
 			}
