@@ -182,7 +182,7 @@
 				]);
 				const data = renderOriginalDetails(byId("prototypeDetails"), prototypeName, details, schema);
 				if (isPromptAction(data)) {
-					const prompt = await runInspectionAction("ToGetPrototypePromptInstructions", { prototypeName });
+					const prompt = await runInspectionAction("ToGetPrototypePromptInstructions", args);
 					if (requestController.signal.aborted) throw new DOMException("The request was cancelled.", "AbortError");
 					renderPromptContent(byId("prototypeDetails"), prompt);
 				}
