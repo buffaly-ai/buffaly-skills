@@ -6780,7 +6780,7 @@
       "PackageType": "WebModule",
       "Title": "Desktop Viewer",
       "Description": "Buffaly Web Module package for Desktop Viewer.",
-      "Version": "0.1.178",
+      "Version": "0.1.179",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/DesktopViewer",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/DesktopViewer",
@@ -6803,7 +6803,7 @@
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "48167f237c45195cfc3b29d969869793ecc99a5f1c8e290a227f27254554712f"
+          "Sha256": "1ae97e1fa9ba18245378aaad6ce4a7f084a6c6efe4a4fb8acf9653dc2129c03e"
         },
         {
           "Path": "Buffaly.Common.dll",
@@ -6815,15 +6815,15 @@
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "6be3d0edd86351cd3c5ad54c52c9a6dfd0a756102f866946dcca1217452d08dc"
+          "Sha256": "cc3931f41c33942f7eef587514cfdf39225d8e45383c7bcd48252ad323279639"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "f8360b3b56c99de708361d93496ff9f69a479c2f50126a3c1698e7b83b630d62"
+          "Sha256": "2b10833197fee6563091580d68461fc1adf3692eab6d385c28ea78d09b678e54"
         },
         {
           "Path": "Buffaly.DesktopAutomation.dll",
-          "Sha256": "030db1854318c6bace93c172d2221b07a104c09b9803c3c2a76fd48a007636f7"
+          "Sha256": "e5a855f2c9e24be308de1364d74ff8cee636fa8b6d6ab428d32c66dbdeb44b25"
         },
         {
           "Path": "Buffaly.DesktopViewer.Web.deps.json",
@@ -6831,11 +6831,11 @@
         },
         {
           "Path": "Buffaly.DesktopViewer.Web.dll",
-          "Sha256": "64801970c7c816092bf0c12c500becd46d6bbe1ad997007da4779769df02a40d"
+          "Sha256": "bbe8dbd5a2d51a292387bffcf9c8e2b6450943881b06724aed144e9ae482de1b"
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "107d2a896ee9195fd47028c4162118843034fb7396b3f258723f7b153334cdab"
+          "Sha256": "20e62887c0ac4928a870e4c390e9de12eb5732d8520cc8d90cf1daffbd132ecb"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -7500,6 +7500,10 @@
         {
           "Path": "Scripts/Tags.sql",
           "Sha256": "235c21b749d3e3973cfd4003803afc19d32c55aef5ed3622ce16866893521d33"
+        },
+        {
+          "Path": "Scripts/TryUpdateSessionDataSp.sql",
+          "Sha256": "ce170b69bf3ad1caeb54f2b1ec3052819d681c4bd2c1898a865358b63de0c9dc"
         },
         {
           "Path": "Scripts/Turns_GetBySessionIDTurnKeys_Sp.sql",
