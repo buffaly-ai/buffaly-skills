@@ -117,8 +117,13 @@
 
 			async function runInspectionAction(prototypeAction, args) {
 				if (requestController.signal.aborted) throw new DOMException("The request was cancelled.", "AbortError");
+				const deadline = Date.now() + 10000;
+				while ((typeof BuffalyAgentService === "undefined" || typeof BuffalyAgentService.RunProtoScriptMethodAsync !== "function") && Date.now() < deadline) {
+					await new Promise(resolve => setTimeout(resolve, 25));
+					if (requestController.signal.aborted) throw new DOMException("The request was cancelled.", "AbortError");
+				}
 				if (typeof BuffalyAgentService === "undefined" || typeof BuffalyAgentService.RunProtoScriptMethodAsync !== "function") {
-					throw new Error("BuffalyAgentService.RunProtoScriptMethodAsync is unavailable.");
+					throw new Error("BuffalyAgentService.RunProtoScriptMethodAsync did not become available.");
 				}
 				return await BuffalyAgentService.RunProtoScriptMethodAsync(sessionKey, "buffaly-agent", prototypeAction, "Execute", JSON.stringify(args));
 			}
