@@ -33,6 +33,32 @@
 			"Name": "GetDefaultEndpoint",
 			"DataObject": {}
 		}
+		,{
+			"IsStatic": "true",
+			"IsReturnTypeArray": "false",
+			"KebabName": "get-account-status",
+			"Parameters": [
+				{ "Type": "String", "IsNullable": "true", "Name": "credentialProfileId", "IsArray": "false", "IsEnum": "false" },
+				{ "Type": "String", "IsNullable": "true", "Name": "modelName", "IsArray": "false", "IsEnum": "false" }
+			],
+			"ReturnType": "OllamaCloudAccountStatusContract",
+			"UrlName": null,
+			"Name": "GetAccountStatus",
+			"DataObject": {}
+		},
+		{
+			"IsStatic": "true",
+			"IsReturnTypeArray": "false",
+			"KebabName": "get-usage-status",
+			"Parameters": [
+				{ "Type": "String", "IsNullable": "true", "Name": "credentialProfileId", "IsArray": "false", "IsEnum": "false" },
+				{ "Type": "String", "IsNullable": "true", "Name": "modelName", "IsArray": "false", "IsEnum": "false" }
+			],
+			"ReturnType": "OllamaCloudUsageStatusContract",
+			"UrlName": null,
+			"Name": "GetUsageStatus",
+			"DataObject": {}
+		}
 	],
 	"Namespace": "Buffaly.Provider.Ollama.Web"
 }

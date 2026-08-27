@@ -53,6 +53,32 @@ class OllamaCloudServiceService {
 		return await ObjectUtil.Promisify(this, this.GetDefaultEndpoint, []);
 	}
 
+	GetAccountStatus(credentialProfileId, modelName, Callback) {
+		return this.GetAccountStatusObject({ credentialProfileId: credentialProfileId || "", modelName: modelName || "" }, Callback);
+	}
+
+	GetAccountStatusObject(oObject, Callback) {
+		this._validate(oObject, OllamaCloudServiceValidators.GetAccountStatus, this.GetAccountStatus.onValidationError);
+		return this._invoke(this.Url + "/get-account-status", "GetAccountStatus", { credentialProfileId: oObject.credentialProfileId || "", modelName: oObject.modelName || "" }, this.GetAccountStatus, Callback);
+	}
+
+	async GetAccountStatusAsync(credentialProfileId, modelName) {
+		return await ObjectUtil.Promisify(this, this.GetAccountStatus, [credentialProfileId || "", modelName || ""]);
+	}
+
+	GetUsageStatus(credentialProfileId, modelName, Callback) {
+		return this.GetUsageStatusObject({ credentialProfileId: credentialProfileId || "", modelName: modelName || "" }, Callback);
+	}
+
+	GetUsageStatusObject(oObject, Callback) {
+		this._validate(oObject, OllamaCloudServiceValidators.GetUsageStatus, this.GetUsageStatus.onValidationError);
+		return this._invoke(this.Url + "/get-usage-status", "GetUsageStatus", { credentialProfileId: oObject.credentialProfileId || "", modelName: oObject.modelName || "" }, this.GetUsageStatus, Callback);
+	}
+
+	async GetUsageStatusAsync(credentialProfileId, modelName) {
+		return await ObjectUtil.Promisify(this, this.GetUsageStatus, [credentialProfileId || "", modelName || ""]);
+	}
+
 	_validate(oObject, validators, onValidationError) {
 		if (!validators) return;
 		for (var key in validators) {
@@ -100,6 +126,11 @@ var OllamaCloudServiceValidators = {
 		apiKey: { Validators: [Validators.MakeRequired(Validators.Text)], InvalidMessage: "Invalid API key" }
 	},
 	GetDefaultEndpoint: {
+	}
+	,
+	GetAccountStatus: {
+	},
+	GetUsageStatus: {
 	}
 };
 

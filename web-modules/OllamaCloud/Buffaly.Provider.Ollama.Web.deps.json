@@ -10,6 +10,7 @@
         "dependencies": {
           "Buffaly.Agent.Tools.Secrets": "1.0.0",
           "Buffaly.Agent.Web.Common": "1.0.0",
+          "Buffaly.Provider.Ollama": "1.0.0",
           "BasicUtilities": "1.0.0.0",
           "Buffaly.Common": "1.0.0.0",
           "WebAppUtilities": "1.0.0.0"
@@ -459,6 +460,29 @@
           }
         }
       },
+      "Buffaly.Provider.Ollama/1.0.0": {
+        "dependencies": {
+          "Buffaly.Agent.Common": "1.0.0",
+          "Buffaly.Agent.Tools.Secrets": "1.0.0",
+          "Buffaly.Agent.Web.Common": "1.0.0",
+          "Buffaly.ProviderContracts": "1.0.0",
+          "Buffaly.Sessions.DB": "1.0.0"
+        },
+        "runtime": {
+          "Buffaly.Provider.Ollama.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Buffaly.ProviderContracts/1.0.0": {
+        "runtime": {
+          "Buffaly.ProviderContracts.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "Buffaly.Sessions.DB/1.0.0": {
         "dependencies": {
           "Buffaly.DB.Core": "1.0.0",
@@ -788,6 +812,16 @@
       "sha512": ""
     },
     "Buffaly.DB.SqlServer/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Provider.Ollama/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.ProviderContracts/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
