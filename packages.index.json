@@ -1323,10 +1323,10 @@
       "PackageType": "ProviderModule",
       "Title": "Ollama Provider",
       "Description": "Buffaly Provider Module package for Ollama Provider.",
-      "Version": "0.1.29",
+      "Version": "0.1.30",
       "PackageKind": "BuffalyProviderModule",
       "SourcePath": "provider-modules/Buffaly.Provider.Ollama",
-      "SourceUrl": "",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/provider-modules/Buffaly.Provider.Ollama",
       "Phrases": [
         "Ollama Provider",
         "Buffaly.Provider.Ollama"
@@ -1342,27 +1342,27 @@
         },
         {
           "Path": "BasicUtilities.dll",
-          "Sha256": "09d8f850383647719051683b7bddf030d2296c5901138179906d3f5064da42e0"
+          "Sha256": "b1d484ba35e2c99b56724d528d34c52443e3ec37834e35fd71991d62a86fd717"
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "cfcab598c2e2aee757ba4961b451c3c7394371e9303db2591de38dd2f43b78b0"
+          "Sha256": "3eb6881e7ee4ab3ab217a8c64a65060a800fbefe3d764c3a329795052270e740"
         },
         {
           "Path": "Buffaly.Agent.Tools.Secrets.dll",
-          "Sha256": "fd7edcdb73078bd59a4c3e06c1d6d8df9490913b34541acad57e7a748b366f64"
+          "Sha256": "618ed9caa477ed9637944addbb7a61c561261d9ec631995d074bd0dd96cfd29e"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "dc2ec06d8f09c9e09237495f31ec1a28e0ac3167295a432c7ed04618157c8dfd"
+          "Sha256": "0ef896b1849d611bfc0051ed6019904ea1428dfe2ffbd441fe4fbd851d21bf73"
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "384623d2e4ea92261160c270048f8a7dc433a85cc6bbcef2edd4be2f9f97c361"
+          "Sha256": "87f0728d60fe93d48e3cc2e0efe722cd459e0bb0fb367ee34c7ae513211d2911"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "23e74c714013e7c70377a15bba8c6158f1ed5f52ce69c689392ff46e3a779b8f"
+          "Sha256": "a344e3a87ae15bae8d536c9a48491dbc749ddd4f523c0d4ed26c73278473c8d6"
         },
         {
           "Path": "Buffaly.Provider.Ollama.deps.json",
@@ -1370,15 +1370,15 @@
         },
         {
           "Path": "Buffaly.Provider.Ollama.dll",
-          "Sha256": "f5f36ebd2350f023d59ed28a21dd7f4844721e6c514e279fcfa5a852962dfd8e"
+          "Sha256": "6dfe439a4400a26392470c62243564cafb422fe89496fa6ba42ce58649d9e243"
         },
         {
           "Path": "Buffaly.ProviderContracts.dll",
-          "Sha256": "2289362129806d2efe837add21beb6282ce615e1d94225713630913c2b6100c1"
+          "Sha256": "37c450d7b8f6c11f3d4e249b2c7be6e92acc1945c7b1c0904cd80076a9dbc62f"
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "c7f529a35db8e01feae783ef71a85476a0a97900958c0bed36a7e6477d27c9ce"
+          "Sha256": "81e887939b79238a8652f7eb284a73e06dd54c6c9bb0652a51d617fc6aaa55fa"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -1498,15 +1498,15 @@
         },
         {
           "Path": "RooTrax.Cache.dll",
-          "Sha256": "9503a02c23a51dc9d3732671166d3b40490243383796202189380caed0ea12f8"
+          "Sha256": "63cb90a5ee66ab7a2e7cd30e26c3dd675fa6c5699fc91adb53433dcad887d925"
         },
         {
           "Path": "RooTrax.Common.DB.dll",
-          "Sha256": "57194e362e9bafcb3eb64b69ee858c4fa65e6ef0b8df759cfe38821e6613dfba"
+          "Sha256": "e4b38250c3ed187daa3585c548d35afa981ea4626fb38522acab84e77f0b1467"
         },
         {
           "Path": "RooTrax.Common.dll",
-          "Sha256": "0edfa785e58025884844b1ba46a30e604c2caeab43aec33b52deb737e4c7ac79"
+          "Sha256": "3a0a1b0992070865b1b8e7d80545b4bc8bcad14c02a179dd051911de647dc11e"
         },
         {
           "Path": "runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll",
@@ -2015,6 +2015,10 @@
         {
           "Path": "Scripts/Tags.sql",
           "Sha256": "235c21b749d3e3973cfd4003803afc19d32c55aef5ed3622ce16866893521d33"
+        },
+        {
+          "Path": "Scripts/TryUpdateSessionDataSp.sql",
+          "Sha256": "ce170b69bf3ad1caeb54f2b1ec3052819d681c4bd2c1898a865358b63de0c9dc"
         },
         {
           "Path": "Scripts/Turns_GetBySessionIDTurnKeys_Sp.sql",
