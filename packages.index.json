@@ -19042,7 +19042,7 @@
       "PackageType": "WebModule",
       "Title": "OpenRouter Catalog",
       "Description": "Buffaly Web Module package for OpenRouter Catalog.",
-      "Version": "0.1.6",
+      "Version": "0.1.7",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/OpenRouterCloud",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/OpenRouterCloud",
@@ -19061,15 +19061,15 @@
         },
         {
           "Path": "BasicUtilities.dll",
-          "Sha256": "09d8f850383647719051683b7bddf030d2296c5901138179906d3f5064da42e0"
+          "Sha256": "b1d484ba35e2c99b56724d528d34c52443e3ec37834e35fd71991d62a86fd717"
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "df7f30ffcf46141379440b745d4753c17e696e44dbe513ce82d64fc77e2c5ff0"
+          "Sha256": "82b3e4f021e013eb20c70553272a5840f18fde09aa1b42920f204eb9dd8002cc"
         },
         {
           "Path": "Buffaly.Agent.Tools.Secrets.dll",
-          "Sha256": "5dbc91d6030119744ae5d5fbd518c21a77573f913afff78fbd48e04dad570d74"
+          "Sha256": "8c16191c58ec2520f9db5be78d051d165cb10dbd597c59f32fe5122d47c72f22"
         },
         {
           "Path": "Buffaly.Common.dll",
@@ -19081,11 +19081,11 @@
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "22f7eaf6ed802801f3b8b9b0ef86cd30b8855db652ec6201b97e5c3009dbfee7"
+          "Sha256": "e6ebcc688f1bd77e9b82f4bf8eca556e88fa2504d37e0c4c1662baca4b217f49"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "a80dd8267d536c371c5bb430f277c7028dd1643529f8aa7f3f7445a48e766f41"
+          "Sha256": "33aa5ef988d3e29ab53e18d9554708e78946adf70a53f3a81d047f15923b4791"
         },
         {
           "Path": "Buffaly.Provider.OpenRouter.Web.deps.json",
@@ -19093,11 +19093,11 @@
         },
         {
           "Path": "Buffaly.Provider.OpenRouter.Web.dll",
-          "Sha256": "8605d81ed49a94e6450d680ff6973d37dc72633acc7b24e2836191d85eef8cda"
+          "Sha256": "762adc9c83b4bd7742252112d474f9c93a16594f41546c7718ead69ca3e08a00"
         },
         {
           "Path": "Buffaly.Provider.OpenRouter.Web.exe",
-          "Sha256": "d24ac7f2a6e5ad0da5243caae13beac2dda71e0d8ba3dfcb627d04fe569f2daf"
+          "Sha256": "b215e618896abff7e670b431dc17dea4059657e7d03fc10aca109d57e06ae54d"
         },
         {
           "Path": "Buffaly.Provider.OpenRouter.Web.runtimeconfig.json",
@@ -19105,7 +19105,7 @@
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "990243e9de6feb188fb47e1f078cb3334e7ff249280599454153d1b311f70ff8"
+          "Sha256": "a80d035dc0960014c0762ff83246586da7afa065cd25cdd2e42b410109daadbb"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -19221,15 +19221,15 @@
         },
         {
           "Path": "RooTrax.Cache.dll",
-          "Sha256": "9503a02c23a51dc9d3732671166d3b40490243383796202189380caed0ea12f8"
+          "Sha256": "63cb90a5ee66ab7a2e7cd30e26c3dd675fa6c5699fc91adb53433dcad887d925"
         },
         {
           "Path": "RooTrax.Common.DB.dll",
-          "Sha256": "57194e362e9bafcb3eb64b69ee858c4fa65e6ef0b8df759cfe38821e6613dfba"
+          "Sha256": "e4b38250c3ed187daa3585c548d35afa981ea4626fb38522acab84e77f0b1467"
         },
         {
           "Path": "RooTrax.Common.dll",
-          "Sha256": "0edfa785e58025884844b1ba46a30e604c2caeab43aec33b52deb737e4c7ac79"
+          "Sha256": "3a0a1b0992070865b1b8e7d80545b4bc8bcad14c02a179dd051911de647dc11e"
         },
         {
           "Path": "runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll",
@@ -19738,6 +19738,10 @@
         {
           "Path": "Scripts/Tags.sql",
           "Sha256": "235c21b749d3e3973cfd4003803afc19d32c55aef5ed3622ce16866893521d33"
+        },
+        {
+          "Path": "Scripts/TryUpdateSessionDataSp.sql",
+          "Sha256": "ce170b69bf3ad1caeb54f2b1ec3052819d681c4bd2c1898a865358b63de0c9dc"
         },
         {
           "Path": "Scripts/Turns_GetBySessionIDTurnKeys_Sp.sql",
