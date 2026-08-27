@@ -170,6 +170,7 @@ BEGIN
     ('UpdateSessionArtifactDataSp', 'update_session_artifact_data_sp'),
     ('UpdateSessionArtifactSp', 'update_session_artifact_sp'),
     ('UpdateSessionDataSp', 'update_session_data_sp'),
+	('TryUpdateSessionDataSp', 'try_update_session_data_sp'),
     ('UpdateSessionDateCreatedSp', 'update_session_date_created_sp'),
 	('UpdateSessionCompactionProviderSp', 'update_session_compaction_provider_sp'),
     ('UpdateSessionNameSp', 'update_session_name_sp'),
