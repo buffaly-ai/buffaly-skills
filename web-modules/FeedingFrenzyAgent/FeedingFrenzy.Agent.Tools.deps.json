@@ -12,6 +12,7 @@
           "BasicUtilities": "1.0.0.0",
           "Buffaly.Agent.Common": "1.0.0.0",
           "Buffaly.Agent.Host": "1.0.0.0",
+          "Buffaly.Agent.Runtime.Abstractions": "1.0.0.0",
           "Buffaly.Agent.Tools.Secrets": "1.0.0.0",
           "Buffaly.Agent.Web.Common": "1.0.0.0",
           "WebAppUtilities": "1.0.0.0"
@@ -151,6 +152,14 @@
           }
         }
       },
+      "Buffaly.Agent.Runtime.Abstractions/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agent.Runtime.Abstractions.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "Buffaly.Agent.Tools.Secrets/1.0.0.0": {
         "runtime": {
           "Buffaly.Agent.Tools.Secrets.dll": {
@@ -186,14 +195,6 @@
       "Buffaly.Agent.Core/1.0.0.0": {
         "runtime": {
           "Buffaly.Agent.Core.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
-          }
-        }
-      },
-      "Buffaly.Agent.Runtime.Abstractions/1.0.0.0": {
-        "runtime": {
-          "Buffaly.Agent.Runtime.Abstractions.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -588,6 +589,11 @@
       "serviceable": false,
       "sha512": ""
     },
+    "Buffaly.Agent.Runtime.Abstractions/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
     "Buffaly.Agent.Tools.Secrets/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
@@ -609,11 +615,6 @@
       "sha512": ""
     },
     "Buffaly.Agent.Core/1.0.0.0": {
-      "type": "reference",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "Buffaly.Agent.Runtime.Abstractions/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""

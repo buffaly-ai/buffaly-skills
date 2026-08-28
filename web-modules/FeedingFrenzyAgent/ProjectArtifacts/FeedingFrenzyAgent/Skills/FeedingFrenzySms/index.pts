@@ -1,0 +1,57 @@
+reference FeedingFrenzy.Agent.Tools FeedingFrenzy.Agent.Tools;
+import FeedingFrenzy.Agent.Tools FeedingFrenzy.Agent.Tools.FeedingFrenzySmsAgentFacade FeedingFrenzySmsAgentFacade;
+
+prototype FeedingFrenzySmsActionRoot : OpsAction
+{
+	Description = "Constrained action root for the reusable Feeding Frenzy SMS agent.";
+}
+
+[SemanticEntity("feeding frenzy sms skill")]
+prototype FeedingFrenzySmsSkill : SkillEntity
+{
+	Description = "Three fixed actions for Feeding Frenzy SMS help and sealed reply delivery.";
+	ActionRoot = FeedingFrenzySmsActionRoot;
+}
+
+[SemanticProgram.InfinitivePhrase("to search feeding frenzy help for the current sms")]
+prototype FeedingFrenzySms_SearchHelp : FeedingFrenzySmsActionRoot
+{
+	Description = "SearchText - the sender's Feeding Frenzy help question. Returns up to five grounded help results.";
+
+	function Execute(string SearchText) : string
+	{
+		JsonObject request = new JsonObject();
+		request["SearchText"] = SearchText;
+		request["MaxResults"] = 5;
+		request["SnippetLength"] = 320;
+		JsonObject args = new JsonObject();
+		args["request"] = request;
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("wiki-service/search", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read a feeding frenzy help article for the current sms")]
+prototype FeedingFrenzySms_GetHelpArticle : FeedingFrenzySmsActionRoot
+{
+	Description = "Slug - exact article slug returned by FeedingFrenzySms_SearchHelp.";
+
+	function Execute(string Slug) : string
+	{
+		JsonObject request = new JsonObject();
+		request["Slug"] = Slug;
+		JsonObject args = new JsonObject();
+		args["request"] = request;
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("wiki-service/get-article", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to send the reply for the current feeding frenzy sms")]
+prototype FeedingFrenzySms_SendCurrentReply : FeedingFrenzySmsActionRoot
+{
+	Description = "MessageBody - exact SMS reply text. Routing and idempotency come only from the sealed current turn.";
+
+	function Execute(string MessageBody) : string
+	{
+		return FeedingFrenzySmsAgentFacade.SendCurrentReply(_opsAgent, MessageBody);
+	}
+}

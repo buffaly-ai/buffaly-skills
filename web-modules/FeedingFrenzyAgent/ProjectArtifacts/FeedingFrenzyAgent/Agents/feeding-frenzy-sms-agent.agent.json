@@ -1,0 +1,21 @@
+{
+  "AgentName": "feeding-frenzy-sms-agent",
+  "DisplayName": "Feeding Frenzy SMS Agent",
+  "Aliases": [
+    "feeding frenzy sms",
+    "feeding frenzy text agent"
+  ],
+  "ProjectFilePath": "Sms.pts",
+  "PromptFile": "Prompts/FeedingFrenzySmsAgent.prompt.md",
+  "PromptContext": "sms",
+  "RootActionPrototypeName": "FeedingFrenzySmsActionRoot",
+  "RootEntityPrototypeName": "FeedingFrenzyAgentEntityRoot",
+  "DefaultProviderName": "openai",
+  "DefaultModelName": "gpt-5.5",
+  "DefaultReasoningLevel": "low",
+  "UiPage": "/buffaly-agent.html",
+  "IsReadOnly": false,
+  "IsHidden": true,
+  "CanChangeModel": false,
+  "DisableLevel2AutoAttach": true
+}

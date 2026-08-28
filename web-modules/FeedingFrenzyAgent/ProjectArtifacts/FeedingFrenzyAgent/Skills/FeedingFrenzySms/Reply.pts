@@ -1,0 +1,13 @@
+reference FeedingFrenzy.Agent.Tools FeedingFrenzy.Agent.Tools;
+import FeedingFrenzy.Agent.Tools FeedingFrenzy.Agent.Tools.FeedingFrenzySmsAgentFacade FeedingFrenzySmsAgentFacade;
+
+[SemanticProgram.InfinitivePhrase("to send another sms reply for the current feeding frenzy turn")]
+prototype FeedingFrenzySms_SendCurrentReply : FeedingFrenzyJsonWsSkillAction
+{
+	Description = "MessageBody - exact SMS reply text. Use for additional ordered messages when one SMS is not enough; routing remains sealed to the current turn.";
+
+	function Execute(string MessageBody) : string
+	{
+		return FeedingFrenzySmsAgentFacade.SendCurrentReply(_opsAgent, MessageBody);
+	}
+}

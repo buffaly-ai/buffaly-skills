@@ -13,6 +13,14 @@ prototype RealtimeCallContextPrompt : ContextPrompt
 	DefinitionPromptPath = @"ContextPrompts/ContextPromptDefinition.prompt.md";
 }
 
+prototype SmsResponseContextPrompt : ContextPrompt
+{
+	EntityName = "SMS response context prompt";
+	ContextPhrase = "when responding through the Feeding Frenzy SMS channel";
+	PromptPath = @"ContextPrompts/SmsResponseContext.prompt.md";
+	DefinitionPromptPath = @"ContextPrompts/ContextPromptDefinition.prompt.md";
+}
+
 prototype EmailWritingContextPrompt : ContextPrompt
 {
 	EntityName = "email writing context prompt";
