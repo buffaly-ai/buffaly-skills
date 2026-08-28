@@ -242,6 +242,10 @@
 				</div>
 				<div class="os-search-actions">
 					<button id="btnSearch" class="os-button primary" type="submit">Search ontology</button>
+					<fieldset class="os-search-mode" aria-label="Search mode" style="display:flex;gap:.6rem;border:0;padding:0;margin:0">
+						<label><input type="radio" name="searchMode" value="semantic" checked> Semantic</label>
+						<label><input type="radio" name="searchMode" value="exact"> Exact</label>
+					</fieldset>
 					<label class="os-kicker" for="txtMaxResults">Results</label>
 					<input id="txtMaxResults" class="os-max" value="8" aria-label="Max results" title="Max results (1-25)">
 				</div>
@@ -358,6 +362,9 @@
 				catalogReady: false,
 				catalogPromise: null,
 				loadSource: "ToSearchCandidateEntities",
+				searchMode: "semantic",
+				selectionMode: "",
+				returnUrl: "",
 				mode: "search",
 				extractToken: 0,
 				extractSource: "",
@@ -379,6 +386,7 @@
 				search: document.getElementById("txtObjectSearch"),
 				form: document.getElementById("searchForm"),
 				btnSearch: document.getElementById("btnSearch"),
+				searchModes: Array.from(document.querySelectorAll('input[name="searchMode"]')),
 				maxResults: document.getElementById("txtMaxResults"),
 				sessionLabel: document.getElementById("sessionLabel"),
 				examples: document.getElementById("exampleChips"),
@@ -2589,6 +2597,24 @@ function applyFrameToExtractUi(frame, envelope) {
 						expandPrototype(name, row);
 					});
 					card.appendChild(head);
+					if (state.selectionMode === "prototype") {
+						const selectionActions = document.createElement("div");
+						selectionActions.className = "os-card-decisions";
+						const openPrototypeButton = document.createElement("button");
+						openPrototypeButton.type = "button";
+						openPrototypeButton.className = "os-button small primary";
+						openPrototypeButton.textContent = "Open prototype";
+						openPrototypeButton.addEventListener("click", event => {
+							event.stopPropagation();
+							try {
+								returnSelectedPrototype(name);
+							} catch (error) {
+								setStatus(error.message || String(error), true);
+							}
+						});
+						selectionActions.appendChild(openPrototypeButton);
+						card.appendChild(selectionActions);
+					}
 					if (state.mode === "extract" && state.activeSpanId) {
 						const decisions = document.createElement("div");
 						decisions.className = "os-card-decisions";
@@ -3292,6 +3318,43 @@ function parseNerJson(raw) {
 					candidates: candidates
 				};
 			}
+			function makeCatalogCandidate(name, similarity) {
+				const catalog = state.catalogByName[name] || {};
+				return { PrototypeName: name, Similarity: similarity, Description: text(catalog.Description || ""), ParentPrototypeNames: requireArray(catalog.ParentPrototypeNames || [], "ParentPrototypeNames"), Source: "catalog-exact" };
+			}
+			async function searchExactCatalog(exactQuery) {
+				const query = text(exactQuery).trim();
+				if (!query) throw new Error("Enter a search query.");
+				await ensureCatalogIndex();
+				const folded = query.toLocaleLowerCase();
+				const candidates = [];
+				Object.keys(state.catalogByName).forEach(name => {
+					let similarity = 0;
+					if (name === query) similarity = 1;
+					else if (name.toLocaleLowerCase() === folded) similarity = .99;
+					else if (name.toLocaleLowerCase().startsWith(folded)) similarity = .90;
+					if (similarity) candidates.push(makeCatalogCandidate(name, similarity));
+				});
+				candidates.sort((left, right) => candidateSimilarity(right) - candidateSimilarity(left) || candidateName(left).localeCompare(candidateName(right)));
+				return { query, source: "catalog-exact", candidates: candidates.slice(0, state.maxResults) };
+			}
+			function validatePrototypeReturnUrl(value) {
+				const raw = text(value).trim();
+				if (!raw || raw.startsWith("//") || raw.includes("\\") || raw.includes("..")) return "";
+				let parsed;
+				try { parsed = new URL(raw, window.location.origin); } catch { return ""; }
+				if (parsed.origin !== window.location.origin) return "";
+				if (parsed.pathname !== "/harness/prototype-viewer" && parsed.pathname !== "/web-modules/OntologyWorkbench/prototype-viewer") return "";
+				return parsed.pathname + parsed.search;
+			}
+			function returnSelectedPrototype(prototypeName) {
+				const safeReturnUrl = validatePrototypeReturnUrl(state.returnUrl);
+				if (!safeReturnUrl || state.selectionMode !== "prototype") throw new Error("A valid prototype viewer return URL is required.");
+				const target = new URL(safeReturnUrl, window.location.origin);
+				target.searchParams.set("prototypeName", prototypeName);
+				target.searchParams.set("sessionKey", state.sessionKey);
+				window.location.assign(target.pathname + target.search);
+			}
 			function renderSpanStrip() {
 				if (!els.spanStrip) return;
 				els.spanStrip.textContent = "";
@@ -3443,10 +3506,14 @@ function parseNerJson(raw) {
 				state.expandedName = "";
 				state.prefetchToken += 1;
 				const prefetchToken = state.prefetchToken;
-				setStatus("Searching candidate entities...", false);
+				setStatus(state.searchMode === "exact"
+					? "Searching the loaded symbol catalog for exact name matches..."
+					: "Searching candidate entities...", false);
 				els.list.innerHTML = '<div class="os-empty">Searching...</div>';
 				const catalogWarm = ensureCatalogIndex().catch(function () { return null; });
-				const result = await searchOneQuery(query, false);
+				const result = state.searchMode === "exact"
+					? await searchExactCatalog(query)
+					: await searchOneQuery(query, false);
 				await catalogWarm;
 				if (prefetchToken !== state.prefetchToken) return;
 				state.query = result.query;
@@ -3458,6 +3525,16 @@ function parseNerJson(raw) {
 			}
 			function initPage() {
 				state.sessionKey = resolveSessionKey();
+				const params = new URLSearchParams(window.location.search || "");
+				state.searchMode = params.get("searchMode") === "exact" ? "exact" : "semantic";
+				els.searchModes.forEach(control => {
+					control.checked = control.value === state.searchMode;
+				});
+				const requestedReturnUrl = validatePrototypeReturnUrl(params.get("returnUrl"));
+				if (params.get("select") === "prototype" && requestedReturnUrl) {
+					state.selectionMode = "prototype";
+					state.returnUrl = requestedReturnUrl;
+				}
 				loadLedger();
 				els.sessionLabel.textContent = "Session: " + (state.sessionKey || "(none)");
 				EXAMPLES.forEach(example => {
@@ -3479,7 +3556,6 @@ function parseNerJson(raw) {
 				setStatus("Attached to " + state.sessionKey + ". Type a query and press Enter.", false);
 				initializePreflightRuntimeSelectors();
 				ensureCatalogIndex().catch(function () { /* expand will surface catalog errors if needed */ });
-				const params = new URLSearchParams(window.location.search || "");
 				const initialQuery = params.get("q") || params.get("query") || "";
 				if (params.get("mode") === "extract" && els.extractPanel) {
 					els.extractPanel.hidden = false;
@@ -3496,6 +3572,15 @@ function parseNerJson(raw) {
 			els.form.addEventListener("submit", event => {
 				event.preventDefault();
 				searchCandidates().catch(error => setStatus(error.message || error, true));
+			});
+			els.searchModes.forEach(control => {
+				control.addEventListener("change", () => {
+					if (!control.checked) return;
+					state.searchMode = control.value === "exact" ? "exact" : "semantic";
+					const nextUrl = new URL(window.location.href);
+					nextUrl.searchParams.set("searchMode", state.searchMode);
+					window.history.replaceState(null, "", nextUrl.pathname + nextUrl.search);
+				});
 			});
 			if (els.extractToggle) {
 				els.extractToggle.addEventListener("click", () => {

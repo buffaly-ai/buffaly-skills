@@ -10,7 +10,7 @@
     h1{margin-bottom:8px}.intro{color:var(--muted);margin-bottom:25px;line-height:1.45}
     .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px}
     label{display:grid;gap:6px;font-size:13px;color:var(--muted);font-weight:750;letter-spacing:.04em;text-transform:uppercase}
-    input{width:100%;padding:11px 12px;border:1px solid var(--border);border-radius:8px;background:#fff;font:14px ui-monospace,Consolas,monospace;color:#202124}
+    input,select{width:100%;padding:11px 12px;border:1px solid var(--border);border-radius:8px;background:#fff;font:14px ui-monospace,Consolas,monospace;color:#202124}
     .hint{margin:10px 0 0;color:var(--muted);font-size:13px;font-weight:500;letter-spacing:0;text-transform:none}
     .actions{display:flex;gap:12px;align-items:center;margin-top:22px;flex-wrap:wrap}
     button{border:0;border-radius:8px;font-weight:800;padding:11px 18px;cursor:pointer}
@@ -24,10 +24,18 @@
   <header data-ontology-workbench-header data-page="settings"></header>
   <script src="/web-modules/OntologyWorkbench/ontology-workbench-header.js"></script>
   <main>
-    <h1>Buffaly agent service</h1>
-    <p class="intro">Set the origin the standalone harness uses for JsonWs clients and agent API calls. Ontology Search loads <code>/JsonWs</code> from this host through the harness, then posts to <code>/api/buffaly.agent.host</code> on the same origin so HTTPS pages can reach an HTTP agent.</p>
+    <h1>Ontology Workbench settings</h1>
+    <p class="intro">Choose whether Tool Menu and composer launches open the standalone Workbench or the installed web module. The standalone harness uses the agent origin below for JsonWs clients and agent API calls.</p>
     <section class="card">
-      <label for="agentBaseUrl">Agent base URL
+      <label for="launchMode">Launch mode
+        <select id="launchMode"><option value="standalone">Standalone Workbench</option><option value="web-module">Installed web module</option></select>
+        <span class="hint">Applies to Tool Menu and composer launches in this browser.</span>
+      </label>
+      <label for="standaloneBaseUrl" style="margin-top:18px">Standalone Workbench URL
+        <input id="standaloneBaseUrl" type="url" placeholder="https://win.tailf78e41.ts.net:5320" autocomplete="off" spellcheck="false">
+        <span class="hint">The launcher appends <code>/harness/</code> and preserves sessionKey/message query parameters.</span>
+      </label>
+      <label for="agentBaseUrl" style="margin-top:18px">Agent base URL
         <input id="agentBaseUrl" type="url" placeholder="http://127.0.0.1:58177" autocomplete="off" spellcheck="false">
         <span class="hint">Example: http://127.0.0.1:58177 or http://127.0.0.1:5017. Do not include a path.</span>
       </label>
@@ -39,7 +47,10 @@
     </div>
   </main>
   <script>
-    const apiBase = location.pathname.startsWith('/harness/') ? '/harness/api' : '/web-modules/OntologyWorkbench/api';
+    const harness = location.pathname.startsWith('/harness/');
+    const apiBase = harness ? '/harness/api' : '/web-modules/OntologyWorkbench/api';
+    const launchModeKey = 'OntologyWorkbench.LaunchMode';
+    const standaloneBaseUrlKey = 'OntologyWorkbench.StandaloneBaseUrl';
     const value = (object, name) => object?.[name] ?? object?.[name[0].toLowerCase() + name.slice(1)];
     const status = (message, error = false) => {
       const el = document.getElementById('status');
@@ -58,8 +69,12 @@
     }
     async function load() {
       try {
-        const snapshot = await request('GET');
-        document.getElementById('agentBaseUrl').value = value(snapshot, 'AgentBaseUrl') || '';
+        const snapshot = harness ? await request('GET') : {};
+        document.getElementById('agentBaseUrl').value = value(snapshot, 'AgentBaseUrl') || 'http://127.0.0.1:58177';
+        document.getElementById('agentBaseUrl').disabled = !harness;
+        document.getElementById('test').hidden = !harness;
+        document.getElementById('launchMode').value = localStorage.getItem(launchModeKey) || 'standalone';
+        document.getElementById('standaloneBaseUrl').value = localStorage.getItem(standaloneBaseUrlKey) || 'https://win.tailf78e41.ts.net:5320';
         document.getElementById('save').disabled = false;
         document.getElementById('test').disabled = false;
         status('Settings loaded.');
@@ -69,10 +84,12 @@
     }
     async function save() {
       const agentBaseUrl = document.getElementById('agentBaseUrl').value.trim();
+      localStorage.setItem(launchModeKey, document.getElementById('launchMode').value);
+      localStorage.setItem(standaloneBaseUrlKey, document.getElementById('standaloneBaseUrl').value.trim());
       document.getElementById('save').disabled = true;
       status('Saving agent base URL...');
       try {
-        const snapshot = await request('PUT', { AgentBaseUrl: agentBaseUrl });
+        const snapshot = harness ? await request('PUT', { AgentBaseUrl: agentBaseUrl }) : {};
         document.getElementById('agentBaseUrl').value = value(snapshot, 'AgentBaseUrl') || agentBaseUrl;
         status('Saved. JsonWs and /api calls now use this origin.');
       } catch (error) {

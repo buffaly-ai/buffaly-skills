@@ -2,7 +2,7 @@
     "use strict";
 
     const config = (window.BuffalyWebModuleConfig && window.BuffalyWebModuleConfig.OntologyWorkbench) || {};
-    const harnessBaseUrl = String(config.HarnessBaseUrl || "").replace(/\/$/, "");
+    const launcherUrl = "/web-modules/OntologyWorkbench/launch.html";
 
     function requireComposer() {
         const composer = document.getElementById("txtOpsV2Prompt");
@@ -24,9 +24,6 @@
     }
 
     function openWorkbench() {
-        if (!harnessBaseUrl) {
-            throw new Error("Ontology Workbench HarnessBaseUrl is not configured.");
-        }
         const composer = requireComposer();
         const message = composer.value;
         if (!message.trim()) {
@@ -34,7 +31,7 @@
         }
 
         const workbenchSessionKey = requireSessionKey() + " - Ontology Workbench";
-        const url = new URL(harnessBaseUrl + "/harness/");
+        const url = new URL(launcherUrl, window.location.origin);
         url.searchParams.set("sessionKey", workbenchSessionKey);
         url.searchParams.set("message", message);
         const opened = window.open(url.toString(), "_blank", "noopener");

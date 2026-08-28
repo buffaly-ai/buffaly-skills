@@ -19,6 +19,7 @@
 	<script src="/js/plugins/codemirror/addon/runmode/runmode.js?v=20260412.2"></script>
 	<script src="/js/buffaly-markdown-code-blocks.js?v=20260703.1"></script>
 	<main class="shell">
+		<div style="display:flex;justify-content:flex-end;margin:0 0 12px"><a id="searchSymbolsLink" class="decision-button" href="/harness/ontology-search">Search symbols</a></div>
 		<div id="viewerStatus" class="viewer-status" role="status" aria-live="polite">Loading prototype…</div>
 		<article id="prototypeCard" class="os-card expanded" tabindex="-1">
 			<div class="os-card-head">
@@ -43,6 +44,16 @@
 			const sessionKey = (launchParams.get("sessionKey") || "").trim();
 			const prototypeName = (launchParams.get("prototypeName") || "").trim();
 			const requestController = new AbortController();
+			function buildSymbolSearchUrl() {
+				const searchUrl = new URL("/harness/ontology-search", window.location.origin);
+				searchUrl.searchParams.set("sessionKey", sessionKey);
+				searchUrl.searchParams.set("q", prototypeName);
+				searchUrl.searchParams.set("searchMode", "exact");
+				searchUrl.searchParams.set("select", "prototype");
+				searchUrl.searchParams.set("returnUrl", window.location.pathname + window.location.search);
+				return searchUrl.pathname + searchUrl.search;
+			}
+			byId("searchSymbolsLink").href = buildSymbolSearchUrl();
 
 			function escapeHtml(value) {
 				return String(value || "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" })[char]);

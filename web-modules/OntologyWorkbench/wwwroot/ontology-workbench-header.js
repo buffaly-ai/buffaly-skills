@@ -7,16 +7,27 @@
   const externalBaseUrl = (host.dataset.baseUrl || '').replace(/\/$/, '');
   const harness = externalBaseUrl.length > 0 || location.pathname.startsWith('/harness/');
   const routeBase = externalBaseUrl || '';
+  const requestedLaunchSettingsUrl = harness ? (new URLSearchParams(location.search).get('launchSettingsUrl') || sessionStorage.getItem('OntologyWorkbench.LaunchSettingsUrl') || '') : '';
+  const launchSettingsUrl = (() => {
+    if (!requestedLaunchSettingsUrl) return '';
+    try {
+      const candidate = new URL(requestedLaunchSettingsUrl);
+      return candidate.protocol === 'http:' || candidate.protocol === 'https:' ? candidate.toString() : '';
+    } catch {
+      return '';
+    }
+  })();
+  if (launchSettingsUrl) sessionStorage.setItem('OntologyWorkbench.LaunchSettingsUrl', launchSettingsUrl);
   const routes = harness
-    ? { grammar: routeBase + '/harness/', runner: routeBase + '/harness/method-runner', search: routeBase + '/harness/ontology-search', settings: routeBase + '/harness/settings', critics: routeBase + '/harness/critic-settings' }
-    : { grammar: '/web-modules/OntologyWorkbench/workbench', runner: '/web-modules/OntologyWorkbench/method-runner', search: '/web-modules/OntologyWorkbench/ontology-search', critics: '/web-modules/OntologyWorkbench/critic-settings' };
+    ? { grammar: routeBase + '/harness/', runner: routeBase + '/harness/method-runner', search: routeBase + '/harness/ontology-search', settings: launchSettingsUrl || routeBase + '/harness/settings', critics: routeBase + '/harness/critic-settings' }
+    : { grammar: '/web-modules/OntologyWorkbench/workbench', runner: '/web-modules/OntologyWorkbench/method-runner', search: '/web-modules/OntologyWorkbench/ontology-search', settings: '/web-modules/OntologyWorkbench/settings.html', critics: '/web-modules/OntologyWorkbench/critic-settings' };
   const active = host.dataset.page || '';
   const items = [
     ['grammar', 'Grammar'],
     ['runner', 'Method runner'],
     ['search', 'Ontology search']
   ];
-  if (harness) items.push(['settings', 'Settings']);
+  items.push(['settings', 'Settings']);
   if (!harness) items.push(['critics', 'Critic settings']);
 
   if (!document.querySelector('link[data-ontology-workbench-header-styles]')) {
@@ -28,5 +39,5 @@
   }
 
   host.className = 'owb-header';
-  host.innerHTML = `<div class="owb-header__inner"><a class="owb-header__brand" href="${routes.grammar}"><span class="owb-header__mark" aria-hidden="true">O</span><span>Ontology Workbench</span></a><nav class="owb-header__nav" aria-label="Ontology Workbench"><div class="owb-header__links">${items.map(([key, label]) => `<a href="${routes[key]}"${key === active ? ' class="is-active" aria-current="page"' : ''}>${label}</a>`).join('')}</div><span class="owb-header__build">Workbench build 2026.08.25.12</span></nav></div>`;
+  host.innerHTML = `<div class="owb-header__inner"><a class="owb-header__brand" href="${routes.grammar}"><span class="owb-header__mark" aria-hidden="true">O</span><span>Ontology Workbench</span></a><nav class="owb-header__nav" aria-label="Ontology Workbench"><div class="owb-header__links">${items.map(([key, label]) => `<a href="${routes[key]}"${key === active ? ' class="is-active" aria-current="page"' : ''}>${label}</a>`).join('')}</div><span class="owb-header__build">Workbench build 2026.08.28.2</span></nav></div>`;
 })();
