@@ -93,7 +93,7 @@ partial prototype FeedingFrenzyJsonWsService#Current : FeedingFrenzyJsonWsServic
 [SemanticEntity("remote feeding frenzy json ws")]
 partial prototype FeedingFrenzyJsonWsService#Medek : FeedingFrenzyJsonWsService
 {
-	BaseUrl = "https://ff.medek.ai";
+	BaseUrl = "https://ff.intelligencefactory.ai";
 	TokenKey = "FeedingFrenzy.Medek.ApiKey";
 	AutomationUserEmail = "matt+buffaly@intelligencefactory.ai";
 	Description = "Explicit MEDEK production binding for separately authorized diagnostics and automation.";
