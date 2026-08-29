@@ -21,6 +21,18 @@ prototype WebProperties_GetWebProperty : FeedingFrenzyWebPropertiesJsonWsSkillAc
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to provision search console for a feeding frenzy web property")]
+prototype WebProperties_ProvisionSearchConsole : FeedingFrenzyWebPropertiesJsonWsSkillAction
+{
+	Description = @"Calls the generated WebProperties.ProvisionSearchConsole route. The production server owns Google credentials, idempotent property creation, ownership verification, sitemap submission, and WebProperty evidence persistence.";
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, int WebPropertyID) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["WebPropertyID"] = WebPropertyID;
+		return service.CallWebPropertiesRoute("web-properties/provision-search-console", args);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to update a feeding frenzy web property")]
 prototype WebProperties_UpdateWebProperty : FeedingFrenzyWebPropertiesJsonWsSkillAction
 {

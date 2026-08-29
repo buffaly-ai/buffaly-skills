@@ -8,7 +8,7 @@ The local and remote bindings use separate Feeding Frenzy API-key secrets. No an
 
 - Local calls use `https://feedingfrenzy.local` and UserSecrets key `FeedingFrenzy.Local.ApiKey`. Do not change the binding to HTTP: the local site redirects to HTTPS and clients can drop the bearer header across that redirect, causing a misleading 401.
 - The local token must be an unexpired Feeding Frenzy `Authorizations` API-key row. Create replacements through an authenticated administrator session and `FeedingFrenzy.Admin.Business.ApiKeys.InsertApiKey`, then store only the token in UserSecrets.
-- Production calls use `https://ff.medek.ai` and the separate UserSecrets key `FeedingFrenzy.ApiKey`. Never reuse a local key in production.
+- Production calls use `https://ff.intelligencefactory.ai` and the separate UserSecrets key `FeedingFrenzy.ApiKey`. Never reuse a local key in production.
 
 ## Metadata mutations
 

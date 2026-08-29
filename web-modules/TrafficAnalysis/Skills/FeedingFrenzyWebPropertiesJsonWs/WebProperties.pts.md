@@ -2,6 +2,14 @@
 
 Thin pass-through actions for the generated `FeedingFrenzy.Admin.Business.WebProperties` JsonWs routes. Parameter names and casing match the generated JsonWs contract exactly. The wrappers return raw route JSON and intentionally contain no parsing, retry, analytics, or traffic-classification logic.
 
+The skill entry point explicitly references `Buffaly.Agent.Tools.Http` so standalone lazy-module validation resolves `JsonWsHelper` without relying on unrelated global project imports.
+
+## Search Console provisioning
+
+### `WebProperties_ProvisionSearchConsole`
+
+Calls the generated `web-properties/provision-search-console` route for one exact environment-specific `WebPropertyID`. The Feeding Frenzy production server remains the lifecycle owner for Google credentials, idempotent domain-property creation, ownership verification, sitemap submission, and persistence of the resulting `Data.Setup.SearchConsole` evidence.
+
 ## Metadata mutation actions
 
 ### `WebProperties_UpdateWebProperty`

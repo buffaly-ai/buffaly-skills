@@ -1,3 +1,4 @@
+reference Buffaly.Agent.Tools.Http Buffaly.Agent.Tools.Http;
 import Buffaly.Agent.Tools.Http Buffaly.Agent.Tools.Http.JsonWsHelper JsonWsHelper;
 import BasicUtilities BasicUtilities.JsonObject JsonObject;
 import BasicUtilities BasicUtilities.StringUtil StringUtil;
@@ -41,7 +42,7 @@ prototype FeedingFrenzyWebPropertiesJsonWsService : Service
 [SemanticEntity("feeding frenzy remote web properties json ws service")]
 partial prototype FeedingFrenzyWebPropertiesJsonWsService#Remote : FeedingFrenzyWebPropertiesJsonWsService
 {
-	BaseUrl = "https://ff.medek.ai";
+	BaseUrl = "https://ff.intelligencefactory.ai";
 	TokenKey = "FeedingFrenzy.ApiKey";
 	Description = "Remote Feeding Frenzy WebProperties JSON service binding.";
 }
