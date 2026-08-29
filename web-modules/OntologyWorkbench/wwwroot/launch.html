@@ -7,8 +7,11 @@
   const baseUrlKey='OntologyWorkbench.StandaloneBaseUrl';
   const mode=localStorage.getItem(modeKey)||'standalone';
   const base=(localStorage.getItem(baseUrlKey)||'https://win.tailf78e41.ts.net:5320').replace(/\/$/,'');
-  const target=mode==='web-module'?new URL('/web-modules/OntologyWorkbench/workbench',location.origin):new URL(base+'/harness/');
   const query=new URLSearchParams(location.search);
+  const viewer=!!query.get('prototypeName');
+  const target=mode==='web-module'
+    ?new URL(viewer?'/web-modules/OntologyWorkbench/prototype-viewer':'/web-modules/OntologyWorkbench/workbench',location.origin)
+    :new URL(base+(viewer?'/harness/prototype-viewer':'/harness/'));
   query.forEach((value,key)=>target.searchParams.set(key,value));
   if(mode==='standalone')target.searchParams.set('launchSettingsUrl',new URL('/web-modules/OntologyWorkbench/settings.html',location.origin).toString());
   location.replace(target.toString());

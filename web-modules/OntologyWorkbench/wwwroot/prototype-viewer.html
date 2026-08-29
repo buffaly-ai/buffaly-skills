@@ -181,6 +181,19 @@
 				body.appendChild(section);
 			}
 
+			async function warmSession() {
+				const harness = location.pathname.startsWith("/harness/");
+				const apiBase = harness ? "/harness/api" : "/web-modules/OntologyWorkbench/api";
+				const response = await fetch(apiBase + "/warm-session", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ SessionKey: sessionKey }),
+					signal: requestController.signal
+				});
+				const text = await response.text();
+				if (!response.ok) throw new Error(text || response.statusText);
+			}
+
 			async function runInspectionAction(prototypeAction, args) {
 				if (requestController.signal.aborted) throw new DOMException("The request was cancelled.", "AbortError");
 				const deadline = Date.now() + 10000;
@@ -199,6 +212,9 @@
 				if (!prototypeName) throw new Error("prototypeName is required.");
 				byId("prototypeTitle").textContent = friendlyPrototype(prototypeName);
 				byId("prototypeRef").textContent = prototypeName;
+				byId("viewerStatus").textContent = "Loading session \"" + sessionKey + "\"...";
+				await warmSession();
+				byId("viewerStatus").textContent = "Resolving loaded or indexed prototype...";
 				const args = { prototype: prototypeName };
 				const [details, schema] = await Promise.all([
 					runInspectionAction("ToGetPrototypeDetails", args),
