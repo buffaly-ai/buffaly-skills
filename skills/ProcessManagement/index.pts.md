@@ -1,5 +1,10 @@
 # index.pts Change History
 
+## Split external and interval run-now actions (2026-08-27)
+- Clarified that `ToTriggerScheduledTaskNow` accepts only `ExternalScheduledTask` rows and directs interval callers to the dedicated action.
+- Added `ToRunIntervalProcessNow(processID)`, a thin typed wrapper over the runtime interval-process bridge.
+- Design decision: preserve mutually exclusive process classifications and expose one explicit run-now action per category instead of routing interval rows through the external-trigger contract.
+
 ## Initial ProcessManagement Skill (2026-06-06)
 - Added ProcessManagement skill actions for listing scheduled tasks, listing recurring processes, listing all Processes rows, inspecting details, adding scheduled tasks, adding recurring processes, enabling/disabling rows, triggering scheduled tasks, and validating process configuration.
 - Design Decision: keep how-to guidance in ProtoScript skill actions/wiki-facing tools rather than C# management-service helper methods.

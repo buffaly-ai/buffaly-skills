@@ -133,11 +133,11 @@ prototype ToDisableBuffalyProcess : ProcessManagementSkillAction
 	}
 }
 
-[SemanticProgram.InfinitivePhrase("to trigger a scheduled task now")]
+[SemanticProgram.InfinitivePhrase("to trigger an external scheduled task now")]
 [SemanticProgram.InfinitivePhrase("to run an external scheduled task now")]
 prototype ToTriggerScheduledTaskNow : ProcessManagementSkillAction
 {
-	Description = @"processName - exact process name. triggerKey may be empty when the row has no ExternalTriggerKey configured.";
+	Description = @"Runs only a process whose Action is ExternalScheduledTask. Do not use this action for IntervalSystemProcess rows; use ToRunIntervalProcessNow instead. processName - exact external scheduled-task name. triggerKey may be empty when the row has no ExternalTriggerKey configured.";
 
 	function Execute(string processName, string triggerKey) : string
 	{
@@ -146,6 +146,18 @@ prototype ToTriggerScheduledTaskNow : ProcessManagementSkillAction
 		request.TriggerKey = triggerKey;
 		request.TriggerSource = "ProtoScriptProcessManagementSkill";
 		return JsonUtil.ToFriendlyJSON(new JsonValue(Processes.TriggerScheduledProcess(request))).ToString();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to run an interval process now")]
+[SemanticProgram.InfinitivePhrase("to manually run an interval system process")]
+prototype ToRunIntervalProcessNow : ProcessManagementSkillAction
+{
+	Description = @"Runs only an enabled process whose Action is IntervalSystemProcess. ExternalScheduledTask rows must use ToTriggerScheduledTaskNow. processID - numeric Processes.ProcessID to run immediately.";
+
+	function Execute(int processID) : string
+	{
+		return JsonUtil.ToFriendlyJSON(new JsonValue(Processes.RunIntervalProcessNow(processID, "ProtoScriptProcessManagementSkill"))).ToString();
 	}
 }
 
