@@ -1,0 +1,55 @@
+reference Buffaly.ErrorLogDispatch.WebModule Buffaly.ErrorLogDispatch.WebModule;
+import Buffaly.ErrorLogDispatch.WebModule Buffaly.ErrorLogDispatch.ErrorDispatchFacade ErrorDispatchFacade;
+import Buffaly.ErrorLogDispatch.WebModule Buffaly.ErrorLogDispatch.ErrorDispatchSessionRequest ErrorDispatchSessionRequest;
+import Buffaly.ErrorLogDispatch.WebModule Buffaly.ErrorLogDispatch.ErrorDispatchSessionReceipt ErrorDispatchSessionReceipt;
+import Buffaly.ErrorLogDispatch.WebModule Buffaly.ErrorLogDispatch.ErrorDispatchDeliveryRequest ErrorDispatchDeliveryRequest;
+import Buffaly.ErrorLogDispatch.WebModule Buffaly.ErrorLogDispatch.ErrorDispatchDeliveryReceipt ErrorDispatchDeliveryReceipt;
+
+prototype ErrorLogDispatchSkillAction : OpsAction
+{
+	Description = @"Deterministic diagnostic-session resolution and delivery for dispatch-agent.";
+}
+
+[SemanticEntity("error log dispatch skill")]
+prototype ErrorLogDispatchSkill : SkillEntity
+{
+	Description = @"Two-operation deterministic pipeline shared by local error logs and remote production alarms.";
+	ActionRoot = ErrorLogDispatchSkillAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to get an error dispatch session")]
+[SemanticProgram.InfinitivePhrase("to resolve a diagnostic owner session")]
+prototype ToGetErrorDispatchSession : ErrorLogDispatchSkillAction, DispatchAgentCuratedActionRoot
+{
+	Description = @"Resolve or create one dedicated diagnostic owner, apply and verify the no-companion ErrorDiagnostic policy with ResetOnLimit, persist ErrorSession or AlarmSession on the exact Dispatch node, and read it back.";
+
+	function Execute(string parentSessionKey, string dispatchNodePrototypeName, string attachmentName, string childSessionKey, string evaluationScope = "Live", string provider = "ollama", string modelName = "glm-5.2", string reasoningLevel = "medium") : ErrorDispatchSessionReceipt
+	{
+		ErrorDispatchSessionRequest request = new ErrorDispatchSessionRequest();
+		request.ParentSessionKey = parentSessionKey;
+		request.DispatchNodePrototypeName = dispatchNodePrototypeName;
+		request.AttachmentName = attachmentName;
+		request.ChildSessionKey = childSessionKey;
+		request.EvaluationScope = evaluationScope;
+		request.Provider = provider;
+		request.ModelName = modelName;
+		request.ReasoningLevel = reasoningLevel;
+		return ErrorDispatchFacade.GetSession(_runtime, _opsAgent, request);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to dispatch an error to a session")]
+[SemanticProgram.InfinitivePhrase("to queue a diagnostic assignment")]
+prototype ToDispatchErrorToSession : ErrorLogDispatchSkillAction, DispatchAgentCuratedActionRoot
+{
+	Description = @"Validate one dedicated diagnostic destination and one bounded assignment, queue it through the canonical typed session relay, and return the actual queue receipt. BuildOnly always fails closed.";
+
+	function Execute(string sessionKey, string assignment, string evaluationScope = "Live") : ErrorDispatchDeliveryReceipt
+	{
+		ErrorDispatchDeliveryRequest request = new ErrorDispatchDeliveryRequest();
+		request.SessionKey = sessionKey;
+		request.Assignment = assignment;
+		request.EvaluationScope = evaluationScope;
+		return ErrorDispatchFacade.Dispatch(_opsAgent, request);
+	}
+}

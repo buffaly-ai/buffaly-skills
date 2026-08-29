@@ -1,0 +1,24 @@
+{
+  "Module": {
+    "Enabled": true,
+    "Name": "ErrorLogDispatch",
+    "DisplayName": "Error Log Dispatch",
+    "Description": "Configure and validate the shared deterministic diagnostic dispatch policy for local errors and remote alarms.",
+    "AssemblyPath": "ErrorLogDispatch/Buffaly.ErrorLogDispatch.WebModule.dll",
+    "TypeName": "Buffaly.ErrorLogDispatch.ErrorLogDispatchWebModule",
+    "LoadOrder": 865,
+    "Pages": [
+      {
+        "Name": "error-log-dispatch-settings",
+        "DisplayName": "Error Log Dispatch Settings",
+        "Path": "/web-modules/ErrorLogDispatch/settings",
+        "Description": "Manage shared diagnostic policy, local error collection, remote alarms, guidance, owner migration, and health."
+      }
+    ],
+    "ProjectArtifacts": [
+      { "ProjectName": "Skills/ErrorLogDispatch", "SourcePath": "ProjectArtifacts/Skills/ErrorLogDispatch/" },
+      { "ProjectName": "ContextPrompts", "SourcePath": "ProjectArtifacts/ContextPrompts/" },
+      { "ProjectName": "Profiles/ErrorDiagnostic", "SourcePath": "ProjectArtifacts/Profiles/ErrorDiagnostic/" }
+    ]
+  }
+}

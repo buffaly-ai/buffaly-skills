@@ -1,0 +1,15 @@
+{
+  "AgentName": "error-diagnostic-agent",
+  "DisplayName": "Error Diagnostic Agent",
+  "PromptFile": "Prompts/BuffalyAgentCore.prompt.md",
+  "ProjectFilePath": "Project.pts",
+  "PromptContext": "ErrorDiagnostic",
+  "RootActionPrototypeName": "CoreAction",
+  "RootEntityPrototypeName": "CoreEntity",
+  "DefaultModelName": "glm-5.2",
+  "UiPage": "/buffaly-agent.html",
+  "IsReadOnly": false,
+  "IsHidden": true,
+  "CanChangeModel": false,
+  "CompanionAgents": []
+}

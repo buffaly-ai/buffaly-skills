@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Error Log Dispatch Settings</title><link rel="stylesheet" href="/web-modules/ErrorLogDispatch/static/settings.css"></head>
+<body><header><h1>Error Log Dispatch</h1><p>One deterministic diagnostic policy for local errors and remote alarms.</p></header><main>
+<section><h2>Overview & Configuration Health</h2><div id="health"></div><button id="refresh">Refresh</button></section>
+<section><h2>Shared Diagnostic Policy</h2><form id="shared"></form><button data-save="shared">Save shared policy</button></section>
+<section><h2>Local Error Logs</h2><form id="local"></form><button data-save="local">Save local settings</button></section>
+<section><h2>Remote Alarms</h2><form id="alarm"></form><button data-save="alarm">Save alarm settings</button></section>
+<section><h2>Diagnostic Guidance</h2><textarea id="guidance" rows="12"></textarea></section>
+<section><h2>Existing Owners / Migration</h2><p>Old owners are inventory-only. Normal dispatch never silently changes their identity.</p><div id="owners"></div></section><pre id="message" role="status"></pre></main><script src="/web-modules/ErrorLogDispatch/static/settings.js"></script></body></html>

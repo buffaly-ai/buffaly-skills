@@ -20318,6 +20318,142 @@
       "RequiresRestart": true,
       "RequiresPreStartInstall": true,
       "PreStartCleanupPaths": []
+    },
+    {
+      "PackageId": "ErrorLogDispatch",
+      "PackageType": "WebModule",
+      "Title": "Error Log Dispatch",
+      "Description": "Buffaly Web Module package for Error Log Dispatch.",
+      "Version": "0.1.0",
+      "PackageKind": "BuffalyWebModule",
+      "SourcePath": "web-modules/ErrorLogDispatch",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/ErrorLogDispatch",
+      "Phrases": [
+        "Error Log Dispatch",
+        "ErrorLogDispatch"
+      ],
+      "Files": [
+        {
+          "Path": "Agents/error-diagnostic-agent.agent.json",
+          "Sha256": "3917f6a3a1d8e9b3808dab32cdb640fb5d74530cda84a8c98d1523cd001bf9ef"
+        },
+        {
+          "Path": "Buffaly.Agent.Web.Common.dll",
+          "Sha256": "81b12758136925068fe7c9fb9c7da7ccb139aa5ae7cc09c72ba23367d473142d"
+        },
+        {
+          "Path": "Buffaly.ErrorLogDispatch.WebModule.deps.json",
+          "Sha256": "e0c1679884a1e7087dc2a1a04deaa71f0291687f55b64fe5f9e9934aa7ee4187"
+        },
+        {
+          "Path": "Buffaly.ErrorLogDispatch.WebModule.dll",
+          "Sha256": "14eec78f3e427964b96232cf657e2fe651836e6355bd04b7fa6536b6406ead1f"
+        },
+        {
+          "Path": "Buffaly.ErrorLogDispatch.WebModule.staticwebassets.endpoints.json",
+          "Sha256": "d391b10a97ba5fdd751442144d04f889eac7f3891e1fbd78e000030d42c95c2b"
+        },
+        {
+          "Path": "ProjectArtifacts/ContextPrompts/ErrorDiagnostic.prompt.md",
+          "Sha256": "27b7851880e813efc4e93974b59303d341c275ad3d32b9e1ac3eb0881ee15ae9"
+        },
+        {
+          "Path": "ProjectArtifacts/ContextPrompts/ErrorDiagnostic.prompt.md.md",
+          "Sha256": "a5f3330c37497c2ca8416902e39d92cc4e9800c3e5af43f2576a71f0e7c44116"
+        },
+        {
+          "Path": "ProjectArtifacts/Profiles/ErrorDiagnostic/Project.pts",
+          "Sha256": "fd871619f8228675c716fe01be9041a6a71b79947ee558252512ba0b2a2f422c"
+        },
+        {
+          "Path": "ProjectArtifacts/Profiles/ErrorDiagnostic/Project.pts.md",
+          "Sha256": "abdf66fce52a9fa015625b194d28c1f642eb28d3d9428ed45e1223a626dbe346"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ErrorLogDispatch/index.pts",
+          "Sha256": "5f2e7aae38ba9c9f0bd2e891cf167ff2f89f7f4686ac2599fcacd77a91952fef"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ErrorLogDispatch/index.pts.lazy.json",
+          "Sha256": "0caccf0342ccc175277fd1f2c4865b66fb7ae94ce30b724ca1a26b60e99f2ec0"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ErrorLogDispatch/index.pts.md",
+          "Sha256": "4d487685a1879d8e317cef69947cd7066a5e01729eac3f0105e444f556ef32cc"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ErrorLogDispatch/skill-manifest.json",
+          "Sha256": "00cc0ca1b77e52f6c11de18fdf272917464e6d95a3b87f68dd0cf5c4c1c507a7"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/ErrorLogDispatch/SKILL.md",
+          "Sha256": "0f510d04b5dfd8fbf2753b6b2908118731a099c9d26f8a3eab7203b691d043b3"
+        },
+        {
+          "Path": "web-module.json",
+          "Sha256": "d065692760bfee9c7851db1e007e7c56049791dd462c8e0fd83a6b61d7f3f512"
+        },
+        {
+          "Path": "web.config",
+          "Sha256": "1cf401b0c860ca37fe808d98d3c849cb2a88a3da7758b8a323cf0d8eb122cedc"
+        },
+        {
+          "Path": "wwwroot/css/settings.css",
+          "Sha256": "594776768d9a665e9fedce0198480f47e6df1681aa29a39b8eb8d90f4c477946"
+        },
+        {
+          "Path": "wwwroot/css/settings.css.br",
+          "Sha256": "feea6a790d027e2952ed589a69e779d00d1773404f3e05453151a4be941bc8b6"
+        },
+        {
+          "Path": "wwwroot/css/settings.css.gz",
+          "Sha256": "2bb9f87437f8ccb2adb3203027712e15e4c0a4c42b3e5f74be3dd9ebb5e76a3b"
+        },
+        {
+          "Path": "wwwroot/index.html",
+          "Sha256": "edd4f68b9ba4b413b3dff899397d484625d836085e4c0564a8d37cfe1845fc31"
+        },
+        {
+          "Path": "wwwroot/index.html.br",
+          "Sha256": "0bf458c778e562a399206e5bd6ea86917068b3c4a2f17208e30e04b42f268876"
+        },
+        {
+          "Path": "wwwroot/index.html.gz",
+          "Sha256": "af054c981d5594c567a98b91f048282b2d29e2de0008a2f48c2981e5b777d0f0"
+        },
+        {
+          "Path": "wwwroot/js/settings.js",
+          "Sha256": "a3fe7946eb451a00c89fc133c7a311ea44a4efa03962cd84eafc286cea8bdbf3"
+        },
+        {
+          "Path": "wwwroot/js/settings.js.br",
+          "Sha256": "a86688c966f48fdcd5b4a6588fa203761c55dfccd5282912eba27ab50ed4e6f3"
+        },
+        {
+          "Path": "wwwroot/js/settings.js.gz",
+          "Sha256": "8b20688c0d74fc38e25dbc05fed1a51b2d38f13ca9f94d1ad93d6a52778ef6e5"
+        }
+      ],
+      "ProjectArtifacts": [
+        {
+          "ProjectName": "Skills/ErrorLogDispatch",
+          "SourcePath": "ProjectArtifacts/Skills/ErrorLogDispatch/"
+        },
+        {
+          "ProjectName": "ContextPrompts",
+          "SourcePath": "ProjectArtifacts/ContextPrompts/"
+        },
+        {
+          "ProjectName": "Profiles/ErrorDiagnostic",
+          "SourcePath": "ProjectArtifacts/Profiles/ErrorDiagnostic/"
+        }
+      ],
+      "Dependencies": [],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "RequiresRestart": true,
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     }
   ]
 }
