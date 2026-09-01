@@ -49,6 +49,7 @@ AS
 		LEFT JOIN	Sessions c WITH (NOLOCK)
 		ON			c.ParentSessionID = p.SessionID
 					AND ISNULL(c.IsArchived, 0) = 0
+					AND ISNULL(c.AgentName, '') NOT IN ('online-session-memory-critic', 'online-action-critic', 'level-2')
 		WHERE		ISNULL(p.IsArchived, 0) = 0
 					AND p.ParentSessionID IS NULL
 		GROUP BY	p.SessionID,
