@@ -34,10 +34,7 @@
         const url = new URL(launcherUrl, window.location.origin);
         url.searchParams.set("sessionKey", workbenchSessionKey);
         url.searchParams.set("message", message);
-        const opened = window.open(url.toString(), "_blank", "noopener");
-        if (!opened) {
-            throw new Error("The browser blocked the Ontology Workbench tab.");
-        }
+        window.open(url.toString(), "_blank", "noopener");
     }
 
     function extractProtoScriptSymbolName(href) {
@@ -85,11 +82,7 @@
         if (sessionKey) {
             url.searchParams.set("sessionKey", sessionKey);
         }
-        const opened = window.open(url.toString(), "_blank", "noopener");
-        if (!opened) {
-            window.alert("The browser blocked the Ontology Workbench tab.");
-            return false;
-        }
+        window.open(url.toString(), "_blank", "noopener");
         return true;
     }
 
