@@ -1,1 +1,20 @@
-{"ToGetErrorDispatchSession":"Skills/ErrorLogDispatch/index.pts","ToDispatchErrorToSession":"Skills/ErrorLogDispatch/index.pts"}
+{
+  "Version": 1,
+  "ModulePath": "Skills/ErrorLogDispatch/index.pts",
+  "Prototypes": {
+    "ErrorLogDispatchSkillAction": "Skills/ErrorLogDispatch/index.pts",
+    "ErrorLogDispatchSkill": "Skills/ErrorLogDispatch/index.pts",
+    "ToGetErrorDispatchSession": "Skills/ErrorLogDispatch/index.pts",
+    "ToDispatchErrorToSession": "Skills/ErrorLogDispatch/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToGetErrorDispatchSession": [
+      "to get an error dispatch session",
+      "to resolve a diagnostic owner session"
+    ],
+    "ToDispatchErrorToSession": [
+      "to dispatch an error to a session",
+      "to queue a diagnostic assignment"
+    ]
+  }
+}
