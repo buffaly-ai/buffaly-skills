@@ -28,31 +28,26 @@ A tangible fix must name the exact component and change, explain why it removes 
 - adjacent regression coverage for neighboring paths and contract boundaries;
 - runtime regression monitoring with the exact signal, threshold, and observation window.
 
-## Output
+## Decision integrity
 
-# Cause
-State `Cause established` and the actual mechanism, or `Cause not established`.
+- Never say `Cause established` if any missing runtime/log evidence could overturn the asserted mechanism.
+- If the implementation explains how an error could occur but the failing runtime path was not observed, say `Cause not established`.
+- Do not mix an established-cause claim with caveats that the decisive behavior could not be confirmed.
 
-# Tangible Fix
-Exact implementation/configuration/operational change, or the concrete diagnostic required to establish cause.
+## Output contract
 
-# Regression Coverage
-Reproduction, fix-verification, adjacent regression tests, and runtime monitoring.
+The first screen must answer the operational question. Do not begin with chronology, source listings, stack narration, or a research transcript.
 
-# Evidence
-Direct evidence and checks performed.
+# Answer
+In at most three sentences: state `Cause established` or `Cause not established`, name the mechanism or remaining uncertainty, and give the direct evidence controlling that decision.
 
-# Competing Causes Eliminated
-Each alternative checked and the evidence that rejected it.
+# Recommendation
+Give one primary recommendation as an imperative. Name the exact file/component and change. If cause is not established, recommend the single discriminating diagnostic instead of a speculative fix.
 
-# Research Performed
-Code, logs, configuration, runtime/deployment state, recent changes, and remote sources checked.
+# Regression Protection
+Use at most four bullets: failing reproduction, focused verification, adjacent boundary regression, and runtime signal with threshold/window.
 
-# Diagnostic Required
-Required only when cause is not established. Give the instrumentation/query, location, fields, and result interpretation.
+# Next Action
+Give exactly one concrete next action the operator can execute or authorize.
 
-# Validation
-How to prove the fix in staging and then monitor production.
-
-# Missing Evidence / Blockers
-Only evidence or access that is genuinely unavailable after the research above.
+Keep the main response under 350 words. Include `# Evidence Appendix` only when needed, with at most five decisive bullets. Do not include separate sections for checks performed, research performed, competing causes, validation, and missing evidence when their contents can be expressed in the answer, recommendation, regression bullets, or appendix.
