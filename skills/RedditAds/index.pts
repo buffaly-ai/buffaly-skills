@@ -157,6 +157,17 @@ prototype ToCreatePausedRedditAd : RedditAdsSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to publish a reddit native text draft as a paused ad")]
+prototype ToPublishRedditNativeTextDraftPaused : RedditAdsSkillAction
+{
+	Description = @"draftId - reviewed local Reddit creative draft id. adAccountId - Reddit ad account id. adGroupId - PAUSED parent ad group id. profileId - account-owned Reddit profile id. confirmPaused - explicit acknowledgement that the real Reddit post and ad must remain PAUSED. Publishes the draft's exact title and PostCopy as a native Reddit TEXT post, links the article through the ad click URL, verifies the new ad is PAUSED, and writes a duplicate-prevention receipt. Never activates spend and does not return the token value.";
+
+	function Execute(string draftId, string adAccountId, string adGroupId, string profileId, bool confirmPaused) : string
+	{
+		return RedditAdsWebService.PublishDraftPausedJson(draftId, adAccountId, adGroupId, profileId, confirmPaused);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to get reddit ad")]
 prototype ToGetRedditAd : RedditAdsSkillAction
 {
