@@ -42,10 +42,15 @@ function conversationUrl(bootstrap: ConversationBootstrap): string {
   const url = new URL('/web-modules/ExtensionBrowser/conversation', bootstrap.Origin);
   url.searchParams.set('presentation', 'sidepanel');
   if (!('SessionKey' in bootstrap) || !bootstrap.SessionKey) throw new Error('Selected Buffaly conversation does not have a durable session key.');
-  if (!bootstrap.InstallationRegistrationId) throw new Error('Selected Buffaly conversation does not have an installation registration id.');
   url.searchParams.set('sessionKey', bootstrap.SessionKey);
-  url.searchParams.set('installationRegistrationId', bootstrap.InstallationRegistrationId);
   return url.toString();
+}
+
+function requireDurableConversation(bootstrap: ConversationBootstrap | null | undefined): ConversationBootstrap {
+  if (!bootstrap) throw new Error('No Buffaly conversation was returned.');
+  if (!('SessionKey' in bootstrap) || !bootstrap.SessionKey) throw new Error('This saved Buffaly conversation has not been migrated to a durable session yet. Select it again or start a new conversation.');
+  if (!bootstrap.InstallationRegistrationId) throw new Error('This saved Buffaly conversation is missing its installation registration. Re-authorize this Buffaly server.');
+  return bootstrap;
 }
 
 export default function App() {
@@ -137,7 +142,7 @@ export default function App() {
       await refreshBrowserInstances();
       return { bootstrap, stored };
     }).then(({ bootstrap, stored }) => {
-      if (bootstrap?.ok && bootstrap.data) setConversation(bootstrap.data as ConversationBootstrap); void refreshBrowserInstances().catch(() => undefined);
+      if (bootstrap?.ok && bootstrap.data) setConversation(requireDurableConversation(bootstrap.data as ConversationBootstrap)); void refreshBrowserInstances().catch(() => undefined);
       if (stored[panelModeStorageKey] === 'agent' || stored[panelModeStorageKey] === 'chat') setPanelMode(stored[panelModeStorageKey] as PanelMode);
     }).catch((reason) => setError(reason instanceof Error ? reason.message : String(reason)));
   }, [getBrowserContextId, refreshBrowserInstances, refreshServers]);
@@ -275,7 +280,7 @@ export default function App() {
       const status = await refreshServers();
       if (status.State === 'Ready') {
         const bootstrap = await chrome.runtime.sendMessage({ type: 'get_buffaly_conversation_bootstrap', browserContextId: await getBrowserContextId() }) as WorkerResponse<ConversationBootstrap> | undefined;
-        if (bootstrap?.ok && bootstrap.data) setConversation(bootstrap.data);
+        if (bootstrap?.ok && bootstrap.data) setConversation(requireDurableConversation(bootstrap.data));
       }
     } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
     finally { setBusy(''); }
@@ -315,12 +320,12 @@ export default function App() {
       if (existingConversation) {
         const existing = await chrome.runtime.sendMessage({ type: 'select_buffaly_conversation', conversationSelectionId: conversationSelectionId(existingConversation), browserContextId: await getBrowserContextId() }) as WorkerResponse<ConversationBootstrap> | undefined;
         if (!existing?.ok || !existing.data) throw new Error(existing?.error || 'The existing Buffaly conversation could not be resumed.');
-        setConversation(existing.data);
+        setConversation(requireDurableConversation(existing.data));
         return;
       }
       const created = await chrome.runtime.sendMessage({ type: 'create_buffaly_conversation', browserContextId: await getBrowserContextId(), displayName: 'Chrome conversation' }) as WorkerResponse<ConversationBootstrap> | undefined;
       if (!created?.ok || !created.data) throw new Error(created?.error || 'The bound conversation could not be created.');
-      setConversation(created.data as ConversationBootstrap);
+      setConversation(requireDurableConversation(created.data as ConversationBootstrap));
     } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
     finally { setBusy(''); }
   }, [getBrowserContextId, origin, refreshServers, serverName, serversStatus.ActiveServer?.Name]);
@@ -331,7 +336,7 @@ export default function App() {
     try {
       const created = await chrome.runtime.sendMessage({ type: 'create_buffaly_conversation', browserContextId: await getBrowserContextId(), displayName: 'Chrome conversation' });
       if (!created.ok) throw new Error(created.error);
-      setConversation(created.data as ConversationBootstrap);
+      setConversation(requireDurableConversation(created.data as ConversationBootstrap));
     } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
     finally { setBusy(''); }
   }, [connected, getBrowserContextId]);
@@ -342,7 +347,7 @@ export default function App() {
     try {
       const selected = await chrome.runtime.sendMessage({ type: 'select_buffaly_conversation', conversationSelectionId, browserContextId: await getBrowserContextId() }) as WorkerResponse<ConversationBootstrap> | undefined;
       if (!selected?.ok || !selected.data) throw new Error(selected?.error || 'The selected Buffaly conversation could not be resumed.');
-      setConversation(selected.data);
+      setConversation(requireDurableConversation(selected.data));
       await refreshServers();
     } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
     finally { setBusy(''); }

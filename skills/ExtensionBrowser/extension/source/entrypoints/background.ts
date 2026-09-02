@@ -2,7 +2,7 @@ import { handleToolCall, grantDebuggerConsent, revokeDebuggerConsent } from '../
 import { detachDebugger, isAttached } from '../lib/debugger-session';
 import { getLogEntries, getLogVersion } from '../lib/tool-log';
 import { ACTIVE_CONVERSATION_STORAGE_KEY, InstallationChannel, authorizeInstallation, conversationFromBootstrap, createDurableConversation, isLegacyConversation, listBrowserInstances, listDurableConversations, loadBoundToolResult, loadConnection, migrateLegacyConversation, openDurableConversation, type ConversationBinding, type DurableConversation } from '../lib/buffaly-connection';
-import { activateConversation, activateServer, canonicalServerOrigin, conversationForContext, getActiveServer, loadServers, reconcileAuthoritativeConversations, removeServer, saveServer, summarizeServers, updateActiveServer, updateActiveServerConversation, type SavedBuffalyServer, type ServerState } from '../lib/buffaly-servers';
+import { activateConversation, activateServer, canonicalServerOrigin, conversationForContext, conversationsForServer, getActiveServer, loadServers, reconcileAuthoritativeConversations, removeServer, saveServer, summarizeServers, updateActiveServer, updateActiveServerConversation, type SavedBuffalyServer, type ServerState } from '../lib/buffaly-servers';
 import type { BoundToolInvocationIdentity } from '../lib/types';
 
 let installationChannel: InstallationChannel | null = null;
@@ -29,6 +29,16 @@ async function openPreparedConversation(connection: Awaited<ReturnType<typeof lo
   await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: prepared });
   await updateActiveServerConversation(browserContextId, prepared, isLegacyConversation(binding) ? binding : undefined);
   return openDurableConversation(connection, prepared.SessionKey, browserContextId);
+}
+
+async function ensureVisibleConversation(connection: Awaited<ReturnType<typeof loadConnection>> & {}, server: SavedBuffalyServer, browserContextId: string) {
+  const existing = conversationForContext(server, browserContextId) || conversationsForServer(server)[0];
+  if (existing) return openPreparedConversation(connection, existing, browserContextId);
+  const bootstrap = await createDurableConversation(connection, browserContextId, 'Chrome conversation');
+  const binding = conversationFromBootstrap(bootstrap);
+  await chrome.storage.local.set({ [ACTIVE_CONVERSATION_STORAGE_KEY]: binding });
+  await updateActiveServerConversation(browserContextId, binding);
+  return bootstrap;
 }
 
 function publishBrowserContexts(): void {
@@ -287,10 +297,8 @@ export default defineBackground(() => {
       Promise.all([loadConnection(), getActiveServer()])
         .then(async ([connection, server]) => {
           const browserContextId = String(request.browserContextId || '');
-          let binding = server ? conversationForContext(server, browserContextId) || undefined : undefined;
-          if (!connection || !binding) return null;
-          const bootstrap = await openPreparedConversation(connection, binding, browserContextId);
-          return bootstrap;
+          if (!connection || !server) return null;
+          return ensureVisibleConversation(connection, server, browserContextId);
         })
         .then((bootstrap) => sendResponse({ ok: true, data: bootstrap }))
         .catch((err: Error) => sendResponse({ ok: false, error: err.message }));
@@ -328,7 +336,6 @@ export default defineBackground(() => {
           const url = new URL('/web-modules/ExtensionBrowser/conversation', connection.Origin);
           url.searchParams.set('presentation', 'standard');
           url.searchParams.set('sessionKey', prepared.SessionKey);
-          url.searchParams.set('installationRegistrationId', prepared.InstallationRegistrationId);
           await chrome.tabs.create({ url: url.toString(), active: true });
           return { Opened: true };
         })
