@@ -99,3 +99,16 @@ prototype ToCreateCleanRootedDeploymentZipFromPublish : ReleaseOpsSkillAction
         return ReleaseOpsExtensionFacade.CreateCleanRootedDeploymentZipFromPublish(projectPath, requiredEntriesJson, outputZipPath, forbiddenPatternsJson, configuration, publishOutputPath, failOnForbidden, timeoutSeconds);
     }
 }
+
+[SemanticProgram.InfinitivePhrase("to validate HTTPS TLS certificate and deployment revision against ALB nodes")]
+[SemanticProgram.InfinitivePhrase("to validate tls against alb nodes")]
+[SemanticProgram.InfinitivePhrase("to verify a deployment revision on every alb node")]
+prototype ToValidateTlsAgainstAlbNodes : ReleaseOpsSkillAction
+{
+    Description = @"Read-only release cutover validation for an ALB-backed HTTPS site. Resolves the ALB DNS name, checks every resolved IP for every hostname using curl --resolve, verifies TLS, HTTP success, and the expected deployment revision marker, and returns structured JSON evidence.";
+
+    function Execute(string albDnsName, string hostnamesJson, string expectedRevision, string relativePath, int timeoutSeconds = 20) : string
+    {
+        return ReleaseOpsExtensionFacade.ValidateTlsAgainstAlbNodes(albDnsName, hostnamesJson, expectedRevision, relativePath, timeoutSeconds);
+    }
+}

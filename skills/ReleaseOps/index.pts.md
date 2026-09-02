@@ -21,3 +21,5 @@ Rebuilt the tracked skill-local `lib/Buffaly.ReleaseOps.Client.dll` from the aut
 ## 2026-09-02
 
 Promoted the reusable deployment ZIP artifact pattern from Online Action Critic session-local actions into ReleaseOps. Added `ToValidateDeploymentZipArtifact` and `ToCreateCleanRootedDeploymentZipFromPublish`, backed by typed C# helpers that create rootless deployment ZIPs from clean .NET publish output, validate required/forbidden/unsafe archive entries, compute SHA-256, and return structured JSON release evidence.
+
+Promoted the reusable ALB TLS/revision validation pattern from the `Affinity Web Cutover` Online Action Critic session-local action into ReleaseOps. Added `ToValidateTlsAgainstAlbNodes`, backed by typed C# validation that resolves ALB node IPs, checks each hostname/IP pair with `curl --resolve`, verifies TLS, HTTP success, and expected revision content, and returns structured JSON release-cutover evidence.
