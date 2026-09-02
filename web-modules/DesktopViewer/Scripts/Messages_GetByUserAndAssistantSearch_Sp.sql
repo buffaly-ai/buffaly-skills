@@ -1,6 +1,9 @@
 -- Combined user/assistant message content search for the Exact Message Search page.
 -- Recency windows and NOLOCK hints match 20260604_MessageSearchProcedures.sql.
 -- Empty @Search lists newest matching-role rows instead of throwing.
+-- Level 2 critic/guidance messages are excluded. SessionKey already skips companion
+-- level-two sessions; this also drops source-session rows that start with [label: Level 2].
+-- Use CHARINDEX, not LIKE: SQL Server LIKE treats [ as a character class.
 CREATE OR ALTER PROCEDURE [dbo].[Messages_GetByUserAndAssistantSearch_Sp]
     @Search nvarchar(255) = N'',
     @RoleFilter nvarchar(20) = N'both',
@@ -70,6 +73,8 @@ BEGIN
             )
             AND (@Search = N'' OR m.Content LIKE N'%' + @Search + N'%')
             AND s.SessionKey NOT LIKE N'%level-two%'
+            AND CHARINDEX(N'[label: Level 2]', LTRIM(m.Content)) <> 1
+            AND CHARINDEX(N'[timeline-label: Level 2]', LTRIM(m.Content)) <> 1
         ORDER BY
             m.MessageID DESC;
 
@@ -116,6 +121,8 @@ BEGIN
         WHERE
             (@Search = N'' OR m.Content LIKE N'%' + @Search + N'%')
             AND s.SessionKey NOT LIKE N'%level-two%'
+            AND CHARINDEX(N'[label: Level 2]', LTRIM(m.Content)) <> 1
+            AND CHARINDEX(N'[timeline-label: Level 2]', LTRIM(m.Content)) <> 1
         ORDER BY
             m.MessageID DESC
         OPTION (RECOMPILE);
@@ -142,11 +149,13 @@ BEGIN
         ON m.MessageID = rc.MessageID
     INNER JOIN dbo.Sessions s WITH (NOLOCK)
         ON s.SessionID = m.SessionID
-    WHERE
-        (@Search = N'' OR m.Content LIKE N'%' + @Search + N'%')
-        AND s.SessionKey NOT LIKE N'%level-two%'
-    ORDER BY
-        m.MessageID DESC
-    OPTION (RECOMPILE);
+        WHERE
+            (@Search = N'' OR m.Content LIKE N'%' + @Search + N'%')
+            AND s.SessionKey NOT LIKE N'%level-two%'
+            AND CHARINDEX(N'[label: Level 2]', LTRIM(m.Content)) <> 1
+            AND CHARINDEX(N'[timeline-label: Level 2]', LTRIM(m.Content)) <> 1
+        ORDER BY
+            m.MessageID DESC
+        OPTION (RECOMPILE);
 END;
 GO
