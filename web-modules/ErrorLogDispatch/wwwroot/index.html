@@ -1,9 +1,66 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Error Log Dispatch Settings</title><link rel="stylesheet" href="/web-modules/ErrorLogDispatch/static/settings.css"></head>
-<body><header><h1>Error Log Dispatch</h1><p>One deterministic diagnostic policy for local errors and remote alarms.</p></header><main>
-<section><h2>Overview & Configuration Health</h2><div id="health"></div><button id="refresh">Refresh</button></section>
-<section><h2>Shared Diagnostic Policy</h2><form id="shared"></form><button data-save="shared">Save shared policy</button></section>
-<section><h2>Local Error Logs</h2><form id="local"></form><button data-save="local">Save local settings</button></section>
-<section><h2>Remote Alarms</h2><form id="alarm"></form><button data-save="alarm">Save alarm settings</button></section>
-<section><h2>Diagnostic Guidance</h2><textarea id="guidance" rows="12"></textarea></section>
-<section><h2>Existing Owners / Migration</h2><p>Old owners are inventory-only. Normal dispatch never silently changes their identity.</p><div id="owners"></div></section><pre id="message" role="status"></pre></main><script src="/web-modules/ErrorLogDispatch/static/settings.js"></script></body></html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Error Log Dispatch Settings</title>
+	<link rel="stylesheet" href="/web-modules/ErrorLogDispatch/static/settings.css">
+</head>
+<body>
+	<main class="app-shell">
+		<header class="hero-card">
+			<div>
+				<p class="eyebrow">Buffaly Agent Operations</p>
+				<h1>Error Log Dispatch</h1>
+				<p class="hero-copy">Configure one deterministic diagnostic policy for local errors and remote alarms.</p>
+			</div>
+			<div class="hero-actions">
+				<span id="connectionBadge" class="status-badge loading">Loading</span>
+				<button id="refresh" type="button">Refresh</button>
+			</div>
+		</header>
+
+		<section class="page-card health-card">
+			<div class="section-header">
+				<div><p class="eyebrow">Runtime Readiness</p><h2>Overview &amp; Configuration Health</h2></div>
+			</div>
+			<div id="health" class="health-grid" aria-live="polite"></div>
+		</section>
+
+		<div class="settings-grid">
+			<section class="page-card settings-card featured-card">
+				<div class="section-header"><div><p class="eyebrow">Applied to all diagnostics</p><h2>Shared Diagnostic Policy</h2><p>Controls the agent identity, model, reasoning, and compaction policy used by deterministic dispatch.</p></div></div>
+				<form id="shared" class="field-grid"></form>
+				<div class="card-actions"><button class="primary" type="button" data-save="shared">Save shared policy</button></div>
+			</section>
+
+			<section class="page-card settings-card">
+				<div class="section-header"><div><p class="eyebrow">Scheduled local process</p><h2>Local Error Logs</h2><p>Controls polling, deduplication, and cooldown behavior for errors read from local disk.</p></div></div>
+				<form id="local" class="field-grid"></form>
+				<div class="card-actions"><button class="primary" type="button" data-save="local">Save local settings</button></div>
+			</section>
+
+			<section class="page-card settings-card">
+				<div class="section-header"><div><p class="eyebrow">Scheduled remote process</p><h2>Remote Alarms</h2><p>Controls polling, deduplication, and cooldown behavior for alarms received from the remote server.</p></div></div>
+				<form id="alarm" class="field-grid"></form>
+				<div class="card-actions"><button class="primary" type="button" data-save="alarm">Save alarm settings</button></div>
+			</section>
+		</div>
+
+		<section class="page-card guidance-card">
+			<div class="section-header"><div><p class="eyebrow">Diagnostic prompt context</p><h2>Diagnostic Guidance</h2><p>Additional bounded instructions supplied to every diagnostic owner.</p></div></div>
+			<label for="guidance" class="sr-only">Diagnostic guidance</label>
+			<textarea id="guidance" rows="12"></textarea>
+			<div class="card-actions"><button class="primary" type="button" data-save="shared">Save guidance and shared policy</button></div>
+		</section>
+
+		<section class="page-card owners-card">
+			<div class="section-header"><div><p class="eyebrow">Read-only inventory</p><h2>Existing Owners / Migration</h2><p>Old owners are inventory-only. Normal dispatch never silently changes their identity.</p></div></div>
+			<div id="owners" class="table-scroll"></div>
+		</section>
+
+		<div id="message" class="message" role="status" aria-live="polite">Loading configuration…</div>
+	</main>
+	<script src="/web-modules/ErrorLogDispatch/static/settings.js"></script>
+</body>
+</html>
