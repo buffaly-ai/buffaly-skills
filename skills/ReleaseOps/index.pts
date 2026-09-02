@@ -75,3 +75,27 @@ prototype ToExtractInstallerBuildEvidence : ReleaseOpsSkillAction
         return ReleaseOpsExtensionFacade.GetInstallerBuildEvidence(buildId);
     }
 }
+
+[SemanticProgram.InfinitivePhrase("to validate a deployment zip artifact")]
+[SemanticProgram.InfinitivePhrase("to inspect a deployment package for forbidden files")]
+prototype ToValidateDeploymentZipArtifact : ReleaseOpsSkillAction
+{
+    Description = @"Validates one deployment ZIP before release use. requiredEntriesJson and forbiddenPatternsJson are JSON string arrays. Default forbidden patterns reject configs, database files, backups, certificates/keys, logs, and artifacts/ entries. Returns structured JSON with SHA-256, entries, and failure reasons.";
+
+    function Execute(string zipFilePath, string requiredEntriesJson = "[]", string forbiddenPatternsJson = "", bool failOnForbidden = true) : string
+    {
+        return ReleaseOpsExtensionFacade.ValidateDeploymentZipArtifact(zipFilePath, requiredEntriesJson, forbiddenPatternsJson, failOnForbidden);
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to create a clean rooted deployment zip from dotnet publish output")]
+[SemanticProgram.InfinitivePhrase("to package a dotnet project for deployment")]
+prototype ToCreateCleanRootedDeploymentZipFromPublish : ReleaseOpsSkillAction
+{
+    Description = @"Publishes a .NET project to a clean folder, creates a rootless deployment ZIP, validates required and forbidden archive entries, computes SHA-256, and returns structured JSON evidence. Uses safe process arguments instead of shell interpolation.";
+
+    function Execute(string projectPath, string requiredEntriesJson, string outputZipPath, string forbiddenPatternsJson = "", string configuration = "Release", string publishOutputPath = "", bool failOnForbidden = true, int timeoutSeconds = 180) : string
+    {
+        return ReleaseOpsExtensionFacade.CreateCleanRootedDeploymentZipFromPublish(projectPath, requiredEntriesJson, outputZipPath, forbiddenPatternsJson, configuration, publishOutputPath, failOnForbidden, timeoutSeconds);
+    }
+}

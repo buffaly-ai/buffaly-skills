@@ -17,3 +17,7 @@ Promoted source-local extension-operation waiting into `ToWaitForExtensionOperat
 ## 2026-08-13
 
 Rebuilt the tracked skill-local `lib/Buffaly.ReleaseOps.Client.dll` from the authoritative Release client source after installer submission gained immutable extension-preflight binding. The executable payload now reads the ready preflight snapshot and posts its exact `extensionPreflightToken`; source updates are not delivered until this tracked DLL is rebuilt and committed with them.
+
+## 2026-09-02
+
+Promoted the reusable deployment ZIP artifact pattern from Online Action Critic session-local actions into ReleaseOps. Added `ToValidateDeploymentZipArtifact` and `ToCreateCleanRootedDeploymentZipFromPublish`, backed by typed C# helpers that create rootless deployment ZIPs from clean .NET publish output, validate required/forbidden/unsafe archive entries, compute SHA-256, and return structured JSON release evidence.
