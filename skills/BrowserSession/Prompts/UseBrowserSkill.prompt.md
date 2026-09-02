@@ -42,7 +42,7 @@ Use `ToRunBrowserScript` only when you specifically need JavaScript evaluated in
 
 ## Secret handling
 
-Use `ToGetUserSecret` to obtain a `StringRef` secret handle. Pass that value directly to `ToFillBrowserSelectorWithSecret`; ProtoScript materializes it at the typed `string` C# boundary expected by the redacted browser helper. Do not manually materialize, print, log, serialize, or place passwords into command-line arguments or script text.
+Use `ToGetUserSecret` to obtain a `StringRef` secret handle. Pass that value directly to `ToFillBrowserSelectorWithSecret`; the BrowserSession wrapper explicitly materializes the `StringRef` before invoking the redacted C# browser helper. Do not manually materialize, print, log, serialize, or place passwords into command-line arguments or script text.
 
 Correct pattern:
 
@@ -51,4 +51,4 @@ passwordRef = ToGetUserSecret(secretKey)
 ToFillBrowserSelectorWithSecret(subAgentId, "input[type=password]", passwordRef, 15000)
 ```
 
-The secret materializes only at the typed action boundary and the browser action returns redacted metadata.
+The secret materializes only inside the typed BrowserSession secret-fill wrapper and the browser action returns redacted metadata.

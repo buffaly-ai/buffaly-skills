@@ -238,11 +238,12 @@ prototype ToRunPlaywrightScript : PlaywrightBrowserSkillAction
 [SemanticProgram.InfinitivePhrase("to type a secret into a browser password field")]
 prototype ToFillBrowserSelectorWithSecret : BrowserSessionSkillAction
 {
-	Description = @"Fills a browser selector with a StringRef secret without returning or logging the secret. The C# helper resolves StringRef handles at the browser secret-fill boundary and fails closed if resolution is unavailable. Returns redacted JSON only.";
+	Description = @"Fills a browser selector with a StringRef secret without returning or logging the secret. The ProtoScript wrapper explicitly materializes the StringRef before calling the C# string helper; the helper still fails closed if an unresolved handle reaches it. Returns redacted JSON only.";
 
 	function Execute(string subAgentId, string selector, StringRef secretValue, int timeoutMs = 15000) : string
 	{
-		return BrowserSessionTools.FillBrowserSelectorWithSecret(_opsAgent, subAgentId, selector, secretValue, timeoutMs);
+		string materializedSecret = MaterializeBrowserSecretValue(secretValue);
+		return BrowserSessionTools.FillBrowserSelectorWithSecret(_opsAgent, subAgentId, selector, materializedSecret, timeoutMs);
 	}
 }
 
@@ -250,10 +251,16 @@ prototype ToFillBrowserSelectorWithSecret : BrowserSessionSkillAction
 [SemanticProgram.InfinitivePhrase("to type a secret into a browser password input")]
 prototype ToFillBrowserPasswordWithSecret : BrowserSessionSkillAction
 {
-	Description = @"Fills a browser password field with a StringRef secret without returning or logging the secret. The C# helper resolves StringRef handles at the browser secret-fill boundary and fails closed if resolution is unavailable. selector defaults to input[type=password]. Returns redacted JSON only.";
+	Description = @"Fills a browser password field with a StringRef secret without returning or logging the secret. The ProtoScript wrapper explicitly materializes the StringRef before calling the dedicated C# password helper; the helper still fails closed if an unresolved handle reaches it. selector defaults to input[type=password]. Returns redacted JSON only.";
 
 	function Execute(string subAgentId, StringRef secretValue, string selector = "input[type=password]", int timeoutMs = 15000) : string
 	{
-		return BrowserSessionTools.FillBrowserSelectorWithSecret(_opsAgent, subAgentId, selector, secretValue, timeoutMs);
+		string materializedSecret = MaterializeBrowserSecretValue(secretValue);
+		return BrowserSessionTools.FillBrowserPasswordWithSecret(_opsAgent, subAgentId, selector, materializedSecret, timeoutMs);
 	}
+}
+
+function MaterializeBrowserSecretValue(StringRef value) : string
+{
+	return value;
 }
