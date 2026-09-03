@@ -216,9 +216,9 @@ prototype ToEnrichPharmacyLeadSkill : ValidatedPromptAction, MarketingWebsiteSal
 [SemanticEntity("create pharmacy growth proposal deck, build pharmacy pitch deck, FairPath pharmacy proposal, lead proposal deck")]
 prototype ToCreatePharmacyGrowthProposalDeckSkill : ValidatedPromptAction, MarketingWebsiteSalesSkillAction
 {
-	Description = "Create an independently validated, image-backed Intelligence Factory / FairPath growth proposal deck by default, with an explicit ClearSpanPartner mode for partner presentations. Accepts a Feeding Frenzy LeadID (preferred) or company name with optional website URL; resolves the official website when missing, internally runs or reuses the validated website opportunity audit only for confirmed official websites, and uses verified public profiles when no official site is found. Routes the story by prospect type, size, website maturity, social proof, reputation, pharmacy/healthcare fit, and remote-care fit; removes inapplicable independent-pharmacy assumptions instead of blocking the workflow; and preserves evidence, arithmetic, caveats, and fit limits in the supporting artifacts. Uses one of two packaged, Remote-Care-first 16-slide presenter templates selected by PresenterMode, including implementation notes, machine-readable slide contract, bundled assets, website visuals, and a remote-care-general 90-day proof-period slide; delivers validated artifacts to the session.";
+	Description = "Create a pharmacy growth proposal deck through a constrained workbench template-package workflow. Accepts a Feeding Frenzy LeadID (preferred) or company name with optional website URL; checks a real template package with HTML, CSS, assets, slots, branch rules, static regions, and builder contract; researches only declared slot values; chooses official-site, no-functioning-site, or unconfirmed-site branch; writes deck-fill.json and build-request.json; and relies on the deterministic builder for final HTML/PDF instead of model-authored deck reconstruction.";
 	SkillKind = "validated-prompt";
-	SkillVersion = "3.8.0";
+	SkillVersion = "5.0.0";
 	ValidatedPromptActionName = "ToCreatePharmacyGrowthProposalDeckSkill";
 	IsPromptAction = true;
 	PromptPath = @"Skills/MarketingWebsiteSales/Prompts/CreatePharmacyGrowthProposalDeck.work.prompt.md";
