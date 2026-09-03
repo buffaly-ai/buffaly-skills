@@ -1,4 +1,4 @@
-# Create Pharmacy Growth Proposal Deck — Workflow-Based Prompt Skill v3
+# Create Pharmacy Growth Proposal Deck - Workflow-Based Prompt Skill v3
 
 ## Role
 
@@ -264,7 +264,7 @@ The deterministic builder creates:
 9. final PDF
 10. `build-report.json`
 
-## Step 1 — `run-input.json`
+## Step 1 - `run-input.json`
 
 Create normalized job input.
 
@@ -295,7 +295,7 @@ Rules:
 - If `templatePackagePath` is missing, use the configured default package path from the skill/workbench.
 - Do not infer a website as official without evidence.
 
-## Step 2 — `template-package-check.json`
+## Step 2 - `template-package-check.json`
 
 Inspect the template package before research or fill work.
 
@@ -327,7 +327,7 @@ Create:
 
 If `complete` is false, stop. Do not produce `deck-fill.json`.
 
-## Step 3 — Minimal Research
+## Step 3 - Minimal Research
 
 Research only fields declared in `slots.json`.
 
@@ -382,7 +382,7 @@ Create `lead-profile.json`:
 }
 ```
 
-## Step 4 — `branch-decision.json`
+## Step 4 - `branch-decision.json`
 
 Create a branch decision that matches `branch-rules.json`.
 
@@ -408,7 +408,7 @@ Branch rules:
 
 Modifiers change wording only. They do not change slide count/order/layout.
 
-## Step 5 — `deck-fill.json`
+## Step 5 - `deck-fill.json`
 
 Produce one fill sheet using the exact slots declared in `slots.json`.
 
@@ -476,7 +476,7 @@ The physical template owns the actual copy/layout. These semantics are here only
 
 ## Branch-Sensitive Slides
 
-### Slides 10–13: Official Site Branch
+### Slides 10-13: Official Site Branch
 
 Use this branch only for confirmed official websites.
 
@@ -493,7 +493,7 @@ Forbidden:
 - unsupported score,
 - broad redesign claim unless the template/slots allow it and evidence supports it.
 
-### Slides 10–13: No Functioning Site Branch
+### Slides 10-13: No Functioning Site Branch
 
 Use for inactive/broken/no-site/public-profile-only prospects.
 
@@ -515,7 +515,7 @@ Forbidden:
 - redesign language,
 - crawl/architecture findings.
 
-### Slides 10–13: Unconfirmed Site Branch
+### Slides 10-13: Unconfirmed Site Branch
 
 Use for candidate site with uncertain ownership/control.
 
@@ -532,7 +532,7 @@ Forbidden:
 - redesign recommendation,
 - criticism of the candidate site as if it is theirs.
 
-## Step 6 — `build-request.json`
+## Step 6 - `build-request.json`
 
 Create:
 
