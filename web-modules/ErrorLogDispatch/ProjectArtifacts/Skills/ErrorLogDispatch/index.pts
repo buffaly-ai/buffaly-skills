@@ -23,7 +23,7 @@ prototype ToGetErrorDispatchSession : ErrorLogDispatchSkillAction, DispatchAgent
 {
 	Description = @"Resolve or create one dedicated diagnostic owner, apply and verify the no-companion ErrorDiagnostic policy with ResetOnLimit, persist ErrorSession or AlarmSession on the exact Dispatch node, and read it back.";
 
-	function Execute(string parentSessionKey, string dispatchNodePrototypeName, string attachmentName, string childSessionKey, string evaluationScope = "Live", string provider = "ollama", string modelName = "glm-5.2", string reasoningLevel = "medium") : ErrorDispatchSessionReceipt
+	function Execute(string parentSessionKey, string dispatchNodePrototypeName, string attachmentName, string childSessionKey, string evaluationScope = "Live") : ErrorDispatchSessionReceipt
 	{
 		ErrorDispatchSessionRequest request = new ErrorDispatchSessionRequest();
 		request.ParentSessionKey = parentSessionKey;
@@ -31,9 +31,6 @@ prototype ToGetErrorDispatchSession : ErrorLogDispatchSkillAction, DispatchAgent
 		request.AttachmentName = attachmentName;
 		request.ChildSessionKey = childSessionKey;
 		request.EvaluationScope = evaluationScope;
-		request.Provider = provider;
-		request.ModelName = modelName;
-		request.ReasoningLevel = reasoningLevel;
 		return ErrorDispatchFacade.GetSession(_runtime, _opsAgent, request);
 	}
 }
