@@ -19194,7 +19194,7 @@
       "PackageType": "WebModule",
       "Title": "OpenRouter Catalog",
       "Description": "Buffaly Web Module package for OpenRouter Catalog.",
-      "Version": "0.1.9",
+      "Version": "0.1.10",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/OpenRouterCloud",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/OpenRouterCloud",
@@ -19217,11 +19217,11 @@
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "ba5521b351f7c25440f03d8ec1aae0e2c4318de126fbe736efd1dfb969b83941"
+          "Sha256": "d75c3651e6970bdff7d2505178953ea708c5d225536e4b0364c56ac371c74fa8"
         },
         {
           "Path": "Buffaly.Agent.Tools.Secrets.dll",
-          "Sha256": "e8789b723c12fd60ff48428bd31e278e33189d78c4b1ad260ce11010cde060bf"
+          "Sha256": "2426432921a26c079dd059aab13667c1785ba6969e5fb5cce49253e16c527472"
         },
         {
           "Path": "Buffaly.Common.dll",
@@ -19233,11 +19233,11 @@
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "da1a4b464d87a8151e206596032277bdda592adfa9b648a2c22453dc469be456"
+          "Sha256": "ed7844dd60ac66ffc6dcc0c9e87be84f272192818f6e5b9d272ac237b717ef1e"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "26e769260e55233d28579e824b93278235e81194cfefed0aca545ddf7200f8bc"
+          "Sha256": "8dcb5b274558d310b4734cddce3acc87e4262f8938d727f3a51ff83447d33992"
         },
         {
           "Path": "Buffaly.Provider.OpenRouter.Web.deps.json",
@@ -19245,11 +19245,11 @@
         },
         {
           "Path": "Buffaly.Provider.OpenRouter.Web.dll",
-          "Sha256": "cf4978d8bdd13b3898287961958cbc72ce42467b95007316abd7e9c746ee32c0"
+          "Sha256": "f29fe0e4a83487440c13910d38fdc08491a1626062b68b0ed49b97582ff8ea36"
         },
         {
           "Path": "Buffaly.Provider.OpenRouter.Web.exe",
-          "Sha256": "ac5b823a4cc844f423e58aef5b9f2800b050854ccb39e6a00d22017a35f76277"
+          "Sha256": "ca80fca8da8228d3fb5ac81c5af6f54fdfc4fe8308552e988dff85220b11c852"
         },
         {
           "Path": "Buffaly.Provider.OpenRouter.Web.runtimeconfig.json",
@@ -19257,7 +19257,7 @@
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "44d4f19bc6dc9210db7714577c9c5bb672e0ceaf38f56633d937fd7a8462da35"
+          "Sha256": "0d11522d98d28bde53d4ec3a868261cac59dac68a21d646e4b20a2ab22bc547c"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -19793,7 +19793,7 @@
         },
         {
           "Path": "Scripts/Messages_GetByUserAndAssistantSearch_Sp.sql",
-          "Sha256": "0a386aefea88ba9e32a537d0b82fc9ae940efaa1b000f2294e2cbea63c70065c"
+          "Sha256": "096009cf13e4b2a87559cc3db269af9b655b3289b539777b0576ca1e111c772b"
         },
         {
           "Path": "Scripts/Messages_GetCountBySessionID_Sp.sql",
@@ -19880,8 +19880,16 @@
           "Sha256": "6c4b83ecacfff3c946f6e0ff52eeb0526c34e43beeb8c9bb10335820096d02a0"
         },
         {
+          "Path": "Scripts/Sessions_GetSidebarRecentPageSp.sql",
+          "Sha256": "b1a69bde5305d5aecac71baee224511af48656d492ba2fa65202acd9253c86ab"
+        },
+        {
           "Path": "Scripts/Sessions_GetSidebarRootPageSp.sql",
-          "Sha256": "c4b7820e34f4359463d76f07f45df46572f4595fba251e33801f36484f49f989"
+          "Sha256": "c537bdcf4818df7053c54e656b2272ba9d9a6332c7d2a9146368a035b6f344d6"
+        },
+        {
+          "Path": "Scripts/Sessions_GetSidebarSelectedBranchSp.sql",
+          "Sha256": "d6eeb4173e66112cfd560db654e3e29569f11231a75a8ad14b1aa676014f4d72"
         },
         {
           "Path": "Scripts/Sessions_ResetRunningRuntimeStatusOnWebStartupSp.sql",
