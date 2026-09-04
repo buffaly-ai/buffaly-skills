@@ -109,6 +109,8 @@ BEGIN
 	INNER JOIN sessions s ON s.session_id = r."SessionID"
 	WHERE
 		s.session_key NOT LIKE '%level-two%'
+		AND LTRIM(r."Content") NOT ILIKE '[label: Level 2]%'
+		AND LTRIM(r."Content") NOT ILIKE '[timeline-label: Level 2]%'
 		AND (
 			(v_scope = 'all' AND (
 				(v_role = 'both' AND r."Role" IN ('user', 'assistant'))
