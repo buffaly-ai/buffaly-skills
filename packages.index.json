@@ -476,10 +476,10 @@
       "PackageType": "ProviderModule",
       "Title": "LlamaCpp Provider",
       "Description": "Buffaly Provider Module package for LlamaCpp Provider.",
-      "Version": "0.1.23",
+      "Version": "0.1.24",
       "PackageKind": "BuffalyProviderModule",
       "SourcePath": "provider-modules/Buffaly.Provider.LlamaCpp",
-      "SourceUrl": "",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/provider-modules/Buffaly.Provider.LlamaCpp",
       "Phrases": [
         "LlamaCpp Provider",
         "Buffaly.Provider.LlamaCpp"
@@ -495,23 +495,23 @@
         },
         {
           "Path": "BasicUtilities.dll",
-          "Sha256": "754e2de1ec26d43288c70d8dd72b139b4af9f5a04eea3a1b0dbf3a7788e7341b"
+          "Sha256": "b6956ee01254e2d35746ff4a8a8a8e880542044dbbd064ed02c3d8556501fe84"
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "80fb8605af3e0a2bbe2b92103aa4df714b9bed25d98f60917b9bf01a8d8db976"
+          "Sha256": "dd84e43d2b94508a719758c5ce4bf92c78c7d22bd0bced403818d6880243dfba"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "7b3c203d1baa996212ab8174631a884667f8f976660c607fd48ac508bc11f2db"
+          "Sha256": "014d169fd2148e8502e67d97de8f05fb43a194f9e88797d98690e8048eeb4913"
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "6da3a3839022ee8b57a96a1919a876274e4f4900d6a642f72396f912f55d7465"
+          "Sha256": "f86eb1167bf2c15acec222a679460f2ac50b8d58a2cce8b862459c212812eee4"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "ab841a18a39702f7c0969ae0dc1ba440f92e2602219ef0bed7ab77cd91aa7570"
+          "Sha256": "493ff6f1d17dc510b54410ddeeaf0dffa2acd608d9de0cde2577f18380431079"
         },
         {
           "Path": "Buffaly.Provider.LlamaCpp.deps.json",
@@ -519,15 +519,15 @@
         },
         {
           "Path": "Buffaly.Provider.LlamaCpp.dll",
-          "Sha256": "65867b96f6591a431456596dc940134d410ad59441b18291390e0114dc01ba65"
+          "Sha256": "015ded66983e4c987067e08d39d55a13ca2b885c42c23cea4c87fd744fa7d1b5"
         },
         {
           "Path": "Buffaly.ProviderContracts.dll",
-          "Sha256": "37c450d7b8f6c11f3d4e249b2c7be6e92acc1945c7b1c0904cd80076a9dbc62f"
+          "Sha256": "5fd02356049cf72797616f2c3ee591df61e466e1c283586daa0e853f1db949e8"
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "a244df1791e04d7b15cfd7a68e16f33f1c6f641333d3d4af969d816c559ae5cf"
+          "Sha256": "1019736b41a96375d13cc584b5c09e841f32fe63d818eaa58364a288c375ced9"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -647,15 +647,15 @@
         },
         {
           "Path": "RooTrax.Cache.dll",
-          "Sha256": "80b98dcc2b3a4ce1ce56f8a256be9538454da015bc696dfd5be370896d463836"
+          "Sha256": "e5a7b4592391aa4b6024f7ac0a0c2ae5625d34d402937dfc7c5b246686d52f6d"
         },
         {
           "Path": "RooTrax.Common.DB.dll",
-          "Sha256": "61fe4e2476656beb2741c383e609c9dfc07def38120a524fe30a3f433d42454b"
+          "Sha256": "4db556349e0ed630a32e819af6730c53bf57ce701bb9171fc565fb057e3a3919"
         },
         {
           "Path": "RooTrax.Common.dll",
-          "Sha256": "928a1656eeab07834a8069c1e956b8e37bca04bfcf63de02f4f6223d20f4d5d8"
+          "Sha256": "1f4f24e15ca323fdeb7c6d52e6cc3d7c397726ae8a597e2c22c23795a15f7201"
         },
         {
           "Path": "runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll",
@@ -719,7 +719,7 @@
         },
         {
           "Path": "Scripts/Deploy_Sessions_GetAll_And_Archived.sql",
-          "Sha256": "6b6ba0d5b64a2e2062b2534bc8d70aef086a924036236bf1e7c03546ad94d4b6"
+          "Sha256": "84d3b773d3e2b78eb44f76dd9914434ef9dd2937e38b110b2b684ea534c76a87"
         },
         {
           "Path": "Scripts/Embeddings.sql",
@@ -1066,6 +1066,10 @@
           "Sha256": "30bf57a72e83a79e5c2012cf3c433e8ac3804c121fd32db7e701e835421f44cc"
         },
         {
+          "Path": "Scripts/Messages_GetByUserAndAssistantSearch_Sp.sql",
+          "Sha256": "096009cf13e4b2a87559cc3db269af9b655b3289b539777b0576ca1e111c772b"
+        },
+        {
           "Path": "Scripts/Messages_GetCountBySessionID_Sp.sql",
           "Sha256": "eec248a79261970b2a769d27eb85ff8ec308e59eb0ddd119aafbb98e9d56334a"
         },
@@ -1135,7 +1139,7 @@
         },
         {
           "Path": "Scripts/Sessions_GetAll_Sp_PagingSp.sql",
-          "Sha256": "58ee9c329df893a1ca4a70d0c2d2a2486fbfd81116d98900d804dff0837a42f5"
+          "Sha256": "39996ccd0c5b201ea6bf4f26a453a537cd8e69ce0c29321167b9c618f18b3f29"
         },
         {
           "Path": "Scripts/Sessions_GetArchivedSp_Sp.sql",
@@ -1150,8 +1154,16 @@
           "Sha256": "6c4b83ecacfff3c946f6e0ff52eeb0526c34e43beeb8c9bb10335820096d02a0"
         },
         {
+          "Path": "Scripts/Sessions_GetSidebarRecentPageSp.sql",
+          "Sha256": "b1a69bde5305d5aecac71baee224511af48656d492ba2fa65202acd9253c86ab"
+        },
+        {
           "Path": "Scripts/Sessions_GetSidebarRootPageSp.sql",
-          "Sha256": "c4b7820e34f4359463d76f07f45df46572f4595fba251e33801f36484f49f989"
+          "Sha256": "f0331bf9af3be2e86b4206ce88c97ec03e7204a30435073cbd9e1f71705d9730"
+        },
+        {
+          "Path": "Scripts/Sessions_GetSidebarSelectedBranchSp.sql",
+          "Sha256": "d6eeb4173e66112cfd560db654e3e29569f11231a75a8ad14b1aa676014f4d72"
         },
         {
           "Path": "Scripts/Sessions_ResetRunningRuntimeStatusOnWebStartupSp.sql",
