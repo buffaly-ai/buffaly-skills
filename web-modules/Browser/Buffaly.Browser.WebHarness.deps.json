@@ -19,6 +19,25 @@
           "Buffaly.Browser.WebHarness.dll": {}
         }
       },
+      "Acornima/1.1.0": {
+        "runtime": {
+          "lib/net8.0/Acornima.dll": {
+            "assemblyVersion": "1.1.0.0",
+            "fileVersion": "1.1.0.0"
+          }
+        }
+      },
+      "Jint/4.1.0": {
+        "dependencies": {
+          "Acornima": "1.1.0"
+        },
+        "runtime": {
+          "lib/net8.0/Jint.dll": {
+            "assemblyVersion": "4.1.0.0",
+            "fileVersion": "4.0.0.0"
+          }
+        }
+      },
       "Microsoft.Bcl.AsyncInterfaces/6.0.0": {
         "runtime": {
           "lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll": {
@@ -66,6 +85,7 @@
       },
       "Buffaly.Browser.Runtime/1.0.0": {
         "dependencies": {
+          "Jint": "4.1.0",
           "Microsoft.Playwright": "1.52.0"
         },
         "runtime": {
@@ -338,6 +358,20 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "Acornima/1.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-MFK/GNp09PF8H6uSkAZght553TddOejD9P1InvKWlGw6ILhmZjI+Y2xiIjGoJ73sbkeZzxwnCWZioK5Wed/J2g==",
+      "path": "acornima/1.1.0",
+      "hashPath": "acornima.1.1.0.nupkg.sha512"
+    },
+    "Jint/4.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-4PzK4dTMOkS7NarKpAGmj3TMdlAUJ+V7w03usuLA4+ETqZnM6lt/bFlZXTtrOhLn32tjqoO803SzTMIv27EgYw==",
+      "path": "jint/4.1.0",
+      "hashPath": "jint.4.1.0.nupkg.sha512"
     },
     "Microsoft.Bcl.AsyncInterfaces/6.0.0": {
       "type": "package",
