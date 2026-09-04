@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "template-manifest/v1",
+  "templateId": "pharmacy-growth-proposal-v5",
+  "templateVersion": "1.0.0",
+  "sourceTemplate": "reference-packet-template/index.html",
+  "slideCount": 16,
+  "entryHtml": "index.html",
+  "stylesheets": [
+    "styles.css",
+    "print.css"
+  ],
+  "slots": "slots.json",
+  "branchRules": "branch-rules.json",
+  "staticRegions": "static-regions.json",
+  "builderContract": "builder-contract.json",
+  "builder": "build_deck.py",
+  "assetsRoot": "assets"
+}

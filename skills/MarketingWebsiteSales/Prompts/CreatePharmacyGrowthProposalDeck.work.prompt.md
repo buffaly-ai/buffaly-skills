@@ -275,7 +275,7 @@ Create normalized job input.
   "state": "",
   "knownWebsite": null,
   "knownNotes": "",
-  "templatePackagePath": "",
+  "templatePackagePath": "Skills/MarketingWebsiteSales/Templates/pharmacy-growth-proposal-v5",
   "salesRep": {
     "name": "Justin Brochetti",
     "email": "",
@@ -303,7 +303,7 @@ Create:
 
 ```json
 {
-  "templatePackagePath": "",
+  "templatePackagePath": "Skills/MarketingWebsiteSales/Templates/pharmacy-growth-proposal-v5",
   "templateId": "",
   "templateVersion": "",
   "complete": true,
@@ -437,11 +437,20 @@ Base shape:
     "state": "",
     "website": null
   },
+  "global": {
+    "pharmacy_name": "",
+    "year": "",
+    "contact_name": "",
+    "contact_title": "",
+    "market_name": "",
+    "sales_rep_name": "Justin Brochetti",
+    "sales_rep_email": ""
+  },
   "branchDecisionRef": "branch-decision.json",
   "slides": {},
   "evidenceBindings": [
     {
-      "fieldPath": "slides.10.proof_caption",
+      "fieldPath": "slides.02.remote_care_revenue_opportunity",
       "evidenceIds": ["ev-001"],
       "claimType": "observed_fact | local_context | calculated_example | caveat | sales_copy"
     }
@@ -449,7 +458,7 @@ Base shape:
 }
 ```
 
-The `slides` object must be generated from `slots.json`.
+The `global` and `slides` objects must be generated from `slots.json`. Global slots apply wherever repeated prospect or presenter fields appear across the template.
 
 ## Required Slide Semantics
 
@@ -538,7 +547,7 @@ Create:
 
 ```json
 {
-  "templatePackagePath": "",
+  "templatePackagePath": "Skills/MarketingWebsiteSales/Templates/pharmacy-growth-proposal-v5",
   "templateId": "pharmacy-growth-proposal-v5",
   "templateVersion": "1.0.0",
   "deckFillPath": "deck-fill.json",
@@ -589,3 +598,5 @@ Report:
 Do not paste the deck.
 Do not describe new layout ideas.
 Do not claim completion if the physical template package was missing or incomplete.
+
+

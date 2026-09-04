@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "builder-contract/v1",
+  "templateId": "pharmacy-growth-proposal-v5",
+  "input": {
+    "deckFill": "deck-fill.json",
+    "branchDecision": "branch-decision.json"
+  },
+  "output": {
+    "html": "dist/index.html",
+    "pdf": "dist/pharmacy-growth-proposal.pdf",
+    "buildReport": "dist/build-report.json"
+  },
+  "checks": [
+    "templatePackageComplete",
+    "slotCoverage",
+    "noUnknownSlots",
+    "staticRegionsUnchanged",
+    "branchRulesApplied",
+    "slideCount16",
+    "pdfPageCount16",
+    "assetsResolve"
+  ]
+}

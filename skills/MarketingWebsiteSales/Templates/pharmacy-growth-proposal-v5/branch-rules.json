@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "branch-rules/v1",
+  "templateId": "pharmacy-growth-proposal-v5",
+  "websiteBranches": {
+    "official_site": {
+      "allowedRegions": [
+        "official_site",
+        "all"
+      ],
+      "hiddenRegions": [
+        "no_functioning_site",
+        "unconfirmed_site"
+      ],
+      "forbiddenTerms": []
+    },
+    "no_functioning_site": {
+      "allowedRegions": [
+        "no_functioning_site",
+        "all"
+      ],
+      "hiddenRegions": [
+        "official_site",
+        "unconfirmed_site"
+      ],
+      "forbiddenTerms": [
+        "website score",
+        "redesign",
+        "crawl",
+        "site architecture",
+        "current-site audit"
+      ]
+    },
+    "unconfirmed_site": {
+      "allowedRegions": [
+        "unconfirmed_site",
+        "all"
+      ],
+      "hiddenRegions": [
+        "official_site",
+        "no_functioning_site"
+      ],
+      "forbiddenTerms": [
+        "official website",
+        "website score",
+        "redesign"
+      ]
+    }
+  },
+  "branchSensitiveSlides": [
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13"
+  ]
+}

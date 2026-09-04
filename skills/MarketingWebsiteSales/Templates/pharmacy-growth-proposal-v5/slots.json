@@ -1,0 +1,433 @@
+{
+  "schemaVersion": "deck-slots/v1",
+  "templateId": "pharmacy-growth-proposal-v5",
+  "templateVersion": "1.0.0",
+  "global": {
+    "pharmacy_name": {
+      "type": "text",
+      "required": true,
+      "maxChars": 80,
+      "dataSlot": "global.pharmacy_name",
+      "description": "Prospect pharmacy or organization name",
+      "evidenceRequired": false
+    },
+    "year": {
+      "type": "text",
+      "required": true,
+      "maxChars": 4,
+      "dataSlot": "global.year",
+      "description": "Presentation year",
+      "evidenceRequired": false
+    },
+    "contact_name": {
+      "type": "text",
+      "required": false,
+      "maxChars": 80,
+      "dataSlot": "global.contact_name",
+      "description": "Prospect contact name",
+      "evidenceRequired": false
+    },
+    "contact_title": {
+      "type": "text",
+      "required": false,
+      "maxChars": 80,
+      "dataSlot": "global.contact_title",
+      "description": "Prospect contact title",
+      "evidenceRequired": false
+    },
+    "market_name": {
+      "type": "text",
+      "required": true,
+      "maxChars": 80,
+      "dataSlot": "global.market_name",
+      "description": "Primary market/city name",
+      "evidenceRequired": false
+    },
+    "sales_rep_name": {
+      "type": "text",
+      "required": true,
+      "maxChars": 80,
+      "dataSlot": "global.sales_rep_name",
+      "description": "Sales representative name",
+      "evidenceRequired": false
+    },
+    "sales_rep_email": {
+      "type": "text",
+      "required": false,
+      "maxChars": 120,
+      "dataSlot": "global.sales_rep_email",
+      "description": "Sales representative email",
+      "evidenceRequired": false
+    }
+  },
+  "slides": {
+    "02": {
+      "changeLevel": "slot_fill",
+      "slots": {
+        "remote_care_revenue_opportunity": {
+          "type": "text",
+          "required": true,
+          "maxChars": 260,
+          "dataSlot": "s02.remote_care_revenue_opportunity",
+          "description": "Remote care revenue opportunity card copy",
+          "evidenceRequired": true
+        },
+        "website_and_local_discovery_opportunity": {
+          "type": "text",
+          "required": true,
+          "maxChars": 260,
+          "dataSlot": "s02.website_and_local_discovery_opportunity",
+          "description": "Website/local discovery opportunity card copy",
+          "evidenceRequired": true
+        },
+        "automation_and_platform_value": {
+          "type": "text",
+          "required": true,
+          "maxChars": 260,
+          "dataSlot": "s02.automation_and_platform_value",
+          "description": "Automation/platform value card copy",
+          "evidenceRequired": false
+        }
+      }
+    },
+    "06": {
+      "changeLevel": "slot_fill",
+      "slots": {
+        "county_or_service_area": {
+          "type": "text",
+          "required": false,
+          "maxChars": 80,
+          "dataSlot": "s06.county_or_service_area",
+          "description": "County or service-area label",
+          "evidenceRequired": true
+        }
+      }
+    },
+    "13": {
+      "changeLevel": "branch_fill",
+      "slots": {
+        "pharmacy_address": {
+          "type": "text",
+          "required": false,
+          "maxChars": 140,
+          "dataSlot": "s13.pharmacy_address",
+          "description": "Prospect address used in competitor/source comparison",
+          "evidenceRequired": true
+        },
+        "competitor_market_1": {
+          "type": "text",
+          "required": false,
+          "maxChars": 80,
+          "dataSlot": "s13.competitor_market_1",
+          "description": "Nearby competitor market label",
+          "evidenceRequired": true
+        },
+        "comparison_lead": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 300,
+          "dataSlot": "s13.comparison_lead",
+          "description": "Slide 13 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "prospect_observed_action": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 300,
+          "dataSlot": "s13.prospect_observed_action",
+          "description": "Slide 13 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "independent_comparison_body": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 300,
+          "dataSlot": "s13.independent_comparison_body",
+          "description": "Slide 13 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "chain_comparison_body": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 300,
+          "dataSlot": "s13.chain_comparison_body",
+          "description": "Slide 13 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "win_body": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 360,
+          "dataSlot": "s13.win_body",
+          "description": "Slide 13 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "sources_checked": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 360,
+          "dataSlot": "s13.sources_checked",
+          "description": "Slide 13 branch-safe copy slot",
+          "evidenceRequired": true
+        }
+      }
+    },
+    "08": {
+      "changeLevel": "branch_fill",
+      "slots": {
+        "positive_proof_lead": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 220,
+          "dataSlot": "s08.positive_proof_lead",
+          "description": "Slide 08 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "proof_2_heading": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 80,
+          "dataSlot": "s08.proof_2_heading",
+          "description": "Slide 08 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "proof_2_body": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 180,
+          "dataSlot": "s08.proof_2_body",
+          "description": "Slide 08 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "proof_3_body": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 180,
+          "dataSlot": "s08.proof_3_body",
+          "description": "Slide 08 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "summary_strip": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 300,
+          "dataSlot": "s08.summary_strip",
+          "description": "Slide 08 branch-safe copy slot",
+          "evidenceRequired": true
+        }
+      }
+    },
+    "09": {
+      "changeLevel": "branch_fill",
+      "slots": {
+        "gap_headline": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 120,
+          "dataSlot": "s09.gap_headline",
+          "description": "Slide 09 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "gap_lead": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 320,
+          "dataSlot": "s09.gap_lead",
+          "description": "Slide 09 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "visual_caption_heading": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 80,
+          "dataSlot": "s09.visual_caption_heading",
+          "description": "Slide 09 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "visual_caption_body": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 220,
+          "dataSlot": "s09.visual_caption_body",
+          "description": "Slide 09 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "panel_heading": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 80,
+          "dataSlot": "s09.panel_heading",
+          "description": "Slide 09 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "panel_subhead": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 180,
+          "dataSlot": "s09.panel_subhead",
+          "description": "Slide 09 branch-safe copy slot",
+          "evidenceRequired": true
+        }
+      }
+    },
+    "10": {
+      "changeLevel": "branch_fill",
+      "slots": {
+        "scorecard_headline": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 140,
+          "dataSlot": "s10.scorecard_headline",
+          "description": "Slide 10 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "scorecard_lead": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 300,
+          "dataSlot": "s10.scorecard_lead",
+          "description": "Slide 10 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "score_label": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 80,
+          "dataSlot": "s10.score_label",
+          "description": "Slide 10 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "score_note": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 180,
+          "dataSlot": "s10.score_note",
+          "description": "Slide 10 branch-safe copy slot",
+          "evidenceRequired": true
+        }
+      }
+    },
+    "11": {
+      "changeLevel": "branch_fill",
+      "slots": {
+        "solution_headline": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 140,
+          "dataSlot": "s11.solution_headline",
+          "description": "Slide 11 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "visual_caption_heading": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 80,
+          "dataSlot": "s11.visual_caption_heading",
+          "description": "Slide 11 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "visual_caption_body": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 220,
+          "dataSlot": "s11.visual_caption_body",
+          "description": "Slide 11 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "second_visual_heading": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 80,
+          "dataSlot": "s11.second_visual_heading",
+          "description": "Slide 11 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "second_visual_body": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 220,
+          "dataSlot": "s11.second_visual_body",
+          "description": "Slide 11 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "solution_note_body": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 340,
+          "dataSlot": "s11.solution_note_body",
+          "description": "Slide 11 branch-safe copy slot",
+          "evidenceRequired": true
+        }
+      }
+    },
+    "12": {
+      "changeLevel": "branch_fill",
+      "slots": {
+        "find_trust_act_lead": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 220,
+          "dataSlot": "s12.find_trust_act_lead",
+          "description": "Slide 12 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "find_body": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 220,
+          "dataSlot": "s12.find_body",
+          "description": "Slide 12 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "trust_body": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 220,
+          "dataSlot": "s12.trust_body",
+          "description": "Slide 12 branch-safe copy slot",
+          "evidenceRequired": true
+        },
+        "act_body": {
+          "type": "html_text",
+          "required": false,
+          "maxChars": 220,
+          "dataSlot": "s12.act_body",
+          "description": "Slide 12 branch-safe copy slot",
+          "evidenceRequired": true
+        }
+      }
+    },
+    "01": {
+      "changeLevel": "static",
+      "slots": {}
+    },
+    "03": {
+      "changeLevel": "static",
+      "slots": {}
+    },
+    "04": {
+      "changeLevel": "static",
+      "slots": {}
+    },
+    "05": {
+      "changeLevel": "static",
+      "slots": {}
+    },
+    "07": {
+      "changeLevel": "static",
+      "slots": {}
+    },
+    "14": {
+      "changeLevel": "static",
+      "slots": {}
+    },
+    "15": {
+      "changeLevel": "static",
+      "slots": {}
+    },
+    "16": {
+      "changeLevel": "static",
+      "slots": {}
+    }
+  }
+}
