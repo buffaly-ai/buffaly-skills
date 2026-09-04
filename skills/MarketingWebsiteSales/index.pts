@@ -222,6 +222,7 @@ prototype ToCreatePharmacyGrowthProposalDeckSkill : ValidatedPromptAction, Marke
 	ValidatedPromptActionName = "ToCreatePharmacyGrowthProposalDeckSkill";
 	IsPromptAction = true;
 	PromptPath = @"Skills/MarketingWebsiteSales/Prompts/CreatePharmacyGrowthProposalDeck.work.prompt.md";
+	WorkPromptPath = @"Skills/MarketingWebsiteSales/Prompts/CreatePharmacyGrowthProposalDeck.work.prompt.md";
 	ValidationPromptPath = @"Skills/MarketingWebsiteSales/Prompts/CreatePharmacyGrowthProposalDeck.validation.prompt.md";
 	Inputs = [
 		"LeadId",
