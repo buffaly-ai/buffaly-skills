@@ -25,10 +25,21 @@ AS
 	BEGIN
 		;WITH SearchableSessions AS
 		(
-			SELECT	sessionRow.*
+			SELECT	sessionRow.SessionID,
+					sessionRow.SessionKey,
+					sessionRow.ParentSessionID,
+					sessionRow.SessionName,
+					sessionRow.AgentName,
+					sessionRow.ProjectName,
+					sessionRow.ProjectFilePath,
+					sessionRow.Provider,
+					sessionRow.ModelName,
+					sessionRow.ReasoningLevel,
+					sessionRow.CompactionProvider,
+					sessionRow.DateCreated,
+					sessionRow.LastUpdated
 			FROM	dbo.Sessions sessionRow WITH (NOLOCK)
-			WHERE	ISNULL(sessionRow.IsArchived, 0) = 0
-					AND sessionRow.SessionKey NOT IN (N'Browser Profiles', N'browser-profiles')
+			WHERE	sessionRow.IsArchived = 0
 		),
 		MatchingSessions AS
 		(
@@ -217,7 +228,7 @@ AS
 				sessionRow.ReasoningLevel,
 				CONVERT(nvarchar(max), N'') AS PromptContext,
 				sessionRow.CompactionProvider,
-				sessionRow.Data,
+				CONVERT(nvarchar(max), N'') AS Data,
 				sessionRow.DateCreated,
 				sessionRow.LastUpdated AS OwnLastUpdated,
 				CASE WHEN deduped.HierarchyDepth = 1 THEN deduped.RootEffectiveLastUpdated ELSE sessionRow.LastUpdated END AS EffectiveLastUpdated,
@@ -251,9 +262,9 @@ AS
 		FROM	dbo.Sessions root WITH (NOLOCK)
 		LEFT JOIN dbo.Sessions child WITH (NOLOCK)
 		ON		child.ParentSessionID = root.SessionID
-				AND ISNULL(child.IsArchived, 0) = 0
+				AND child.IsArchived = 0
 		WHERE	root.ParentSessionID IS NULL
-				AND ISNULL(root.IsArchived, 0) = 0
+				AND root.IsArchived = 0
 		GROUP BY root.SessionID,
 				 root.LastUpdated
 	),
@@ -290,7 +301,7 @@ AS
 				root.ReasoningLevel,
 				CONVERT(nvarchar(max), N'') AS PromptContext,
 				root.CompactionProvider,
-				root.Data,
+				CONVERT(nvarchar(max), N'') AS Data,
 				root.DateCreated,
 				root.LastUpdated AS OwnLastUpdated,
 				pagedRoot.EffectiveLastUpdated,
@@ -319,7 +330,7 @@ AS
 				child.ReasoningLevel,
 				CONVERT(nvarchar(max), N'') AS PromptContext,
 				child.CompactionProvider,
-				child.Data,
+				CONVERT(nvarchar(max), N'') AS Data,
 				child.DateCreated,
 				child.LastUpdated AS OwnLastUpdated,
 				child.LastUpdated AS EffectiveLastUpdated,
@@ -334,7 +345,7 @@ AS
 		ON		parent.SessionID = pagedRoot.RootSessionID
 		JOIN	dbo.Sessions child WITH (NOLOCK)
 		ON		child.ParentSessionID = pagedRoot.RootSessionID
-				AND ISNULL(child.IsArchived, 0) = 0
+				AND child.IsArchived = 0
 	)
 	SELECT	SessionID,
 			SessionKey,
