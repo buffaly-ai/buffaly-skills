@@ -67,6 +67,7 @@ Require:
 - no builder warnings unless explicitly acceptable and disclosed,
 - no unknown slots,
 - required slots filled or backed by approved fallback,
+- required `image_asset` slots filled with lead-specific local run assets, not packaged template/sample image paths,
 - selected branch valid,
 - final HTML has exactly 16 sections,
 - slot count and applied slot count are reported.
@@ -132,6 +133,8 @@ Final customer-facing HTML must not contain:
 - internal workflow/tool/debug language,
 - obvious unsupported factual claims,
 - branch-forbidden active claims.
+
+Final customer-facing HTML must not keep packaged website sample images in website/public-presence visual regions when `slots.json` declares image slots. Require rewritten `dist/assets/run-images/...` references for those image slots, and require those files to exist.
 
 ## Correct Blocker Validation
 

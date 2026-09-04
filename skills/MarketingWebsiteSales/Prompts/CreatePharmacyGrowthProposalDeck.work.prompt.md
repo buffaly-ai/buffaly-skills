@@ -100,6 +100,8 @@ Owns logos, fonts, static visuals, branch visuals, and shared imagery.
 
 The model may reference approved asset ids in `deck-fill.json`. The model must not invent asset paths.
 
+When `slots.json` declares an `image_asset` slot, create or copy a lead-specific local image under the current run artifact folder and fill the slot with that relative path. Do not point an `image_asset` slot at a packaged template/sample image under `assets/`. If a prospect-specific website/public-presence image cannot be obtained, stop with a concrete blocker instead of leaving sample visuals in the customer deck.
+
 ### `slots.json`
 
 This is the authoritative fill map.
@@ -421,6 +423,8 @@ Rules:
 - Do not include static slide content.
 - Do not include HTML.
 - Do not describe layouts.
+- For `image_asset` slots, use a local relative path under this run's artifact folder, such as `assets/run-images/homepage.png`; the deterministic builder copies it into `dist/assets/run-images/` and rewrites the matching image `src`.
+- Never use packaged template/sample image paths for `image_asset` slot values.
 - Use short copy that fits each slot's declared length.
 - Bind researched claims to evidence ids.
 - Use approved fallback copy only when the slot declares a fallback.

@@ -36,6 +36,46 @@ def set_slot(html_text, data_slot, value, allow_inline_html=False):
         return m.group(1) + sanitize_value(value, allow_inline_html) + m.group(4)
     return pattern.subn(repl, html_text)
 
+def normalize_asset_path(value):
+    raw = str(value or "").strip().replace("\\", "/")
+    if not raw or raw.startswith("/") or ":" in raw or ".." in raw.split("/"):
+        return None
+    return raw
+
+def set_image_slot(html_text, data_slot, asset_src):
+    pattern = re.compile(r'(<img\b(?=[^>]*\bdata-slot="' + re.escape(data_slot) + r'")[^>]*\bsrc=")(?P<src>[^"]*)("[^>]*>)', re.S)
+    def repl(m):
+        return m.group(1) + html_lib.escape(asset_src, quote=True) + m.group(3)
+    return pattern.subn(repl, html_text)
+
+def apply_image_slot(html_text, data_slot, value, deck_fill_path, out_dir, spec, report):
+    asset_path = normalize_asset_path(value)
+    if not asset_path:
+        report["errors"].append(f"Invalid image asset path for {data_slot}: {value}")
+        return html_text, 0
+    ext = Path(asset_path).suffix.lower()
+    allowed = [e.lower() for e in spec.get("allowedExtensions", [".png", ".jpg", ".jpeg", ".webp"])]
+    if ext not in allowed:
+        report["errors"].append(f"Invalid image asset extension for {data_slot}: {asset_path}")
+        return html_text, 0
+    if asset_path.startswith("assets/") and not asset_path.startswith("assets/run-images/"):
+        report["errors"].append(f"Image asset for {data_slot} must be a lead-specific run asset, not a packaged template asset: {asset_path}")
+        return html_text, 0
+    source = (deck_fill_path.parent / asset_path).resolve()
+    try:
+        source.relative_to(deck_fill_path.parent.resolve())
+    except ValueError:
+        report["errors"].append(f"Image asset for {data_slot} must stay under the run artifact folder: {asset_path}")
+        return html_text, 0
+    if not source.exists() or not source.is_file():
+        report["errors"].append(f"Image asset file missing for {data_slot}: {asset_path}")
+        return html_text, 0
+    dest = out_dir / "assets" / "run-images" / source.name
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(source, dest)
+    output_src = dest.relative_to(out_dir).as_posix()
+    return set_image_slot(html_text, data_slot, output_src)
+
 def enforce_branch_clean_html(html_text, website_branch):
     if website_branch not in ("no_functioning_site", "unconfirmed_site"):
         return html_text
@@ -62,9 +102,7 @@ def copy_assets(template_dir, out_dir):
         src = template_dir / name
         dst = out_dir / name
         if src.is_dir():
-            if dst.exists():
-                shutil.rmtree(dst)
-            shutil.copytree(src, dst)
+            shutil.copytree(src, dst, dirs_exist_ok=True)
         elif src.exists():
             shutil.copy2(src, dst)
 
@@ -90,7 +128,8 @@ def main():
     manifest = read_json(template_dir / "template-manifest.json")
     slots = read_json(template_dir / "slots.json")
     branch_rules = read_json(template_dir / "branch-rules.json")
-    fill = read_json(args.deck_fill)
+    deck_fill_path = Path(args.deck_fill).resolve()
+    fill = read_json(deck_fill_path)
     branch = read_json(args.branch_decision)
     website_branch = branch.get("websiteBranch")
     if website_branch not in branch_rules.get("websiteBranches", {}):
@@ -123,7 +162,10 @@ def main():
         return 2
     for path, value in values.items():
         spec = slot_specs[path]
-        html_text, count = set_slot(html_text, spec["dataSlot"], value or "", spec.get("type") == "html_text")
+        if spec.get("type") == "image_asset":
+            html_text, count = apply_image_slot(html_text, spec["dataSlot"], value, deck_fill_path, out_dir, spec, report)
+        else:
+            html_text, count = set_slot(html_text, spec["dataSlot"], value or "", spec.get("type") == "html_text")
         if path.startswith("global."):
             if count < 1:
                 report["errors"].append(f"Expected at least one HTML data-slot for {path}/{spec['dataSlot']}, found {count}")

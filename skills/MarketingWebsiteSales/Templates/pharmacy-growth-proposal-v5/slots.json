@@ -252,6 +252,16 @@
           "description": "Slide 09 branch-safe copy slot",
           "evidenceRequired": true
         },
+        "website_visual_asset": {
+          "type": "image_asset",
+          "required": true,
+          "maxChars": 180,
+          "dataSlot": "s09.website_visual_asset",
+          "description": "Local run-asset path for the prospect-specific website/public-presence visual shown on slide 09",
+          "evidenceRequired": true,
+          "allowedExtensions": [".png", ".jpg", ".jpeg", ".webp"],
+          "sourceRoot": "run_artifact"
+        },
         "panel_heading": {
           "type": "html_text",
           "required": false,
@@ -333,6 +343,16 @@
           "dataSlot": "s11.visual_caption_body",
           "description": "Slide 11 branch-safe copy slot",
           "evidenceRequired": true
+        },
+        "website_visual_asset": {
+          "type": "image_asset",
+          "required": true,
+          "maxChars": 180,
+          "dataSlot": "s11.website_visual_asset",
+          "description": "Local run-asset path for the prospect-specific website/public-presence visual shown on slide 11",
+          "evidenceRequired": true,
+          "allowedExtensions": [".png", ".jpg", ".jpeg", ".webp"],
+          "sourceRoot": "run_artifact"
         },
         "second_visual_heading": {
           "type": "html_text",
