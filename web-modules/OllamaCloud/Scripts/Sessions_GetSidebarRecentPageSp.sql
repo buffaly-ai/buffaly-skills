@@ -34,9 +34,9 @@ AS
 				sessionRow.Provider,
 				sessionRow.ModelName,
 				sessionRow.ReasoningLevel,
-				CONVERT(nvarchar(max), N'') AS PromptContext,
+				sessionRow.PromptContext,
 				sessionRow.CompactionProvider,
-				CONVERT(nvarchar(max), N'') AS Data,
+				sessionRow.Data,
 				sessionRow.DateCreated,
 				sessionRow.LastUpdated AS OwnLastUpdated,
 				ROW_NUMBER() OVER
@@ -62,6 +62,7 @@ AS
 							N'code-review-agent',
 							N'code-review-agent-v3'
 						)
+						AND ISNULL(JSON_VALUE(sessionRow.Data, '$.SessionKind'), N'') <> N'CodexSubAgent'
 						AND sessionRow.SessionKey NOT LIKE N'%-online-memory-critic'
 						AND sessionRow.SessionKey NOT LIKE N'%-online-action-critic'
 						AND sessionRow.SessionKey NOT LIKE N'%.CodeReviewAgentV3'
@@ -96,6 +97,5 @@ AS
 			CONVERT(int, NULL) AS HierarchyDepth
 	FROM	EligibleRows
 	WHERE	RowOrdinal BETWEEN @SkipRows + 1 AND @SkipRows + @NumRows + 1
-	ORDER BY RowOrdinal
-	OPTION (MAXDOP 2);
+	ORDER BY RowOrdinal;
 GO

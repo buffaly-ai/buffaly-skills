@@ -252,6 +252,16 @@ AS
 		LEFT JOIN dbo.Sessions child WITH (NOLOCK)
 		ON		child.ParentSessionID = root.SessionID
 				AND ISNULL(child.IsArchived, 0) = 0
+				AND child.SessionKey NOT IN (N'Browser Profiles', N'browser-profiles')
+				AND
+				(
+					child.SessionKey = N'Buffaly.CodeReviews.Global'
+					OR
+					(
+						ISNULL(child.AgentName, N'') NOT IN (N'code-review-agent', N'code-review-agent-v3')
+						AND child.SessionKey NOT LIKE N'%.CodeReviewAgentV3'
+					)
+				)
 		WHERE	root.ParentSessionID IS NULL
 				AND ISNULL(root.IsArchived, 0) = 0
 				AND root.SessionKey NOT IN (N'Browser Profiles', N'browser-profiles')
@@ -345,6 +355,16 @@ AS
 		JOIN	dbo.Sessions child WITH (NOLOCK)
 		ON		child.ParentSessionID = pagedRoot.RootSessionID
 				AND ISNULL(child.IsArchived, 0) = 0
+				AND child.SessionKey NOT IN (N'Browser Profiles', N'browser-profiles')
+				AND
+				(
+					child.SessionKey = N'Buffaly.CodeReviews.Global'
+					OR
+					(
+						ISNULL(child.AgentName, N'') NOT IN (N'code-review-agent', N'code-review-agent-v3')
+						AND child.SessionKey NOT LIKE N'%.CodeReviewAgentV3'
+					)
+				)
 	)
 	SELECT	SessionID,
 			SessionKey,
