@@ -143,6 +143,14 @@
           }
         }
       },
+      "Buffaly.Agent.Core/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agent.Core.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "Buffaly.Agent.Common/1.0.0.0": {
         "runtime": {
           "Buffaly.Agent.Common.dll": {
@@ -178,14 +186,6 @@
       "kScript/1.0.0.0": {
         "runtime": {
           "kScript.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
-          }
-        }
-      },
-      "Buffaly.Agent.Core/1.0.0.0": {
-        "runtime": {
-          "Buffaly.Agent.Core.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -303,19 +303,19 @@
           }
         }
       },
-      "Microsoft.Identity.Client/4.73.1.0": {
-        "runtime": {
-          "Microsoft.Identity.Client.dll": {
-            "assemblyVersion": "4.73.1.0",
-            "fileVersion": "4.73.1.0"
-          }
-        }
-      },
       "RooTrax.Cache/1.0.0.0": {
         "runtime": {
           "RooTrax.Cache.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Microsoft.Identity.Client/4.73.1.0": {
+        "runtime": {
+          "Microsoft.Identity.Client.dll": {
+            "assemblyVersion": "4.73.1.0",
+            "fileVersion": "4.73.1.0"
           }
         }
       },
@@ -455,6 +455,11 @@
       "serviceable": false,
       "sha512": ""
     },
+    "Buffaly.Agent.Core/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
     "Buffaly.Agent.Common/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
@@ -476,11 +481,6 @@
       "sha512": ""
     },
     "kScript/1.0.0.0": {
-      "type": "reference",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "Buffaly.Agent.Core/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
@@ -555,12 +555,12 @@
       "serviceable": false,
       "sha512": ""
     },
-    "Microsoft.Identity.Client/4.73.1.0": {
+    "RooTrax.Cache/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
     },
-    "RooTrax.Cache/1.0.0.0": {
+    "Microsoft.Identity.Client/4.73.1.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
