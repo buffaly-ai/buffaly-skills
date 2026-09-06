@@ -1343,7 +1343,7 @@
       "PackageType": "ProviderModule",
       "Title": "Ollama Provider",
       "Description": "Buffaly Provider Module package for Ollama Provider.",
-      "Version": "0.1.35",
+      "Version": "0.1.36",
       "PackageKind": "BuffalyProviderModule",
       "SourcePath": "provider-modules/Buffaly.Provider.Ollama",
       "SourceUrl": "",
@@ -1366,23 +1366,23 @@
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "f8456ffd3b4bd0fe07a035f7f12776a37eaeb8181ab30bf773203c93db285c26"
+          "Sha256": "03cee71d3823d657368b8db8d1aa1d2bf3c6492d73aef1730266ee337f67eb33"
         },
         {
           "Path": "Buffaly.Agent.Tools.Secrets.dll",
-          "Sha256": "6edf7cdced8d0d9d79d2928e1803207558b5f8d814573dcc5623c30d778db3d4"
+          "Sha256": "52bf560568a4aae06a149c43351bfd00836a249533f975a7989771e4d604fa6c"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "998017d33bde5e7a10ba7f23279d6b8e86484034e19ab9947b9c7873fecfa0ea"
+          "Sha256": "dcdc3224b6e0fe40a2343e3ced2eddbd03b2e7ee976e0557c1ae2620936c4972"
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "ab99eed9d8d0e019f6c324be1562a26ce5ea7e3ffb595a4a668f24e161285fae"
+          "Sha256": "540c751797cf938ffabe61b60d6253c2f62bfbc53f777dc0a1b519604fb57782"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "03c65c7c494a40e47f177514c81121368a6ed6dbcff7c64ae4034647baacf63a"
+          "Sha256": "b1c2cf907e3bcb1c3d8bf566f7e89b358f0cdfcdcc4c3a3eee41c7ca19f437a6"
         },
         {
           "Path": "Buffaly.Provider.Ollama.deps.json",
@@ -1390,7 +1390,7 @@
         },
         {
           "Path": "Buffaly.Provider.Ollama.dll",
-          "Sha256": "9c4b3481b40fdba1851be7a5552649c6b17192bb0185af99a6197b26715e739f"
+          "Sha256": "de2fabb956501a2904fe8c2c2fcd8b72809a98c9ab795c8d443ed86890c4f13e"
         },
         {
           "Path": "Buffaly.ProviderContracts.dll",
@@ -1398,7 +1398,7 @@
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "94428ea4c3366a6ab601948565dcf4eb2cc980c325f2101deb44b9c626a4ee5e"
+          "Sha256": "90cd26d573bb53f96143e1d5512fedd6f395169e2391f83c28a0ba058cde3c69"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -2025,12 +2025,16 @@
           "Sha256": "6c4b83ecacfff3c946f6e0ff52eeb0526c34e43beeb8c9bb10335820096d02a0"
         },
         {
+          "Path": "Scripts/Sessions_GetSidebarActivityBatchSp.sql",
+          "Sha256": "62e91a33012e11eaf3cbddd0a447f38c5d21a05672c927c1ca9fc4dd2c878b84"
+        },
+        {
           "Path": "Scripts/Sessions_GetSidebarRecentPageSp.sql",
           "Sha256": "e06daef532d6993ad0ea0732201fc53b57a10cfc5120fa34637070b36ff83b01"
         },
         {
           "Path": "Scripts/Sessions_GetSidebarRootPageSp.sql",
-          "Sha256": "f0331bf9af3be2e86b4206ce88c97ec03e7204a30435073cbd9e1f71705d9730"
+          "Sha256": "ee5b8d8586b70b355d51a5612f505cb7eee7bb5c40152e6b8060905f2cec4f9f"
         },
         {
           "Path": "Scripts/Sessions_GetSidebarSelectedBranchSp.sql",
