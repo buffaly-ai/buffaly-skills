@@ -21,7 +21,7 @@ AS
 
 	DECLARE @SearchPattern nvarchar(257) = '%' + ISNULL(@Search, '') + '%';
 
-	;WITH EligibleRows AS
+	;WITH CandidateRows AS
 	(
 		SELECT	sessionRow.SessionID,
 				sessionRow.SessionKey,
@@ -51,25 +51,6 @@ AS
 				AND sessionRow.SessionKey NOT IN (N'Browser Profiles', N'browser-profiles')
 				AND
 				(
-					sessionRow.SessionKey = N'Buffaly.CodeReviews.Global'
-					OR
-					(
-						ISNULL(sessionRow.AgentName, N'') NOT IN
-						(
-							N'level-2',
-							N'online-session-memory-critic',
-							N'online-action-critic',
-							N'code-review-agent',
-							N'code-review-agent-v3'
-						)
-						AND ISNULL(JSON_VALUE(sessionRow.Data, '$.SessionKind'), N'') <> N'CodexSubAgent'
-						AND sessionRow.SessionKey NOT LIKE N'%-online-memory-critic'
-						AND sessionRow.SessionKey NOT LIKE N'%-online-action-critic'
-						AND sessionRow.SessionKey NOT LIKE N'%.CodeReviewAgentV3'
-					)
-				)
-				AND
-				(
 					ISNULL(@Search, '') = ''
 					OR sessionRow.SessionKey LIKE @SearchPattern
 					OR sessionRow.SessionName LIKE @SearchPattern
@@ -95,7 +76,7 @@ AS
 			CONVERT(int, NULL) AS RootSessionID,
 			CONVERT(int, NULL) AS RootOrdinal,
 			CONVERT(int, NULL) AS HierarchyDepth
-	FROM	EligibleRows
+	FROM	CandidateRows
 	WHERE	RowOrdinal BETWEEN @SkipRows + 1 AND @SkipRows + @NumRows + 1
 	ORDER BY RowOrdinal;
 GO
