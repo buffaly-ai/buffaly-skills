@@ -122,11 +122,23 @@ prototype ToSetBuffalySessionParent : SessionManagementSkillAction
 [SemanticProgram.InfinitivePhrase("to send instruction to child session")]
 prototype ToSendToSession : SessionManagementSkillAction
 {
-	Description = @"sessionKey - target existing session key. instruction - one instruction to queue for that session without waiting for completion. Returns the canonical minimal queued input result.";
+	Description = @"Persist/enqueue exactly one input for later processing by the target session. sessionKey - target existing session key. instruction - complete asynchronous work instruction. Returns after queue acceptance only; it does not wait for execution or completion, does not report execution, and cannot inject into an in-progress model turn. Never call it repeatedly to approximate live steering. Use ToSteerActiveSession when and only when the intent is to interrupt a currently running target turn. Returns QueuedInputResult.";
 
 	function Execute(string sessionKey, string instruction) : QueuedInputResult
 	{
 		return SessionTools.SendToSessionTool(_opsAgent, sessionKey, instruction);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to steer an active session")]
+[SemanticProgram.InfinitivePhrase("to inject an instruction into a running session turn")]
+prototype ToSteerActiveSession : SessionManagementSkillAction
+{
+	Description = @"Inject exactly one steering instruction into the target session's currently active/running turn. sessionKey - target existing session key. instruction - steering correction for that active turn. This action never creates, loads, starts, resumes, or queues a session and never falls back to ToSendToSession. Unloaded, idle, queued-only, compacting, stopped, or completed targets return Accepted=false with a clear status and no queued item. Returns ActiveSessionSteerResult, not QueuedInputResult.";
+
+	function Execute(string sessionKey, string instruction) : ActiveSessionSteerResult
+	{
+		return SessionTools.SteerActiveSessionTool(_opsAgent, sessionKey, instruction);
 	}
 }
 
