@@ -97,10 +97,21 @@ async function executeInTabMultiArgs<T, A extends unknown[]>(
 
 async function executeInjectedDomOperation(tabId: number, operation: InjectedDomOperationName, args: Record<string, unknown>): Promise<ToolResult> {
   const target = { tabId } as chrome.scripting.InjectionTarget & { frameIds?: number[]; documentIds?: string[] };
-  if (typeof args.frameId === 'number' && Number.isInteger(args.frameId)) target.frameIds = [args.frameId];
-  if (typeof args.documentId === 'string' && args.documentId.length > 0) target.documentIds = [args.documentId];
+  const requestedFrameId = typeof args.frameId === 'number' && Number.isInteger(args.frameId) ? args.frameId : undefined;
+  const requestedDocumentId = typeof args.documentId === 'string' && args.documentId.length > 0 ? args.documentId : undefined;
+  let preflightDocumentToken: string | undefined;
+  // Chrome rejects targets that specify both documentIds and frameIds. When callers provide both,
+  // first prove the document belongs to the requested frame without mutation, then mutate by the
+  // already-verified documentId with the document token pinned. A mismatch returns before this call.
+  if (requestedDocumentId && requestedFrameId !== undefined) {
+    const preflight = await executeInjectedDomScopePreflight(tabId, requestedDocumentId, requestedFrameId, typeof args.documentToken === 'string' ? args.documentToken : undefined);
+    if (!preflight.ok) return preflight;
+    preflightDocumentToken = isRecord(preflight.data) && typeof preflight.data.documentToken === 'string' ? preflight.data.documentToken : undefined;
+    target.documentIds = [requestedDocumentId];
+  } else if (requestedDocumentId) target.documentIds = [requestedDocumentId];
+  else if (requestedFrameId !== undefined) target.frameIds = [requestedFrameId];
 
-  const expectedDocumentToken = typeof args.documentToken === 'string' ? args.documentToken : undefined;
+  const expectedDocumentToken = typeof args.documentToken === 'string' ? args.documentToken : preflightDocumentToken;
   const request: InjectedDomOperationRequest = { operation, args, expectedDocumentToken };
   const results = await chrome.scripting.executeScript({
     target,
@@ -114,15 +125,15 @@ async function executeInjectedDomOperation(tabId: number, operation: InjectedDom
   }
 
   const scriptResult = results[0];
-  if (typeof args.frameId === 'number' && scriptResult.frameId !== args.frameId) {
-    return { ok: false, error: `Injected frameId ${scriptResult.frameId} did not match requested frameId ${args.frameId}.`, code: 'FRAME_SCOPE_MISMATCH' };
+  if (requestedFrameId !== undefined && scriptResult.frameId !== requestedFrameId) {
+    return { ok: false, error: `Injected frameId ${scriptResult.frameId} did not match requested frameId ${requestedFrameId}.`, code: 'FRAME_SCOPE_MISMATCH' };
   }
-  if (typeof args.documentId === 'string' && scriptResult.documentId !== args.documentId) {
-    return { ok: false, error: `Injected documentId ${scriptResult.documentId ?? ''} did not match requested documentId ${args.documentId}.`, code: 'DOCUMENT_SCOPE_MISMATCH' };
+  if (requestedDocumentId && scriptResult.documentId !== requestedDocumentId) {
+    return { ok: false, error: `Injected documentId ${scriptResult.documentId ?? ''} did not match requested documentId ${requestedDocumentId}.`, code: 'DOCUMENT_SCOPE_MISMATCH' };
   }
 
   const result = scriptResult.result as InjectedDomOperationResult | undefined;
-  if (!result) return { ok: false, error: 'Injected DOM operation returned no result.', code: 'NO_SCRIPT_RESULT' };
+  if (!result) return { ok: false, error: 'Injected DOM operation returned no result; the injected function likely threw or could not be serialized in Chrome.', code: 'NO_SCRIPT_RESULT' };
   const scope = { tabId, frameId: scriptResult.frameId, documentId: scriptResult.documentId, documentToken: result.documentToken };
   if (!result.ok) return { ok: false, error: result.error, code: result.code };
   return { ok: true, data: { ...(isRecord(result.data) ? result.data : { value: result.data }), ...scope } };
@@ -130,6 +141,29 @@ async function executeInjectedDomOperation(tabId: number, operation: InjectedDom
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+async function executeInjectedDomScopePreflight(tabId: number, documentId: string, frameId: number, expectedDocumentToken?: string): Promise<ToolResult> {
+  const request: InjectedDomOperationRequest = { operation: 'get_scope', args: {}, expectedDocumentToken };
+  const results = await chrome.scripting.executeScript({
+    target: { tabId, documentIds: [documentId] } as chrome.scripting.InjectionTarget & { documentIds: string[] },
+    world: 'ISOLATED',
+    func: injectedDomOperation,
+    args: [request],
+  });
+  if (!results || results.length === 0) return { ok: false, error: 'Scope preflight returned no results.', code: 'NO_SCRIPT_RESULT' };
+  if (results.length > 1) return { ok: false, error: 'Scope preflight matched multiple documents.', code: 'MULTIPLE_FRAMES' };
+  const scriptResult = results[0];
+  if (scriptResult.frameId !== frameId) {
+    return { ok: false, error: `Preflight documentId ${documentId} belongs to frameId ${scriptResult.frameId}, not requested frameId ${frameId}.`, code: 'FRAME_SCOPE_MISMATCH' };
+  }
+  if (scriptResult.documentId !== documentId) {
+    return { ok: false, error: `Preflight documentId ${scriptResult.documentId ?? ''} did not match requested documentId ${documentId}.`, code: 'DOCUMENT_SCOPE_MISMATCH' };
+  }
+  const result = scriptResult.result as InjectedDomOperationResult | undefined;
+  if (!result) return { ok: false, error: 'Scope preflight injected function returned no result.', code: 'NO_SCRIPT_RESULT' };
+  if (!result.ok) return { ok: false, error: result.error, code: result.code };
+  return { ok: true, data: { tabId, frameId: scriptResult.frameId, documentId: scriptResult.documentId, documentToken: result.documentToken } };
 }
 
 // ─── Debugger Consent Enforcement ───

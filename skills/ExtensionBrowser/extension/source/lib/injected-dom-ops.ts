@@ -8,7 +8,8 @@ export type InjectedDomOperationName =
   | 'select_option'
   | 'get_attribute'
   | 'check_exists'
-  | 'get_viewport';
+  | 'get_viewport'
+  | 'get_scope';
 
 export interface InjectedDomOperationRequest {
   operation: InjectedDomOperationName;
@@ -19,24 +20,6 @@ export interface InjectedDomOperationRequest {
 export type InjectedDomOperationResult =
   | { ok: true; data: unknown; documentToken: string }
   | { ok: false; error: string; code: string; documentToken?: string };
-
-interface RegisteredElement {
-  token: string;
-  refId: string;
-  element: Element;
-}
-
-interface RegistryState {
-  documentToken: string;
-  nextId: number;
-  byRefId: Map<string, RegisteredElement>;
-  byElement: WeakMap<Element, string>;
-}
-
-type SearchRoot = Document | ShadowRoot;
-
-const GLOBAL_KEY = '__buffalyInjectedDomOpsRegistry_v1__';
-const REF_PREFIX = 'buffaly-dom-ref:v1:';
 
 export function injectedDomOperation(request: InjectedDomOperationRequest): InjectedDomOperationResult {
   interface RegisteredElement {
@@ -169,42 +152,26 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
     return { id: ref, elementId: ref, tag: el.tagName.toLowerCase(), role: el.getAttribute('role') || '', name: el.getAttribute('aria-label') || (el as HTMLInputElement).name || '', text: (el.textContent || '').trim().slice(0, 200), selector: uniqueSelector(el), bounds: { x: rect.x, y: rect.y, width: rect.width, height: rect.height }, visible: rect.width > 0 && rect.height > 0, disabled: isDisabled(el), readOnly: isReadOnly(el), shadowRoot: rootLabel(el.getRootNode()) };
   }
   function uniqueSelector(el: Element): string {
-    const root = el.getRootNode() as SearchRoot;
     const tag = el.tagName.toLowerCase();
     const id = el.getAttribute('id');
     if (id) {
       const escapedId = `#${cssEscape(id)}`;
-      if (isUniqueInRoot(root, escapedId, el)) return escapedId;
+      if (isUniqueInActionScope(escapedId, el)) return escapedId;
       const exactId = `${tag}[id="${cssStringEscape(id)}"]`;
-      if (isUniqueInRoot(root, exactId, el)) return exactId;
+      if (isUniqueInActionScope(exactId, el)) return exactId;
     }
     for (const attr of ['name', 'aria-label', 'role', 'type', 'value']) {
       const value = el.getAttribute(attr);
       if (!value) continue;
       const candidate = `${tag}[${attr}="${cssStringEscape(value)}"]`;
-      if (isUniqueInRoot(root, candidate, el)) return candidate;
+      if (isUniqueInActionScope(candidate, el)) return candidate;
     }
-    const parts: string[] = [];
-    let current: Element | null = el;
-    while (current) {
-      const currentTag = current.tagName.toLowerCase();
-      const parent: Element | null = current.parentElement;
-      if (!parent) { parts.unshift(currentTag); break; }
-      const currentTagName = current.tagName;
-      const siblings = Array.from(parent.children).filter((s: Element) => s.tagName === currentTagName);
-      parts.unshift(`${currentTag}:nth-of-type(${siblings.indexOf(current) + 1})`);
-      const candidate = parts.join(' > ');
-      if (isUniqueInRoot(root, candidate, el)) return candidate;
-      current = parent;
-    }
-    return parts.join(' > ') || tag;
+    return '';
   }
 
-  function isUniqueInRoot(root: SearchRoot, selector: string, el: Element): boolean {
-    try {
-      const matches = Array.from(root.querySelectorAll(selector));
-      return matches.length === 1 && matches[0] === el;
-    } catch { return false; }
+  function isUniqueInActionScope(selector: string, el: Element): boolean {
+    const matches = querySelectorAllDeep(selector);
+    return matches.kind === 'ok' && matches.elements.length === 1 && matches.elements[0] === el;
   }
 
   function cssEscape(value: string): string {
@@ -258,16 +225,24 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
     if (!['replace', 'append', 'clear'].includes(mode)) return fail('UNSUPPORTED_TYPE_MODE', `Unsupported type_text mode: ${mode}`, registry.documentToken);
     if (isDisabled(el)) return fail('ELEMENT_DISABLED', 'Target element is disabled.', registry.documentToken);
     if (isReadOnly(el)) return fail('ELEMENT_READONLY', 'Target element is read-only.', registry.documentToken);
+    if (isHiddenForTyping(el)) return fail('ELEMENT_NOT_VISIBLE', 'Target element is hidden and cannot be typed into.', registry.documentToken);
+    const interactable = validateInteractable(el, 'type into');
+    if (!interactable.ok) return fail(interactable.code, interactable.error, registry.documentToken);
+    const obstruction = obstructionAtCenter(el);
+    if (obstruction) return fail('ELEMENT_OBSTRUCTED', obstruction, registry.documentToken);
 
     const replacement = mode === 'clear' ? '' : text;
     if (isTextInput(el)) {
       const input = el;
       input.focus();
+      if (document.activeElement !== input) return fail('FOCUS_FAILED', 'Target input did not receive focus before type_text.', registry.documentToken);
       const prior = input.value;
       const next = mode === 'append' ? prior + replacement : replacement;
+      if (canSetInputSelection(input)) input.setSelectionRange(mode === 'append' ? prior.length : 0, prior.length);
       setNativeValue(input, next);
-      input.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: mode === 'append' ? 'insertText' : 'insertReplacementText', data: replacement }));
-      input.dispatchEvent(new Event('change', { bubbles: true }));
+      if (canSetInputSelection(input)) input.setSelectionRange(next.length, next.length);
+      input.dispatchEvent(new InputEvent('input', { bubbles: true, composed: true, inputType: mode === 'append' ? 'insertText' : 'insertReplacementText', data: replacement }));
+      input.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
       if (input.value !== next) return fail('READBACK_MISMATCH', `Input readback mismatch after type_text. Expected ${JSON.stringify(next)} but found ${JSON.stringify(input.value)}.`, registry.documentToken);
       return ok(registry, { typed: true, mode, length: replacement.length, valueLength: input.value.length, selector: resolved.selector, elementId: resolved.elementId });
     }
@@ -275,13 +250,16 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
     if (isContentEditable(el)) {
       const target = el as HTMLElement;
       target.focus();
+      if (document.activeElement !== target) return fail('FOCUS_FAILED', 'Target contenteditable did not receive focus before type_text.', registry.documentToken);
       const prior = target.textContent ?? '';
       const next = mode === 'append' ? prior + replacement : replacement;
+      selectEditableText(target, mode === 'append' ? prior.length : 0, prior.length);
       target.textContent = next;
-      target.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: mode === 'append' ? 'insertText' : 'insertReplacementText', data: replacement }));
-      target.dispatchEvent(new Event('change', { bubbles: true }));
+      selectEditableText(target, next.length, next.length);
+      target.dispatchEvent(new InputEvent('input', { bubbles: true, composed: true, inputType: mode === 'append' ? 'insertText' : 'insertReplacementText', data: replacement }));
+      target.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
       if ((target.textContent ?? '') !== next) return fail('READBACK_MISMATCH', 'Contenteditable readback mismatch after type_text.', registry.documentToken);
-      return ok(registry, { typed: true, mode, length: replacement.length, valueLength: next.length, selector: resolved.selector, elementId: resolved.elementId });
+      return ok(registry, { typed: true, mode, length: replacement.length, valueLength: next.length, plainTextOnly: true, verification: 'Contenteditable mutation uses textContent plain-text semantics; rich editor document model success is unverified.', selector: resolved.selector, elementId: resolved.elementId });
     }
 
     return fail('UNSUPPORTED_TARGET', `type_text does not support <${el.tagName.toLowerCase()}> targets.`, registry.documentToken);
@@ -355,11 +333,29 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
   function validateInteractable(el: Element, operation: string): { ok: true } | { ok: false; code: string; error: string } {
     if (!(el instanceof HTMLElement) && !(el instanceof SVGElement)) return { ok: false, code: 'UNSUPPORTED_TARGET', error: `${operation} target is not an HTMLElement/SVGElement.` };
     if (isDisabled(el)) return { ok: false, code: 'ELEMENT_DISABLED', error: `Cannot ${operation} a disabled element.` };
+    if (el instanceof HTMLInputElement && el.type === 'hidden') return { ok: false, code: 'ELEMENT_NOT_VISIBLE', error: `Cannot ${operation} a hidden input.` };
+    if (!hasRenderedBox(el)) return { ok: false, code: 'ELEMENT_NOT_VISIBLE', error: `Cannot ${operation} an element with no rendered layout box.` };
     const rect = el.getBoundingClientRect();
     if (rect.width <= 0 || rect.height <= 0) return { ok: false, code: 'ELEMENT_NOT_VISIBLE', error: `Cannot ${operation} an element with empty bounds.` };
-    const style = window.getComputedStyle(el);
-    if (style.visibility === 'hidden' || style.display === 'none' || style.pointerEvents === 'none') return { ok: false, code: 'ELEMENT_NOT_INTERACTABLE', error: `Cannot ${operation} an element that is hidden or pointer-events:none.` };
+    const hiddenAncestor = firstHiddenAncestor(el);
+    if (hiddenAncestor) return { ok: false, code: 'ELEMENT_NOT_INTERACTABLE', error: `Cannot ${operation} an element hidden by <${hiddenAncestor.tagName.toLowerCase()}> or its styles.` };
     return { ok: true };
+  }
+
+  function hasRenderedBox(el: Element): boolean {
+    return el.getClientRects().length > 0;
+  }
+
+  function firstHiddenAncestor(el: Element): HTMLElement | SVGElement | null {
+    let current: Element | null = el;
+    while (current) {
+      if (current instanceof HTMLElement || current instanceof SVGElement) {
+        const style = window.getComputedStyle(current);
+        if (style.visibility === 'hidden' || style.display === 'none' || style.pointerEvents === 'none' || Number(style.opacity) === 0) return current;
+      }
+      current = current.parentElement;
+    }
+    return null;
   }
 
   function obstructionAtCenter(el: Element): string | null {
@@ -380,14 +376,65 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
     return el instanceof HTMLButtonElement || el instanceof HTMLInputElement || el instanceof HTMLSelectElement || el instanceof HTMLTextAreaElement || el instanceof HTMLOptionElement ? el.disabled : el.getAttribute('aria-disabled') === 'true';
   }
 
+  function isHiddenForTyping(el: Element): boolean {
+    if (el instanceof HTMLInputElement && el.type === 'hidden') return true;
+    if (el instanceof HTMLElement && el.hidden) return true;
+    const rects = el.getClientRects();
+    if (rects.length === 0) return true;
+    let current: Element | null = el;
+    while (current) {
+      if (current instanceof HTMLElement || current instanceof SVGElement) {
+        const style = window.getComputedStyle(current);
+        if (style.display === 'none' || style.visibility === 'hidden' || Number(style.opacity) === 0) return true;
+      }
+      current = current.parentElement;
+    }
+    return false;
+  }
+
+  function selectEditableText(target: HTMLElement, start: number, end: number): void {
+    const selection = window.getSelection();
+    const range = document.createRange();
+    const textNode = firstTextNode(target) ?? target.appendChild(document.createTextNode(''));
+    const max = textNode.textContent?.length ?? 0;
+    range.setStart(textNode, Math.max(0, Math.min(start, max)));
+    range.setEnd(textNode, Math.max(0, Math.min(end, max)));
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+  }
+
+  function firstTextNode(root: Node): Text | null {
+    if (root.nodeType === Node.TEXT_NODE) return root as Text;
+    for (const child of Array.from(root.childNodes)) {
+      const found = firstTextNode(child);
+      if (found) return found;
+    }
+    return null;
+  }
+
   function isReadOnly(el: Element): boolean {
-    return el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement ? el.readOnly : el.getAttribute('aria-readonly') === 'true';
+    if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) return el.readOnly || el.getAttribute('aria-readonly') === 'true';
+    if (el.getAttribute('aria-readonly') === 'true') return true;
+    if (el instanceof HTMLElement && el.isContentEditable) {
+      let current: HTMLElement | null = el;
+      while (current) {
+        if (current.getAttribute('contenteditable') === 'false') return true;
+        if (current.getAttribute('aria-readonly') === 'true') return true;
+        current = current.parentElement;
+      }
+    }
+    return false;
   }
 
   function isTextInput(el: Element): el is HTMLInputElement | HTMLTextAreaElement {
     if (el instanceof HTMLTextAreaElement) return true;
     if (!(el instanceof HTMLInputElement)) return false;
     return !['button', 'checkbox', 'color', 'file', 'hidden', 'image', 'radio', 'range', 'reset', 'submit'].includes(el.type);
+  }
+
+  function canSetInputSelection(el: HTMLInputElement | HTMLTextAreaElement): boolean {
+    if (el instanceof HTMLTextAreaElement) return true;
+    return ['text', 'search', 'url', 'tel', 'password'].includes(el.type);
   }
 
   function isContentEditable(el: Element): boolean {
@@ -430,6 +477,7 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
       case 'get_attribute': return getAttribute(registry, request.args);
       case 'check_exists': return checkExists(registry, request.args);
       case 'get_viewport': return ok(registry, getViewport());
+      case 'get_scope': return ok(registry, { scoped: true });
       default: return fail('UNSUPPORTED_OPERATION', `Unsupported injected DOM operation: ${String(request.operation)}`, registry.documentToken);
     }
   } catch (error) {

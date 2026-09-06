@@ -736,7 +736,7 @@
       "SkillName": "ExtensionBrowser",
       "Title": "Extension Browser",
       "Description": "Buffaly skill package for Extension Browser.",
-      "Version": "0.2.86",
+      "Version": "0.2.87",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Extension Browser",
@@ -749,12 +749,16 @@
           "Sha256": "83b5f5540a789e08ab0ffb8c0ba982e93c7461a18ca867e2b8ae575a319c9174"
         },
         {
+          "Path": "docs/EXTENSION_DOM_CONTRACT.md",
+          "Sha256": "fadd0161eb0d6e94e0277da0bfddc72c5f1184ca63c108f9595cdd2a696fd721"
+        },
+        {
           "Path": "docs/VALIDATION.md",
           "Sha256": "f11c9a6e16f4af4f20779237ee938110519eec7fcba39423f8b8fe14fbacf8c5"
         },
         {
           "Path": "extension/release/Buffaly-Browser-Agent-0.2.61-chrome.zip",
-          "Sha256": "42484ce639c221c5c3c9d3ee42e059a76742c660755f0c0130aa30fedee08180"
+          "Sha256": "6776b99410ea398efd5f0661587d1b547ca114b13bcac3d4ad99017826699f55"
         },
         {
           "Path": "extension/source/.gitignore",
@@ -798,7 +802,7 @@
         },
         {
           "Path": "extension/source/lib/injected-dom-ops.ts",
-          "Sha256": "10ad490474329fa47cf1f724ca9b0551ce260c28381094379e08a245aba43bfb"
+          "Sha256": "bb2d72190fd2a0acae69ac398b1e914f453a1a4383cb195f3161d50677338481"
         },
         {
           "Path": "extension/source/lib/safety.ts",
@@ -810,7 +814,7 @@
         },
         {
           "Path": "extension/source/lib/tool-router.ts",
-          "Sha256": "912969c77816ed2fa31d9f30e3b7d052eb69ce9403a61c3b11ccdc67c6da8260"
+          "Sha256": "cdf42f88801c382779526cc78c06453efb530629849bd4243a8cdedd0fbe658d"
         },
         {
           "Path": "extension/source/lib/types.ts",
