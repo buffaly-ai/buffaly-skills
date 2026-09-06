@@ -8,6 +8,8 @@
 		json: Object.freeze({ label: "JSON", name: "JSON", mode: Object.freeze({ name: "javascript", json: true }), assets: ["javascript"] }),
 		csharp: Object.freeze({ label: "C#", name: "C#", mode: "text/x-csharp", assets: ["clike"] }),
 		protoscript: Object.freeze({ label: "PTS", name: "ProtoScript", mode: "text/x-protoscript", assets: ["clike", "protoscript"] }),
+		patch: Object.freeze({ label: "PATCH", name: "Patch", mode: "text/x-diff", assets: ["diff"] }),
+		diff: Object.freeze({ label: "DIFF", name: "Diff", mode: "text/x-diff", assets: ["diff"] }),
 		xml: Object.freeze({ label: "XML", name: "XML", mode: "application/xml", assets: ["xml"] }),
 		sql: Object.freeze({ label: "SQL", name: "SQL", mode: "text/x-sql", assets: ["sql"] }),
 		shell: Object.freeze({ label: "SH", name: "Shell", mode: "text/x-sh", assets: ["shell"] }),
@@ -18,7 +20,7 @@
 		".html": "html", ".htm": "html", ".css": "css",
 		".js": "javascript", ".mjs": "javascript", ".cjs": "javascript", ".jsx": "javascript",
 		".ts": "typescript", ".tsx": "typescript", ".json": "json",
-		".cs": "csharp", ".pts": "protoscript", ".xml": "xml",
+		".cs": "csharp", ".pts": "protoscript", ".patch": "patch", ".diff": "diff", ".xml": "xml",
 		".sql": "sql", ".sh": "shell", ".bash": "shell",
 		".ps1": "powershell", ".psm1": "powershell", ".psd1": "powershell",
 		".txt": "text"

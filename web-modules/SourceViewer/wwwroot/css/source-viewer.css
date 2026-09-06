@@ -8,7 +8,7 @@ body { margin: 0; font-family: Inter, "Segoe UI", system-ui, sans-serif; color: 
 .source-viewer__identity h1 { margin: 0; font-size: 1rem; }
 .source-viewer__identity p { margin: .2rem 0 0; color: var(--muted); font-size: .78rem; word-break: break-all; }
 .source-viewer__actions { display: flex; gap: .5rem; }
-.source-viewer button { border: 1px solid #9db8e8; border-radius: 999px; background: #fff; color: #1d4ed8; padding: .4rem .75rem; font-weight: 700; cursor: pointer; }
+.source-viewer button, .source-viewer__download { border: 1px solid #9db8e8; border-radius: 999px; background: #fff; color: #1d4ed8; padding: .4rem .75rem; font-weight: 700; cursor: pointer; text-decoration: none; font-size: .82rem; }
 .source-viewer button:disabled { opacity: .5; cursor: default; }
 .source-viewer__status { padding: .5rem 1rem; color: var(--muted); font-size: .8rem; }
 .source-viewer__status.error { color: #b91c1c; }
@@ -29,8 +29,8 @@ body { margin: 0; font-family: Inter, "Segoe UI", system-ui, sans-serif; color: 
 @media (prefers-color-scheme: dark) {
 	:root { color-scheme: dark; --border: #334155; --muted: #94a3b8; --blue: #3b82f6; }
 	body { color: #e2e8f0; background: #0f172a; }
-	.source-viewer__header, .source-viewer button, .CodeMirror { background: #111827; color: #e2e8f0; }
-	.source-viewer button { border-color: #475569; color: #93c5fd; }
+	.source-viewer__header, .source-viewer button, .source-viewer__download, .CodeMirror { background: #111827; color: #e2e8f0; }
+	.source-viewer button, .source-viewer__download { border-color: #475569; color: #93c5fd; }
 	.cm-s-default .cm-keyword { color: #c084fc; }
 	.cm-s-default .cm-def, .cm-s-default .cm-variable-2 { color: #67e8f9; }
 	.cm-s-default .cm-string { color: #fca5a5; }

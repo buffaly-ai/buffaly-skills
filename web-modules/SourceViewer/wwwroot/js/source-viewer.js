@@ -3,11 +3,13 @@
 	const query = new URLSearchParams(window.location.search);
 	const requestedPath = (query.get("path") || "").trim();
 	const navigationRoot = (query.get("root") || requestedPath).trim();
+	const downloadUrl = (query.get("download") || "").trim();
 	const title = document.getElementById("title");
 	const path = document.getElementById("path");
 	const kind = document.getElementById("kind");
 	const status = document.getElementById("status");
 	const copy = document.getElementById("copy");
+	const download = document.getElementById("download");
 	const close = document.getElementById("close");
 	const directory = document.getElementById("directory");
 	const editorHost = document.querySelector(".source-viewer__editor");
@@ -63,6 +65,7 @@
 		await loadLanguage(language);
 		title.textContent = file.name; path.textContent = file.path; kind.textContent = language.label; kind.title = language.name;
 		document.title = file.name + " - Source Viewer";
+		if (downloadUrl) { download.href = downloadUrl; download.hidden = false; }
 		editor = CodeMirror.fromTextArea(document.getElementById("source"), { mode: language.mode, lineNumbers: true, readOnly: true, lineWrapping: false });
 		editor.setValue(file.text); copy.disabled = false;
 		status.textContent = file.length.toLocaleString() + " bytes | " + language.name + " | Read only";
