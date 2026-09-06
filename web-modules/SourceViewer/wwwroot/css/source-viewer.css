@@ -13,6 +13,14 @@ body { margin: 0; font-family: Inter, "Segoe UI", system-ui, sans-serif; color: 
 .source-viewer__status { padding: .5rem 1rem; color: var(--muted); font-size: .8rem; }
 .source-viewer__status.error { color: #b91c1c; }
 .source-viewer__editor { flex: 1; min-height: 0; border-top: 1px solid var(--border); }
+.source-viewer__directory { flex: 1; min-height: 0; overflow: auto; padding: .5rem 1rem 1rem; border-top: 1px solid var(--border); }
+.source-viewer__entry { width: 100%; display: grid; grid-template-columns: 4.5rem minmax(0,1fr); gap: .75rem; align-items: center; padding: .65rem .75rem; border: 0; border-bottom: 1px solid var(--border); border-radius: 0; background: transparent; color: inherit; text-align: left; }
+.source-viewer__entry:hover:not(:disabled), .source-viewer__entry:focus-visible { background: color-mix(in srgb,var(--blue) 9%,transparent); }
+.source-viewer__entry:disabled { opacity: .55; cursor: not-allowed; }
+.source-viewer__entry-kind { color: var(--muted); font-size: .68rem; font-weight: 800; letter-spacing: .05em; }
+.source-viewer__entry-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: Consolas,"Cascadia Code",monospace; }
+.source-viewer__entry--up { font-weight: 800; }
+.source-viewer__empty { color: var(--muted); text-align: center; padding: 3rem 1rem; }
 .CodeMirror { height: 100%; font-size: 14px; line-height: 1.45; background: #fff; }
 .cm-s-default .cm-keyword { color: #0000ff; }
 .cm-s-default .cm-def, .cm-s-default .cm-variable-2 { color: #2b91af; }
