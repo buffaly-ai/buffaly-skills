@@ -9,12 +9,12 @@ import type {
 import { validateUrl, looksLikePaymentForm } from './safety';
 import {
   attachDebugger, detachDebugger, isAttached, getAttachedTabId,
-  clickViaDebugger, clickAtCoords, typeViaDebugger, pressKeyViaDebugger,
   scrollViaDebugger, navigateViaDebugger,
   getPageTextViaDebugger, waitForSelector, hoverViaDebugger,
   getConsoleEvents, clearConsoleEvents,
 } from './debugger-session';
 import { addLogEntry, updateLogEntry } from './tool-log';
+import { injectedDomOperation, type InjectedDomOperationName, type InjectedDomOperationRequest, type InjectedDomOperationResult } from './injected-dom-ops';
 
 // ─── Helper: get active tab ───
 
@@ -95,6 +95,43 @@ async function executeInTabMultiArgs<T, A extends unknown[]>(
   return results[0].result as T;
 }
 
+async function executeInjectedDomOperation(tabId: number, operation: InjectedDomOperationName, args: Record<string, unknown>): Promise<ToolResult> {
+  const target = { tabId } as chrome.scripting.InjectionTarget & { frameIds?: number[]; documentIds?: string[] };
+  if (typeof args.frameId === 'number' && Number.isInteger(args.frameId)) target.frameIds = [args.frameId];
+  if (typeof args.documentId === 'string' && args.documentId.length > 0) target.documentIds = [args.documentId];
+
+  const expectedDocumentToken = typeof args.documentToken === 'string' ? args.documentToken : undefined;
+  const request: InjectedDomOperationRequest = { operation, args, expectedDocumentToken };
+  const results = await chrome.scripting.executeScript({
+    target,
+    world: 'ISOLATED',
+    func: injectedDomOperation,
+    args: [request],
+  });
+  if (!results || results.length === 0) return { ok: false, error: 'Script execution returned no results', code: 'NO_SCRIPT_RESULT' };
+  if (results.length > 1 && target.frameIds === undefined && target.documentIds === undefined) {
+    return { ok: false, error: 'Injected DOM operation matched multiple frames. Provide frameId or documentId.', code: 'MULTIPLE_FRAMES' };
+  }
+
+  const scriptResult = results[0];
+  if (typeof args.frameId === 'number' && scriptResult.frameId !== args.frameId) {
+    return { ok: false, error: `Injected frameId ${scriptResult.frameId} did not match requested frameId ${args.frameId}.`, code: 'FRAME_SCOPE_MISMATCH' };
+  }
+  if (typeof args.documentId === 'string' && scriptResult.documentId !== args.documentId) {
+    return { ok: false, error: `Injected documentId ${scriptResult.documentId ?? ''} did not match requested documentId ${args.documentId}.`, code: 'DOCUMENT_SCOPE_MISMATCH' };
+  }
+
+  const result = scriptResult.result as InjectedDomOperationResult | undefined;
+  if (!result) return { ok: false, error: 'Injected DOM operation returned no result.', code: 'NO_SCRIPT_RESULT' };
+  const scope = { tabId, frameId: scriptResult.frameId, documentId: scriptResult.documentId, documentToken: result.documentToken };
+  if (!result.ok) return { ok: false, error: result.error, code: result.code };
+  return { ok: true, data: { ...(isRecord(result.data) ? result.data : { value: result.data }), ...scope } };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
 // ─── Debugger Consent Enforcement ───
 // The background service worker must track whether the user has explicitly
 // granted consent to attach the debugger. This prevents any generic tool_call
@@ -156,50 +193,7 @@ async function handleGetDomSnapshot(args: GetDomSnapshotArgs): Promise<ToolResul
   const tabId = await resolveTabId(args.tabId);
   const maxNodes = args.maxNodes ?? 200;
 
-  const snapshot = await executeInTabWithArgs(tabId, (mn: number) => {
-    const interactiveSelectors =
-      'a, button, input, select, textarea, [role="button"], [role="link"], [role="checkbox"], [role="tab"], [tabindex], [onclick]';
-    const elements = document.querySelectorAll(interactiveSelectors);
-    const results: any[] = [];
-
-    function genSelector(el: Element): string {
-      if (el.id) return '#' + el.id;
-      const tag = el.tagName.toLowerCase();
-      const classes = Array.from(el.classList).map((c: string) => '.' + c).join('');
-      if (classes) return tag + classes;
-      const parent = el.parentElement;
-      if (parent) {
-        const siblings = Array.from(parent.children).filter((c) => c.tagName === el.tagName);
-        const index = siblings.indexOf(el) + 1;
-        return genSelector(parent) + ' > ' + tag + ':nth-of-type(' + index + ')';
-      }
-      return tag;
-    }
-
-    for (const el of elements) {
-      if (results.length >= mn) break;
-      const rect = el.getBoundingClientRect();
-      if (rect.width === 0 && rect.height === 0) continue;
-      results.push({
-        id: 'el_' + results.length,
-        tag: el.tagName.toLowerCase(),
-        role: el.getAttribute('role') || '',
-        name: el.getAttribute('aria-label') || '',
-        text: (el.textContent || '').trim().slice(0, 100),
-        selector: genSelector(el),
-        bounds: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
-        visible: rect.width > 0 && rect.height > 0,
-      });
-    }
-    return {
-      url: window.location.href,
-      title: document.title,
-      elements: results,
-      truncated: elements.length > mn,
-    };
-  }, maxNodes);
-
-  return { ok: true, data: snapshot };
+  return executeInjectedDomOperation(tabId, 'get_dom_snapshot', { ...args, maxNodes });
 }
 
 async function handleScreenshot(args: ScreenshotArgs): Promise<ToolResult> {
@@ -240,32 +234,7 @@ async function handleFindElements(args: FindElementsArgs): Promise<ToolResult> {
   const query = args.query;
   const maxResults = args.maxResults ?? 50;
 
-  const elements = await executeInTabMultiArgs(tabId, (q: string, mr: number) => {
-    const els = document.querySelectorAll(q);
-    const results: any[] = [];
-    function genSelector(el: Element): string {
-      if (el.id) return '#' + el.id;
-      const tag = el.tagName.toLowerCase();
-      const classes = Array.from(el.classList).map((c: string) => '.' + c).join('');
-      if (classes) return tag + classes;
-      return tag;
-    }
-    for (const el of els) {
-      if (results.length >= mr) break;
-      const rect = el.getBoundingClientRect();
-      results.push({
-        id: 'el_' + results.length,
-        tag: el.tagName.toLowerCase(),
-        text: (el.textContent || '').trim().slice(0, 200),
-        selector: genSelector(el),
-        bounds: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
-        visible: rect.width > 0 && rect.height > 0,
-      });
-    }
-    return results;
-  }, [query, maxResults]);
-
-  return { ok: true, data: { elements, query, tabId } };
+  return executeInjectedDomOperation(tabId, 'find_elements', { ...args, query, maxResults });
 }
 
 async function handleNavigate(args: NavigateArgs): Promise<ToolResult> {
@@ -284,96 +253,39 @@ async function handleNavigate(args: NavigateArgs): Promise<ToolResult> {
 
 async function handleClick(args: ClickArgs): Promise<ToolResult> {
   const tabId = await resolveTabId(args.tabId);
-  const useDebugger = args.useDebugger ?? false;
 
   // Safety: check for payment forms
   if (args.selector && looksLikePaymentForm(args.selector)) {
     return { ok: false, error: 'Payment form detected. Confirmation required for payment-related clicks.', code: 'PAYMENT_CONFIRMATION_REQUIRED' };
   }
 
-  // If debugger is attached and useDebugger is true (or no selector but coords provided)
-  if ((useDebugger || (args.x !== undefined && args.y !== undefined)) && isAttached(tabId)) {
-    if (args.selector) {
-      const result = await clickViaDebugger(tabId, args.selector);
-      return { ok: true, data: result };
-    } else if (args.x !== undefined && args.y !== undefined) {
-      const result = await clickAtCoords(tabId, args.x, args.y);
-      return { ok: true, data: result };
-    }
+  if (args.selector || args.elementId) {
+    return executeInjectedDomOperation(tabId, 'click', args as unknown as Record<string, unknown>);
   }
 
-  // Content-script path (no debugger)
-  if (args.selector) {
-    const clicked = await executeInTabWithArgs(tabId, (sel: string) => {
-      const el = document.querySelector(sel);
-      if (!el) return false;
-      el.scrollIntoView({ block: 'center' });
-      (el as HTMLElement).click();
-      return true;
-    }, args.selector);
-    return { ok: true, data: { clicked, selector: args.selector } };
+  if (args.x !== undefined && args.y !== undefined) {
+    return { ok: false, error: 'Coordinate click requires explicit debugger path; fixed DOM click does not auto-fallback to debugger.', code: 'DEBUGGER_CLICK_UNSUPPORTED' };
   }
 
-  return { ok: false, error: 'Click requires either selector or x,y coordinates' };
+  return { ok: false, error: 'Click requires selector or elementId.', code: 'TARGET_REQUIRED' };
 }
 
 async function handleTypeText(args: TypeTextArgs): Promise<ToolResult> {
   const tabId = await resolveTabId(args.tabId);
-  const useDebugger = args.useDebugger ?? false;
   const clear = args.clear ?? true;
 
   if (!args.selector && !args.elementId) {
-    return { ok: false, error: 'type_text requires selector or elementId' };
+    return { ok: false, error: 'type_text requires selector or elementId', code: 'TARGET_REQUIRED' };
   }
-  if (!args.text) {
-    return { ok: false, error: 'type_text requires text' };
+  if (args.text === undefined) {
+    return { ok: false, error: 'type_text requires text', code: 'TEXT_REQUIRED' };
   }
-
-  const selector = args.selector ?? `[data-agent-id="${args.elementId}"]`;
-
-  // Debugger path (trusted input)
-  if (useDebugger && isAttached(tabId)) {
-    const result = await typeViaDebugger(tabId, selector, args.text, clear);
-    return { ok: true, data: result };
-  }
-
-  // Content-script path
-  const typed = await executeInTabWithArgs(tabId, (params: { sel: string; txt: string; clr: boolean }) => {
-    const el = document.querySelector(params.sel) as HTMLInputElement | HTMLTextAreaElement | null;
-    if (!el) return false;
-    el.focus();
-    if (params.clr) el.value = '';
-    // Try execCommand first (preserves undo history, works for React controlled inputs)
-    // Fallback to direct value assignment if execCommand fails (common in chrome.scripting context)
-    if (!document.execCommand('insertText', false, params.txt)) {
-      el.value = params.txt;
-    }
-    el.dispatchEvent(new Event('input', { bubbles: true }));
-    el.dispatchEvent(new Event('change', { bubbles: true }));
-    return true;
-  }, { sel: selector, txt: args.text, clr: clear });
-
-  return { ok: true, data: { typed, selector, length: args.text.length } };
+  return executeInjectedDomOperation(tabId, 'type_text', { ...args, clear });
 }
 
 async function handlePressKey(args: PressKeyArgs): Promise<ToolResult> {
   const tabId = await resolveTabId(args.tabId);
-
-  if (isAttached(tabId)) {
-    const result = await pressKeyViaDebugger(tabId, args.key, args.modifiers ?? 0);
-    return { ok: true, data: result };
-  }
-
-  // Content-script fallback: dispatch keyboard event
-  await executeInTabWithArgs(tabId, (key: string) => {
-    const ev = new KeyboardEvent('keydown', { key, bubbles: true });
-    document.dispatchEvent(ev);
-    const ev2 = new KeyboardEvent('keyup', { key, bubbles: true });
-    document.dispatchEvent(ev2);
-    return true;
-  }, args.key);
-
-  return { ok: true, data: { pressed: true, key: args.key } };
+  return executeInjectedDomOperation(tabId, 'press_key', args as unknown as Record<string, unknown>);
 }
 
 async function handleScroll(args: ScrollArgs): Promise<ToolResult> {
@@ -544,71 +456,27 @@ async function handleGoForward(args: GoForwardArgs): Promise<ToolResult> {
 
 async function handleHover(args: HoverArgs): Promise<ToolResult> {
   const tabId = await resolveTabId(args.tabId);
-
-  if (isAttached(tabId)) {
-    const result = await hoverViaDebugger(tabId, args.selector);
-    return { ok: true, data: result };
-  }
-
-  // Content-script fallback: dispatch mouseover/mousemove events
-  const hovered = await executeInTabWithArgs(tabId, (sel: string) => {
-    const el = document.querySelector(sel);
-    if (!el) return false;
-    el.scrollIntoView({ block: 'center' });
-    el.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, cancelable: true }));
-    el.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, cancelable: true }));
-    return true;
-  }, args.selector);
-  return { ok: true, data: { hovered, selector: args.selector } };
+  return executeInjectedDomOperation(tabId, 'hover', args as unknown as Record<string, unknown>);
 }
 
 async function handleSelectOption(args: SelectOptionArgs): Promise<ToolResult> {
   const tabId = await resolveTabId(args.tabId);
-
-  const selected = await executeInTabMultiArgs(tabId, (sel: string, val: string) => {
-    const el = document.querySelector(sel) as HTMLSelectElement | null;
-    if (!el) return false;
-    el.value = val;
-    el.dispatchEvent(new Event('change', { bubbles: true }));
-    el.dispatchEvent(new Event('input', { bubbles: true }));
-    return true;
-  }, [args.selector, args.value]);
-  return { ok: true, data: { selected, selector: args.selector, value: args.value } };
+  return executeInjectedDomOperation(tabId, 'select_option', args as unknown as Record<string, unknown>);
 }
 
 async function handleGetAttribute(args: GetAttributeArgs): Promise<ToolResult> {
   const tabId = await resolveTabId(args.tabId);
-
-  const value = await executeInTabMultiArgs(tabId, (sel: string, attr: string) => {
-    const el = document.querySelector(sel);
-    if (!el) return null;
-    return el.getAttribute(attr);
-  }, [args.selector, args.attributeName]);
-  return { ok: true, data: { value, selector: args.selector, attribute: args.attributeName } };
+  return executeInjectedDomOperation(tabId, 'get_attribute', args as unknown as Record<string, unknown>);
 }
 
 async function handleCheckExists(args: CheckExistsArgs): Promise<ToolResult> {
   const tabId = await resolveTabId(args.tabId);
-
-  const count = await executeInTabWithArgs(tabId, (sel: string) => {
-    return document.querySelectorAll(sel).length;
-  }, args.selector);
-  return { ok: true, data: { exists: count > 0, count, selector: args.selector } };
+  return executeInjectedDomOperation(tabId, 'check_exists', args as unknown as Record<string, unknown>);
 }
 
 async function handleGetViewport(args: GetViewportArgs): Promise<ToolResult> {
   const tabId = await resolveTabId(args.tabId);
-
-  const viewport = await executeInTab(tabId, () => {
-    return {
-      width: window.innerWidth,
-      height: window.innerHeight,
-      scrollX: window.scrollX,
-      scrollY: window.scrollY,
-      devicePixelRatio: window.devicePixelRatio,
-    };
-  });
-  return { ok: true, data: viewport };
+  return executeInjectedDomOperation(tabId, 'get_viewport', args as unknown as Record<string, unknown>);
 }
 
 async function handleConsoleEvents(args: ConsoleEventsArgs): Promise<ToolResult> {

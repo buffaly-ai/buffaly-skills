@@ -123,6 +123,9 @@ export interface GetPageTextArgs {
 
 export interface GetDomSnapshotArgs {
   tabId?: number;
+  frameId?: number;
+  documentId?: string;
+  documentToken?: string;
   maxNodes?: number;
 }
 
@@ -134,6 +137,9 @@ export interface ScreenshotArgs {
 export interface FindElementsArgs {
   query: string;
   tabId?: number;
+  frameId?: number;
+  documentId?: string;
+  documentToken?: string;
   maxResults?: number;
 }
 
@@ -148,6 +154,9 @@ export interface ClickArgs {
   y?: number;
   elementId?: string;
   tabId?: number;
+  frameId?: number;
+  documentId?: string;
+  documentToken?: string;
   useDebugger?: boolean;
 }
 
@@ -156,14 +165,27 @@ export interface TypeTextArgs {
   elementId?: string;
   text: string;
   clear?: boolean;
+  mode?: 'replace' | 'append' | 'clear';
   tabId?: number;
+  frameId?: number;
+  documentId?: string;
+  documentToken?: string;
   useDebugger?: boolean;
 }
 
 export interface PressKeyArgs {
   key: string;
   modifiers?: number;
+  altKey?: boolean;
+  ctrlKey?: boolean;
+  metaKey?: boolean;
+  shiftKey?: boolean;
+  selector?: string;
+  elementId?: string;
   tabId?: number;
+  frameId?: number;
+  documentId?: string;
+  documentToken?: string;
 }
 
 export interface ScrollArgs {
@@ -205,28 +227,46 @@ export interface GoForwardArgs {
 
 export interface HoverArgs {
   selector: string;
+  elementId?: string;
   tabId?: number;
+  frameId?: number;
+  documentId?: string;
+  documentToken?: string;
 }
 
 export interface SelectOptionArgs {
-  selector: string;
+  selector?: string;
+  elementId?: string;
   value: string;
   tabId?: number;
+  frameId?: number;
+  documentId?: string;
+  documentToken?: string;
 }
 
 export interface GetAttributeArgs {
-  selector: string;
+  selector?: string;
+  elementId?: string;
   attributeName: string;
   tabId?: number;
+  frameId?: number;
+  documentId?: string;
+  documentToken?: string;
 }
 
 export interface CheckExistsArgs {
   selector: string;
   tabId?: number;
+  frameId?: number;
+  documentId?: string;
+  documentToken?: string;
 }
 
 export interface GetViewportArgs {
   tabId?: number;
+  frameId?: number;
+  documentId?: string;
+  documentToken?: string;
 }
 
 export interface ConsoleEventsArgs {

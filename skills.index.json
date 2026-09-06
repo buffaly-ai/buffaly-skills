@@ -736,7 +736,7 @@
       "SkillName": "ExtensionBrowser",
       "Title": "Extension Browser",
       "Description": "Buffaly skill package for Extension Browser.",
-      "Version": "0.2.85",
+      "Version": "0.2.86",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Extension Browser",
@@ -797,6 +797,10 @@
           "Sha256": "7d18e04ad0e8895d4d3d883ea79c976d1bc4aff1f53afb7c9674b1d41d610686"
         },
         {
+          "Path": "extension/source/lib/injected-dom-ops.ts",
+          "Sha256": "10ad490474329fa47cf1f724ca9b0551ce260c28381094379e08a245aba43bfb"
+        },
+        {
           "Path": "extension/source/lib/safety.ts",
           "Sha256": "6fe06254fe0dbeff491e33c1de9e2c4294a28605e8add45bdb809f1df2123b71"
         },
@@ -806,11 +810,11 @@
         },
         {
           "Path": "extension/source/lib/tool-router.ts",
-          "Sha256": "963f4e5c7bb366734c5f375a7ddabd1939539f27f340b119819a8072701155fb"
+          "Sha256": "912969c77816ed2fa31d9f30e3b7d052eb69ce9403a61c3b11ccdc67c6da8260"
         },
         {
           "Path": "extension/source/lib/types.ts",
-          "Sha256": "1c4f74e4e2e0044afdb7f0e6275ea0512f4d9119829a7da5edfd8a95573f6265"
+          "Sha256": "11f5298d93f99fc0c789e054ead471ac4b465915b32f881ba683a840d4bf1064"
         },
         {
           "Path": "extension/source/package-lock.json",
