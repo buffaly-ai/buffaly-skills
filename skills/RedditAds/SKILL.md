@@ -11,6 +11,7 @@ OpsAgent skill for Reddit Ads API v3 access checks, inventory reads, reporting, 
 - Gets one campaign, ad group, or ad by id.
 - Generates performance reports with date range presets.
 - Creates campaigns, ad groups, and ads only with PAUSED status so spend is not activated.
+- Publishes reviewed local drafts as native Reddit `TEXT` posts with exact title/body copy, requires the article URL inside that body, and verifies the resulting free-form ad is `PAUSED` before recording retry-safe progress/final receipts. Reddit free-form ads do not accept an ad-level `click_url`.
 - Returns raw Reddit JSON responses for inspection.
 - Provides trusted prompt workflows for audits, campaign planning, paused campaign creation, and optimization recommendations.
 
@@ -26,7 +27,7 @@ OpsAgent skill for Reddit Ads API v3 access checks, inventory reads, reporting, 
 - Failures should report clear status without echoing request URLs that contain credentials.
 
 ## Read-Only Boundary
-- This version is limited to access checks, ad account reads, campaign listing, inventory listing, object detail reads, reporting, and paused-only object creation.
+- This version is limited to access checks, ad account reads, campaign listing, inventory listing, object detail reads, reporting, guarded native-text draft publication, and paused-only object creation.
 - Do not add activation, delete, archive, budget increase, status update, or non-PAUSED mutation actions without explicit approval.
 
 ## Prompt Workflows
