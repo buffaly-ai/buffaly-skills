@@ -203,7 +203,7 @@ prototype ToCaptureBrowserScreenshot : BrowserSessionSkillAction
 {
 	Description = @"Thin wrapper over BrowserTools.BrowserScreenshotTool(_opsAgent, subAgentId, relativePath).";
 
-	function Execute(string subAgentId, string relativePath) : string
+	function Execute(string subAgentId, string relativePath) : Prototype
 	{
 		return BrowserTools.BrowserScreenshotTool(_opsAgent, subAgentId, relativePath);
 	}

@@ -17,3 +17,7 @@ Defines canonical `BrowserSkill`, the `BrowserSessionSkill` compatibility alias,
 
 ## 2026-06-27
 - Added ToRunPlaywrightScript so agents can run Playwright-style browser automation natively through BrowserSessionSkill.
+
+## 2026-09-06
+- Changed `ToCaptureBrowserScreenshot.Execute(...)` to return `Prototype` so the C# `IStructuredToolResult` remains boxed across ProtoScript instead of being coerced to a string.
+- Design Decision: BrowserSession should preserve screenshot image content parts while leaving the metadata text/path contract owned by BrowserTools.
