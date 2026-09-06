@@ -14,7 +14,7 @@ Marketing- or client-specific validated prompt workflows should live in their ow
 - `ToSummarizeTextInOneSentenceSkill` — minimal sample validated prompt action.
 - Workflow-report narrative actions and debugging helpers remain generic infrastructure examples.
 
-Inherited direct `ValidatedPromptAction.Execute(userInput, maxAttempts)` calls use the action's explicit `ValidatedPromptActionName` field as the runner action identity. Concrete validated-prompt actions must assign this field to their own canonical prototype name; this avoids relying on unavailable inherited-method prototype-name reflection in ProtoScript.
+Inherited direct `ValidatedPromptAction.Execute(userInput, maxAttempts)` calls derive the runner action identity from the concrete receiver's `PrototypeName`. Concrete validated-prompt actions no longer need to assign `ValidatedPromptActionName` just to make inherited direct execution identify the action correctly.
 
 ## Source-of-truth rule
 
