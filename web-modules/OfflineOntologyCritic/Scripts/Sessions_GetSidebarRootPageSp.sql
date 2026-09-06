@@ -258,7 +258,8 @@ AS
 				CASE
 					WHEN MAX(child.LastUpdated) IS NOT NULL AND MAX(child.LastUpdated) > root.LastUpdated THEN MAX(child.LastUpdated)
 					ELSE root.LastUpdated
-				END AS EffectiveLastUpdated
+				END AS EffectiveLastUpdated,
+				COUNT(child.SessionID) AS DirectChildCount
 		FROM	dbo.Sessions root WITH (NOLOCK)
 		LEFT JOIN dbo.Sessions child WITH (NOLOCK)
 		ON		child.ParentSessionID = root.SessionID
@@ -272,9 +273,31 @@ AS
 	(
 		SELECT	RootSessionID,
 				EffectiveLastUpdated,
+				CONVERT(int, DirectChildCount + 1) AS FamilyRowCount,
 				ROW_NUMBER() OVER (ORDER BY EffectiveLastUpdated DESC, RootSessionID DESC) AS RootOrdinal,
 				COUNT(*) OVER () AS TotalRootRows
 		FROM	RootActivity
+	),
+	RequestedRoots AS
+	(
+		SELECT	RootSessionID,
+				EffectiveLastUpdated,
+				FamilyRowCount,
+				RootOrdinal,
+				TotalRootRows,
+				SUM(FamilyRowCount) OVER (ORDER BY RootOrdinal ROWS UNBOUNDED PRECEDING) AS CumulativeFamilyRows
+		FROM	RankedRoots
+		WHERE	RootOrdinal BETWEEN @SkipRoots + 1 AND @SkipRoots + @NumRoots
+	),
+	BudgetedRoots AS
+	(
+		SELECT	RootSessionID,
+				EffectiveLastUpdated,
+				RootOrdinal,
+				TotalRootRows
+		FROM	RequestedRoots
+		WHERE	RootOrdinal = @SkipRoots + 1
+				OR CumulativeFamilyRows <= 500
 	),
 	PagedRoots AS
 	(
@@ -282,9 +305,9 @@ AS
 				EffectiveLastUpdated,
 				RootOrdinal,
 				TotalRootRows,
-				COUNT(*) OVER () AS RootRowsReturned
-		FROM	RankedRoots
-		WHERE	RootOrdinal BETWEEN @SkipRoots + 1 AND @SkipRoots + @NumRoots
+				COUNT(*) OVER () AS RootRowsReturned,
+				CONVERT(bit, CASE WHEN MAX(RootOrdinal) OVER () < TotalRootRows THEN 1 ELSE 0 END) AS HasMoreRootRows
+		FROM	BudgetedRoots
 	),
 	SidebarRows AS
 	(
@@ -309,7 +332,7 @@ AS
 				CONVERT(int, pagedRoot.RootOrdinal) AS RootOrdinal,
 				1 AS HierarchyDepth,
 				CONVERT(int, pagedRoot.RootRowsReturned) AS RootRowsReturned,
-				CONVERT(bit, CASE WHEN pagedRoot.TotalRootRows > @SkipRoots + @NumRoots THEN 1 ELSE 0 END) AS HasMoreRootRows,
+				pagedRoot.HasMoreRootRows,
 				CONVERT(bit, 0) AS IsSearchBounded
 		FROM	PagedRoots pagedRoot
 		JOIN	dbo.Sessions root WITH (NOLOCK)
@@ -338,7 +361,7 @@ AS
 				CONVERT(int, pagedRoot.RootOrdinal) AS RootOrdinal,
 				2 AS HierarchyDepth,
 				CONVERT(int, pagedRoot.RootRowsReturned) AS RootRowsReturned,
-				CONVERT(bit, CASE WHEN pagedRoot.TotalRootRows > @SkipRoots + @NumRoots THEN 1 ELSE 0 END) AS HasMoreRootRows,
+				pagedRoot.HasMoreRootRows,
 				CONVERT(bit, 0) AS IsSearchBounded
 		FROM	PagedRoots pagedRoot
 		JOIN	dbo.Sessions parent WITH (NOLOCK)
