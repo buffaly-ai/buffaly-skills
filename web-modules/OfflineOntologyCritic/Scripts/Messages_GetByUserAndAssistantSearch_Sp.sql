@@ -9,7 +9,8 @@ CREATE OR ALTER PROCEDURE [dbo].[Messages_GetByUserAndAssistantSearch_Sp]
     @RoleFilter nvarchar(20) = N'both',
     @MaxRows int = 25,
     @SearchScope nvarchar(20) = N'recent',
-    @MaxMessageScanCount int = 0
+    @MaxMessageScanCount int = 0,
+    @SessionKey nvarchar(256) = N''
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -35,8 +36,35 @@ BEGIN
 
     SET @SearchScope = LOWER(LTRIM(RTRIM(@SearchScope)));
 
-    IF @SearchScope NOT IN (N'recent', N'deep', N'all')
-        THROW 50023, 'SearchScope must be recent, deep, or all.', 1;
+    IF @SearchScope NOT IN (N'this', N'recent', N'deep', N'all')
+        THROW 50023, 'SearchScope must be this, recent, deep, or all.', 1;
+
+    IF @SearchScope = N'this'
+    BEGIN
+        IF @SessionKey IS NULL OR LTRIM(RTRIM(@SessionKey)) = N''
+            THROW 50027, 'SessionKey is required when SearchScope is this.', 1;
+
+        SELECT TOP (@MaxRows)
+            s.SessionKey,
+            s.SessionName,
+            m.*
+        FROM dbo.Messages m WITH (NOLOCK)
+        INNER JOIN dbo.Sessions s WITH (NOLOCK)
+            ON s.SessionID = m.SessionID
+        WHERE s.SessionKey = @SessionKey
+            AND (
+                (@RoleFilter = N'both' AND m.Role IN (N'user', N'assistant'))
+                OR (@RoleFilter = N'user' AND m.Role = N'user')
+                OR (@RoleFilter = N'assistant' AND m.Role = N'assistant')
+            )
+            AND (@Search = N'' OR m.Content LIKE N'%' + @Search + N'%')
+            AND s.SessionKey NOT LIKE N'%level-two%'
+            AND CHARINDEX(N'[label: Level 2]', LTRIM(m.Content)) <> 1
+            AND CHARINDEX(N'[timeline-label: Level 2]', LTRIM(m.Content)) <> 1
+        ORDER BY m.MessageID DESC;
+
+        RETURN;
+    END;
 
     IF @SearchScope = N'recent'
     BEGIN
