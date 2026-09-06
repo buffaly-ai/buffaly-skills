@@ -14,6 +14,7 @@
 	const directory = document.getElementById("directory");
 	const editorHost = document.querySelector(".source-viewer__editor");
 	let editor = null;
+	let sourceText = null;
 
 	function fail(message) { status.textContent = message; status.classList.add("error"); }
 	function addScript(name) { return new Promise((resolve, reject) => { const script = document.createElement("script"); script.src = "vendor/codemirror/mode/" + name + "/" + name + ".js?v=2"; script.onload = resolve; script.onerror = () => reject(new Error("Could not load Source Viewer syntax mode: " + name)); document.head.appendChild(script); }); }
@@ -67,7 +68,7 @@
 		document.title = file.name + " - Source Viewer";
 		if (downloadUrl) { download.href = downloadUrl; download.hidden = false; }
 		editor = CodeMirror.fromTextArea(document.getElementById("source"), { mode: language.mode, lineNumbers: true, readOnly: true, lineWrapping: false });
-		editor.setValue(file.text); copy.disabled = false;
+		sourceText = file.text; editor.setValue(sourceText); copy.disabled = false;
 		status.textContent = file.length.toLocaleString() + " bytes | " + language.name + " | Read only";
 	}
 
@@ -83,8 +84,8 @@
 		} catch (error) { fail(error.message); }
 	}
 
-	copy.addEventListener("click", async function () { if (!editor) return; await navigator.clipboard.writeText(editor.getValue()); status.textContent = "Copied source."; });
+	copy.addEventListener("click", async function () { if (sourceText === null) return; await navigator.clipboard.writeText(sourceText); status.textContent = "Copied source."; });
 	close.addEventListener("click", function () { window.close(); });
-	window.addEventListener("unload", function () { editor = null; }, { once: true });
+	window.addEventListener("unload", function () { editor = null; sourceText = null; }, { once: true });
 	void load();
 })();
