@@ -11,6 +11,7 @@ async function loadCoreAssets() { if (!assetsPromise) { addStyle(BASE + "vendor/
 async function loadLanguageAssets(language) { for (const asset of language.assets) { if (!modePromises.has(asset)) modePromises.set(asset, addScript(BASE + "vendor/codemirror/mode/" + asset + "/" + asset + ".js")); await modePromises.get(asset); } }
 async function readTarget(path) { const response = await fetch(API + "?path=" + encodeURIComponent(path) + "&root=" + encodeURIComponent(path), { credentials: "same-origin", cache: "no-store" }); const text = await response.text(); let result = null; try { result = text ? JSON.parse(text) : null; } catch { throw new Error("Source Viewer returned invalid JSON."); } if (!response.ok) throw new Error(result && result.message ? result.message : "Source target request failed (" + response.status + ")."); return result; }
 function standaloneUrl(path, root) { const url = new URL(BASE + "index.html", location.origin); url.searchParams.set("path", path); url.searchParams.set("root", root); return url.href; }
+function childPath(folderPath, name) { return folderPath.replace(/[\\\/]$/, "") + (folderPath.includes("\\") ? "\\" : "/") + name; }
 
 class SourceViewerModule extends HTMLElement {
   constructor() { super(); this._configuration = null; this._started = false; this._editor = null; }
@@ -36,7 +37,7 @@ class SourceViewerModule extends HTMLElement {
     this._editor = window.CodeMirror.fromTextArea(textarea, { mode: language.mode, lineNumbers: true, readOnly: true, lineWrapping: false, viewportMargin: 30 });
   }
   _renderDirectory(folder) {
-    let rows = folder.entries.map(entry => '<a class="sv-entry' + (!entry.canOpen ? ' sv-disabled' : '') + '" ' + (entry.canOpen ? 'href="' + escapeHtml(entry.kind === "directory" ? standaloneUrl(entry.path, folder.root) : "buffaly://file/open?path=" + encodeURIComponent(entry.path)) + '"' : '') + '><span>' + escapeHtml(entry.kind === "directory" ? "DIR" : entry.kind === "file" ? "FILE" : "LOCKED") + '</span><strong>' + escapeHtml(entry.name) + '</strong></a>').join("");
+    let rows = folder.entries.map(entry => { const path = childPath(folder.path, entry.name), canOpen = entry.kind !== "locked"; return '<a class="sv-entry' + (!canOpen ? ' sv-disabled' : '') + '" ' + (canOpen ? 'href="' + escapeHtml(entry.kind === "directory" ? standaloneUrl(path, folder.root) : "buffaly://file/open?path=" + encodeURIComponent(path)) + '"' : '') + '><span>' + escapeHtml(entry.kind === "directory" ? "DIR" : entry.kind === "file" ? "FILE" : "LOCKED") + '</span><strong>' + escapeHtml(entry.name) + '</strong></a>'; }).join("");
     if (!rows) rows = '<p class="sv-empty">This directory is empty.</p>';
     this.innerHTML = '<style>' + SourceViewerModule.styles + '</style><article class="sv-card"><header><div><span class="sv-kicker">Source Viewer</span><h2>' + escapeHtml(folder.name) + '</h2><p title="' + escapeHtml(folder.path) + '">' + escapeHtml(folder.path) + '</p></div><span class="sv-kind" title="Directory">DIR</span></header><nav class="sv-directory">' + rows + '</nav><footer><span>' + Number(folder.totalCount).toLocaleString() + ' items</span>' + (folder.truncated ? '<span>Showing first 500</span>' : '') + '<span>Directory</span></footer></article>';
   }

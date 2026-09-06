@@ -21,6 +21,7 @@
 	async function loadLanguage(language) { for (const asset of language.assets) await addScript(asset); }
 	function targetUrl(targetPath) { const url = new URL(location.href); url.search = ""; url.searchParams.set("path", targetPath); url.searchParams.set("root", navigationRoot); return url.href; }
 	function genericFileUrl(targetPath) { return "buffaly://file/open?path=" + encodeURIComponent(targetPath); }
+	function childPath(folderPath, name) { return folderPath.replace(/[\\\/]$/, "") + (folderPath.includes("\\") ? "\\" : "/") + name; }
 	function navigateDirectory(targetPath) { location.assign(targetUrl(targetPath)); }
 	function openFile(targetPath) { if (window.BuffalySourceLanguage.detect(targetPath).id !== "text" || /\.txt$/i.test(targetPath)) location.assign(targetUrl(targetPath)); else location.assign(genericFileUrl(targetPath)); }
 
@@ -41,17 +42,18 @@
 			directory.appendChild(up);
 		}
 		for (const entry of folder.entries) {
+			const targetPath = childPath(folder.path, entry.name);
+			const canOpen = entry.kind !== "locked";
 			const row = document.createElement("button");
 			row.type = "button";
 			row.className = "source-viewer__entry";
-			row.disabled = !entry.canOpen;
+			row.disabled = !canOpen;
 			const marker = entry.kind === "directory" ? "DIR" : entry.kind === "file" ? "FILE" : "LOCKED";
 			row.innerHTML = '<span class="source-viewer__entry-kind"></span><span class="source-viewer__entry-name"></span>';
 			row.querySelector(".source-viewer__entry-kind").textContent = marker;
 			row.querySelector(".source-viewer__entry-name").textContent = entry.name;
-			if (entry.isReparsePoint) row.title = "Reparse point navigation is disabled.";
-			else if (!entry.canOpen) row.title = "Entry could not be accessed.";
-			else row.addEventListener("click", () => entry.kind === "directory" ? navigateDirectory(entry.path) : openFile(entry.path));
+			if (!canOpen) row.title = "Entry navigation is disabled.";
+			else row.addEventListener("click", () => entry.kind === "directory" ? navigateDirectory(targetPath) : openFile(targetPath));
 			directory.appendChild(row);
 		}
 		if (!folder.entries.length) {
