@@ -3,6 +3,7 @@
 ## Separate Queued Send From Active Steering (2026-09-06)
 - Clarified `ToSendToSession` as queue acceptance only: it persists one later input, does not wait for execution/completion, cannot interrupt an active model turn, and must not be repeated as pseudo-steering.
 - Added `ToSteerActiveSession` with an `ActiveSessionSteerResult` receipt. It is active-turn-only and never creates, starts, resumes, or queues an idle/unloaded target.
+- Import `ActiveSessionSteerResult` explicitly so clean worker compilation can resolve the public action return type.
 - Kept both actions as thin ProtoScript wrappers over the shared typed session service contract.
 
 ## Define Canonical Turn Paging Semantics (2026-08-22)
