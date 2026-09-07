@@ -32,7 +32,8 @@ prototype ToProvisionRecaptchaKey : RecaptchaSkillAction
 		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
 		GoogleOperationsLocalProofHelper.PreflightAndPersistEvidence(proofDirectoryPath, "Recaptcha.ProvisionRecaptchaKey");
 		JsonObject args = new JsonObject(); args["ProjectID"] = projectId; args["DisplayName"] = displayName; args["DomainsCsv"] = domainsCsv; args["IntegrationType"] = integrationType;
-		return service.CallWebPropertiesRoute("google-operations/provision-recaptcha-web-key", args);
+		string result = service.CallWebPropertiesRoute("google-operations/provision-recaptcha-key", args);
+		return GoogleOperationsLocalProofHelper.PersistResultEvidence(proofDirectoryPath, "Recaptcha.ProvisionRecaptchaKey", result);
 	}
 }
 
