@@ -73,3 +73,26 @@ prototype ToAddGoogleAnalyticsProperty : GoogleAnalyticsSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to run an advanced google analytics report")]
+prototype ToRunMarketingAnalyticsReportAdvanced : GoogleAnalyticsSkillAction
+{
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string propertyAlias, string startDate, string endDate, string dimensionsCsv, string metricsCsv, int limit, int offset, string orderByCsv, string dimensionFilterJson) : string
+	{
+		if (service == null)
+		{
+			return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		}
+		JsonObject args = new JsonObject();
+		args["PropertyAlias"] = propertyAlias;
+		args["StartDate"] = startDate;
+		args["EndDate"] = endDate;
+		args["DimensionsCsv"] = dimensionsCsv;
+		args["MetricsCsv"] = metricsCsv;
+		args["Limit"] = limit;
+		args["Offset"] = offset;
+		args["OrderByCsv"] = orderByCsv;
+		args["DimensionFilterJson"] = dimensionFilterJson;
+		return service.CallWebPropertiesRoute("google-operations/run-marketing-analytics-report-advanced", args);
+	}
+	Description = @"FF-owned GA report with explicit offset, orderByCsv and GA4 DimensionFilterJson. Preserves arbitrary dimensions, metrics and date ranges; uses only the FF service credential.";
+}
