@@ -9,3 +9,4 @@ History:
 - 2026-09-07 contract fix: actions now use `FeedingFrenzyWebPropertiesJsonWsService` with Marketing compatibility GoogleOperations routes and PascalCase parameters from `C:\dev\FeedingFrenzy\FeedingFrenzy.Admin.Business\GoogleOperations.cs`. Local `proofDirectoryPath` is validated before setup calls and is not sent to Feeding Frenzy.
 
 
+

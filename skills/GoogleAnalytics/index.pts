@@ -68,7 +68,8 @@ prototype ToAddGoogleAnalyticsProperty : GoogleAnalyticsSkillAction
 		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
 		GoogleOperationsLocalProofHelper.PreflightAndPersistEvidence(proofDirectoryPath, "GoogleAnalytics.AddGoogleAnalyticsProperty");
 		JsonObject args = new JsonObject(); args["AccountID"] = accountId; args["PropertyDisplayName"] = propertyDisplayName; args["WebStreamDisplayName"] = webStreamDisplayName; args["DefaultUri"] = defaultUri;
-		return service.CallWebPropertiesRoute("google-operations/add-google-analytics-property", args);
+		string result = service.CallWebPropertiesRoute("google-operations/add-google-analytics-property", args);
+		return GoogleOperationsLocalProofHelper.PersistResultEvidence(proofDirectoryPath, "GoogleAnalytics.AddGoogleAnalyticsProperty", result);
 	}
 }
 

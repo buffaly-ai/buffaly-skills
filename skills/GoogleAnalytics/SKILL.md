@@ -16,6 +16,7 @@ Primitive GA4 tools for Buffaly.Marketing routed through the canonical Feeding F
 - `ToRunMarketingAnalyticsReport(service, propertyAlias, startDate, endDate, dimensionsCsv, metricsCsv, limit)` -> `run-marketing-analytics-report` with `PropertyAlias`, `StartDate`, `EndDate`, `DimensionsCsv`, `MetricsCsv`, `Limit`
 - `ToAddGoogleAnalyticsProperty(service, accountId, propertyDisplayName, webStreamDisplayName, defaultUri, proofDirectoryPath)` -> `add-google-analytics-property` with `AccountID`, `PropertyDisplayName`, `WebStreamDisplayName`, `DefaultUri`
 
-`proofDirectoryPath` is validated by the native `GoogleOperationsLocalProofHelper`, which writes a unique probe and persists sanitized local evidence before mutation. The local path is not sent to Feeding Frenzy; FF creates server-owned proof artifacts.
+`proofDirectoryPath` is validated by the native `GoogleOperationsLocalProofHelper`, which writes a unique probe and persists sanitized preflight evidence before mutation, then persists sanitized result evidence after the successful Feeding Frenzy response and returns a wrapper containing `LocalProofEvidencePath`. The local path is not sent to Feeding Frenzy; FF creates server-owned proof artifacts.
+
 
 
