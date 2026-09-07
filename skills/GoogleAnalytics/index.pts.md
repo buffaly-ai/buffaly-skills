@@ -1,12 +1,11 @@
 # index.pts
 
-- 2026-06-18: Added the first GoogleAnalytics ProtoScript skill bundle with primitive data-access tools for listing configured properties, testing GA4 access, and running generic reports through the Buffaly.Marketing C# facade.
+GoogleAnalytics owner-source ProtoScript skill.
 
-- 2026-06-18: Aligned the skill prototype shape with existing working OpsAgent skills by using SkillEntity directly and setting EntityName explicitly for reliable action discovery.
+History:
+- 2026-06-18: Added primitive GA4 tools.
+- 2026-08-14: Added property/web-stream provisioning action.
+- 2026-09-07: Routed actions through Feeding Frenzy GoogleOperations.
+- 2026-09-07 contract fix: actions now use `FeedingFrenzyWebPropertiesJsonWsService` with Marketing compatibility GoogleOperations routes and PascalCase parameters from `C:\dev\FeedingFrenzy\FeedingFrenzy.Admin.Business\GoogleOperations.cs`. Local `proofDirectoryPath` is validated before setup calls and is not sent to Feeding Frenzy.
 
-- 2026-07-20: Replaced the package-local `lib/Buffaly.Marketing.dll` reference with assembly-name resolution so public extension reconciliation does not require a DLL copied into the source skill directory.
-- 2026-07-20: Corrected assembly-name resolution to the unquoted `reference Buffaly.Marketing Buffaly.Marketing;` form; quoted values are project-relative DLL paths in ProtoScript.
 
-- 2026-08-02: Configured the GA4 facade from `GoogleAnalytics.ServiceAccountKey` at each credential-dependent action boundary. This makes the documented UserSecrets contract executable instead of relying on uncalled static configuration or stale process state.
-
-2026-08-14: Added ToAddGoogleAnalyticsProperty thin action over the Buffaly.Marketing GA Admin provisioning facade.

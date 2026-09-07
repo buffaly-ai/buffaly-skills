@@ -1,6 +1,6 @@
 reference Buffaly.Marketing Buffaly.Marketing;
-import Buffaly.Marketing Buffaly.Marketing.GoogleAnalytics.GoogleAnalyticsProtoScriptFacade GoogleAnalyticsProtoScriptFacade;
-import Buffaly.Agent.Tools.Secrets Buffaly.Agent.Tools.Secrets.UserSecrets UserSecrets;
+import Buffaly.Marketing Buffaly.Marketing.FeedingFrenzyGoogleOperations.GoogleOperationsLocalProofHelper GoogleOperationsLocalProofHelper;
+import BasicUtilities BasicUtilities.JsonObject JsonObject;
 
 prototype GoogleAnalyticsSkillAction : OpsAction
 {
@@ -21,9 +21,10 @@ prototype ToListMarketingAnalyticsProperties : GoogleAnalyticsSkillAction
 {
 	Description = @"Returns configured GA4 property aliases, account IDs, property IDs, and API property names as JSON.";
 
-	function Execute() : string
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service) : string
 	{
-		return GoogleAnalyticsProtoScriptFacade.ListProperties();
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		return service.CallWebPropertiesRoute("google-operations/list-marketing-analytics-properties", new JsonObject());
 	}
 }
 
@@ -33,10 +34,11 @@ prototype ToTestMarketingAnalyticsAccess : GoogleAnalyticsSkillAction
 {
 	Description = @"propertyAlias - configured GA4 property alias. startDate/endDate - GA4 date strings such as 7daysAgo/yesterday. Returns access status JSON.";
 
-	function Execute(string propertyAlias, string startDate, string endDate) : string
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string propertyAlias, string startDate, string endDate) : string
 	{
-		GoogleAnalyticsProtoScriptFacade.ConfigureServiceAccountCredentialJson(UserSecrets.GetSecret("GoogleAnalytics.ServiceAccountKey"));
-		return GoogleAnalyticsProtoScriptFacade.TestAccess(propertyAlias, startDate, endDate);
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["PropertyAlias"] = propertyAlias; args["StartDate"] = startDate; args["EndDate"] = endDate;
+		return service.CallWebPropertiesRoute("google-operations/test-marketing-analytics-access", args);
 	}
 }
 
@@ -46,10 +48,11 @@ prototype ToRunMarketingAnalyticsReport : GoogleAnalyticsSkillAction
 {
 	Description = @"propertyAlias - configured GA4 property alias. dimensionsCsv/metricsCsv - comma-separated GA4 fields. Returns raw GA4 report JSON wrapped with property metadata.";
 
-	function Execute(string propertyAlias, string startDate, string endDate, string dimensionsCsv, string metricsCsv, int limit) : string
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string propertyAlias, string startDate, string endDate, string dimensionsCsv, string metricsCsv, int limit) : string
 	{
-		GoogleAnalyticsProtoScriptFacade.ConfigureServiceAccountCredentialJson(UserSecrets.GetSecret("GoogleAnalytics.ServiceAccountKey"));
-		return GoogleAnalyticsProtoScriptFacade.RunReport(propertyAlias, startDate, endDate, dimensionsCsv, metricsCsv, limit);
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["PropertyAlias"] = propertyAlias; args["StartDate"] = startDate; args["EndDate"] = endDate; args["DimensionsCsv"] = dimensionsCsv; args["MetricsCsv"] = metricsCsv; args["Limit"] = limit;
+		return service.CallWebPropertiesRoute("google-operations/run-marketing-analytics-report", args);
 	}
 }
 
@@ -60,10 +63,12 @@ prototype ToAddGoogleAnalyticsProperty : GoogleAnalyticsSkillAction
 {
 	Description = @"accountId - GA account ID. propertyDisplayName - GA4 property display name. webStreamDisplayName - web stream display name. defaultUri - canonical website URL. proofDirectoryPath - writable local proof directory checked before mutation. Creates or reuses the GA4 property and web stream, then returns the measurement ID.";
 
-	function Execute(string accountId, string propertyDisplayName, string webStreamDisplayName, string defaultUri, string proofDirectoryPath) : string
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string accountId, string propertyDisplayName, string webStreamDisplayName, string defaultUri, string proofDirectoryPath) : string
 	{
-		GoogleAnalyticsProtoScriptFacade.ConfigureServiceAccountCredentialJson(UserSecrets.GetSecret("GoogleAnalytics.ServiceAccountKey"));
-		return GoogleAnalyticsProtoScriptFacade.ProvisionPropertyWebStream(accountId, propertyDisplayName, webStreamDisplayName, defaultUri, proofDirectoryPath);
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		GoogleOperationsLocalProofHelper.PreflightAndPersistEvidence(proofDirectoryPath, "GoogleAnalytics.AddGoogleAnalyticsProperty");
+		JsonObject args = new JsonObject(); args["AccountID"] = accountId; args["PropertyDisplayName"] = propertyDisplayName; args["WebStreamDisplayName"] = webStreamDisplayName; args["DefaultUri"] = defaultUri;
+		return service.CallWebPropertiesRoute("google-operations/add-google-analytics-property", args);
 	}
 }
 
