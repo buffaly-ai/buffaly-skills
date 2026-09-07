@@ -52,8 +52,8 @@
     <section class="panel">
       <h2>Most reused</h2>
       <table aria-label="Most reused prototypes">
-        <thead><tr><th>Prototype</th><th>Kind</th><th>Borrows</th><th>Keeps</th><th>Distinct destinations</th><th>Last activity</th><th>Hash</th></tr></thead>
-        <tbody id="rankings"><tr><td colspan="7" class="muted">No reuse events found.</td></tr></tbody>
+        <thead><tr><th>Prototype</th><th>Source</th><th>Kind</th><th>Borrows</th><th>Keeps</th><th>Distinct destinations</th><th>Last activity</th><th>Hash</th></tr></thead>
+        <tbody id="rankings"><tr><td colspan="8" class="muted">No reuse events found.</td></tr></tbody>
       </table>
     </section>
 
@@ -81,7 +81,7 @@
       $('totalKeeps').textContent = model.totalKeeps ?? model.TotalKeeps ?? 0;
       $('failureCount').textContent = model.failureCount ?? model.FailureCount ?? 0;
       const rankings = model.rankings ?? model.Rankings ?? [];
-      $('rankings').innerHTML = rankings.length ? rankings.map(row => `<tr><td>${prototypeLink(row.prototypeName ?? row.PrototypeName)}</td><td>${text(row.kind ?? row.Kind)}</td><td>${text(row.totalBorrows ?? row.TotalBorrows)}</td><td>${text(row.totalKeeps ?? row.TotalKeeps)}</td><td>${text(row.distinctDestinationSessions ?? row.DistinctDestinationSessions)}</td><td>${text(row.lastActivityUtc ?? row.LastActivityUtc)}</td><td><code>${text(row.definitionHash ?? row.DefinitionHash)}</code></td></tr>`).join('') : '<tr><td colspan="7" class="muted">No reuse events found.</td></tr>';
+      $('rankings').innerHTML = rankings.length ? rankings.map(row => `<tr><td>${prototypeLink(row.prototypeName ?? row.PrototypeName)}</td><td>${sessionLink(row.sourceSessionKey ?? row.SourceSessionKey)}</td><td>${text(row.kind ?? row.Kind)}</td><td>${text(row.totalBorrows ?? row.TotalBorrows)}</td><td>${text(row.totalKeeps ?? row.TotalKeeps)}</td><td>${text(row.distinctDestinationSessions ?? row.DistinctDestinationSessions)}</td><td>${text(row.lastActivityUtc ?? row.LastActivityUtc)}</td><td><code>${text(row.definitionHash ?? row.DefinitionHash)}</code></td></tr>`).join('') : '<tr><td colspan="8" class="muted">No reuse events found.</td></tr>';
       const activity = model.activity ?? model.Activity ?? [];
       $('activity').innerHTML = activity.length ? activity.map(item => { const e = item.event ?? item.Event ?? {}; return `<tr><td>${text(e.timestampUtc ?? e.TimestampUtc)}</td><td>${text(e.operation ?? e.Operation)}</td><td>${text(e.outcome ?? e.Outcome)}</td><td>${prototypeLink(e.prototypeName ?? e.PrototypeName)}</td><td>${sessionLink(e.sourceSessionKey ?? e.SourceSessionKey)}</td><td>${sessionLink(e.destinationSessionKey ?? e.DestinationSessionKey ?? item.sessionKey ?? item.SessionKey)}</td><td>${text(e.error ?? e.Error)}</td></tr>`; }).join('') : '<tr><td colspan="7" class="muted">No activity found.</td></tr>';
       const diagnostics = model.diagnostics ?? model.Diagnostics ?? [];
