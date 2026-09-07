@@ -108,7 +108,7 @@
       "slots": {
         "pharmacy_address": {
           "type": "text",
-          "required": false,
+          "required": true,
           "maxChars": 140,
           "dataSlot": "s13.pharmacy_address",
           "description": "Prospect address used in competitor/source comparison",
@@ -116,7 +116,7 @@
         },
         "competitor_market_1": {
           "type": "text",
-          "required": false,
+          "required": true,
           "maxChars": 80,
           "dataSlot": "s13.competitor_market_1",
           "description": "Nearby competitor market label",
@@ -124,7 +124,7 @@
         },
         "comparison_lead": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 300,
           "dataSlot": "s13.comparison_lead",
           "description": "Slide 13 branch-safe copy slot",
@@ -132,7 +132,7 @@
         },
         "prospect_observed_action": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 300,
           "dataSlot": "s13.prospect_observed_action",
           "description": "Slide 13 branch-safe copy slot",
@@ -140,7 +140,7 @@
         },
         "independent_comparison_body": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 300,
           "dataSlot": "s13.independent_comparison_body",
           "description": "Slide 13 branch-safe copy slot",
@@ -148,7 +148,7 @@
         },
         "chain_comparison_body": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 300,
           "dataSlot": "s13.chain_comparison_body",
           "description": "Slide 13 branch-safe copy slot",
@@ -156,7 +156,7 @@
         },
         "win_body": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 360,
           "dataSlot": "s13.win_body",
           "description": "Slide 13 branch-safe copy slot",
@@ -164,7 +164,7 @@
         },
         "sources_checked": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 360,
           "dataSlot": "s13.sources_checked",
           "description": "Slide 13 branch-safe copy slot",
@@ -177,7 +177,7 @@
       "slots": {
         "positive_proof_lead": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 220,
           "dataSlot": "s08.positive_proof_lead",
           "description": "Slide 08 branch-safe copy slot",
@@ -185,7 +185,7 @@
         },
         "proof_2_heading": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 80,
           "dataSlot": "s08.proof_2_heading",
           "description": "Slide 08 branch-safe copy slot",
@@ -193,7 +193,7 @@
         },
         "proof_2_body": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 180,
           "dataSlot": "s08.proof_2_body",
           "description": "Slide 08 branch-safe copy slot",
@@ -201,7 +201,7 @@
         },
         "proof_3_body": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 180,
           "dataSlot": "s08.proof_3_body",
           "description": "Slide 08 branch-safe copy slot",
@@ -209,7 +209,7 @@
         },
         "summary_strip": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 300,
           "dataSlot": "s08.summary_strip",
           "description": "Slide 08 branch-safe copy slot",
@@ -222,7 +222,7 @@
       "slots": {
         "gap_headline": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 120,
           "dataSlot": "s09.gap_headline",
           "description": "Slide 09 branch-safe copy slot",
@@ -230,7 +230,7 @@
         },
         "gap_lead": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 320,
           "dataSlot": "s09.gap_lead",
           "description": "Slide 09 branch-safe copy slot",
@@ -238,7 +238,7 @@
         },
         "visual_caption_heading": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 80,
           "dataSlot": "s09.visual_caption_heading",
           "description": "Slide 09 branch-safe copy slot",
@@ -246,7 +246,7 @@
         },
         "visual_caption_body": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 220,
           "dataSlot": "s09.visual_caption_body",
           "description": "Slide 09 branch-safe copy slot",
@@ -259,12 +259,17 @@
           "dataSlot": "s09.website_visual_asset",
           "description": "Local run-asset path for the prospect-specific website/public-presence visual shown on slide 09",
           "evidenceRequired": true,
-          "allowedExtensions": [".png", ".jpg", ".jpeg", ".webp"],
+          "allowedExtensions": [
+            ".png",
+            ".jpg",
+            ".jpeg",
+            ".webp"
+          ],
           "sourceRoot": "run_artifact"
         },
         "panel_heading": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 80,
           "dataSlot": "s09.panel_heading",
           "description": "Slide 09 branch-safe copy slot",
@@ -272,7 +277,7 @@
         },
         "panel_subhead": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 180,
           "dataSlot": "s09.panel_subhead",
           "description": "Slide 09 branch-safe copy slot",
@@ -285,7 +290,7 @@
       "slots": {
         "scorecard_headline": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 140,
           "dataSlot": "s10.scorecard_headline",
           "description": "Slide 10 branch-safe copy slot",
@@ -293,7 +298,7 @@
         },
         "scorecard_lead": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 300,
           "dataSlot": "s10.scorecard_lead",
           "description": "Slide 10 branch-safe copy slot",
@@ -301,7 +306,7 @@
         },
         "score_label": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 80,
           "dataSlot": "s10.score_label",
           "description": "Slide 10 branch-safe copy slot",
@@ -309,7 +314,7 @@
         },
         "score_note": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 180,
           "dataSlot": "s10.score_note",
           "description": "Slide 10 branch-safe copy slot",
@@ -322,7 +327,7 @@
       "slots": {
         "solution_headline": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 140,
           "dataSlot": "s11.solution_headline",
           "description": "Slide 11 branch-safe copy slot",
@@ -330,7 +335,7 @@
         },
         "visual_caption_heading": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 80,
           "dataSlot": "s11.visual_caption_heading",
           "description": "Slide 11 branch-safe copy slot",
@@ -338,7 +343,7 @@
         },
         "visual_caption_body": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 220,
           "dataSlot": "s11.visual_caption_body",
           "description": "Slide 11 branch-safe copy slot",
@@ -351,12 +356,17 @@
           "dataSlot": "s11.website_visual_asset",
           "description": "Local run-asset path for the prospect-specific website/public-presence visual shown on slide 11",
           "evidenceRequired": true,
-          "allowedExtensions": [".png", ".jpg", ".jpeg", ".webp"],
+          "allowedExtensions": [
+            ".png",
+            ".jpg",
+            ".jpeg",
+            ".webp"
+          ],
           "sourceRoot": "run_artifact"
         },
         "second_visual_heading": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 80,
           "dataSlot": "s11.second_visual_heading",
           "description": "Slide 11 branch-safe copy slot",
@@ -364,7 +374,7 @@
         },
         "second_visual_body": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 220,
           "dataSlot": "s11.second_visual_body",
           "description": "Slide 11 branch-safe copy slot",
@@ -372,7 +382,7 @@
         },
         "solution_note_body": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 340,
           "dataSlot": "s11.solution_note_body",
           "description": "Slide 11 branch-safe copy slot",
@@ -385,7 +395,7 @@
       "slots": {
         "find_trust_act_lead": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 220,
           "dataSlot": "s12.find_trust_act_lead",
           "description": "Slide 12 branch-safe copy slot",
@@ -393,7 +403,7 @@
         },
         "find_body": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 220,
           "dataSlot": "s12.find_body",
           "description": "Slide 12 branch-safe copy slot",
@@ -401,7 +411,7 @@
         },
         "trust_body": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 220,
           "dataSlot": "s12.trust_body",
           "description": "Slide 12 branch-safe copy slot",
@@ -409,7 +419,7 @@
         },
         "act_body": {
           "type": "html_text",
-          "required": false,
+          "required": true,
           "maxChars": 220,
           "dataSlot": "s12.act_body",
           "description": "Slide 12 branch-safe copy slot",

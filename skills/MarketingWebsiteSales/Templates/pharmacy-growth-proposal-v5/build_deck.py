@@ -79,23 +79,8 @@ def apply_image_slot(html_text, data_slot, value, deck_fill_path, out_dir, spec,
 def enforce_branch_clean_html(html_text, website_branch):
     if website_branch not in ("no_functioning_site", "unconfirmed_site"):
         return html_text
-    replacements = {
-        "FairPath Workflow": "FairPath Support",
-        "One Clear Remote-Care Workflow": "One Clear Remote-Care Path",
-        "One clear remote care workflow": "One clear remote care path",
-        "One workflow keeps ownership, exceptions, and billing readiness visible.": "One shared view keeps ownership, exceptions, and billing readiness visible.",
-        "Use FairPath with a real first patient group. Keep going because the workflow is useful, measurable, and manageable for the team.": "Use FairPath with a real first patient group. Keep going because the path is useful, measurable, and manageable for the team.",
-        "If the workflow is not ready to scale, pause with a clear record of what was tested, what worked, and what needs to change.": "If the first path is not ready to scale, pause with a clear record of what was tested, what worked, and what needs to change.",
-        "Role-based launch training plus scheduled workflow sessions for the first patient wave.": "Role-based launch training plus scheduled working sessions for the first patient wave.",
-        "The first step is not billing everyone. It is scoring the patient population, choosing the first manageable group, and proving the workflow over 90 days.": "The first step is not billing everyone. It is reviewing the patient population, choosing the first manageable group, and proving the path over 90 days.",
-        "Reduce handoffs with one workflow for scoring, outreach, documentation, billing support, reporting, and follow-through.": "Reduce handoffs with one shared path for outreach, documentation, billing support, reporting, and follow-through.",
-        "Technical crawlability": "Profile clarity",
-        "Audit scores are internal planning signals from a sampled crawl on": "This public-profile view is a planning signal for",
-        "They are not traffic, ranking, or performance measurements.": "It is not a traffic, ranking, or performance measurement."
-    }
-    for old, new in replacements.items():
-        html_text = html_text.replace(old, new)
-    return re.sub(r"\b[Ss]coring\b", "Reviewing", html_text)
+    # Branch-safe template regions do not require unrelated clinical copy rewrites.
+    return html_text
 
 def copy_assets(template_dir, out_dir):
     for name in ["styles.css", "print.css", "assets"]:
