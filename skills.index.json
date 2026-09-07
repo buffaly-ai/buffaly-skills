@@ -3279,7 +3279,7 @@
       "SkillName": "SearchConsole",
       "Title": "Google Search Console",
       "Description": "Buffaly skill package for Google Search Console.",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Google Search Console",
@@ -3289,7 +3289,7 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "91c89ec2b30f097d844790ed52892daf999b9adba4981c9e99cb9fb89277d665"
+          "Sha256": "f5971c47a194e5815c2bc11acd58dd51b1734ad3c97cdcf6a99db91aaa7b27c3"
         },
         {
           "Path": "index.pts.lazy.json",
@@ -3297,7 +3297,11 @@
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "079abebf302a6535ff405d06bd487c812b5045115fd39735a0e8885b0cafc9ee"
+          "Sha256": "2a8f8f729dcb5e1bfd667cd44007f787c908d4b7b11fe4d22458901292574e78"
+        },
+        {
+          "Path": "lib/Buffaly.Marketing.dll",
+          "Sha256": "653f0a84e1f290ca48bc587543b672bb199e9e62d25c7b0554cd7335a3958b29"
         }
       ],
       "EntryPoint": "index.pts",

@@ -67,6 +67,7 @@ prototype ToProvisionSearchConsoleProperty : SearchConsoleSkillAction
 		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
 		GoogleOperationsLocalProofHelper.PreflightAndPersistEvidence(proofDirectoryPath, "SearchConsole.ProvisionSearchConsoleProperty");
 		JsonObject args = new JsonObject(); args["RootDomain"] = rootDomain; args["SitemapUrl"] = sitemapUrl; args["AllowCreateProperty"] = allowCreateProperty; args["AllowProvisionDnsTxt"] = allowProvisionDnsTxt; args["AllowVerifyOwnership"] = allowVerifyOwnership; args["AllowSubmitSitemap"] = allowSubmitSitemap;
-		return service.CallWebPropertiesRoute("google-operations/provision-search-console-property", args);
+		string result = service.CallWebPropertiesRoute("google-operations/provision-search-console-property", args);
+		return GoogleOperationsLocalProofHelper.PersistResultEvidence(proofDirectoryPath, "SearchConsole.ProvisionSearchConsoleProperty", result);
 	}
 }
