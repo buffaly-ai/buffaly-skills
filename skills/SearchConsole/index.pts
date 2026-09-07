@@ -1,0 +1,72 @@
+reference Buffaly.Marketing Buffaly.Marketing;
+import Buffaly.Marketing Buffaly.Marketing.FeedingFrenzyGoogleOperations.GoogleOperationsLocalProofHelper GoogleOperationsLocalProofHelper;
+import BasicUtilities BasicUtilities.JsonObject JsonObject;
+
+prototype SearchConsoleSkillAction : OpsAction
+{
+	Description = @"Base action type for Google Search Console data access through Feeding Frenzy.";
+}
+
+[SemanticEntity("google search console skill")]
+[SemanticEntity("search console skill")]
+prototype SearchConsoleSkill : SkillEntity
+{
+	Description = "Google Search Console reporting tools routed through authenticated Feeding Frenzy Google operations.";
+	EntityName = "google search console skill";
+	ActionRoot = SearchConsoleSkillAction;
+}
+
+[SemanticProgram.InfinitivePhrase("to run a google search console performance report")]
+[SemanticProgram.InfinitivePhrase("to run a google search console report")]
+prototype ToRunSearchConsolePerformanceReport : SearchConsoleSkillAction
+{
+	Description = @"siteUrl - Search Console site URL/property. startDate/endDate - yyyy-MM-dd or supported relative dates. dimensionsCsv - comma-separated Search Console dimensions. rowLimit - max rows. dataState - Search Console data state such as final or all. Returns Search Console performance JSON via Feeding Frenzy; no local Google credentials are used.";
+
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string siteUrl, string startDate, string endDate, string dimensionsCsv, int rowLimit, string dataState) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["SiteUrl"] = siteUrl; args["StartDate"] = startDate; args["EndDate"] = endDate; args["DimensionsCsv"] = dimensionsCsv; args["RowLimit"] = rowLimit; args["DataState"] = dataState;
+		return service.CallWebPropertiesRoute("google-operations/run-search-console-performance-report", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to run a generic google search console report")]
+prototype ToRunSearchConsoleReport : SearchConsoleSkillAction
+{
+	Description = @"siteUrl - Search Console site URL/property. startDate/endDate - yyyy-MM-dd or supported relative dates. dimensionsCsv - comma-separated dimensions. rowLimit - max rows. dataState - final or all. startRow - paging offset. Returns wrapped Search Console report JSON through Feeding Frenzy.";
+
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string siteUrl, string startDate, string endDate, string dimensionsCsv, int rowLimit, string dataState, int startRow) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["SiteUrl"] = siteUrl; args["StartDate"] = startDate; args["EndDate"] = endDate; args["DimensionsCsv"] = dimensionsCsv; args["RowLimit"] = rowLimit; args["DataState"] = dataState; args["StartRow"] = startRow;
+		return service.CallWebPropertiesRoute("google-operations/run-search-console-report", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list google search console sites")]
+[SemanticProgram.InfinitivePhrase("to list search console properties")]
+prototype ToListSearchConsoleSites : SearchConsoleSkillAction
+{
+	Description = @"Returns Search Console site/property catalog JSON through Feeding Frenzy.";
+
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		return service.CallWebPropertiesRoute("google-operations/list-search-console-sites", new JsonObject());
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to provision a google search console property")]
+[SemanticProgram.InfinitivePhrase("to setup a google search console property")]
+prototype ToProvisionSearchConsoleProperty : SearchConsoleSkillAction
+{
+	Description = @"rootDomain - verified root domain. sitemapUrl - sitemap URL to submit. proofDirectoryPath - writable local proof directory checked before mutation. allowCreateProperty/allowProvisionDnsTxt/allowVerifyOwnership/allowSubmitSitemap - explicit mutation gates. Returns provisioning JSON through Feeding Frenzy.";
+
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string rootDomain, string sitemapUrl, string proofDirectoryPath, bool allowCreateProperty, bool allowProvisionDnsTxt, bool allowVerifyOwnership, bool allowSubmitSitemap) : string
+	{
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		GoogleOperationsLocalProofHelper.PreflightAndPersistEvidence(proofDirectoryPath, "SearchConsole.ProvisionSearchConsoleProperty");
+		JsonObject args = new JsonObject(); args["RootDomain"] = rootDomain; args["SitemapUrl"] = sitemapUrl; args["AllowCreateProperty"] = allowCreateProperty; args["AllowProvisionDnsTxt"] = allowProvisionDnsTxt; args["AllowVerifyOwnership"] = allowVerifyOwnership; args["AllowSubmitSitemap"] = allowSubmitSitemap;
+		return service.CallWebPropertiesRoute("google-operations/provision-search-console-property", args);
+	}
+}

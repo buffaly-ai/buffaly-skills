@@ -3274,6 +3274,35 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": []
+    },
+    {
+      "SkillName": "SearchConsole",
+      "Title": "Google Search Console",
+      "Description": "Buffaly skill package for Google Search Console.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Google Search Console",
+        "SearchConsole"
+      ],
+      "Path": "skills/SearchConsole",
+      "Files": [
+        {
+          "Path": "index.pts",
+          "Sha256": "91c89ec2b30f097d844790ed52892daf999b9adba4981c9e99cb9fb89277d665"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "d196e451e371c583b7b1f628a12e4160e570cb1cb03fe5f7424acb340f860377"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "079abebf302a6535ff405d06bd487c812b5045115fd39735a0e8885b0cafc9ee"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": []
     }
   ]
 }
