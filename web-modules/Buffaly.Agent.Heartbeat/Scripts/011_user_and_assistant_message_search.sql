@@ -109,6 +109,10 @@ BEGIN
 	INNER JOIN sessions s ON s.session_id = r."SessionID"
 	WHERE
 		s.session_key NOT LIKE '%level-two%'
+		AND COALESCE(s.agent_name, '') NOT IN ('level-2', 'online-session-memory-critic', 'online-action-critic', 'online-memory-critic')
+		AND s.session_key NOT LIKE '%-online-memory-critic'
+		AND s.session_key NOT LIKE '%-online-action-critic'
+		AND s.session_key NOT LIKE '%-online-session-memory-critic'
 		AND LTRIM(r."Content") NOT ILIKE '[label: Level 2]%'
 		AND LTRIM(r."Content") NOT ILIKE '[timeline-label: Level 2]%'
 		AND (
