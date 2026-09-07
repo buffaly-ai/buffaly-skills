@@ -9,6 +9,7 @@ import Buffaly.Agent.Host Buffaly.Agent.Host.GetSessionTurnBootstrapResponse Get
 import Buffaly.Agent.Host Buffaly.Agent.Host.GetSessionTurnPageResponse GetSessionTurnPageResponse;
 import Buffaly.Agent.Host Buffaly.Agent.Host.GetTurnDetailResponse GetTurnDetailResponse;
 import Buffaly.Agent.Host Buffaly.Agent.Host.DeleteSessionResultContract DeleteSessionResultContract;
+import Buffaly.Agent.Host Buffaly.Agent.Host.QueuedInputsContract QueuedInputsContract;
 
 
 prototype SessionManagementSkillAction : OpsAction
@@ -123,11 +124,58 @@ prototype ToSetBuffalySessionParent : SessionManagementSkillAction
 [SemanticProgram.InfinitivePhrase("to send instruction to child session")]
 prototype ToSendToSession : SessionManagementSkillAction
 {
-	Description = @"Persist/enqueue exactly one input for later processing by the target session. sessionKey - target existing session key. instruction - complete asynchronous work instruction. Returns after queue acceptance only; it does not wait for execution or completion, does not report execution, and cannot inject into an in-progress model turn. Never call it repeatedly to approximate live steering. Use ToSteerActiveSession when and only when the intent is to interrupt a currently running target turn. Returns QueuedInputResult.";
+	Description = @"Persist/enqueue exactly one actionable assignment for later processing by the target session. Never use this action for repeated progress/status; use ToQueueLatestSessionMessage when only the latest pending update matters. Returns after queue acceptance only, never waits for execution/completion, cannot inject into an in-progress turn, and must not be repeated to approximate steering. Use ToSteerActiveSession only to interrupt a currently active turn. The receipt includes the real QueueItemId, MessageKey, and current canonical QueuedCount so queue growth is visible.";
 
 	function Execute(string sessionKey, string instruction) : QueuedInputResult
 	{
 		return SessionTools.SendToSessionTool(_opsAgent, sessionKey, instruction);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to queue the latest message to a session")]
+[SemanticProgram.InfinitivePhrase("to replace a pending session message")]
+[SemanticProgram.InfinitivePhrase("to report coalescing progress to a parent session")]
+prototype ToQueueLatestSessionMessage : SessionManagementSkillAction
+{
+	Description = @"Explicitly queue one next-turn message for which only the latest pending value matters. sessionKey - target session. queueKey - stable logical queue identity reused by this source session. instruction - latest self-contained queued message. While an earlier message with the same source and queueKey is pending, this replaces that row; after consumption, a later message queues normally. This is queued delivery, not session status mutation and not live steering. Critics/helpers must not emit a second parent update for the observed session's queueKey. The receipt includes QueueItemId, MessageKey, QueuedCount, and ReplacedPending.";
+
+	function Execute(string sessionKey, string queueKey, string instruction) : QueuedInputResult
+	{
+		return SessionTools.QueueLatestSessionMessageTool(_opsAgent, sessionKey, queueKey, instruction);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get queued session messages")]
+[SemanticProgram.InfinitivePhrase("to inspect a session input queue")]
+prototype ToGetQueuedSessionMessages : SessionManagementSkillAction
+{
+	Description = @"sessionKey - exact target session key. Returns the canonical next-turn queue, including QueuedCount, DispatchInProgress, QueueItemId values, message text, and source metadata. This is read-only and does not consume or start queued work.";
+
+	function Execute(string sessionKey) : QueuedInputsContract
+	{
+		return SessionTools.GetQueuedSessionMessagesTool(sessionKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to remove one queued session message")]
+prototype ToRemoveQueuedSessionMessage : SessionManagementSkillAction
+{
+	Description = @"Remove exactly one next-turn queued message by queueItemId from the exact sessionKey, then return the canonical remaining queue and QueuedCount. Inspect first and preserve needed evidence; this does not remove steering messages or other queued rows.";
+
+	function Execute(string sessionKey, string queueItemId) : QueuedInputsContract
+	{
+		return SessionTools.RemoveQueuedSessionMessageTool(sessionKey, queueItemId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to clear all queued session messages")]
+prototype ToClearAllQueuedSessionMessages : SessionManagementSkillAction
+{
+	Description = @"Destructive queue cleanup. Remove every next-turn queued message from the exact sessionKey and return the canonical remaining queue and QueuedCount. Use only after inspection and explicit authorization to discard all pending work; prefer ToRemoveQueuedSessionMessage for targeted cleanup. This does not remove pending live-steer messages.";
+
+	function Execute(string sessionKey) : QueuedInputsContract
+	{
+		return SessionTools.ClearAllQueuedSessionMessagesTool(sessionKey);
 	}
 }
 
