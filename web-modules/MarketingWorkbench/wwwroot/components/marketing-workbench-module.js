@@ -17,7 +17,7 @@ export class MarketingWorkbenchModule extends HTMLElement {
     const header = document.createElement('header');
     header.style.cssText = 'padding:16px;display:flex;flex-wrap:wrap;align-items:center;gap:16px';
     const title = document.createElement('strong'); title.textContent = 'Marketing Workbench';
-    const status = document.createElement('span'); status.textContent = 'Reading workbench connection…'; status.setAttribute('role', 'status');
+    const status = document.createElement('span'); status.textContent = 'Reading workbench connection...'; status.setAttribute('role', 'status');
     header.append(title, status); panel.append(header); this.append(panel);
     try {
       const response = await fetch('/api/buffaly.marketing-workbench/connection', { signal, cache: 'no-store' });
