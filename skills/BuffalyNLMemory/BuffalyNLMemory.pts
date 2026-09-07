@@ -78,6 +78,19 @@ prototype ToInterpretOnlineActionDefinition : BuffalyNLMemorySkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to borrow an action from another session")]
+[SemanticProgram.InfinitivePhrase("to borrow an entity from another session")]
+[SemanticProgram.InfinitivePhrase("to borrow a session prototype")]
+prototype ToBorrowSessionPrototype : ProtoScriptAction, BuffalyNLMemorySkillAction
+{
+	Description = @"ownerScope - exact session: scope of the source. prototypeName - exact source prototype name. kind - Action or Entity. Reads one definition from that session and interprets it unchanged in this runtime. Only self-contained definitions are supported; missing dependencies fail through normal interpretation and are not imported. Does not copy destination artifacts, promote permanently, or execute the borrowed action.";
+
+	function Execute(string ownerScope, string prototypeName, string kind) : string
+	{
+		return BuffalyNlMemoryRuntimeTools.BorrowSessionPrototype(_runtime, _opsAgent, ownerScope, prototypeName, kind);
+	}
+}
+
 prototype ToReadOnlineActionDefinition : BuffalyNLMemorySkillAction
 {
 	Description = @"Internal source-session action that returns one exact definition owned by SessionActions.pts, or an empty string when absent.";
