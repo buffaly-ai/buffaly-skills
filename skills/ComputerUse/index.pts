@@ -2,6 +2,8 @@ reference Buffaly.DesktopAutomation Buffaly.DesktopAutomation;
 import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseToolService ComputerUseToolService;
 import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseToolResult ComputerUseToolResult;
 import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseActionResult ComputerUseActionResult;
+import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseTargetSelector ComputerUseTargetSelector;
+import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseGetAppStateRequest ComputerUseGetAppStateRequest;
 import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseClickRequest ComputerUseClickRequest;
 import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseSecondaryActionRequest ComputerUseSecondaryActionRequest;
 import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseSetValueRequest ComputerUseSetValueRequest;
@@ -13,20 +15,20 @@ import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseTypeTextRe
 
 prototype ComputerUseSkillAction : OpsAction
 {
-	Description = @"Base action type for app-aware Computer Use tools.";
+	Description = @"Base action type for exact-window Computer Use tools. Use opaqueWindowId values returned by list_apps; do not infer or construct native handles.";
 }
 
 [SemanticEntity("computer use skill")]
 prototype ComputerUseSkill : SkillEntity
 {
-	Description = "App-aware Computer Use tools for observing and controlling one exact desktop window from the active model session. Call get_app_state before interaction.";
+	Description = "Exact-window Computer Use tools for observing and controlling one desktop window from the active model session. Call list_apps, choose the exact window, call get_app_state with its opaqueWindowId, then pass that opaqueWindowId plus the returned ObservationId to one mutation. After every successful mutation, call get_app_state again before reusing element ids or observation ids.";
 	ActionRoot = ComputerUseSkillAction;
 }
 
 [SemanticProgram.InfinitivePhrase("to list computer use apps")]
 prototype list_apps : ComputerUseSkillAction
 {
-	Description = @"List the apps and visible windows available to Computer Use. This tool is part of plugin Computer Use.";
+	Description = @"List visible top-level app windows/dialogs available to Computer Use. Choose the exact window from the returned metadata and use its opaqueWindowId/WindowId for get_app_state and all later mutations; do not guess or construct native handles. This tool is part of plugin Computer Use.";
 	function Execute() : ComputerUseToolResult
 	{
 		string sessionKey = ComputerUseToolService.GetCurrentSessionKey();
@@ -38,22 +40,25 @@ prototype list_apps : ComputerUseSkillAction
 [SemanticProgram.InfinitivePhrase("to observe a desktop app")]
 prototype get_app_state : ComputerUseSkillAction
 {
-	Description = @"app - app name or process name. Starts or reuses an exact-window lease and returns a screenshot plus accessibility tree. Call once per assistant turn before interaction. This tool is part of plugin Computer Use.";
-	function Execute(string app) : ComputerUseToolResult
+	Description = @"opaqueWindowId - exact opaque WindowId returned by list_apps for the selected window. Returns a screenshot, accessibility tree, and ObservationId for that exact target. Call immediately before mutation and reuse the returned ObservationId only for the next action on this same opaqueWindowId. This tool is part of plugin Computer Use.";
+	function Execute(string opaqueWindowId) : ComputerUseToolResult
 	{
 		string sessionKey = ComputerUseToolService.GetCurrentSessionKey();
-		return ComputerUseToolService.GetAppState(sessionKey, app);
+		ComputerUseTargetSelector target = new ComputerUseTargetSelector(); target.WindowId = opaqueWindowId;
+		ComputerUseGetAppStateRequest request = new ComputerUseGetAppStateRequest(); request.Target = target;
+		return ComputerUseToolService.GetAppState(sessionKey, request);
 	}
 }
 
 [SemanticProgram.InfinitivePhrase("to click a computer app")]
 prototype click : ComputerUseSkillAction
 {
-	Description = @"app - app name. elementIndex - observed element id, or leave empty and provide screenshot x/y. clickCount defaults to 1. mouseButton is left, right, or middle. This tool is part of plugin Computer Use.";
-	function Execute(string app, string elementIndex = "", double x = -1, double y = -1, int clickCount = 1, string mouseButton = "left") : ComputerUseActionResult
+	Description = @"opaqueWindowId - exact WindowId returned by list_apps/get_app_state. expectedObservationId - exact ObservationId from the immediately preceding get_app_state for the same opaqueWindowId. elementIndex - observed element id, or leave empty and provide screenshot x/y. clickCount defaults to 1. mouseButton is left, right, or middle. This tool is part of plugin Computer Use.";
+	function Execute(string opaqueWindowId, string expectedObservationId, string elementIndex = "", double x = -1, double y = -1, int clickCount = 1, string mouseButton = "left") : ComputerUseActionResult
 	{
 		string sessionKey = ComputerUseToolService.GetCurrentSessionKey();
-		ComputerUseClickRequest request = new ComputerUseClickRequest(); request.App = app; request.ElementIndex = elementIndex; request.X = x; request.Y = y; request.ClickCount = clickCount; request.MouseButton = mouseButton;
+		ComputerUseTargetSelector target = new ComputerUseTargetSelector(); target.WindowId = opaqueWindowId;
+		ComputerUseClickRequest request = new ComputerUseClickRequest(); request.Target = target; request.ExpectedObservationId = expectedObservationId; request.ElementIndex = elementIndex; request.X = x; request.Y = y; request.ClickCount = clickCount; request.MouseButton = mouseButton;
 		return ComputerUseToolService.Click(sessionKey, request);
 	}
 }
@@ -61,50 +66,50 @@ prototype click : ComputerUseSkillAction
 [SemanticProgram.InfinitivePhrase("to perform a secondary computer app action")]
 prototype perform_secondary_action : ComputerUseSkillAction
 {
-	Description = @"app, elementIndex, action. Invokes one advertised UIA action: invoke, expand, collapse, toggle, select, add_to_selection, remove_from_selection, or scroll_into_view. This tool is part of plugin Computer Use.";
-	function Execute(string app, string elementIndex, string action) : ComputerUseActionResult { string sessionKey = ComputerUseToolService.GetCurrentSessionKey(); ComputerUseSecondaryActionRequest request = new ComputerUseSecondaryActionRequest(); request.App = app; request.ElementIndex = elementIndex; request.Action = action; return ComputerUseToolService.PerformSecondaryAction(sessionKey, request); }
+	Description = @"opaqueWindowId, expectedObservationId, elementIndex, action. opaqueWindowId is the exact WindowId selected from list_apps/get_app_state. expectedObservationId is the exact ObservationId from the immediately preceding get_app_state for that same window. Invokes one advertised UIA action: invoke, expand, collapse, toggle, select, add_to_selection, remove_from_selection, or scroll_into_view. This tool is part of plugin Computer Use.";
+	function Execute(string opaqueWindowId, string expectedObservationId, string elementIndex, string action) : ComputerUseActionResult { string sessionKey = ComputerUseToolService.GetCurrentSessionKey(); ComputerUseTargetSelector target = new ComputerUseTargetSelector(); target.WindowId = opaqueWindowId; ComputerUseSecondaryActionRequest request = new ComputerUseSecondaryActionRequest(); request.Target = target; request.ExpectedObservationId = expectedObservationId; request.ElementIndex = elementIndex; request.Action = action; return ComputerUseToolService.PerformSecondaryAction(sessionKey, request); }
 }
 
 [SemanticProgram.InfinitivePhrase("to set a computer app value")]
 prototype set_value : ComputerUseSkillAction
 {
-	Description = @"app, elementIndex, value. Sets an enabled settable accessibility element. This tool is part of plugin Computer Use.";
-	function Execute(string app, string elementIndex, string value) : ComputerUseActionResult { string sessionKey = ComputerUseToolService.GetCurrentSessionKey(); ComputerUseSetValueRequest request = new ComputerUseSetValueRequest(); request.App = app; request.ElementIndex = elementIndex; request.Value = value; return ComputerUseToolService.SetValue(sessionKey, request); }
+	Description = @"opaqueWindowId, expectedObservationId, elementIndex, value. opaqueWindowId is the exact WindowId selected from list_apps/get_app_state. expectedObservationId is the exact ObservationId from the immediately preceding get_app_state for that same window. Sets an enabled settable accessibility element. This tool is part of plugin Computer Use.";
+	function Execute(string opaqueWindowId, string expectedObservationId, string elementIndex, string value) : ComputerUseActionResult { string sessionKey = ComputerUseToolService.GetCurrentSessionKey(); ComputerUseTargetSelector target = new ComputerUseTargetSelector(); target.WindowId = opaqueWindowId; ComputerUseSetValueRequest request = new ComputerUseSetValueRequest(); request.Target = target; request.ExpectedObservationId = expectedObservationId; request.ElementIndex = elementIndex; request.Value = value; return ComputerUseToolService.SetValue(sessionKey, request); }
 }
 
 [SemanticProgram.InfinitivePhrase("to select text in a computer app")]
 prototype select_text : ComputerUseSkillAction
 {
-	Description = @"app, elementIndex, text, prefix(optional), suffix(optional), selection(optional: text, cursor_before, cursor_after). This tool is part of plugin Computer Use.";
-	function Execute(string app, string elementIndex, string text, string prefix = "", string suffix = "", string selection = "text") : ComputerUseActionResult { string sessionKey = ComputerUseToolService.GetCurrentSessionKey(); ComputerUseSelectTextRequest request = new ComputerUseSelectTextRequest(); request.App = app; request.ElementIndex = elementIndex; request.Text = text; request.Prefix = prefix; request.Suffix = suffix; request.Selection = selection; return ComputerUseToolService.SelectText(sessionKey, request); }
+	Description = @"opaqueWindowId, expectedObservationId, elementIndex, text, prefix(optional), suffix(optional), selection(optional: text, cursor_before, cursor_after). opaqueWindowId is the exact WindowId selected from list_apps/get_app_state. expectedObservationId is the exact ObservationId from the immediately preceding get_app_state for that same window. This tool is part of plugin Computer Use.";
+	function Execute(string opaqueWindowId, string expectedObservationId, string elementIndex, string text, string prefix = "", string suffix = "", string selection = "text") : ComputerUseActionResult { string sessionKey = ComputerUseToolService.GetCurrentSessionKey(); ComputerUseTargetSelector target = new ComputerUseTargetSelector(); target.WindowId = opaqueWindowId; ComputerUseSelectTextRequest request = new ComputerUseSelectTextRequest(); request.Target = target; request.ExpectedObservationId = expectedObservationId; request.ElementIndex = elementIndex; request.Text = text; request.Prefix = prefix; request.Suffix = suffix; request.Selection = selection; return ComputerUseToolService.SelectText(sessionKey, request); }
 }
 
 [SemanticProgram.InfinitivePhrase("to scroll a computer app")]
 prototype scroll : ComputerUseSkillAction
 {
-	Description = @"app, elementIndex(optional), direction(up/down/left/right), pages(optional). This tool is part of plugin Computer Use.";
-	function Execute(string app, string direction, string elementIndex = "", double pages = 1) : ComputerUseActionResult { string sessionKey = ComputerUseToolService.GetCurrentSessionKey(); ComputerUseScrollRequest request = new ComputerUseScrollRequest(); request.App = app; request.ElementIndex = elementIndex; request.Direction = direction; request.Pages = pages; return ComputerUseToolService.Scroll(sessionKey, request); }
+	Description = @"opaqueWindowId, expectedObservationId, direction(up/down/left/right), elementIndex(optional), pages(optional). opaqueWindowId is the exact WindowId selected from list_apps/get_app_state. expectedObservationId is the exact ObservationId from the immediately preceding get_app_state for that same window. Every successful mutation invalidates the prior observation; call get_app_state again before reusing element ids or observation ids. This tool is part of plugin Computer Use.";
+	function Execute(string opaqueWindowId, string expectedObservationId, string direction, string elementIndex = "", double pages = 1) : ComputerUseActionResult { string sessionKey = ComputerUseToolService.GetCurrentSessionKey(); ComputerUseTargetSelector target = new ComputerUseTargetSelector(); target.WindowId = opaqueWindowId; ComputerUseScrollRequest request = new ComputerUseScrollRequest(); request.Target = target; request.ExpectedObservationId = expectedObservationId; request.ElementIndex = elementIndex; request.Direction = direction; request.Pages = pages; return ComputerUseToolService.Scroll(sessionKey, request); }
 }
 
 [SemanticProgram.InfinitivePhrase("to drag in a computer app")]
 prototype drag : ComputerUseSkillAction
 {
-	Description = @"app and screenshot coordinates fromX, fromY, toX, toY. This tool is part of plugin Computer Use.";
-	function Execute(string app, double fromX, double fromY, double toX, double toY) : ComputerUseActionResult { string sessionKey = ComputerUseToolService.GetCurrentSessionKey(); ComputerUseDragRequest request = new ComputerUseDragRequest(); request.App = app; request.FromX = fromX; request.FromY = fromY; request.ToX = toX; request.ToY = toY; return ComputerUseToolService.Drag(sessionKey, request); }
+	Description = @"opaqueWindowId, expectedObservationId, and screenshot coordinates fromX, fromY, toX, toY. opaqueWindowId is the exact WindowId selected from list_apps/get_app_state. expectedObservationId is the exact ObservationId from the immediately preceding get_app_state for that same window. Every successful mutation invalidates the prior observation; call get_app_state again before reusing element ids or observation ids. This tool is part of plugin Computer Use.";
+	function Execute(string opaqueWindowId, string expectedObservationId, double fromX, double fromY, double toX, double toY) : ComputerUseActionResult { string sessionKey = ComputerUseToolService.GetCurrentSessionKey(); ComputerUseTargetSelector target = new ComputerUseTargetSelector(); target.WindowId = opaqueWindowId; ComputerUseDragRequest request = new ComputerUseDragRequest(); request.Target = target; request.ExpectedObservationId = expectedObservationId; request.FromX = fromX; request.FromY = fromY; request.ToX = toX; request.ToY = toY; return ComputerUseToolService.Drag(sessionKey, request); }
 }
 
 [SemanticProgram.InfinitivePhrase("to press a key in a computer app")]
 prototype press_key : ComputerUseSkillAction
 {
-	Description = @"app, key. Presses one key or modifier chord such as Return, Tab, win+c, or Up. This tool is part of plugin Computer Use.";
-	function Execute(string app, string key) : ComputerUseActionResult { string sessionKey = ComputerUseToolService.GetCurrentSessionKey(); ComputerUsePressKeyRequest request = new ComputerUsePressKeyRequest(); request.App = app; request.Key = key; return ComputerUseToolService.PressKey(sessionKey, request); }
+	Description = @"opaqueWindowId, expectedObservationId, key. opaqueWindowId is the exact WindowId selected from list_apps/get_app_state. expectedObservationId is the exact ObservationId from the immediately preceding get_app_state for that same window. Presses one key or modifier chord such as Return, Tab, win+c, or Up. This tool is part of plugin Computer Use.";
+	function Execute(string opaqueWindowId, string expectedObservationId, string key) : ComputerUseActionResult { string sessionKey = ComputerUseToolService.GetCurrentSessionKey(); ComputerUseTargetSelector target = new ComputerUseTargetSelector(); target.WindowId = opaqueWindowId; ComputerUsePressKeyRequest request = new ComputerUsePressKeyRequest(); request.Target = target; request.ExpectedObservationId = expectedObservationId; request.Key = key; return ComputerUseToolService.PressKey(sessionKey, request); }
 }
 
 [SemanticProgram.InfinitivePhrase("to type text in a computer app")]
 prototype type_text : ComputerUseSkillAction
 {
-	Description = @"app, text. Types literal text into the exact leased window. This tool is part of plugin Computer Use.";
-	function Execute(string app, string text) : ComputerUseActionResult { string sessionKey = ComputerUseToolService.GetCurrentSessionKey(); ComputerUseTypeTextRequest request = new ComputerUseTypeTextRequest(); request.App = app; request.Text = text; return ComputerUseToolService.TypeText(sessionKey, request); }
+	Description = @"opaqueWindowId, expectedObservationId, text. opaqueWindowId is the exact WindowId selected from list_apps/get_app_state. expectedObservationId is the exact ObservationId from the immediately preceding get_app_state for that same window. Types literal text into the exact leased window. This tool is part of plugin Computer Use.";
+	function Execute(string opaqueWindowId, string expectedObservationId, string text) : ComputerUseActionResult { string sessionKey = ComputerUseToolService.GetCurrentSessionKey(); ComputerUseTargetSelector target = new ComputerUseTargetSelector(); target.WindowId = opaqueWindowId; ComputerUseTypeTextRequest request = new ComputerUseTypeTextRequest(); request.Target = target; request.ExpectedObservationId = expectedObservationId; request.Text = text; return ComputerUseToolService.TypeText(sessionKey, request); }
 }
 
 
