@@ -1,7 +1,8 @@
 // Recaptcha Skill - Google reCAPTCHA Enterprise key and domain management
 reference Buffaly.Marketing Buffaly.Marketing;
-import Buffaly.Marketing Buffaly.Marketing.Recaptcha.RecaptchaProtoScriptFacade RecaptchaProtoScriptFacade;
-import Buffaly.Agent.Tools.Secrets Buffaly.Agent.Tools.Secrets.UserSecrets UserSecrets;
+import Buffaly.Marketing Buffaly.Marketing.FeedingFrenzyGoogleOperations.GoogleOperationsLocalProofHelper GoogleOperationsLocalProofHelper;
+import BasicUtilities BasicUtilities.JsonObject JsonObject;
+import BasicUtilities BasicUtilities.StringUtil StringUtil;
 
 // ===== Skill Entity =====
 [SemanticEntity("recaptcha skill")]
@@ -9,7 +10,7 @@ import Buffaly.Agent.Tools.Secrets Buffaly.Agent.Tools.Secrets.UserSecrets UserS
 [SemanticEntity("google recaptcha skill")]
 prototype RecaptchaSkill : SkillEntity
 {
-	Description = "Google reCAPTCHA Enterprise key and domain management actions via service-account-authenticated gcloud CLI.";
+	Description = "Google reCAPTCHA Enterprise key and domain management actions routed through authenticated Feeding Frenzy Google operations.";
 	ActionRoot = RecaptchaSkillAction;
 }
 
@@ -26,50 +27,16 @@ prototype ToProvisionRecaptchaKey : RecaptchaSkillAction
 {
 	Description = @"projectId - Google Cloud project ID. displayName - human-readable key name. domainsCsv - comma-separated hostnames only. integrationType - score or checkbox. proofDirectoryPath - writable local proof directory checked before mutation. Creates or reuses a reCAPTCHA Enterprise web key and ensures required domains.";
 
-	function Execute(string projectId, string displayName, string domainsCsv, string integrationType, string proofDirectoryPath) : string
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string projectId, string displayName, string domainsCsv, string integrationType, string proofDirectoryPath) : string
 	{
-		RecaptchaProtoScriptFacade.ConfigureServiceAccountCredentialJson(UserSecrets.GetSecret("RecaptchaEnterprise.ServiceAccountKey"));
-		return RecaptchaProtoScriptFacade.ProvisionWebKey(projectId, displayName, domainsCsv, integrationType, proofDirectoryPath);
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		GoogleOperationsLocalProofHelper.PreflightAndPersistEvidence(proofDirectoryPath, "Recaptcha.ProvisionRecaptchaKey");
+		JsonObject args = new JsonObject(); args["ProjectID"] = projectId; args["DisplayName"] = displayName; args["DomainsCsv"] = domainsCsv; args["IntegrationType"] = integrationType;
+		return service.CallWebPropertiesRoute("google-operations/provision-recaptcha-web-key", args);
 	}
 }
 
-// ===== Shared Helpers =====
-
-// Service account key file for reCAPTCHA Enterprise management (outside source control)
-function ToRecaptchaDefaultKeyFile() : string
-{
-	return "C:\\drop\\recaptcha-enterprise-sa.json";
-}
-
-// Activates the reCAPTCHA Enterprise service account so gcloud commands work without interactive user auth
-function ToRecaptchaEnsureServiceAccount() : string
-{
-	string script = "gcloud auth activate-service-account --key-file='C:\\drop\\recaptcha-enterprise-sa.json' --quiet 2>&1; gcloud config set account recaptcha-enterprise@intelligence-fac-1731098258626.iam.gserviceaccount.com 2>&1";
-	return SystemOperations.RunPowerShell(script, 15);
-}
-
-
-function ToRecaptchaDefaultProjectId() : string
-{
-// Returns the default reCAPTCHA Enterprise project ID
-	return "intelligence-fac-1731098258626";
-}
-
-function ToRecaptchaCleanOutput(string result) : string
-{
-	// Strip "Exit code: N" suffix appended by RunPowerShellStreamingToRuntimeUi
-	int exitCodeIdx = result.IndexOf("Exit code: ");
-	if (exitCodeIdx >= 0)
-		return result.Substring(0, exitCodeIdx).Trim();
-	return result.Trim();
-}
-
-function ToRecaptchaEscapeSingleQuoted(string value) : string
-{
-	if (StringUtil.IsEmpty(value))
-		return "";
-	return value.Replace("'", "''");
-}
+// ===== Shared Validation Helpers =====
 
 // Validates a single hostname: no scheme, path, port, or whitespace
 function ToRecaptchaValidateHostname(string hostname) : bool
@@ -129,45 +96,19 @@ function ToRecaptchaValidateProjectId(string projectId) : bool
 	return true;
 }
 
-
-function ToRecaptchaRunGcloud(string argumentLine, int timeoutSeconds, string label) : string
-{
-	if (timeoutSeconds <= 0)
-		timeoutSeconds = 60;
-
-	// Call gcloud directly - simpler than ProcessStartInfo and works with SystemOperations
-	string script = "$env:CLOUDSDK_CORE_DISABLE_PROMPTS='1'; ";
-	script = script + "$output = gcloud " + ToRecaptchaEscapeSingleQuoted(argumentLine) + " 2>&1; ";
-	script = script + "Write-Output $output; ";
-
-	return SystemOperations.RunPowerShell(script, timeoutSeconds);
-}
-
-function ToRecaptchaGetDomains(string keyId, string projectId) : string
-{
-	// Use gcloud --format=value() to get domains directly, avoiding JSON parsing
-	string script = "gcloud recaptcha keys describe " + keyId + " --project=" + projectId + " --format=value(webSettings.allowedDomains) --quiet 2>&1";
-	string output = SystemOperations.RunPowerShell(script, 60);
-	// gcloud value() format uses semicolons for repeated fields; normalize to commas
-	return output.Replace(";", ",").Trim();
-}
-
 // ===== Actions =====
 
 [SemanticProgram.InfinitivePhrase("to list recaptcha keys")]
 [SemanticProgram.InfinitivePhrase("to list recaptcha enterprise keys")]
 prototype ToListRecaptchaKeys : RecaptchaSkillAction
 {
-	Description = @"projectId - Google Cloud project ID. If empty, uses the current gcloud default project. Returns JSON array of reCAPTCHA Enterprise keys.";
+	Description = @"projectId - Google Cloud project ID. Required. Returns JSON array of reCAPTCHA Enterprise keys.";
 
-	function Execute(string projectId) : string
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string projectId) : string
 	{
-		ToRecaptchaEnsureServiceAccount();
-		if (StringUtil.IsEmpty(projectId))
-			projectId = "intelligence-fac-1731098258626";
-
-		string script = "gcloud recaptcha keys list --project=" + projectId + " --format=json --quiet 2>&1";
-		return SystemOperations.RunPowerShell(script, 60);
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["ProjectID"] = projectId;
+		return service.CallWebPropertiesRoute("google-operations/list-recaptcha-keys", args);
 	}
 }
 
@@ -175,16 +116,13 @@ prototype ToListRecaptchaKeys : RecaptchaSkillAction
 [SemanticProgram.InfinitivePhrase("to describe a recaptcha key")]
 prototype ToGetRecaptchaKey : RecaptchaSkillAction
 {
-	Description = @"keyId - reCAPTCHA key ID or full key name. projectId - Google Cloud project ID. If empty, uses the current gcloud default project. Returns JSON with full key details including webSettings.allowedDomains.";
+	Description = @"keyId - reCAPTCHA key ID or full key name. projectId - Google Cloud project ID. Required. Returns JSON with full key details including webSettings.allowedDomains.";
 
-	function Execute(string keyId, string projectId) : string
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string keyId, string projectId) : string
 	{
-		ToRecaptchaEnsureServiceAccount();
-		if (StringUtil.IsEmpty(projectId))
-			projectId = ToRecaptchaDefaultProjectId();
-
-		string script = "gcloud recaptcha keys describe " + keyId + " --project=" + projectId + " --format=json --quiet 2>&1";
-		return SystemOperations.RunPowerShell(script, 60);
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["ProjectID"] = projectId; args["KeyID"] = keyId;
+		return service.CallWebPropertiesRoute("google-operations/get-recaptcha-key", args);
 	}
 }
 
@@ -192,18 +130,13 @@ prototype ToGetRecaptchaKey : RecaptchaSkillAction
 [SemanticProgram.InfinitivePhrase("to add a domain to a recaptcha key")]
 prototype ToAddRecaptchaDomain : RecaptchaSkillAction
 {
-	Description = @"keyId - reCAPTCHA key ID. domain - domain to add (hostname only, no scheme/path/port). projectId - Google Cloud project ID. If empty, uses the current gcloud default project. Reads current domains, appends the new domain if not already present, and updates the key. Returns JSON with the updated domain list.";
+	Description = @"keyId - reCAPTCHA key ID. domain - domain to add (hostname only, no scheme/path/port). projectId - Google Cloud project ID. Required. Appends the domain if not already present. Returns JSON with the updated domain list.";
 
-	function Execute(string keyId, string domain, string projectId) : string
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string keyId, string domain, string projectId) : string
 	{
-		ToRecaptchaEnsureServiceAccount();
-		if (StringUtil.IsEmpty(projectId))
-			projectId = ToRecaptchaDefaultProjectId();
-
-		// Use PowerShell to do the read-modify-write in one script
-		string psScript = "$domains = (gcloud recaptcha keys describe '" + keyId + "' --project='" + projectId + "' --format='value(webSettings.allowedDomains)' --quiet 2>$null); $domains = $domains -replace ';', ','; if ($domains -and $domains.Contains('" + domain + "')) { $newDomains = $domains } elseif ($domains) { $newDomains = $domains + ',' + '" + domain + "' } else { $newDomains = '" + domain + "' }; gcloud recaptcha keys update '" + keyId + "' --project='" + projectId + "' --web --domains=\"$newDomains\" --format=json --quiet 2>&1; Write-Output 'Exit code: 0'";
-		string raw = SystemOperations.RunPowerShell(psScript, 60);
-		return ToRecaptchaCleanOutput(raw);
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["ProjectID"] = projectId; args["KeyID"] = keyId; args["Domain"] = domain;
+		return service.CallWebPropertiesRoute("google-operations/add-recaptcha-domain", args);
 	}
 }
 
@@ -211,18 +144,13 @@ prototype ToAddRecaptchaDomain : RecaptchaSkillAction
 [SemanticProgram.InfinitivePhrase("to remove a domain from a recaptcha key")]
 prototype ToRemoveRecaptchaDomain : RecaptchaSkillAction
 {
-	Description = @"keyId - reCAPTCHA key ID. domain - domain to remove. projectId - Google Cloud project ID. If empty, uses the current gcloud default project. Reads current domains, removes the specified domain, and updates the key. Returns JSON with the updated domain list.";
+	Description = @"keyId - reCAPTCHA key ID. domain - domain to remove. projectId - Google Cloud project ID. Required. Removes the specified domain. Returns JSON with the updated domain list.";
 
-	function Execute(string keyId, string domain, string projectId) : string
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string keyId, string domain, string projectId) : string
 	{
-		ToRecaptchaEnsureServiceAccount();
-		if (StringUtil.IsEmpty(projectId))
-			projectId = ToRecaptchaDefaultProjectId();
-
-		// Use PowerShell to do the read-modify-write in one script
-		string psScript = "$domains = (gcloud recaptcha keys describe '" + keyId + "' --project='" + projectId + "' --format='value(webSettings.allowedDomains)' --quiet 2>$null); $domains = $domains -replace ';', ','; $parts = $domains -split ',' | Where-Object { $_ -ne '" + domain + "' }; $newDomains = $parts -join ','; gcloud recaptcha keys update '" + keyId + "' --project='" + projectId + "' --web --domains=\"$newDomains\" --format=json --quiet 2>&1; Write-Output 'Exit code: 0'";
-		string raw = SystemOperations.RunPowerShell(psScript, 60);
-		return ToRecaptchaCleanOutput(raw);
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["ProjectID"] = projectId; args["KeyID"] = keyId; args["Domain"] = domain;
+		return service.CallWebPropertiesRoute("google-operations/remove-recaptcha-domain", args);
 	}
 }
 
@@ -230,16 +158,13 @@ prototype ToRemoveRecaptchaDomain : RecaptchaSkillAction
 [SemanticProgram.InfinitivePhrase("to replace recaptcha domains")]
 prototype ToSetRecaptchaDomains : RecaptchaSkillAction
 {
-	Description = @"keyId - reCAPTCHA key ID. domains - comma-separated list of domains to set (replaces existing list entirely). projectId - Google Cloud project ID. If empty, uses the current gcloud default project. Returns JSON with the updated key details.";
+	Description = @"keyId - reCAPTCHA key ID. domains - comma-separated list of domains to set (replaces existing list entirely). projectId - Google Cloud project ID. Required. Returns JSON with the updated key details.";
 
-	function Execute(string keyId, string domains, string projectId) : string
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string keyId, string domains, string projectId) : string
 	{
-		ToRecaptchaEnsureServiceAccount();
-		if (StringUtil.IsEmpty(projectId))
-			projectId = ToRecaptchaDefaultProjectId();
-
-		string script = "gcloud recaptcha keys update " + keyId + " --project=" + projectId + " --web --domains=\"" + domains + "\" --quiet 2>&1";
-		return SystemOperations.RunPowerShell(script, 60);
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
+		JsonObject args = new JsonObject(); args["ProjectID"] = projectId; args["KeyID"] = keyId; args["DomainsCsv"] = domains;
+		return service.CallWebPropertiesRoute("google-operations/set-recaptcha-domains", args);
 	}
 }
 
@@ -247,17 +172,11 @@ prototype ToSetRecaptchaDomains : RecaptchaSkillAction
 [SemanticProgram.InfinitivePhrase("to create a recaptcha enterprise key")]
 prototype ToCreateRecaptchaKey : RecaptchaSkillAction
 {
-	Description = @"displayName - human-readable name for the key (typically a site or app name). domains - comma-separated list of allowed domains (hostnames only, no scheme/path/port). integrationType - SCORE or CHECKBOX. projectId - Google Cloud project ID. If empty, uses the default. Creates a new reCAPTCHA Enterprise web key and returns JSON with the created key details.";
+	Description = @"displayName - human-readable name for the key (typically a site or app name). domains - comma-separated list of allowed domains (hostnames only, no scheme/path/port). integrationType - SCORE or CHECKBOX. projectId - Google Cloud project ID. Required. Creates a new reCAPTCHA Enterprise web key and returns JSON with the created key details.";
 
-	function Execute(string displayName, string domains, string integrationType, string projectId) : string
+	function Execute(FeedingFrenzyWebPropertiesJsonWsService service, string displayName, string domains, string integrationType, string projectId) : string
 	{
-		ToRecaptchaEnsureServiceAccount();
-		if (StringUtil.IsEmpty(projectId))
-			projectId = ToRecaptchaDefaultProjectId();
-
-		if (StringUtil.IsEmpty(integrationType))
-			integrationType = "score";
-
+		if (service == null) return "Error: FeedingFrenzyWebPropertiesJsonWsService binding is required.";
 		// Validate integrationType is a closed enum (score or checkbox)
 		if (!StringUtil.EqualNoCase(integrationType, "score") && !StringUtil.EqualNoCase(integrationType, "checkbox"))
 			throw new InvalidOperationException("integrationType must be 'score' or 'checkbox', got: " + integrationType);
@@ -270,13 +189,7 @@ prototype ToCreateRecaptchaKey : RecaptchaSkillAction
 		if (!ToRecaptchaValidateProjectId(projectId))
 			throw new InvalidOperationException("projectId must be 6-30 chars, lowercase letters, digits, and hyphens, starting with a letter.");
 
-		// Escape all interpolated values to prevent command injection
-		string safeDisplayName = ToRecaptchaEscapeSingleQuoted(displayName);
-		string safeDomains = ToRecaptchaEscapeSingleQuoted(domains);
-		string safeIntegrationType = ToRecaptchaEscapeSingleQuoted(integrationType);
-		string safeProjectId = ToRecaptchaEscapeSingleQuoted(projectId);
-
-		string script = "gcloud recaptcha keys create --display-name='" + safeDisplayName + "' --web --domains='" + safeDomains + "' --integration-type='" + safeIntegrationType + "' --project='" + safeProjectId + "' --format=json --quiet 2>&1";
-		return SystemOperations.RunPowerShell(script, 60);
+		JsonObject args = new JsonObject(); args["ProjectID"] = projectId; args["DisplayName"] = displayName; args["DomainsCsv"] = domains; args["IntegrationType"] = integrationType;
+		return service.CallWebPropertiesRoute("google-operations/create-recaptcha-key", args);
 	}
 }

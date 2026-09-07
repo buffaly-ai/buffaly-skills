@@ -1,31 +1,23 @@
 # Recaptcha Skill
 
-Provides Ops actions for managing Google reCAPTCHA Enterprise keys and allowed domains via the gcloud CLI.
+Provides Ops actions for managing Google reCAPTCHA Enterprise keys and allowed domains through the canonical Feeding Frenzy route-based Google operations service.
 
-## Prerequisites
-- gcloud CLI installed and authenticated
-- reCAPTCHA Enterprise API enabled on the target Google Cloud project
-- Service account with `recaptchaenterprise.keys.get`, `.list`, `.update` IAM permissions
+## Binding
 
-## Structure
-- `index.pts` — All actions and helpers in a single file
+- Callers pass `FeedingFrenzyWebPropertiesJsonWsService service`; use `FeedingFrenzyWebPropertiesJsonWsService#Remote` for production.
+- Canonical remote binding: `BaseUrl = https://ff.intelligencefactory.ai`, `TokenKey = FeedingFrenzy.ApiKey`.
+- Routes are generated method routes under `api/feedingfrenzy.admin.business/google-operations/*`.
+- The tool caller does not provide Google secrets, activate `gcloud`, call Google APIs directly, or set process-global credentials.
 
 ## Actions
 
-### Key Management
-- `ToListRecaptchaKeys(projectId)` — List all reCAPTCHA Enterprise keys in a project
-- `ToGetRecaptchaKey(keyId, projectId)` — Get full details of a key including allowed domains
+- `ToProvisionRecaptchaKey(service, projectId, displayName, domainsCsv, integrationType, proofDirectoryPath)` -> `provision-recaptcha-web-key` with `ProjectID`, `DisplayName`, `DomainsCsv`, `IntegrationType`
+- `ToListRecaptchaKeys(service, projectId)` -> `list-recaptcha-keys` with `ProjectID`
+- `ToGetRecaptchaKey(service, keyId, projectId)` -> `get-recaptcha-key` with `ProjectID`, `KeyID`
+- `ToAddRecaptchaDomain(service, keyId, domain, projectId)` -> `add-recaptcha-domain` with `ProjectID`, `KeyID`, `Domain`
+- `ToRemoveRecaptchaDomain(service, keyId, domain, projectId)` -> `remove-recaptcha-domain` with `ProjectID`, `KeyID`, `Domain`
+- `ToSetRecaptchaDomains(service, keyId, domains, projectId)` -> `set-recaptcha-domains` with `ProjectID`, `KeyID`, `DomainsCsv`
+- `ToCreateRecaptchaKey(service, displayName, domains, integrationType, projectId)` -> `create-recaptcha-key` with `ProjectID`, `DisplayName`, `DomainsCsv`, `IntegrationType`
 
-### Domain Management
-- `ToAddRecaptchaDomain(keyId, domain, projectId)` — Add a domain to a key's allowed list
-- `ToRemoveRecaptchaDomain(keyId, domain, projectId)` — Remove a domain from a key's allowed list
-- `ToSetRecaptchaDomains(keyId, domains, projectId)` — Replace the full domain list for a key
+`proofDirectoryPath` is validated by the native `GoogleOperationsLocalProofHelper`, which writes a unique probe and persists sanitized local evidence before provisioning. The local path is not sent to Feeding Frenzy; FF creates server-owned proof artifacts.
 
-## Notes
-- `projectId` defaults to the current gcloud project when empty
-- Domains must be hostnames only (no scheme, path, port, query, or fragment)
-- Subdomains of an allowed domain are automatically allowed by Google
-- Max 250 domains per key
-- Add/Remove operations use a read-modify-write pattern (GET key, modify domain array, PATCH back)
-- All operations use `SystemOperations.RunPowerShellStreamingToRuntimeUi` with `ProcessStartInfo` for reliable gcloud execution
-- Uses the same process execution pattern as the ClaudeCode skill
