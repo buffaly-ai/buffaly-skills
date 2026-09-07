@@ -73,7 +73,15 @@
   <script src="ontology-workbench-header.js"></script>
   <script>
     const $ = id => document.getElementById(id);
-    function text(value) { return value == null || value === '' ? '—' : String(value); }
+    function text(value) { return value == null || value === '' ? '—' : escapeHtml(String(value)); }
+    function escapeHtml(value) {
+      return value
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
     function sessionLink(key) { return key ? `<a href="/?session=${encodeURIComponent(key)}">${text(key)}</a>` : '—'; }
     function prototypeLink(name) { return name ? `<a href="prototype-viewer.html?prototype=${encodeURIComponent(name)}">${text(name)}</a>` : '—'; }
     function render(model) {
