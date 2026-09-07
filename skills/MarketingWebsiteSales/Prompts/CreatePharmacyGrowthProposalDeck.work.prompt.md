@@ -337,6 +337,8 @@ Do not research for its own sake.
 Do not perform a broad website audit unless an official-site branch and declared slots need it.
 Do not draft slides.
 
+For ordinary public research, website verification, and Google/Bing access, use `UseBrowserSkill` and `ToOpenManagedCdpBrowserSession` with an empty browser key so the installation resolves its configured persistent CDP browser. Reuse it through an agent-owned tab. Do not open `ToOpenPersonalIsolatedPlaywrightBrowser`, `ToOpenPlaywrightBrowserSession`, or any disposable profile unless the caller explicitly requests Playwright, UI/e2e testing, or clean-profile reproduction. If managed CDP is unavailable, record the explicit blocker and use an approved search/API provider when suitable; never silently fall back to Playwright. If a search engine presents a CAPTCHA or automation block, stop browser retries and do not repeat the query on another browser or search engine.
+
 Create `research-notes.md`:
 
 ```markdown

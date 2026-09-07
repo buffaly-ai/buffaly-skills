@@ -42,7 +42,7 @@ include "PromptActions.pts";
 [SemanticProgram.InfinitivePhrase("to start a browser session")]
 prototype ToOpenBrowserSession : BrowserSessionSkillAction
 {
-	Description = @"Thin wrapper over BrowserTools.BrowserSubAgentOpenTool(_opsAgent, profileName). profileName - persistent browser profile name. Returns JSON containing subAgentId/profile/status.";
+	Description = @"Canonical generic browser opener backed by C# CDP. For ordinary research and the installation default, pass an empty profileName so the configured managed persistent browser is resolved; do not invent a disposable profile. Returns a selection receipt containing backend, non-secret profile/session identity, created/reused state, and fallback fields. Explicit Playwright/UI testing must use ToOpenPlaywrightBrowserSession instead.";
 
 	function Execute(string profileName) : string
 	{
@@ -56,9 +56,12 @@ prototype ToOpenBrowserSession : BrowserSessionSkillAction
 [SemanticProgram.InfinitivePhrase("to recover the persistent browser")]
 [SemanticProgram.InfinitivePhrase("to open the browser with the existing login")]
 [SemanticProgram.InfinitivePhrase("to open a persistent CDP browser")]
+[SemanticProgram.InfinitivePhrase("to research the web in the persistent browser")]
+[SemanticProgram.InfinitivePhrase("to search Google in the persistent browser")]
+[SemanticProgram.InfinitivePhrase("to search Bing in the persistent browser")]
 prototype ToOpenManagedCdpBrowserSession : BrowserSessionSkillAction
 {
-	Description = @"Authoritative route for registered persistent/default browsers. Atomically resolves the managed CDP browser, invokes its pre-approved launcher when the endpoint is unavailable, waits for bounded health recovery, and opens an absolute URL without Tier 2 approval. Use this instead of ToLaunchCdpChrome or raw port-based ToOpenCdpBrowserSession whenever a managed browser or existing login is intended. An empty browserKey uses Browser Feature DefaultManagedBrowserKey; the caller never supplies a launcher, profile, executable, or port.";
+	Description = @"Authoritative route for ordinary web research, search-engine access, and registered persistent/default or existing-login browsers. Atomically resolves the configured managed CDP browser, invokes its pre-approved launcher when unavailable, waits for bounded health recovery, and opens an agent-owned tab. An empty browserKey uses Browser Feature DefaultManagedBrowserKey; never guess a key, launcher, profile, executable, or port. Managed failure is terminal and never silently falls back to Playwright. Returns backend/profile/session, created/reused, recovery, launcher, and fallback receipts.";
 
 	function Execute(string browserKey, string url) : string
 	{
@@ -68,9 +71,10 @@ prototype ToOpenManagedCdpBrowserSession : BrowserSessionSkillAction
 
 [SemanticProgram.InfinitivePhrase("to open a playwright browser session")]
 [SemanticProgram.InfinitivePhrase("to open an isolated playwright browser")]
+[SemanticProgram.InfinitivePhrase("to open a disposable browser for explicit UI testing")]
 prototype ToOpenPlaywrightBrowserSession : PlaywrightBrowserSkillAction
 {
-	Description = @"Opens an explicitly Playwright-backed browser session without changing the generic CDP default.";
+	Description = @"Explicit test-only browser opener. Use only when the caller requests Playwright, UI/e2e testing, or clean-profile reproduction. Never use for ordinary research, Google/Bing search, public-site browsing, authenticated continuity, or as fallback from managed CDP. Returns a receipt with backend=playwright and the disposable profile/session identity.";
 
 	function Execute(string profileName) : string
 	{
