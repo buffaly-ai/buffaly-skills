@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Prototype Reuse</title>
+  <link rel="stylesheet" href="ontology-workbench-header.css" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; background: #f7f7f8; color: #1f2937; }
+    main { padding: 24px; max-width: 1200px; margin: 0 auto; }
+    .panel { background: white; border: 1px solid #ddd; border-radius: 10px; padding: 16px; margin-bottom: 18px; box-shadow: 0 1px 2px #0001; }
+    .filters { display: flex; gap: 12px; flex-wrap: wrap; align-items: end; }
+    label { display: grid; gap: 4px; font-size: 13px; font-weight: 600; }
+    select, input, button { font: inherit; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 8px; }
+    button { background: #1f2937; color: white; cursor: pointer; }
+    .stats { display: flex; gap: 12px; flex-wrap: wrap; }
+    .stat { background: #eef2ff; padding: 12px 14px; border-radius: 8px; min-width: 130px; }
+    .stat strong { display: block; font-size: 24px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border-bottom: 1px solid #e5e7eb; padding: 9px; text-align: left; vertical-align: top; }
+    th { background: #f8fafc; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+    .muted { color: #64748b; }
+    .diagnostic { color: #991b1b; background: #fef2f2; padding: 8px; border-radius: 6px; margin: 4px 0; }
+    a { color: #2563eb; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { background: #f1f5f9; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div data-ontology-workbench-header data-page="reuse"></div>
+  <main>
+    <h1>Prototype Reuse</h1>
+    <section class="panel filters" aria-label="Prototype reuse filters">
+      <label>Kind
+        <select id="kind"><option value="">All</option><option>Action</option><option>Entity</option></select>
+      </label>
+      <label>Operation
+        <select id="operation"><option value="">All</option><option>Borrow</option><option>Keep</option></select>
+      </label>
+      <label>Prototype
+        <input id="prototype" placeholder="Exact prototype name" />
+      </label>
+      <button id="refresh" type="button">Refresh</button>
+      <span id="status" class="muted"></span>
+    </section>
+
+    <section class="panel stats" aria-label="Prototype reuse totals">
+      <div class="stat"><strong id="totalBorrows">0</strong><span>Total borrows</span></div>
+      <div class="stat"><strong id="totalKeeps">0</strong><span>Total keeps</span></div>
+      <div class="stat"><strong id="failureCount">0</strong><span>Failures</span></div>
+    </section>
+
+    <section class="panel">
+      <h2>Most reused</h2>
+      <table aria-label="Most reused prototypes">
+        <thead><tr><th>Prototype</th><th>Kind</th><th>Borrows</th><th>Keeps</th><th>Distinct destinations</th><th>Last activity</th><th>Hash</th></tr></thead>
+        <tbody id="rankings"><tr><td colspan="7" class="muted">No reuse events found.</td></tr></tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>Activity</h2>
+      <table aria-label="Prototype reuse activity">
+        <thead><tr><th>Time UTC</th><th>Operation</th><th>Outcome</th><th>Prototype</th><th>Source</th><th>Destination</th><th>Error</th></tr></thead>
+        <tbody id="activity"><tr><td colspan="7" class="muted">No activity found.</td></tr></tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>Diagnostics</h2>
+      <div id="diagnostics" class="muted">No malformed ledger diagnostics.</div>
+    </section>
+  </main>
+  <script src="ontology-workbench-header.js"></script>
+  <script>
+    const $ = id => document.getElementById(id);
+    function text(value) { return value == null || value === '' ? '—' : String(value); }
+    function sessionLink(key) { return key ? `<a href="/?session=${encodeURIComponent(key)}">${text(key)}</a>` : '—'; }
+    function prototypeLink(name) { return name ? `<a href="prototype-viewer.html?prototype=${encodeURIComponent(name)}">${text(name)}</a>` : '—'; }
+    function render(model) {
+      $('totalBorrows').textContent = model.totalBorrows ?? model.TotalBorrows ?? 0;
+      $('totalKeeps').textContent = model.totalKeeps ?? model.TotalKeeps ?? 0;
+      $('failureCount').textContent = model.failureCount ?? model.FailureCount ?? 0;
+      const rankings = model.rankings ?? model.Rankings ?? [];
+      $('rankings').innerHTML = rankings.length ? rankings.map(row => `<tr><td>${prototypeLink(row.prototypeName ?? row.PrototypeName)}</td><td>${text(row.kind ?? row.Kind)}</td><td>${text(row.totalBorrows ?? row.TotalBorrows)}</td><td>${text(row.totalKeeps ?? row.TotalKeeps)}</td><td>${text(row.distinctDestinationSessions ?? row.DistinctDestinationSessions)}</td><td>${text(row.lastActivityUtc ?? row.LastActivityUtc)}</td><td><code>${text(row.definitionHash ?? row.DefinitionHash)}</code></td></tr>`).join('') : '<tr><td colspan="7" class="muted">No reuse events found.</td></tr>';
+      const activity = model.activity ?? model.Activity ?? [];
+      $('activity').innerHTML = activity.length ? activity.map(item => { const e = item.event ?? item.Event ?? {}; return `<tr><td>${text(e.timestampUtc ?? e.TimestampUtc)}</td><td>${text(e.operation ?? e.Operation)}</td><td>${text(e.outcome ?? e.Outcome)}</td><td>${prototypeLink(e.prototypeName ?? e.PrototypeName)}</td><td>${sessionLink(e.sourceSessionKey ?? e.SourceSessionKey)}</td><td>${sessionLink(e.destinationSessionKey ?? e.DestinationSessionKey ?? item.sessionKey ?? item.SessionKey)}</td><td>${text(e.error ?? e.Error)}</td></tr>`; }).join('') : '<tr><td colspan="7" class="muted">No activity found.</td></tr>';
+      const diagnostics = model.diagnostics ?? model.Diagnostics ?? [];
+      $('diagnostics').innerHTML = diagnostics.length ? diagnostics.map(d => `<div class="diagnostic">${text(d)}</div>`).join('') : 'No malformed ledger diagnostics.';
+    }
+    async function load() {
+      $('status').textContent = 'Loading…';
+      const params = new URLSearchParams();
+      if ($('kind').value) params.set('kind', $('kind').value);
+      if ($('operation').value) params.set('operation', $('operation').value);
+      if ($('prototype').value.trim()) params.set('prototype', $('prototype').value.trim());
+      const response = await fetch('/web-modules/OntologyWorkbench/api/prototype-reuse?' + params.toString());
+      if (!response.ok) throw new Error(await response.text());
+      render(await response.json());
+      $('status').textContent = 'Loaded';
+    }
+    $('refresh').addEventListener('click', () => load().catch(err => { $('status').textContent = err.message; }));
+    load().catch(err => { $('status').textContent = err.message; });
+  </script>
+</body>
+</html>

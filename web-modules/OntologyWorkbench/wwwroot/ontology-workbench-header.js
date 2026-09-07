@@ -19,13 +19,14 @@
   })();
   if (launchSettingsUrl) sessionStorage.setItem('OntologyWorkbench.LaunchSettingsUrl', launchSettingsUrl);
   const routes = harness
-    ? { grammar: routeBase + '/harness/', runner: routeBase + '/harness/method-runner', search: routeBase + '/harness/ontology-search', settings: launchSettingsUrl || routeBase + '/harness/settings', critics: routeBase + '/harness/critic-settings' }
-    : { grammar: '/web-modules/OntologyWorkbench/workbench', runner: '/web-modules/OntologyWorkbench/method-runner', search: '/web-modules/OntologyWorkbench/ontology-search', settings: '/web-modules/OntologyWorkbench/settings.html', critics: '/web-modules/OntologyWorkbench/critic-settings' };
+    ? { grammar: routeBase + '/harness/', runner: routeBase + '/harness/method-runner', search: routeBase + '/harness/ontology-search', reuse: routeBase + '/harness/prototype-reuse', settings: launchSettingsUrl || routeBase + '/harness/settings', critics: routeBase + '/harness/critic-settings' }
+    : { grammar: '/web-modules/OntologyWorkbench/workbench', runner: '/web-modules/OntologyWorkbench/method-runner', search: '/web-modules/OntologyWorkbench/ontology-search', reuse: '/web-modules/OntologyWorkbench/prototype-reuse', settings: '/web-modules/OntologyWorkbench/settings.html', critics: '/web-modules/OntologyWorkbench/critic-settings' };
   const active = host.dataset.page || '';
   const items = [
     ['grammar', 'Grammar'],
     ['runner', 'Method runner'],
-    ['search', 'Ontology search']
+    ['search', 'Ontology search'],
+    ['reuse', 'Prototype reuse']
   ];
   items.push(['settings', 'Settings']);
   if (!harness) items.push(['critics', 'Critic settings']);

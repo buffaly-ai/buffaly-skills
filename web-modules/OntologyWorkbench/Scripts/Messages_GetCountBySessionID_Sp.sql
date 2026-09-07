@@ -1,0 +1,21 @@
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE Specific_Name = 'Messages_GetCountBySessionID_Sp')
+BEGIN
+	DROP PROCEDURE Messages_GetCountBySessionID_Sp
+END
+GO
+
+SET ANSI_NULLS OFF
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+CREATE PROCEDURE [dbo].[Messages_GetCountBySessionID_Sp]
+	@SessionID [int]
+AS
+
+	SET NOCOUNT ON
+
+	SELECT		COUNT(*) as Total
+	FROM		Messages WITH (NOLOCK)
+	WHERE		[SessionID] = @SessionID
+
+GO
