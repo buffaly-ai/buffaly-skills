@@ -20718,6 +20718,57 @@
       "RequiresRestart": true,
       "RequiresPreStartInstall": true,
       "PreStartCleanupPaths": []
+    },
+    {
+      "PackageId": "MarketingWorkbench",
+      "PackageType": "WebModule",
+      "Title": "Marketing Workbench",
+      "Description": "Buffaly Web Module package for Marketing Workbench.",
+      "Version": "0.1.0",
+      "PackageKind": "BuffalyWebModule",
+      "SourcePath": "web-modules/MarketingWorkbench",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/MarketingWorkbench",
+      "Phrases": [
+        "Marketing Workbench",
+        "MarketingWorkbench"
+      ],
+      "Files": [
+        {
+          "Path": "Buffaly.MarketingWorkbench.Web.deps.json",
+          "Sha256": "4fbb23304ad550d37147ea541afc8a0ddcd45176e0634fe8f293676b2e824ca3"
+        },
+        {
+          "Path": "Buffaly.MarketingWorkbench.Web.dll",
+          "Sha256": "d4e2a9459c09e4e50c016e075d8db1329efe09cd2579a9c61789ed135b435c50"
+        },
+        {
+          "Path": "README.md",
+          "Sha256": "cd196242d08193d021b95046643da7c66c098bd66bbadc524196ac20401872c6"
+        },
+        {
+          "Path": "web-module.json",
+          "Sha256": "e1e7cb457cd14367f59882b1d821d916ca7b920986ddb6dc370bad0cb1cb9dbb"
+        },
+        {
+          "Path": "wwwroot/components/marketing-workbench-module.js",
+          "Sha256": "cb410b265865d8f7a2ec3178f92b985dcf4487dc51e41721c0bb7b7b4a047ba1"
+        },
+        {
+          "Path": "wwwroot/components/marketing-workbench-module.js.md",
+          "Sha256": "745a93972430f3bd3768572d16ffde7bc0b29a70ac01c71c1bfba2a7f4326d01"
+        },
+        {
+          "Path": "wwwroot/index.html",
+          "Sha256": "a3e09867cb77a4edc49f88ac96b2eb12a146c3fb610ee3ffa60d75472a019fc8"
+        }
+      ],
+      "ProjectArtifacts": [],
+      "Dependencies": [],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "RequiresRestart": true,
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     }
   ]
 }
