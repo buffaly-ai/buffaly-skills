@@ -19,7 +19,7 @@ Provides Ops actions for managing Google reCAPTCHA Enterprise keys and allowed d
 - `ToSetRecaptchaDomains(service, keyId, domains, projectId)` -> `set-recaptcha-domains` with `ProjectID`, `KeyID`, `DomainsCsv`
 - `ToCreateRecaptchaKey(service, displayName, domains, integrationType, projectId)` -> `create-recaptcha-key` with `ProjectID`, `DisplayName`, `DomainsCsv`, `IntegrationType`
 
-`proofDirectoryPath` is validated by the native `GoogleOperationsLocalProofHelper`, which writes a unique probe and persists sanitized preflight evidence before provisioning, then persists sanitized result evidence after the successful Feeding Frenzy response and returns a wrapper containing `LocalProofEvidencePath`. The local path is not sent to Feeding Frenzy; FF creates server-owned proof artifacts.
+`proofDirectoryPath` is validated by the native `GoogleOperationsLocalProofHelper`, which writes a unique probe and persists sanitized preflight evidence before provisioning, then persists sanitized result evidence after the successful Feeding Frenzy response and returns the original JSON object augmented with `LocalProofEvidencePath`. The local path is not sent to Feeding Frenzy; FF creates server-owned proof artifacts.
 
 
 
