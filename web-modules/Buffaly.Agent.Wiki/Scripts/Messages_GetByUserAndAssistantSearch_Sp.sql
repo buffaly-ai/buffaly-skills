@@ -3,6 +3,8 @@
 -- Empty @Search lists newest matching-role rows instead of throwing.
 -- Level 2 critic/guidance messages are excluded. SessionKey already skips companion
 -- level-two sessions; this also drops source-session rows that start with [label: Level 2].
+-- Online Critic and Level 2 helper sessions are excluded by canonical AgentName and
+-- SessionKey suffix. Do not filter ordinary conversation Content that merely mentions critics.
 -- Use CHARINDEX, not LIKE: SQL Server LIKE treats [ as a character class.
 CREATE OR ALTER PROCEDURE [dbo].[Messages_GetByUserAndAssistantSearch_Sp]
     @Search nvarchar(255) = N'',
@@ -58,7 +60,11 @@ BEGIN
                 OR (@RoleFilter = N'assistant' AND m.Role = N'assistant')
             )
             AND (@Search = N'' OR m.Content LIKE N'%' + @Search + N'%')
+            AND ISNULL(s.AgentName, N'') NOT IN (N'level-2', N'online-session-memory-critic', N'online-action-critic', N'online-memory-critic')
             AND s.SessionKey NOT LIKE N'%level-two%'
+            AND s.SessionKey NOT LIKE N'%-online-memory-critic'
+            AND s.SessionKey NOT LIKE N'%-online-action-critic'
+            AND s.SessionKey NOT LIKE N'%-online-session-memory-critic'
             AND CHARINDEX(N'[label: Level 2]', LTRIM(m.Content)) <> 1
             AND CHARINDEX(N'[timeline-label: Level 2]', LTRIM(m.Content)) <> 1
         ORDER BY m.MessageID DESC;
@@ -100,7 +106,11 @@ BEGIN
                 OR (@RoleFilter = N'assistant' AND m.Role = N'assistant')
             )
             AND (@Search = N'' OR m.Content LIKE N'%' + @Search + N'%')
+            AND ISNULL(s.AgentName, N'') NOT IN (N'level-2', N'online-session-memory-critic', N'online-action-critic', N'online-memory-critic')
             AND s.SessionKey NOT LIKE N'%level-two%'
+            AND s.SessionKey NOT LIKE N'%-online-memory-critic'
+            AND s.SessionKey NOT LIKE N'%-online-action-critic'
+            AND s.SessionKey NOT LIKE N'%-online-session-memory-critic'
             AND CHARINDEX(N'[label: Level 2]', LTRIM(m.Content)) <> 1
             AND CHARINDEX(N'[timeline-label: Level 2]', LTRIM(m.Content)) <> 1
         ORDER BY
@@ -148,7 +158,11 @@ BEGIN
             ON s.SessionID = m.SessionID
         WHERE
             (@Search = N'' OR m.Content LIKE N'%' + @Search + N'%')
+            AND ISNULL(s.AgentName, N'') NOT IN (N'level-2', N'online-session-memory-critic', N'online-action-critic', N'online-memory-critic')
             AND s.SessionKey NOT LIKE N'%level-two%'
+            AND s.SessionKey NOT LIKE N'%-online-memory-critic'
+            AND s.SessionKey NOT LIKE N'%-online-action-critic'
+            AND s.SessionKey NOT LIKE N'%-online-session-memory-critic'
             AND CHARINDEX(N'[label: Level 2]', LTRIM(m.Content)) <> 1
             AND CHARINDEX(N'[timeline-label: Level 2]', LTRIM(m.Content)) <> 1
         ORDER BY
@@ -179,7 +193,11 @@ BEGIN
         ON s.SessionID = m.SessionID
         WHERE
             (@Search = N'' OR m.Content LIKE N'%' + @Search + N'%')
+            AND ISNULL(s.AgentName, N'') NOT IN (N'level-2', N'online-session-memory-critic', N'online-action-critic', N'online-memory-critic')
             AND s.SessionKey NOT LIKE N'%level-two%'
+            AND s.SessionKey NOT LIKE N'%-online-memory-critic'
+            AND s.SessionKey NOT LIKE N'%-online-action-critic'
+            AND s.SessionKey NOT LIKE N'%-online-session-memory-critic'
             AND CHARINDEX(N'[label: Level 2]', LTRIM(m.Content)) <> 1
             AND CHARINDEX(N'[timeline-label: Level 2]', LTRIM(m.Content)) <> 1
         ORDER BY
