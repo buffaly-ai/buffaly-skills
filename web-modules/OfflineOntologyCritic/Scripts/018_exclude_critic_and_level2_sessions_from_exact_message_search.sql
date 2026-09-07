@@ -1,4 +1,5 @@
--- Add active-session exact message search while preserving the five-argument compatibility routine.
+-- Exclude Online Critic and Level 2 helper sessions from Exact Message Search.
+-- Canonical identities: AgentName plus SessionKey suffixes. Keep Level 2 message-label filters.
 CREATE OR REPLACE FUNCTION messages_get_by_user_and_assistant_search_sp(
 	p_search text,
 	p_role_filter text,
@@ -90,3 +91,5 @@ BEGIN
 	LIMIT v_max_rows;
 END;
 $$;
+
+SELECT record_schema_migration('018_exclude_critic_and_level2_sessions_from_exact_message_search');
