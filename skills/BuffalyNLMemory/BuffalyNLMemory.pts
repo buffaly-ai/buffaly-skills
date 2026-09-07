@@ -91,6 +91,19 @@ prototype ToBorrowSessionPrototype : ProtoScriptAction, BuffalyNLMemorySkillActi
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to keep an action from another session")]
+[SemanticProgram.InfinitivePhrase("to keep an entity from another session")]
+[SemanticProgram.InfinitivePhrase("to keep a session prototype")]
+prototype ToKeepSessionPrototype : ProtoScriptAction, BuffalyNLMemorySkillAction
+{
+	Description = @"ownerScope - exact session: scope of the source. prototypeName - exact source prototype name. kind - Action or Entity. Reads one definition from that session and persists it into this session through the existing local Action/Entity authoring path. Collision validation is the normal authoring validation; no silent overwrite of prototypes not owned by the target artifact.";
+
+	function Execute(string ownerScope, string prototypeName, string kind) : string
+	{
+		return BuffalyNlMemoryRuntimeTools.KeepSessionPrototype(_runtime, _opsAgent, ownerScope, prototypeName, kind);
+	}
+}
+
 prototype ToReadOnlineActionDefinition : BuffalyNLMemorySkillAction
 {
 	Description = @"Internal source-session action that returns one exact definition owned by SessionActions.pts, or an empty string when absent.";
