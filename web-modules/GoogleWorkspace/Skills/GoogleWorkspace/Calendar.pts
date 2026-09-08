@@ -50,7 +50,8 @@ prototype ToCreateGoogleWorkspaceCalendarEvent : GoogleWorkspaceSkillAction
 		if (StringUtil.IsEmpty(scopePreset))
 			scopePreset = "calendar";
 
-		string eventJson = "{\"summary\":\"" + summary + "\",\"description\":\"" + description + "\",\"location\":\"" + location + "\",\"start\":{\"dateTime\":\"" + startIso + "\",\"timeZone\":\"" + timeZone + "\"},\"end\":{\"dateTime\":\"" + endIso + "\",\"timeZone\":\"" + timeZone + "\"}}";
+		// Native construction preserves text and validates the optional email-string array.
+		string eventJson = GoogleWorkspaceServiceHost.BuildCalendarEventJson(summary, startIso, endIso, timeZone, description, location, attendeesJson);
 
 		// Return facade JSON without reshaping.
 		return GoogleWorkspaceServiceHost.CreateEventAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
