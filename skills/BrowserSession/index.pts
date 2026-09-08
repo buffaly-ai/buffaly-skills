@@ -119,6 +119,39 @@ prototype ToOpenBrowserUrl : BrowserSessionSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to insert text into a focused browser editor")]
+prototype ToInsertFocusedBrowserText : BrowserSessionSkillAction
+{
+	Description = @"Insert text through trusted browser input into the already-focused editor in this managed browser session. Requires document focus and an active element matching expectedFocusedSelector; does not focus an element or mutate DOM. Use the managed subAgentId, not a legacy CdpBrowser helper session ID. This inserts text, not clipboard paste or guaranteed multi-cell TSV. Focus validation and input dispatch are separate operations.";
+
+	function Execute(string subAgentId, string expectedFocusedSelector, string text) : string
+	{
+		return BrowserTools.BrowserInsertFocusedTextTool(_opsAgent, subAgentId, expectedFocusedSelector, text);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to paste text into a focused browser editor")]
+prototype ToPasteFocusedBrowserText : BrowserSessionSkillAction
+{
+	Description = @"Paste text through the Browser runtime into the already-focused editor in this managed browser session. Requires document focus and an active element matching expectedFocusedSelector. Use the managed subAgentId, not a legacy CdpBrowser helper session ID. Does not select or focus a target. Application-specific cell, formula and clipboard behavior must be verified independently; dispatch alone does not prove the paste succeeded.";
+
+	function Execute(string subAgentId, string expectedFocusedSelector, string text) : string
+	{
+		return BrowserTools.BrowserPasteFocusedTextTool(_opsAgent, subAgentId, expectedFocusedSelector, text);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to press a key in a focused browser editor")]
+prototype ToPressFocusedBrowserKey : BrowserSessionSkillAction
+{
+	Description = @"Dispatch a trusted key or key chord to the already-focused editor in this managed browser session. Requires document focus and an active element matching expectedFocusedSelector; does not change focus or use DOM mutation. Use the managed subAgentId, not a legacy CdpBrowser helper session ID. Focus validation and key dispatch are separate operations; verify the application result independently.";
+
+	function Execute(string subAgentId, string expectedFocusedSelector, string key) : string
+	{
+		return BrowserTools.BrowserPressFocusedKeyTool(_opsAgent, subAgentId, expectedFocusedSelector, key);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to click a browser selector")]
 prototype ToClickBrowserSelector : BrowserSessionSkillAction
 {
