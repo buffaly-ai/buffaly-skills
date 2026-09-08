@@ -29,6 +29,14 @@ This workflow is specifically for local session task artifacts. Do not convert t
 9. Do not mark a task `Closed` until the task records evidence that each acceptance criterion was met or explicitly waived by the user.
 10. When status changes, record the reason and evidence in the task.
 
+## Task Status Storage
+
+- Keep one current status in the task preamble (`Status: Open`) or an existing `## Status` section. Section-based tasks, including `- State: Open`, remain supported; do not migrate valid tasks just to change their layout.
+- Use `ToSetLocalTaskStatus` for explicit state changes with a short single-line reason. It updates the existing declaration and current reason/update metadata, preserving unrelated task evidence and history.
+- If old task metadata contains duplicate or conflicting statuses, the next explicit status update uses the requested state and removes the duplicate current declarations. Do not guess which old value was intended or rewrite tasks during listing. Until updated, different states are listed as `Status conflict` and remain visible in the active list.
+- Status examples in code fences and historical status lines in other sections are evidence, not current task metadata. Keep the current declaration in the preamble or Status section.
+- The tool's closure-heading check is not proof of acceptance; record completion evidence before requesting `Closed`.
+
 ## Workflow
 
 1. Define the user's goal in plain language from the request and available evidence.
