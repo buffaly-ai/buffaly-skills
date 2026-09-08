@@ -21,7 +21,8 @@ CREATE PROCEDURE [dbo].[InsertMessageSp]
 	@CompactionEpoch [int],
 	@MessageKey [nvarchar](255),
 	@TurnID [nvarchar](255),
-	@CompactionEpochKey [nvarchar](255)
+	@CompactionEpochKey [nvarchar](255),
+	@DateCreated [datetime] = NULL
 AS
     
     -- Automatically generated on 4/15/2026 2:56:22 AM.
@@ -41,7 +42,7 @@ AS
             [IsCompacted], 
             [CompactionEpoch], 
             [MessageKey], 
-            [ThreadKey], 
+            [TurnID], 
             [CompactionEpochKey]
     )
     VALUES
@@ -53,7 +54,7 @@ AS
             @ToolName, 
             @ToolArguments, 
             @CallID, 
-            getdate(), 
+            COALESCE(@DateCreated, getdate()),
             getdate(), 
             @Data, 
             @IsCompacted, 
