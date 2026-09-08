@@ -102,10 +102,11 @@ prototype ToExtractPlainTextFromGoogleWorkspaceDocument : GoogleWorkspaceSkillAc
 [SemanticProgram.InfinitivePhrase("to create a public google docs document")]
 prototype ToCreatePublicGoogleWorkspaceDocument : GoogleWorkspaceSkillAction
 {
-	Description = @"accountKey - authorized account key. scopePreset - defaults to docs.write when empty. title and optional bodyTextHtml are creation inputs. Returns JSON.";
+	Description = @"accountKey - authorized account key. scopePreset - defaults to docs.write when empty. title and bodyTextHtml required. Body accepts a StringRef or text; HTML is compiled to document formatting before creation. Unsupported HTML fails before creation. Returns JSON.";
 
-	function Execute(string accountKey, string scopePreset, string title, string bodyTextHtml) : string
+	function Execute(string accountKey, string scopePreset, string title, StringRef bodyTextHtml) : string
 	{
+        string resolvedContent = bodyTextHtml;
 		if (StringUtil.IsEmpty(scopePreset))
 			scopePreset = "docs.write";
 
@@ -113,7 +114,7 @@ prototype ToCreatePublicGoogleWorkspaceDocument : GoogleWorkspaceSkillAction
 		return GoogleWorkspaceServiceHost.CreatePublicDocumentAsync(			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
 			NormalizeGoogleWorkspaceOperationScopePreset(scopePreset),
 			title,
-			bodyTextHtml,
+			resolvedContent,
 			true,
 			false,
 			new CancellationToken(false));
@@ -160,3 +161,19 @@ prototype ToGetGoogleWorkspaceDocumentTabText : GoogleWorkspaceSkillAction
 }
 
 
+
+[SemanticProgram.InfinitivePhrase("to create a google document from explicit content")]
+prototype ToCreateGoogleWorkspaceDocumentFromContent : GoogleWorkspaceSkillAction
+{
+    Description = @"content accepts a StringRef or text. contentFormat must be auto, text, html or pages. text preserves literal markup. makePublic controls link sharing. All content preparation occurs before Google calls.";
+    function Execute(string accountKey, string scopePreset, string title, StringRef content, string contentFormat, bool makePublic) : string
+    {
+        string resolvedContent = content;
+        if (StringUtil.IsEmpty(scopePreset))
+            scopePreset = "docs.write";
+        return GoogleWorkspaceServiceHost.CreateDocumentFromContentAsync(
+            GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+            NormalizeGoogleWorkspaceOperationScopePreset(scopePreset), title,
+            resolvedContent, contentFormat, makePublic, false, new CancellationToken(false));
+    }
+}
