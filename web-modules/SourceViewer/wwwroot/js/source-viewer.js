@@ -9,12 +9,16 @@
 	const kind = document.getElementById("kind");
 	const status = document.getElementById("status");
 	const copy = document.getElementById("copy");
+	const preview = document.getElementById("preview");
 	const download = document.getElementById("download");
 	const close = document.getElementById("close");
 	const directory = document.getElementById("directory");
 	const editorHost = document.querySelector(".source-viewer__editor");
+	const previewHost = document.getElementById("preview-host");
+	const previewFrame = document.getElementById("preview-frame");
 	let editor = null;
 	let sourceText = null;
+	let previewing = false;
 
 	function fail(message) { status.textContent = message; status.classList.add("error"); }
 	function addScript(name) { return new Promise((resolve, reject) => { const script = document.createElement("script"); script.src = "vendor/codemirror/mode/" + name + "/" + name + ".js?v=2"; script.onload = resolve; script.onerror = () => reject(new Error("Could not load Source Viewer syntax mode: " + name)); document.head.appendChild(script); }); }
@@ -71,7 +75,19 @@
 		if (downloadUrl) { download.href = downloadUrl; download.hidden = false; }
 		editor = CodeMirror.fromTextArea(document.getElementById("source"), { mode: language.mode, lineNumbers: true, readOnly: true, lineWrapping: false });
 		sourceText = file.text; editor.setValue(sourceText); copy.disabled = false;
+		if (/\.html?$/i.test(file.path)) preview.hidden = false;
 		status.textContent = file.length.toLocaleString() + " bytes | " + language.name + " | Read only";
+	}
+
+	function togglePreview() {
+		if (!editor || preview.hidden) return;
+		previewing = !previewing;
+		editorHost.hidden = previewing;
+		previewHost.hidden = !previewing;
+		preview.textContent = previewing ? "Source" : "Preview";
+		preview.setAttribute("aria-pressed", previewing ? "true" : "false");
+		if (previewing && !previewFrame.src) previewFrame.src = "/api/buffaly.source-viewer/html-preview?path=" + encodeURIComponent(requestedPath);
+		status.textContent = previewing ? "Rendered HTML preview | Isolated" : sourceText.length.toLocaleString() + " characters | HTML | Read only";
 	}
 
 	async function load() {
@@ -87,7 +103,8 @@
 	}
 
 	copy.addEventListener("click", async function () { if (sourceText === null) return; await navigator.clipboard.writeText(sourceText); status.textContent = "Copied source."; });
+	preview.addEventListener("click", togglePreview);
 	close.addEventListener("click", function () { window.close(); });
-	window.addEventListener("unload", function () { editor = null; sourceText = null; }, { once: true });
+	window.addEventListener("unload", function () { previewFrame.src = "about:blank"; editor = null; sourceText = null; }, { once: true });
 	void load();
 })();

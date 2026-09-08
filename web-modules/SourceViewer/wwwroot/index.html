@@ -14,11 +14,12 @@
 				<span id="kind" class="source-viewer__kind" aria-hidden="true">TXT</span>
 				<div><h1 id="title">Source file</h1><p id="path"></p></div>
 			</div>
-			<div class="source-viewer__actions"><a id="download" class="source-viewer__download" hidden>Download original</a><button id="copy" type="button" disabled>Copy</button><button id="close" type="button">Close</button></div>
+			<div class="source-viewer__actions"><a id="download" class="source-viewer__download" hidden>Download original</a><button id="preview" type="button" hidden>Preview</button><button id="copy" type="button" disabled>Copy</button><button id="close" type="button">Close</button></div>
 		</header>
 		<div id="status" class="source-viewer__status" role="status">Loading…</div>
 		<nav id="directory" class="source-viewer__directory" aria-label="Directory contents" hidden></nav>
 		<div class="source-viewer__editor"><textarea id="source" aria-label="Source code"></textarea></div>
+		<div id="preview-host" class="source-viewer__preview" hidden><iframe id="preview-frame" title="Rendered HTML preview" sandbox="allow-scripts" credentialless></iframe></div>
 	</main>
 	<script src="vendor/codemirror/lib/codemirror.js?v=2"></script>
 	<script src="js/source-language.js?v=2"></script>
