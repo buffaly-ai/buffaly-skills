@@ -1005,6 +1005,16 @@
 			function candidateLoadState(row) {
 				return text(row && (row.loadState || row.LoadState));
 			}
+			function candidateOwnerScope(row) {
+				return text(row && (row.ownerScope || row.OwnerScope)).trim();
+			}
+			function candidateSemanticScope(row) {
+				return text(row && (row.semanticScope || row.SemanticScope)).trim();
+			}
+			function isForeignUnavailableCandidate(row) {
+				return candidateLoadState(row).toLowerCase() === "unavailable"
+					|| candidateSemanticScope(row).toLowerCase() === "foreign";
+			}
 			function candidateDump(row) {
 				return text(row && (row.prototype || row.Prototype));
 			}
@@ -2246,7 +2256,9 @@ function applyFrameToExtractUi(frame, envelope) {
 					outboundLinks: [],
 					scalarProperties: [],
 					semanticEntities: [],
-					error: ""
+					error: "",
+					unavailableReason: "",
+					ownerScope: ""
 				};
 			}
 			function copyText(value) {
@@ -2908,6 +2920,31 @@ function applyFrameToExtractUi(frame, envelope) {
 
 				const row = ensureCandidateRow(name, candidateRow);
 				const dump = candidateDump(row);
+				if (isForeignUnavailableCandidate(row)) {
+					const ownerScope = candidateOwnerScope(row);
+					const ownerLabel = ownerScope || "another session";
+					const dumpProperties = parseDetailsProperties(dump);
+					const foreign = {
+						status: "ready",
+						parents: parentsOf(name, dump, ""),
+						descendants: [],
+						detailsText: "",
+						schemaText: "",
+						sourceText: "",
+						sourcePath: "",
+						properties: dumpProperties,
+						outboundLinks: [],
+						scalarProperties: [],
+						semanticEntities: parseSemanticEntities("", name, dumpProperties),
+						error: "",
+						unavailableReason: "This object belongs to " + ownerLabel + " and is not available in the current session runtime.",
+						ownerScope: ownerScope,
+						loadedAt: Date.now()
+					};
+					state.neighborhood[name] = foreign;
+					if (!silent || state.expandedName === name) renderCandidates();
+					return Promise.resolve(foreign);
+				}
 				if (!silent || cached.status !== "ready") {
 					state.neighborhood[name] = Object.assign({}, cached, {
 						status: "loading",

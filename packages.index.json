@@ -20580,7 +20580,7 @@
       "PackageType": "WebModule",
       "Title": "Ontology Workbench",
       "Description": "Buffaly Web Module package for Ontology Workbench.",
-      "Version": "0.1.35",
+      "Version": "0.1.36",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/OntologyWorkbench",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/OntologyWorkbench",
@@ -20599,43 +20599,43 @@
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "d799193c2a00e3e1305ec2af8050d8fc03d7da18c3a6d1b416600601ad80aa87"
+          "Sha256": "ab5496d9edb3b4a7c91ad0946e1de60a8a1e65eb35668d2783bf6428d9902548"
         },
         {
           "Path": "Buffaly.Agent.CSharpSkill.dll",
-          "Sha256": "2252adde28e2e7149e89a07338c5652223f9af7898f19ef3bc2ed78ae56b0e5f"
+          "Sha256": "6ec68a29646d1999c1b7d22d3001956c9449f7fcce4a64f01098121bb636d3a8"
         },
         {
           "Path": "Buffaly.Agent.ProtoScript.Runtime.dll",
-          "Sha256": "a93b5c2947294ac69cef4762dcdc9bd58572a1342486c89deadad662ce7be357"
+          "Sha256": "af1eb5013c8b644335a27818d33be5547e29ab4da15a55c5ff34218b29875f20"
         },
         {
           "Path": "Buffaly.Agent.ProtoScriptAuthoring.dll",
-          "Sha256": "1ab722dff29f1e0422a9da7b0124fa04a9898870fa0eec5efd565e188e2ab9a5"
+          "Sha256": "73f59401f764de3bf76e01fea5a3c77550b9c87fd294a61aec86a3005ebfa820"
         },
         {
           "Path": "Buffaly.Agent.SemanticDatabase.DB.dll",
-          "Sha256": "d9e78df730f57b2a7c65e29a31c7f9c80aaa7569666e059fab352d0e28379418"
+          "Sha256": "39964f1f54e496b739b268a2165ba50caa7ab1f58137b45ea2cbaebbc3573e85"
         },
         {
           "Path": "Buffaly.Agent.SemanticDatabase.dll",
-          "Sha256": "f07a06afc23cf7e3688376312beb7b79ca0e050ae72e4c2c9fd4d52fde71ef5d"
+          "Sha256": "643fc169a12903e4321927e9703620e3a51035ce39726189e023b0268ee98b06"
         },
         {
           "Path": "Buffaly.Agent.Tools.SemanticDatabase.dll",
-          "Sha256": "122bff3a18226fcd80bffd8b1fb00a83c5660a0f9c42be7cb829ba25cd3d7372"
+          "Sha256": "81ae866ac01762083ec441e42e587eb6ff2b0bf27ebe472ee763566c5b9f9ce6"
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "81d3ef05628f99920f9006e19c11290abce5962113607c9786530a653460ade7"
+          "Sha256": "a49ecb088ce98bfdfde68999d94fc832b1db5d3c78f2b2ea8503d14d5e8fc017"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "8bd4c3eb6e1583f16945b83e4c3c28d0ef6e5b2f3a2f856894136cca6e1ada48"
+          "Sha256": "690247e6edeb0a2521c299360d5a70ddf479b69bb62cca4f8cc00c78e3428dd6"
         },
         {
           "Path": "Buffaly.NLMemory.dll",
-          "Sha256": "13aa71bfa356e172cd1462068fe26b0c15ed410b13e5c0f7b3337e0442baeac7"
+          "Sha256": "a3f091eacaee0b127905ab292c73a488a5a5a960d16b5ab7cad064e3f55fa30b"
         },
         {
           "Path": "Buffaly.OntologyWorkbench.WebModule.deps.json",
@@ -20643,7 +20643,7 @@
         },
         {
           "Path": "Buffaly.OntologyWorkbench.WebModule.dll",
-          "Sha256": "1e76696bdc5c47a72e5d4b2062853d05eb799cb811643e42f85514a2d51a4dac"
+          "Sha256": "d381417edd33be6251b14ed9b97195c9a10ee22e0bed374c4bfb061861c55923"
         },
         {
           "Path": "Buffaly.ProviderContracts.dll",
@@ -20651,7 +20651,7 @@
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "0155d645f349737be79582e32b23d941794d41718d906d865315e1298a6a6d5c"
+          "Sha256": "1f79576b0637f196dbafb758cadbffee140136fe2c4409509968ab730b906ef7"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -20839,7 +20839,7 @@
         },
         {
           "Path": "Scripts/Fragments.sql",
-          "Sha256": "e43d9ab74212546faa8ff46b893aa9a182164fec7fe6b388f238125c07e9e1ab"
+          "Sha256": "aae084959471e88baf6e148ed065ec7f96ebced3b2b2afa134826032cd4fae18"
         },
         {
           "Path": "Scripts/FragmentVectorsNative.sql",
@@ -21286,6 +21286,10 @@
           "Sha256": "235c21b749d3e3973cfd4003803afc19d32c55aef5ed3622ce16866893521d33"
         },
         {
+          "Path": "Scripts/TryUpdateFeatureSettingsSp.sql",
+          "Sha256": "d65c59567fd8d3e95a97fdc19d54f9fa1ddd7fa2f07d0a0a62fa1f10e72ec25e"
+        },
+        {
           "Path": "Scripts/TryUpdateSessionDataSp.sql",
           "Sha256": "ce170b69bf3ad1caeb54f2b1ec3052819d681c4bd2c1898a865358b63de0c9dc"
         },
@@ -21459,7 +21463,7 @@
         },
         {
           "Path": "wwwroot/ontology-search.html",
-          "Sha256": "90471b6660a9857137ccecfd6985e737aea6d610689b3ef1c03c0f2f5ce0b9c8"
+          "Sha256": "8171aa73c0820c8f352359764143f50962f4cd115e9832f0c570a18ab2700661"
         },
         {
           "Path": "wwwroot/ontology-workbench-composer.js",
