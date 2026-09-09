@@ -137,3 +137,23 @@ GO
 
 		
 		
+
+-- Narrow lookup index; do not add a duplicate when an equivalent leading-key index already exists.
+IF OBJECT_ID(N'dbo.SessionSubscriptions', N'U') IS NULL
+	THROW 51001, 'SessionSubscriptions table is required.', 1;
+
+IF NOT EXISTS (
+	SELECT 1 FROM sys.indexes i
+	JOIN sys.index_columns ic ON ic.object_id=i.object_id AND ic.index_id=i.index_id
+	JOIN sys.columns c ON c.object_id=ic.object_id AND c.column_id=ic.column_id
+	WHERE i.object_id=OBJECT_ID(N'dbo.SessionSubscriptions')
+		AND i.type IN (1,2) AND i.is_disabled=0 AND i.is_hypothetical=0 AND i.has_filter=0
+		AND ic.key_ordinal=1 AND c.name=N'SessionID'
+)
+BEGIN
+	IF EXISTS (SELECT 1 FROM sys.indexes WHERE object_id=OBJECT_ID(N'dbo.SessionSubscriptions') AND name=N'IX_SessionSubscriptions_SessionID')
+		THROW 51002, 'IX_SessionSubscriptions_SessionID exists but is not an enabled unfiltered SessionID-leading index.', 1;
+	CREATE NONCLUSTERED INDEX IX_SessionSubscriptions_SessionID
+		ON dbo.SessionSubscriptions(SessionID);
+END;
+GO
