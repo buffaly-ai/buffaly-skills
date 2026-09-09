@@ -6840,7 +6840,7 @@
       "PackageType": "WebModule",
       "Title": "Desktop Viewer",
       "Description": "Buffaly Web Module package for Desktop Viewer.",
-      "Version": "0.1.197",
+      "Version": "0.1.198",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/DesktopViewer",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/DesktopViewer",
@@ -6863,7 +6863,7 @@
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "11e461433abbf22c3ac81409fdfd42b7fb2f4acc9fd608a23c9bc4bfe30c32a0"
+          "Sha256": "763f667960e608b8618eae41015fc4ddf0a6039825cd446c5e80cbef2b5def73"
         },
         {
           "Path": "Buffaly.Common.dll",
@@ -6875,15 +6875,15 @@
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "ea7ad73b259ee17f8b49ba69046ef6ef812e3f406c8a459f5bac2ac09965d54e"
+          "Sha256": "50789a811f8fc714c35b976b4b322daf638e93760829f21325dc2011b57ecb43"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "84c0fb3050be7c90462fe1408325869f0416b9ae58667b516512ebffc6e4192c"
+          "Sha256": "31e56b1b91aa9900371cf0e7f3e393e10c7a4c4d1f9ccbcf8b4a5858a123d031"
         },
         {
           "Path": "Buffaly.DesktopAutomation.dll",
-          "Sha256": "938815f518c29f9bf6acbc4e9ed25b93273807a5b42fa5247b5cbb7a8c54ed60"
+          "Sha256": "d9e23266b67e499eb931bde7a07850fe8f362128ee207c76e2eda92b670738f6"
         },
         {
           "Path": "Buffaly.DesktopViewer.Web.deps.json",
@@ -6891,11 +6891,11 @@
         },
         {
           "Path": "Buffaly.DesktopViewer.Web.dll",
-          "Sha256": "a1bed5bf09c3d0dddc7dcb674c3b84edc8fad1a71c9ba95a4317e109d51091b0"
+          "Sha256": "5e7f2963a51d78c0361d10fe5b5f6894e42f85f89966971551e13077c5b338e8"
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "e6fb8ddccf940f4ac9c7d7ab4dcd2e9e88a46212cc4a9f3b5427a7130fa4f5ba"
+          "Sha256": "1749ee4a85ead32b0d03086739f739fcb39f2c80b9b065a50a5db7f189c598d7"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -7131,7 +7131,7 @@
         },
         {
           "Path": "Scripts/Fragments.sql",
-          "Sha256": "e43d9ab74212546faa8ff46b893aa9a182164fec7fe6b388f238125c07e9e1ab"
+          "Sha256": "aae084959471e88baf6e148ed065ec7f96ebced3b2b2afa134826032cd4fae18"
         },
         {
           "Path": "Scripts/FragmentVectorsNative.sql",
@@ -7523,7 +7523,7 @@
         },
         {
           "Path": "Scripts/SessionSubscriptions.sql",
-          "Sha256": "ba60bde920aee9feedc83edb69f23995e8f87a54d7416d1440e3aa9d4b08ae1f"
+          "Sha256": "e036417bb69d0b5d8dde97adbd50919128a05cd08a49cf18ae15e96db0196cda"
         },
         {
           "Path": "Scripts/Sessions_GetAll_Sp.sql",
@@ -7576,6 +7576,10 @@
         {
           "Path": "Scripts/Tags.sql",
           "Sha256": "235c21b749d3e3973cfd4003803afc19d32c55aef5ed3622ce16866893521d33"
+        },
+        {
+          "Path": "Scripts/TryUpdateFeatureSettingsSp.sql",
+          "Sha256": "78f94c64640d3aa8ffcdfd47878f28b9f825250e6c84c2ab4f1ee63990acc26f"
         },
         {
           "Path": "Scripts/TryUpdateSessionDataSp.sql",
