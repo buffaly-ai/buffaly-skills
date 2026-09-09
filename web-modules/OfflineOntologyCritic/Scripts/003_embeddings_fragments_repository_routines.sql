@@ -253,7 +253,9 @@ CREATE OR REPLACE FUNCTION fragments_get_most_similar1_by_embedding_id_and_tag_i
 	p_embeddings text,
 	p_embedding_id integer,
 	p_tag_id integer,
-	p_threshold double precision
+	p_threshold double precision,
+	p_binding_selection text DEFAULT 'All',
+	p_local_scopes_json text DEFAULT '[]'
 )
 RETURNS TABLE ("FragmentID" integer, "Fragment" text, "ParentFragmentID" integer, "FragmentKey" varchar(255), "Data" text, "DateCreated" timestamp, "LastUpdated" timestamp, "Similarity" double precision)
 LANGUAGE sql
@@ -270,6 +272,30 @@ AS $$
 	INNER JOIN fragment_tags ft ON ft.fragment_id = f.fragment_id AND ft.tag_id = p_tag_id
 	INNER JOIN fragment_vectors_native v ON v.fragment_id = f.fragment_id AND v.embedding_id = p_embedding_id
 	WHERE (1 - (v.vector_value <=> p_embeddings::vector(1536))) >= p_threshold
+		AND (
+			p_binding_selection = 'All'
+			OR (p_binding_selection = 'Available'
+				AND (
+					NULLIF(BTRIM(COALESCE(f.data::jsonb ->> 'PrototypeName', '')), '') IS NOT NULL
+					OR EXISTS (
+						SELECT 1
+						FROM jsonb_each_text(COALESCE(f.data::jsonb -> 'ScopedPrototypeBindings', '{}'::jsonb)) bindings
+						JOIN jsonb_array_elements_text(COALESCE(NULLIF(p_local_scopes_json, '')::jsonb, '[]'::jsonb)) scope(value)
+							ON scope.value = bindings.key
+					)
+				))
+			OR (p_binding_selection = 'Foreign'
+				AND EXISTS (
+					SELECT 1
+					FROM jsonb_each_text(COALESCE(f.data::jsonb -> 'ScopedPrototypeBindings', '{}'::jsonb)) bindings
+					WHERE bindings.key LIKE 'session:%'
+						AND NOT EXISTS (
+							SELECT 1
+							FROM jsonb_array_elements_text(COALESCE(NULLIF(p_local_scopes_json, '')::jsonb, '[]'::jsonb)) scope(value)
+							WHERE scope.value = bindings.key
+						)
+				))
+		)
 	ORDER BY v.vector_value <=> p_embeddings::vector(1536), f.fragment_id ASC
 	LIMIT 100;
 $$;
