@@ -262,7 +262,9 @@ CREATE OR REPLACE FUNCTION "Fragments_GetMostSimilar1ByEmbeddingIDAndTagID_Sp"(
     p_embeddings jsonb,
     p_embedding_id integer,
     p_tag_id integer,
-	p_threshold double precision
+	p_threshold double precision,
+	p_binding_selection text DEFAULT 'All',
+	p_local_scopes_json text DEFAULT '[]'
 )
 RETURNS TABLE ("FragmentID" integer, "Fragment" text, "ParentFragmentID" integer, "FragmentKey" varchar(255), "Data" text, "DateCreated" timestamp, "LastUpdated" timestamp, "Similarity" double precision)
 LANGUAGE sql
@@ -272,6 +274,8 @@ AS $$
         p_embeddings::text,
         p_embedding_id,
         p_tag_id,
-		p_threshold
+		p_threshold,
+		p_binding_selection,
+		p_local_scopes_json
     );
 $$;
