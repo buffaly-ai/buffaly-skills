@@ -2615,9 +2615,16 @@ function applyFrameToExtractUi(frame, envelope) {
 						const openPrototypeButton = document.createElement("button");
 						openPrototypeButton.type = "button";
 						openPrototypeButton.className = "os-button small primary";
-						openPrototypeButton.textContent = "Open prototype";
+						const unavailableForeign = isForeignUnavailableCandidate(row);
+						openPrototypeButton.textContent = unavailableForeign ? "Owned by another session" : "Open prototype";
+						openPrototypeButton.disabled = unavailableForeign;
+						if (unavailableForeign) {
+							openPrototypeButton.title = "This object is not available in the current session runtime."
+								+ (candidateOwnerScope(row) ? " Owner: " + candidateOwnerScope(row) + "." : "");
+						}
 						openPrototypeButton.addEventListener("click", event => {
 							event.stopPropagation();
+							if (unavailableForeign) return;
 							try {
 								returnSelectedPrototype(name);
 							} catch (error) {
@@ -2663,6 +2670,20 @@ function applyFrameToExtractUi(frame, envelope) {
 						err.style.textAlign = "left";
 						err.textContent = nb.error;
 						body.appendChild(err);
+					} else if (state.expandedName === name && nb.unavailableReason) {
+						const notice = document.createElement("div");
+						notice.className = "os-status";
+						notice.style.textAlign = "left";
+						notice.textContent = nb.unavailableReason;
+						body.appendChild(notice);
+
+						const description = descriptionFrom(dump, "", null, nb.properties || []) || matchSnippet(row, state.query);
+						if (description) {
+							const desc = document.createElement("p");
+							desc.className = "os-description";
+							desc.textContent = description;
+							body.appendChild(desc);
+						}
 					} else if (state.expandedName === name) {
 						const catalogObj = state.catalogByName[name];
 						const properties = nb.properties || [];
