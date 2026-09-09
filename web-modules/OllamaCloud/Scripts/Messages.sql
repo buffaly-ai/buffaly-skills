@@ -54,9 +54,6 @@ CREATE TABLE [dbo].[Messages](
 	[TurnID] nvarchar(255)    NULL
 	,
 
-	[ThreadKey] nvarchar(255)    NOT NULL
-	,
-
 	[CompactionEpochKey] nvarchar(255)    NULL
 	,
 	

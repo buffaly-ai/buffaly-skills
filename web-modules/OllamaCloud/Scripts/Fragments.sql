@@ -289,6 +289,35 @@ BEGIN
         SELECT CAST(1 - VECTOR_DISTANCE('cosine', [v].[VectorValue], @QueryVector) AS float) AS [Similarity]
     ) [sim]
     WHERE [sim].[Similarity] >= @Threshold
+      AND
+      (
+          @BindingSelection = N'All'
+          OR (@BindingSelection = N'Available'
+              AND
+              (
+                  NULLIF(LTRIM(RTRIM(JSON_VALUE([f].[Data], '$.PrototypeName'))), N'') IS NOT NULL
+                  OR EXISTS
+                  (
+                      SELECT 1
+                      FROM OPENJSON(ISNULL(JSON_QUERY([f].[Data], '$.ScopedPrototypeBindings'), N'{}')) [bindings]
+                      INNER JOIN OPENJSON(@LocalScopesJson) [scope]
+                          ON [scope].[value] = [bindings].[key]
+                  )
+              ))
+          OR (@BindingSelection = N'Foreign'
+              AND EXISTS
+              (
+                  SELECT 1
+                  FROM OPENJSON(ISNULL(JSON_QUERY([f].[Data], '$.ScopedPrototypeBindings'), N'{}')) [bindings]
+                  WHERE [bindings].[key] LIKE N'session:%'
+                    AND NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM OPENJSON(@LocalScopesJson) [scope]
+                        WHERE [scope].[value] = [bindings].[key]
+                    )
+              ))
+      )
     ORDER BY [sim].[Similarity] DESC, [f].[FragmentID] ASC;
 END
 GO
@@ -299,7 +328,9 @@ CREATE PROCEDURE [dbo].[Fragments_GetMostSimilar1ByEmbeddingIDAndTagID_Sp]
     @Embeddings nvarchar(max),
     @EmbeddingID int,
     @TagID int,
-	@Threshold float
+	@Threshold float,
+	@BindingSelection nvarchar(20) = N'All',
+	@LocalScopesJson nvarchar(max) = N'[]'
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -326,6 +357,35 @@ BEGIN
         SELECT CAST(1 - VECTOR_DISTANCE('cosine', [v].[VectorValue], @QueryVector) AS float) AS [Similarity]
     ) [sim]
     WHERE [sim].[Similarity] >= @Threshold
+      AND
+      (
+          @BindingSelection = N'All'
+          OR (@BindingSelection = N'Available'
+              AND
+              (
+                  NULLIF(LTRIM(RTRIM(JSON_VALUE([f].[Data], '$.PrototypeName'))), N'') IS NOT NULL
+                  OR EXISTS
+                  (
+                      SELECT 1
+                      FROM OPENJSON(ISNULL(JSON_QUERY([f].[Data], '$.ScopedPrototypeBindings'), N'{}')) [bindings]
+                      INNER JOIN OPENJSON(@LocalScopesJson) [scope]
+                          ON [scope].[value] = [bindings].[key]
+                  )
+              ))
+          OR (@BindingSelection = N'Foreign'
+              AND EXISTS
+              (
+                  SELECT 1
+                  FROM OPENJSON(ISNULL(JSON_QUERY([f].[Data], '$.ScopedPrototypeBindings'), N'{}')) [bindings]
+                  WHERE [bindings].[key] LIKE N'session:%'
+                    AND NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM OPENJSON(@LocalScopesJson) [scope]
+                        WHERE [scope].[value] = [bindings].[key]
+                    )
+              ))
+      )
     ORDER BY [sim].[Similarity] DESC, [f].[FragmentID] ASC;
 END
 GO
@@ -373,8 +433,38 @@ BEGIN
         SELECT CAST(1 - VECTOR_DISTANCE('cosine', [v].[VectorValue], @QueryVector) AS float) AS [Similarity]
     ) [sim]
     WHERE [sim].[Similarity] >= @Threshold
+      AND
+      (
+          @BindingSelection = N'All'
+          OR (@BindingSelection = N'Available'
+              AND
+              (
+                  NULLIF(LTRIM(RTRIM(JSON_VALUE([f].[Data], '$.PrototypeName'))), N'') IS NOT NULL
+                  OR EXISTS
+                  (
+                      SELECT 1
+                      FROM OPENJSON(ISNULL(JSON_QUERY([f].[Data], '$.ScopedPrototypeBindings'), N'{}')) [bindings]
+                      INNER JOIN OPENJSON(@LocalScopesJson) [scope]
+                          ON [scope].[value] = [bindings].[key]
+                  )
+              ))
+          OR (@BindingSelection = N'Foreign'
+              AND EXISTS
+              (
+                  SELECT 1
+                  FROM OPENJSON(ISNULL(JSON_QUERY([f].[Data], '$.ScopedPrototypeBindings'), N'{}')) [bindings]
+                  WHERE [bindings].[key] LIKE N'session:%'
+                    AND NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM OPENJSON(@LocalScopesJson) [scope]
+                        WHERE [scope].[value] = [bindings].[key]
+                    )
+              ))
+      )
         AND (@StartUtc IS NULL OR [f].[DateCreated] >= @StartUtc)
         AND (@EndUtc IS NULL OR [f].[DateCreated] <= @EndUtc)
     ORDER BY [sim].[Similarity] DESC, [f].[FragmentID] ASC;
 END
 GO
+
