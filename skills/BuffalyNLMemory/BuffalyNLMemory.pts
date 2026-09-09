@@ -78,6 +78,7 @@ prototype ToInterpretOnlineActionDefinition : BuffalyNLMemorySkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to borrow a session action")]
 [SemanticProgram.InfinitivePhrase("to borrow an action from another session")]
 prototype ToBorrowSessionAction : ProtoScriptAction, BuffalyNLMemorySkillAction
 {
@@ -89,6 +90,7 @@ prototype ToBorrowSessionAction : ProtoScriptAction, BuffalyNLMemorySkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to borrow a session entity")]
 [SemanticProgram.InfinitivePhrase("to borrow an entity from another session")]
 prototype ToBorrowSessionEntity : ProtoScriptAction, BuffalyNLMemorySkillAction
 {
