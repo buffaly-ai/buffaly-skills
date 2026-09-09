@@ -16,7 +16,9 @@ AS
     SET Settings = @Settings,
         LastUpdated = GETDATE()
     WHERE FeatureID = @FeatureID
-      AND ((Settings = @ExpectedSettings) OR (Settings IS NULL AND @ExpectedSettings IS NULL))
+      AND ((DATALENGTH(Settings) = DATALENGTH(@ExpectedSettings)
+            AND Settings COLLATE Latin1_General_100_BIN2 = @ExpectedSettings COLLATE Latin1_General_100_BIN2)
+           OR (Settings IS NULL AND @ExpectedSettings IS NULL))
 
     SELECT CONVERT(int, @@ROWCOUNT) AS UpdatedRows
 GO
