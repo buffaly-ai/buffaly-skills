@@ -1,0 +1,60 @@
+{
+  "Assembly": "GeneralSkillWorkbench.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+  "Type": "GeneralSkillWorkbench.Web.Services.Connections",
+  "KebabName": "connections",
+  "Methods": [
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [],
+      "Name": "GetConnection",
+      "KebabName": "get-connection",
+      "ReturnType": "ConnectionResponse"
+    },
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "false",
+          "Name": "Candidate",
+          "Type": "BuffalyConnectionCandidate",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "TestConnection",
+      "KebabName": "test-connection",
+      "ReturnType": "ConnectionTestResult"
+    },
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "false",
+          "Name": "Candidate",
+          "Type": "BuffalyConnectionCandidate",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "ExpectedRevision",
+          "Type": "Int64",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "SaveConnection",
+      "KebabName": "save-connection",
+      "ReturnType": "SaveConnectionResult"
+    }
+  ]
+}

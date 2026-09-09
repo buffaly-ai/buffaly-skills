@@ -1,0 +1,78 @@
+{
+  "Assembly": "GeneralSkillWorkbench.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+  "Type": "GeneralSkillWorkbench.Web.Services.SkillGraphs",
+  "KebabName": "skill-graphs",
+  "Methods": [
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "false",
+          "Name": "RootSkill",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "true",
+          "Name": "Inputs",
+          "Type": "JsonObject",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "true",
+          "Name": "OptionalPrerequisites",
+          "Type": "String[]",
+          "IsArray": "true",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "Resolve",
+      "KebabName": "resolve",
+      "ReturnType": "ResolvedSkillGraph"
+    },
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "false",
+          "Name": "ExpectedFingerprint",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "RootSkill",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "true",
+          "Name": "Inputs",
+          "Type": "JsonObject",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "true",
+          "Name": "OptionalPrerequisites",
+          "Type": "String[]",
+          "IsArray": "true",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "Revalidate",
+      "KebabName": "revalidate",
+      "ReturnType": "ResolvedSkillGraph"
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "Assembly": "GeneralSkillWorkbench.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+  "Type": "GeneralSkillWorkbench.Web.Services.PromptSkills",
+  "KebabName": "prompt-skills",
+  "Methods": [
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "true",
+          "Name": "Query",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "Limit",
+          "Type": "Int32",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "Refresh",
+          "Type": "Boolean",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "SearchPromptSkills",
+      "KebabName": "search-prompt-skills",
+      "ReturnType": "PromptSkillSearchResponse"
+    },
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "false",
+          "Name": "PrototypeName",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "Refresh",
+          "Type": "Boolean",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "GetPromptSkill",
+      "KebabName": "get-prompt-skill",
+      "ReturnType": "PromptSkillDetail"
+    }
+  ]
+}

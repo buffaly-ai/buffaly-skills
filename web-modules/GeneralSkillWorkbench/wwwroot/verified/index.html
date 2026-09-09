@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Verified Workbench</title>
+  <link rel="stylesheet" href="./verified.css">
+</head>
+<body>
+  <a class="skip-link" href="#mainContent">Skip to verified workbench</a>
+  <div class="shell">
+    <header class="hero" aria-labelledby="pageTitle">
+      <div>
+        <p class="eyebrow">General Skill Workbench</p>
+        <h1 id="pageTitle">Verified workflow run</h1>
+        <p class="lede">Run approved definitions step by step with explicit model selection, real execution states, checks, artifacts, and timeline evidence.</p>
+      </div>
+      <div class="hero-actions" aria-label="Catalog actions">
+        <button id="refreshCatalogButton" type="button" class="secondary">Refresh catalog</button>
+        <span id="catalogStatus" class="status-pill neutral" role="status">Loading catalog</span>
+      </div>
+    </header>
+
+    <main id="mainContent" class="layout" tabindex="-1">
+      <div id="apiError" class="alert hidden" role="alert"></div>
+      <details id="setupDisclosure" class="card setup-card" open>
+        <summary id="setupSummary">New run setup — definition, model and inputs</summary>
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Setup</p>
+            <h2 id="setupTitle">Definition, inputs, and model</h2>
+          </div>
+          <button id="runButton" type="button" class="primary">Run</button>
+        </div>
+
+        <div class="form-grid">
+          <label class="field">
+            <span>Workflow definition</span>
+            <select id="definitionSelect" required aria-describedby="definitionHelp"></select>
+            <small id="definitionHelp">Loaded from <code>/api/verified/definitions</code>.</small>
+          </label>
+
+          <label class="field">
+            <span>Provider</span>
+            <select id="providerSelect" required></select>
+          </label>
+
+          <label class="field">
+            <span>Transport</span>
+            <select id="transportSelect" required></select>
+          </label>
+
+          <label class="field">
+            <span>Model</span>
+            <select id="modelSelect" required></select>
+          </label>
+
+          <label class="field">
+            <span>Reasoning level</span>
+            <select id="reasoningSelect" required></select>
+          </label>
+        </div>
+
+        <div class="new-run-identity">
+          <span class="label">Requested identity · new run</span>
+          <strong id="requestedIdentity">No model selected</strong>
+        </div>
+
+        <label class="field editor-field">
+          <span>Inputs JSON</span>
+          <textarea id="inputsEditor" spellcheck="false" rows="3" aria-describedby="inputsHelp inputsError"></textarea>
+          <small id="inputsHelp">Edit run inputs as a JSON object. Suggested inputs from the selected definition are shown only when provided by the API.</small>
+        </label>
+        <div id="inputsError" class="inline-error" role="alert"></div>
+        <details class="suggested-inputs">
+          <summary>Suggested inputs</summary>
+          <pre id="suggestedInputsBlock"></pre>
+        </details>
+      </details>
+
+      <section class="card progress-card" aria-labelledby="progressTitle">
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">Progress</p>
+            <h2 id="progressTitle">Workflow steps</h2>
+          </div>
+          <div class="run-controls" aria-label="Run controls">
+            <button id="startButton" type="button" class="secondary" disabled>Start</button>
+            <button id="cancelButton" type="button" class="danger" disabled>Cancel</button>
+          </div>
+        </div>
+        <div id="progressStrip" class="progress-strip" role="list" aria-label="Horizontal workflow progress"></div>
+        <div class="identity-grid" aria-label="Selected run identity and timing">
+          <div><span class="label">Frozen request</span><strong id="runRequestedIdentity">No run selected</strong></div>
+          <div><span class="label">Actual execution</span><strong id="actualIdentity">No run selected</strong></div>
+          <div><span class="label">Timing</span><strong id="timingSummary">No timing yet</strong></div>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <section class="card detail-card" aria-labelledby="detailsTitle">
+          <div class="tabs" role="tablist" aria-label="Workbench views">
+            <button id="tab-step" type="button" role="tab" aria-selected="true" aria-controls="panel-step" class="tab active">Step</button>
+            <button id="tab-results" type="button" role="tab" aria-selected="false" aria-controls="panel-results" class="tab">Results</button>
+            <button id="tab-checks" type="button" role="tab" aria-selected="false" aria-controls="panel-checks" class="tab">Checks</button>
+            <button id="tab-artifacts" type="button" role="tab" aria-selected="false" aria-controls="panel-artifacts" class="tab">Artifacts</button>
+          </div>
+
+          <h2 id="detailsTitle" class="sr-only">Selected step details</h2>
+          <div id="panel-step" role="tabpanel" tabindex="0" aria-labelledby="tab-step" class="tabpanel active"></div>
+          <div id="panel-results" role="tabpanel" tabindex="0" aria-labelledby="tab-results" class="tabpanel" hidden></div>
+          <div id="panel-checks" role="tabpanel" tabindex="0" aria-labelledby="tab-checks" class="tabpanel" hidden></div>
+          <div id="panel-artifacts" role="tabpanel" tabindex="0" aria-labelledby="tab-artifacts" class="tabpanel" hidden></div>
+        </section>
+
+        <aside class="side-stack" aria-label="Run history and execution timeline">
+          <section class="card history-card" aria-labelledby="historyTitle">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">History</p>
+                <h2 id="historyTitle">Runs</h2>
+              </div>
+              <button id="refreshRunsButton" type="button" class="secondary">Refresh</button>
+            </div>
+            <div id="runHistory" class="run-history" role="list" aria-label="Run history"></div>
+          </section>
+
+          <section class="card timeline-card" aria-labelledby="timelineTitle">
+            <p class="eyebrow">Evidence</p>
+            <h2 id="timelineTitle">Execution timeline</h2>
+            <ol id="timeline" class="timeline"></ol>
+          </section>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <script src="./verified.js" defer></script>
+</body>
+</html>

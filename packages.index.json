@@ -21705,6 +21705,485 @@
       "RequiresRestart": true,
       "RequiresPreStartInstall": true,
       "PreStartCleanupPaths": []
+    },
+    {
+      "PackageId": "GeneralSkillWorkbench",
+      "PackageType": "WebModule",
+      "Title": "General Skill Workbench",
+      "Description": "Buffaly Web Module package for General Skill Workbench.",
+      "Version": "0.1.0",
+      "PackageKind": "BuffalyWebModule",
+      "SourcePath": "web-modules/GeneralSkillWorkbench",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/GeneralSkillWorkbench",
+      "Phrases": [
+        "General Skill Workbench",
+        "GeneralSkillWorkbench"
+      ],
+      "Files": [
+        {
+          "Path": "Buffaly.Agent.Web.Common.dll",
+          "Sha256": "c5778535d65583cb50095381eabf9ad3147ef1ef2bf8c42b6c46d18a108ca4a4"
+        },
+        {
+          "Path": "Data/Catalog/skills.json",
+          "Sha256": "49d84e138d7d9208cb296d55209db7569463f8ae6c21b0a2149d99cf43b7ad1f"
+        },
+        {
+          "Path": "Data/Workspaces/marketing/curated-artifact-library.json",
+          "Sha256": "f7aa9a58c540abac402a4556d494b82a60f2a23d46722513b0a48b1fede27405"
+        },
+        {
+          "Path": "Data/Workspaces/marketing/curated-deck-library.json",
+          "Sha256": "b3c39369f11079aeeb9da944a5eaa5b7863d55629835610916613549593ce72d"
+        },
+        {
+          "Path": "GeneralSkillWorkbench.WebModule.deps.json",
+          "Sha256": "d3c9d77d9cd692c59ad4a84e0d8f4b586062f88ad9575bb09b7c94fe49bc70ef"
+        },
+        {
+          "Path": "GeneralSkillWorkbench.WebModule.dll",
+          "Sha256": "6a0d2369fae39dd0e7935887e12167302288572963ad03df2a302de61867415e"
+        },
+        {
+          "Path": "GeneralSkillWorkbench.WebModule.staticwebassets.endpoints.json",
+          "Sha256": "0004f1680b5f671c6f49a278a38cb29651db7dffa661269799c7144851c9084d"
+        },
+        {
+          "Path": "web-module.json",
+          "Sha256": "9ef748886973604a018b961df4369448b380a6833195c79ea009eb49d843783e"
+        },
+        {
+          "Path": "web.config",
+          "Sha256": "64edad005e950f6223bc12897683773f6581a5b4861ebdd59cd59a02f3fd7b60"
+        },
+        {
+          "Path": "wwwroot/app.js",
+          "Sha256": "d23f616e2dbd3f12caebe32014bd69f7e997c7ff4d1d93b3e6d1a55355614e7c"
+        },
+        {
+          "Path": "wwwroot/app.js.br",
+          "Sha256": "5697eb7523040dcb4d297a28433c871868d85bd0c370c7035ebb6e1346fc5fc5"
+        },
+        {
+          "Path": "wwwroot/app.js.gz",
+          "Sha256": "8d4f70b0404431610c76297415661c18413e8a5e7d86247ca1c49ef80fe56ef7"
+        },
+        {
+          "Path": "wwwroot/app.js.md",
+          "Sha256": "98f5c6d8775abe79644cdc1ebcbd4686a1e953d2d827bfe289fadb259191b4f2"
+        },
+        {
+          "Path": "wwwroot/app.js.md.br",
+          "Sha256": "dc23a5a428ebc83db632593c5117e8dc1fc530c2622a960c7dafac08b6a1eac6"
+        },
+        {
+          "Path": "wwwroot/app.js.md.gz",
+          "Sha256": "75ab939dd0ffd9cb0aa0969592c7a44a688d366bf4996378f3ede8cbb40d4e8c"
+        },
+        {
+          "Path": "wwwroot/index.html",
+          "Sha256": "047dc8a6c247873c20cf614989c793ea14a5d018a8a79d65e4e48638e2429364"
+        },
+        {
+          "Path": "wwwroot/index.html.br",
+          "Sha256": "45b78dd9a87c106583118cc0da8b1948b40ebca81042c23f3ee53289d5af0a9e"
+        },
+        {
+          "Path": "wwwroot/index.html.gz",
+          "Sha256": "5d4cb96ee30c05b3c54d03e9a746be8d6370462bf39a60a0491e2861d060b783"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.Connections.ashx.js",
+          "Sha256": "aacde564afa963ed7cd234aa1155320c0bbfdd709b76199054a213b8df500e35"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.Connections.ashx.js.br",
+          "Sha256": "c39dc41245dda6646c7040efe9e14b614cd0ed15a24a286a81c0af2a1ad76dde"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.Connections.ashx.js.gz",
+          "Sha256": "e691fa33c16caeee4d4c678d529a5943582b3a08a86c094038891f08fce80968"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.Connections.json",
+          "Sha256": "f0788ec09a2d2af844e873e89ba466fd4742653f4c93eea5a666eab4376e203e"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.Connections.json.br",
+          "Sha256": "50b1173d2136e353d0c350c2286f49bd453e84a1036a23bc23195f23972c5dd6"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.Connections.json.gz",
+          "Sha256": "6ad54999d55a678dc9bd4824e67e74e545429f61c5ccabbd1edc85bb4ba4a43b"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.PromptSkills.ashx.js",
+          "Sha256": "ac192f10cedfca512cc0ab09791ac2bd9122732869baf2095014f4dd0c3addeb"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.PromptSkills.ashx.js.br",
+          "Sha256": "82aec9b3faefdb8aa3a393a0d25220bee17bb91ec27b8233a8c2d5b7b528178b"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.PromptSkills.ashx.js.gz",
+          "Sha256": "74fc0725584c04fb649cdf4cf0519fd1e5f243290d681ea8c091887691f2efe6"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.PromptSkills.json",
+          "Sha256": "ed60abd5b807215d1e3aac5c358d6145ce514143fb9c2680064aa30490b5cfcf"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.PromptSkills.json.br",
+          "Sha256": "774d782726e340a9cbb57feb7a42df5366c2fe1876ff76ebe6d0cbb5d18e3f24"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.PromptSkills.json.gz",
+          "Sha256": "157067ae742f79288db5fb600310cc04b241a376fb5bf6c64f0bc9632086949d"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.Runs.ashx.js",
+          "Sha256": "71de2f9991af52caf6c3473659660bbd019e34e8a714f1825a6dddd3daf54f7a"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.Runs.ashx.js.br",
+          "Sha256": "2dc704f281bc214906eee44fa643f1e0f0233c9ff59f1b3d4945c40db46d8faf"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.Runs.ashx.js.gz",
+          "Sha256": "f9e4c078e77d97ab159164e8a6a2df800ce82a492784c03c1b962188790293c2"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.Runs.json",
+          "Sha256": "4fa87136a4c4665819bb292d6059372f29590e14cae99ac0dc5b8c7abbf7f394"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.Runs.json.br",
+          "Sha256": "90037155f99b06444e6254e726e2bbdb53d412868d7c923c9d46736191c9fb61"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.Runs.json.gz",
+          "Sha256": "47bf0e3d8f68ecaf6d7704cd441263a29be19024b7312a053a9697e49624c67f"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.SkillCatalog.ashx.js",
+          "Sha256": "c9e1c964d84d93d761e7721421c2b17b700c826ec156abac5506e11c8700ca5b"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.SkillCatalog.ashx.js.br",
+          "Sha256": "9abae72f3b4841f86209fad884784f388fce43f8b4ad80e54fce3af97d1ff0a5"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.SkillCatalog.ashx.js.gz",
+          "Sha256": "a4c6fcc796e0894dfcbc59649ebd2a8244ac336640ac59ca14ac0f71171b4a91"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.SkillCatalog.json",
+          "Sha256": "1025d0f251506c6bc71b5ab2b4b9145293448766b1d8c046777b03e9e287fce4"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.SkillCatalog.json.br",
+          "Sha256": "ce803bc1d496a325e8652c04cb82d5bf54e1dafa5266d41558181461db92932c"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.SkillCatalog.json.gz",
+          "Sha256": "0d9dfcbf55fb3f3e03dd321a3d92d72198bc583e9eecbab7a3ee1aaab5c81627"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.SkillGraphs.ashx.js",
+          "Sha256": "911b27c622df70a14c8a14b82f02a5e781e52b8510d349cac2b0ee148d127d39"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.SkillGraphs.ashx.js.br",
+          "Sha256": "d2b483b29bd47157a63f8afb2b3028c3052602fe417adbdc203e8ecfa9575088"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.SkillGraphs.ashx.js.gz",
+          "Sha256": "4201591d8d6ec6c1bb89fa86b360b1e774a272bbf658e5d381ac2e549edc6db9"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.SkillGraphs.json",
+          "Sha256": "c866ffb3d43c5cb507cb43448c6230b1fd94f5aa76ee7dccc2574e412accbf19"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.SkillGraphs.json.br",
+          "Sha256": "1305867fde2cc9f1677fca6ff2500d7bf392c0c73d45540f3355449e5f60fd5a"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.SkillGraphs.json.gz",
+          "Sha256": "58e7fa6ee71d9f4cdf33f4cbb080d0c9b3142b3290d6fed8ea78b280f39c224e"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.Workspaces.ashx.js",
+          "Sha256": "6f1413d68e311c854ebbddc3aa0121c1b03205c25fcf638f4ab98a1ed31a6e46"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.Workspaces.ashx.js.br",
+          "Sha256": "67a1c2cea04768dd91bd06b43a83daeb1cb5296c198aa50db5e16724f9179f0e"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.Workspaces.ashx.js.gz",
+          "Sha256": "fa6e4d270fe4b486643057320a67df340c0487519da7098317e29a44bd2ddf3e"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.Workspaces.json",
+          "Sha256": "ccc9b201f625934fd1f16a924b40b3f95ce8bda581254b1bd00c7394055ce09c"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.Workspaces.json.br",
+          "Sha256": "3e476cf0dc66ab7a9e9540420055f3c0d57ed0a191e494853126e151d0bb8f47"
+        },
+        {
+          "Path": "wwwroot/JsonWs/GeneralSkillWorkbench.Web.Services.Workspaces.json.gz",
+          "Sha256": "b58baf377cd43194aae7df7a7e457edc8f8498a26b3ff42479534d7f9ec70d53"
+        },
+        {
+          "Path": "wwwroot/js/plugins/marked/marked.min.js",
+          "Sha256": "f0261dc7c1e12d0f8aa980277dc8c16ed1fd8c9e148de66f7cda64a773b9b215"
+        },
+        {
+          "Path": "wwwroot/js/plugins/marked/marked.min.js.br",
+          "Sha256": "c06eb91df6d8e0d6eb188b2a724e983db9bc7aa1f6b261b6114c929dec94f719"
+        },
+        {
+          "Path": "wwwroot/js/plugins/marked/marked.min.js.gz",
+          "Sha256": "e1d6914b6e81a27b4e2a7dbcf2eb84cc45d28575825f9ba2b58b9ffc604ecf2f"
+        },
+        {
+          "Path": "wwwroot/runs/index.html",
+          "Sha256": "5657f080c25bca7f174730f83f8be7c515d1a1b93889be7b81f494dba5e55905"
+        },
+        {
+          "Path": "wwwroot/runs/index.html.br",
+          "Sha256": "7f03f1a02f68bdbd305a1515d61d01b3eed85536dff2ad4dc57e3acfc92b82c9"
+        },
+        {
+          "Path": "wwwroot/runs/index.html.gz",
+          "Sha256": "7307e6a42365ad052b62d5fc5cacb0b1615b390ebcc8191a65589b4960514e45"
+        },
+        {
+          "Path": "wwwroot/runs/runs.js",
+          "Sha256": "9a665eec81ac8715910cb1b47cd0f72fe6d98cd6507df01fbd17b6803256423f"
+        },
+        {
+          "Path": "wwwroot/runs/runs.js.br",
+          "Sha256": "653d5df690984228a40a871d828d1e19a327cd4b2129e0d0eb7f3d9d8fd772d5"
+        },
+        {
+          "Path": "wwwroot/runs/runs.js.gz",
+          "Sha256": "08b2eae8348ef4f7aa1167c5755617a046546da8809b02316d8aab3b87ddc251"
+        },
+        {
+          "Path": "wwwroot/runs/runs.js.md",
+          "Sha256": "ea3715bc1e4dd1a5775e5e944d94df5752cb31b3031b60b0181ea5eaa5a79865"
+        },
+        {
+          "Path": "wwwroot/runs/runs.js.md.br",
+          "Sha256": "a968d104c843c040d167635af58887fdeb6570951553f8f0e81cf797c872d673"
+        },
+        {
+          "Path": "wwwroot/runs/runs.js.md.gz",
+          "Sha256": "c80cdf57ecb03b257f52998df6a00d5fbdc929db8d1b14a3045bf24725bcb6f8"
+        },
+        {
+          "Path": "wwwroot/styles.css",
+          "Sha256": "1f602f8157d14b151190eafa6b902f904dabcc543d0a58e9ecaf5a1510389672"
+        },
+        {
+          "Path": "wwwroot/styles.css.br",
+          "Sha256": "889583d4c201bbb22a24bac4739a2200048f0e764fdc0c417fc57cca26405707"
+        },
+        {
+          "Path": "wwwroot/styles.css.gz",
+          "Sha256": "31d150d331cfb55ef5702dce8f93339f3eed9a877616d0459dc7f39ed2d1ed87"
+        },
+        {
+          "Path": "wwwroot/verified/index.html",
+          "Sha256": "d2fd0a09057fa208efa0d89de378b0f24bd2c38cabdc91add8dcdd33cdde5ab8"
+        },
+        {
+          "Path": "wwwroot/verified/index.html.br",
+          "Sha256": "e82c77d252cfae1565726a36229fae9305826c44915d83e744ec4d39507a878f"
+        },
+        {
+          "Path": "wwwroot/verified/index.html.gz",
+          "Sha256": "6c0c2516deb6bef3377dde969a33cdca6a200c35e4f1d6a9a5f178c758b58ec3"
+        },
+        {
+          "Path": "wwwroot/verified/verified.css",
+          "Sha256": "9f0099a127d89e9264cd29db5fe121fc3d85470be1b073a23f0f9a6bc95a1b58"
+        },
+        {
+          "Path": "wwwroot/verified/verified.css.br",
+          "Sha256": "cd416df78bc41646b89306369e536cf1df5d47911472ef2da8b3e919e57a1f6f"
+        },
+        {
+          "Path": "wwwroot/verified/verified.css.gz",
+          "Sha256": "6a35267f3a5ff34734f95562fbcb90734832723964da904fb4b88b21d9fa9bd5"
+        },
+        {
+          "Path": "wwwroot/verified/verified.js",
+          "Sha256": "0ddec2c71cd89491e78f86f4988f0305c24b82d778d6e34a551b7dbdf01e372b"
+        },
+        {
+          "Path": "wwwroot/verified/verified.js.br",
+          "Sha256": "4bf88e05f5bb32b19bf45de37501d5fb2259cf9c097a4ffe2aaad13466429b2c"
+        },
+        {
+          "Path": "wwwroot/verified/verified.js.gz",
+          "Sha256": "88c0af01a75931c7df6537062a2d7d370dfcb90fe0a60aaac941c405c4e6d7d4"
+        },
+        {
+          "Path": "wwwroot/verified/verified.js.md",
+          "Sha256": "be86181bcacb1895c71432481af1230bbfe51452cad1a890b408506310629f0d"
+        },
+        {
+          "Path": "wwwroot/verified/verified.js.md.br",
+          "Sha256": "298941e0b531ebdf841249e02c7f1693b79c5e2b6ccd90c9e93ac7d20ad7ecce"
+        },
+        {
+          "Path": "wwwroot/verified/verified.js.md.gz",
+          "Sha256": "e73a6bfb3e3b470f93d984f405b4c7a23604a6dae653bf61d040b5cfe15a62d0"
+        },
+        {
+          "Path": "wwwroot/workbench-config.local.json",
+          "Sha256": "d3a42f9fd5084590d0c3142c2c8c4b7bdcaae230cc91bc0a26cde8d6e522d785"
+        },
+        {
+          "Path": "wwwroot/workbench-config.local.json.br",
+          "Sha256": "7404b161bcff6bef457683992818ace668d142447d60fe9a545ecbbb06147ce2"
+        },
+        {
+          "Path": "wwwroot/workbench-config.local.json.gz",
+          "Sha256": "79ea02b4f52292943201c713c4c3110784e1a1b2cc1b9db411f91614260f0a88"
+        },
+        {
+          "Path": "wwwroot/workspaces/index.html",
+          "Sha256": "c40d8e665b2e3f9a6d9f3a3dca9555228ef843880ac51ca4ea2f1974b0361472"
+        },
+        {
+          "Path": "wwwroot/workspaces/index.html.br",
+          "Sha256": "dbf4b5a3ba24d7e678b6b1132e0c927d38489250559dec3361c091c1fd8d4cf1"
+        },
+        {
+          "Path": "wwwroot/workspaces/index.html.gz",
+          "Sha256": "44388f1c98b55e32937261bede42f0e8f92f04dbdce4b8a8e078642369075bb7"
+        },
+        {
+          "Path": "wwwroot/workspaces/skill-source.css",
+          "Sha256": "ec55a06b246a0eb9fede171d214623127c3c9b4470bb870b286d041a5c258a51"
+        },
+        {
+          "Path": "wwwroot/workspaces/skill-source.css.br",
+          "Sha256": "648b693ea7d4e2ba184d1cccd6745db1e2c147b96f65acd1129a32e7ac686473"
+        },
+        {
+          "Path": "wwwroot/workspaces/skill-source.css.gz",
+          "Sha256": "84d9bcdcd97b55841bd5a32a495bc6579cb1df27aae16963e960afe55fc9b2d9"
+        },
+        {
+          "Path": "wwwroot/workspaces/skill-source.html",
+          "Sha256": "e6c6780a486f3338e018c35e4e9a39b77e2bbdb55f24480336404caebb65e007"
+        },
+        {
+          "Path": "wwwroot/workspaces/skill-source.html.br",
+          "Sha256": "d7002b4aae6384abf68d337226e6fb02c3f19d056e3b9911f5ad2a142eef508e"
+        },
+        {
+          "Path": "wwwroot/workspaces/skill-source.html.gz",
+          "Sha256": "78dac88b25f4d06cd9071756e12a4b3c66e933fbf8097bf52e6aafc7d1046ab5"
+        },
+        {
+          "Path": "wwwroot/workspaces/skill-source.js",
+          "Sha256": "d7aeb9f4498acab592bd9bb54a3cbd2f091ee0c3bd87a96c4796c2e4c7347a16"
+        },
+        {
+          "Path": "wwwroot/workspaces/skill-source.js.br",
+          "Sha256": "da8375c3d2ff5ac43d12af3e378b3df8d646ce3705dab2f7f5201f72f6ae24ae"
+        },
+        {
+          "Path": "wwwroot/workspaces/skill-source.js.gz",
+          "Sha256": "7bf81d4bd0958ff8ab797c232e5ba7a10bf0c6a0e2a4d33f64fb8b84dd02ab73"
+        },
+        {
+          "Path": "wwwroot/workspaces/skill-source.js.md",
+          "Sha256": "c019af9abf671f9f41906443cc1ef3390b508c9c4119081cd14c60c4843d81e3"
+        },
+        {
+          "Path": "wwwroot/workspaces/skill-source.js.md.br",
+          "Sha256": "c8fec0a809cb5812184f82c838bba7239396a14722d00674c1bb704ef2e3a8f4"
+        },
+        {
+          "Path": "wwwroot/workspaces/skill-source.js.md.gz",
+          "Sha256": "977876be90842defc3f5c99d8a0b8db2dde5e8ba5ab518f28a0db1d99be4d398"
+        },
+        {
+          "Path": "wwwroot/workspaces/workspace-workbench.js",
+          "Sha256": "f99afd03c30882679d34c2e8a3ea0d5b2f4b0e47487a0da07b7824f2d690b28c"
+        },
+        {
+          "Path": "wwwroot/workspaces/workspace-workbench.js.br",
+          "Sha256": "5d133ceec4c8ebd6351a87eb277e45c8ceb972083f7cbfd83df972a75398d7f8"
+        },
+        {
+          "Path": "wwwroot/workspaces/workspace-workbench.js.gz",
+          "Sha256": "6542fe789277d122a34576f80b28d02c854c75f91ad7165512dcc3222f3744ad"
+        },
+        {
+          "Path": "wwwroot/workspaces/workspace-workbench.js.md",
+          "Sha256": "2b7a642763927e51051aab2beb6fe8198ab0f13af57acdc52b37597218402a7b"
+        },
+        {
+          "Path": "wwwroot/workspaces/workspace-workbench.js.md.br",
+          "Sha256": "8e2c89f635743cfaa0e3d18f052d479b88c0c0021569c3bf817ab761623800c0"
+        },
+        {
+          "Path": "wwwroot/workspaces/workspace-workbench.js.md.gz",
+          "Sha256": "2d55d463644d22ffb6152fd18b564a1b3d848eb0096da51538b44c73be0037d4"
+        },
+        {
+          "Path": "wwwroot/workspaces/workspace.css",
+          "Sha256": "1531b0df2447ef3d2e8d6165d121a6409333a0a1cf553dd23122ca205ab1d2c2"
+        },
+        {
+          "Path": "wwwroot/workspaces/workspace.css.br",
+          "Sha256": "43d6188584ce054c85b64cac07bc8c111ba8279d842d9b07b3ae8b7e9b81ea6b"
+        },
+        {
+          "Path": "wwwroot/workspaces/workspace.css.gz",
+          "Sha256": "ea28e27a6df9788bdf2735f8fd991772c1b8efefdfe1a905b35f21aa6ec46887"
+        },
+        {
+          "Path": "wwwroot/workspaces/workspace.js",
+          "Sha256": "ca4300d6bea4c31285b24920e5aba87b90de69f0c69bc17f3b523ad834f932bd"
+        },
+        {
+          "Path": "wwwroot/workspaces/workspace.js.br",
+          "Sha256": "766841331070f37e41af175e641505bb4bdee6aaf6f1f94ed276a57ac588d372"
+        },
+        {
+          "Path": "wwwroot/workspaces/workspace.js.gz",
+          "Sha256": "b0efa06c0499535cd327ceaac0c924ab023deb488c108b8d9e632027078a9048"
+        },
+        {
+          "Path": "wwwroot/workspaces/workspace.js.md",
+          "Sha256": "ba9f4a46af7e26ff4825df0063d6dd30f0c972614d44d552c61140321ff730b0"
+        },
+        {
+          "Path": "wwwroot/workspaces/workspace.js.md.br",
+          "Sha256": "f3b079f28530477c44957310d49a20c806c3e85cd7a4bc1b234dc020d711cb20"
+        },
+        {
+          "Path": "wwwroot/workspaces/workspace.js.md.gz",
+          "Sha256": "02e9c7c09504ad1178dbe7a5280d94b6fa24f272bfa2c24564b497522a60ed32"
+        }
+      ],
+      "ProjectArtifacts": [],
+      "Dependencies": [],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "RequiresRestart": true,
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     }
   ]
 }

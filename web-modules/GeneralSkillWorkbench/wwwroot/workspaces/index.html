@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Marketing Workspace</title>
+  <meta name="description" content="Marketing workspace for General Skill Workbench.">
+  <link rel="icon" href="data:,">
+  <style>html,body{height:100%;margin:0;background:#f4f6f8}body{font-family:Inter,"Segoe UI",system-ui,sans-serif;color:#182230}*{box-sizing:border-box}workspace-workbench{display:block;min-height:100%}.loading{padding:32px;color:#53647c}</style>
+  <script>window.GSW_BASE=location.pathname.startsWith('/web-modules/GeneralSkillWorkbench')?'/web-modules/GeneralSkillWorkbench':'';</script>
+  <script>document.write(`<script src="${window.GSW_BASE}/JsonWs/GeneralSkillWorkbench.Web.Services.Workspaces.ashx.js"><\\/script>`);</script>
+</head>
+<body>
+  <workspace-workbench id="workbench"></workspace-workbench>
+  <p class="loading" id="status">Loading marketing workspace…</p>
+  <script type="module" src="./workspace.js"></script>
+</body>
+</html>

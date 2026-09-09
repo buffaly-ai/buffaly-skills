@@ -1,0 +1,582 @@
+{
+  "Assembly": "GeneralSkillWorkbench.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+  "Type": "GeneralSkillWorkbench.Web.Services.Runs",
+  "KebabName": "runs",
+  "Methods": [
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "false",
+          "Name": "ResolutionId",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "ExpectedFingerprint",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "RunKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "true",
+          "Name": "DisplayName",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "true",
+          "Name": "SessionKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "true",
+          "Name": "Metadata",
+          "Type": "JsonObject",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "MaterializeFromGraph",
+      "KebabName": "materialize-from-graph",
+      "ReturnType": "GeneralRun"
+    },
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "false",
+          "Name": "RunKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "GetRun",
+      "KebabName": "get-run",
+      "ReturnType": "GeneralRun"
+    },
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "false",
+          "Name": "RunKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+     "Name": "ExportRun",
+     "KebabName": "export-run",
+     "ReturnType": "GeneralRun"
+   },
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "false",
+          "Name": "RunKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "ExpectedRevision",
+          "Type": "Int64",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "DisplayName",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "RenameRun",
+      "KebabName": "rename-run",
+      "ReturnType": "GeneralRun"
+    },
+   {
+     "UrlName": null,
+     "DataObject": {},
+     "IsReturnTypeArray": "false",
+     "IsStatic": "false",
+     "Parameters": [
+       {
+         "IsNullable": "false",
+         "Name": "Run",
+         "Type": "JsonObject",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "ImportRun",
+      "KebabName": "import-run",
+      "ReturnType": "GeneralRun"
+    },
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "true",
+      "IsStatic": "false",
+      "Parameters": [],
+      "Name": "ListLegacyRuns",
+      "KebabName": "list-legacy-runs",
+      "ReturnType": "Object[]"
+    },
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [],
+      "Name": "ListRuns",
+      "KebabName": "list-runs",
+      "ReturnType": "RunIndexResponse"
+    },
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "false",
+          "Name": "RunKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "NodeKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "GetNodePrompt",
+      "KebabName": "get-node-prompt",
+      "ReturnType": "CurrentPromptDefinition"
+    },
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "false",
+          "Name": "RunKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "GetStatus",
+      "KebabName": "get-status",
+      "ReturnType": "RunStatusResponse"
+    },
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "false",
+          "Name": "RunKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "ExpectedRevision",
+          "Type": "Int64",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "SessionKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "AttachSession",
+      "KebabName": "attach-session",
+      "ReturnType": "GeneralRun"
+    },
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "false",
+          "Name": "RunKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "ExpectedRevision",
+          "Type": "Int64",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "true",
+          "Name": "IdempotencyKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "Prime",
+      "KebabName": "prime",
+      "ReturnType": "GeneralRun"
+    },
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "false",
+          "Name": "RunKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "ExpectedRevision",
+          "Type": "Int64",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "true",
+          "Name": "IdempotencyKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "ValidateFinal",
+      "KebabName": "validate-final",
+      "ReturnType": "GeneralRun"
+    },
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "false",
+          "Name": "RunKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "NodeKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "StepKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "ExpectedRevision",
+          "Type": "Int64",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "true",
+          "Name": "IdempotencyKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "true",
+          "Name": "RerunGuidance",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "AcceptResult",
+          "Type": "Boolean",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "RunStep",
+      "KebabName": "run-step",
+      "ReturnType": "StepResult"
+    },
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "false",
+          "Name": "RunKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "NodeKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "StepKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "ExpectedRevision",
+          "Type": "Int64",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "Result",
+          "Type": "JsonObject",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "ValidateStepResult",
+      "KebabName": "validate-step-result",
+      "ReturnType": "ValidationOnlyResponse"
+    },
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "false",
+          "Name": "RunKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "ExpectedRevision",
+          "Type": "Int64",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "true",
+          "Name": "IdempotencyKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "StartBatch",
+      "KebabName": "start-batch",
+      "ReturnType": "GraphBatchState"
+    },
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "false",
+          "Name": "RunKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "ExpectedRevision",
+          "Type": "Int64",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "true",
+          "Name": "IdempotencyKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "PauseBatch",
+      "KebabName": "pause-batch",
+      "ReturnType": "GraphBatchState"
+    },
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "false",
+          "Name": "RunKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "ExpectedRevision",
+          "Type": "Int64",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "true",
+          "Name": "IdempotencyKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "ResumeBatch",
+      "KebabName": "resume-batch",
+      "ReturnType": "GraphBatchState"
+    },
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "false",
+          "Name": "RunKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "OperationId",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "ExpectedRevision",
+          "Type": "Int64",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "false",
+          "Name": "Reason",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "FailActiveOperation",
+      "KebabName": "fail-active-operation",
+      "ReturnType": "GeneralRun"
+    },
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "false",
+          "Name": "CanonicalPrototype",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "GetSkillDeepLink",
+      "KebabName": "get-skill-deep-link",
+      "ReturnType": "Object"
+    },
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "false",
+          "Name": "RunKey",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "GetRunDeepLink",
+      "KebabName": "get-run-deep-link",
+      "ReturnType": "Object"
+    }
+  ]
+}

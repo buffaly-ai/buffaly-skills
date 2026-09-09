@@ -1,0 +1,50 @@
+{
+  "Assembly": "GeneralSkillWorkbench.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+  "Type": "GeneralSkillWorkbench.Web.Services.SkillCatalog",
+  "KebabName": "skill-catalog",
+  "Methods": [
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "true",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "true",
+          "Name": "Query",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        },
+        {
+          "IsNullable": "true",
+          "Name": "Adapter",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "SearchSkills",
+      "KebabName": "search-skills",
+      "ReturnType": "SkillSummary[]"
+    },
+    {
+      "UrlName": null,
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        {
+          "IsNullable": "false",
+          "Name": "CanonicalPrototype",
+          "Type": "String",
+          "IsArray": "false",
+          "IsEnum": "false"
+        }
+      ],
+      "Name": "GetSkill",
+      "KebabName": "get-skill",
+      "ReturnType": "SkillDescriptor"
+    }
+  ]
+}

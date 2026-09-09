@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Workflow source - Marketing Workspace</title>
+  <link rel="icon" href="data:,">
+  <script>window.GSW_BASE=location.pathname.startsWith('/web-modules/GeneralSkillWorkbench')?'/web-modules/GeneralSkillWorkbench':'';</script>
+  <script>document.write(`<script src="${window.GSW_BASE}/JsonWs/GeneralSkillWorkbench.Web.Services.Workspaces.ashx.js"><\\/script>`);</script>
+  <script>document.write(`<script src="${window.GSW_BASE}/js/plugins/marked/marked.min.js?v=15.0.3"><\\/script>`);</script>
+  <script>document.write(`<link rel="stylesheet" href="${window.GSW_BASE}/workspaces/skill-source.css">`);</script>
+</head>
+<body>
+  <header class="topbar">
+    <a id="back" class="back" href="./">Back to Marketing Workspace</a>
+    <span>Workflow source</span>
+  </header>
+  <main id="source" class="source-shell"><p class="loading">Loading workflow source...</p></main>
+  <script type="module">import(`${window.GSW_BASE}/workspaces/skill-source.js`);</script>
+</body>
+</html>

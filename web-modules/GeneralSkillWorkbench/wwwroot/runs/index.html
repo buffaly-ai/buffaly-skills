@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Runs - General Skill Workbench</title>
+<style>
+:root{--ink:#202a36;--muted:#687789;--line:#d5dde5;--bg:#f4f5f7;--blue:#275fb9;--green:#167452;--amber:#94600b;--red:#9d3943}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 Segoe UI,Arial,sans-serif}header{background:#fff;border-bottom:1px solid var(--line);padding:15px 22px;display:flex;align-items:center;gap:10px}header div{margin-right:auto}h1{font-size:20px;margin:0}header p{margin:2px 0 0;color:var(--muted)}a{color:var(--blue)}.button{border:1px solid #bec9d4;background:#fff;border-radius:5px;padding:7px 10px;text-decoration:none;color:#33495d;font-weight:700}.button.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+</style>
+<link rel="stylesheet" href="/styles.css?v=20260815-runs-shell">
+</head>
+<body>
+<header>
+<div><h1>General Skill Workbench</h1><p>Prompt skills from configured Buffaly instance.</p></div>
+<a class="button" href="/" style="margin-left:auto">New Run</a>
+<a class="button" href="/runs/">Runs</a>
+<a class="button" href="/?view=settings">Settings</a>
+</header>
+<main>
+<div id="app" class="loading">Loading runs.</div>
+</main>
+<script src="/JsonWs/GeneralSkillWorkbench.Web.Services.Runs.ashx.js"></script>
+<script src="/runs/runs.js?v=20260815-runs-shell"></script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+{
+  "schemaVersion": "marketing-curated-artifact-library/v1",
+  "updatedAtUtc": "2026-09-02T11:14:09.1226609Z",
+  "source": "seeded-from-identified-marketing-artifacts",
+  "clients": [
+    {
+      "clientKey": "cobbs-westside-pharmacy",
+      "displayName": "Cobbs Westside Pharmacy",
+      "aliases": [
+        "Cobbs Pharmacy",
+        "Cobbs Westside",
+        "Cobbs Westside Pharmacy",
+        "Cobb's Westside Pharmacy"
+      ],
+      "artifactFamilies": [
+        {
+          "artifactFamilyKey": "cobbs-westside-pharmacy-website-transformation-showcase",
+          "title": "Cobb's Westside Pharmacy — Website Transformation",
+          "artifactType": "website_transformation_showcase",
+          "curationStatus": "approved",
+          "primaryArtifactId": "cobbs-westside-transformation-report-html",
+          "characteristics": [
+            "website transformation",
+            "before and after",
+            "showcase",
+            "decision deck",
+            "customer-ready",
+            "visual comparison",
+            "desktop comparison",
+            "mobile comparison",
+            "service-page comparison",
+            "HTML",
+            "PDF"
+          ],
+          "artifacts": [
+            {
+              "artifactId": "cobbs-westside-transformation-report-html",
+              "fileName": "cobbs-westside-website-transformation-report.html",
+              "sourceRootKey": "buffaly-sessions",
+              "sourceType": "Buffaly session artifacts",
+              "relativePath": "Cobb Westside Pharmacy-visual-comparison/artifacts/cobbs-westside-website-transformation-report.html",
+              "sourceSessionKey": "Cobb Westside Pharmacy-visual-comparison",
+              "sourceRunKey": "sample-cobbs-westside-transformation-deck",
+              "workflowAction": "ToCreateClientWebsiteTransformationDecisionDeckSkill",
+              "mediaType": "text/html",
+              "previewMode": "embed",
+              "role": "html-preview",
+              "updatedAtUtc": "2026-08-20T17:43:13.0105293Z",
+              "length": 18265,
+              "notes": "Primary showcase report with before/after comparison sections."
+            },
+            {
+              "artifactId": "cobbs-westside-transformation-report-pdf",
+              "fileName": "cobbs-westside-website-transformation-report.pdf",
+              "sourceRootKey": "buffaly-sessions",
+              "sourceType": "Buffaly session artifacts",
+              "relativePath": "Cobb Westside Pharmacy-visual-comparison/artifacts/cobbs-westside-website-transformation-report.pdf",
+              "sourceSessionKey": "Cobb Westside Pharmacy-visual-comparison",
+              "sourceRunKey": "sample-cobbs-westside-transformation-deck",
+              "workflowAction": "ToCreateClientWebsiteTransformationDecisionDeckSkill",
+              "mediaType": "application/pdf",
+              "previewMode": "embed",
+              "role": "pdf-export",
+              "updatedAtUtc": "2026-08-20T17:43:51.1430031Z",
+              "length": 6444916,
+              "notes": "PDF export of the transformation showcase report."
+            },
+            {
+              "artifactId": "cobbs-westside-transformation-workflow-runner",
+              "fileName": "cobbs-westside-pharmacy-sample-workflow-runner.html",
+              "sourceRootKey": "buffaly-sessions",
+              "sourceType": "Buffaly session artifacts",
+              "relativePath": "Cobb Westside Pharmacy-visual-comparison/artifacts/cobbs-westside-pharmacy-sample-workflow-runner.html",
+              "sourceSessionKey": "Cobb Westside Pharmacy-visual-comparison",
+              "sourceRunKey": "sample-cobbs-westside-transformation-deck",
+              "workflowAction": "ToCreateClientWebsiteTransformationDecisionDeckSkill",
+              "mediaType": "text/html",
+              "previewMode": "embed",
+              "role": "workflow-evidence",
+              "updatedAtUtc": "2026-08-20T19:20:50.3697627Z",
+              "length": 30851,
+              "notes": "Sample workflow runner report for the completed transformation decision-deck workflow."
+            },
+            {
+              "artifactId": "cobbs-westside-before-home-desktop",
+              "fileName": "original-home-desktop-verified.png",
+              "sourceRootKey": "buffaly-sessions",
+              "sourceType": "Buffaly session artifacts",
+              "relativePath": "Cobb Westside Pharmacy-visual-comparison/artifacts/cobb-customer-report-assets/original-home-desktop-verified.png",
+              "sourceSessionKey": "Cobb Westside Pharmacy-visual-comparison",
+              "sourceRunKey": "sample-cobbs-westside-transformation-deck",
+              "workflowAction": "ToCreateClientWebsiteTransformationDecisionDeckSkill",
+              "mediaType": "image/png",
+              "previewMode": "embed",
+              "role": "before-image",
+              "updatedAtUtc": "2026-08-20T16:28:13.8235263Z",
+              "length": 2379722,
+              "notes": "Verified public-site desktop before image."
+            },
+            {
+              "artifactId": "cobbs-westside-after-home-desktop",
+              "fileName": "new-home-desktop-verified.png",
+              "sourceRootKey": "buffaly-sessions",
+              "sourceType": "Buffaly session artifacts",
+              "relativePath": "Cobb Westside Pharmacy-visual-comparison/artifacts/cobb-customer-report-assets/new-home-desktop-verified.png",
+              "sourceSessionKey": "Cobb Westside Pharmacy-visual-comparison",
+              "sourceRunKey": "sample-cobbs-westside-transformation-deck",
+              "workflowAction": "ToCreateClientWebsiteTransformationDecisionDeckSkill",
+              "mediaType": "image/png",
+              "previewMode": "embed",
+              "role": "after-image",
+              "updatedAtUtc": "2026-08-20T16:28:14.4437004Z",
+              "length": 1987208,
+              "notes": "Verified new-site desktop after image."
+            },
+            {
+              "artifactId": "cobbs-westside-before-home-mobile",
+              "fileName": "original-home-mobile-first-screen.png",
+              "sourceRootKey": "buffaly-sessions",
+              "sourceType": "Buffaly session artifacts",
+              "relativePath": "Cobb Westside Pharmacy-visual-comparison/artifacts/cobb-customer-report-assets/original-home-mobile-first-screen.png",
+              "sourceSessionKey": "Cobb Westside Pharmacy-visual-comparison",
+              "sourceRunKey": "sample-cobbs-westside-transformation-deck",
+              "workflowAction": "ToCreateClientWebsiteTransformationDecisionDeckSkill",
+              "mediaType": "image/png",
+              "previewMode": "embed",
+              "role": "before-image",
+              "updatedAtUtc": "2026-08-20T16:36:56.3069637Z",
+              "length": 2222385,
+              "notes": "Original mobile first-screen before image."
+            },
+            {
+              "artifactId": "cobbs-westside-after-home-mobile",
+              "fileName": "new-home-mobile-first-screen.png",
+              "sourceRootKey": "buffaly-sessions",
+              "sourceType": "Buffaly session artifacts",
+              "relativePath": "Cobb Westside Pharmacy-visual-comparison/artifacts/cobb-customer-report-assets/new-home-mobile-first-screen.png",
+              "sourceSessionKey": "Cobb Westside Pharmacy-visual-comparison",
+              "sourceRunKey": "sample-cobbs-westside-transformation-deck",
+              "workflowAction": "ToCreateClientWebsiteTransformationDecisionDeckSkill",
+              "mediaType": "image/png",
+              "previewMode": "embed",
+              "role": "after-image",
+              "updatedAtUtc": "2026-08-20T16:36:56.4459767Z",
+              "length": 1615334,
+              "notes": "New mobile first-screen after image."
+            },
+            {
+              "artifactId": "cobbs-westside-before-medsync-desktop",
+              "fileName": "original-medsync-desktop-verified.png",
+              "sourceRootKey": "buffaly-sessions",
+              "sourceType": "Buffaly session artifacts",
+              "relativePath": "Cobb Westside Pharmacy-visual-comparison/artifacts/cobb-customer-report-assets/original-medsync-desktop-verified.png",
+              "sourceSessionKey": "Cobb Westside Pharmacy-visual-comparison",
+              "sourceRunKey": "sample-cobbs-westside-transformation-deck",
+              "workflowAction": "ToCreateClientWebsiteTransformationDecisionDeckSkill",
+              "mediaType": "image/png",
+              "previewMode": "embed",
+              "role": "before-image",
+              "updatedAtUtc": "2026-08-20T16:30:09.8338945Z",
+              "length": 1606704,
+              "notes": "Original Med Sync service-page before image."
+            },
+            {
+              "artifactId": "cobbs-westside-after-medsync-desktop",
+              "fileName": "new-medsync-desktop-verified.png",
+              "sourceRootKey": "buffaly-sessions",
+              "sourceType": "Buffaly session artifacts",
+              "relativePath": "Cobb Westside Pharmacy-visual-comparison/artifacts/cobb-customer-report-assets/new-medsync-desktop-verified.png",
+              "sourceSessionKey": "Cobb Westside Pharmacy-visual-comparison",
+              "sourceRunKey": "sample-cobbs-westside-transformation-deck",
+              "workflowAction": "ToCreateClientWebsiteTransformationDecisionDeckSkill",
+              "mediaType": "image/png",
+              "previewMode": "embed",
+              "role": "after-image",
+              "updatedAtUtc": "2026-08-20T16:30:10.1659035Z",
+              "length": 581638,
+              "notes": "New Med Sync service-page after image."
+            }
+          ],
+          "evidence": [
+            "HTML title is Cobb's Westside Pharmacy — Website Transformation.",
+            "Report includes before/after homepage desktop, mobile, and Medication Synchronization comparisons.",
+            "Workflow runner identifies action ToCreateClientWebsiteTransformationDecisionDeckSkill and published demo/PDF artifacts."
+          ]
+        }
+      ]
+    }
+  ],
+  "rejectedCandidates": [],
+  "needsReview": []
+}

@@ -1,0 +1,25 @@
+{
+  "Module": {
+    "Enabled": true,
+    "Name": "GeneralSkillWorkbench",
+    "DisplayName": "General Skill Workbench",
+    "Description": "Run package-owned prompt skill workflows inside Buffaly without a separate workbench website.",
+    "AssemblyPath": "GeneralSkillWorkbench/GeneralSkillWorkbench.WebModule.dll",
+    "TypeName": "GeneralSkillWorkbench.WebModule.GeneralSkillWorkbenchWebModule",
+    "LoadOrder": 1350,
+    "Pages": [
+      {
+        "Name": "general-skill-workbench",
+        "DisplayName": "General Skill Workbench",
+        "Path": "/web-modules/GeneralSkillWorkbench/",
+        "Description": "Discover, configure, and execute General Skill Workbench runs in Buffaly."
+      },
+      {
+        "Name": "marketing-workspace",
+        "DisplayName": "Marketing Workspace",
+        "Path": "/web-modules/GeneralSkillWorkbench/workspaces/marketing",
+        "Description": "Open the Marketing workspace in the in-process General Skill Workbench."
+      }
+    ]
+  }
+}

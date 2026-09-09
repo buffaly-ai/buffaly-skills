@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "workbench-skill-catalog/v1",
+  "ownerPackage": "MarketingWebsiteSales",
+  "catalogVersion": "1.0.3-local-fallback",
+  "skills": [
+    {
+      "schemaVersion": "workbench-skill/v1",
+      "actionPrototype": "ToAnalyzeExistingWebsiteForImprovementsSkill",
+      "displayName": "Analyze Existing Website for Improvements",
+      "aliases": ["website analysis", "website audit"],
+      "skillVersion": "1.2.0",
+      "executionAdapter": "validated-markdown-workflow/v1",
+      "workflowKey": "marketing-website-sales.analyze-existing-website-for-improvements",
+      "workPromptPath": "Skills/MarketingWebsiteSales/Prompts/AnalyzeExistingWebsiteForImprovements.work.prompt.md",
+      "validationPromptPath": "Skills/MarketingWebsiteSales/Prompts/AnalyzeExistingWebsiteForImprovements.validation.prompt.md",
+      "inputSchemaPath": "Skills/MarketingWebsiteSales/workbench/input-schemas/website-improvement-audit.json",
+      "outputSchemaPath": "Skills/MarketingWebsiteSales/workbench/output-schemas/website-improvement-audit-result.json",
+      "prerequisites": []
+    },
+    {
+      "schemaVersion": "workbench-skill/v1",
+      "actionPrototype": "ToCheckPharmacyReputationSkill",
+      "displayName": "Check Pharmacy Reputation",
+      "aliases": ["reputation check", "pharmacy reviews"],
+      "skillVersion": "1.0.0",
+      "executionAdapter": "prompt-workflow/v1",
+      "workflowKey": "marketing-website-sales.check-pharmacy-reputation",
+      "workPromptPath": "Skills/MarketingWebsiteSales/Prompts/CheckPharmacyReputation.prompt.md",
+      "inputSchemaPath": "Skills/MarketingWebsiteSales/workbench/input-schemas/pharmacy-reputation-check.json",
+      "outputSchemaPath": "Skills/MarketingWebsiteSales/workbench/output-schemas/pharmacy-reputation-check-result.json",
+      "prerequisites": []
+    },
+    {
+      "schemaVersion": "workbench-skill/v1",
+      "actionPrototype": "ToCreatePharmacyGrowthProposalDeckSkill",
+      "displayName": "Create Pharmacy Growth Proposal Deck",
+      "aliases": ["proposal deck", "pharmacy growth proposal"],
+      "skillVersion": "4.0.0",
+      "executionAdapter": "validated-markdown-workflow/v1",
+      "workflowKey": "marketing-website-sales.create-pharmacy-growth-proposal-deck",
+      "workPromptPath": "Skills/MarketingWebsiteSales/Prompts/CreatePharmacyGrowthProposalDeck.work.prompt.md",
+      "validationPromptPath": "Skills/MarketingWebsiteSales/Prompts/CreatePharmacyGrowthProposalDeck.validation.prompt.md",
+      "inputSchemaPath": "Skills/MarketingWebsiteSales/workbench/input-schemas/pharmacy-growth-proposal-deck.json",
+      "outputSchemaPath": "Skills/MarketingWebsiteSales/workbench/output-schemas/pharmacy-growth-proposal-deck-result.json",
+      "prerequisites": [
+        {
+          "skill": "ToAnalyzeExistingWebsiteForImprovementsSkill",
+          "kind": "conditional_required",
+          "condition": "facts.officialWebsite.status == 'confirmed official website'",
+          "reusePolicy": "identity_and_freshness_match",
+          "bindings": [
+            { "from": "outputs.websiteAudit", "to": "inputs.websiteAudit" },
+            { "from": "outputs.websiteAuditArtifacts", "to": "inputs.websiteAuditArtifacts" }
+          ]
+        }
+      ]
+    }
+  ]
+}

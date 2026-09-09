@@ -1,0 +1,50 @@
+{
+  "Assembly": "GeneralSkillWorkbench.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+  "Type": "GeneralSkillWorkbench.Web.Services.Workspaces",
+  "KebabName": "workspaces",
+  "Methods": [
+    {
+      "DataObject": {},
+      "IsReturnTypeArray": "true",
+      "IsStatic": "false",
+      "Parameters": [],
+      "Name": "ListWorkspaces",
+      "KebabName": "list-workspaces",
+      "ReturnType": "WorkspaceSummary[]"
+    },
+    {
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [{ "IsNullable": "false", "Name": "WorkspaceKey", "Type": "String", "IsArray": "false", "IsEnum": "false" }],
+      "Name": "GetWorkspace",
+      "KebabName": "get-workspace",
+      "ReturnType": "ResolvedWorkspace"
+    },
+    {
+      "DataObject": {},
+      "IsReturnTypeArray": "true",
+      "IsStatic": "false",
+      "Parameters": [
+        { "IsNullable": "false", "Name": "WorkspaceKey", "Type": "String", "IsArray": "false", "IsEnum": "false" },
+        { "IsNullable": "false", "Name": "MaxCount", "Type": "Int32", "IsArray": "false", "IsEnum": "false" }
+      ],
+      "Name": "ListRecentRuns",
+      "KebabName": "list-recent-runs",
+      "ReturnType": "WorkspaceRunSummary[]"
+    },
+    {
+      "DataObject": {},
+      "IsReturnTypeArray": "false",
+      "IsStatic": "false",
+      "Parameters": [
+        { "IsNullable": "false", "Name": "WorkspaceKey", "Type": "String", "IsArray": "false", "IsEnum": "false" },
+        { "IsNullable": "false", "Name": "MaxRuns", "Type": "Int32", "IsArray": "false", "IsEnum": "false" },
+        { "IsNullable": "false", "Name": "MaxArtifacts", "Type": "Int32", "IsArray": "false", "IsEnum": "false" }
+      ],
+      "Name": "GetDashboard",
+      "KebabName": "get-dashboard",
+      "ReturnType": "WorkspaceDashboard"
+    }
+  ]
+}
