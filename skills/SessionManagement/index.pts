@@ -116,19 +116,16 @@ prototype ToSetBuffalySessionParent : SessionManagementSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to queue a message to a session")]
 [SemanticProgram.InfinitivePhrase("to queue an instruction to a session")]
-[SemanticProgram.InfinitivePhrase("to send message to a session")]
-[SemanticProgram.InfinitivePhrase("to dispatch instruction to child agent")]
-[SemanticProgram.InfinitivePhrase("to dispatch instruction to a session")]
 [SemanticProgram.InfinitivePhrase("to queue an instruction for a child session")]
-[SemanticProgram.InfinitivePhrase("to send instruction to child session")]
-prototype ToSendToSession : SessionManagementSkillAction
+prototype ToQueueMessageToSession : SessionManagementSkillAction
 {
-	Description = @"Persist/enqueue exactly one actionable assignment for later processing by the target session. Never use this action for repeated progress/status; use ToQueueLatestSessionMessage when only the latest pending update matters. Returns after queue acceptance only, never waits for execution/completion, cannot inject into an in-progress turn, and must not be repeated to approximate steering. Use ToSteerActiveSession only to interrupt a currently active turn. The receipt includes the real QueueItemId, MessageKey, and current canonical QueuedCount so queue growth is visible.";
+	Description = @"Queue exactly one new actionable assignment for later processing by the target session. This is never live delivery. Inter-session admission is limited to two queued messages; at the limit this returns Accepted=false without adding a row and directs the caller to inspect/replace a pending message with ToQueueLatestSessionMessage or use ToSteerActiveSession for an active turn. Never use this action for repeated progress/status or corrections to a pending handoff. The receipt includes Accepted, Message, QueueItemId, MessageKey, and canonical QueuedCount.";
 
 	function Execute(string sessionKey, string instruction) : QueuedInputResult
 	{
-		return SessionTools.SendToSessionTool(_opsAgent, sessionKey, instruction);
+		return SessionTools.QueueMessageToSessionTool(_opsAgent, sessionKey, instruction);
 	}
 }
 
@@ -137,7 +134,7 @@ prototype ToSendToSession : SessionManagementSkillAction
 [SemanticProgram.InfinitivePhrase("to report coalescing progress to a parent session")]
 prototype ToQueueLatestSessionMessage : SessionManagementSkillAction
 {
-	Description = @"Explicitly queue one next-turn message for which only the latest pending value matters. sessionKey - target session. queueKey - stable logical queue identity reused by this source session. instruction - latest self-contained queued message. While an earlier message with the same source and queueKey is pending, this replaces that row; after consumption, a later message queues normally. This is queued delivery, not session status mutation and not live steering. Critics/helpers must not emit a second parent update for the observed session's queueKey. The receipt includes QueueItemId, MessageKey, QueuedCount, and ReplacedPending.";
+	Description = @"Explicitly queue one next-turn message for which only the latest pending value matters. sessionKey - target session. queueKey - stable logical queue identity reused by this source session. instruction - latest self-contained queued message. While an earlier message with the same source and queueKey is pending, this replaces that row even when the two-message inter-session limit is reached; a new queueKey at the limit is rejected without mutation. This is queued delivery, not session status mutation and not live steering. Critics/helpers must not emit a second parent update for the observed session's queueKey. The receipt includes Accepted, Message, QueueItemId, MessageKey, QueuedCount, and ReplacedPending.";
 
 	function Execute(string sessionKey, string queueKey, string instruction) : QueuedInputResult
 	{

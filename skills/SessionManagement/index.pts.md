@@ -1,12 +1,16 @@
 # index.pts Change History
 
+## Rename And Cap Inter-Session Queue Admission (2026-09-11)
+- Renamed package-owned `ToSendToSession` to `ToQueueMessageToSession` and removed send/deliver semantic aliases.
+- Documented the authoritative two-message inter-session cap, explicit rejection, same-key latest-value replacement, and active-steering alternative.
+
 ## Make Queued Delivery Explicit And Observable (2026-09-07)
 - Replaced the misleading `ToUpdateSessionStatus` name with `ToQueueLatestSessionMessage`, which explicitly documents that it queues a next-turn input while replacing a still-pending row for the same stable source queue key.
-- `ToSendToSession` and queue-latest receipts now report canonical `QueuedCount` alongside QueueItemId and MessageKey.
+- Append and queue-latest receipts report canonical `QueuedCount` alongside QueueItemId and MessageKey.
 - Added read-only queue inspection, targeted removal, and explicit destructive clear-all actions over the canonical queue APIs. Clear-all guidance requires inspection and explicit authorization.
 
 ## Separate Queued Send From Active Steering (2026-09-06)
-- Clarified `ToSendToSession` as queue acceptance only: it persists one later input, does not wait for execution/completion, cannot interrupt an active model turn, and must not be repeated as pseudo-steering.
+- Clarified append queueing as acceptance only: it persists one later input, does not wait for execution/completion, cannot interrupt an active model turn, and must not be repeated as pseudo-steering.
 - Added `ToSteerActiveSession` with an `ActiveSessionSteerResult` receipt. It is active-turn-only and never creates, starts, resumes, or queues an idle/unloaded target.
 - Import `ActiveSessionSteerResult` explicitly so clean worker compilation can resolve the public action return type.
 - Kept both actions as thin ProtoScript wrappers over the shared typed session service contract.
