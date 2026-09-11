@@ -8,7 +8,7 @@ This bundled infrastructure skill implements the minimal queued-message bridge b
 - Bound actions accept no session key. They delegate to `SessionTools`, which resolves the target from trusted Voice Agent runtime state and enforces binding limits.
 - `VoiceAgentDispatcher` is the dispatcher prompt-context prototype and supplemental action root; its specialized action is `ToSendMessageToVoiceAgent`.
 - The full-project `index.pts` includes the lightweight file and defines only that dispatcher-return action, keeping `ContextPrompt` infrastructure out of the Voice Agent entry.
-- Send actions call `SessionTools.SendToSessionTool` and return a truthful plain-text delivery signal that prevents model-driven duplicate sends; latest-turn recovery returns the existing `TurnSummaryContract`.
+- Send actions call `SessionTools.QueueMessageToSessionTool` and return a truthful plain-text delivery signal that prevents model-driven duplicate sends; latest-turn recovery returns the existing `TurnSummaryContract`.
 - Outbound Voice targets are resolved by `SessionTools` from the current runtime session: active session-bound Voice Agents use the server-owned binding parent, while standalone Voice Agents use their persisted private dispatcher pointer. The model-facing actions never accept a routing key.
 - Dispatcher returns continue to use runtime-bound `VoiceAgent.SourceSessionKey`.
 - Dispatcher returns begin with `[label: Voice Agent Dispatcher]`.
@@ -22,7 +22,7 @@ No dispatch DTO, event, subscription, callback, polling loop, job store, or inte
 
 ## Dispatcher return end-cycle guard
 
-- Fresh staging validation proved that `SessionTools.SendToSessionTool(...)` queues the return but does not mechanically terminate dispatcher processing.
+- Fresh staging validation proved that `SessionTools.QueueMessageToSessionTool(...)` queues the return but does not mechanically terminate dispatcher processing.
 - The dispatcher return now uses the established Level 2 result wording: delivery is complete and the current cycle must end now.
 - This prevents the mandatory send-back prompt from firing twice without adding DTOs, events, deduplication state, or special runtime code.
 
@@ -35,7 +35,7 @@ No dispatch DTO, event, subscription, callback, polling loop, job store, or inte
 ## Hard per-turn duplicate suppression
 
 - Overlapping-input staging validation proved that end-cycle wording alone is advisory: providers may still issue the same side-effectful action in later completion rounds of one turn.
-- Both bridge actions now call `SessionTools.SendToSessionOncePerCurrentTurnTool(...)`, which claims the exact direction, target, and instruction against the authoritative active turn before queueing.
+- Both bridge actions now call `SessionTools.QueueMessageToSessionOncePerCurrentTurnTool(...)`, which claims the exact direction, target, and instruction against the authoritative active turn before queueing.
 - Repeated calls in the same turn are suppressed at the side-effect boundary; identical instructions remain valid in later turns. Ordinary queued session messages remain the only transport.
 
 ## Durable queue acknowledgement (2026-07-22)
