@@ -1,6 +1,7 @@
 import Buffaly.Agent.Host Buffaly.Agent.Host.BuffalyArtifacts BuffalyArtifacts;
 import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.SessionTools SessionTools;
 import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.Level2WatcherTools Level2WatcherTools;
+import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.QueuedInputResult QueuedInputResult;
 import BasicUtilities BasicUtilities.JsonUtil JsonUtil;
 
 prototype Level2WatcherSkillAction : OpsAction
@@ -53,13 +54,11 @@ prototype ToGetObservedSessionKey : Level2WatcherSkillAction, Level2ObserverActi
 	}
 }
 
-[SemanticProgram.InfinitivePhrase("to send a message to the subscribed session for this watcher")]
-[SemanticProgram.InfinitivePhrase("to message the observed source session from this level2 watcher")]
-[SemanticProgram.InfinitivePhrase("to send guidance to the currently supervised level1 session")]
-[SemanticProgram.InfinitivePhrase("to send a message to observed session and return immediately")]
-prototype ToSendMessageToObservedSessionAndReturn : Level2WatcherSkillAction, Level2ObserverActionRoot
+[SemanticProgram.InfinitivePhrase("to queue a message to the subscribed session for this watcher")]
+[SemanticProgram.InfinitivePhrase("to queue guidance to the currently supervised level1 session")]
+prototype ToQueueMessageToObservedSessionAndReturn : Level2WatcherSkillAction, Level2ObserverActionRoot
 {
-	Description = @"instruction - message text to send to the observed/subscribed source session. Preferred watcher nudge path for normal Level2 guidance when you want to message the supervised/observed session and return immediately. Automatically prepends [label: Level 2] when no supported label is already present. Prefer this over generic cross-session send tools for normal watcher-to-observed guidance.";
+	Description = @"instruction - message text to queue for a future turn in the observed/subscribed source session. This is not live delivery. Inter-session admission is limited to two queued messages and may reject without mutation; use active steering for an active turn or replace an existing queued update. Automatically prepends [label: Level 2] when no supported label is already present.";
 
 	function Execute(string instruction) : string
 	{
@@ -79,8 +78,12 @@ prototype ToSendMessageToObservedSessionAndReturn : Level2WatcherSkillAction, Le
 				labeledInstruction = trimmedInstruction;
 			}
 		}
-		SessionTools.SendToSessionTool(observedSessionKey, labeledInstruction);
-		return "Guidance delivered to observed session. End cycle now.";
+		QueuedInputResult queued = SessionTools.QueueMessageToSessionTool(observedSessionKey, labeledInstruction);
+		if (queued.Accepted == false)
+		{
+			return "Error: " + queued.Message;
+		}
+		return "Guidance queued for a future observed-session turn. QueueItemId=" + queued.QueueItemId + "; QueuedCount=" + queued.QueuedCount.ToString() + ". End cycle now.";
 	}
 }
 
