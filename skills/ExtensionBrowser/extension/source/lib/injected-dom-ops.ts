@@ -198,8 +198,17 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
     if (!interactable.ok) return fail(interactable.code, interactable.error, registry.documentToken);
     const obstruction = obstructionAtCenter(el);
     if (obstruction) return fail('ELEMENT_OBSTRUCTED', obstruction, registry.documentToken);
+    const rect = el.getBoundingClientRect();
+    const position = { bubbles: true, cancelable: true, composed: true, clientX: rect.left + rect.width / 2, clientY: rect.top + rect.height / 2, button: 0 };
+    // A DOM activation must include the press/release lifecycle for controls whose
+    // state is established by pointerdown/mousedown before their click handler.
+    el.dispatchEvent(new PointerEvent('pointerdown', { ...position, pointerId: 1, pointerType: 'mouse', isPrimary: true, buttons: 1 }));
+    const pressed = el.dispatchEvent(new MouseEvent('mousedown', { ...position, buttons: 1 }));
+    if (pressed) (el as HTMLElement).focus?.();
+    el.dispatchEvent(new PointerEvent('pointerup', { ...position, pointerId: 1, pointerType: 'mouse', isPrimary: true, buttons: 0 }));
+    el.dispatchEvent(new MouseEvent('mouseup', { ...position, buttons: 0 }));
     (el as HTMLElement).click();
-    return ok(registry, { clicked: true, executed: true, verified: false, verification: 'DOM HTMLElement.click() dispatched; page task success is unverified.', selector: resolved.selector, elementId: resolved.elementId });
+    return ok(registry, { clicked: true, executed: true, synthetic: true, verified: false, verification: 'DOM pointer/mouse press-release and click dispatched; await a page postcondition before claiming task success.', selector: resolved.selector, elementId: resolved.elementId });
   }
 
   function hoverElement(registry: RegistryState, args: Record<string, unknown>): InjectedDomOperationResult {

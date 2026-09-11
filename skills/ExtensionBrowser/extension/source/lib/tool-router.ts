@@ -1,4 +1,5 @@
 import type { ToolResult, ToolName } from './types';
+import { toolContracts, validateToolArguments } from './tool-contract';
 import type {
   GetPageTextArgs, GetDomSnapshotArgs, ScreenshotArgs, FindElementsArgs,
   NavigateArgs, ClickArgs, TypeTextArgs, PressKeyArgs, ScrollArgs, WaitArgs,
@@ -58,7 +59,7 @@ async function executeInTab<T>(tabId: number, func: () => T): Promise<T> {
   if (!results || results.length === 0) {
     throw new Error('Script execution returned no results');
   }
-  return results[0].result as T;
+  return requireScriptResult<T>(results[0]);
 }
 
 async function executeInTabWithArgs<T, A>(
@@ -74,7 +75,7 @@ async function executeInTabWithArgs<T, A>(
   if (!results || results.length === 0) {
     throw new Error('Script execution returned no results');
   }
-  return results[0].result as T;
+  return requireScriptResult<T>(results[0]);
 }
 
 // ─── Multi-arg variant for functions needing multiple injected args ───
@@ -92,7 +93,13 @@ async function executeInTabMultiArgs<T, A extends unknown[]>(
   if (!results || results.length === 0) {
     throw new Error('Script execution returned no results');
   }
-  return results[0].result as T;
+  return requireScriptResult<T>(results[0]);
+}
+
+function requireScriptResult<T>(result: { result?: unknown; error?: string }): T {
+  if (result.error) throw new Error(`SCRIPT_EXECUTION_FAILED: ${result.error}`);
+  if (result.result === undefined) throw new Error('NO_SCRIPT_RESULT: injected function returned no value.');
+  return result.result as T;
 }
 
 async function executeInjectedDomOperation(tabId: number, operation: InjectedDomOperationName, args: Record<string, unknown>): Promise<ToolResult> {
@@ -461,6 +468,10 @@ async function handleGetStatus(args: Record<string, unknown>): Promise<ToolResul
   return {
     ok: true,
     data: {
+      extensionVersion: chrome.runtime.getManifest().version,
+      extensionId: chrome.runtime.id,
+      contractVersion: 'dom-v1-schema-1',
+      toolContracts,
       debuggerAttached: attachedTabId !== null,
       debuggerTabId: attachedTabId,
       activeTab,
@@ -532,10 +543,15 @@ async function handleConsoleEvents(args: ConsoleEventsArgs): Promise<ToolResult>
 // ─── Main Tool Router ───
 
 export async function handleToolCall(tool: string, args: Record<string, unknown>): Promise<ToolResult> {
-  args = await bindWindowToArguments(tool, args);
   const logId = addLogEntry(tool, args);
 
   try {
+    const invalid = validateToolArguments(tool, args);
+    if (invalid) {
+      updateLogEntry(logId, invalid);
+      return invalid;
+    }
+    args = await bindWindowToArguments(tool, args);
     let result: ToolResult;
 
     switch (tool as ToolName) {
