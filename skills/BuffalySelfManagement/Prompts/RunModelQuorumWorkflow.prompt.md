@@ -37,7 +37,7 @@ If the user uses approximate provider names, bind them to catalog-valid provider
 
 ### 3) Dispatch the shared task without waiting
 Use a fire-and-forget session send when the goal is parallel quorum work.
-Prefer a tool equivalent to `ToSendToSession(sessionKey, instruction)` rather than `ToSendToSessionAndWait`, so all children can start before the parent waits.
+Prefer a tool equivalent to `ToQueueMessageToSession(sessionKey, instruction)` rather than `ToSendToSessionAndWait`, so all children can start before the parent waits.
 
 Dispatch the same task body to each child, with only minimal session-specific metadata if needed.
 Do not solve the child task in the parent before dispatching.
