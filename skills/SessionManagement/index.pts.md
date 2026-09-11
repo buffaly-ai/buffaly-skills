@@ -1,16 +1,17 @@
 # index.pts Change History
 
-## Rename And Cap Inter-Session Queue Admission (2026-09-11)
-- Renamed package-owned `ToSendToSession` to `ToQueueMessageToSession` and removed send/deliver semantic aliases.
-- Documented the authoritative two-message inter-session cap, explicit rejection, same-key latest-value replacement, and active-steering alternative.
+## Rename Inter-Session Send And Cap Queue Admission (2026-09-11)
+- Renamed the append-only public action from `ToSendToSession` to `ToQueueMessageToSession`; removed send/deliver semantic phrases so its future-turn behavior is unambiguous.
+- Inter-session queue actions now request a strict maximum of two pending messages. The authoritative target rejects a third new row without mutation and directs callers to replace a pending latest-value message or use active steering.
+- Queue receipts expose `Accepted` and `Message`; latest-value replacement remains admissible at the cap.
 
 ## Make Queued Delivery Explicit And Observable (2026-09-07)
 - Replaced the misleading `ToUpdateSessionStatus` name with `ToQueueLatestSessionMessage`, which explicitly documents that it queues a next-turn input while replacing a still-pending row for the same stable source queue key.
-- Append and queue-latest receipts report canonical `QueuedCount` alongside QueueItemId and MessageKey.
+- `ToQueueMessageToSession` and queue-latest receipts now report canonical `QueuedCount` alongside QueueItemId and MessageKey.
 - Added read-only queue inspection, targeted removal, and explicit destructive clear-all actions over the canonical queue APIs. Clear-all guidance requires inspection and explicit authorization.
 
 ## Separate Queued Send From Active Steering (2026-09-06)
-- Clarified append queueing as acceptance only: it persists one later input, does not wait for execution/completion, cannot interrupt an active model turn, and must not be repeated as pseudo-steering.
+- Clarified `ToQueueMessageToSession` as queue acceptance only: it persists one later input, does not wait for execution/completion, cannot interrupt an active model turn, and must not be repeated as pseudo-steering.
 - Added `ToSteerActiveSession` with an `ActiveSessionSteerResult` receipt. It is active-turn-only and never creates, starts, resumes, or queues an idle/unloaded target.
 - Import `ActiveSessionSteerResult` explicitly so clean worker compilation can resolve the public action return type.
 - Kept both actions as thin ProtoScript wrappers over the shared typed session service contract.
@@ -21,7 +22,7 @@
 - Defined `HasMore` as older canonical turns remaining, not message rows or cursor state.
 
 ## Preserve Cross-Session Sender Identity (2026-07-22)
-- Updated `ToSendToSession` to pass `_opsAgent` into the typed session facade so queued instructions carry authoritative source-session and agent identity.
+- Updated `ToQueueMessageToSession` to pass `_opsAgent` into the typed session facade so queued instructions carry authoritative source-session and agent identity.
 - Kept the ProtoScript action as thin glue; persistence and validation remain in the C# contracts and services.
 
 ## Add Persisted Recent Session Inventory (2026-07-20)
@@ -117,7 +118,7 @@
 - Design Decision: archive/unarchive should be explicit SessionManagement tools backed by targeted session metadata APIs, not prompt workflows that move folders.
 
 ## Remove Send-And-Wait Registration (2026-06-14)
-- Removed the `ToSendToSessionAndWait` ProtoScript prototype so SessionManagement only exposes the supported one-way `ToSendToSession` cross-session send.
+- Removed the `ToSendToSessionAndWait` ProtoScript prototype so SessionManagement only exposes the supported one-way `ToQueueMessageToSession` cross-session send.
 - Design decision: cross-session wait semantics are unsupported, and the skill surface should not advertise a tool that now fails fast by design.
 
 ## Add Parent-Key And Sibling Session Actions (2026-06-16)

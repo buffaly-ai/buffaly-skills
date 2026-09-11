@@ -180,7 +180,7 @@ prototype ToClearAllQueuedSessionMessages : SessionManagementSkillAction
 [SemanticProgram.InfinitivePhrase("to inject an instruction into a running session turn")]
 prototype ToSteerActiveSession : SessionManagementSkillAction
 {
-	Description = @"Inject exactly one steering instruction into the target session's currently active/running turn. sessionKey - target existing session key. instruction - steering correction for that active turn. This action never creates, loads, starts, resumes, or queues a session and never falls back to ToSendToSession. Unloaded, idle, queued-only, compacting, stopped, or completed targets return Accepted=false with a clear status and no queued item. Returns ActiveSessionSteerResult, not QueuedInputResult.";
+	Description = @"Inject exactly one steering instruction into the target session's currently active/running turn. sessionKey - target existing session key. instruction - steering correction for that active turn. This action never creates, loads, starts, resumes, or queues a session and never falls back to ToQueueMessageToSession. Unloaded, idle, queued-only, compacting, stopped, or completed targets return Accepted=false with a clear status and no queued item. Returns ActiveSessionSteerResult, not QueuedInputResult.";
 
 	function Execute(string sessionKey, string instruction) : ActiveSessionSteerResult
 	{
