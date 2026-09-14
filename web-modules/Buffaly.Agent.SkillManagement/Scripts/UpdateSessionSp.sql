@@ -36,7 +36,10 @@ AS
             [ReasoningLevel] = @ReasoningLevel, 
             [PromptContext] = @PromptContext, 
             [LastUpdated] = getdate(), 
-            [Data] = @Data, 
+            -- Preserve lifecycle-owned values from this row, not the caller's earlier snapshot.
+            [Data] = JSON_MODIFY(JSON_MODIFY(@Data,
+				'$.RuntimeStatus', JSON_VALUE(Data, '$.RuntimeStatus')),
+				'$.LastNonRunningUtc', JSON_VALUE(Data, '$.LastNonRunningUtc')),
             [SessionName] = @SessionName, 
             [ParentSessionID] = @ParentSessionID, 
             [IsArchived] = @IsArchived
