@@ -18,10 +18,12 @@ BEGIN
 
 	UPDATE Sessions
 	SET
-		Data = JSON_MODIFY(
+		NeedsAttention = 1,
+		Data = JSON_MODIFY(JSON_MODIFY(JSON_MODIFY(JSON_MODIFY(JSON_MODIFY(
 			JSON_MODIFY(Data, '$.RuntimeStatus', 'Loaded'),
-			'$.LastNonRunningUtc',
-			@nowUtc),
+			'$.IsRunning', CAST(0 AS bit)), '$.ActiveTurnKey', ''),
+			'$.CurrentTurnStartedUtc', ''), '$.LastNonRunningUtc', @nowUtc),
+			'$.LastRuntimeStateUpdatedUtc', @nowUtc),
 		LastUpdated = GETUTCDATE()
 	WHERE
 		ISJSON(Data) = 1

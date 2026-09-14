@@ -17396,7 +17396,7 @@
       "PackageType": "WebModule",
       "Title": "Wiki",
       "Description": "Buffaly Web Module package for Wiki.",
-      "Version": "0.1.170",
+      "Version": "0.1.171",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/Buffaly.Agent.Wiki",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/Buffaly.Agent.Wiki",
@@ -17419,7 +17419,7 @@
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "91115adddbc4ea1e225bf3309bfb02d1db59a8863d4a5ddca0b4abe1ca0de13d"
+          "Sha256": "cd4d00dff18645ab875ad424375b83eb71b53641376d2661acf015f3d76c102d"
         },
         {
           "Path": "Buffaly.Agent.Wiki.deps.json",
@@ -17427,19 +17427,19 @@
         },
         {
           "Path": "Buffaly.Agent.Wiki.dll",
-          "Sha256": "837e45db6f15922daaadb0b814d35104f8bbccc2cb2ed4520f1013cf1f3bc96a"
+          "Sha256": "2361bcca4f4f32a5da9ab372029eaaef85a587cdb801e43c976daa2f4e562d85"
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "c11480fdfe1ffb69cdc8356547face9756c0c59266e98a7fc68d20304762f200"
+          "Sha256": "5d52cf840ca7c2d349528a95e2914173622642b96657c2ba2f0d4a3c59daf288"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "ddf34137dd6131af0484bb260a3fadd228bc04ee69c387e25b59affc14ca8cad"
+          "Sha256": "e1df00c6b067c280f991b5b3e9a97e40b5e7935d9ed28aa687bae90aecc6fe69"
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "55584777efdf91c5c08922d2863fe276f3c5bd768a883855c35d3d0ed01a01d0"
+          "Sha256": "c00fdc6de6ffa5365895cdb0d0f88cedf9641e1c4c92a0ff85e255c2fe05be23"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -18043,11 +18043,15 @@
         },
         {
           "Path": "Scripts/Sessions.sql",
-          "Sha256": "714ce0de445540875c1bbf7c721ed7e11fb92e287034c788272fbfc4f21f2777"
+          "Sha256": "3e5040ebd1de28f40b698a5c9a81b942823e1764e6a45ac30a85d49760d907bf"
         },
         {
           "Path": "Scripts/SessionSubscriptions.sql",
           "Sha256": "e036417bb69d0b5d8dde97adbd50919128a05cd08a49cf18ae15e96db0196cda"
+        },
+        {
+          "Path": "Scripts/Sessions_AcknowledgeAttentionSp.sql",
+          "Sha256": "ae10428d4bd371f291da2501421faba44b9a4b343e8154dc56a50886e6a0fba9"
         },
         {
           "Path": "Scripts/Sessions_GetAll_Sp.sql",
@@ -18074,6 +18078,10 @@
           "Sha256": "6c4b83ecacfff3c946f6e0ff52eeb0526c34e43beeb8c9bb10335820096d02a0"
         },
         {
+          "Path": "Scripts/Sessions_GetPendingAttentionSp.sql",
+          "Sha256": "ffc34ace42ec925775be3b84b4e18c818ec8c4e168b84e86f094e4e7310648ad"
+        },
+        {
           "Path": "Scripts/Sessions_GetSidebarActivityBatchSp.sql",
           "Sha256": "62e91a33012e11eaf3cbddd0a447f38c5d21a05672c927c1ca9fc4dd2c878b84"
         },
@@ -18091,7 +18099,15 @@
         },
         {
           "Path": "Scripts/Sessions_ResetRunningRuntimeStatusOnWebStartupSp.sql",
-          "Sha256": "72d6cf22e7bdee8413da4de9a3784f00477f1f05a317a5825549b8460e5ab744"
+          "Sha256": "b7e0926b35b12e1715ac4d81a554002253ce0dd67be343b603a4b023ed243890"
+        },
+        {
+          "Path": "Scripts/Sessions_RollbackEvaluateAdmissionWithAttentionSp.sql",
+          "Sha256": "913070641e30fa4d869a130b4c1806cf5b2c7c1f50e901564a1fc6a329028566"
+        },
+        {
+          "Path": "Scripts/Sessions_UpdateRuntimeStateWithAttentionSp.sql",
+          "Sha256": "fc17599ef7964537117a0a8290c1d763c7047bff34fc69763bcd41c2e8907ab0"
         },
         {
           "Path": "Scripts/StoredProcedureHasParameterSp.sql",
@@ -18108,6 +18124,10 @@
         {
           "Path": "Scripts/TryUpdateSessionDataSp.sql",
           "Sha256": "ce170b69bf3ad1caeb54f2b1ec3052819d681c4bd2c1898a865358b63de0c9dc"
+        },
+        {
+          "Path": "Scripts/Turns.sql",
+          "Sha256": "36611c4719ef670e305e67575da64d4c43ca3a1d2b2b376b5dcfc49dddf1e463"
         },
         {
           "Path": "Scripts/Turns_GetBySessionIDTurnKeys_Sp.sql",
@@ -18171,7 +18191,7 @@
         },
         {
           "Path": "Scripts/UpdateSessionDataSp.sql",
-          "Sha256": "744b7c31395c22db47caaf9a41069b4056fb6e87b643052d2571155a35b0d915"
+          "Sha256": "45928195ab634dac21917e26d349b093317fc7b208f810a354b8ac1a8a40e31f"
         },
         {
           "Path": "Scripts/UpdateSessionDateCreatedSp.sql",
@@ -18191,11 +18211,11 @@
         },
         {
           "Path": "Scripts/UpdateSessionProviderSelectionSp.sql",
-          "Sha256": "f83debdd8e7dc7d6f2e0f5cbf9b754f485c5c5ff08337d165f713bbbd281e36a"
+          "Sha256": "e39a12a6c6195629b1cf4e057975e8644fbe3c9a2632af235f76159316ad4652"
         },
         {
           "Path": "Scripts/UpdateSessionSp.sql",
-          "Sha256": "b01010400fd1425ee0893ec989598fc8a44e4bcf04d1748c753a6f1ad72a2224"
+          "Sha256": "eb9ff17efecb0fc3812087f9ea9e4d28770bf2f7d3fddd0c6955ce944f958e7a"
         },
         {
           "Path": "Scripts/UpdateSessionSubscriptionDataSp.sql",
