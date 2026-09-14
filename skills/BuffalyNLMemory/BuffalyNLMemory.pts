@@ -82,7 +82,7 @@ prototype ToInterpretOnlineActionDefinition : BuffalyNLMemorySkillAction
 [SemanticProgram.InfinitivePhrase("to borrow an action from another session")]
 prototype ToBorrowSessionAction : ProtoScriptAction, BuffalyNLMemorySkillAction
 {
-	Description = @"ownerScope - exact session: scope of the source. prototypeName - exact source action prototype name. Reads one action definition from that session, interprets it unchanged in this runtime, then registers it as a callable tool through the host loader. Only self-contained definitions are supported; missing dependencies fail through normal interpretation and are not imported. Does not execute the borrowed action.";
+	Description = @"ownerScope - exact session: scope of the source. prototypeName - exact source action prototype name. Reads one action definition from that session, persists it into this session through the Online Action authoring path, then registers it as a callable tool through the host loader. Only self-contained definitions are supported; missing dependencies fail through normal persistence and are not imported. Does not execute the borrowed action.";
 
 	function Execute(string ownerScope, string prototypeName) : string
 	{
@@ -94,7 +94,7 @@ prototype ToBorrowSessionAction : ProtoScriptAction, BuffalyNLMemorySkillAction
 [SemanticProgram.InfinitivePhrase("to borrow an entity from another session")]
 prototype ToBorrowSessionEntity : ProtoScriptAction, BuffalyNLMemorySkillAction
 {
-	Description = @"ownerScope - exact session: scope of the source. prototypeName - exact source entity prototype name. Reads one entity definition from that session and interprets it unchanged in this runtime. Only self-contained definitions are supported; missing dependencies fail through normal interpretation and are not imported.";
+	Description = @"ownerScope - exact session: scope of the source. prototypeName - exact source entity prototype name. Reads one entity definition from that session and persists it into this session through the NLMemory entity authoring path. Only self-contained definitions are supported; missing dependencies fail through normal persistence and are not imported.";
 
 	function Execute(string ownerScope, string prototypeName) : string
 	{
