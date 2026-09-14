@@ -16,7 +16,10 @@ AS
 	SET Provider = @Provider,
 		ModelName = @ModelName,
 		ReasoningLevel = @ReasoningLevel,
-		Data = @Data,
+		-- Provider edits do not own the runtime state or acknowledgement token.
+		Data = JSON_MODIFY(JSON_MODIFY(@Data,
+			'$.RuntimeStatus', JSON_VALUE(Data, '$.RuntimeStatus')),
+			'$.LastNonRunningUtc', JSON_VALUE(Data, '$.LastNonRunningUtc')),
 		LastUpdated = getdate()
 	WHERE SessionID = @SessionID
 
