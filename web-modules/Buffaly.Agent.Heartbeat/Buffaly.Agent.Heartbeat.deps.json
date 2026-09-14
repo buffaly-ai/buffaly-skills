@@ -760,14 +760,6 @@
           }
         }
       },
-      "RooTrax.Common.DB/1.0.0.0": {
-        "runtime": {
-          "RooTrax.Common.DB.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
-          }
-        }
-      },
       "Ontology.Simulation/1.0.0.0": {
         "runtime": {
           "Ontology.Simulation.dll": {
@@ -843,6 +835,14 @@
       "RooTrax.Git/1.0.0.0": {
         "runtime": {
           "RooTrax.Git.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "RooTrax.Common.DB/1.0.0.0": {
+        "runtime": {
+          "RooTrax.Common.DB.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -1303,11 +1303,6 @@
       "serviceable": false,
       "sha512": ""
     },
-    "RooTrax.Common.DB/1.0.0.0": {
-      "type": "reference",
-      "serviceable": false,
-      "sha512": ""
-    },
     "Ontology.Simulation/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
@@ -1354,6 +1349,11 @@
       "sha512": ""
     },
     "RooTrax.Git/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "RooTrax.Common.DB/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
