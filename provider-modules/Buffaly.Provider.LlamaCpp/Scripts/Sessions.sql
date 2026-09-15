@@ -53,6 +53,7 @@ CREATE TABLE [dbo].[Sessions](
 
 	[IsArchived] bit    NOT NULL
 	,
+	[NeedsAttention] bit NOT NULL CONSTRAINT [DF_Sessions_NeedsAttention] DEFAULT (0),
 	
 
 
@@ -103,6 +104,10 @@ GO
 	
 ALTER TABLE [dbo].[Sessions] ADD  CONSTRAINT [DF_Sessions_IsArchived]  DEFAULT (0) FOR [IsArchived]
 GO	
+
+CREATE INDEX IX_Sessions_PendingAttention ON dbo.Sessions(SessionID)
+	WHERE NeedsAttention = 1 AND IsArchived = 0;
+GO
 	
 
 
