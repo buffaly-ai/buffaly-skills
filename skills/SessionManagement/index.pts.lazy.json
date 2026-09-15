@@ -1,0 +1,168 @@
+{
+  "Version": 1,
+  "ModulePath": "Skills/SessionManagement/index.pts",
+  "Prototypes": {
+    "SessionManagementSkill": "Skills/SessionManagement/index.pts",
+    "SessionManagementSkillAction": "Skills/SessionManagement/index.pts",
+    "ToAnalyzeAndImproveEntitiesWithinSessionSkill": "Skills/SessionManagement/index.pts",
+    "ToArchiveBuffalySession": "Skills/SessionManagement/index.pts",
+    "ToBootstrapWebhookTimelineEvent": "Skills/SessionManagement/index.pts",
+    "ToClearAllQueuedSessionMessages": "Skills/SessionManagement/index.pts",
+    "ToCreateBuffalyChildSession": "Skills/SessionManagement/index.pts",
+    "ToCreateBuffalySession": "Skills/SessionManagement/index.pts",
+    "ToCreateBuffalySiblingSession": "Skills/SessionManagement/index.pts",
+    "ToGetBuffalySessionParentKey": "Skills/SessionManagement/index.pts",
+    "ToGetChildSessions": "Skills/SessionManagement/index.pts",
+    "ToGetMostRecentSessionTurn": "Skills/SessionManagement/index.pts",
+    "ToGetQueuedSessionMessages": "Skills/SessionManagement/index.pts",
+    "ToGetRecentSessionTurns": "Skills/SessionManagement/index.pts",
+    "ToGetSessionAssistantMessageMarkdown": "Skills/SessionManagement/index.pts",
+    "ToGetSessionStatus": "Skills/SessionManagement/index.pts",
+    "ToGetSessionTurnDetail": "Skills/SessionManagement/index.pts",
+    "ToGetSessionTurnPage": "Skills/SessionManagement/index.pts",
+    "ToGetUserState": "Skills/SessionManagement/index.pts",
+    "ToListActiveSessions": "Skills/SessionManagement/index.pts",
+    "ToListRecentSessions": "Skills/SessionManagement/index.pts",
+    "ToPassUserStateToABuffalyAgent": "Skills/SessionManagement/index.pts",
+    "ToQueueLatestSessionMessage": "Skills/SessionManagement/index.pts",
+    "ToQueueMessageToSession": "Skills/SessionManagement/index.pts",
+    "ToRemoveQueuedSessionMessage": "Skills/SessionManagement/index.pts",
+    "ToResolveTopCandidateAndRun": "Skills/SessionManagement/index.pts",
+    "ToSearchSessionFinalAssistantMessages": "Skills/SessionManagement/index.pts",
+    "ToSearchSessionMessages": "Skills/SessionManagement/index.pts",
+    "ToSendMessageToSession": "Skills/SessionManagement/index.pts",
+    "ToSetBuffalySessionParent": "Skills/SessionManagement/index.pts",
+    "ToUnarchiveBuffalySession": "Skills/SessionManagement/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToAnalyzeAndImproveEntitiesWithinSessionSkill": [
+      "to analyze and improve entities within a session",
+      "to build an entity improvement merge plan from a session",
+      "to extract session entities and propose ontology improvements"
+    ],
+    "ToCreateBuffalySession": [
+      "to create or load a buffaly session",
+      "to ensure a buffaly session exists",
+      "to ensure a buffaly-agent session runtime exists"
+    ],
+    "ToCreateBuffalyChildSession": [
+      "to attach a buffaly child session to a parent session",
+      "to create or load a buffaly child session",
+      "to ensure a buffaly child session exists"
+    ],
+    "ToGetChildSessions": [
+      "to get child sessions for a parent session",
+      "to list buffaly child sessions under a parent session",
+      "to reuse an existing child buffaly session"
+    ],
+    "ToGetBuffalySessionParentKey": [
+      "to get a buffaly session parent key",
+      "to get the parent key for a session",
+      "to read a session parent session key"
+    ],
+    "ToCreateBuffalySiblingSession": [
+      "to attach a new session as a sibling of another session",
+      "to create a buffaly sibling session",
+      "to create a sibling session under the same parent"
+    ],
+    "ToSetBuffalySessionParent": [
+      "to attach an existing buffaly session to an existing parent session",
+      "to change the parent session for an existing buffaly session",
+      "to set a buffaly session parent"
+    ],
+    "ToQueueMessageToSession": [
+      "to queue a message to a session",
+      "to queue an instruction for a child session",
+      "to queue an instruction to a session",
+      "to send a message to a session with queuing"
+    ],
+    "ToQueueLatestSessionMessage": [
+      "to queue the latest message to a session",
+      "to replace a pending session message"
+    ],
+    "ToGetQueuedSessionMessages": [
+      "to get queued session messages",
+      "to inspect a session input queue"
+    ],
+    "ToRemoveQueuedSessionMessage": [
+      "to remove one queued session message"
+    ],
+    "ToClearAllQueuedSessionMessages": [
+      "to clear all queued session messages"
+    ],
+    "ToSendMessageToSession": [
+      "to send a message to a session",
+      "to send an instruction to a session",
+      "to steer a session"
+    ],
+    "ToGetSessionStatus": [
+      "to fetch worker-aware session status",
+      "to get session status",
+      "to read the authoritative status for a buffaly session"
+    ],
+    "ToArchiveBuffalySession": [
+      "to archive a buffaly session",
+      "to hide a buffaly session from the active session list",
+      "to mark a session as archived"
+    ],
+    "ToUnarchiveBuffalySession": [
+      "to mark a session as not archived",
+      "to restore an archived buffaly session to the session list",
+      "to unarchive a buffaly session"
+    ],
+    "ToGetMostRecentSessionTurn": [
+      "to check child session progress",
+      "to get latest child session result",
+      "to get progress from a child session",
+      "to get the most recent session turn",
+      "to inspect a session",
+      "to inspect recent child session output"
+    ],
+    "ToGetRecentSessionTurns": [
+      "to check what happened recently in a child session",
+      "to get recent child session progress",
+      "to get recent session timeline",
+      "to get recent session turns",
+      "to inspect recent assistant responses from a session"
+    ],
+    "ToGetSessionTurnPage": [
+      "to get older session timeline summaries",
+      "to inspect older turn summaries",
+      "to page older session turns"
+    ],
+    "ToGetSessionTurnDetail": [
+      "to get details for one session turn",
+      "to inspect full rows for a selected turn",
+      "to inspect tool output within one turn"
+    ],
+    "ToListActiveSessions": [
+      "to get active session info rows",
+      "to list active buffaly sessions",
+      "to list active sessions from the runtime"
+    ],
+    "ToListRecentSessions": [
+      "to get recent session hierarchy and activity",
+      "to list persisted recent buffaly sessions",
+      "to list recent sessions with parent metadata"
+    ],
+    "ToGetSessionAssistantMessageMarkdown": [
+      "to deterministically convert a session message key into markdown",
+      "to get a session message as markdown from a session",
+      "to get session message markdown by message key"
+    ],
+    "ToSearchSessionMessages": [
+      "to find user messages in session history",
+      "to search user session messages by content"
+    ],
+    "ToSearchSessionFinalAssistantMessages": [
+      "to find final assistant answers in session history",
+      "to search assistant final responses in session history",
+      "to search final assistant session messages by content"
+    ],
+    "ToGetUserState": [
+      "to fetch the full user state payload for a session",
+      "to get user state",
+      "to read stored user state by session key"
+    ]
+  }
+}

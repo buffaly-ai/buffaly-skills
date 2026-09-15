@@ -131,3 +131,6 @@
 - Design Decision: offline ontology critic orchestration is owned by the separate `lib/web-modules/OfflineOntologyCritic` package and should not be part of the normal Buffaly agent/session-management surface.
 
 - 2026-07-11 - Clarified ToCreateBuffalyChildSession guidance: child creation does not set models; create/attach first, inspect the provider catalog, then set the child session model with an exact catalog ModelName.
+
+## 2026-09-15 - Simple send versus queue
+- Immediate send is ToSendMessageToSession for running or idle targets; deferred queue remains explicit. Removed overly narrow active-only phrases and misleading progress-reporting alias.

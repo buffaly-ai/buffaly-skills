@@ -117,11 +117,12 @@ prototype ToSetBuffalySessionParent : SessionManagementSkillAction
 }
 
 [SemanticProgram.InfinitivePhrase("to queue a message to a session")]
+[SemanticProgram.InfinitivePhrase("to send a message to a session with queuing")]
 [SemanticProgram.InfinitivePhrase("to queue an instruction to a session")]
 [SemanticProgram.InfinitivePhrase("to queue an instruction for a child session")]
 prototype ToQueueMessageToSession : SessionManagementSkillAction
 {
-	Description = @"Queue exactly one new actionable assignment for later processing by the target session. This is never live delivery. Inter-session admission is limited to two queued messages; at the limit this returns Accepted=false without adding a row and directs the caller to inspect/replace a pending message with ToQueueLatestSessionMessage or use ToSteerActiveSession for an active turn. Never use this action for repeated progress/status or corrections to a pending handoff. The receipt includes Accepted, Message, QueueItemId, MessageKey, and canonical QueuedCount.";
+	Description = @"Queue exactly one new actionable assignment for later processing by the target session. This is never live delivery. Inter-session admission is limited to two queued messages; at the limit this returns Accepted=false without adding a row and directs the caller to inspect/replace a pending message with ToQueueLatestSessionMessage or use ToSendMessageToSession for immediate delivery. Never use this action for repeated progress/status or corrections to a pending handoff. The receipt includes Accepted, Message, QueueItemId, MessageKey, and canonical QueuedCount.";
 
 	function Execute(string sessionKey, string instruction) : QueuedInputResult
 	{
@@ -131,7 +132,6 @@ prototype ToQueueMessageToSession : SessionManagementSkillAction
 
 [SemanticProgram.InfinitivePhrase("to queue the latest message to a session")]
 [SemanticProgram.InfinitivePhrase("to replace a pending session message")]
-[SemanticProgram.InfinitivePhrase("to report coalescing progress to a parent session")]
 prototype ToQueueLatestSessionMessage : SessionManagementSkillAction
 {
 	Description = @"Explicitly queue one next-turn message for which only the latest pending value matters. sessionKey - target session. queueKey - stable logical queue identity reused by this source session. instruction - latest self-contained queued message. While an earlier message with the same source and queueKey is pending, this replaces that row even when the two-message inter-session limit is reached; a new queueKey at the limit is rejected without mutation. This is queued delivery, not session status mutation and not live steering. Critics/helpers must not emit a second parent update for the observed session's queueKey. The receipt includes Accepted, Message, QueueItemId, MessageKey, QueuedCount, and ReplacedPending.";
@@ -176,11 +176,12 @@ prototype ToClearAllQueuedSessionMessages : SessionManagementSkillAction
 	}
 }
 
-[SemanticProgram.InfinitivePhrase("to steer an active session")]
-[SemanticProgram.InfinitivePhrase("to inject an instruction into a running session turn")]
-prototype ToSteerActiveSession : SessionManagementSkillAction
+[SemanticProgram.InfinitivePhrase("to send a message to a session")]
+[SemanticProgram.InfinitivePhrase("to send an instruction to a session")]
+[SemanticProgram.InfinitivePhrase("to steer a session")]
+prototype ToSendMessageToSession : SessionManagementSkillAction
 {
-	Description = @"Inject exactly one steering instruction into the target session's currently active/running turn. sessionKey - target existing session key. instruction - steering correction for that active turn. This action never creates, loads, starts, resumes, or queues a session and never falls back to ToQueueMessageToSession. Unloaded, idle, queued-only, compacting, stopped, or completed targets return Accepted=false with a clear status and no queued item. Returns ActiveSessionSteerResult, not QueuedInputResult.";
+	Description = @"Send one message to an existing session using immediate steering. A running session receives the message in its current work; an idle or unloaded session is started to process it. Returns an admission receipt without waiting for the recipient to finish. Does not append a deferred next-turn queue item. Use ToQueueMessageToSession only when queuing is explicitly intended. Acceptance is not completion. Routine progress should stay in the sender's durable record.";
 
 	function Execute(string sessionKey, string instruction) : ActiveSessionSteerResult
 	{
