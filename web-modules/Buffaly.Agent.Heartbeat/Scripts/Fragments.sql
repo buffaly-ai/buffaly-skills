@@ -363,11 +363,11 @@ BEGIN
           OR (@BindingSelection = N'Available'
               AND
               (
-                  NULLIF(LTRIM(RTRIM(JSON_VALUE([f].[Data], '$.PrototypeName'))), N'') IS NOT NULL
+                  NULLIF(LTRIM(RTRIM(JSON_VALUE(CASE WHEN ISJSON([f].[Data]) = 1 THEN [f].[Data] ELSE N'{}' END, '$.PrototypeName'))), N'') IS NOT NULL
                   OR EXISTS
                   (
                       SELECT 1
-                      FROM OPENJSON(ISNULL(JSON_QUERY([f].[Data], '$.ScopedPrototypeBindings'), N'{}')) [bindings]
+                      FROM OPENJSON(ISNULL(JSON_QUERY(CASE WHEN ISJSON([f].[Data]) = 1 THEN [f].[Data] ELSE N'{}' END, '$.ScopedPrototypeBindings'), N'{}')) [bindings]
                       INNER JOIN OPENJSON(@LocalScopesJson) [scope]
                           ON [scope].[value] = [bindings].[key]
                   )
@@ -376,7 +376,7 @@ BEGIN
               AND EXISTS
               (
                   SELECT 1
-                  FROM OPENJSON(ISNULL(JSON_QUERY([f].[Data], '$.ScopedPrototypeBindings'), N'{}')) [bindings]
+                  FROM OPENJSON(ISNULL(JSON_QUERY(CASE WHEN ISJSON([f].[Data]) = 1 THEN [f].[Data] ELSE N'{}' END, '$.ScopedPrototypeBindings'), N'{}')) [bindings]
                   WHERE [bindings].[key] LIKE N'session:%'
                     AND NOT EXISTS
                     (
