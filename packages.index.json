@@ -21407,7 +21407,7 @@
       "PackageType": "WebModule",
       "Title": "Wiki",
       "Description": "Buffaly Web Module package for Wiki.",
-      "Version": "0.1.172",
+      "Version": "0.1.173",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/Buffaly.Agent.Wiki",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/Buffaly.Agent.Wiki",
@@ -21426,11 +21426,11 @@
         },
         {
           "Path": "BasicUtilities.dll",
-          "Sha256": "a2514631504765de9c5421bb139fec646c0040e36a8c3c85a82596ff956e5c41"
+          "Sha256": "92155fd19cea8999329d5a5dab5fb6f6264af3c7a54ffe3521756ea816849523"
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "f16acc6909a176d45b653f454448437ab0803bcf0b63598eeb9002f108d32825"
+          "Sha256": "99142536c55511bf3de308b4b55ed31b11915833469f1f053dff1336c85befbf"
         },
         {
           "Path": "Buffaly.Agent.Wiki.deps.json",
@@ -21438,19 +21438,19 @@
         },
         {
           "Path": "Buffaly.Agent.Wiki.dll",
-          "Sha256": "a6f8beb522a95e19ba19ccc742142e6c511362363feafe2324313abf8513f170"
+          "Sha256": "e7bfae34fd454d2a2c6ad0c78f610865b863e6cbde92078ad4d2851bdaf03b89"
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "7054b0c179eb71ec0ecc85fba3b4d7ea25c7daeb0040f37ffabe2a3a47a54673"
+          "Sha256": "097ac28d93fd0767631a4da0ce139a98efea47d0717bcc92efeff2b04e5bd999"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "29890cbd02effe55a87dfb0311fa37e4d20679ff89b6727650f13c277ca69ffe"
+          "Sha256": "2252ea8ae19746abd70ee5c8a7c01379e2091a6d9255fb9dc9f02e74df37b3fb"
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "3e03ef949c038974ceda3cf24a1472c81e03c699d0cdc46cc44d4bba2baae1e6"
+          "Sha256": "cff7f793ba3893b32c1ae4b8470f7d522178b8cb73a30aeb4b6260cf387339fd"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -21578,15 +21578,15 @@
         },
         {
           "Path": "RooTrax.Cache.dll",
-          "Sha256": "193e33de3c560004ddcb072f99cc0052865bb767e0bd78643c092734e0fbe8c0"
+          "Sha256": "f73cbf4c8912d97c80e55c9daa34026a6a968fa55a5bf2c7186a1a2b9ead87d3"
         },
         {
           "Path": "RooTrax.Common.DB.dll",
-          "Sha256": "1b746948cb93b7e65d9ba2806f49d2f68fc8c2651ed1ac57e0dc8f05c92f8725"
+          "Sha256": "3196d128456d2b93c3e2bcb5bc4f2e38a02b8d4d9cc8f2934494f2eec94545ba"
         },
         {
           "Path": "RooTrax.Common.dll",
-          "Sha256": "e0619b8b89f02cfcdfad82e0d2ef71beb9b932a728d7344fcfcf3207736964b2"
+          "Sha256": "defa36494ffec78b29183300bb4bc16068baf4cc2b447840b6192a0763cfea7b"
         },
         {
           "Path": "runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll",
@@ -21630,7 +21630,7 @@
         },
         {
           "Path": "Scripts/CopyMessageSp.sql",
-          "Sha256": "1f4e97bf64a347a058b4cee43bed9f979a525e5600457d0bb858c80b13443237"
+          "Sha256": "350f0764edc20918311a285dc5632f5d2e1df74e2c4b4b3b1bc423b73b30fb10"
         },
         {
           "Path": "Scripts/CopyPageLayoutSp.sql",
@@ -21894,7 +21894,7 @@
         },
         {
           "Path": "Scripts/InsertMessageSp.sql",
-          "Sha256": "4958d8d533dd1867d01e5676e8d1182d0c4f929835dddd1caba2c8bdc3fe7704"
+          "Sha256": "be6926bf4b38918a34c0b7381689122c4c871ac82185fd11c0cd9b9b0de5fbc5"
         },
         {
           "Path": "Scripts/InsertPageLayoutSp.sql",
@@ -21978,7 +21978,11 @@
         },
         {
           "Path": "Scripts/Messages.sql",
-          "Sha256": "92e1ab7295c0784efbf7863213ce4a9d0e47c58923ecf87ebe07fc6fcd834dc2"
+          "Sha256": "0b3fc620663e767d31fcff1d930e0498aed71c7bba41d018a785ad6b7b0229cd"
+        },
+        {
+          "Path": "Scripts/Messages_ClearSessionTimeline.sql",
+          "Sha256": "afb4c976ad7f0213be64ea2e4368794cd2ca6771c66e0c8ed348b51c58b09cb9"
         },
         {
           "Path": "Scripts/Messages_GetByMessageIDs_Sp.sql",
@@ -22015,6 +22019,10 @@
         {
           "Path": "Scripts/Messages_GetTurnDeltasSinceBySessionIDAndMessageKey_Sp.sql",
           "Sha256": "22ec70a67491ff30b51ea57b767eafc9f6f8664cf20b2736ce12de4eb13ab811"
+        },
+        {
+          "Path": "Scripts/Messages_PersistSessionCompaction.sql",
+          "Sha256": "2e965285706b66070f55ea07954caeb0433072e9b8384b74e5b093d9612cc0b6"
         },
         {
           "Path": "Scripts/PageLayouts.sql",
@@ -22138,7 +22146,7 @@
         },
         {
           "Path": "Scripts/Turns.sql",
-          "Sha256": "36611c4719ef670e305e67575da64d4c43ca3a1d2b2b376b5dcfc49dddf1e463"
+          "Sha256": "7d9378ff451930a06453c57894c10f954f17e3abcdcd859e8ae5b0a84c33877e"
         },
         {
           "Path": "Scripts/Turns_GetBySessionIDTurnKeys_Sp.sql",
@@ -22157,6 +22165,10 @@
           "Sha256": "30410e5cf134a0d0ea2d072c7bbbacbb915fac99d25f310299ff3c2b90877a99"
         },
         {
+          "Path": "Scripts/Turns_ReadIndex.sql",
+          "Sha256": "cb9a9f97b93c24e499920273da2f6927c9203e61913488dee0857e38d335efa1"
+        },
+        {
           "Path": "Scripts/UpdateFeatureDataSp.sql",
           "Sha256": "7d8f4622ab7ce06da233b6e0ee0223e02b96a1e9bdb6c22744bb3f1cc3c6d048"
         },
@@ -22170,7 +22182,7 @@
         },
         {
           "Path": "Scripts/UpdateMessageCompactionEpochAtomicSp.sql",
-          "Sha256": "81098d236ac277ae445fc4f9f12b7c54f3e1e42c50dbc45690d7d7086353fd12"
+          "Sha256": "88fe359e3ba19d53bf7b1cc63f76fa4c1165bb71410db88c6b2ade712bd57602"
         },
         {
           "Path": "Scripts/UpdateMessageDataSp.sql",
@@ -22182,7 +22194,7 @@
         },
         {
           "Path": "Scripts/UpdateMessageSp.sql",
-          "Sha256": "c0f9415f2ccf9d3b81c08edc140df33e82deb2a62f83ec9b0190459f33343fae"
+          "Sha256": "0be403aa47df04ea8e74d5cae2ea716b0e44c9545f73f5c3f8a0456420a80e10"
         },
         {
           "Path": "Scripts/UpdateMessageToolArgumentsSp.sql",
