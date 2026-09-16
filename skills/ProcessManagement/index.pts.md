@@ -1,5 +1,9 @@
 # index.pts Change History
 
+## Reject same-session interval recursion (2026-09-16)
+- Routed `ToRunIntervalProcessNow` through the session-aware runtime boundary using the authoritative `ToolInvocationContext` session key.
+- A manual trigger now fails before claim/dispatch when the target interval handler is configured to re-enter the caller's own session, preventing the proven runtime-gate self-deadlock without changing intentional scheduler timeout suppression.
+
 ## Split external and interval run-now actions (2026-08-27)
 - Clarified that `ToTriggerScheduledTaskNow` accepts only `ExternalScheduledTask` rows and directs interval callers to the dedicated action.
 - Added `ToRunIntervalProcessNow(processID)`, a thin typed wrapper over the runtime interval-process bridge.

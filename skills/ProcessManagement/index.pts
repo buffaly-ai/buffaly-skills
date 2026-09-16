@@ -2,6 +2,7 @@ import Buffaly.Business Buffaly.Sessions.Processes Processes;
 import Buffaly.Business Buffaly.Sessions.AddExternalScheduledTaskContract AddExternalScheduledTaskContract;
 import Buffaly.Business Buffaly.Sessions.AddRecurringProcessContract AddRecurringProcessContract;
 import Buffaly.Business Buffaly.Sessions.TriggerScheduledProcessContract TriggerScheduledProcessContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.ToolInvocationContext ToolInvocationContext;
 
 prototype ProcessManagementSkillAction : OpsAction
 {
@@ -157,7 +158,7 @@ prototype ToRunIntervalProcessNow : ProcessManagementSkillAction
 
 	function Execute(int processID) : string
 	{
-		return JsonUtil.ToFriendlyJSON(new JsonValue(Processes.RunIntervalProcessNow(processID, "ProtoScriptProcessManagementSkill"))).ToString();
+		return JsonUtil.ToFriendlyJSON(new JsonValue(Processes.RunIntervalProcessNowFromSession(processID, "ProtoScriptProcessManagementSkill", ToolInvocationContext.RequireSessionKey()))).ToString();
 	}
 }
 
