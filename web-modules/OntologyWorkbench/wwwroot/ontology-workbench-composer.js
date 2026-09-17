@@ -105,32 +105,23 @@
     }
 
     function mount() {
-        if (document.getElementById("btnOntologyWorkbenchComposer")) {
+        if (!window.BuffalyComposerOverflow || typeof window.BuffalyComposerOverflow.register !== "function") {
             return;
         }
-        const actions = document.querySelector(".ops-v2-composer-actions");
-        const center = actions && actions.querySelector(".ops-v2-composer-actions-center");
-        if (!actions || !center) {
-            return;
-        }
-        const button = document.createElement("button");
-        button.id = "btnOntologyWorkbenchComposer";
-        button.type = "button";
-        button.className = "ops-v2-upload-btn ontology-workbench-composer-btn";
-        button.title = "Open composer text in Ontology Workbench";
-        button.setAttribute("aria-label", button.title);
-        button.innerHTML = '<i class="bi bi-diagram-3" aria-hidden="true"></i><span class="visually-hidden">Ontology Workbench</span>';
-        button.style.color = "#7c3aed";
-        button.style.marginRight = "0.45rem";
-        button.addEventListener("click", function () {
-            try {
-                openWorkbench();
-            } catch (error) {
-                button.title = error.message;
-                window.alert(error.message);
+        window.BuffalyComposerOverflow.register({
+            id: "ontology-workbench",
+            order: 20,
+            label: "Open in Ontology Workbench",
+            iconHtml: '<i class="bi bi-diagram-3" aria-hidden="true"></i>',
+            isAvailable: function () { return !!document.getElementById("txtOpsV2Prompt"); },
+            run: function () {
+                try {
+                    openWorkbench();
+                } catch (error) {
+                    window.alert(error.message);
+                }
             }
         });
-        actions.insertBefore(button, center);
     }
 
     if (document.readyState === "loading") {

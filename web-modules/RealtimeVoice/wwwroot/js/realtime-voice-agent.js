@@ -176,25 +176,16 @@
 	}
 	function injectButton() {
 		ensureStyles();
-		if (byId("realtimeVoiceVoiceButton")) return true;
-		const actions = document.querySelector(".ops-v2-composer-actions");
-		if (!actions) return false;
-		actions.classList.add("realtime-voice-actions-host");
-		let left = actions.querySelector(".realtime-voice-actions-left");
-		if (!left) {
-			left = document.createElement("div");
-			left.className = "realtime-voice-actions-left";
-			actions.insertBefore(left, actions.firstChild);
-		}
-		const voiceButton = document.createElement("button");
-		voiceButton.id = "realtimeVoiceVoiceButton";
-		voiceButton.className = "realtime-voice-button realtime-voice-voice-button";
-		voiceButton.type = "button";
-		voiceButton.title = "Talk about this session";
-		voiceButton.setAttribute("aria-label", "Talk about this session");
-		voiceButton.innerHTML = "<span aria-hidden=\"true\">⚡</span>";
-		voiceButton.addEventListener("click", function (event) { event.preventDefault(); runBoundRealtimeVoice(); });
-		left.appendChild(voiceButton);
+		if (!window.BuffalyComposerOverflow || typeof window.BuffalyComposerOverflow.register !== "function") return false;
+		window.BuffalyComposerOverflow.register({
+			id: "realtime-voice",
+			order: 10,
+			trigger: "lightning",
+			label: "Talk about this session",
+			iconHtml: "<span aria-hidden=\"true\">⚡</span>",
+			isAvailable: function () { return !byId("realtimeVoiceRealtimePlugin"); },
+			run: function () { runBoundRealtimeVoice(); }
+		});
 		return true;
 	}
 
