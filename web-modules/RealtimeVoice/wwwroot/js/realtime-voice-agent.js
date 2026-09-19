@@ -61,8 +61,6 @@
 		stopTimer = null;
 		byId("realtimeVoiceRealtimePlugin")?.remove();
 		byId("realtimeVoiceCompactControls")?.remove();
-		document.querySelector(".realtime-voice-actions-left")?.remove();
-		document.querySelector(".ops-v2-composer-actions")?.classList.remove("realtime-voice-actions-host");
 		activeFrame = null;
 		frameReady = false;
 		compactStopRequested = false;
@@ -158,7 +156,7 @@
 		controls.className = "realtime-voice-compact-controls";
 		controls.dataset.state = "starting";
 		controls.innerHTML = "<span id=\"realtimeVoiceCompactOrb\" class=\"realtime-voice-compact-orb\" role=\"status\" aria-live=\"polite\" aria-label=\"Realtime voice: starting\"></span><button id=\"realtimeVoiceCompactStop\" class=\"realtime-voice-compact-stop\" type=\"button\">Stop</button><button id=\"realtimeVoiceCompactDiagnostics\" class=\"realtime-voice-compact-diagnostics\" type=\"button\" title=\"Open realtime voice diagnostics\" aria-label=\"Open realtime voice diagnostics\" aria-expanded=\"false\">?</button>";
-		ensureCallControlsHost()?.appendChild(controls);
+		byId("realtimeVoiceVoiceButton")?.parentNode?.appendChild(controls);
 		controls.querySelector("#realtimeVoiceCompactStop").addEventListener("click", () => stopBoundRealtimeVoice("user-stop"));
 		controls.querySelector("#realtimeVoiceCompactDiagnostics").addEventListener("click", toggleDiagnostics);
 		activeFrame = frame;
@@ -176,9 +174,11 @@
 		const host = byId("realtimeVoiceRealtimePlugin");
 		if (host && host.dataset.boundSessionKey !== getActiveSessionKey()) closeBoundRealtimeVoice();
 	}
-	function ensureCallControlsHost() {
+	function injectButton() {
+		ensureStyles();
+		if (byId("realtimeVoiceVoiceButton")) return true;
 		const actions = document.querySelector(".ops-v2-composer-actions");
-		if (!actions) return null;
+		if (!actions) return false;
 		actions.classList.add("realtime-voice-actions-host");
 		let left = actions.querySelector(".realtime-voice-actions-left");
 		if (!left) {
@@ -186,22 +186,15 @@
 			left.className = "realtime-voice-actions-left";
 			actions.insertBefore(left, actions.firstChild);
 		}
-		return left;
-	}
-
-	function injectButton() {
-		ensureStyles();
-		if (window.__buffalyRealtimeVoiceOverflowRegistered === true) return true;
-		if (!window.BuffalyComposerOverflow || typeof window.BuffalyComposerOverflow.register !== "function") return false;
-		window.BuffalyComposerOverflow.register({
-			id: "realtime-voice",
-			order: 10,
-			label: "Talk about this session",
-			iconHtml: "<span aria-hidden=\"true\">⚡</span>",
-			isAvailable: function () { return !byId("realtimeVoiceRealtimePlugin"); },
-			run: function () { runBoundRealtimeVoice(); }
-		});
-		window.__buffalyRealtimeVoiceOverflowRegistered = true;
+		const voiceButton = document.createElement("button");
+		voiceButton.id = "realtimeVoiceVoiceButton";
+		voiceButton.className = "realtime-voice-button realtime-voice-voice-button";
+		voiceButton.type = "button";
+		voiceButton.title = "Talk about this session";
+		voiceButton.setAttribute("aria-label", "Talk about this session");
+		voiceButton.innerHTML = "<span aria-hidden=\"true\">⚡</span>";
+		voiceButton.addEventListener("click", function (event) { event.preventDefault(); runBoundRealtimeVoice(); });
+		left.appendChild(voiceButton);
 		return true;
 	}
 
