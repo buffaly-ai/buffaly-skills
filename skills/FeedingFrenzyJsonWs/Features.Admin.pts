@@ -1,0 +1,24 @@
+[SemanticProgram.InfinitivePhrase("to get a Feeding Frenzy feature by name")]
+prototype Features_GetFeatureByFeatureName : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"Gets one Feeding Frenzy feature by exact FeatureName through the generated Features API.";
+	function Execute(FeedingFrenzyJsonWsService service, string FeatureName) : string
+	{
+		JsonObject args = new JsonObject();
+		args["FeatureName"] = FeatureName;
+		return service.CallBusinessRoute("features/get-feature-by-feature-name", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to update Feeding Frenzy feature data")]
+prototype Features_UpdateFeatureData : FeedingFrenzyJsonWsAdminGuardedWriteAction
+{
+	Description = @"Updates only one Feeding Frenzy feature's Data JSON through the generated Features API.";
+	function Execute(FeedingFrenzyJsonWsService service, int FeatureID, string Data) : string
+	{
+		JsonObject args = new JsonObject();
+		args["FeatureID"] = FeatureID;
+		args["Data"] = Data;
+		return service.CallBusinessRoute("features/update-feature-data", args);
+	}
+}

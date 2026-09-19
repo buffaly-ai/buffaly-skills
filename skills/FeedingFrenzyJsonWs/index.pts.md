@@ -1,5 +1,10 @@
 # FeedingFrenzyJsonWs ProtoScript Change History
 
+## Expose feature data read and guarded update actions (2026-09-19)
+- Added `Features_GetFeatureByFeatureName` as a thin wrapper over `features/get-feature-by-feature-name` with an explicit service binding.
+- Added `Features_UpdateFeatureData` as an explicitly loaded guarded write wrapper over `features/update-feature-data` with an explicit service binding.
+- The update route changes only `Data`; callers read first, preserve unrelated JSON keys, and read back after the write.
+
 ## Configure one session-owned user authorization (2026-08-21)
 - Added `ConfigureAuthorization(BaseUrl, AuthorizationToken)` so the Buffaly web module can initialize the existing service instance inside one user's live ProtoScript session without persisting the token or writing it to UserSecrets.
 - Added `TokenIsAuthorizationToken`; configured embedded sessions call the existing direct `JsonWsHelper.CallJsonRoute(...)` transport with the supplied Bearer token, while untouched `#Remote` and `#Local` bindings preserve their existing `CallJsonRouteSecure(...)` secret-key behavior.
