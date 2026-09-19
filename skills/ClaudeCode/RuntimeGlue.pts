@@ -1,0 +1,94 @@
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.RuntimeUiEventOutputContract RuntimeUiEventOutputContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.LiveToolInputCollectionRequestContract LiveToolInputCollectionRequestContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.LiveToolInputCollectionResultContract LiveToolInputCollectionResultContract;
+
+function ToClaudeNativeContextJson(string childScope, string model, string workingDirectory) : string
+{
+	return ClaudeCodeTools.CreateContextJson(_opsAgent.GetSessionKeyOrEmpty(), _opsAgent.GetCurrentSessionDirectory(), _opsAgent.GetCurrentProjectDirectory(), _opsAgent.GetCurrentToolInvocationIdOrEmpty(), _opsAgent.GetCurrentToolMessageKeyOrEmpty(), _opsAgent.GetCurrentTurnKeyOrEmpty(), childScope, model, workingDirectory);
+}
+
+function ToClaudeNativeTurnJson(string childScope, string prompt, string model, string system, int timeoutSeconds, string workingDirectory, bool ephemeral) : string
+{
+	return ClaudeCodeTools.CreateTurnRequestJson(_opsAgent.GetSessionKeyOrEmpty(), _opsAgent.GetCurrentSessionDirectory(), _opsAgent.GetCurrentProjectDirectory(), _opsAgent.GetCurrentToolInvocationIdOrEmpty(), _opsAgent.GetCurrentToolMessageKeyOrEmpty(), _opsAgent.GetCurrentTurnKeyOrEmpty(), childScope, prompt, model, system, timeoutSeconds, workingDirectory, ephemeral);
+}
+
+function ToClaudeNativeEmit(string text) : string
+{
+	if (StringUtil.IsEmpty(text))
+		return "";
+	_opsAgent.EmitRuntimeUiOutput(new RuntimeUiEventOutputContract
+	{
+		EventType = "tool-channel-output",
+		Stream = "stdout",
+		ToolInvocationId = _opsAgent.GetCurrentToolInvocationIdOrEmpty(),
+		MessageKey = _opsAgent.GetCurrentToolMessageKeyOrEmpty(),
+		Text = text,
+		Command = "Claude Code"
+	});
+	return "";
+}
+
+function ToClaudeNativeRunHandle(string handle) : string
+{
+	string presented = "";
+	while (true)
+	{
+		string batch = ClaudeCodeTools.Poll(handle, 250);
+		ToClaudeNativeEmit(ClaudeCodeTools.DescribePollEvents(batch));
+		string interactionId = ClaudeCodeTools.GetPollInteractionId(batch);
+		if (!StringUtil.IsEmpty(interactionId) && interactionId != presented)
+		{
+			presented = interactionId;
+			string messageKey = _opsAgent.GetCurrentToolMessageKeyOrEmpty();
+			if (StringUtil.IsEmpty(messageKey))
+				messageKey = "claude-native-interaction";
+			string toolInvocationId = _opsAgent.GetCurrentToolInvocationIdOrEmpty();
+			if (StringUtil.IsEmpty(toolInvocationId))
+				toolInvocationId = "claude-native-interaction";
+			LiveToolInputCollectionResultContract inputResult = _opsAgent.CollectLiveToolInput(new LiveToolInputCollectionRequestContract
+			{
+				InputKind = "line",
+				Prompt = ClaudeCodeTools.GetPollInteractionPrompt(batch),
+				DisplayMode = "focused-popup",
+				Title = "Claude Code decision",
+				Required = true,
+				IsSensitive = false,
+				TimeoutSeconds = 120,
+				ToolInvocationId = toolInvocationId,
+				MessageKey = messageKey
+			});
+			if (inputResult.Status == "submitted")
+			{
+				string choice = inputResult.Value;
+				if (StringUtil.IsEmpty(choice))
+					choice = "deny";
+				int generation = ClaudeCodeTools.GetPollInteractionGeneration(batch);
+				ClaudeCodeTools.Reply(handle, interactionId, ClaudeCodeTools.CreateInteractionReplyJson(choice, generation));
+			}
+			else
+			{
+				ClaudeCodeTools.Cancel(handle);
+			}
+		}
+		if (ClaudeCodeTools.IsTerminalPoll(batch))
+		{
+			string resultJson = ClaudeCodeTools.GetPollResultJson(batch);
+			if (StringUtil.IsEmpty(resultJson))
+				resultJson = ClaudeCodeTools.GetResult(handle);
+			return ClaudeCodeTools.FormatLegacyResult(resultJson);
+		}
+	}
+	return "Error: native run ended without a terminal result.";
+}
+
+function ToClaudeNativeTurn(string childScope, string prompt, string model, string system, int timeoutSeconds, string workingDirectory, bool ephemeral) : string
+{
+	if (timeoutSeconds <= 0)
+		timeoutSeconds = 3600;
+	string requestJson = ToClaudeNativeTurnJson(childScope, prompt, model, system, timeoutSeconds, workingDirectory, ephemeral);
+	string handle = ClaudeCodeTools.BeginTurn(requestJson, _opsAgent.GetCurrentOperationCancellationToken());
+	string result = "";
+	result = ToClaudeNativeRunHandle(handle);
+	ClaudeCodeTools.Release(handle);
+	return result;
+}

@@ -1,0 +1,94 @@
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.RuntimeUiEventOutputContract RuntimeUiEventOutputContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.LiveToolInputCollectionRequestContract LiveToolInputCollectionRequestContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.LiveToolInputCollectionResultContract LiveToolInputCollectionResultContract;
+
+function ToAntigravityNativeContextJson(string childScope, string model, string workingDirectory) : string
+{
+	return AntigravityTools.CreateContextJson(_opsAgent.GetSessionKeyOrEmpty(), _opsAgent.GetCurrentSessionDirectory(), _opsAgent.GetCurrentProjectDirectory(), _opsAgent.GetCurrentToolInvocationIdOrEmpty(), _opsAgent.GetCurrentToolMessageKeyOrEmpty(), _opsAgent.GetCurrentTurnKeyOrEmpty(), childScope, model, workingDirectory);
+}
+
+function ToAntigravityNativeTurnJson(string childScope, string prompt, string model, string system, int timeoutSeconds, string workingDirectory, bool ephemeral) : string
+{
+	return AntigravityTools.CreateTurnRequestJson(_opsAgent.GetSessionKeyOrEmpty(), _opsAgent.GetCurrentSessionDirectory(), _opsAgent.GetCurrentProjectDirectory(), _opsAgent.GetCurrentToolInvocationIdOrEmpty(), _opsAgent.GetCurrentToolMessageKeyOrEmpty(), _opsAgent.GetCurrentTurnKeyOrEmpty(), childScope, prompt, model, system, timeoutSeconds, workingDirectory, ephemeral);
+}
+
+function ToAntigravityNativeEmit(string text) : string
+{
+	if (StringUtil.IsEmpty(text))
+		return "";
+	_opsAgent.EmitRuntimeUiOutput(new RuntimeUiEventOutputContract
+	{
+		EventType = "tool-channel-output",
+		Stream = "stdout",
+		ToolInvocationId = _opsAgent.GetCurrentToolInvocationIdOrEmpty(),
+		MessageKey = _opsAgent.GetCurrentToolMessageKeyOrEmpty(),
+		Text = text,
+		Command = "Antigravity"
+	});
+	return "";
+}
+
+function ToAntigravityNativeRunHandle(string handle) : string
+{
+	string presented = "";
+	while (true)
+	{
+		string batch = AntigravityTools.Poll(handle, 250);
+		ToAntigravityNativeEmit(AntigravityTools.DescribePollEvents(batch));
+		string interactionId = AntigravityTools.GetPollInteractionId(batch);
+		if (!StringUtil.IsEmpty(interactionId) && interactionId != presented)
+		{
+			presented = interactionId;
+			string messageKey = _opsAgent.GetCurrentToolMessageKeyOrEmpty();
+			if (StringUtil.IsEmpty(messageKey))
+				messageKey = "antigravity-native-interaction";
+			string toolInvocationId = _opsAgent.GetCurrentToolInvocationIdOrEmpty();
+			if (StringUtil.IsEmpty(toolInvocationId))
+				toolInvocationId = "antigravity-native-interaction";
+			LiveToolInputCollectionResultContract inputResult = _opsAgent.CollectLiveToolInput(new LiveToolInputCollectionRequestContract
+			{
+				InputKind = "line",
+				Prompt = AntigravityTools.GetPollInteractionPrompt(batch),
+				DisplayMode = "focused-popup",
+				Title = "Antigravity decision",
+				Required = true,
+				IsSensitive = false,
+				TimeoutSeconds = 600,
+				ToolInvocationId = toolInvocationId,
+				MessageKey = messageKey
+			});
+			if (inputResult.Status == "submitted")
+			{
+				string choice = inputResult.Value;
+				if (StringUtil.IsEmpty(choice))
+					choice = "deny";
+				int generation = AntigravityTools.GetPollInteractionGeneration(batch);
+				AntigravityTools.Reply(handle, interactionId, AntigravityTools.CreateInteractionReplyJson(choice, generation));
+			}
+			else
+			{
+				AntigravityTools.Cancel(handle);
+			}
+		}
+		if (AntigravityTools.IsTerminalPoll(batch))
+		{
+			string resultJson = AntigravityTools.GetPollResultJson(batch);
+			if (StringUtil.IsEmpty(resultJson))
+				resultJson = AntigravityTools.GetResult(handle);
+			return AntigravityTools.FormatLegacyResult(resultJson);
+		}
+	}
+	return "Error: native run ended without a terminal result.";
+}
+
+function ToAntigravityNativeTurn(string childScope, string prompt, string model, string system, int timeoutSeconds, string workingDirectory, bool ephemeral) : string
+{
+	if (timeoutSeconds <= 0)
+		timeoutSeconds = 3600;
+	string requestJson = ToAntigravityNativeTurnJson(childScope, prompt, model, system, timeoutSeconds, workingDirectory, ephemeral);
+	string handle = AntigravityTools.BeginTurn(requestJson, _opsAgent.GetCurrentOperationCancellationToken());
+	string result = "";
+	result = ToAntigravityNativeRunHandle(handle);
+	AntigravityTools.Release(handle);
+	return result;
+}

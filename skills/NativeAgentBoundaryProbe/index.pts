@@ -1,0 +1,165 @@
+reference Buffaly.Tools.BoundaryProbe;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.RuntimeUiEventOutputContract RuntimeUiEventOutputContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.LiveToolInputCollectionRequestContract LiveToolInputCollectionRequestContract;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.LiveToolInputCollectionResultContract LiveToolInputCollectionResultContract;
+import Buffaly.Tools.BoundaryProbe Buffaly.Tools.BoundaryProbe.BoundaryProbe BoundaryProbe;
+
+prototype NativeAgentBoundaryProbeSkillAction : OpsAction
+{
+	Description = @"Independent C# tool boundary diagnostics. Does not invoke Claude or Antigravity.";
+}
+
+[SemanticEntity("native agent boundary probe")]
+prototype NativeAgentBoundaryProbeSkill : SkillEntity, CoreEntity
+{
+	Description = "Tests an independently built DLL skill and native .NET cancellation-token marshalling.";
+	ActionRoot = NativeAgentBoundaryProbeSkillAction;
+}
+
+function NativeAgentBoundaryProbeCaptureIdentityJson() : string
+{
+	return "{\"sessionKey\":\"" + _opsAgent.GetSessionKeyOrEmpty() + "\",\"toolInvocationId\":\"" + _opsAgent.GetCurrentToolInvocationIdOrEmpty() + "\",\"messageKey\":\"" + _opsAgent.GetCurrentToolMessageKeyOrEmpty() + "\",\"turnKey\":\"" + _opsAgent.GetCurrentTurnKeyOrEmpty() + "\"}";
+}
+
+[SemanticProgram.InfinitivePhrase("to describe the native tool boundary probe")]
+prototype ToDescribeNativeToolBoundaryProbe : NativeAgentBoundaryProbeSkillAction
+{
+	function Execute() : string
+	{
+		return BoundaryProbe.Describe();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to echo through the native tool boundary probe")]
+prototype ToEchoNativeToolBoundaryProbe : NativeAgentBoundaryProbeSkillAction
+{
+	Description = "Round-trips the supplied text through the independent DLL JSON echo. Diagnostic only.";
+
+	function Execute(string value) : string
+	{
+		return BoundaryProbe.Echo(value);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to start the native tool cancellation probe")]
+prototype ToStartNativeToolCancellationProbe : NativeAgentBoundaryProbeSkillAction
+{
+	Description = "Waits up to 60 seconds. Press the normal Buffaly Stop button to test cancellation. This is a diagnostic, not a vendor call.";
+
+	function Execute() : string
+	{
+		string runHandle = BoundaryProbe.BeginWithIdentity("Buffaly cancellation-token probe", 60000, _opsAgent.GetCurrentOperationCancellationToken(), NativeAgentBoundaryProbeCaptureIdentityJson());
+		_opsAgent.EmitRuntimeUiOutput(new RuntimeUiEventOutputContract
+		{
+			EventType = "tool-channel-output",
+			Stream = "stdout",
+			ToolInvocationId = _opsAgent.GetCurrentToolInvocationIdOrEmpty(),
+			MessageKey = _opsAgent.GetCurrentToolMessageKeyOrEmpty(),
+			Text = "Diagnostic probe handle: " + runHandle + "\nPress Stop; then use the read-result diagnostic with this handle in the same worker process.",
+			Command = "Native tool boundary probe"
+		});
+		while (!BoundaryProbe.IsTerminal(runHandle))
+		{
+			BoundaryProbe.Poll(runHandle, 250);
+		}
+		string result = BoundaryProbe.GetResult(runHandle);
+		BoundaryProbe.Release(runHandle);
+		return result;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to read the native tool boundary probe result")]
+prototype ToReadNativeToolBoundaryProbeResult : NativeAgentBoundaryProbeSkillAction
+{
+	Description = "Diagnostic-only runHandle from the preceding probe's tool output. Reads and releases completed evidence in the same worker process.";
+
+	function Execute(string runHandle) : string
+	{
+		if (!BoundaryProbe.IsTerminal(runHandle))
+			return BoundaryProbe.Poll(runHandle, 0);
+		string result = BoundaryProbe.GetResult(runHandle);
+		BoundaryProbe.Release(runHandle);
+		return result;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to run the native tool live input probe")]
+prototype ToRunNativeToolLiveInputProbe : NativeAgentBoundaryProbeSkillAction
+{
+	Description = "Starts independent C# work, then CollectLiveToolInput while C# continues ticking. Diagnostic only.";
+
+	function Execute() : string
+	{
+		string identity = NativeAgentBoundaryProbeCaptureIdentityJson();
+		string runHandle = BoundaryProbe.BeginWithIdentity("live-input-probe", 30000, _opsAgent.GetCurrentOperationCancellationToken(), identity);
+		int ticksBefore = BoundaryProbe.GetTickCount(runHandle);
+		string messageKey = _opsAgent.GetCurrentToolMessageKeyOrEmpty();
+		if (StringUtil.IsEmpty(messageKey))
+			messageKey = "native-boundary-probe-live-input";
+		string toolInvocationId = _opsAgent.GetCurrentToolInvocationIdOrEmpty();
+		if (StringUtil.IsEmpty(toolInvocationId))
+			toolInvocationId = "native-boundary-probe-live-input";
+		LiveToolInputCollectionResultContract inputResult = _opsAgent.CollectLiveToolInput(new LiveToolInputCollectionRequestContract
+		{
+			InputKind = "line",
+			Prompt = "Native-agent boundary live-input probe. Type allow.",
+			DisplayMode = "focused-popup",
+			Title = "Boundary probe live input",
+			Required = true,
+			IsSensitive = false,
+			TimeoutSeconds = 20,
+			ToolInvocationId = toolInvocationId,
+			MessageKey = messageKey
+		});
+		int ticksAfter = BoundaryProbe.GetTickCount(runHandle);
+		BoundaryProbe.Cancel(runHandle);
+		while (!BoundaryProbe.IsTerminal(runHandle))
+		{
+			BoundaryProbe.Poll(runHandle, 250);
+		}
+		string probeResult = BoundaryProbe.GetResult(runHandle);
+		BoundaryProbe.Release(runHandle);
+		return "{\"kind\":\"boundary-probe\",\"liveInputStatus\":\"" + inputResult.Status + "\",\"liveInputValue\":\"" + inputResult.Value + "\",\"ticksBefore\":" + ticksBefore.ToString() + ",\"ticksAfter\":" + ticksAfter.ToString() + ",\"capturedIdentity\":" + identity + ",\"probe\":" + probeResult + "}";
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to abort the native tool boundary probe without release")]
+prototype ToAbortNativeToolBoundaryProbeWithoutRelease : NativeAgentBoundaryProbeSkillAction
+{
+	Description = "Begins a probe then throws before Release so the watchdog must dispose the run. Diagnostic only.";
+
+	function Execute() : string
+	{
+		string runHandle = BoundaryProbe.BeginWithIdentity("abort-without-release", 60000, _opsAgent.GetCurrentOperationCancellationToken(), NativeAgentBoundaryProbeCaptureIdentityJson());
+		_opsAgent.EmitRuntimeUiOutput(new RuntimeUiEventOutputContract
+		{
+			EventType = "tool-channel-output",
+			Stream = "stdout",
+			ToolInvocationId = _opsAgent.GetCurrentToolInvocationIdOrEmpty(),
+			MessageKey = _opsAgent.GetCurrentToolMessageKeyOrEmpty(),
+			Text = "Abort-without-release handle: " + runHandle,
+			Command = "Native tool boundary probe"
+		});
+		return runHandle;
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to capture native tool boundary probe identity")]
+prototype ToCaptureNativeToolBoundaryProbeIdentity : NativeAgentBoundaryProbeSkillAction
+{
+	Description = "Starts a short probe with captured UI identity and returns it. Diagnostic only.";
+
+	function Execute() : string
+	{
+		string identity = NativeAgentBoundaryProbeCaptureIdentityJson();
+		string runHandle = BoundaryProbe.BeginWithIdentity("identity-capture", 1500, _opsAgent.GetCurrentOperationCancellationToken(), identity);
+		while (!BoundaryProbe.IsTerminal(runHandle))
+		{
+			BoundaryProbe.Poll(runHandle, 250);
+		}
+		string result = BoundaryProbe.GetResult(runHandle);
+		string captured = BoundaryProbe.GetCapturedIdentity(runHandle);
+		BoundaryProbe.Release(runHandle);
+		return "{\"kind\":\"boundary-probe\",\"beginIdentity\":" + identity + ",\"storedIdentity\":" + captured + ",\"probe\":" + result + "}";
+	}
+}
