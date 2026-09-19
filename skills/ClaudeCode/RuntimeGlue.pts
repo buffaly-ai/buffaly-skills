@@ -81,6 +81,22 @@ function ToClaudeNativeRunHandle(string handle) : string
 	return "Error: native run ended without a terminal result.";
 }
 
+function ToClaudeNativeRunHandleJson(string handle) : string
+{
+	while (true)
+	{
+		string batch = ClaudeCodeTools.Poll(handle, 250);
+		if (ClaudeCodeTools.IsTerminalPoll(batch))
+		{
+			string resultJson = ClaudeCodeTools.GetPollResultJson(batch);
+			if (StringUtil.IsEmpty(resultJson))
+				resultJson = ClaudeCodeTools.GetResult(handle);
+			return resultJson;
+		}
+	}
+	return "";
+}
+
 function ToClaudeNativeTurn(string childScope, string prompt, string model, string system, int timeoutSeconds, string workingDirectory, bool ephemeral) : string
 {
 	if (timeoutSeconds <= 0)

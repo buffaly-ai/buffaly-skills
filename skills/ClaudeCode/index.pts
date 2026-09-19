@@ -217,6 +217,24 @@ prototype ToGetClaudeConversationState : ClaudeCodeSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to get claude usage stats")]
+[SemanticProgram.InfinitivePhrase("to check claude usage")]
+prototype ToGetClaudeUsageStats : ClaudeCodeSkillAction
+{
+	Description = @"Returns the latest available Claude account, context, turn, and session usage telemetry. stateScope optionally selects a delegated Claude conversation. Unsupported fields are returned as partial telemetry and never fail normal Claude calls.";
+
+	function Execute(string stateScope) : string
+	{
+		if (StringUtil.IsEmpty(stateScope))
+			stateScope = "default";
+		string contextJson = ToClaudeNativeContextJson(stateScope, "", "");
+		string handle = ClaudeCodeTools.BeginUsage(contextJson, _opsAgent.GetCurrentOperationCancellationToken());
+		string resultJson = ToClaudeNativeRunHandleJson(handle);
+		ClaudeCodeTools.Release(handle);
+		return ClaudeCodeTools.GetResultText(resultJson);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to set claude model")]
 [SemanticProgram.InfinitivePhrase("to switch claude model")]
 [SemanticProgram.InfinitivePhrase("to set ant model")]

@@ -146,6 +146,20 @@ prototype ToGetAntigravityConversationState : AntigravitySkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to get antigravity usage stats")]
+[SemanticProgram.InfinitivePhrase("to check antigravity usage")]
+prototype ToGetAntigravityUsageStats : AntigravitySkillAction
+{
+	Description = @"Returns the latest available ACP context, cost, turn usage, and rate-limit telemetry. stateScope optionally selects a delegated child scope. Unsupported telemetry returns partial JSON and never fails normal Antigravity calls.";
+
+	function Execute(string stateScope) : string
+	{
+		if (StringUtil.IsEmpty(stateScope))
+			stateScope = "default";
+		return AntigravityTools.GetUsageStats(ToAntigravityNativeContextJson(stateScope, "", ""));
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to set antigravity model")]
 [SemanticProgram.InfinitivePhrase("to switch antigravity model")]
 prototype ToSetAntigravityModel : AntigravitySkillAction
