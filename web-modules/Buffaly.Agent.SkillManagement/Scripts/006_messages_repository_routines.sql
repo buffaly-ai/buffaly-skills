@@ -117,8 +117,6 @@ DROP FUNCTION IF EXISTS messages_get_by_session_iddate_range_sp(integer,timestam
 DROP FUNCTION IF EXISTS "Messages_GetBySessionIDDateRangeSp"(integer,timestamp,timestamp,integer);
 DROP FUNCTION IF EXISTS update_messages_compaction_epoch_by_message_keys_json_sp(integer,text,integer,text);
 DROP FUNCTION IF EXISTS "UpdateMessagesCompactionEpochByMessageKeysJsonSp"(integer,text,integer,text);
-DROP FUNCTION IF EXISTS update_message_date_created_sp(integer,timestamp);
-DROP FUNCTION IF EXISTS "UpdateMessageDateCreatedSp"(integer,timestamp);
 
 CREATE OR REPLACE FUNCTION messages_get_by_session_iddate_range_sp(p_session_id integer,p_start_utc timestamp,p_end_utc timestamp,p_num_rows integer)
 RETURNS TABLE ("MessageID" integer,"SessionID" integer,"SequenceNumber" integer,"Role" text,"Content" text,"ToolName" text,"ToolArguments" text,"CallID" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"IsCompacted" boolean,"CompactionEpoch" integer,"MessageKey" text,"TurnID" text,"CompactionEpochKey" text,"TurnRowID" bigint)
@@ -224,14 +222,3 @@ LANGUAGE sql AS $$
 	)
 	SELECT COUNT(*)::integer AS "UpdatedRows" FROM updated;
 $$;
-
-CREATE OR REPLACE FUNCTION update_message_date_created_sp(p_message_id integer,p_date_created timestamp)
-RETURNS void LANGUAGE sql AS $$
-	UPDATE messages SET date_created = p_date_created WHERE message_id = p_message_id;
-$$;
-
-CREATE OR REPLACE FUNCTION "UpdateMessageDateCreatedSp"(p_message_id integer,p_date_created timestamp)
-RETURNS void LANGUAGE sql AS $$
-SELECT update_message_date_created_sp(p_message_id,p_date_created);
-$$;
-
