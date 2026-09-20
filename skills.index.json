@@ -479,8 +479,8 @@
     {
       "SkillName": "ClaudeCode",
       "Title": "Claude Code",
-      "Description": "Native Claude Code tool integration.",
-      "Version": "0.3.2",
+      "Description": "Buffaly skill package for Claude Code.",
+      "Version": "0.3.3",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Claude Code",
@@ -507,9 +507,7 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [
-        "A supported native Claude Code executable"
-      ]
+      "Prerequisites": []
     },
     {
       "SkillName": "Codex",
