@@ -8219,7 +8219,7 @@
       "PackageType": "WebModule",
       "Title": "Error Log Dispatch",
       "Description": "Buffaly Web Module package for Error Log Dispatch.",
-      "Version": "0.1.42",
+      "Version": "0.1.43",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/ErrorLogDispatch",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/ErrorLogDispatch",
@@ -8234,11 +8234,11 @@
         },
         {
           "Path": "Buffaly.Agent.DispatchTree.Viewer.dll",
-          "Sha256": "419428ec3c309541dc5d77ba231bd4d5076bc3679a862a50472c47d17124667d"
+          "Sha256": "b4a38aad2d1e1b706efbc484efcd9488f3da192c66ba3f290f84aa24eff7236e"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "80b872ddfeb87ae5c21838ecf14b929861609628aa602bf65b30192bf62c0f8f"
+          "Sha256": "0c7aaca88b24d9a2d2b2d23abc5121edda4a9cbd91f1eb87370c6d982bca1080"
         },
         {
           "Path": "Buffaly.ErrorLogDispatch.WebModule.deps.json",
@@ -8246,7 +8246,7 @@
         },
         {
           "Path": "Buffaly.ErrorLogDispatch.WebModule.dll",
-          "Sha256": "b8123be8d92543bbfe98e30caf0e4c07aba9eff1c5d146703236f51d238b8b0f"
+          "Sha256": "cc679f78924caf2d38af206fbefe388cf8de31c40aa1e22447b8f0a1a620c4b8"
         },
         {
           "Path": "Buffaly.ErrorLogDispatch.WebModule.staticwebassets.endpoints.json",
@@ -8254,7 +8254,7 @@
         },
         {
           "Path": "Buffaly.NLMemory.dll",
-          "Sha256": "cdb79d460488b6ec0197c4282d75476fd8897cd5e1ab8defcf8243862813549b"
+          "Sha256": "48c3611b8c542445928a7821897673858a9c8c8e93a436c68dae946efbfb79a2"
         },
         {
           "Path": "ProjectArtifacts/ContextPrompts/ErrorDiagnostic.prompt.md",
@@ -8340,18 +8340,15 @@
       "ProjectArtifacts": [
         {
           "ProjectName": "Skills/ErrorLogDispatch",
-          "SourcePath": "ProjectArtifacts/Skills/ErrorLogDispatch/",
-          "InstallAsProject": false
+          "SourcePath": "ProjectArtifacts/Skills/ErrorLogDispatch/"
         },
         {
           "ProjectName": "ContextPrompts",
-          "SourcePath": "ProjectArtifacts/ContextPrompts/",
-          "InstallAsProject": false
+          "SourcePath": "ProjectArtifacts/ContextPrompts/"
         },
         {
           "ProjectName": "Profiles/ErrorDiagnostic",
-          "SourcePath": "ProjectArtifacts/Profiles/ErrorDiagnostic/",
-          "InstallAsProject": false
+          "SourcePath": "ProjectArtifacts/Profiles/ErrorDiagnostic/"
         }
       ],
       "Dependencies": [],
