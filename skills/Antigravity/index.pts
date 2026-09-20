@@ -7,7 +7,7 @@ include "RuntimeGlue.pts";
 [SemanticEntity("google antigravity cli skill")]
 prototype AntigravitySkill : SkillEntity
 {
-	Description = "Native Antigravity ACP tool: auth status/login/logout, one-shot prompt execution, and conversation management. Uses agy_acp_server plus matching localharness_external. Operator config is BUFFALY_ANTIGRAVITY_TOOL_CONFIG. Does not scrape ordinary agy CLI state.";
+	Description = "Native Antigravity ACP tool: auth status/login/logout, one-shot prompt execution, and conversation management. Uses agy_acp_server plus matching localharness_external. Operator config is editable at Skills/Antigravity/config.json. Does not scrape ordinary agy CLI state.";
 	ActionRoot = AntigravitySkillAction;
 }
 
@@ -26,7 +26,7 @@ prototype ToGetAntigravityAuthStatus : AntigravitySkillAction
 	function Execute() : string
 	{
 		string contextJson = ToAntigravityNativeContextJson("default", "", "");
-		string handle = AntigravityTools.BeginProbe(contextJson, _opsAgent.GetCurrentOperationCancellationToken());
+		string handle = AntigravityTools.BeginProbe(ToAntigravityNativeConfigJson(), contextJson, _opsAgent.GetCurrentOperationCancellationToken());
 		string result = ToAntigravityNativeRunHandle(handle);
 		AntigravityTools.Release(handle);
 		return result;
@@ -46,7 +46,7 @@ prototype ToBeginAntigravityLogin : AntigravitySkillAction
 		if (timeoutSeconds <= 0)
 			timeoutSeconds = 600;
 		string contextJson = AntigravityTools.CreateTurnRequestJson(_opsAgent.GetSessionKeyOrEmpty(), _opsAgent.GetCurrentSessionDirectory(), _opsAgent.GetCurrentProjectDirectory(), _opsAgent.GetCurrentToolInvocationIdOrEmpty(), _opsAgent.GetCurrentToolMessageKeyOrEmpty(), _opsAgent.GetCurrentTurnKeyOrEmpty(), "default", "login", "", "", timeoutSeconds, "", false);
-		string handle = AntigravityTools.BeginLogin(contextJson, _opsAgent.GetCurrentOperationCancellationToken());
+		string handle = AntigravityTools.BeginLogin(ToAntigravityNativeConfigJson(), contextJson, _opsAgent.GetCurrentOperationCancellationToken());
 		string result = ToAntigravityNativeRunHandle(handle);
 		AntigravityTools.Release(handle);
 		return result;
@@ -64,7 +64,7 @@ prototype ToLogoutAntigravityAccount : AntigravitySkillAction
 	function Execute() : string
 	{
 		string contextJson = ToAntigravityNativeContextJson("default", "", "");
-		string handle = AntigravityTools.BeginLogout(contextJson, _opsAgent.GetCurrentOperationCancellationToken());
+		string handle = AntigravityTools.BeginLogout(ToAntigravityNativeConfigJson(), contextJson, _opsAgent.GetCurrentOperationCancellationToken());
 		string result = ToAntigravityNativeRunHandle(handle);
 		AntigravityTools.Release(handle);
 		return result;
@@ -130,7 +130,7 @@ prototype ToStartNewAntigravityConversation : AntigravitySkillAction
 	function Execute(string model) : string
 	{
 		string contextJson = ToAntigravityNativeContextJson("default", model, "");
-		return AntigravityTools.ResetConversation(contextJson);
+		return AntigravityTools.ResetConversation(ToAntigravityNativeConfigJson(), contextJson);
 	}
 }
 
@@ -142,7 +142,7 @@ prototype ToGetAntigravityConversationState : AntigravitySkillAction
 
 	function Execute() : string
 	{
-		return AntigravityTools.GetConversationState(ToAntigravityNativeContextJson("default", "", ""));
+		return AntigravityTools.GetConversationState(ToAntigravityNativeConfigJson(), ToAntigravityNativeContextJson("default", "", ""));
 	}
 }
 
@@ -156,7 +156,7 @@ prototype ToGetAntigravityUsageStats : AntigravitySkillAction
 	{
 		if (StringUtil.IsEmpty(stateScope))
 			stateScope = "default";
-		return AntigravityTools.GetUsageStats(ToAntigravityNativeContextJson(stateScope, "", ""));
+		return AntigravityTools.GetUsageStats(ToAntigravityNativeConfigJson(), ToAntigravityNativeContextJson(stateScope, "", ""));
 	}
 }
 
@@ -170,7 +170,7 @@ prototype ToSetAntigravityModel : AntigravitySkillAction
 	{
 		if (StringUtil.IsEmpty(model))
 			return "Error: model is required.";
-		return AntigravityTools.SetModel(ToAntigravityNativeContextJson("default", model, ""), model);
+		return AntigravityTools.SetModel(ToAntigravityNativeConfigJson(), ToAntigravityNativeContextJson("default", model, ""), model);
 	}
 }
 
@@ -182,6 +182,6 @@ prototype ToSetAntigravityWorkingDirectory : AntigravitySkillAction
 
 	function Execute(string workingDirectory) : string
 	{
-		return AntigravityTools.SetWorkingDirectory(ToAntigravityNativeContextJson("default", "", workingDirectory), workingDirectory);
+		return AntigravityTools.SetWorkingDirectory(ToAntigravityNativeConfigJson(), ToAntigravityNativeContextJson("default", "", workingDirectory), workingDirectory);
 	}
 }

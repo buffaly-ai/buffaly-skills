@@ -2,6 +2,14 @@ import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.Run
 import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.LiveToolInputCollectionRequestContract LiveToolInputCollectionRequestContract;
 import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.LiveToolInputCollectionResultContract LiveToolInputCollectionResultContract;
 
+function ToAntigravityNativeConfigJson() : string
+{
+	string configPath = Path.Combine(_opsAgent.GetCurrentProjectDirectory(), "Skills", "Antigravity", "config.json");
+	if (!File.Exists(configPath))
+		throw new InvalidOperationException("Antigravity config.json was not found: " + configPath);
+	return File.ReadAllText(configPath);
+}
+
 function ToAntigravityNativeContextJson(string childScope, string model, string workingDirectory) : string
 {
 	return AntigravityTools.CreateContextJson(_opsAgent.GetSessionKeyOrEmpty(), _opsAgent.GetCurrentSessionDirectory(), _opsAgent.GetCurrentProjectDirectory(), _opsAgent.GetCurrentToolInvocationIdOrEmpty(), _opsAgent.GetCurrentToolMessageKeyOrEmpty(), _opsAgent.GetCurrentTurnKeyOrEmpty(), childScope, model, workingDirectory);
@@ -86,7 +94,7 @@ function ToAntigravityNativeTurn(string childScope, string prompt, string model,
 	if (timeoutSeconds <= 0)
 		timeoutSeconds = 3600;
 	string requestJson = ToAntigravityNativeTurnJson(childScope, prompt, model, system, timeoutSeconds, workingDirectory, ephemeral);
-	string handle = AntigravityTools.BeginTurn(requestJson, _opsAgent.GetCurrentOperationCancellationToken());
+	string handle = AntigravityTools.BeginTurn(ToAntigravityNativeConfigJson(), requestJson, _opsAgent.GetCurrentOperationCancellationToken());
 	string result = "";
 	result = ToAntigravityNativeRunHandle(handle);
 	AntigravityTools.Release(handle);
