@@ -49,8 +49,8 @@
     {
       "SkillName": "Antigravity",
       "Title": "Antigravity",
-      "Description": "Native Antigravity ACP tool integration.",
-      "Version": "0.3.2",
+      "Description": "Buffaly skill package for Antigravity.",
+      "Version": "0.3.3",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Antigravity",
@@ -63,8 +63,8 @@
           "Sha256": "5fde977f225f27042242c622d63a95319ee022e0215ca3a8cea111505cfe46f6"
         },
         {
-          "Path": "lib/Buffaly.Tools.Antigravity.dll",
-          "Sha256": "635a580da4b99f435c80afb2ea2e1973dba810a160d9d51bc9a849182e257061"
+          "Path": "index.pts.lazy.json",
+          "Sha256": "ebf71376b6fbfb4192118ed7ff02021bddfe9b63d2934d87967a7d1b50f6126b"
         },
         {
           "Path": "lib/AcpBrowserCapture.deps.json",
@@ -83,6 +83,10 @@
           "Sha256": "4719954ee973dde9617a64d30002c1df89df2f75ab40e6b01db8b3126388ce5f"
         },
         {
+          "Path": "lib/Buffaly.Tools.Antigravity.dll",
+          "Sha256": "635a580da4b99f435c80afb2ea2e1973dba810a160d9d51bc9a849182e257061"
+        },
+        {
           "Path": "RuntimeGlue.pts",
           "Sha256": "48ca9a6a1de1c4511c706089d507bb43148b13bccef98a29447344a6732872a3"
         },
@@ -93,9 +97,7 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [
-        "A supported agy_acp_server and matching localharness_external"
-      ]
+      "Prerequisites": []
     },
     {
       "SkillName": "AudioTranscription",
