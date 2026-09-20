@@ -10247,10 +10247,10 @@
       "PackageType": "WebModule",
       "Title": "GoDaddy",
       "Description": "Buffaly Web Module package for GoDaddy.",
-      "Version": "0.1.82",
+      "Version": "0.1.83",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/GoDaddy",
-      "SourceUrl": "",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/GoDaddy",
       "Phrases": [
         "GoDaddy",
         "GoDaddy"
@@ -10270,7 +10270,7 @@
         },
         {
           "Path": "Buffaly.GoDaddy.Web.dll",
-          "Sha256": "e1c03334fce2eee32af4f9067c5d7dc1919f20e257058443a9df1de8daaedbeb"
+          "Sha256": "0aa31fe487110140ad95514d69f68bf3b766f3efc5d3b03bc58ef9f597dea19a"
         },
         {
           "Path": "Buffaly.ProviderContracts.dll",
@@ -10344,8 +10344,7 @@
       "ProjectArtifacts": [
         {
           "ProjectName": "Skills/GoDaddy",
-          "SourcePath": "Skills/GoDaddy/",
-          "InstallAsProject": false
+          "SourcePath": "Skills/GoDaddy/"
         }
       ],
       "Dependencies": [],
