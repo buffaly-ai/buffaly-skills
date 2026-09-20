@@ -188,17 +188,3 @@ BEGIN
 END;
 $$;
 SELECT record_schema_migration('005_sessions_repository_routines');
-
-
-DROP FUNCTION IF EXISTS update_session_date_created_sp(integer,timestamp);
-DROP FUNCTION IF EXISTS "UpdateSessionDateCreatedSp"(integer,timestamp);
-
-CREATE OR REPLACE FUNCTION update_session_date_created_sp(p_session_id integer,p_date_created timestamp)
-RETURNS void LANGUAGE sql AS $$
-	UPDATE sessions SET date_created = p_date_created WHERE session_id = p_session_id;
-$$;
-
-CREATE OR REPLACE FUNCTION "UpdateSessionDateCreatedSp"(p_session_id integer,p_date_created timestamp)
-RETURNS void LANGUAGE sql AS $$
-SELECT update_session_date_created_sp(p_session_id,p_date_created);
-$$;
