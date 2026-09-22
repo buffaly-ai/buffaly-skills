@@ -2,14 +2,6 @@ import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.Run
 import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.LiveToolInputCollectionRequestContract LiveToolInputCollectionRequestContract;
 import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.LiveToolInputCollectionResultContract LiveToolInputCollectionResultContract;
 
-function ToClaudeNativeConfigJson() : string
-{
-	string configPath = Path.Combine(_opsAgent.GetCurrentProjectDirectory(), "Skills", "ClaudeCode", "config.json");
-	if (!File.Exists(configPath))
-		throw new InvalidOperationException("ClaudeCode config.json was not found: " + configPath);
-	return File.ReadAllText(configPath);
-}
-
 function ToClaudeNativeContextJson(string childScope, string model, string workingDirectory) : string
 {
 	return ClaudeCodeTools.CreateContextJson(_opsAgent.GetSessionKeyOrEmpty(), _opsAgent.GetCurrentSessionDirectory(), _opsAgent.GetCurrentProjectDirectory(), _opsAgent.GetCurrentToolInvocationIdOrEmpty(), _opsAgent.GetCurrentToolMessageKeyOrEmpty(), _opsAgent.GetCurrentTurnKeyOrEmpty(), childScope, model, workingDirectory);
@@ -110,7 +102,7 @@ function ToClaudeNativeTurn(string childScope, string prompt, string model, stri
 	if (timeoutSeconds <= 0)
 		timeoutSeconds = 3600;
 	string requestJson = ToClaudeNativeTurnJson(childScope, prompt, model, system, timeoutSeconds, workingDirectory, ephemeral);
-	string handle = ClaudeCodeTools.BeginTurn(ToClaudeNativeConfigJson(), requestJson, _opsAgent.GetCurrentOperationCancellationToken());
+	string handle = ClaudeCodeTools.BeginTurn(requestJson, _opsAgent.GetCurrentOperationCancellationToken());
 	string result = "";
 	result = ToClaudeNativeRunHandle(handle);
 	ClaudeCodeTools.Release(handle);

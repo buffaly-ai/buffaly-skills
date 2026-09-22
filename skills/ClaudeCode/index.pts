@@ -11,7 +11,7 @@ include "RuntimeGlue.pts";
 [SemanticEntity("anthropic cli skill")]
 prototype ClaudeCodeSkill : SkillEntity
 {
-	Description = "Native Claude Code tool: auth status/login/logout, one-shot prompt execution, and scoped conversation management. Uses the official native claude executable over stream-json. Operator config is editable at Skills/ClaudeCode/config.json.";
+	Description = "Native Claude Code tool: auth status/login/logout, one-shot prompt execution, and scoped conversation management. Uses the official native claude executable over stream-json. Operator config is BUFFALY_CLAUDE_CODE_TOOL_CONFIG.";
 	ActionRoot = ClaudeCodeSkillAction;
 }
 
@@ -31,7 +31,7 @@ prototype ToGetClaudeAuthStatus : ClaudeCodeSkillAction
 	function Execute() : string
 	{
 		string contextJson = ToClaudeNativeContextJson("default", "", "");
-		string handle = ClaudeCodeTools.BeginProbe(ToClaudeNativeConfigJson(), contextJson, _opsAgent.GetCurrentOperationCancellationToken());
+		string handle = ClaudeCodeTools.BeginProbe(contextJson, _opsAgent.GetCurrentOperationCancellationToken());
 		string result = ToClaudeNativeRunHandle(handle);
 		ClaudeCodeTools.Release(handle);
 		return result;
@@ -55,7 +55,7 @@ prototype ToBeginClaudeLogin : ClaudeCodeSkillAction
 		if (timeoutSeconds <= 0)
 			timeoutSeconds = 360;
 		string contextJson = ClaudeCodeTools.CreateTurnRequestJson(_opsAgent.GetSessionKeyOrEmpty(), _opsAgent.GetCurrentSessionDirectory(), _opsAgent.GetCurrentProjectDirectory(), _opsAgent.GetCurrentToolInvocationIdOrEmpty(), _opsAgent.GetCurrentToolMessageKeyOrEmpty(), _opsAgent.GetCurrentTurnKeyOrEmpty(), "default", "login", "", "", timeoutSeconds, "", false);
-		string handle = ClaudeCodeTools.BeginLogin(ToClaudeNativeConfigJson(), contextJson, _opsAgent.GetCurrentOperationCancellationToken());
+		string handle = ClaudeCodeTools.BeginLogin(contextJson, _opsAgent.GetCurrentOperationCancellationToken());
 		string result = ToClaudeNativeRunHandle(handle);
 		ClaudeCodeTools.Release(handle);
 		return result;
@@ -75,7 +75,7 @@ prototype ToLogoutClaudeAccount : ClaudeCodeSkillAction
 	function Execute() : string
 	{
 		string contextJson = ToClaudeNativeContextJson("default", "", "");
-		string handle = ClaudeCodeTools.BeginLogout(ToClaudeNativeConfigJson(), contextJson, _opsAgent.GetCurrentOperationCancellationToken());
+		string handle = ClaudeCodeTools.BeginLogout(contextJson, _opsAgent.GetCurrentOperationCancellationToken());
 		string result = ToClaudeNativeRunHandle(handle);
 		ClaudeCodeTools.Release(handle);
 		return result;
@@ -121,7 +121,7 @@ prototype ToStartScopedClaudeConversation : ClaudeCodeSkillAction
 		if (StringUtil.IsEmpty(stateScope))
 			return "Error: stateScope is required for scoped Claude state.";
 		string contextJson = ToClaudeNativeContextJson(stateScope, model, "");
-		return ClaudeCodeTools.ResetConversation(ToClaudeNativeConfigJson(), contextJson);
+		return ClaudeCodeTools.ResetConversation(contextJson);
 	}
 }
 
@@ -136,7 +136,7 @@ prototype ToSetScopedClaudeWorkingDirectory : ClaudeCodeSkillAction
 		if (StringUtil.IsEmpty(stateScope))
 			return "Error: stateScope is required for scoped Claude state.";
 		string contextJson = ToClaudeNativeContextJson(stateScope, "", workingDirectory);
-		return ClaudeCodeTools.SetWorkingDirectory(ToClaudeNativeConfigJson(), contextJson, workingDirectory);
+		return ClaudeCodeTools.SetWorkingDirectory(contextJson, workingDirectory);
 	}
 }
 [SemanticProgram.InfinitivePhrase("to run claude state scoping regression")]
@@ -199,7 +199,7 @@ prototype ToStartNewClaudeConversation : ClaudeCodeSkillAction
 	function Execute(string model) : string
 	{
 		string contextJson = ToClaudeNativeContextJson("default", model, "");
-		return ClaudeCodeTools.ResetConversation(ToClaudeNativeConfigJson(), contextJson);
+		return ClaudeCodeTools.ResetConversation(contextJson);
 	}
 }
 
@@ -213,7 +213,7 @@ prototype ToGetClaudeConversationState : ClaudeCodeSkillAction
 
 	function Execute() : string
 	{
-		return ClaudeCodeTools.GetConversationState(ToClaudeNativeConfigJson(), ToClaudeNativeContextJson("default", "", ""));
+		return ClaudeCodeTools.GetConversationState(ToClaudeNativeContextJson("default", "", ""));
 	}
 }
 
@@ -228,7 +228,7 @@ prototype ToGetClaudeUsageStats : ClaudeCodeSkillAction
 		if (StringUtil.IsEmpty(stateScope))
 			stateScope = "default";
 		string contextJson = ToClaudeNativeContextJson(stateScope, "", "");
-		string handle = ClaudeCodeTools.BeginUsage(ToClaudeNativeConfigJson(), contextJson, _opsAgent.GetCurrentOperationCancellationToken());
+		string handle = ClaudeCodeTools.BeginUsage(contextJson, _opsAgent.GetCurrentOperationCancellationToken());
 		string resultJson = ToClaudeNativeRunHandleJson(handle);
 		ClaudeCodeTools.Release(handle);
 		return ClaudeCodeTools.GetResultText(resultJson);
@@ -247,7 +247,7 @@ prototype ToSetClaudeModel : ClaudeCodeSkillAction
 	{
 		if (StringUtil.IsEmpty(model))
 			return "Error: model is required.";
-		return ClaudeCodeTools.SetModel(ToClaudeNativeConfigJson(), ToClaudeNativeContextJson("default", model, ""), model);
+		return ClaudeCodeTools.SetModel(ToClaudeNativeContextJson("default", model, ""), model);
 	}
 }
 [SemanticProgram.InfinitivePhrase("to set claude working directory")]
@@ -260,7 +260,7 @@ prototype ToSetClaudeWorkingDirectory : ClaudeCodeSkillAction
 
 	function Execute(string workingDirectory) : string
 	{
-		return ClaudeCodeTools.SetWorkingDirectory(ToClaudeNativeConfigJson(), ToClaudeNativeContextJson("default", "", workingDirectory), workingDirectory);
+		return ClaudeCodeTools.SetWorkingDirectory(ToClaudeNativeContextJson("default", "", workingDirectory), workingDirectory);
 	}
 }
 
@@ -276,7 +276,7 @@ prototype ToSetScopedClaudeModel : ClaudeCodeSkillAction
 			return "Error: stateScope is required for scoped Claude state.";
 		if (StringUtil.IsEmpty(model))
 			return "Error: model is required.";
-		return ClaudeCodeTools.SetModel(ToClaudeNativeConfigJson(), ToClaudeNativeContextJson(stateScope, model, ""), model);
+		return ClaudeCodeTools.SetModel(ToClaudeNativeContextJson(stateScope, model, ""), model);
 	}
 }
 
@@ -290,6 +290,6 @@ prototype ToGetScopedClaudeConversationState : ClaudeCodeSkillAction
 	{
 		if (StringUtil.IsEmpty(stateScope))
 			return "Error: stateScope is required for scoped Claude state.";
-		return ClaudeCodeTools.GetConversationState(ToClaudeNativeConfigJson(), ToClaudeNativeContextJson(stateScope, "", ""));
+		return ClaudeCodeTools.GetConversationState(ToClaudeNativeContextJson(stateScope, "", ""));
 	}
 }
