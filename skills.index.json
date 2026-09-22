@@ -50,7 +50,7 @@
       "SkillName": "Antigravity",
       "Title": "Antigravity",
       "Description": "Buffaly skill package for Antigravity.",
-      "Version": "0.3.4",
+      "Version": "0.3.5",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Antigravity",
@@ -65,6 +65,10 @@
         {
           "Path": "index.pts",
           "Sha256": "29487768582be42f5de2721faa45cc5c70210d17404d6d558ad492918bc64ec1"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "ebf71376b6fbfb4192118ed7ff02021bddfe9b63d2934d87967a7d1b50f6126b"
         },
         {
           "Path": "lib/AcpBrowserCapture.deps.json",
