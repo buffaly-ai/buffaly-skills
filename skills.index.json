@@ -50,7 +50,7 @@
       "SkillName": "Antigravity",
       "Title": "Antigravity",
       "Description": "Buffaly skill package for Antigravity.",
-      "Version": "0.3.5",
+      "Version": "0.3.6",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Antigravity",
@@ -67,20 +67,16 @@
           "Sha256": "29487768582be42f5de2721faa45cc5c70210d17404d6d558ad492918bc64ec1"
         },
         {
-          "Path": "index.pts.lazy.json",
-          "Sha256": "ebf71376b6fbfb4192118ed7ff02021bddfe9b63d2934d87967a7d1b50f6126b"
-        },
-        {
           "Path": "lib/AcpBrowserCapture.deps.json",
           "Sha256": "67d8dbdd868e75f6b126dd0fddedd0d775b5ae35336abf21690244b57825b81a"
         },
         {
           "Path": "lib/AcpBrowserCapture.dll",
-          "Sha256": "a230e2ac2b44b605a2e249ed1f4d3e9a5c6f69d4b27bcc9f36a168e23437b413"
+          "Sha256": "032d5a2fa68dfdfe1fb4912c40817a5c251d5eedf0b7ebd5565f33a7c8475374"
         },
         {
           "Path": "lib/AcpBrowserCapture.exe",
-          "Sha256": "eea0bd149c5255bd2f8cc3f7ee244548a215d8594a74fe2fa9f2ea2e8bb9b211"
+          "Sha256": "87af9a00187cc1083c7bf9f3097f2e71f6a15ab05f68d89a400804a9c8588220"
         },
         {
           "Path": "lib/AcpBrowserCapture.runtimeconfig.json",
@@ -88,7 +84,7 @@
         },
         {
           "Path": "lib/Buffaly.Tools.Antigravity.dll",
-          "Sha256": "ef352c820651da37e0755bfbffd3965325323b6efdb827452a2f6352197dddcf"
+          "Sha256": "9e5afdb3e7b1187a5433933115f13a5d4193d41fdc5703bb5bd1069aed0c95de"
         },
         {
           "Path": "RuntimeGlue.pts",
@@ -101,7 +97,10 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": []
+      "Prerequisites": [],
+      "PreservedFiles": [
+        "config.json"
+      ]
     },
     {
       "SkillName": "AudioTranscription",
@@ -484,7 +483,7 @@
       "SkillName": "ClaudeCode",
       "Title": "Claude Code",
       "Description": "Buffaly skill package for Claude Code.",
-      "Version": "0.3.5",
+      "Version": "0.3.6",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Claude Code",
@@ -493,29 +492,36 @@
       "Path": "skills/ClaudeCode",
       "Files": [
         {
-          "Path": "config.json",
-          "Sha256": "c8cf569e21eb824bdd2e1cdd8cb775dcc14055f40829ce484e7546f4c36de617"
+          "Path": "config.example.json",
+          "Sha256": "dc0da180505051d4e7b237ff0fbf8f87fb05ee5aeb3044ee59b5210a7beeccd9"
         },
         {
           "Path": "index.pts",
-          "Sha256": "bd57f3ab7cf47741d342b7c8e23648a1ff09e0bde64094e018f183fae2446722"
+          "Sha256": "9e173a675da8dd197dc9cd077058737045f8ece3aa967d03534353ed5db354a0"
         },
         {
           "Path": "lib/Buffaly.Tools.ClaudeCode.dll",
-          "Sha256": "8b516c814e4ffc38e7e768675f7ccc97d082af8b8c048d90c2ab5f9d9f2ddc75"
+          "Sha256": "1d21564813e5a2de1f2e206e54e432f5dd10da6ceb9981caa13fca18e9b4b77f"
         },
         {
           "Path": "RuntimeGlue.pts",
-          "Sha256": "8a48cb64d14c977c85601b3008522fee6ee6bb4aa08e3096c38e2de316a012e1"
+          "Sha256": "58ddbc2ee7c08d60ed4230278cc50aa8860813a6ed192330bf5dfa74dae214a9"
         },
         {
           "Path": "SKILL.md",
-          "Sha256": "b45ff525743328a93b125729bcf6bc00ffce564558385c2bc5e8737bceb82799"
+          "Sha256": "29008c1945d8dcd9d993b053ab8c0f04f7f49f370160fd99aeff69df3c541687"
+        },
+        {
+          "Path": "Test-ClaudeCodeStateScoping.ps1",
+          "Sha256": "2ec79487a82df8eb36f32270fdd277dc268d958d789a5b9b8909b58bf840e8da"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": []
+      "Prerequisites": [],
+      "PreservedFiles": [
+        "config.json"
+      ]
     },
     {
       "SkillName": "Codex",
