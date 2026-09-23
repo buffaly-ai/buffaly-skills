@@ -38,8 +38,49 @@ function ToClaudeNativeEmit(string text) : string
 
 function ToClaudeNativeRunHandle(string handle) : string
 {
-	string resultJson = ClaudeCodeTools.WaitForTerminalResult(handle, 250);
-	return ClaudeCodeTools.FormatLegacyResult(resultJson);
+	while (true)
+	{
+		string batch = ClaudeCodeTools.WaitForTerminalOrInteraction(handle, 250);
+		if (ClaudeCodeTools.IsTerminalPoll(batch))
+		{
+			string resultJson = ClaudeCodeTools.GetPollResultJson(batch);
+			if (StringUtil.IsEmpty(resultJson))
+				resultJson = ClaudeCodeTools.GetResult(handle);
+			return ClaudeCodeTools.FormatLegacyResult(resultJson);
+		}
+		string interactionId = ClaudeCodeTools.GetPollInteractionId(batch);
+		string messageKey = _opsAgent.GetCurrentToolMessageKeyOrEmpty();
+		if (StringUtil.IsEmpty(messageKey))
+			messageKey = "claude-native-interaction";
+		string toolInvocationId = _opsAgent.GetCurrentToolInvocationIdOrEmpty();
+		if (StringUtil.IsEmpty(toolInvocationId))
+			toolInvocationId = "claude-native-interaction";
+		LiveToolInputCollectionResultContract inputResult = _opsAgent.CollectLiveToolInput(new LiveToolInputCollectionRequestContract
+		{
+			InputKind = "line",
+			Prompt = ClaudeCodeTools.GetPollInteractionPrompt(batch),
+			DisplayMode = "focused-popup",
+			Title = "Claude Code decision",
+			Required = true,
+			IsSensitive = false,
+			TimeoutSeconds = 120,
+			ToolInvocationId = toolInvocationId,
+			MessageKey = messageKey
+		});
+		if (inputResult.Status == "submitted")
+		{
+			string choice = inputResult.Value;
+			if (StringUtil.IsEmpty(choice))
+				choice = "deny";
+			int generation = ClaudeCodeTools.GetPollInteractionGeneration(batch);
+			ClaudeCodeTools.Reply(handle, interactionId, ClaudeCodeTools.CreateInteractionReplyJson(choice, generation));
+		}
+		else
+		{
+			ClaudeCodeTools.Cancel(handle);
+		}
+	}
+	return "Error: native run ended without a terminal result.";
 }
 
 function ToClaudeNativeRunHandleJson(string handle) : string
