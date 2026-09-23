@@ -38,71 +38,13 @@ function ToClaudeNativeEmit(string text) : string
 
 function ToClaudeNativeRunHandle(string handle) : string
 {
-	string presented = "";
-	while (true)
-	{
-		string batch = ClaudeCodeTools.Poll(handle, 250);
-		ToClaudeNativeEmit(ClaudeCodeTools.DescribePollEvents(batch));
-		string interactionId = ClaudeCodeTools.GetPollInteractionId(batch);
-		if (!StringUtil.IsEmpty(interactionId) && interactionId != presented)
-		{
-			presented = interactionId;
-			string messageKey = _opsAgent.GetCurrentToolMessageKeyOrEmpty();
-			if (StringUtil.IsEmpty(messageKey))
-				messageKey = "claude-native-interaction";
-			string toolInvocationId = _opsAgent.GetCurrentToolInvocationIdOrEmpty();
-			if (StringUtil.IsEmpty(toolInvocationId))
-				toolInvocationId = "claude-native-interaction";
-			LiveToolInputCollectionResultContract inputResult = _opsAgent.CollectLiveToolInput(new LiveToolInputCollectionRequestContract
-			{
-				InputKind = "line",
-				Prompt = ClaudeCodeTools.GetPollInteractionPrompt(batch),
-				DisplayMode = "focused-popup",
-				Title = "Claude Code decision",
-				Required = true,
-				IsSensitive = false,
-				TimeoutSeconds = 120,
-				ToolInvocationId = toolInvocationId,
-				MessageKey = messageKey
-			});
-			if (inputResult.Status == "submitted")
-			{
-				string choice = inputResult.Value;
-				if (StringUtil.IsEmpty(choice))
-					choice = "deny";
-				int generation = ClaudeCodeTools.GetPollInteractionGeneration(batch);
-				ClaudeCodeTools.Reply(handle, interactionId, ClaudeCodeTools.CreateInteractionReplyJson(choice, generation));
-			}
-			else
-			{
-				ClaudeCodeTools.Cancel(handle);
-			}
-		}
-		if (ClaudeCodeTools.IsTerminalPoll(batch))
-		{
-			string resultJson = ClaudeCodeTools.GetPollResultJson(batch);
-			if (StringUtil.IsEmpty(resultJson))
-				resultJson = ClaudeCodeTools.GetResult(handle);
-			return ClaudeCodeTools.FormatLegacyResult(resultJson);
-		}
-	}
-	return "Error: native run ended without a terminal result.";
+	string resultJson = ClaudeCodeTools.WaitForTerminalResult(handle, 250);
+	return ClaudeCodeTools.FormatLegacyResult(resultJson);
 }
 
 function ToClaudeNativeRunHandleJson(string handle) : string
 {
-	while (true)
-	{
-		string batch = ClaudeCodeTools.Poll(handle, 250);
-		if (ClaudeCodeTools.IsTerminalPoll(batch))
-		{
-			string resultJson = ClaudeCodeTools.GetPollResultJson(batch);
-			if (StringUtil.IsEmpty(resultJson))
-				resultJson = ClaudeCodeTools.GetResult(handle);
-			return resultJson;
-		}
-	}
-	return "";
+	return ClaudeCodeTools.WaitForTerminalResult(handle, 250);
 }
 
 function ToClaudeNativeTurn(string childScope, string prompt, string model, string system, int timeoutSeconds, string workingDirectory, bool ephemeral) : string
