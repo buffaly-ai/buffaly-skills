@@ -112,7 +112,13 @@ function ToClaudeNativeTurn(string childScope, string prompt, string model, stri
 	string requestJson = ToClaudeNativeTurnJson(childScope, prompt, model, system, timeoutSeconds, workingDirectory, ephemeral);
 	string handle = ClaudeCodeTools.BeginTurn(ToClaudeNativeConfigJson(), requestJson, _opsAgent.GetCurrentOperationCancellationToken());
 	string result = "";
-	result = ToClaudeNativeRunHandle(handle);
-	ClaudeCodeTools.Release(handle);
+	try
+	{
+		result = ToClaudeNativeRunHandle(handle);
+	}
+	finally
+	{
+		ClaudeCodeTools.Release(handle);
+	}
 	return result;
 }

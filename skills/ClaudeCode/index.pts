@@ -32,8 +32,15 @@ prototype ToGetClaudeAuthStatus : ClaudeCodeSkillAction
 	{
 		string contextJson = ToClaudeNativeContextJson("default", "", "");
 		string handle = ClaudeCodeTools.BeginProbe(ToClaudeNativeConfigJson(), contextJson, _opsAgent.GetCurrentOperationCancellationToken());
-		string result = ToClaudeNativeRunHandle(handle);
-		ClaudeCodeTools.Release(handle);
+		string result = "";
+		try
+		{
+			result = ToClaudeNativeRunHandle(handle);
+		}
+		finally
+		{
+			ClaudeCodeTools.Release(handle);
+		}
 		return result;
 	}
 }
@@ -56,8 +63,15 @@ prototype ToBeginClaudeLogin : ClaudeCodeSkillAction
 			timeoutSeconds = 360;
 		string contextJson = ClaudeCodeTools.CreateTurnRequestJson(_opsAgent.GetSessionKeyOrEmpty(), _opsAgent.GetCurrentSessionDirectory(), _opsAgent.GetCurrentProjectDirectory(), _opsAgent.GetCurrentToolInvocationIdOrEmpty(), _opsAgent.GetCurrentToolMessageKeyOrEmpty(), _opsAgent.GetCurrentTurnKeyOrEmpty(), "default", "login", "", "", timeoutSeconds, "", false);
 		string handle = ClaudeCodeTools.BeginLogin(ToClaudeNativeConfigJson(), contextJson, _opsAgent.GetCurrentOperationCancellationToken());
-		string result = ToClaudeNativeRunHandle(handle);
-		ClaudeCodeTools.Release(handle);
+		string result = "";
+		try
+		{
+			result = ToClaudeNativeRunHandle(handle);
+		}
+		finally
+		{
+			ClaudeCodeTools.Release(handle);
+		}
 		return result;
 	}
 }
@@ -76,8 +90,15 @@ prototype ToLogoutClaudeAccount : ClaudeCodeSkillAction
 	{
 		string contextJson = ToClaudeNativeContextJson("default", "", "");
 		string handle = ClaudeCodeTools.BeginLogout(ToClaudeNativeConfigJson(), contextJson, _opsAgent.GetCurrentOperationCancellationToken());
-		string result = ToClaudeNativeRunHandle(handle);
-		ClaudeCodeTools.Release(handle);
+		string result = "";
+		try
+		{
+			result = ToClaudeNativeRunHandle(handle);
+		}
+		finally
+		{
+			ClaudeCodeTools.Release(handle);
+		}
 		return result;
 	}
 }
@@ -229,8 +250,15 @@ prototype ToGetClaudeUsageStats : ClaudeCodeSkillAction
 			stateScope = "default";
 		string contextJson = ToClaudeNativeContextJson(stateScope, "", "");
 		string handle = ClaudeCodeTools.BeginUsage(ToClaudeNativeConfigJson(), contextJson, _opsAgent.GetCurrentOperationCancellationToken());
-		string resultJson = ToClaudeNativeRunHandleJson(handle);
-		ClaudeCodeTools.Release(handle);
+		string resultJson = "";
+		try
+		{
+			resultJson = ToClaudeNativeRunHandleJson(handle);
+		}
+		finally
+		{
+			ClaudeCodeTools.Release(handle);
+		}
 		return ClaudeCodeTools.GetResultText(resultJson);
 	}
 }
