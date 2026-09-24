@@ -33,6 +33,7 @@ AS
 		CompactionEpochKey = @CompactionEpochKey,
 		LastUpdated = GETDATE()
 	WHERE MessageID = @MessageID
+		AND (CompactionEpoch IS NULL OR CompactionEpoch <> @CompactionEpoch OR CompactionEpochKey IS NULL OR CompactionEpochKey <> @CompactionEpochKey)
 
 	SELECT @@ROWCOUNT AS UpdatedRows
 
