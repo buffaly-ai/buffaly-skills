@@ -123,17 +123,17 @@
           }
         }
       },
-      "Buffaly.Sessions.DB/1.0.0.0": {
+      "Buffaly.DB.Core/1.0.0.0": {
         "runtime": {
-          "Buffaly.Sessions.DB.dll": {
+          "Buffaly.DB.Core.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         }
       },
-      "Buffaly.DB.Core/1.0.0.0": {
+      "Buffaly.Sessions.DB/1.0.0.0": {
         "runtime": {
-          "Buffaly.DB.Core.dll": {
+          "Buffaly.Sessions.DB.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -147,6 +147,14 @@
           }
         }
       },
+      "Buffaly.DB.Hybrid/1.0.0.0": {
+        "runtime": {
+          "Buffaly.DB.Hybrid.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "Buffaly.Sessions.DB.PostGres/1.0.0.0": {
         "runtime": {
           "Buffaly.Sessions.DB.PostGres.dll": {
@@ -155,9 +163,9 @@
           }
         }
       },
-      "Buffaly.DB.Hybrid/1.0.0.0": {
+      "RooTrax.Common.DB/1.0.0.0": {
         "runtime": {
-          "Buffaly.DB.Hybrid.dll": {
+          "RooTrax.Common.DB.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -246,14 +254,6 @@
       "Buffaly.Agent.SemanticDatabase.DB/1.0.0.0": {
         "runtime": {
           "Buffaly.Agent.SemanticDatabase.DB.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
-          }
-        }
-      },
-      "RooTrax.Common.DB/1.0.0.0": {
-        "runtime": {
-          "RooTrax.Common.DB.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -356,12 +356,12 @@
       "serviceable": false,
       "sha512": ""
     },
-    "Buffaly.Sessions.DB/1.0.0.0": {
+    "Buffaly.DB.Core/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
     },
-    "Buffaly.DB.Core/1.0.0.0": {
+    "Buffaly.Sessions.DB/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
@@ -371,12 +371,17 @@
       "serviceable": false,
       "sha512": ""
     },
+    "Buffaly.DB.Hybrid/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
     "Buffaly.Sessions.DB.PostGres/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
     },
-    "Buffaly.DB.Hybrid/1.0.0.0": {
+    "RooTrax.Common.DB/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
@@ -432,11 +437,6 @@
       "sha512": ""
     },
     "Buffaly.Agent.SemanticDatabase.DB/1.0.0.0": {
-      "type": "reference",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "RooTrax.Common.DB/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
