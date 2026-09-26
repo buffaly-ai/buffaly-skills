@@ -124,8 +124,10 @@ CREATE OR REPLACE FUNCTION turns_populate_unlinked(p_session_id integer,p_max_me
 RETURNS TABLE("ProcessedMessages" integer,"HasMore" boolean) LANGUAGE plpgsql AS $$ DECLARE processed integer; BEGIN
 	IF p_session_id<=0 OR p_max_messages<1 OR p_max_messages>1000 OR p_lock_timeout_milliseconds<1 OR p_lock_timeout_milliseconds>30000 THEN RAISE EXCEPTION 'Invalid Turns populate bounds.'; END IF;
 	PERFORM set_config('lock_timeout',p_lock_timeout_milliseconds::text||'ms',true);
-	DROP TABLE IF EXISTS pg_temp.populate_turn_messages;
-	CREATE TEMP TABLE populate_turn_messages(message_id integer PRIMARY KEY,turn_key text NOT NULL) ON COMMIT DROP;
+	-- Reuse one transaction-local table across historical batches. Repeated DROP/CREATE in
+	-- one transaction accumulates relation locks and exhausts max_locks_per_transaction.
+	CREATE TEMP TABLE IF NOT EXISTS populate_turn_messages(message_id integer PRIMARY KEY,turn_key text NOT NULL) ON COMMIT DROP;
+	TRUNCATE TABLE populate_turn_messages;
 	INSERT INTO populate_turn_messages SELECT message_id,turn_id FROM messages WHERE session_id=p_session_id AND turn_row_id IS NULL AND turn_id IS NOT NULL AND turn_id<>'' ORDER BY message_id LIMIT p_max_messages;
 	GET DIAGNOSTICS processed=ROW_COUNT;
 	INSERT INTO turns(session_id,turn_key,display_order_at_utc) SELECT p_session_id,p.turn_key,min(m.date_created) FROM (SELECT DISTINCT turn_key FROM populate_turn_messages)p JOIN messages m ON m.session_id=p_session_id AND m.turn_id=p.turn_key GROUP BY p.turn_key ON CONFLICT(session_id,turn_key) DO NOTHING;
