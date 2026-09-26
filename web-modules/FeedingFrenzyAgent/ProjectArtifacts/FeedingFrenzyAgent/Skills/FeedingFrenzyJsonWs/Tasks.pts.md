@@ -7,6 +7,7 @@ Thin wrappers over the generated `FeedingFrenzy.Admin.Business.Tasks` and `TaskS
 - `Tasks_GetTask`
 - `Tasks_GetTasks`
 - `Tasks_GetTasksByTaskStatusID`
+- `Tasks_GetTasksByLeadID`
 - `TaskStatuses_GetTaskStatus`
 - `TaskStatuses_GetTaskStatuses`
 - `TaskStatuses_GetTaskStatusByTaskStatusName`
@@ -22,4 +23,4 @@ These inherit `FeedingFrenzyJsonWsSkillAction` and are available through the nor
 
 These inherit `FeedingFrenzyJsonWsGuardedWriteAction`, preserving the existing rule that mutating CRM actions require explicit loading rather than default-agent exposure.
 
-The wrappers preserve generated route names, parameter casing, and nullability. Because the runtime tool schema exposes only non-nullable integers, the write actions use `AssignToUserID = 0` as the explicit unassigned sentinel and translate it to JSON `null` before calling the generated nullable business contract; positive IDs pass through unchanged. `DueDate` is passed as an ISO-like string accepted by JsonWs date binding; an empty string represents a nullable due date. `Notes` is the task detail field. `Data` is metadata only and, for Work Queue rows, is limited to `customer` and `waitingReason`.
+The wrappers preserve generated route names, parameter casing, and nullability. Because the runtime tool schema exposes only non-nullable integers, the write actions use `AssignToUserID = 0` as the explicit unassigned sentinel and `LeadID = 0` as the explicit no-customer sentinel, translating each to JSON `null`; positive IDs pass through unchanged. `DueDate` is passed as an ISO-like string accepted by JsonWs date binding; an empty string represents a nullable due date. `Notes` is the task detail field. `Data` is metadata only; new customer assignments use canonical `LeadID`, while legacy `customer` text remains readable without automatic conversion.
