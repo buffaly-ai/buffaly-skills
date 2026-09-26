@@ -32,6 +32,18 @@ prototype Tasks_GetTasksByTaskStatusID : FeedingFrenzyJsonWsSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to list feeding frenzy tasks by lead")]
+prototype Tasks_GetTasksByLeadID : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"Lists tasks for one customer LeadID through the generated Tasks JsonWs route.";
+	function Execute(int LeadID) : string
+	{
+		JsonObject args = new JsonObject();
+		args["LeadID"] = LeadID;
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("tasks/get-tasks-by-lead-id", args);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to get a feeding frenzy task status")]
 prototype TaskStatuses_GetTaskStatus : FeedingFrenzyJsonWsSkillAction
 {
@@ -69,8 +81,8 @@ prototype TaskStatuses_GetTaskStatusByTaskStatusName : FeedingFrenzyJsonWsSkillA
 [SemanticProgram.InfinitivePhrase("to create a feeding frenzy task")]
 prototype Tasks_InsertTask : FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
-	Description = @"Creates a task through generated Tasks.InsertTask. AssignToUserID 0 means unassigned and is sent as null. DueDate is an ISO-like string; pass an empty string for no due date. Data must contain only approved task metadata.";
-	function Execute(string TaskDescription, int TaskStatusID, int AssignToUserID, int CreatedByUserID, string Data, string DueDate, string Notes) : string
+	Description = @"Creates a task through generated Tasks.InsertTask. AssignToUserID 0 means unassigned; LeadID 0 means no customer. DueDate is an ISO-like string; pass an empty string for no due date. Data must contain only approved task metadata.";
+	function Execute(string TaskDescription, int TaskStatusID, int AssignToUserID, int CreatedByUserID, string Data, string DueDate, string Notes, int LeadID) : string
 	{
 		JsonObject args = new JsonObject();
 		args["TaskDescription"] = TaskDescription;
@@ -81,6 +93,8 @@ prototype Tasks_InsertTask : FeedingFrenzyJsonWsAdminGuardedWriteAction
 		args["Data"] = Data;
 		args["DueDate"] = DueDate;
 		args["Notes"] = Notes;
+		if (LeadID > 0) args["LeadID"] = LeadID;
+		else args["LeadID"] = null;
 		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("tasks/insert-task", args);
 	}
 }
@@ -88,8 +102,8 @@ prototype Tasks_InsertTask : FeedingFrenzyJsonWsAdminGuardedWriteAction
 [SemanticProgram.InfinitivePhrase("to update a feeding frenzy task")]
 prototype Tasks_UpdateTask : FeedingFrenzyJsonWsAdminGuardedWriteAction
 {
-	Description = @"Updates a task through generated Tasks.UpdateTask. AssignToUserID 0 means unassigned and is sent as null. DueDate is an ISO-like string; pass an empty string for no due date.";
-	function Execute(int TaskID, string TaskDescription, int TaskStatusID, int AssignToUserID, int CreatedByUserID, string Data, string DueDate, string Notes) : string
+	Description = @"Updates a task through generated Tasks.UpdateTask. AssignToUserID 0 means unassigned; LeadID 0 means no customer. DueDate is an ISO-like string; pass an empty string for no due date.";
+	function Execute(int TaskID, string TaskDescription, int TaskStatusID, int AssignToUserID, int CreatedByUserID, string Data, string DueDate, string Notes, int LeadID) : string
 	{
 		JsonObject args = new JsonObject();
 		args["TaskID"] = TaskID;
@@ -101,6 +115,8 @@ prototype Tasks_UpdateTask : FeedingFrenzyJsonWsAdminGuardedWriteAction
 		args["Data"] = Data;
 		args["DueDate"] = DueDate;
 		args["Notes"] = Notes;
+		if (LeadID > 0) args["LeadID"] = LeadID;
+		else args["LeadID"] = null;
 		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("tasks/update-task", args);
 	}
 }
