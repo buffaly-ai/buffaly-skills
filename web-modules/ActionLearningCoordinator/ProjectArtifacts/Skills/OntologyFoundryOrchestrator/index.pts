@@ -113,7 +113,7 @@ prototype ToAssignOntologyFoundryWorker : OntologyFoundryOrchestratorSkillAction
 	Description = @"workerSessionKey and instruction must match one reserved ledger row. Queues one bounded assignment without waiting.";
 	function Execute(string workerSessionKey, string instruction) : QueuedInputResult
 	{
-		return SessionTools.SendToSessionTool(workerSessionKey, instruction);
+		return SessionTools.QueueMessageToSessionTool(workerSessionKey, instruction);
 	}
 }
 

@@ -159,7 +159,7 @@ prototype ToOntologyFoundrySendToSession : OntologyFoundrySkillAction, OntologyF
 	Description = @"sessionKey - exact existing Level2 key. instruction - exact inspect-only harvest prompt. Returns queued IDs used for correlation.";
 	function Execute(string sessionKey, string instruction) : QueuedInputResult
 	{
-		return SessionTools.SendToSessionTool(sessionKey, instruction);
+		return SessionTools.QueueMessageToSessionTool(sessionKey, instruction);
 	}
 }
 

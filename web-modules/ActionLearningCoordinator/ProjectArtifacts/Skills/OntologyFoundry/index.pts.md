@@ -1,5 +1,7 @@
 # Ontology Foundry ProtoScript
 
+2026-09-26: Updated the thin cross-session queue wrapper to call the current `SessionTools.QueueMessageToSessionTool` API. This is the same deferred queue behavior under its unambiguous current name.
+
 Defines the private Ontology Foundry action/entity roots, the `OntologyFoundrySkill` registration, prompt actions, parent-only profile launch/continuation actions, and narrow wrappers over current ontology, conversation search, and the fixed artifact owner.
 
 The artifact wrappers require an exact Level1 `sourceSessionKey` and can read or atomically replace only that source session's `artifacts/ontology-foundry/evidence-graph.md`. The reusable Foundry worker is a child of the source and does not own a second canonical graph. Candidate analysis and scoring remain in the trusted prompt; ProtoScript is thin orchestration.
