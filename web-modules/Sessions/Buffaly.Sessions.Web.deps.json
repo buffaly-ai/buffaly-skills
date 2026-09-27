@@ -17,6 +17,7 @@
           "Buffaly.DB.SqlServer": "1.0.0",
           "Buffaly.SessionSemanticDatabase": "1.0.0",
           "Buffaly.Sessions.DB": "1.0.0",
+          "Buffaly.Sessions.DB.PostGres": "1.0.0",
           "System.Data.SqlClient": "4.8.6",
           "BasicUtilities": "1.0.0.0",
           "Buffaly.Common": "1.0.0.0",
@@ -614,6 +615,18 @@
           }
         }
       },
+      "Buffaly.Sessions.DB.PostGres/1.0.0": {
+        "dependencies": {
+          "Buffaly.DB.Core": "1.0.0",
+          "Npgsql": "9.0.3"
+        },
+        "runtime": {
+          "Buffaly.Sessions.DB.PostGres.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "Buffaly.SessionSemanticDatabase/1.0.0": {
         "dependencies": {
           "Buffaly.Agent.Common": "1.0.0",
@@ -1048,6 +1061,11 @@
       "sha512": ""
     },
     "Buffaly.Sessions.DB/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Buffaly.Sessions.DB.PostGres/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
