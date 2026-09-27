@@ -169,6 +169,22 @@ END $$;
 
 CREATE OR REPLACE FUNCTION turns_read_index_detail_rows(p_session_id integer,p_turn_key text,p_num_rows integer) RETURNS TABLE("MessageID" integer,"SessionID" integer,"SequenceNumber" integer,"Role" text,"Content" text,"ToolName" text,"ToolArguments" text,"CallID" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"IsCompacted" boolean,"CompactionEpoch" integer,"MessageKey" text,"TurnID" text,"CompactionEpochKey" text,"TurnRowID" bigint) LANGUAGE sql STABLE AS $$ SELECT newest.message_id,newest.session_id,newest.sequence_number,newest.role,newest.content,newest.tool_name,newest.tool_arguments,newest.call_id,newest.date_created,newest.last_updated,newest.data,newest.is_compacted,newest.compaction_epoch,newest.message_key,newest.turn_id,newest.compaction_epoch_key,newest.turn_row_id FROM(SELECT m.message_id,m.session_id,m.sequence_number,m.role,m.content,m.tool_name,m.tool_arguments,m.call_id,m.date_created,m.last_updated,m.data,m.is_compacted,m.compaction_epoch,m.message_key,m.turn_id,m.compaction_epoch_key,m.turn_row_id FROM messages m WHERE m.session_id=p_session_id AND m.turn_id=p_turn_key ORDER BY m.date_created DESC,m.message_id DESC LIMIT p_num_rows)newest ORDER BY newest.date_created,newest.message_id $$;
 
+-- The provider executor preserves canonical SQL Server routine names and quotes them.
+-- Install exact-name wrappers after the snake-case Turns routines exist so existing-session
+-- bootstrap and maintenance calls resolve on PostgreSQL as well as fresh message writes.
+CREATE OR REPLACE FUNCTION "Turns_ReadIndexPage"(p_session_id integer,p_skip_rows integer,p_num_rows integer,p_before_time timestamp,p_before_message_id integer,p_user_only boolean,p_force_message_projection boolean)
+RETURNS TABLE("TotalTurns" bigint,"HasMore" boolean,"TurnID" bigint,"SessionID" integer,"TurnKey" text,"DisplayOrderAtUtc" timestamp,"FirstMessageID" integer,"UserMessageID" integer,"AssistantMessageID" integer,"LastErrorMessageID" integer,"TerminalMessageID" integer) LANGUAGE sql STABLE AS $$ SELECT * FROM turns_read_index_page(p_session_id,p_skip_rows,p_num_rows,p_before_time,p_before_message_id,p_user_only,p_force_message_projection) $$;
+CREATE OR REPLACE FUNCTION "Turns_ReadIndexTurn"(p_session_id integer,p_turn_key text,p_force_message_projection boolean)
+RETURNS TABLE("TurnID" bigint,"SessionID" integer,"TurnKey" text,"DisplayOrderAtUtc" timestamp,"FirstMessageID" integer,"UserMessageID" integer,"AssistantMessageID" integer,"LastErrorMessageID" integer,"TerminalMessageID" integer) LANGUAGE sql STABLE AS $$ SELECT * FROM turns_read_index_turn(p_session_id,p_turn_key,p_force_message_projection) $$;
+CREATE OR REPLACE FUNCTION "Turns_ReadIndexDetailRows"(p_session_id integer,p_turn_key text,p_num_rows integer)
+RETURNS TABLE("MessageID" integer,"SessionID" integer,"SequenceNumber" integer,"Role" text,"Content" text,"ToolName" text,"ToolArguments" text,"CallID" text,"DateCreated" timestamp,"LastUpdated" timestamp,"Data" text,"IsCompacted" boolean,"CompactionEpoch" integer,"MessageKey" text,"TurnID" text,"CompactionEpochKey" text,"TurnRowID" bigint) LANGUAGE sql STABLE AS $$ SELECT * FROM turns_read_index_detail_rows(p_session_id,p_turn_key,p_num_rows) $$;
+CREATE OR REPLACE FUNCTION "Turns_PopulateUnlinked"(p_session_id integer,p_max_messages integer,p_lock_timeout_milliseconds integer)
+RETURNS TABLE("ProcessedMessages" integer,"HasMore" boolean) LANGUAGE sql AS $$ SELECT * FROM turns_populate_unlinked(p_session_id,p_max_messages,p_lock_timeout_milliseconds) $$;
+CREATE OR REPLACE FUNCTION "Turns_MaintainIndex"(p_session_id integer,p_turn_keys_json text,p_max_unlinked_messages integer,p_lock_timeout_milliseconds integer)
+RETURNS TABLE("ProcessedMessages" integer,"RepairedTurns" integer,"HasMoreUnlinked" boolean) LANGUAGE sql AS $$ SELECT * FROM turns_maintain_index(p_session_id,p_turn_keys_json,p_max_unlinked_messages,p_lock_timeout_milliseconds) $$;
+CREATE OR REPLACE FUNCTION "Turns_RepairPage"(p_session_id integer,p_after_turn_id bigint,p_num_rows integer,p_lock_timeout_milliseconds integer)
+RETURNS TABLE("RepairedTurns" integer,"LastTurnID" bigint,"HasMore" boolean) LANGUAGE sql AS $$ SELECT * FROM turns_repair_page(p_session_id,p_after_turn_id,p_num_rows,p_lock_timeout_milliseconds) $$;
+
 
 -- One ordinary message transaction; an exception rolls back retained moves, new rows and session data.
 CREATE OR REPLACE FUNCTION messages_persist_session_compaction(
