@@ -498,3 +498,12 @@ prototype ToRunMultiStepLiveToolInputCoordinationTest : ProcessSkillAction
 }
 
 
+[SemanticProgram.InfinitivePhrase("to execute a protected AWS SSM command")]
+prototype ToExecuteProtectedAwsSsmCommand : ProcessSkillAction
+{
+	function Execute(string instanceId, string command, string region) : string
+	{
+		return SsmCommandService.ExecuteOnInstance(instanceId, command, region);
+	}
+	Description = @"Execute an approved PowerShell command on a Windows SSM target. The shared C# sender owns the remote scratch directory; caller supplies only instanceId, command and region. Arbitrary scripts require one-time approval.";
+}

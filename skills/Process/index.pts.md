@@ -49,3 +49,7 @@
 ## Add GitHub Auth Visible Output Tool (2026-06-14)
 - Added `ToRunGitHubAuthLoginWithVisibleOutput`, a Process skill action that launches `gh auth login` through the streaming PowerShell path and passes one `ProcessToolDisplayOptions` object with `ForceOpenToolWindow = true`.
 - Design Decision: use explicit launch-time display intent for auth-code workflows instead of stdout/stderr string detection, and keep display metadata grouped in one object rather than adding more scalar process parameters.
+
+## SSM protection v1 implementation batch
+- C5 — shared discoverable action without per-command cwd.
+- Implements the approved Server Tools SSM protection design v1; validation and final commit evidence must be recorded at implementation.
