@@ -1,8 +1,20 @@
 {
   "Enabled": true,
+  "ProcessPolicyProvisioned": true,
+  "RemoteCommandAnalysisEnabled": true,
+  "SafetyAnalysisTimeoutSeconds": 15,
   "ApprovalTimeoutSeconds": 120,
   "ApprovalText": "APPROVE",
   "Rules": [
+    {
+      "RuleId": "raw-ssm-execution",
+      "Enabled": true,
+      "Scope": 1,
+      "Disposition": 1,
+      "RiskCategory": "RemoteExecution",
+      "Reason": "This invocation executes commands through AWS SSM.",
+      "Conditions": [{ "Target": 3, "MatchMode": 4, "Comparison": 1, "Values": ["aws ssm send-command", "aws ssm start-session", "aws ssm start-automation-execution", "aws ssm start-associations-once", "session-manager-plugin", "Send-SSMCommand", "Start-SSMSession", "ssm-sdk send-command"] }]
+    },
     {
       "RuleId": "safe-hard-deny-smoke-test",
       "Enabled": true,
