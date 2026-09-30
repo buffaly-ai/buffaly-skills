@@ -36,18 +36,33 @@ A tangible fix must name the exact component and change, explain why it removes 
 
 ## Output contract
 
-The first screen must answer the operational question. Do not begin with chronology, source listings, stack narration, or a research transcript.
+The first screen must answer the operational question by identifying the error and its verified origin before analysis. Do not begin with chronology, source listings, stack narration, a causal essay, or a research transcript.
 
-# Answer
-In at most three sentences: state `Cause established` or `Cause not established`, name the mechanism or remaining uncertainty, and give the direct evidence controlling that decision.
+Open the response's Summary section with this compact block, using `Unknown — <missing evidence>` rather than guessing:
 
-# Recommendation
+**Error**
+- **Exception:** `<exact exception type>: <message verbatim>`; redact only secrets or credentials and mark each redaction as `[REDACTED]`.
+- **Thrown at:** `<linked source file>:<line> — <type.method>` when verified. If unavailable, say `Unknown` and name the missing symbol/source evidence.
+- **Context:** `<affected session/service>` at `<occurrence time with timezone>`.
+- **Impact:** `<one sentence describing the observed operational effect>`.
+
+Immediately distinguish location semantics when they differ:
+- **Throw site** is the frame or source statement that created/threw the exception.
+- **Caller** is the invoking frame and must not be presented as the throw site.
+- **Logger/catch site** is where the exception was recorded and must not be presented as its causal origin.
+- If only a caller or logger is known, state that the causal throw site is unknown.
+
+Then, in no more than four bullets, give **Established**, **Hypotheses**, and **Next action**. Established findings require direct evidence. Hypotheses must be explicitly labeled and omitted when none remain. The next action must be the single fix or discriminating diagnostic required by the outcome.
+
+When a repository path and commit are known, link the verified throw-site file or commit. Never invent a path, line, symbol, session, service, timestamp, or source link.
+
+## Recommendation
 Give one primary recommendation as an imperative. Name the exact file/component and change. If cause is not established, recommend the single discriminating diagnostic instead of a speculative fix.
 
-# Regression Protection
+## Regression Protection
 Use at most four bullets: failing reproduction, focused verification, adjacent boundary regression, and runtime signal with threshold/window.
 
-# Next Action
+## Next Action
 Give exactly one concrete next action the operator can execute or authorize.
 
-Keep the main response under 350 words. Include `# Evidence Appendix` only when needed, with at most five decisive bullets. Do not include separate sections for checks performed, research performed, competing causes, validation, and missing evidence when their contents can be expressed in the answer, recommendation, regression bullets, or appendix.
+Keep the main response under 350 words. Put long analysis, timelines, stack detail, and supporting evidence after the compact summary, or link an artifact when available. Include `## Evidence Appendix` only when needed, with at most five decisive bullets. Do not include separate sections for checks performed, research performed, competing causes, validation, and missing evidence when their contents can be expressed in the compact summary, recommendation, regression bullets, or appendix.
