@@ -22163,10 +22163,10 @@
       "PackageType": "WebModule",
       "Title": "Wiki",
       "Description": "Buffaly Web Module package for Wiki.",
-      "Version": "0.1.190",
+      "Version": "0.1.191",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/Buffaly.Agent.Wiki",
-      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/Buffaly.Agent.Wiki",
+      "SourceUrl": "",
       "Phrases": [
         "Wiki",
         "Buffaly.Agent.Wiki"
@@ -22186,7 +22186,7 @@
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "aa8dddd981de92c16ca4139e2fbb8da2f5d803f77898d74995ac6893999a69e0"
+          "Sha256": "882a5e045f6a45d0a910d7ea27e020d776a116d287df8659f22b58e42d6fe5eb"
         },
         {
           "Path": "Buffaly.Agent.Wiki.deps.json",
@@ -22194,19 +22194,19 @@
         },
         {
           "Path": "Buffaly.Agent.Wiki.dll",
-          "Sha256": "354f75779fd9a457300a9c71e01b30a14a1a78c77221b093edb7428b1df13f43"
+          "Sha256": "e48453a4df21f141ded3c97236907d20e7d96373784eb24ee6e034af176ba028"
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "fe74bccb07d64a3ad0226a648e3fec8b162824760f0171e680444fe2b20f1f47"
+          "Sha256": "46ed771f0da77d1f36316f1947b501888572aa28433d09a2b5decd0a15b89232"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "a990f88f1c0fd57317ba4c82bb9015afb0aa9ba40ad8a66a95b1e1dfe14e1ea6"
+          "Sha256": "1867bc655018f66e5e007d7813efed66cd1253a7fed28d48bb006e7ab91648f2"
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "a3a578f9dd8163bcbc75d7c7217a0e6dfd7975ce610e9aa003c30017473c2558"
+          "Sha256": "53d6a9f396040cc8c8810b3b5703fe5225cc94591a8e8d4e9d8ab5b579b297b6"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -22854,7 +22854,7 @@
         },
         {
           "Path": "Scripts/Sessions_GetPendingAttentionSp.sql",
-          "Sha256": "ffc34ace42ec925775be3b84b4e18c818ec8c4e168b84e86f094e4e7310648ad"
+          "Sha256": "aa4c0f5ba360d29bab39dcd20d7d92dab1e8c044a4d4ac195e7c042e12f51e58"
         },
         {
           "Path": "Scripts/Sessions_GetSidebarActivityBatchSp.sql",
@@ -22871,6 +22871,10 @@
         {
           "Path": "Scripts/Sessions_GetSidebarSelectedBranchSp.sql",
           "Sha256": "d6eeb4173e66112cfd560db654e3e29569f11231a75a8ad14b1aa676014f4d72"
+        },
+        {
+          "Path": "Scripts/Sessions_ResetRunningForResumeSp.sql",
+          "Sha256": "bdc758d365fd771da475b81c90700e2d0c5f375f5142a986ff9444b85b83d940"
         },
         {
           "Path": "Scripts/Sessions_ResetRunningRuntimeStatusOnWebStartupSp.sql",
