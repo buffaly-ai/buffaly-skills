@@ -507,3 +507,13 @@ prototype ToExecuteProtectedAwsSsmCommand : ProcessSkillAction
 	}
 	Description = @"Execute an approved PowerShell command on a Windows SSM target. The shared C# sender owns the remote scratch directory; caller supplies only instanceId, command and region. Arbitrary scripts require one-time approval.";
 }
+
+[SemanticProgram.InfinitivePhrase("to ensure the remote temp directory exists")]
+prototype ToEnsureRemoteSsmTempDirectory : ProcessSkillAction
+{
+	function Execute(string instanceId, string region) : string
+	{
+		return SsmCommandService.EnsureRemoteTempDirectory(instanceId, region);
+	}
+	Description = @"Approve once to ensure literal C:\Temp exists on the selected Windows SSM target. Creates only that fixed directory if missing; no arbitrary command/path, deletion, ACL change or restart. Returns Created, AlreadyExists or failure.";
+}

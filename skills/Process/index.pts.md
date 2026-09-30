@@ -53,3 +53,6 @@
 ## SSM protection v1 implementation batch
 - C5 — shared discoverable action without per-command cwd.
 - Implements the approved Server Tools SSM protection design v1; validation and final commit evidence must be recorded at implementation.
+
+## SSM directory v2 implementation
+- Literal C:\Temp default/fallback, configurable directory and protected fixed initializer; preserve exact-request approve-once. Implemented approved amendment; validated with focused tests.
