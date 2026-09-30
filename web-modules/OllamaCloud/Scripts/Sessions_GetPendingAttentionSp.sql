@@ -14,12 +14,12 @@ BEGIN
 		JSON_VALUE(s.Data, '$.SessionKind') AS SessionKind,
 		JSON_QUERY(s.Data, '$.Specialization') AS Specialization,
 		s.NeedsAttention, JSON_VALUE(s.Data, '$.LastNonRunningUtc') AS StopStamp,
-		CASE JSON_VALUE(m.Data, '$.TerminalOutcome.State')
+		CASE WHEN t.TurnKey IS NOT NULL AND t.TurnKey <> '' AND t.TerminalMessageID IS NULL AND JSON_VALUE(s.Data, '$.RuntimeStatus') <> 'Running' THEN 'Interrupted' ELSE CASE JSON_VALUE(m.Data, '$.TerminalOutcome.State')
 			WHEN 'Failed' THEN 'Errors'
 			WHEN 'Completed' THEN CASE WHEN JSON_VALUE(m.Data, '$.TerminalOutcome.SavedWorkResume') = 'true' THEN 'Resumed' ELSE 'Completed' END
-			ELSE '' END AS AttentionGroup
+			ELSE '' END END AS AttentionGroup
 	FROM dbo.Sessions s
-	OUTER APPLY (SELECT TOP (1) TerminalMessageID FROM dbo.Turns WHERE SessionID = s.SessionID ORDER BY DisplayOrderAtUtc DESC, TurnID DESC) t
+	OUTER APPLY (SELECT TOP (1) TurnKey, TerminalMessageID FROM dbo.Turns WHERE SessionID = s.SessionID ORDER BY DisplayOrderAtUtc DESC, FirstMessageID DESC) t
 	LEFT JOIN dbo.Messages m ON m.MessageID = t.TerminalMessageID
 	WHERE s.NeedsAttention = 1 AND s.IsArchived = 0
 	ORDER BY CONVERT(datetimeoffset(7), JSON_VALUE(s.Data, '$.LastNonRunningUtc')), s.SessionID;
