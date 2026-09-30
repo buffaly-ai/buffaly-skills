@@ -1,8 +1,10 @@
 {
+  "RemoteSsmWorkingDirectory": "C:\\Temp",
   "Enabled": true,
   "ProcessPolicyProvisioned": true,
   "RemoteCommandAnalysisEnabled": true,
-  "SafetyAnalysisTimeoutSeconds": 15,
+  "AutoApproveReadOnlySsmCommands": false,
+  "SafetyAnalysisTimeoutSeconds": 60,
   "ApprovalTimeoutSeconds": 120,
   "ApprovalText": "APPROVE",
   "Rules": [

@@ -239,5 +239,16 @@ BEGIN
 	RETURN QUERY SELECT moved,inserted_count;
 END $$;
 
+-- The provider executor quotes the canonical repository routine name. Keep this wrapper
+-- exact-cased so PostgreSQL resolves the same contract used by SQL Server and application code.
+CREATE OR REPLACE FUNCTION "Messages_PersistSessionCompaction"(
+	p_session_id integer,p_target_epoch integer,p_target_epoch_key text,p_session_data text,
+	p_retained_messages_json text,p_inserted_messages_json text)
+RETURNS TABLE("MovedRows" integer,"InsertedRows" integer) LANGUAGE sql AS $$
+	SELECT * FROM messages_persist_session_compaction(
+		p_session_id,p_target_epoch,p_target_epoch_key,p_session_data,
+		p_retained_messages_json,p_inserted_messages_json)
+$$;
+
 SELECT record_schema_migration('030_turns_query_index');
 
