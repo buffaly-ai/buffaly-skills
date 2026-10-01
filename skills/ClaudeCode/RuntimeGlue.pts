@@ -67,7 +67,8 @@ function ToClaudeNativeRunHandle(string handle) : string
 			ToolInvocationId = toolInvocationId,
 			MessageKey = messageKey
 		});
-		if (inputResult.Status == "submitted")
+		ToClaudeNativeEmit("Claude live input result: status=" + inputResult.Status + "; value=" + inputResult.Value + "\n");
+	if (inputResult.Status == "submitted")
 		{
 			string choice = inputResult.Value;
 			if (StringUtil.IsEmpty(choice))
