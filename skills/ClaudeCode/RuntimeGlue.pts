@@ -74,7 +74,9 @@ function ToClaudeNativeRunHandle(string handle) : string
 			if (StringUtil.IsEmpty(choice))
 				choice = "deny";
 			int generation = ClaudeCodeTools.GetPollInteractionGeneration(batch);
-			ClaudeCodeTools.Reply(handle, interactionId, ClaudeCodeTools.CreateInteractionReplyJson(choice, generation));
+			string replyJson = ClaudeCodeTools.CreateInteractionReplyJson(choice, generation);
+		ToClaudeNativeEmit("Claude reply: " + replyJson + "\n");
+		ClaudeCodeTools.Reply(handle, interactionId, replyJson);
 		}
 		else
 		{
