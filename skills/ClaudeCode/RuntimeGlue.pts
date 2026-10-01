@@ -67,15 +67,13 @@ function ToClaudeNativeRunHandle(string handle) : string
 			ToolInvocationId = toolInvocationId,
 			MessageKey = messageKey
 		});
-		ToClaudeNativeEmit("Claude live input result: status=" + inputResult.Status + "; value=" + inputResult.Value + "\n");
-	if (inputResult.Status.Equals("submitted"))
+		if (inputResult.Status.Equals("submitted"))
 		{
 			string choice = inputResult.Value;
 			if (StringUtil.IsEmpty(choice))
 				choice = "deny";
 			int generation = ClaudeCodeTools.GetPollInteractionGeneration(batch);
 			string replyJson = ClaudeCodeTools.CreateInteractionReplyJson(choice, generation);
-		ToClaudeNativeEmit("Claude reply: " + replyJson + "\n");
 		ClaudeCodeTools.Reply(handle, interactionId, replyJson);
 		}
 		else
