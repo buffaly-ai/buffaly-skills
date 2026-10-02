@@ -219,7 +219,7 @@
       "SkillName": "BuffalyMaintenance",
       "Title": "Buffaly Maintenance",
       "Description": "Buffaly skill package for Buffaly Maintenance.",
-      "Version": "0.1.72",
+      "Version": "0.1.73",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Buffaly Maintenance",
@@ -241,16 +241,17 @@
         },
         {
           "Path": "lib/Buffaly.Agent.Provisioning.dll",
-          "Sha256": "d728b6f238d3fa559b6171eca6c67dfa4be0c75e6324b679d2d5f1176a549a58"
+          "Sha256": "10283579d1c9c8570f46dd348c7f3077b26530c430a0b4d4a652c04471d1fa4a"
         },
         {
           "Path": "lib/Buffaly.Maintenance.Client.dll",
-          "Sha256": "5523868c139b63e5920ad2b56b321a1008b5f7aaa2a8d3673f01b4647964937a"
+          "Sha256": "13d2a606b1fb8f72bf96fb96aa0f900b2b480b75ddfe54ff35877615ea70c2cf"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": []
+      "Prerequisites": [],
+      "PreservedFiles": []
     },
     {
       "SkillName": "BuffalyNLMemory",
