@@ -23370,6 +23370,41 @@
       "RequiresRestart": true,
       "RequiresPreStartInstall": true,
       "PreStartCleanupPaths": []
+    },
+    {
+      "PackageId": "Buffaly.Chat.ScriptedProvider",
+      "PackageType": "ProviderModule",
+      "Title": "H1 Scripted Chat Provider (Test Only)",
+      "Description": "Buffaly Provider Module package for H1 Scripted Chat Provider (Test Only).",
+      "Version": "0.1.0",
+      "PackageKind": "BuffalyProviderModule",
+      "SourcePath": "provider-modules/Buffaly.Chat.ScriptedProvider",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/provider-modules/Buffaly.Chat.ScriptedProvider",
+      "Phrases": [
+        "H1 Scripted Chat Provider (Test Only)",
+        "Buffaly.Chat.ScriptedProvider"
+      ],
+      "Files": [
+        {
+          "Path": "Buffaly.Chat.ScriptedProvider.deps.json",
+          "Sha256": "a1750202db11c11e0fa988406cb3ecfba7e3a0517100726fd8d59eb33b653a31"
+        },
+        {
+          "Path": "Buffaly.Chat.ScriptedProvider.dll",
+          "Sha256": "36951c2a4d38c4a24c05a82cc4ca04c862dde0b73614c536d70ee07bce4ec0e1"
+        },
+        {
+          "Path": "ProviderModules.json",
+          "Sha256": "0d6105aac2f76fcd7aac11f0a7e68126021241aab751c51ad6d83199aee801cd"
+        }
+      ],
+      "ProjectArtifacts": [],
+      "Dependencies": [],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "RequiresRestart": true,
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     }
   ]
 }
