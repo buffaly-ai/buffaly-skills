@@ -121,3 +121,14 @@ prototype Portal_ReadBuyerMessages : RealEstateActionRoot
 	}
 	Description = "Read canonical buyer rows with exact MessageKey and content for confirmation and qualification evidence. No external transcript.";
 }
+[SemanticProgram.InfinitivePhrase("to reply to the buyer")]
+prototype Portal_Respond : RealEstateActionRoot
+{
+	function Execute(string Message) : string
+	{
+		return PortalTools.Respond(_opsAgent, Message);
+	}
+	Description = "Required final step: send the complete customer-facing answer as Message (markdown). This action publishes exactly one canonical final answer through Buffaly response directives. Do not follow it with another bare model final. Business facts must come from tools and bookings must have successful receipts.";
+	ResponseFormat = "markdown";
+	ResponseResultType = "display message";
+}
