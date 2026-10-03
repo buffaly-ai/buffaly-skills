@@ -488,10 +488,10 @@
       "PackageType": "ProviderModule",
       "Title": "LlamaCpp Provider",
       "Description": "Buffaly Provider Module package for LlamaCpp Provider.",
-      "Version": "0.1.63",
+      "Version": "0.1.64",
       "PackageKind": "BuffalyProviderModule",
       "SourcePath": "provider-modules/Buffaly.Provider.LlamaCpp",
-      "SourceUrl": "",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/provider-modules/Buffaly.Provider.LlamaCpp",
       "Phrases": [
         "LlamaCpp Provider",
         "Buffaly.Provider.LlamaCpp"
@@ -507,39 +507,39 @@
         },
         {
           "Path": "BasicUtilities.dll",
-          "Sha256": "6ed0357d79b7579f355c6c8fce21fb82efbd92242ee03899e5f6d38141b9406c"
+          "Sha256": "40332858ddb6d21550f2e07c40fddf94c281ecfb5194631f93da628c0463fc10"
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "372dac25ea1e5472587b233a90eb90c0c7a2f614425be225560b0461898bb920"
+          "Sha256": "2b516331e4189574dfa6b49254edbfe94f7bbbd6270479a1065bc0380676635c"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "b95964f91206bc164930abe59c6c6f481ad5e940c56086f01cd1a66617553946"
+          "Sha256": "08d58fa1a368511ccef98fa3f93e3b3a392aa3886d2dfbffb429e5ed7fbd469f"
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "f389d5f25a1b250c534f1e729b57bda6ea7e83ee584e9fa76c4efa38d38c488e"
+          "Sha256": "e5d5d8c9424d959d6beee6f2cc662dabdb5d4d6c2f2500fd3a93a52558245b5d"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "a186437fe3002c51d9e98cfb3e4299fb7a1ded312a868358d46af311a0496722"
+          "Sha256": "7eeafd99beaca22c734eaaa8e518d0c5b4ffdaa711ea9bf843b17f5bee45e034"
         },
         {
           "Path": "Buffaly.Provider.LlamaCpp.deps.json",
-          "Sha256": "f9e70e873c67cfdf28faa0dd1b3f20a284a207415702c56b6a34d814c1d7aae2"
+          "Sha256": "67887d3c74927b3c6d0911a9bacbb226f2e1260cac643534a2235812b6dbbeb8"
         },
         {
           "Path": "Buffaly.Provider.LlamaCpp.dll",
-          "Sha256": "1cd2804c3477bfdb2e6407769fb69b824cd729fc3bc9a05714c8c4a0547498bf"
+          "Sha256": "89b72518f88694bdf7575ac68104efc434212a93396b55658ea6938dcf30a9ce"
         },
         {
           "Path": "Buffaly.ProviderContracts.dll",
-          "Sha256": "e4c557ba33a083df6d1ff7a2d6f39f09b6b4ed9e36484c273dab931da22a02eb"
+          "Sha256": "12340a528470c604fcde7de6ad8876a4623fea13caf33e6df6da0e6b98b5c270"
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "b8574d7d94eec1ad2ac77d14a2cf4e55f0ff75273e54e3d782f9c3b4ee7a6726"
+          "Sha256": "a5b48fd70dbf79ed8aeac320b59e9af90e56906237cabe8281c312aa56cac7c6"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -659,15 +659,15 @@
         },
         {
           "Path": "RooTrax.Cache.dll",
-          "Sha256": "04db0b3bbed606b3f965d775e1607545e33db8db69a57d60cb58db070ad43497"
+          "Sha256": "e045c4e8cd8e82680122e65da78872fd455ea4deea1df5e9d4c3196064ce86c7"
         },
         {
           "Path": "RooTrax.Common.DB.dll",
-          "Sha256": "1f821ea33065b2e0a08416e5fd589e354fd320d85175576d4162a6a6027efeed"
+          "Sha256": "766e2d48f06233ddefe49791f42f036f7aad26b6c6548631206a94383bab4199"
         },
         {
           "Path": "RooTrax.Common.dll",
-          "Sha256": "dfa3b9484ee85c06c733e86aeef8603424e5eddde1b1e8a78fc3d668d70c0127"
+          "Sha256": "e4a801485f77c9410743466033f2eec524bf1ef7c1c374ceab5b5039daffc736"
         },
         {
           "Path": "runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll",
@@ -1251,7 +1251,7 @@
         },
         {
           "Path": "Scripts/Turns_ReadIndex.sql",
-          "Sha256": "cb9a9f97b93c24e499920273da2f6927c9203e61913488dee0857e38d335efa1"
+          "Sha256": "5525fd8b2c0c7b08f0a739d2c133f9345f0dcf6c59bb3c56cb3d430b27081214"
         },
         {
           "Path": "Scripts/UpdateFeatureDataSp.sql",
@@ -1328,6 +1328,10 @@
         {
           "Path": "Scripts/UpdateToolResultPairCompactionEpochKeyAtomicSp.sql",
           "Sha256": "8233f57b8dc6ddce04e3ac9c1b330963837d0400d063d0a102736e94e167269f"
+        },
+        {
+          "Path": "SixLabors.ImageSharp.dll",
+          "Sha256": "609a57965d0a7b5ccfb79d919ea7384e7ec86c03266b0390a19bd5f2104bc353"
         },
         {
           "Path": "System.ClientModel.dll",
