@@ -23304,6 +23304,68 @@
       "RequiresRestart": true,
       "RequiresPreStartInstall": true,
       "PreStartCleanupPaths": []
+    },
+    {
+      "PackageId": "Javier.RealEstate.Agent",
+      "PackageType": "WebModule",
+      "Title": "Javier Real Estate Agent Connector",
+      "Description": "Buffaly Web Module package for Javier Real Estate Agent Connector.",
+      "Version": "0.1.0",
+      "PackageKind": "BuffalyWebModule",
+      "SourcePath": "web-modules/Javier.RealEstate.Agent",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/Javier.RealEstate.Agent",
+      "Phrases": [
+        "Javier Real Estate Agent Connector",
+        "Javier.RealEstate.Agent"
+      ],
+      "Files": [
+        {
+          "Path": "Buffaly.Chat.ApplicationApi.dll",
+          "Sha256": "8bd7f23eabd83e352e54247398a6c4cf3d4c14d62eb82671f6c8889681495f8e"
+        },
+        {
+          "Path": "Javier.RealEstate.Agent.deps.json",
+          "Sha256": "d479ab0c1a8366e544ddd75a7433da95de36d67fd6b0ef977fd2ab218977c868"
+        },
+        {
+          "Path": "Javier.RealEstate.Agent.dll",
+          "Sha256": "26d35f7097a1d42a5f775f8977716ff24aff4c1c08f02ff82ef8afd677a43c8a"
+        },
+        {
+          "Path": "ProjectArtifacts/Agents/customer-real-estate-agent.agent.json",
+          "Sha256": "0d86a48c47b97781e6da1eeef5cab1e9756e99b61d21dbb6e6af60ca065f1722"
+        },
+        {
+          "Path": "ProjectArtifacts/JavierRealEstate/Project.pts",
+          "Sha256": "211dd6b510cebce2fcdc3ef724bc3c6d858e8389c998a6d4e7a1fe5589085a2e"
+        },
+        {
+          "Path": "ProjectArtifacts/JavierRealEstate/Prompts/RealEstate.prompt.md",
+          "Sha256": "a3ed0456508481111c7f977d223c721a5fd7fac880851636b83f16650373ea9a"
+        },
+        {
+          "Path": "web-module.json",
+          "Sha256": "621e67636bd59e45e4f19dc96f7fa70ffd3b12557a705a4db67260075d7895f9"
+        }
+      ],
+      "ProjectArtifacts": [
+        {
+          "ProjectName": "Profiles/JavierRealEstate",
+          "SourcePath": "ProjectArtifacts/JavierRealEstate/",
+          "InstallAsProject": false
+        },
+        {
+          "ProjectName": "Agents",
+          "SourcePath": "ProjectArtifacts/Agents/",
+          "InstallAsProject": false
+        }
+      ],
+      "Dependencies": [],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "RequiresRestart": true,
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     }
   ]
 }

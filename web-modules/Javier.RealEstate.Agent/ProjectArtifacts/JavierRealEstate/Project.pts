@@ -1,0 +1,109 @@
+include "../ChatIntegration/ChatWorker.pts";
+include "../../CoreLite/CoreLite.pts";
+reference Javier.RealEstate.Agent;
+import Javier.RealEstate.Agent Javier.RealEstate.Agent.PortalTools PortalTools;
+prototype RealEstateActionRoot : OpsAction;
+prototype RealEstateEntityRoot : SemanticEntityBase;
+[SemanticProgram.InfinitivePhrase("to read available real estate projects")]
+prototype Portal_ReadProjects : RealEstateActionRoot
+{
+	function Execute(string ArgumentsJSON) : string
+	{
+		return PortalTools.Execute(_opsAgent, "ReadProjects", ArgumentsJSON);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to read project models")]
+prototype Portal_ReadModels : RealEstateActionRoot
+{
+	function Execute(string ArgumentsJSON) : string
+	{
+		return PortalTools.Execute(_opsAgent, "ReadModels", ArgumentsJSON);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to read project financing")]
+prototype Portal_ReadFinancing : RealEstateActionRoot
+{
+	function Execute(string ArgumentsJSON) : string
+	{
+		return PortalTools.Execute(_opsAgent, "ReadFinancing", ArgumentsJSON);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to read available visit slots")]
+prototype Portal_ReadSlots : RealEstateActionRoot
+{
+	function Execute(string ArgumentsJSON) : string
+	{
+		return PortalTools.Execute(_opsAgent, "ReadSlots", ArgumentsJSON);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to read customer visits")]
+prototype Portal_ReadBookings : RealEstateActionRoot
+{
+	function Execute(string ArgumentsJSON) : string
+	{
+		return PortalTools.Execute(_opsAgent, "ReadBookings", ArgumentsJSON);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to save confirmed buyer details")]
+prototype Portal_SaveContact : RealEstateActionRoot
+{
+	function Execute(string ArgumentsJSON) : string
+	{
+		return PortalTools.Execute(_opsAgent, "SaveContact", ArgumentsJSON);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to record buyer qualification")]
+prototype Portal_Qualify : RealEstateActionRoot
+{
+	function Execute(string ArgumentsJSON) : string
+	{
+		return PortalTools.Execute(_opsAgent, "Qualify", ArgumentsJSON);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to book a confirmed visit")]
+prototype Portal_BookVisit : RealEstateActionRoot
+{
+	function Execute(string ArgumentsJSON) : string
+	{
+		return PortalTools.Execute(_opsAgent, "BookVisit", ArgumentsJSON);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to cancel a confirmed visit")]
+prototype Portal_CancelVisit : RealEstateActionRoot
+{
+	function Execute(string ArgumentsJSON) : string
+	{
+		return PortalTools.Execute(_opsAgent, "CancelVisit", ArgumentsJSON);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to request a staff followup")]
+prototype Portal_Followup : RealEstateActionRoot
+{
+	function Execute(string ArgumentsJSON) : string
+	{
+		return PortalTools.Execute(_opsAgent, "Followup", ArgumentsJSON);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to reconcile a business operation")]
+prototype Portal_Reconcile : RealEstateActionRoot
+{
+	function Execute(string ArgumentsJSON) : string
+	{
+		return PortalTools.Execute(_opsAgent, "Reconcile", ArgumentsJSON);
+	}
+}
+prototype PortalStaffWorker
+{
+	function Reconcile(string OperationKey) : string
+	{
+		return PortalTools.ReconcileStaff(_opsAgent, OperationKey);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to read canonical buyer messages")]
+prototype Portal_ReadBuyerMessages : RealEstateActionRoot
+{
+	function Execute() : string
+	{
+		return PortalTools.Execute(_opsAgent, "ReadBuyerMessages", "{}");
+	}
+}

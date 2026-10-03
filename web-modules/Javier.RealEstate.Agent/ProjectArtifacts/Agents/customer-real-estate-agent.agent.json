@@ -1,0 +1,20 @@
+{
+  "AgentName": "customer-real-estate-agent",
+  "DisplayName": "Kely Real Estate Assistant",
+  "ProjectFilePath": "Profiles/JavierRealEstate/Project.pts",
+  "PromptFile": "Profiles/JavierRealEstate/Prompts/RealEstate.prompt.md",
+  "PromptContext": "customer-real-estate",
+  "RootActionPrototypeName": "RealEstateActionRoot",
+  "RootEntityPrototypeName": "RealEstateEntityRoot",
+  "Provider": "openai",
+  "DefaultModelName": "gpt-5.5",
+  "DefaultReasoningLevel": "medium",
+  "UiPage": "conversations",
+  "IsReadOnly": false,
+  "IsHidden": true,
+  "CanChangeModel": false,
+  "CompanionAgents": [],
+  "CompanionAttachment": null,
+  "RunAdmissionPrototypeName": "ChatRunAdmission",
+  "EnableImmediateProtoScriptCommands": false
+}
