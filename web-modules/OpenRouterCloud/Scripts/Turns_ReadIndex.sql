@@ -124,60 +124,31 @@ END
 GO
 
 CREATE OR ALTER PROCEDURE dbo.Turns_ReadIndexPage
-	@SessionID int,@SkipRows int,@NumRows int,@BeforeTime datetime2(7)=NULL,@BeforeMessageID int=NULL,@UserOnly bit=0,@ForceMessageProjection bit=0
+ @SessionID int,@SkipRows int,@NumRows int,@BeforeTime datetime2(7)=NULL,@BeforeMessageID int=NULL,@UserOnly bit=0
 AS
 BEGIN
-	SET NOCOUNT ON;
-	IF @SkipRows<0 OR @NumRows<1 OR @NumRows>5000 THROW 51092,'Invalid Turns index page bounds.',1;
-	IF (@BeforeTime IS NULL AND @BeforeMessageID IS NOT NULL) OR (@BeforeTime IS NOT NULL AND @BeforeMessageID IS NULL) THROW 51092,'Both Turns index page boundary values are required.',1;
-	IF @ForceMessageProjection=0 AND NOT EXISTS(SELECT 1 FROM dbo.Messages WHERE SessionID=@SessionID AND TurnRowID IS NULL AND TurnID IS NOT NULL AND TurnID<>N'')
-	BEGIN
-		DECLARE @Total bigint=(SELECT COUNT_BIG(*) FROM dbo.Turns t WHERE SessionID=@SessionID AND (@UserOnly=0 OR UserMessageID IS NOT NULL) AND EXISTS(SELECT 1 FROM dbo.Messages m WHERE m.SessionID=@SessionID AND m.TurnID=t.TurnKey));
-		DECLARE @Filtered bigint=(SELECT COUNT_BIG(*) FROM dbo.Turns t WHERE SessionID=@SessionID AND (@UserOnly=0 OR UserMessageID IS NOT NULL) AND EXISTS(SELECT 1 FROM dbo.Messages m WHERE m.SessionID=@SessionID AND m.TurnID=t.TurnKey) AND (@BeforeTime IS NULL OR DisplayOrderAtUtc<@BeforeTime OR(DisplayOrderAtUtc=@BeforeTime AND FirstMessageID<@BeforeMessageID)));
-		SELECT @Total AS TotalTurns,CAST(CASE WHEN @SkipRows+@NumRows<@Filtered THEN 1 ELSE 0 END AS bit) AS HasMore;
-		SELECT TurnID,SessionID,TurnKey,DisplayOrderAtUtc,FirstMessageID,UserMessageID,AssistantMessageID,LastErrorMessageID,TerminalMessageID FROM dbo.Turns t
-		WHERE SessionID=@SessionID AND (@UserOnly=0 OR UserMessageID IS NOT NULL) AND EXISTS(SELECT 1 FROM dbo.Messages m WHERE m.SessionID=@SessionID AND m.TurnID=t.TurnKey)
-		AND (@BeforeTime IS NULL OR DisplayOrderAtUtc<@BeforeTime OR(DisplayOrderAtUtc=@BeforeTime AND FirstMessageID<@BeforeMessageID)) ORDER BY DisplayOrderAtUtc DESC,FirstMessageID DESC OFFSET @SkipRows ROWS FETCH NEXT @NumRows ROWS ONLY;
-		RETURN;
-	END
-	CREATE TABLE #Complete(TurnID bigint NOT NULL,SessionID int NOT NULL,TurnKey nvarchar(255) NOT NULL,DisplayOrderAtUtc datetime2(7) NOT NULL,FirstMessageID int NULL,UserMessageID int NULL,AssistantMessageID int NULL,LastErrorMessageID int NULL,TerminalMessageID int NULL);
-	INSERT #Complete
-	SELECT CASE WHEN @ForceMessageProjection=1 OR EXISTS(SELECT 1 FROM dbo.Messages x WHERE x.SessionID=@SessionID AND x.TurnID=k.TurnKey AND x.TurnRowID IS NULL) THEN CONVERT(bigint,0) ELSE COALESCE(t.TurnID,CONVERT(bigint,0)) END,@SessionID,k.TurnKey,COALESCE(u.DateCreated,f.DateCreated),f.MessageID,u.MessageID,a.MessageID,e.MessageID,z.MessageID
-	FROM (SELECT DISTINCT TurnID AS TurnKey FROM dbo.Messages WHERE SessionID=@SessionID AND TurnID IS NOT NULL AND TurnID<>N'') k LEFT JOIN dbo.Turns t ON t.SessionID=@SessionID AND t.TurnKey=k.TurnKey
-	OUTER APPLY (SELECT TOP (1) m.MessageID,m.DateCreated FROM dbo.Messages m WHERE m.SessionID=@SessionID AND m.TurnID=k.TurnKey ORDER BY m.DateCreated,m.MessageID) f
-	OUTER APPLY (SELECT TOP (1) m.MessageID,m.DateCreated FROM dbo.Messages m WHERE m.SessionID=@SessionID AND m.TurnID=k.TurnKey AND m.Role=N'User' ORDER BY m.DateCreated,m.MessageID) u
-	OUTER APPLY (SELECT TOP (1) m.MessageID FROM dbo.Messages m WHERE m.SessionID=@SessionID AND m.TurnID=k.TurnKey AND m.Role=N'Assistant' ORDER BY m.DateCreated DESC,m.MessageID DESC) a
-	OUTER APPLY (SELECT TOP (1) m.MessageID FROM dbo.Messages m WHERE m.SessionID=@SessionID AND m.TurnID=k.TurnKey AND m.Role=N'Lifecycle' AND ((JSON_VALUE(CASE WHEN ISJSON(m.Data)=1 THEN m.Data ELSE N'{}' END,'$.TerminalOutcome.State') IS NOT NULL AND LOWER(JSON_VALUE(CASE WHEN ISJSON(m.Data)=1 THEN m.Data ELSE N'{}' END,'$.TerminalOutcome.State'))=N'failed') OR (JSON_VALUE(CASE WHEN ISJSON(m.Data)=1 THEN m.Data ELSE N'{}' END,'$.TerminalOutcome.State') IS NULL AND (LOWER(COALESCE(JSON_VALUE(CASE WHEN ISJSON(m.Data)=1 THEN m.Data ELSE N'{}' END,'$.Name'),N''))=N'error' OR LOWER(COALESCE(JSON_VALUE(CASE WHEN ISJSON(m.Data)=1 THEN m.Data ELSE N'{}' END,'$.Phase'),N''))=N'error'))) ORDER BY m.DateCreated DESC,m.MessageID DESC) e
-	OUTER APPLY (SELECT TOP (1) m.MessageID FROM dbo.Messages m WHERE m.SessionID=@SessionID AND m.TurnID=k.TurnKey AND m.Role=N'Lifecycle' AND ((JSON_VALUE(CASE WHEN ISJSON(m.Data)=1 THEN m.Data ELSE N'{}' END,'$.TerminalOutcome.State') IS NOT NULL AND LOWER(JSON_VALUE(CASE WHEN ISJSON(m.Data)=1 THEN m.Data ELSE N'{}' END,'$.TerminalOutcome.State')) IN(N'completed',N'failed',N'cancelled')) OR (JSON_VALUE(CASE WHEN ISJSON(m.Data)=1 THEN m.Data ELSE N'{}' END,'$.TerminalOutcome.State') IS NULL AND (LOWER(COALESCE(JSON_VALUE(CASE WHEN ISJSON(m.Data)=1 THEN m.Data ELSE N'{}' END,'$.Name'),N'')) IN(N'error',N'turncomplete',N'turncompleted') OR LOWER(COALESCE(JSON_VALUE(CASE WHEN ISJSON(m.Data)=1 THEN m.Data ELSE N'{}' END,'$.Phase'),N'')) IN(N'error',N'turncomplete',N'turncompleted')))) ORDER BY m.DateCreated DESC,m.MessageID DESC) z WHERE @UserOnly=0 OR u.MessageID IS NOT NULL;
-	DECLARE @ColdTotal bigint=(SELECT COUNT_BIG(*) FROM #Complete),@ColdFiltered bigint=(SELECT COUNT_BIG(*) FROM #Complete WHERE @BeforeTime IS NULL OR DisplayOrderAtUtc<@BeforeTime OR(DisplayOrderAtUtc=@BeforeTime AND FirstMessageID<@BeforeMessageID));
-	SELECT @ColdTotal AS TotalTurns,CAST(CASE WHEN @SkipRows+@NumRows<@ColdFiltered THEN 1 ELSE 0 END AS bit) AS HasMore;
-	SELECT * FROM #Complete WHERE @BeforeTime IS NULL OR DisplayOrderAtUtc<@BeforeTime OR(DisplayOrderAtUtc=@BeforeTime AND FirstMessageID<@BeforeMessageID) ORDER BY DisplayOrderAtUtc DESC,FirstMessageID DESC OFFSET @SkipRows ROWS FETCH NEXT @NumRows ROWS ONLY;
+ SET NOCOUNT ON;
+ IF @SkipRows<0 OR @NumRows<1 OR @NumRows>5000 THROW 51092,'Invalid Turns index page bounds.',1;
+ IF (@BeforeTime IS NULL AND @BeforeMessageID IS NOT NULL) OR (@BeforeTime IS NOT NULL AND @BeforeMessageID IS NULL) THROW 51092,'Both Turns index page boundary values are required.',1;
+ -- Persisted Turns owns summary metadata; message history is never a paging fallback.
+ DECLARE @Total bigint=(SELECT COUNT_BIG(*) FROM dbo.Turns WHERE SessionID=@SessionID AND (@UserOnly=0 OR UserMessageID IS NOT NULL));
+ DECLARE @Filtered bigint=(SELECT COUNT_BIG(*) FROM dbo.Turns WHERE SessionID=@SessionID AND (@UserOnly=0 OR UserMessageID IS NOT NULL) AND (@BeforeTime IS NULL OR DisplayOrderAtUtc<@BeforeTime OR(DisplayOrderAtUtc=@BeforeTime AND FirstMessageID<@BeforeMessageID)));
+ SELECT @Total AS TotalTurns,CAST(CASE WHEN @SkipRows+@NumRows<@Filtered THEN 1 ELSE 0 END AS bit) AS HasMore;
+ SELECT TurnID,SessionID,TurnKey,DisplayOrderAtUtc,FirstMessageID,UserMessageID,AssistantMessageID,LastErrorMessageID,TerminalMessageID FROM dbo.Turns
+ WHERE SessionID=@SessionID AND (@UserOnly=0 OR UserMessageID IS NOT NULL)
+ AND (@BeforeTime IS NULL OR DisplayOrderAtUtc<@BeforeTime OR(DisplayOrderAtUtc=@BeforeTime AND FirstMessageID<@BeforeMessageID))
+ ORDER BY DisplayOrderAtUtc DESC,FirstMessageID DESC OFFSET @SkipRows ROWS FETCH NEXT @NumRows ROWS ONLY;
 END
 GO
 
-CREATE OR ALTER PROCEDURE dbo.Turns_ReadIndexTurn @SessionID int,@TurnKey nvarchar(255),@ForceMessageProjection bit=0
+CREATE OR ALTER PROCEDURE dbo.Turns_ReadIndexTurn @SessionID int,@TurnKey nvarchar(255)
 AS
 BEGIN
-	SET NOCOUNT ON;
-	SELECT q.TurnID,q.SessionID,q.TurnKey,q.DisplayOrderAtUtc,q.FirstMessageID,q.UserMessageID,q.AssistantMessageID,q.LastErrorMessageID,q.TerminalMessageID
-	FROM (SELECT t.TurnID,t.SessionID,t.TurnKey,t.DisplayOrderAtUtc,t.FirstMessageID,t.UserMessageID,t.AssistantMessageID,t.LastErrorMessageID,t.TerminalMessageID,0 AS Priority FROM dbo.Turns t
-		WHERE @ForceMessageProjection=0 AND t.SessionID=@SessionID AND t.TurnKey=@TurnKey
-		AND EXISTS(SELECT 1 FROM dbo.Messages m WHERE m.SessionID=@SessionID AND m.TurnID=@TurnKey)
-		AND NOT EXISTS(SELECT 1 FROM dbo.Messages m WHERE m.SessionID=@SessionID AND m.TurnID=@TurnKey AND m.TurnRowID IS NULL)
-		AND NOT EXISTS(SELECT 1 FROM (VALUES(t.FirstMessageID),(t.UserMessageID),(t.AssistantMessageID),(t.LastErrorMessageID),(t.TerminalMessageID)) anchor(MessageID) WHERE anchor.MessageID IS NOT NULL AND NOT EXISTS(SELECT 1 FROM dbo.Messages m WHERE m.MessageID=anchor.MessageID AND m.SessionID=@SessionID AND m.TurnID=@TurnKey AND m.TurnRowID=t.TurnID))
-		UNION ALL
-		SELECT CONVERT(bigint,0),@SessionID,@TurnKey,COALESCE(u.DateCreated,f.DateCreated),f.MessageID,u.MessageID,a.MessageID,e.MessageID,z.MessageID,1
-		FROM (SELECT 1 AS Present WHERE EXISTS(SELECT 1 FROM dbo.Messages WHERE SessionID=@SessionID AND TurnID=@TurnKey)) p
-		OUTER APPLY (SELECT TOP (1) MessageID,DateCreated FROM dbo.Messages WHERE SessionID=@SessionID AND TurnID=@TurnKey ORDER BY DateCreated,MessageID) f
-		OUTER APPLY (SELECT TOP (1) MessageID,DateCreated FROM dbo.Messages WHERE SessionID=@SessionID AND TurnID=@TurnKey AND Role=N'User' ORDER BY DateCreated,MessageID) u
-		OUTER APPLY (SELECT TOP (1) MessageID FROM dbo.Messages WHERE SessionID=@SessionID AND TurnID=@TurnKey AND Role=N'Assistant' ORDER BY DateCreated DESC,MessageID DESC) a
-		OUTER APPLY (SELECT TOP (1) MessageID FROM dbo.Messages m WHERE SessionID=@SessionID AND TurnID=@TurnKey AND Role=N'Lifecycle' AND ((JSON_VALUE(CASE WHEN ISJSON(m.Data)=1 THEN m.Data ELSE N'{}' END,'$.TerminalOutcome.State') IS NOT NULL AND LOWER(JSON_VALUE(CASE WHEN ISJSON(m.Data)=1 THEN m.Data ELSE N'{}' END,'$.TerminalOutcome.State'))=N'failed') OR (JSON_VALUE(CASE WHEN ISJSON(m.Data)=1 THEN m.Data ELSE N'{}' END,'$.TerminalOutcome.State') IS NULL AND (LOWER(COALESCE(JSON_VALUE(CASE WHEN ISJSON(m.Data)=1 THEN m.Data ELSE N'{}' END,'$.Name'),N''))=N'error' OR LOWER(COALESCE(JSON_VALUE(CASE WHEN ISJSON(m.Data)=1 THEN m.Data ELSE N'{}' END,'$.Phase'),N''))=N'error'))) ORDER BY DateCreated DESC,MessageID DESC) e
-		OUTER APPLY (SELECT TOP (1) MessageID FROM dbo.Messages m WHERE SessionID=@SessionID AND TurnID=@TurnKey AND Role=N'Lifecycle' AND ((JSON_VALUE(CASE WHEN ISJSON(m.Data)=1 THEN m.Data ELSE N'{}' END,'$.TerminalOutcome.State') IS NOT NULL AND LOWER(JSON_VALUE(CASE WHEN ISJSON(m.Data)=1 THEN m.Data ELSE N'{}' END,'$.TerminalOutcome.State')) IN(N'completed',N'failed',N'cancelled')) OR (JSON_VALUE(CASE WHEN ISJSON(m.Data)=1 THEN m.Data ELSE N'{}' END,'$.TerminalOutcome.State') IS NULL AND (LOWER(COALESCE(JSON_VALUE(CASE WHEN ISJSON(m.Data)=1 THEN m.Data ELSE N'{}' END,'$.Name'),N'')) IN(N'error',N'turncomplete',N'turncompleted') OR LOWER(COALESCE(JSON_VALUE(CASE WHEN ISJSON(m.Data)=1 THEN m.Data ELSE N'{}' END,'$.Phase'),N'')) IN(N'error',N'turncomplete',N'turncompleted')))) ORDER BY DateCreated DESC,MessageID DESC) z
-		WHERE @ForceMessageProjection=1 OR NOT EXISTS(SELECT 1 FROM dbo.Turns t WHERE t.SessionID=@SessionID AND t.TurnKey=@TurnKey AND EXISTS(SELECT 1 FROM dbo.Messages m WHERE m.SessionID=@SessionID AND m.TurnID=@TurnKey) AND NOT EXISTS(SELECT 1 FROM dbo.Messages m WHERE m.SessionID=@SessionID AND m.TurnID=@TurnKey AND m.TurnRowID IS NULL) AND NOT EXISTS(SELECT 1 FROM (VALUES(t.FirstMessageID),(t.UserMessageID),(t.AssistantMessageID),(t.LastErrorMessageID),(t.TerminalMessageID)) anchor(MessageID) WHERE anchor.MessageID IS NOT NULL AND NOT EXISTS(SELECT 1 FROM dbo.Messages m WHERE m.MessageID=anchor.MessageID AND m.SessionID=@SessionID AND m.TurnID=@TurnKey AND m.TurnRowID=t.TurnID)))) q
-	ORDER BY q.Priority;
+ SET NOCOUNT ON;
+ SELECT TurnID,SessionID,TurnKey,DisplayOrderAtUtc,FirstMessageID,UserMessageID,AssistantMessageID,LastErrorMessageID,TerminalMessageID
+ FROM dbo.Turns WHERE SessionID=@SessionID AND TurnKey=@TurnKey;
 END
 GO
-
 CREATE OR ALTER PROCEDURE dbo.Turns_ReadIndexDetailRows @SessionID int,@TurnKey nvarchar(255),@NumRows int
 AS
 BEGIN
