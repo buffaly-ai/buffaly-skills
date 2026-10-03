@@ -6,10 +6,10 @@
       "PackageType": "ProviderModule",
       "Title": "Anthropic Provider",
       "Description": "Buffaly Provider Module package for Anthropic Provider.",
-      "Version": "0.1.80",
+      "Version": "0.1.81",
       "PackageKind": "BuffalyProviderModule",
       "SourcePath": "provider-modules/Buffaly.Provider.Anthropic",
-      "SourceUrl": "",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/provider-modules/Buffaly.Provider.Anthropic",
       "Phrases": [
         "Anthropic Provider",
         "Buffaly.Provider.Anthropic"
@@ -25,11 +25,11 @@
         },
         {
           "Path": "BasicUtilities.dll",
-          "Sha256": "6ed0357d79b7579f355c6c8fce21fb82efbd92242ee03899e5f6d38141b9406c"
+          "Sha256": "40332858ddb6d21550f2e07c40fddf94c281ecfb5194631f93da628c0463fc10"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "b95964f91206bc164930abe59c6c6f481ad5e940c56086f01cd1a66617553946"
+          "Sha256": "08d58fa1a368511ccef98fa3f93e3b3a392aa3886d2dfbffb429e5ed7fbd469f"
         },
         {
           "Path": "Buffaly.NativeAgents.ClaudeCode.dll",
@@ -37,15 +37,15 @@
         },
         {
           "Path": "Buffaly.Provider.Anthropic.deps.json",
-          "Sha256": "cc1f476982c794727b168caac73eece2d18290422e3d42440165d7a6fb71554e"
+          "Sha256": "b63fc83de95636ef84dd22b0e135707bd36581b4f5deb056b197d35a782e7805"
         },
         {
           "Path": "Buffaly.Provider.Anthropic.dll",
-          "Sha256": "da2ea492041441d041d13927f43116859f6b10ca4b900bd05a83128ff82e6549"
+          "Sha256": "9560414ddc4bc971a697ad2d26ed0831c2a8a240966031889e68624a1d3eb381"
         },
         {
           "Path": "Buffaly.ProviderContracts.dll",
-          "Sha256": "e4c557ba33a083df6d1ff7a2d6f39f09b6b4ed9e36484c273dab931da22a02eb"
+          "Sha256": "12340a528470c604fcde7de6ad8876a4623fea13caf33e6df6da0e6b98b5c270"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -190,6 +190,10 @@
         {
           "Path": "ru/Microsoft.Data.SqlClient.resources.dll",
           "Sha256": "8cfbbfb7bff1f0670695e556815f7d9f48f580ee8b3ca5590dcac49a01642eea"
+        },
+        {
+          "Path": "SixLabors.ImageSharp.dll",
+          "Sha256": "609a57965d0a7b5ccfb79d919ea7384e7ec86c03266b0390a19bd5f2104bc353"
         },
         {
           "Path": "System.ClientModel.dll",
