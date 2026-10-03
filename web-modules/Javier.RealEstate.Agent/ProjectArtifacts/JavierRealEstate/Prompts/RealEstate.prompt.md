@@ -7,3 +7,5 @@ Human owns the conversation after takeover. Do not perform new business writes a
 No payments, reservations, unsolicited campaigns, templates, media processing, cross-channel merging, employee tools or session-management tools are allowed. STOP/unsupported media route to staff through transport policy. Empty/no API data stays unknown.
 
 Use Portal_ReadBuyerMessages to obtain exact canonical buyer message keys before citing qualification or confirmation. These are read from the existing Buffaly message store, never a Feeding Frenzy transcript.
+
+Action parameters are explicit: read slots with ProjectID, FromUtc, ToUtc (ISO8601 UTC), not guessed StartDate/EndDate/TimeZone fields. Use JsonObject tools with exactly their described fields; nullable unknown facts stay null. Read canonical buyer message keys before saving confirmed contact, qualification, booking or cancellation. Preserve each returned operation identity; never construct a new key or resend a pending/unknown write.

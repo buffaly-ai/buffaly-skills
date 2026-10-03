@@ -1,96 +1,109 @@
 include "../ChatIntegration/ChatWorker.pts";
 include "../../CoreLite/CoreLite.pts";
 reference Javier.RealEstate.Agent;
+reference BasicUtilities;
 import Javier.RealEstate.Agent Javier.RealEstate.Agent.PortalTools PortalTools;
+import BasicUtilities BasicUtilities.JsonObject JsonObject;
 prototype RealEstateActionRoot : OpsAction;
 prototype RealEstateEntityRoot : SemanticEntityBase;
 [SemanticProgram.InfinitivePhrase("to read available real estate projects")]
 prototype Portal_ReadProjects : RealEstateActionRoot
 {
-	function Execute(string ArgumentsJSON) : string
+	function Execute() : string
 	{
-		return PortalTools.Execute(_opsAgent, "ReadProjects", ArgumentsJSON);
+		return PortalTools.ReadProjects(_opsAgent);
 	}
+	Description = "Read authoritative catalog projects with ProjectID, SourceVersion, location and timezone. No arguments.";
 }
 [SemanticProgram.InfinitivePhrase("to read project models")]
 prototype Portal_ReadModels : RealEstateActionRoot
 {
-	function Execute(string ArgumentsJSON) : string
+	function Execute(string ProjectID) : string
 	{
-		return PortalTools.Execute(_opsAgent, "ReadModels", ArgumentsJSON);
+		return PortalTools.ReadModels(_opsAgent, ProjectID);
 	}
+	Description = "ProjectID must be an exact returned project identity. Returns models, published prices and availability timestamps.";
 }
 [SemanticProgram.InfinitivePhrase("to read project financing")]
 prototype Portal_ReadFinancing : RealEstateActionRoot
 {
-	function Execute(string ArgumentsJSON) : string
+	function Execute(string ProjectID) : string
 	{
-		return PortalTools.Execute(_opsAgent, "ReadFinancing", ArgumentsJSON);
+		return PortalTools.ReadFinancing(_opsAgent, ProjectID);
 	}
+	Description = "ProjectID must be an exact returned project identity. Returns versioned published financing terms, not credit approval.";
 }
 [SemanticProgram.InfinitivePhrase("to read available visit slots")]
 prototype Portal_ReadSlots : RealEstateActionRoot
 {
-	function Execute(string ArgumentsJSON) : string
+	function Execute(string ProjectID, string FromUtc, string ToUtc) : string
 	{
-		return PortalTools.Execute(_opsAgent, "ReadSlots", ArgumentsJSON);
+		return PortalTools.ReadSlots(_opsAgent, ProjectID, FromUtc, ToUtc);
 	}
+	Description = "Read available visits for exact ProjectID. FromUtc and ToUtc are ISO8601 UTC date-times (for example 2026-10-05T00:00:00Z). Slots return SlotID, timezone and AvailabilityVersion; never invent them.";
 }
 [SemanticProgram.InfinitivePhrase("to read customer visits")]
 prototype Portal_ReadBookings : RealEstateActionRoot
 {
-	function Execute(string ArgumentsJSON) : string
+	function Execute(string ContactID) : string
 	{
-		return PortalTools.Execute(_opsAgent, "ReadBookings", ArgumentsJSON);
+		return PortalTools.ReadBookings(_opsAgent, ContactID);
 	}
+	Description = "Read visits for exact ContactID already saved successfully in this conversation.";
 }
 [SemanticProgram.InfinitivePhrase("to save confirmed buyer details")]
 prototype Portal_SaveContact : RealEstateActionRoot
 {
-	function Execute(string ArgumentsJSON) : string
+	function Execute(JsonObject ContactDetails, bool CustomerConfirmed, string ConfirmedMessageKey) : string
 	{
-		return PortalTools.Execute(_opsAgent, "SaveContact", ArgumentsJSON);
+		return PortalTools.SaveContact(_opsAgent, ContactDetails, CustomerConfirmed, ConfirmedMessageKey);
 	}
+	Description = "ContactDetails is a JSON object with exactly Name (string), Email (string or null), Phone (string or null). Preserve customer-supplied values; absent contact channels are null, not invented. CustomerConfirmed must be true; ConfirmedMessageKey is an actual confirming customer message key returned by Portal_ReadBuyerMessages.";
 }
 [SemanticProgram.InfinitivePhrase("to record buyer qualification")]
 prototype Portal_Qualify : RealEstateActionRoot
 {
-	function Execute(string ArgumentsJSON) : string
+	function Execute(JsonObject Qualification) : string
 	{
-		return PortalTools.Execute(_opsAgent, "Qualify", ArgumentsJSON);
+		return PortalTools.Qualify(_opsAgent, Qualification);
 	}
+	Description = "Qualification JSON object requires exactly ContactID, ProjectID, ModelID, Budget, DesiredBedrooms, PurchaseTimeframe, FinancingNeeded, Purpose, SourceMessageKeys. ContactID is already linked. Unknown optional values are null. Budget is null or {Currency:string,Amount:decimal-string}; DesiredBedrooms is int or null; FinancingNeeded is bool or null; SourceMessageKeys is a nonempty array of actual customer keys from Portal_ReadBuyerMessages. Never infer a score or invent buyer facts.";
 }
 [SemanticProgram.InfinitivePhrase("to book a confirmed visit")]
 prototype Portal_BookVisit : RealEstateActionRoot
 {
-	function Execute(string ArgumentsJSON) : string
+	function Execute(string ContactID, string ProjectID, string SlotID, string AvailabilityVersion, bool CustomerConfirmed, string ConfirmedMessageKey) : string
 	{
-		return PortalTools.Execute(_opsAgent, "BookVisit", ArgumentsJSON);
+		return PortalTools.BookVisit(_opsAgent, ContactID, ProjectID, SlotID, AvailabilityVersion, CustomerConfirmed, ConfirmedMessageKey);
 	}
+	Description = "Use linked ContactID and exact ProjectID, SlotID, AvailabilityVersion from available slots. CustomerConfirmed must be true; ConfirmedMessageKey must cite the buyer confirming this specific date/time. Only Succeeded with RecordID confirms a booking. Unknown/Pending requires same-operation lookup, never resend.";
 }
 [SemanticProgram.InfinitivePhrase("to cancel a confirmed visit")]
 prototype Portal_CancelVisit : RealEstateActionRoot
 {
-	function Execute(string ArgumentsJSON) : string
+	function Execute(string ContactID, string BookingID, bool CustomerConfirmed, string ConfirmedMessageKey, string Reason) : string
 	{
-		return PortalTools.Execute(_opsAgent, "CancelVisit", ArgumentsJSON);
+		return PortalTools.CancelVisit(_opsAgent, ContactID, BookingID, CustomerConfirmed, ConfirmedMessageKey, Reason);
 	}
+	Description = "ContactID and BookingID must already be linked to this conversation. CustomerConfirmed is true only after explicit consent to cancel this booking; ConfirmedMessageKey cites that buyer row. Reason is customer-provided text. Never report cancellation before successful receipt.";
 }
 [SemanticProgram.InfinitivePhrase("to request a staff followup")]
 prototype Portal_Followup : RealEstateActionRoot
 {
-	function Execute(string ArgumentsJSON) : string
+	function Execute(JsonObject Followup) : string
 	{
-		return PortalTools.Execute(_opsAgent, "Followup", ArgumentsJSON);
+		return PortalTools.Followup(_opsAgent, Followup);
 	}
+	Description = "Followup JSON object requires exactly ContactID (linked string or null), Reason (string), RequestedAt (ISO8601 UTC), PreferredContactTime (string or null). Successful followup hands ownership to staff; do not promise deadlines.";
 }
 [SemanticProgram.InfinitivePhrase("to reconcile a business operation")]
 prototype Portal_Reconcile : RealEstateActionRoot
 {
-	function Execute(string ArgumentsJSON) : string
+	function Execute(string OperationKey) : string
 	{
-		return PortalTools.Execute(_opsAgent, "Reconcile", ArgumentsJSON);
+		return PortalTools.ReconcileOperation(_opsAgent, OperationKey);
 	}
+	Description = "Read-only lookup of exact OperationKey already returned in this conversation. No resend or new operation identity.";
 }
 prototype PortalStaffWorker
 {
@@ -106,4 +119,5 @@ prototype Portal_ReadBuyerMessages : RealEstateActionRoot
 	{
 		return PortalTools.Execute(_opsAgent, "ReadBuyerMessages", "{}");
 	}
+	Description = "Read canonical buyer rows with exact MessageKey and content for confirmation and qualification evidence. No external transcript.";
 }
