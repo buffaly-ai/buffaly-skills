@@ -1,0 +1,13 @@
+{
+  "Module": {
+    "Enabled": true,
+    "Name": "Buffaly.Chat",
+    "DisplayName": "Application chat integration",
+    "Description": "Canonical conversation integration and worker coordination.",
+    "AssemblyPath": "Buffaly.Chat/Buffaly.Chat.Server.dll",
+    "TypeName": "Buffaly.Chat.Server.ChatWebModule",
+    "LoadOrder": 860,
+    "ProjectArtifacts": [{"ProjectName":"Profiles/ChatIntegration","SourcePath":"ProjectArtifacts/ChatIntegration/","InstallAsProject":false}],
+    "Pages": []
+  }
+}

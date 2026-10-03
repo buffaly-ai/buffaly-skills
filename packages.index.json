@@ -23255,6 +23255,55 @@
       "RequiresRestart": true,
       "RequiresPreStartInstall": true,
       "PreStartCleanupPaths": []
+    },
+    {
+      "PackageId": "Buffaly.Chat",
+      "PackageType": "WebModule",
+      "Title": "Application Chat Integration",
+      "Description": "Buffaly Web Module package for Application Chat Integration.",
+      "Version": "0.1.0",
+      "PackageKind": "BuffalyWebModule",
+      "SourcePath": "web-modules/Buffaly.Chat",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/Buffaly.Chat",
+      "Phrases": [
+        "Application Chat Integration",
+        "Buffaly.Chat"
+      ],
+      "Files": [
+        {
+          "Path": "Buffaly.Chat.Contracts.dll",
+          "Sha256": "daad7e9810dd917247e29749135c5205f401f3428a15ea6ff86b67f963524b28"
+        },
+        {
+          "Path": "Buffaly.Chat.Server.deps.json",
+          "Sha256": "d957266f09b42578621e1f546d8d0355dc87f5e414f2bfd21eade70ea20afac7"
+        },
+        {
+          "Path": "Buffaly.Chat.Server.dll",
+          "Sha256": "0141a97445a576528b4197150c8bc67eff0be519c8637026b16f63e7400383e2"
+        },
+        {
+          "Path": "ProjectArtifacts/ChatIntegration/ChatWorker.pts",
+          "Sha256": "67f8deb4d7a581a649b5c7e25bbf02bba8bf77b1a4a4997761a038236db3ba37"
+        },
+        {
+          "Path": "web-module.json",
+          "Sha256": "cb02bdfe10512190f9942c6e794dedc13d8a1b7e3505b2900f29835ac90446a4"
+        }
+      ],
+      "ProjectArtifacts": [
+        {
+          "ProjectName": "Profiles/ChatIntegration",
+          "SourcePath": "ProjectArtifacts/ChatIntegration/",
+          "InstallAsProject": false
+        }
+      ],
+      "Dependencies": [],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "RequiresRestart": true,
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     }
   ]
 }
