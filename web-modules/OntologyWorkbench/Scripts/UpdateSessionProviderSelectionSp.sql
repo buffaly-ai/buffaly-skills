@@ -1,26 +1,10 @@
-IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE Specific_Name = 'UpdateSessionProviderSelectionSp')
-BEGIN
-	DROP PROCEDURE UpdateSessionProviderSelectionSp
-END
-GO
-
-CREATE PROCEDURE [dbo].[UpdateSessionProviderSelectionSp]
-	@SessionID int,
-	@Provider nvarchar(255),
-	@ModelName nvarchar(255),
-	@ReasoningLevel nvarchar(255),
-	@Data nvarchar(max)
+CREATE OR ALTER PROCEDURE dbo.UpdateSessionProviderSelectionSp
+ @SessionID int,@Provider nvarchar(255),@ModelName nvarchar(255),@ReasoningLevel nvarchar(255),@Transport nvarchar(255)
 AS
-
-	UPDATE Sessions
-	SET Provider = @Provider,
-		ModelName = @ModelName,
-		ReasoningLevel = @ReasoningLevel,
-		-- Provider edits do not own the runtime state or acknowledgement token.
-		Data = JSON_MODIFY(JSON_MODIFY(@Data,
-			'$.RuntimeStatus', JSON_VALUE(Data, '$.RuntimeStatus')),
-			'$.LastNonRunningUtc', JSON_VALUE(Data, '$.LastNonRunningUtc')),
-		LastUpdated = getdate()
-	WHERE SessionID = @SessionID
-
+BEGIN
+ SET NOCOUNT ON;
+ IF NULLIF(@Transport,N'') IS NULL THROW 51120,'Transport is required.',1;
+ UPDATE dbo.Sessions SET Provider=@Provider,ModelName=@ModelName,ReasoningLevel=@ReasoningLevel,Transport=@Transport,LastUpdated=GETDATE()
+ WHERE SessionID=@SessionID;
+END
 GO
