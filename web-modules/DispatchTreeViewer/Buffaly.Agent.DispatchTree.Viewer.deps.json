@@ -314,6 +314,14 @@
           }
         }
       },
+      "SixLabors.ImageSharp/3.1.12": {
+        "runtime": {
+          "lib/net6.0/SixLabors.ImageSharp.dll": {
+            "assemblyVersion": "3.0.0.0",
+            "fileVersion": "3.1.12.0"
+          }
+        }
+      },
       "System.ClientModel/1.5.1": {
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "9.0.4",
@@ -420,7 +428,8 @@
       "Buffaly.Agent.Core/1.0.0": {
         "dependencies": {
           "Buffaly.Agent.Common": "1.0.0",
-          "Buffaly.Agent.Web.Common": "1.0.0"
+          "Buffaly.Agent.Web.Common": "1.0.0",
+          "Buffaly.Sessions.DB": "1.0.0"
         },
         "runtime": {
           "Buffaly.Agent.Core.dll": {
@@ -525,7 +534,8 @@
         "dependencies": {
           "Buffaly.Agent.ProtoScript.Runtime": "1.0.0",
           "Buffaly.Agent.ProtoScriptAuthoring": "1.0.0",
-          "Buffaly.Agent.Tools.SemanticDatabase": "1.0.0"
+          "Buffaly.Agent.Tools.SemanticDatabase": "1.0.0",
+          "ProtoScript.Parsers": "1.0.0"
         },
         "runtime": {
           "Buffaly.NLMemory.dll": {
@@ -535,6 +545,9 @@
         }
       },
       "Buffaly.ProviderContracts/1.0.0": {
+        "dependencies": {
+          "Buffaly.Agent.Web.Common": "1.0.0"
+        },
         "runtime": {
           "Buffaly.ProviderContracts.dll": {
             "assemblyVersion": "1.0.0.0",
@@ -554,15 +567,7 @@
           }
         }
       },
-      "ProtoScript.Interpretter/1.0.0.0": {
-        "runtime": {
-          "ProtoScript.Interpretter.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
-          }
-        }
-      },
-      "ProtoScript/1.0.0.0": {
+      "ProtoScript/1.0.0": {
         "runtime": {
           "ProtoScript.dll": {
             "assemblyVersion": "1.0.0.0",
@@ -570,9 +575,20 @@
           }
         }
       },
-      "ProtoScript.Parsers/1.0.0.0": {
+      "ProtoScript.Parsers/1.0.0": {
+        "dependencies": {
+          "ProtoScript": "1.0.0"
+        },
         "runtime": {
           "ProtoScript.Parsers.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "ProtoScript.Interpretter/1.0.0.0": {
+        "runtime": {
+          "ProtoScript.Interpretter.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -877,6 +893,13 @@
       "path": "microsoft.sqlserver.server/1.0.0",
       "hashPath": "microsoft.sqlserver.server.1.0.0.nupkg.sha512"
     },
+    "SixLabors.ImageSharp/3.1.12": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-iAg6zifihXEFS/t7fiHhZBGAdCp3FavsF4i2ZIDp0JfeYeDVzvmlbY1CNhhIKimaIzrzSi5M/NBFcWvZT2rB/A==",
+      "path": "sixlabors.imagesharp/3.1.12",
+      "hashPath": "sixlabors.imagesharp.3.1.12.nupkg.sha512"
+    },
     "System.ClientModel/1.5.1": {
       "type": "package",
       "serviceable": true,
@@ -1019,17 +1042,17 @@
       "serviceable": false,
       "sha512": ""
     },
+    "ProtoScript/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ProtoScript.Parsers/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
     "ProtoScript.Interpretter/1.0.0.0": {
-      "type": "reference",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "ProtoScript/1.0.0.0": {
-      "type": "reference",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "ProtoScript.Parsers/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
