@@ -8,81 +8,17 @@
     ".NETCoreApp,Version=v9.0": {
       "Javier.RealEstate.Agent/1.0.0": {
         "dependencies": {
-          "Buffaly.Chat.ApplicationApi": "1.0.0",
-          "Buffaly.Chat.Server": "1.0.0"
+          "Buffaly.Chat.ApplicationApi": "1.0.0.0"
         },
         "runtime": {
           "Javier.RealEstate.Agent.dll": {}
         }
       },
-      "Buffaly.Chat.ApplicationApi/1.0.0": {
-        "dependencies": {
-          "Buffaly.Chat.Contracts": "1.0.0"
-        },
+      "Buffaly.Chat.ApplicationApi/1.0.0.0": {
         "runtime": {
           "Buffaly.Chat.ApplicationApi.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
-          }
-        }
-      },
-      "Buffaly.Chat.Contracts/1.0.0": {
-        "runtime": {
-          "Buffaly.Chat.Contracts.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
-          }
-        }
-      },
-      "Buffaly.Chat.Server/1.0.0": {
-        "dependencies": {
-          "Buffaly.Chat.Contracts": "1.0.0"
-        },
-        "runtime": {
-          "Buffaly.Chat.Server.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
-          }
-        },
-        "resources": {
-          "cs/Microsoft.Data.SqlClient.resources.dll": {
-            "locale": "cs"
-          },
-          "de/Microsoft.Data.SqlClient.resources.dll": {
-            "locale": "de"
-          },
-          "es/Microsoft.Data.SqlClient.resources.dll": {
-            "locale": "es"
-          },
-          "fr/Microsoft.Data.SqlClient.resources.dll": {
-            "locale": "fr"
-          },
-          "it/Microsoft.Data.SqlClient.resources.dll": {
-            "locale": "it"
-          },
-          "ja/Microsoft.Data.SqlClient.resources.dll": {
-            "locale": "ja"
-          },
-          "ko/Microsoft.Data.SqlClient.resources.dll": {
-            "locale": "ko"
-          },
-          "pl/Microsoft.Data.SqlClient.resources.dll": {
-            "locale": "pl"
-          },
-          "pt-BR/Microsoft.Data.SqlClient.resources.dll": {
-            "locale": "pt-BR"
-          },
-          "ru/Microsoft.Data.SqlClient.resources.dll": {
-            "locale": "ru"
-          },
-          "tr/Microsoft.Data.SqlClient.resources.dll": {
-            "locale": "tr"
-          },
-          "zh-Hans/Microsoft.Data.SqlClient.resources.dll": {
-            "locale": "zh-Hans"
-          },
-          "zh-Hant/Microsoft.Data.SqlClient.resources.dll": {
-            "locale": "zh-Hant"
           }
         }
       }
@@ -94,18 +30,8 @@
       "serviceable": false,
       "sha512": ""
     },
-    "Buffaly.Chat.ApplicationApi/1.0.0": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "Buffaly.Chat.Contracts/1.0.0": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "Buffaly.Chat.Server/1.0.0": {
-      "type": "project",
+    "Buffaly.Chat.ApplicationApi/1.0.0.0": {
+      "type": "reference",
       "serviceable": false,
       "sha512": ""
     }
