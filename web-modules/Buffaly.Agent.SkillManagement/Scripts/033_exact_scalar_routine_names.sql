@@ -20,6 +20,9 @@ BEGIN
     FOR mapping IN
         SELECT *
         FROM (VALUES
+    ('Sessions_GetSidebarActivityBatchSp', 'sessions_get_sidebar_activity_batch_sp'),
+    ('Sessions_GetSidebarSelectedBranchSp', 'sessions_get_sidebar_selected_branch_sp'),
+    ('Sessions_GetSidebarRecentPageSp', 'sessions_get_sidebar_recent_page_sp'),
     ('CopyFeatureSp', 'copy_feature_sp'),
     ('CopyMessageSp', 'copy_message_sp'),
     ('CopyPageLayoutSp', 'copy_page_layout_sp'),
@@ -147,7 +150,6 @@ BEGIN
     ('Sessions_GetArchivedSp_Sp', 'sessions_get_archived_sp_sp'),
     ('Sessions_GetArchivedSp_Sp_CountSp', 'sessions_get_archived_sp_sp_count_sp'),
     ('Sessions_GetArchivedSp_Sp_PagingSp', 'sessions_get_archived_sp_sp_paging_sp'),
-    ('Sessions_ResetRunningRuntimeStatusOnWebStartupSp', 'sessions_reset_running_runtime_status_on_web_startup_sp'),
     ('StoredProcedureHasParameterSp', 'stored_procedure_has_parameter_sp'),
     ('Turns_GetBySessionID_Sp', 'turns_get_by_session_id_sp'),
     ('Turns_GetBySessionIDTurnKeys_Sp', 'turns_get_by_session_idturn_keys_sp'),
@@ -181,6 +183,7 @@ BEGIN
     ('UpdateSessionSubscriptionSp', 'update_session_subscription_sp')
         ) AS m(canonical_name, source_name)
     LOOP
+        IF (SELECT count(*) FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='public' AND p.proname=mapping.source_name)<>1 THEN RAISE EXCEPTION 'One scalar implementation required for %',mapping.source_name; END IF;
         SELECT p.oid,
                pg_catalog.pg_get_function_arguments(p.oid),
                pg_catalog.pg_get_function_identity_arguments(p.oid),

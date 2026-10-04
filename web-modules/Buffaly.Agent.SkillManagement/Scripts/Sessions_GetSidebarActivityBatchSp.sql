@@ -34,7 +34,7 @@ AS
 			sessionRow.ParentSessionID,
 			sessionRow.SessionName,
 			sessionRow.AgentName,
-			sessionRow.Data,
+			sessionRow.SessionKind,
 			sessionRow.LastUpdated
 		FROM @RequestedSessionKeys requested
 		JOIN dbo.Sessions sessionRow WITH (NOLOCK)
@@ -60,7 +60,7 @@ AS
 		requested.SessionKey,
 		requested.SessionName,
 		requested.AgentName,
-		requested.Data,
+		requested.SessionKind,
 		requested.LastUpdated AS OwnLastUpdated,
 		CASE WHEN requested.ParentSessionID IS NULL THEN rootActivity.EffectiveLastUpdated ELSE requested.LastUpdated END AS EffectiveLastUpdated
 	FROM RequestedSessions requested
