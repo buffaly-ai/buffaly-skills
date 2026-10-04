@@ -17,55 +17,25 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	SET XACT_ABORT ON;
-	DECLARE @TurnRowID bigint = NULL, @PreviousTurnRowID bigint;
-	DECLARE @OccurredAt datetime2(7);
-	SELECT @OccurredAt = DateCreated, @PreviousTurnRowID = TurnRowID FROM dbo.Messages WHERE MessageID = @MessageID;
-	IF @OccurredAt IS NULL RETURN;
-
-	DECLARE @OwnTransaction bit=CASE WHEN @@TRANCOUNT=0 THEN 1 ELSE 0 END;
-	BEGIN TRY
-	IF @OwnTransaction=1 BEGIN TRANSACTION;
-	IF NULLIF(@TurnID, N'') IS NOT NULL
-	BEGIN
-		SELECT @TurnRowID = TurnID FROM dbo.Turns WHERE SessionID = @SessionID AND TurnKey = @TurnID;
-		IF @TurnRowID IS NULL
-		BEGIN
-			SET XACT_ABORT OFF;
-			BEGIN TRY
-				INSERT dbo.Turns(SessionID, TurnKey, DisplayOrderAtUtc) VALUES(@SessionID, @TurnID, @OccurredAt);
-				SET @TurnRowID = CONVERT(bigint, SCOPE_IDENTITY());
-			END TRY
-			BEGIN CATCH
-				IF ERROR_NUMBER() NOT IN(2601,2627) OR ERROR_MESSAGE() NOT LIKE N'%UQ_Turns_SessionKey%' THROW;
-				SELECT @TurnRowID=TurnID FROM dbo.Turns WHERE SessionID=@SessionID AND TurnKey=@TurnID;
-				IF @TurnRowID IS NULL THROW;
-			END CATCH
-			SET XACT_ABORT ON;
-		END
-	END
-
-	UPDATE dbo.Messages SET
-		SessionID=@SessionID, SequenceNumber=@SequenceNumber, Role=@Role, Content=@Content,
-		ToolName=@ToolName, ToolArguments=@ToolArguments, CallID=@CallID, LastUpdated=GETDATE(),
+	-- Keep the full method, but never SET identity, ownership, membership or classification.
+	UPDATE m SET
+		SequenceNumber=@SequenceNumber, Content=@Content,
+		ToolName=@ToolName, ToolArguments=@ToolArguments, CallID=@CallID,
 		Data=@Data, IsCompacted=@IsCompacted, CompactionEpoch=@CompactionEpoch,
-		MessageKey=@MessageKey, TurnID=@TurnID, TurnRowID=@TurnRowID, CompactionEpochKey=@CompactionEpochKey,MessageKind=@MessageKind,TerminalOutcomeState=@TerminalOutcomeState,SavedWorkResume=@SavedWorkResume
-	WHERE MessageID=@MessageID;
-
-	-- Broad message edits can move/remove a former anchor; recompute only the affected physical turns.
-	UPDATE t SET FirstMessageID=f.MessageID,UserMessageID=u.MessageID,AssistantMessageID=a.MessageID,
-	 LastErrorMessageID=e.MessageID,TerminalMessageID=z.MessageID,DisplayOrderAtUtc=COALESCE(u.DateCreated,f.DateCreated,t.DisplayOrderAtUtc)
-	FROM dbo.Turns t
-	OUTER APPLY(SELECT TOP(1) MessageID,DateCreated FROM dbo.Messages WHERE TurnRowID=t.TurnID ORDER BY DateCreated,MessageID)f
-	OUTER APPLY(SELECT TOP(1) MessageID,DateCreated FROM dbo.Messages WHERE TurnRowID=t.TurnID AND Role=N'User' ORDER BY DateCreated,MessageID)u
-	OUTER APPLY(SELECT TOP(1) MessageID FROM dbo.Messages WHERE TurnRowID=t.TurnID AND Role=N'Assistant' ORDER BY DateCreated DESC,MessageID DESC)a
-	OUTER APPLY(SELECT TOP(1) MessageID FROM dbo.Messages WHERE TurnRowID=t.TurnID AND Role=N'Lifecycle' AND(MessageKind=N'Error' OR TerminalOutcomeState=N'Failed') ORDER BY DateCreated DESC,MessageID DESC)e
-	OUTER APPLY(SELECT TOP(1) MessageID FROM dbo.Messages WHERE TurnRowID=t.TurnID AND Role=N'Lifecycle' AND TerminalOutcomeState IN(N'Completed',N'Failed',N'Cancelled') ORDER BY DateCreated DESC,MessageID DESC)z
-	WHERE t.TurnID IN(@PreviousTurnRowID,@TurnRowID);
-	IF @OwnTransaction=1 COMMIT;
-	END TRY
-	BEGIN CATCH
-		IF @OwnTransaction=1 AND XACT_STATE()<>0 ROLLBACK;
-		THROW;
-	END CATCH
+		CompactionEpochKey=@CompactionEpochKey, LastUpdated=GETDATE()
+	FROM dbo.Messages m
+	WHERE m.MessageID=@MessageID
+	  -- NULL-safe byte equality does not equate case changes or trailing spaces.
+	  AND NOT EXISTS (
+		SELECT m.SessionID,CONVERT(varbinary(max),m.Role),CONVERT(varbinary(max),m.MessageKey),CONVERT(varbinary(max),m.TurnID),
+			CONVERT(varbinary(max),m.MessageKind),CONVERT(varbinary(max),m.TerminalOutcomeState),m.SavedWorkResume
+		EXCEPT
+		SELECT @SessionID,CONVERT(varbinary(max),@Role),CONVERT(varbinary(max),@MessageKey),CONVERT(varbinary(max),@TurnID),
+			CONVERT(varbinary(max),@MessageKind),CONVERT(varbinary(max),@TerminalOutcomeState),@SavedWorkResume)
+	  -- Execution Lifecycle payload remains immutable; turnless callback status is separate.
+	  AND (m.Role<>N'Lifecycle' OR ((m.TurnID IS NULL OR DATALENGTH(m.TurnID)=0) AND m.TurnRowID IS NULL)
+		OR NOT EXISTS (SELECT CONVERT(varbinary(max),m.Data) EXCEPT SELECT CONVERT(varbinary(max),@Data)));
+	IF @@ROWCOUNT=0 AND EXISTS(SELECT 1 FROM dbo.Messages WHERE MessageID=@MessageID)
+		THROW 51440,'Message identity, session, turn, role, classification and linked Lifecycle evidence cannot be changed.',1;
 END
 GO
