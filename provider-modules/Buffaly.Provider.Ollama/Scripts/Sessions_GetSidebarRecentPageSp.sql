@@ -36,7 +36,7 @@ AS
 				sessionRow.ReasoningLevel,
 				sessionRow.PromptContext,
 				sessionRow.CompactionProvider,
-				sessionRow.Data,
+				sessionRow.State, sessionRow.SessionKind, sessionRow.Transport,
 				sessionRow.DateCreated,
 				sessionRow.LastUpdated AS OwnLastUpdated,
 				ROW_NUMBER() OVER
@@ -69,7 +69,7 @@ AS
 			ReasoningLevel,
 			PromptContext,
 			CompactionProvider,
-			Data,
+			State, SessionKind, Transport,
 			DateCreated,
 			OwnLastUpdated,
 			OwnLastUpdated AS EffectiveLastUpdated,

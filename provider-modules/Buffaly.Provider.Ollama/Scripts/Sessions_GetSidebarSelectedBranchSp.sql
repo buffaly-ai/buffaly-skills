@@ -161,7 +161,7 @@ AS
 			sessionRow.ReasoningLevel,
 			sessionRow.PromptContext,
 			sessionRow.CompactionProvider,
-			sessionRow.Data,
+			sessionRow.State, sessionRow.SessionKind, sessionRow.Transport,
 			sessionRow.DateCreated,
 			sessionRow.LastUpdated AS OwnLastUpdated,
 			CASE WHEN hierarchy.HierarchyDepth = 1 THEN rootActivity.EffectiveLastUpdated ELSE sessionRow.LastUpdated END AS EffectiveLastUpdated,

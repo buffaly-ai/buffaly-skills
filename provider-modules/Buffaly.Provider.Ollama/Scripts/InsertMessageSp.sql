@@ -3,7 +3,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE OR ALTER PROCEDURE [dbo].[InsertMessageSp]
-	@SessionID int,@SequenceNumber int,@Role nvarchar(255),@Content nvarchar(max),@ToolName nvarchar(255),@ToolArguments nvarchar(max),@CallID nvarchar(255),@Data nvarchar(max),@IsCompacted bit,@CompactionEpoch int,@MessageKey nvarchar(255),@TurnID nvarchar(255),@CompactionEpochKey nvarchar(255),@DateCreated datetime=NULL
+	@SessionID int,@SequenceNumber int,@Role nvarchar(255),@Content nvarchar(max),@ToolName nvarchar(255),@ToolArguments nvarchar(max),@CallID nvarchar(255),@Data nvarchar(max),@IsCompacted bit,@CompactionEpoch int,@MessageKey nvarchar(255),@TurnID nvarchar(255),@CompactionEpochKey nvarchar(255),@MessageKind nvarchar(255),@TerminalOutcomeState nvarchar(255),@SavedWorkResume bit,@DateCreated datetime=NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -31,13 +31,13 @@ BEGIN
 				SET XACT_ABORT ON;
 			END
 		END
-		INSERT dbo.Messages(SessionID,SequenceNumber,Role,Content,ToolName,ToolArguments,CallID,DateCreated,LastUpdated,Data,IsCompacted,CompactionEpoch,MessageKey,TurnID,TurnRowID,CompactionEpochKey)
-		VALUES(@SessionID,@SequenceNumber,@Role,@Content,@ToolName,@ToolArguments,@CallID,@OccurredAt,GETDATE(),@Data,@IsCompacted,@CompactionEpoch,@MessageKey,@TurnID,@TurnRowID,@CompactionEpochKey);
+		INSERT dbo.Messages(SessionID,SequenceNumber,Role,Content,ToolName,ToolArguments,CallID,DateCreated,LastUpdated,Data,IsCompacted,CompactionEpoch,MessageKey,TurnID,TurnRowID,CompactionEpochKey,MessageKind,TerminalOutcomeState,SavedWorkResume)
+		VALUES(@SessionID,@SequenceNumber,@Role,@Content,@ToolName,@ToolArguments,@CallID,@OccurredAt,GETDATE(),@Data,@IsCompacted,@CompactionEpoch,@MessageKey,@TurnID,@TurnRowID,@CompactionEpochKey,@MessageKind,@TerminalOutcomeState,@SavedWorkResume);
 		SET @MessageID=CONVERT(int,SCOPE_IDENTITY());
 		IF @TurnRowID IS NOT NULL
 		BEGIN
-			DECLARE @IsError bit=CASE WHEN @Role=N'Lifecycle' AND ((JSON_VALUE(CASE WHEN ISJSON(@Data)=1 THEN @Data ELSE N'{}' END,'$.TerminalOutcome.State') IS NOT NULL AND LOWER(JSON_VALUE(CASE WHEN ISJSON(@Data)=1 THEN @Data ELSE N'{}' END,'$.TerminalOutcome.State'))=N'failed') OR (JSON_VALUE(CASE WHEN ISJSON(@Data)=1 THEN @Data ELSE N'{}' END,'$.TerminalOutcome.State') IS NULL AND (LOWER(COALESCE(JSON_VALUE(CASE WHEN ISJSON(@Data)=1 THEN @Data ELSE N'{}' END,'$.Name'),N''))=N'error' OR LOWER(COALESCE(JSON_VALUE(CASE WHEN ISJSON(@Data)=1 THEN @Data ELSE N'{}' END,'$.Phase'),N''))=N'error'))) THEN 1 ELSE 0 END;
-			DECLARE @IsTerminal bit=CASE WHEN @Role=N'Lifecycle' AND ((JSON_VALUE(CASE WHEN ISJSON(@Data)=1 THEN @Data ELSE N'{}' END,'$.TerminalOutcome.State') IS NOT NULL AND LOWER(JSON_VALUE(CASE WHEN ISJSON(@Data)=1 THEN @Data ELSE N'{}' END,'$.TerminalOutcome.State')) IN(N'completed',N'failed',N'cancelled')) OR (JSON_VALUE(CASE WHEN ISJSON(@Data)=1 THEN @Data ELSE N'{}' END,'$.TerminalOutcome.State') IS NULL AND (LOWER(COALESCE(JSON_VALUE(CASE WHEN ISJSON(@Data)=1 THEN @Data ELSE N'{}' END,'$.Name'),N'')) IN(N'error',N'turncomplete',N'turncompleted') OR LOWER(COALESCE(JSON_VALUE(CASE WHEN ISJSON(@Data)=1 THEN @Data ELSE N'{}' END,'$.Phase'),N'')) IN(N'error',N'turncomplete',N'turncompleted')))) THEN 1 ELSE 0 END;
+			DECLARE @IsError bit=CASE WHEN @Role=N'Lifecycle' AND (@MessageKind=N'Error' OR @TerminalOutcomeState=N'Failed') THEN 1 ELSE 0 END;
+			DECLARE @IsTerminal bit=CASE WHEN @Role=N'Lifecycle' AND @TerminalOutcomeState IN(N'Completed',N'Failed',N'Cancelled') THEN 1 ELSE 0 END;
 			UPDATE t SET
 				FirstMessageID=COALESCE(t.FirstMessageID,@MessageID),
 				UserMessageID=CASE WHEN @Role=N'User' THEN COALESCE(t.UserMessageID,@MessageID) ELSE t.UserMessageID END,
