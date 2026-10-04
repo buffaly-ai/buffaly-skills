@@ -7223,10 +7223,10 @@
       "PackageType": "WebModule",
       "Title": "Desktop Viewer",
       "Description": "Buffaly Web Module package for Desktop Viewer.",
-      "Version": "0.1.247",
+      "Version": "0.1.248",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/DesktopViewer",
-      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/DesktopViewer",
+      "SourceUrl": "",
       "Phrases": [
         "Desktop Viewer",
         "DesktopViewer"
@@ -7242,11 +7242,11 @@
         },
         {
           "Path": "BasicUtilities.dll",
-          "Sha256": "83357df0b3e752361bfbb140840ebfda51bf897f770bb9e333fb739af3f53025"
+          "Sha256": "b09a4a5de865df727b64940127678af55dba1f1eea8d2cc0153f1d05c4d5e6d5"
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "8171b93273f447673eb36ca1de3e4a6e020aa8b7604270fda73426ce35305d77"
+          "Sha256": "c544fe9b8008061eb6324c25f23e3c45cda194f92bbe0e5b858750ff79aed215"
         },
         {
           "Path": "Buffaly.Common.dll",
@@ -7258,15 +7258,15 @@
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "6bb07a2ba8a02355910127a326bc0c6369eadfdb59ef62874bdb34586b80f0aa"
+          "Sha256": "0fb102a37c9370ac5e3c25b441e2445402159e38c42a92f79227e65b172b8d42"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "6b3acf86e8034f9e4e6c3cde299cbbf8bdb9eb487a4cf36bfc010dd5340e80f4"
+          "Sha256": "c70916d8b0fad6a8211ddfda516aa1c07b5d7b984456cc8a7d246280e035f6b8"
         },
         {
           "Path": "Buffaly.DesktopAutomation.dll",
-          "Sha256": "c28f84c645b7eef729ee9e155b109282328817e410ed05171a7e04ecc907bfb5"
+          "Sha256": "ed8a92b526c48aaa01d1439667654a8e9b77730c8f2d45e341de69e09ea48d1f"
         },
         {
           "Path": "Buffaly.DesktopViewer.Web.deps.json",
@@ -7274,11 +7274,11 @@
         },
         {
           "Path": "Buffaly.DesktopViewer.Web.dll",
-          "Sha256": "4ca411c16123e885a40b4c994a7ce6ae0bd818ea659f4746ae1faa884e17ea18"
+          "Sha256": "b72b8918d8fd485ead234eee1e8a5affb0aa170e8857c185571e6f9f0eb86eae"
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "beeb139cad3c462238da0aee62cb514752da1519573f579de9c478d8011330d5"
+          "Sha256": "15205fafd59a99d33f96b21f92e63b1b25e303aa90229a9710384e603e289a79"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -7418,15 +7418,15 @@
         },
         {
           "Path": "RooTrax.Cache.dll",
-          "Sha256": "7a31183a8a58634d601360438170bee866a3cb4cdc6c197ef8ccf6248a70bb63"
+          "Sha256": "ff69e35ba88a846fc0a2fcc64a7df136260e86d6a230cdc6f2f1c54448c7f71a"
         },
         {
           "Path": "RooTrax.Common.DB.dll",
-          "Sha256": "a148fac3230b1f37f7b05ff20d0a4dbf1080f3ec6ca1305058863067a41f8c11"
+          "Sha256": "9154a73d22724f255fe87f2a443ba4bc9dd0c5aa10a93ac13e479f6074717257"
         },
         {
           "Path": "RooTrax.Common.dll",
-          "Sha256": "8d4cd3894700359bfb0044e16364f4a6a672b7f749a45c656d430d7d5fd5ee37"
+          "Sha256": "8374cd0433188fce6df286ac077099c0f579466d234630cabde9556a87e97d5f"
         },
         {
           "Path": "runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll",
@@ -7478,7 +7478,7 @@
         },
         {
           "Path": "Scripts/CopyMessageSp.sql",
-          "Sha256": "1b08da2a7b3b59a938ed15c4a6daf15376a36428e9c5fb8128c72505ed9f0003"
+          "Sha256": "d8bb3f9e154b36e03352d1c595bfec1d8f75e4e6240ab89ba04b09502c01d5d4"
         },
         {
           "Path": "Scripts/CopyPageLayoutSp.sql",
@@ -7878,7 +7878,15 @@
         },
         {
           "Path": "Scripts/Messages_UpdateSessionEventStatusSp.sql",
-          "Sha256": "f3dd7b26b639e2a20405a4e24d073c542cddb4f688475b32cd7381f666f4bd3d"
+          "Sha256": "8a487ae17b1167b8f4ba6c59da64cb8fefabc84a79dc33e4301174a2c5487eee"
+        },
+        {
+          "Path": "Scripts/Message_RemoveUnlinked_Sp.sql",
+          "Sha256": "554ddd3dcf22e81944c49eb9377cd6b304f23a3e6c4ead335259b5783070eb26"
+        },
+        {
+          "Path": "Scripts/Message_UpdateDataGuarded_Sp.sql",
+          "Sha256": "fd86648f1af7000f87447ce7528fb5279d112132d0b0e4760fc5021cca7caa5a"
         },
         {
           "Path": "Scripts/PageLayouts.sql",
@@ -8050,7 +8058,7 @@
         },
         {
           "Path": "Scripts/UpdateMessageSp.sql",
-          "Sha256": "0f3ac90bb684abc6e623b91ee418752682514be8b6f162a8fe38dc406ced239f"
+          "Sha256": "0c718143f056f794661c9f5922759ffd9f2022757bc92490c0abdd53a0480fdb"
         },
         {
           "Path": "Scripts/UpdateMessageToolArgumentsSp.sql",
