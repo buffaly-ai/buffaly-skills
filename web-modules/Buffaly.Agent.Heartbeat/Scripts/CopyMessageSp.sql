@@ -1,11 +1,20 @@
 CREATE OR ALTER PROCEDURE [dbo].[CopyMessageSp] @MessageID int
 AS
 BEGIN
- SET NOCOUNT ON;
- DECLARE @SessionID int,@SequenceNumber int,@Role nvarchar(255),@Content nvarchar(max),@ToolName nvarchar(255),@ToolArguments nvarchar(max),@CallID nvarchar(255),@Data nvarchar(max),@IsCompacted bit,@CompactionEpoch int,@MessageKey nvarchar(255),@TurnID nvarchar(255),@CompactionEpochKey nvarchar(255),@MessageKind nvarchar(255),@TerminalOutcomeState nvarchar(255),@SavedWorkResume bit;
- SELECT @SessionID=SessionID,@SequenceNumber=SequenceNumber,@Role=Role,@Content=Content,@ToolName=ToolName,@ToolArguments=ToolArguments,@CallID=CallID,@Data=Data,@IsCompacted=IsCompacted,@CompactionEpoch=CompactionEpoch,@MessageKey=MessageKey+N' - Copy',@TurnID=TurnID,@CompactionEpochKey=CompactionEpochKey,@MessageKind=MessageKind,@TerminalOutcomeState=TerminalOutcomeState,@SavedWorkResume=SavedWorkResume FROM dbo.Messages WHERE MessageID=@MessageID;
- IF @SessionID IS NULL BEGIN SELECT CONVERT(int,NULL) AS MessageID; RETURN; END;
- -- One authoritative insert owns chronology, turn identity and scalar anchor maintenance.
- EXEC dbo.InsertMessageSp @SessionID,@SequenceNumber,@Role,@Content,@ToolName,@ToolArguments,@CallID,@Data,@IsCompacted,@CompactionEpoch,@MessageKey,@TurnID,@CompactionEpochKey,@MessageKind,@TerminalOutcomeState,@SavedWorkResume;
+	SET NOCOUNT ON;
+	-- Keep Copy, but never manufacture another message in an execution turn.
+	INSERT dbo.Messages(SessionID,SequenceNumber,Role,Content,ToolName,ToolArguments,CallID,DateCreated,LastUpdated,Data,IsCompacted,CompactionEpoch,MessageKey,TurnID,TurnRowID,CompactionEpochKey,MessageKind,TerminalOutcomeState,SavedWorkResume)
+	SELECT SessionID,SequenceNumber,Role,Content,ToolName,ToolArguments,CallID,GETDATE(),GETDATE(),Data,IsCompacted,CompactionEpoch,MessageKey+N' - Copy',TurnID,NULL,CompactionEpochKey,MessageKind,TerminalOutcomeState,SavedWorkResume
+	FROM dbo.Messages
+	WHERE MessageID=@MessageID AND Role=N'Lifecycle' AND (TurnID IS NULL OR DATALENGTH(TurnID)=0) AND TurnRowID IS NULL
+	  AND TerminalOutcomeState IS NULL AND SavedWorkResume IS NULL;
+	IF @@ROWCOUNT=0
+	BEGIN
+		IF EXISTS(SELECT 1 FROM dbo.Messages WHERE MessageID=@MessageID)
+			THROW 51443,'Only a turnless Lifecycle message without execution outcome can be copied.',1;
+		SELECT CONVERT(int,NULL) AS MessageID;
+		RETURN;
+	END
+	SELECT CONVERT(int,SCOPE_IDENTITY()) AS MessageID;
 END
 GO
