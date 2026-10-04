@@ -194,29 +194,42 @@ BEGIN
 END $$;
 
 CREATE OR REPLACE FUNCTION update_message_sp(p_message_id integer,p_session_id integer,p_sequence_number integer,p_role text,p_content text,p_tool_name text,p_tool_arguments text,p_call_id text,p_data text,p_is_compacted boolean,p_compaction_epoch integer,p_message_key text,p_turn_id text,p_compaction_epoch_key text,p_message_kind text,p_terminal_outcome_state text,p_saved_work_resume boolean)
-RETURNS void LANGUAGE plpgsql AS $$ DECLARE resolved_turn_id bigint; previous_turn_id bigint; occurred_at timestamp; BEGIN SELECT date_created,turn_row_id INTO occurred_at,previous_turn_id FROM messages WHERE message_id=p_message_id; IF NOT FOUND THEN RETURN; END IF; IF NULLIF(p_turn_id,'') IS NOT NULL THEN INSERT INTO turns(session_id,turn_key,display_order_at_utc) VALUES(p_session_id,p_turn_id,occurred_at) ON CONFLICT(session_id,turn_key) DO NOTHING RETURNING turn_id INTO resolved_turn_id; IF resolved_turn_id IS NULL THEN SELECT turn_id INTO STRICT resolved_turn_id FROM turns WHERE session_id=p_session_id AND turn_key=p_turn_id; END IF; END IF; UPDATE messages SET session_id=p_session_id,sequence_number=p_sequence_number,role=p_role,content=p_content,tool_name=p_tool_name,tool_arguments=p_tool_arguments,call_id=p_call_id,last_updated=timezone('utc',clock_timestamp()),data=p_data,is_compacted=p_is_compacted,compaction_epoch=p_compaction_epoch,message_key=p_message_key,turn_id=p_turn_id,turn_row_id=resolved_turn_id,compaction_epoch_key=p_compaction_epoch_key,message_kind=p_message_kind,terminal_outcome_state=p_terminal_outcome_state,saved_work_resume=p_saved_work_resume WHERE message_id=p_message_id;
- UPDATE turns t SET
- first_message_id=(SELECT m.message_id FROM messages m WHERE m.turn_row_id=t.turn_id ORDER BY m.date_created,m.message_id LIMIT 1),
- user_message_id=(SELECT m.message_id FROM messages m WHERE m.turn_row_id=t.turn_id AND m.role='User' ORDER BY m.date_created,m.message_id LIMIT 1),
- assistant_message_id=(SELECT m.message_id FROM messages m WHERE m.turn_row_id=t.turn_id AND m.role='Assistant' ORDER BY m.date_created DESC,m.message_id DESC LIMIT 1),
- last_error_message_id=(SELECT m.message_id FROM messages m WHERE m.turn_row_id=t.turn_id AND m.role='Lifecycle' AND(m.message_kind='Error' OR m.terminal_outcome_state='Failed') ORDER BY m.date_created DESC,m.message_id DESC LIMIT 1),
- terminal_message_id=(SELECT m.message_id FROM messages m WHERE m.turn_row_id=t.turn_id AND m.role='Lifecycle' AND m.terminal_outcome_state IN('Completed','Failed','Cancelled') ORDER BY m.date_created DESC,m.message_id DESC LIMIT 1),
- display_order_at_utc=COALESCE((SELECT m.date_created FROM messages m WHERE m.turn_row_id=t.turn_id AND m.role='User' ORDER BY m.date_created,m.message_id LIMIT 1),(SELECT m.date_created FROM messages m WHERE m.turn_row_id=t.turn_id ORDER BY m.date_created,m.message_id LIMIT 1),t.display_order_at_utc)
- WHERE t.turn_id IN(previous_turn_id,resolved_turn_id); END $$;
+RETURNS void LANGUAGE plpgsql AS $$
+BEGIN
+ UPDATE messages m SET sequence_number=p_sequence_number,content=p_content,tool_name=p_tool_name,
+  tool_arguments=p_tool_arguments,call_id=p_call_id,data=p_data,is_compacted=p_is_compacted,
+  compaction_epoch=p_compaction_epoch,compaction_epoch_key=p_compaction_epoch_key,
+  last_updated=timezone('utc',clock_timestamp())
+ WHERE m.message_id=p_message_id
+  AND ROW(m.session_id,m.role,m.message_key,m.turn_id,m.message_kind,m.terminal_outcome_state,m.saved_work_resume)
+   IS NOT DISTINCT FROM ROW(p_session_id,p_role,p_message_key,p_turn_id,p_message_kind,p_terminal_outcome_state,p_saved_work_resume)
+  AND (m.role<>'Lifecycle' OR (NULLIF(m.turn_id,'') IS NULL AND m.turn_row_id IS NULL) OR m.data IS NOT DISTINCT FROM p_data);
+ IF NOT FOUND AND EXISTS(SELECT 1 FROM messages WHERE message_id=p_message_id) THEN
+  RAISE EXCEPTION 'Message identity, session, turn, role, classification and linked Lifecycle evidence cannot be changed.';
+ END IF;
+END $$;
 
 CREATE OR REPLACE FUNCTION remove_message_sp(p_message_id integer) RETURNS void LANGUAGE sql AS $$ DELETE FROM messages WHERE message_id=p_message_id $$;
 
-CREATE OR REPLACE FUNCTION copy_message_sp(p_message_id integer) RETURNS TABLE("MessageID" integer) LANGUAGE plpgsql AS $$
-DECLARE source_row messages%ROWTYPE;
+CREATE OR REPLACE FUNCTION copy_message_sp(p_message_id integer) RETURNS TABLE("MessageID" integer)
+LANGUAGE plpgsql AS $$
+DECLARE copied_id integer;
 BEGIN
-	SELECT * INTO source_row FROM messages WHERE message_id=p_message_id;
-	-- The pre-authority provider returned no rows for a missing source.
-	IF NOT FOUND THEN RETURN; END IF;
-	-- Resolve the provider-local index exactly as an ordinary insert; never copy a stale numeric link.
-	RETURN QUERY SELECT * FROM insert_message_sp(source_row.session_id,source_row.sequence_number,source_row.role,source_row.content,
-		source_row.tool_name,source_row.tool_arguments,source_row.call_id,source_row.data,source_row.is_compacted,source_row.compaction_epoch,
-		source_row.message_key||'-copy-'||replace(clock_timestamp()::text,' ','-')||'-'||floor(random()*1000000)::integer::text,
-		source_row.turn_id,source_row.compaction_epoch_key,source_row.message_kind,source_row.terminal_outcome_state,source_row.saved_work_resume,timezone('utc',clock_timestamp()));
+ INSERT INTO messages(session_id,sequence_number,role,content,tool_name,tool_arguments,call_id,date_created,last_updated,data,is_compacted,compaction_epoch,message_key,turn_id,turn_row_id,compaction_epoch_key,message_kind,terminal_outcome_state,saved_work_resume)
+ SELECT session_id,sequence_number,role,content,tool_name,tool_arguments,call_id,timezone('utc',clock_timestamp()),timezone('utc',clock_timestamp()),data,is_compacted,compaction_epoch,
+  message_key||'-copy-'||replace(clock_timestamp()::text,' ','-')||'-'||floor(random()*1000000)::integer::text,
+  turn_id,NULL,compaction_epoch_key,message_kind,terminal_outcome_state,saved_work_resume
+ FROM messages
+ WHERE message_id=p_message_id AND role='Lifecycle' AND NULLIF(turn_id,'') IS NULL AND turn_row_id IS NULL
+  AND terminal_outcome_state IS NULL AND saved_work_resume IS NULL
+ RETURNING message_id INTO copied_id;
+ IF NOT FOUND THEN
+  IF EXISTS(SELECT 1 FROM messages WHERE message_id=p_message_id) THEN
+   RAISE EXCEPTION 'Only a turnless Lifecycle message without execution outcome can be copied.';
+  END IF;
+  RETURN;
+ END IF;
+ RETURN QUERY SELECT copied_id;
 END $$;
 
 CREATE OR REPLACE FUNCTION update_message_tool_arguments_sp(p_message_id integer,p_tool_arguments text) RETURNS void LANGUAGE sql AS $$ UPDATE messages SET tool_arguments=p_tool_arguments,last_updated=timezone('utc',clock_timestamp()) WHERE message_id=p_message_id $$;
@@ -616,14 +629,15 @@ BEGIN
 END;
 $$;
 
+-- Forward the exact typed producer projection; a different OUT order makes SELECT * invalid.
 CREATE OR REPLACE FUNCTION "Sessions_GetSidebarRootPageSp"(p_search varchar, p_skip_roots integer, p_num_roots integer)
 RETURNS TABLE (
-	"SessionID" integer,"SessionKey" text,"ParentSessionID" integer,"SessionName" text,
+	"SessionID" integer,"SessionKey" text,"ParentSessionID" integer,"ParentSessionKey" text,"SessionName" text,
 	"AgentName" text,"ProjectName" text,"ProjectFilePath" text,"Provider" text,"ModelName" text,
-	"ReasoningLevel" text,"PromptContext" text,"State" text,"SessionKind" text,"Transport" text,"DateCreated" timestamp,
-	"OwnLastUpdated" timestamp,"EffectiveLastUpdated" timestamp,"IsArchived" boolean,
+	"ReasoningLevel" text,"PromptContext" text,"CompactionProvider" text,"State" text,"SessionKind" text,"Transport" text,"DateCreated" timestamp,
+	"OwnLastUpdated" timestamp,"EffectiveLastUpdated" timestamp,
 	"RootSessionID" integer,"RootOrdinal" integer,"HierarchyDepth" integer,
-	"RootRowsReturned" integer,"HasMoreRootRows" boolean)
+	"RootRowsReturned" integer,"HasMoreRootRows" boolean,"IsSearchBounded" boolean)
 LANGUAGE sql AS $$
 	SELECT * FROM sessions_get_sidebar_root_page_sp(p_search::text, p_skip_roots, p_num_roots);
 $$;
@@ -1048,6 +1062,26 @@ END $$;
 CREATE OR REPLACE FUNCTION "Messages_UpdateSessionEventStatusSp"(p_message_id integer,p_session_id integer,p_message_kind text,p_data text) RETURNS void LANGUAGE plpgsql AS $$
 BEGIN
  IF NULLIF(p_message_kind,'') IS NULL THEN RAISE EXCEPTION 'Callback MessageKind required'; END IF;
- UPDATE messages SET message_kind=p_message_kind,data=p_data,last_updated=timezone('utc',clock_timestamp()) WHERE message_id=p_message_id AND session_id=p_session_id AND role='Lifecycle' AND NULLIF(turn_id,'') IS NULL AND terminal_outcome_state IS NULL AND saved_work_resume IS NULL;
+ UPDATE messages SET message_kind=p_message_kind,data=p_data,last_updated=timezone('utc',clock_timestamp()) WHERE message_id=p_message_id AND session_id=p_session_id AND role='Lifecycle' AND NULLIF(turn_id,'') IS NULL AND turn_row_id IS NULL AND terminal_outcome_state IS NULL AND saved_work_resume IS NULL;
  IF NOT FOUND THEN RAISE EXCEPTION 'Callback lifecycle identity/ownership mismatch'; END IF;
+END $$;
+
+CREATE OR REPLACE FUNCTION "Message_RemoveUnlinked_Sp"(p_message_id integer)
+RETURNS void LANGUAGE plpgsql AS $$
+BEGIN
+ DELETE FROM messages WHERE message_id=p_message_id AND NULLIF(turn_id,'') IS NULL AND turn_row_id IS NULL;
+ IF NOT FOUND AND EXISTS(SELECT 1 FROM messages WHERE message_id=p_message_id) THEN
+  RAISE EXCEPTION 'A message belonging to a turn cannot be removed individually.';
+ END IF;
+END $$;
+
+CREATE OR REPLACE FUNCTION "Message_UpdateDataGuarded_Sp"(p_message_id integer,p_data text)
+RETURNS void LANGUAGE plpgsql AS $$
+BEGIN
+ UPDATE messages SET data=p_data,last_updated=timezone('utc',clock_timestamp())
+ WHERE message_id=p_message_id
+  AND (role<>'Lifecycle' OR (NULLIF(turn_id,'') IS NULL AND turn_row_id IS NULL) OR data IS NOT DISTINCT FROM p_data);
+ IF NOT FOUND AND EXISTS(SELECT 1 FROM messages WHERE message_id=p_message_id) THEN
+  RAISE EXCEPTION 'Linked Lifecycle execution evidence cannot be changed through UpdateMessageData.';
+ END IF;
 END $$;
