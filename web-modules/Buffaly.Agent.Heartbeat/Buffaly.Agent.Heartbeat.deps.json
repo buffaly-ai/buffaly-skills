@@ -771,7 +771,8 @@
       "Buffaly.Agent.Core/1.0.0": {
         "dependencies": {
           "Buffaly.Agent.Common": "1.0.0",
-          "Buffaly.Agent.Web.Common": "1.0.0"
+          "Buffaly.Agent.Web.Common": "1.0.0",
+          "Buffaly.Sessions.DB": "1.0.0"
         },
         "runtime": {
           "Buffaly.Agent.Core.dll": {
@@ -965,6 +966,9 @@
         }
       },
       "Buffaly.Agent.Web.Common/1.0.0": {
+        "dependencies": {
+          "SixLabors.ImageSharp": "3.1.12"
+        },
         "runtime": {
           "Buffaly.Agent.Web.Common.dll": {
             "assemblyVersion": "1.0.0.0",
@@ -1027,6 +1031,9 @@
         }
       },
       "Buffaly.ProviderContracts/1.0.0": {
+        "dependencies": {
+          "Buffaly.Agent.Web.Common": "1.0.0"
+        },
         "runtime": {
           "Buffaly.ProviderContracts.dll": {
             "assemblyVersion": "1.0.0.0",
@@ -1049,6 +1056,7 @@
       "Buffaly.Sessions.DB.PostGres/1.0.0": {
         "dependencies": {
           "Buffaly.DB.Core": "1.0.0",
+          "Buffaly.DB.Postgres": "1.0.0",
           "Npgsql": "9.0.3"
         },
         "runtime": {
