@@ -1,0 +1,20 @@
+{
+  "AgentName":"customer-cfl-cleaners-agent",
+  "DisplayName":"CFL Cleaners Assistant",
+  "ProjectFilePath":"Profiles/CflCleaners/Project.pts",
+  "PromptFile":"Profiles/CflCleaners/Prompts/CflCleaners.prompt.md",
+  "PromptContext":"customer-cfl-cleaners",
+  "RootActionPrototypeName":"CFLActionRoot",
+  "RootEntityPrototypeName":"CFLEntityRoot",
+  "Provider":"openai",
+  "DefaultModelName":"gpt-5.5",
+  "DefaultReasoningLevel":"medium",
+  "UiPage":"conversations",
+  "IsReadOnly":false,
+  "IsHidden":true,
+  "CanChangeModel":false,
+  "CompanionAgents":[],
+  "CompanionAttachment":null,
+  "RunAdmissionPrototypeName":"ChatRunAdmission",
+  "EnableImmediateProtoScriptCommands":false
+}

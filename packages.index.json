@@ -23457,6 +23457,64 @@
       "RequiresRestart": true,
       "RequiresPreStartInstall": true,
       "PreStartCleanupPaths": []
+    },
+    {
+      "PackageId": "CFL.Cleaners.Agent",
+      "PackageType": "WebModule",
+      "Title": "CFL Cleaners Reference Agent",
+      "Description": "Buffaly Web Module package for CFL Cleaners Reference Agent.",
+      "Version": "0.1.0",
+      "PackageKind": "BuffalyWebModule",
+      "SourcePath": "web-modules/CFL.Cleaners.Agent",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/CFL.Cleaners.Agent",
+      "Phrases": [
+        "CFL Cleaners Reference Agent",
+        "CFL.Cleaners.Agent"
+      ],
+      "Files": [
+        {
+          "Path": "CFL.Cleaners.Agent/CFL.Cleaners.Agent.dll",
+          "Sha256": "9974df10266b770158ada31f78678440e1872a5cfdd0835574ab437b243c5d4f"
+        },
+        {
+          "Path": "CFL.Cleaners.Agent/CFL.Cleaners.Contracts.dll",
+          "Sha256": "f6eabbfe1bb1b6557cbab148486061dccbb8cd4e7c1842a83f980bbe69b42e79"
+        },
+        {
+          "Path": "ProjectArtifacts/Agents/customer-cfl-cleaners-agent.agent.json",
+          "Sha256": "a206cda8ed9ee3d272a05cc865ec87ad3f18e6beb1e70b71522b37ae97953b24"
+        },
+        {
+          "Path": "ProjectArtifacts/CflCleaners/Project.pts",
+          "Sha256": "5a1b45deacc68e2ffc8ca2217f9f86f560b270bc29e93e665dfe39b6ed5908df"
+        },
+        {
+          "Path": "ProjectArtifacts/CflCleaners/Prompts/CflCleaners.prompt.md",
+          "Sha256": "71f1d91d98f903a13472f3997b30c59e6071ee32083a2dfc9a2d5682088ce2fb"
+        },
+        {
+          "Path": "web-module.json",
+          "Sha256": "48b5d54ae4a28e54d00715fee7af8e8ff9ebaa24cb7c9b211eb6c468ccc3fd72"
+        }
+      ],
+      "ProjectArtifacts": [
+        {
+          "ProjectName": "Profiles/CflCleaners",
+          "SourcePath": "ProjectArtifacts/CflCleaners/",
+          "InstallAsProject": false
+        },
+        {
+          "ProjectName": "Agents",
+          "SourcePath": "ProjectArtifacts/Agents/",
+          "InstallAsProject": false
+        }
+      ],
+      "Dependencies": [],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "RequiresRestart": true,
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     }
   ]
 }
