@@ -134,3 +134,8 @@
 
 ## 2026-09-15 - Simple send versus queue
 - Immediate send is ToSendMessageToSession for running or idle targets; deferred queue remains explicit. Removed overly narrow active-only phrases and misleading progress-reporting alias.
+
+## 2026-10-06 — explicit deep search guidance
+- Typed parsed upsert revised ToSearchSessionMessages and ToSearchSessionFinalAssistantMessages descriptions: recent0=2500, deeppositivecount required/start10000, deliberate unboundedall and candidate-window coverage.
+- Preserved semantic annotations and pass-through signatures/default0/C# owner validation. Authoring serializer reordered Description after method without changing execution.
+- Validation: typed authoring parse/upsert succeeded and focused wrapper guidance regression passed in19/19 expanded Release run. Installed ProtoScript execution validation pending.

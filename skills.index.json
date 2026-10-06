@@ -2241,7 +2241,7 @@
       "SkillName": "SessionManagement",
       "Title": "Session Management",
       "Description": "Buffaly skill package for Session Management.",
-      "Version": "0.1.13",
+      "Version": "0.1.14",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Session Management",
@@ -2251,11 +2251,15 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "c506616f86a8d7c1f44640cae3b0d78b78dfcc2b911d41c3adea816e650edafe"
+          "Sha256": "53ea005fb5d9cb82862b364d2033803fb5d01ec90c4ecef6e2987ab5505261bc"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "3515d713b433984c5d401fda870ac395b9b67237c244a9ec3b681ffb499bf066"
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "138b5a2b7f59360afdeaab1cff733b99efdc7db8e2c1a0eaa427b73a90f3ec07"
+          "Sha256": "cb4e6ca0045ce04f79198ceb1b41bc27d3df99765d4ec91fe38620150bbadba2"
         },
         {
           "Path": "PromptActions.pts",
@@ -2284,15 +2288,12 @@
         {
           "Path": "ToNormalizePossiblyStringRefHandleToString.troubleshooting.md",
           "Sha256": "6e296d30ba3bd836d01a6e28c5c840522fb95b1e041a78789730bfaf4865fbb4"
-        },
-        {
-          "Path": "index.pts.lazy.json",
-          "Sha256": "3515d713b433984c5d401fda870ac395b9b67237c244a9ec3b681ffb499bf066"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": []
+      "Prerequisites": [],
+      "PreservedFiles": []
     },
     {
       "SkillName": "SessionSync",

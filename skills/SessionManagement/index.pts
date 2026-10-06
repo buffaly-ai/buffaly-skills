@@ -328,26 +328,26 @@ prototype ToGetSessionAssistantMessageMarkdown : SessionManagementSkillAction
 [SemanticProgram.InfinitivePhrase("to find user messages in session history")]
 prototype ToSearchSessionMessages : SessionManagementSkillAction
 {
-	Description = @"search - required content search text. maxRows - maximum messages to return, default 25 and capped in C#. searchScope - recent (default), deep, or all; use recent first, then deep only if recent results are insufficient. maxMessageScanCount - optional scan cap; 0 uses the scope-specific default. Returns compact JSON with MessageID, SessionID, MessageKey, TurnKey, SequenceNumber, Role, Text, SearchScope, MaxMessageScanCount, and NextSearchSuggestion.";
-
 	function Execute(string search, int maxRows = 25, string searchScope = "recent", int maxMessageScanCount = 0) : string
 	{
 		return SessionTools.SearchSessionMessagesTool(search, maxRows, searchScope, maxMessageScanCount);
 	}
+	Description = @"search - required content search text. maxRows - maximum returned messages, default 25; this does not cap candidates. searchScope - recent (default), deep, or all. Use recent first. maxMessageScanCount - recent 0 uses 2500 candidates; deep requires an explicit positive limit, start with 10000 and expand deliberately. all is an explicit unbounded historical scan. Results cover only the candidate window. Returns compact JSON with MessageID, SessionID, MessageKey, TurnKey, SequenceNumber, Role, Text, SearchScope, MaxMessageScanCount, and NextSearchSuggestion.";
 }
+
 
 [SemanticProgram.InfinitivePhrase("to search final assistant session messages by content")]
 [SemanticProgram.InfinitivePhrase("to search assistant final responses in session history")]
 [SemanticProgram.InfinitivePhrase("to find final assistant answers in session history")]
 prototype ToSearchSessionFinalAssistantMessages : SessionManagementSkillAction
 {
-	Description = @"search - required content search text. maxRows - maximum messages to return, default 25 and capped in C#. searchScope - recent (default), deep, or all; use recent first, then deep only if recent results are insufficient. maxMessageScanCount - optional scan cap; 0 uses the scope-specific default. Returns compact JSON with MessageID, SessionID, MessageKey, TurnKey, SequenceNumber, Role, Text, SearchScope, MaxMessageScanCount, and NextSearchSuggestion.";
-
 	function Execute(string search, int maxRows = 25, string searchScope = "recent", int maxMessageScanCount = 0) : string
 	{
 		return SessionTools.SearchSessionFinalAssistantMessagesTool(search, maxRows, searchScope, maxMessageScanCount);
 	}
+	Description = @"search - required content search text. maxRows - maximum returned messages, default 25; this does not cap candidates. searchScope - recent (default), deep, or all. Use recent first. maxMessageScanCount - recent 0 uses 2500 candidates; deep requires an explicit positive limit, start with 10000 and expand deliberately. all is an explicit unbounded historical scan. Results cover only the candidate window. Returns compact JSON with MessageID, SessionID, MessageKey, TurnKey, SequenceNumber, Role, Text, SearchScope, MaxMessageScanCount, and NextSearchSuggestion.";
 }
+
 
 
 
