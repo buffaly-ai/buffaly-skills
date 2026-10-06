@@ -1,7 +1,13 @@
 reference Buffaly.Chat.Server;
 import Buffaly.Chat.Server Buffaly.Chat.Server.ChatRuntime ChatRuntime;
+import Buffaly.Chat.Server Buffaly.Chat.Server.ChatWorkerExecution ChatWorkerExecution;
 prototype ChatIngressWorker
 {
+	function Run(string MessageKey) : string
+	{
+		return ChatWorkerExecution.Run(_opsAgent, MessageKey);
+	}
+
 	function Prepare(string MessageKey) : string
 	{
 		return ChatRuntime.Prepare(_opsAgent, MessageKey);
