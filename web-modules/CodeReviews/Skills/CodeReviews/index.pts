@@ -10,6 +10,8 @@ import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewT
 import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewEvidenceService CodeReviewEvidenceService;
 import Buffaly.Agent.Host Buffaly.Agent.Host.BuffalyArtifacts BuffalyArtifacts;
 import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.SessionTools SessionTools;
+import Buffaly.Agent.Host Buffaly.Agent.Host.TurnSummaryContract TurnSummaryContract;
+import Buffaly.Agent.Host Buffaly.Agent.Host.GetSessionTurnBootstrapResponse GetSessionTurnBootstrapResponse;
 import BasicUtilities BasicUtilities.JsonUtil JsonUtil;
 
 [SemanticEntity("code reviews agent tools")]
