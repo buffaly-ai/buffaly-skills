@@ -27,8 +27,15 @@ prototype ToGetAntigravityAuthStatus : AntigravitySkillAction
 	{
 		string contextJson = ToAntigravityNativeContextJson("default", "", "");
 		string handle = AntigravityTools.BeginProbe(ToAntigravityNativeConfigJson(), contextJson, _opsAgent.GetCurrentOperationCancellationToken());
-		string result = ToAntigravityNativeRunHandle(handle);
-		AntigravityTools.Release(handle);
+		string result = "";
+		try
+		{
+			result = ToAntigravityNativeRunHandle(handle);
+		}
+		finally
+		{
+			AntigravityTools.Release(handle);
+		}
 		return result;
 	}
 }
@@ -47,8 +54,15 @@ prototype ToBeginAntigravityLogin : AntigravitySkillAction
 			timeoutSeconds = 600;
 		string contextJson = AntigravityTools.CreateTurnRequestJson(_opsAgent.GetSessionKeyOrEmpty(), _opsAgent.GetCurrentSessionDirectory(), _opsAgent.GetCurrentProjectDirectory(), _opsAgent.GetCurrentToolInvocationIdOrEmpty(), _opsAgent.GetCurrentToolMessageKeyOrEmpty(), _opsAgent.GetCurrentTurnKeyOrEmpty(), "default", "login", "", "", timeoutSeconds, "", false);
 		string handle = AntigravityTools.BeginLogin(ToAntigravityNativeConfigJson(), contextJson, _opsAgent.GetCurrentOperationCancellationToken());
-		string result = ToAntigravityNativeRunHandle(handle);
-		AntigravityTools.Release(handle);
+		string result = "";
+		try
+		{
+			result = ToAntigravityNativeRunHandle(handle);
+		}
+		finally
+		{
+			AntigravityTools.Release(handle);
+		}
 		return result;
 	}
 }
@@ -65,8 +79,15 @@ prototype ToLogoutAntigravityAccount : AntigravitySkillAction
 	{
 		string contextJson = ToAntigravityNativeContextJson("default", "", "");
 		string handle = AntigravityTools.BeginLogout(ToAntigravityNativeConfigJson(), contextJson, _opsAgent.GetCurrentOperationCancellationToken());
-		string result = ToAntigravityNativeRunHandle(handle);
-		AntigravityTools.Release(handle);
+		string result = "";
+		try
+		{
+			result = ToAntigravityNativeRunHandle(handle);
+		}
+		finally
+		{
+			AntigravityTools.Release(handle);
+		}
 		return result;
 	}
 }

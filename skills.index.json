@@ -50,7 +50,7 @@
       "SkillName": "Antigravity",
       "Title": "Antigravity",
       "Description": "Buffaly skill package for Antigravity.",
-      "Version": "0.3.9",
+      "Version": "0.3.10",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Antigravity",
@@ -64,7 +64,7 @@
         },
         {
           "Path": "index.pts",
-          "Sha256": "29487768582be42f5de2721faa45cc5c70210d17404d6d558ad492918bc64ec1"
+          "Sha256": "62e2e9419b4f93966e067a1262d4a3b235f64cd76937a93328ef330f9db54e3c"
         },
         {
           "Path": "lib/AcpBrowserCapture.deps.json",
@@ -72,11 +72,11 @@
         },
         {
           "Path": "lib/AcpBrowserCapture.dll",
-          "Sha256": "59e9dd851623d9a6801cdde1e90df0c3b89c5b1d5ee11dbc7521959ab0423d7e"
+          "Sha256": "1f44ac73b7579ea2b0cc77fea23ac39f3017455be57dfa8dbc3742bb5b7c6607"
         },
         {
           "Path": "lib/AcpBrowserCapture.exe",
-          "Sha256": "ad25d1d87e648f7a570f87829afe4be9f0f5ded316302ed21251d9a4bf7e3150"
+          "Sha256": "e3433aa7eb36b8aeb92bd21d30392db90e5cb81e2362f9fe013f4d62687699b4"
         },
         {
           "Path": "lib/AcpBrowserCapture.runtimeconfig.json",
@@ -84,11 +84,11 @@
         },
         {
           "Path": "lib/Buffaly.Tools.Antigravity.dll",
-          "Sha256": "580f049fee1807736b8a00453116e6fb57ded5c99698df4689158f0f9c5844d4"
+          "Sha256": "6970d573c1ca6b4404151756de11f35d14bbdbe59e9ef18a774d4130cc4c83f5"
         },
         {
           "Path": "RuntimeGlue.pts",
-          "Sha256": "125593a42ae4f36bebe51e716d89529f19a95308c396859ed377be14c4ee6acd"
+          "Sha256": "29703ef83ad52e539e21ad452e2e5c83556fb656304c711758b96d9336f4d443"
         },
         {
           "Path": "SKILL.md",
@@ -98,7 +98,9 @@
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "PreservedFiles": []
+      "PreservedFiles": [
+        "config.json"
+      ]
     },
     {
       "SkillName": "AudioTranscription",

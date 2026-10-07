@@ -41,7 +41,7 @@ function ToAntigravityNativeRunHandle(string handle) : string
 	string presented = "";
 	while (true)
 	{
-		string batch = AntigravityTools.Poll(handle, 250);
+		string batch = AntigravityTools.WaitForTerminalOrInteraction(handle, 250);
 		ToAntigravityNativeEmit(AntigravityTools.DescribePollEvents(batch));
 		string interactionId = AntigravityTools.GetPollInteractionId(batch);
 		if (!StringUtil.IsEmpty(interactionId) && interactionId != presented)
@@ -65,7 +65,7 @@ function ToAntigravityNativeRunHandle(string handle) : string
 				ToolInvocationId = toolInvocationId,
 				MessageKey = messageKey
 			});
-			if (inputResult.Status == "submitted")
+			if (inputResult.Status.Equals("submitted"))
 			{
 				string choice = inputResult.Value;
 				if (StringUtil.IsEmpty(choice))
@@ -96,7 +96,13 @@ function ToAntigravityNativeTurn(string childScope, string prompt, string model,
 	string requestJson = ToAntigravityNativeTurnJson(childScope, prompt, model, system, timeoutSeconds, workingDirectory, ephemeral);
 	string handle = AntigravityTools.BeginTurn(ToAntigravityNativeConfigJson(), requestJson, _opsAgent.GetCurrentOperationCancellationToken());
 	string result = "";
-	result = ToAntigravityNativeRunHandle(handle);
-	AntigravityTools.Release(handle);
+	try
+	{
+		result = ToAntigravityNativeRunHandle(handle);
+	}
+	finally
+	{
+		AntigravityTools.Release(handle);
+	}
 	return result;
 }
