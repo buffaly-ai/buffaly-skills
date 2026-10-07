@@ -6,9 +6,7 @@ BEGIN
  END IF;
  RETURN QUERY SELECT r.* FROM get_session_rows() r
  WHERE r."ParentSessionID" = p_parent_session_id AND r."IsArchived" = false
- AND r."SessionKey" IS NOT NULL AND r."SessionKey" ~ '[^	
-
-                  　]'
+ AND r."SessionKey" IS NOT NULL AND r."SessionKey" ~ U&'[^\0009\000A\000B\000C\000D\0020\0085\00A0\1680\2000\2001\2002\2003\2004\2005\2006\2007\2008\2009\200A\2028\2029\202F\205F\3000]'
  ORDER BY r."LastUpdated" DESC, r."SessionID" DESC LIMIT p_num_rows;
 END;
 $$;
@@ -37,9 +35,7 @@ BEGIN
  (
   SELECT child.session_id, row_number() OVER (ORDER BY child.last_updated DESC, child.session_id DESC) AS child_ordinal
   FROM sessions child JOIN navigable_sessions selected ON selected.session_key=p_session_key AND child.parent_session_id=selected.session_id
-  WHERE child.is_archived=false AND child.session_key IS NOT NULL AND child.session_key ~ '[^	
-
-                  　]'
+  WHERE child.is_archived=false AND child.session_key IS NOT NULL AND child.session_key ~ U&'[^\0009\000A\000B\000C\000D\0020\0085\00A0\1680\2000\2001\2002\2003\2004\2005\2006\2007\2008\2009\200A\2028\2029\202F\205F\3000]'
   ORDER BY child.last_updated DESC, child.session_id DESC LIMIT 201
  ),
  selected_ancestors AS
