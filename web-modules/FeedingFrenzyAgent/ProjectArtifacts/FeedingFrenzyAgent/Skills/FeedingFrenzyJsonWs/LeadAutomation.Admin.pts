@@ -13,6 +13,20 @@ prototype LeadAutomation_GetLeadsBySearch : FeedingFrenzyJsonWsSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to get the latest feeding frenzy leads")]
+[SemanticProgram.InfinitivePhrase("to find the newest feeding frenzy lead")]
+prototype LeadAutomation_GetLatestLeads : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"Fresh authorized lead search ordered by DateCreated descending. For latest/newest lead requests, call this on the current turn before selecting a LeadID and fetching details; never infer newest from remembered detail results. Tied creation timestamps are equally recent. Returns response JSON with Markdown lead IDs.";
+
+	function Execute(string Search) : string
+	{
+		JsonObject args = new JsonObject();
+		args["Search"] = Search;
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-latest-leads", args);
+	}
+}
+
 prototype LeadAutomation_GetLeadsByTagName : FeedingFrenzyJsonWsSkillAction
 {
 	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.LeadAutomation.GetLeadsByTagName(TagName, Search, SortColumn, SortAscending, SkipRows, NumRows). Returns raw response JSON string.";
