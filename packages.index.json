@@ -17036,7 +17036,7 @@
       "PackageType": "WebModule",
       "Title": "OpenRouter Catalog",
       "Description": "Buffaly Web Module package for OpenRouter Catalog.",
-      "Version": "0.1.72",
+      "Version": "0.1.73",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/OpenRouterCloud",
       "SourceUrl": "",
@@ -17055,15 +17055,15 @@
         },
         {
           "Path": "BasicUtilities.dll",
-          "Sha256": "c1502d3ea0650740b3dea8ff7ac6186e86079420c9d3b93fa3dc3ed0aa203b18"
+          "Sha256": "a4531aa533db7d920a5a47dc57b0819602bb2c68150c0f87f3fe1a938e431e46"
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "1a92686faa4e8be4c019b1d9c93957aa77a48610f022b5f98e5a57aa6434c120"
+          "Sha256": "894c0d533250573e9f987fbb55315271480029d79eb33ddc46605dedcfc2e62b"
         },
         {
           "Path": "Buffaly.Agent.Tools.Secrets.dll",
-          "Sha256": "9b8426e8c44c3b510fb3972ea8f4f610e2d0ceb01897e9c91642afe9ae492938"
+          "Sha256": "096068c5f8d413c06072e6e4a9bddde42e7f6ed32523666cfba3590398078cb5"
         },
         {
           "Path": "Buffaly.Common.dll",
@@ -17075,11 +17075,11 @@
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "c453fc8a06531c49be867d9fceac6228eb76d2951516bbbc3a194c3be2ca9791"
+          "Sha256": "98a7fd3ff34ba5da6c2e7e70c5ef365fa19c5a7184323e1a684440db11f6b04a"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "7eba2d7c1347bbf29b443a42eaa90819878c972b48025626ad2c220b7c0d10ab"
+          "Sha256": "34c4e97c031864b8e219e3cbc952773b63ec4b64319519ba2ee5d88b990f7846"
         },
         {
           "Path": "Buffaly.Provider.OpenRouter.Web.deps.json",
@@ -17087,11 +17087,11 @@
         },
         {
           "Path": "Buffaly.Provider.OpenRouter.Web.dll",
-          "Sha256": "e910d5883c3909f1ec42f9d23c3fb7e8ef18e7c42d7dffe0b5a172cd3fb73d1f"
+          "Sha256": "8208f03dd0e7ad1100fb96ba23d02c5ee2486240ae3422b590ae7097da013b2d"
         },
         {
           "Path": "Buffaly.Provider.OpenRouter.Web.exe",
-          "Sha256": "13233fd14dc8e5d90c5a02e0137ae9bfc67f5c120030dce8595f19a75f0da217"
+          "Sha256": "867bbf0022cba580206a6be15f957e112b98da11ef5dbefd70dd1846233da376"
         },
         {
           "Path": "Buffaly.Provider.OpenRouter.Web.runtimeconfig.json",
@@ -17099,7 +17099,7 @@
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "44f8c9a3e22e38f769828c9ccc42c670b09722fecdc031c87f1400c5344240d1"
+          "Sha256": "f4b1cec9eafa05dedc635a10de74b86bab2fe15881760978fdb31cb786fcc2aa"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -17215,15 +17215,15 @@
         },
         {
           "Path": "RooTrax.Cache.dll",
-          "Sha256": "293568c5bf2896682b0b8922e7a23cfebd7a8ac264a7cf8d2632ae3ce4dca47c"
+          "Sha256": "c5f757cba8b5184687206a7b1ec8bddb55a4951d38ebe26be265acc8d09e6c0d"
         },
         {
           "Path": "RooTrax.Common.DB.dll",
-          "Sha256": "8f41c7e4c195ee01b3de2dcc2927d047c48dec23fc57b07f5d7fb8c93e6612bf"
+          "Sha256": "05cb5f416ddb2378389e08a32eec9854b96060315ee7b47da276acc70b04a746"
         },
         {
           "Path": "RooTrax.Common.dll",
-          "Sha256": "b2ab70f2762b4de6eee391cfd1defc2f68cb95d252a4c2567ec9633dca87268f"
+          "Sha256": "aaf6ef8bb982ba12554e9f2273557f2dc2dbcbbb9c852f2bbd5689972b661eb2"
         },
         {
           "Path": "runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll",
@@ -17750,8 +17750,16 @@
           "Sha256": "6c4b83ecacfff3c946f6e0ff52eeb0526c34e43beeb8c9bb10335820096d02a0"
         },
         {
+          "Path": "Scripts/Sessions_GetByParentSessionIDChildWindow_Sp.sql",
+          "Sha256": "7b4ca569dca65e86173586a00d1615d075e2c251820c29cdc0ebeb34ae007d83"
+        },
+        {
           "Path": "Scripts/Sessions_GetPendingAttentionSp.sql",
           "Sha256": "84d0a95929b5620c2bfbc7951b1c906a5a8ef76cc9c197b649c5a2161bc34f9f"
+        },
+        {
+          "Path": "Scripts/Sessions_GetSelectedChildWindow_Sp.sql",
+          "Sha256": "e81dc143d4ab5bb2cf0e7392b6f2f286652073c00006cd16cf4efe71c5e981fa"
         },
         {
           "Path": "Scripts/Sessions_GetSidebarActivityBatchSp.sql",
