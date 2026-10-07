@@ -1,0 +1,4 @@
+# SalesRepresentative.pts.md history
+
+## 2026-10-07 — make fresh authorized lookup discoverable for representative agent
+Included existing LeadAutomation.Admin.pts read-only wrappers in representative role composition; despite historical filename these operations are authorized by the owning business representative cohort. Default representative previously lacked latest action, so administrator-only parsing could not prove the conversational fix. Actual owning BuffalyAgent runtime compiles and discovers GetLatestLeads; real chat-latest responses_api turns query Lead9 then query again for inserted Lead10 and matching details with earlier assistant answer retained. Existing administrator composition inherits it without duplicate include. No guarded write operations added; no production activation.
