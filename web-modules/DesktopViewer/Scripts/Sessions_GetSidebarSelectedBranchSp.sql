@@ -30,19 +30,15 @@ AS
 		FROM	dbo.Sessions sessionRow
 		WHERE	ISNULL(sessionRow.IsArchived, 0) = 0
 				AND sessionRow.SessionKey NOT IN (N'Browser Profiles', N'browser-profiles')
-				AND
-				(
-					sessionRow.SessionKey = N'Buffaly.CodeReviews.Global'
-					OR
-					(
-						ISNULL(sessionRow.AgentName, N'') NOT IN
-						(
-							N'code-review-agent',
-							N'code-review-agent-v3'
-						)
-						AND sessionRow.SessionKey NOT LIKE N'%.CodeReviewAgentV3'
-					)
-				)
+	),
+	SelectedChildren AS
+	(
+		SELECT TOP (201) child.SessionID, child.ParentSessionID,
+			ROW_NUMBER() OVER (ORDER BY child.LastUpdated DESC, child.SessionID DESC) AS ChildOrdinal
+		FROM dbo.Sessions child
+		JOIN SelectedSession selected ON child.ParentSessionID = selected.SessionID
+		WHERE child.IsArchived = 0 AND child.SessionKey IS NOT NULL AND child.SessionKey LIKE N'%[^' + NCHAR(9) + NCHAR(10) + NCHAR(11) + NCHAR(12) + NCHAR(13) + NCHAR(32) + NCHAR(133) + NCHAR(160) + NCHAR(5760) + NCHAR(8192) + NCHAR(8193) + NCHAR(8194) + NCHAR(8195) + NCHAR(8196) + NCHAR(8197) + NCHAR(8198) + NCHAR(8199) + NCHAR(8200) + NCHAR(8201) + NCHAR(8202) + NCHAR(8232) + NCHAR(8233) + NCHAR(8239) + NCHAR(8287) + NCHAR(12288) + N']%' COLLATE Latin1_General_100_BIN2
+		ORDER BY child.LastUpdated DESC, child.SessionID DESC
 	),
 	SelectedAncestors AS
 	(
@@ -84,6 +80,7 @@ AS
 		JOIN NavigableSessions child
 		ON child.ParentSessionID = rootPath.SessionID
 		WHERE rootPath.ParentSessionID IS NULL
+			AND child.ParentSessionID NOT IN (SELECT SessionID FROM SelectedSession)
 	),
 	RootResolution AS
 	(
@@ -114,12 +111,13 @@ AS
 			FROM SelectedAncestors selectedPath
 			WHERE selectedPath.DistanceFromSelected > 2
 		)
+		AND child.ParentSessionID NOT IN (SELECT SessionID FROM SelectedSession)
 
 		UNION
 
 		SELECT child.SessionID
-		FROM SelectedSession selectedIdentity
-		JOIN NavigableSessions child ON child.ParentSessionID = selectedIdentity.SessionID
+		FROM SelectedChildren child
+		WHERE child.ChildOrdinal <= 200
 	),
 	RootActivity AS
 	(
@@ -167,7 +165,9 @@ AS
 			CASE WHEN hierarchy.HierarchyDepth = 1 THEN rootActivity.EffectiveLastUpdated ELSE sessionRow.LastUpdated END AS EffectiveLastUpdated,
 			resolved.RootSessionID,
 			CONVERT(int, NULL) AS RootOrdinal,
-			hierarchy.HierarchyDepth
+			hierarchy.HierarchyDepth,
+			(SELECT SessionID FROM SelectedSession) AS SelectedSessionID,
+			CONVERT(bit, CASE WHEN EXISTS (SELECT 1 FROM SelectedChildren WHERE ChildOrdinal = 201) THEN 1 ELSE 0 END) AS DirectChildrenTruncated
 	FROM	Hierarchy hierarchy
 	CROSS JOIN AncestorValidation validation
 	JOIN	NavigableSessions sessionRow ON sessionRow.SessionID = hierarchy.SessionID
