@@ -488,7 +488,7 @@
       "PackageType": "ProviderModule",
       "Title": "LlamaCpp Provider",
       "Description": "Buffaly Provider Module package for LlamaCpp Provider.",
-      "Version": "0.1.78",
+      "Version": "0.1.79",
       "PackageKind": "BuffalyProviderModule",
       "SourcePath": "provider-modules/Buffaly.Provider.LlamaCpp",
       "SourceUrl": "",
@@ -507,23 +507,23 @@
         },
         {
           "Path": "BasicUtilities.dll",
-          "Sha256": "a4531aa533db7d920a5a47dc57b0819602bb2c68150c0f87f3fe1a938e431e46"
+          "Sha256": "f557cfa05c13668d9dd50b7c2eee3e2ff8e1548ff09eaa07e87c6917878924a2"
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "66da3747740425b4b30596599f64d98ef29e3b18aeaaef697d6f11b89921282d"
+          "Sha256": "1eb55479f3a3e5f22122147aa8e1ff808226affd163ee41566266896c40bdff1"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "693facc07df36de2647330e89b06b9f9c59daaebfee233dfcb2ce55bf4b32890"
+          "Sha256": "0d66f230f4a2240965f1a833d499e8a88130990ae45b37c11fc480056f6a7d81"
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "319af15e0794ade48f495cb6981e5be8fbc7d66d09383a004f74686206753fe2"
+          "Sha256": "bbeaaa4c19674a365a5ba3a261f2b3e19b6a4e3652c4fe0f0d77e8ae21247958"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "16549b123dcadb736ccafde6a32d2d37a5d4e2bbe97727cc9cb0def3593bc0a5"
+          "Sha256": "7e0d3c4b87c906f41712dc20fff6d4802e7e655129294687a46d9e8c40cd11aa"
         },
         {
           "Path": "Buffaly.Provider.LlamaCpp.deps.json",
@@ -531,15 +531,15 @@
         },
         {
           "Path": "Buffaly.Provider.LlamaCpp.dll",
-          "Sha256": "438d54d8c268dae2438a95f3b3d930597e2c0a0936ee1a5125baad1eecc2e150"
+          "Sha256": "af5b8a4cd3f8fa3fa9ffd1a800f52df90333348f7dd3ed5dc7e3151217130133"
         },
         {
           "Path": "Buffaly.ProviderContracts.dll",
-          "Sha256": "014679859bdcba55383b245d2d7fc718431d3f0b45512559fe3d9f386d1bb4ad"
+          "Sha256": "3853753d650e68c5aec90d6a9d786a5436b0af358e79dc75ca4eefe508be618a"
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "0643701e7d7fb992d8a50a5cfe78fea17ba1ebb16fa500df093316c524a51fc1"
+          "Sha256": "012c4665c4f6ecbc3c8247bbeb0beb94ed700fbb6300d1a7bc789b07a38d6e66"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -659,15 +659,15 @@
         },
         {
           "Path": "RooTrax.Cache.dll",
-          "Sha256": "c5f757cba8b5184687206a7b1ec8bddb55a4951d38ebe26be265acc8d09e6c0d"
+          "Sha256": "9133a03f8def3639df6564f6454fb000122ef4bbf0fad363194a5749c95d6e4d"
         },
         {
           "Path": "RooTrax.Common.DB.dll",
-          "Sha256": "05cb5f416ddb2378389e08a32eec9854b96060315ee7b47da276acc70b04a746"
+          "Sha256": "9ca5ebc5392b122fbfb1bbc15fc90b7c55c240e5967f10704ba05331efefb8b8"
         },
         {
           "Path": "RooTrax.Common.dll",
-          "Sha256": "aaf6ef8bb982ba12554e9f2273557f2dc2dbcbbb9c852f2bbd5689972b661eb2"
+          "Sha256": "05a4a365cab0a31352ac215f4a4f85088ca0d8763ffe77f9af973930bad3802b"
         },
         {
           "Path": "runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll",
@@ -1202,6 +1202,10 @@
           "Sha256": "84d0a95929b5620c2bfbc7951b1c906a5a8ef76cc9c197b649c5a2161bc34f9f"
         },
         {
+          "Path": "Scripts/Sessions_GetSelectedChildWindow_Sp.sql",
+          "Sha256": "e81dc143d4ab5bb2cf0e7392b6f2f286652073c00006cd16cf4efe71c5e981fa"
+        },
+        {
           "Path": "Scripts/Sessions_GetSidebarActivityBatchSp.sql",
           "Sha256": "d71156294e02ce9a47a89654690a62b94535f96be960a3c9678a1b39028435dd"
         },
@@ -1215,7 +1219,7 @@
         },
         {
           "Path": "Scripts/Sessions_GetSidebarSelectedBranchSp.sql",
-          "Sha256": "15629bd298938e0f8990c0a08c75b23c5c361962074e4b91cfbac2362b5286e1"
+          "Sha256": "9aa5ec6e5ba1069a65d656bead70a44d1b873bd61873126cb2d7f0f2d769bc6d"
         },
         {
           "Path": "Scripts/Sessions_RequireScalarStorageV3Sp.sql",
