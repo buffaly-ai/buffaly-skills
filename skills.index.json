@@ -2080,7 +2080,7 @@
       "SkillName": "Process",
       "Title": "Process",
       "Description": "Buffaly skill package for Process.",
-      "Version": "0.1.5",
+      "Version": "0.1.6",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Process",
@@ -2090,11 +2090,15 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "40b57ae94ac5ebcb51b38bbf446174c87a995068a865233f0cbc814487d01023"
+          "Sha256": "9a043d63825a06057eeba0780cd06139c72eb64081de13ae68add05264be9d6c"
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "e3cf44fea06e7809e3cd1b9e2b543ed81fae956f20768ea258b1a9bb0da60a0a"
+          "Sha256": "0cb76b5a50d310144811cdb5a65f155ee15de0233f98afe523d54e879e8ae4c9"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "93c06a48243f134074fab93acf56925dad04cf51f27cdd3daa0343f436e8688e"
         }
       ],
       "EntryPoint": "index.pts",

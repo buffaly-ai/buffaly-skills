@@ -56,3 +56,19 @@
 
 ## SSM directory v2 implementation
 - Literal C:\Temp default/fallback, configurable directory and protected fixed initializer; preserve exact-request approve-once. Implemented approved amendment; validated with focused tests.
+
+## 2026-10-08 — require typed-tool/API discovery before SSM
+- Updated Description on ToExecuteProtectedAwsSsmCommand and ToEnsureRemoteSsmTempDirectory through the native ProtoScriptAuthoring upsert service against the canonical Process package source, not an installed package copy. Preserved infinitive phrases, parameters, sender calls and directory/approval semantics.
+- Requires ToSearchCandidateActions, signature/contract inspection, appropriate loading, suitable alternative preference and concise evidenced fallback in request/approval context; forbids denial/API-only bypass and grants no execution approval.
+- Validation: file parsed (17 prototypes); 9/9 fresh module/schema cases and 34/34 existing SSM safeguard tests passed without real AWS commands. Runtime-schema test uses actual descriptions/signatures with a nonexecuted remote-body fixture; protected sender adapter regression separately passes. Core package/Host delivery and tool re-registration still required; no installed package edits or production restart.
+
+## 2026-10-08 — shorten SSM descriptions after user correction
+- Protected command and fixed initializer now carry one concise tool-level preflight paragraph, identical to schema help to prevent duplicate insertion. Native typed upsert preserved phrases, signatures and sender bodies. Detailed workflow stays in SSM-specific skill instructions; core master addition removed.
+- Validation: complete canonical file parsed (17 prototypes), 44/44 guidance and safeguard cases passed, bounded changed Host build passed. No installed package edit, remote command, deployment or restart.
+
+## 2026-10-08 — preserve original descriptions first
+- Reordered only ToExecuteProtectedAwsSsmCommand and ToEnsureRemoteSsmTempDirectory descriptions through native typed upsert: complete original purpose/parameter/result/approval text first, blank line, concise preflight after. No sender/signature change.
+- Validation: 45/45 schema and SSM safeguard tests passed, including exact original text and ordering checks; canonical file parses 17 prototypes. No deployment/restart or remote command.
+
+## 2026-10-08 — brief appended note
+- Shortened only appended SSM preflight through typed native upsert; full original descriptions, signatures and sender bodies preserved. 17 prototypes parsed, 45/45 guidance/safeguard tests passed and bounded Host build passed. No remote execution or installed delivery.

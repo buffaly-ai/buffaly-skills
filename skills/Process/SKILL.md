@@ -1,0 +1,10 @@
+# Process skill: remote SSM routing
+
+Before any SSM execution, discover existing typed/domain-native tools and supported APIs with `ToSearchCandidateActions`. Inspect signatures/contracts, load appropriate tools with `ToLoadProtoScriptActionTool`, and prefer a suitable tool/API. Match the actual operation, target, required data and authorized scope; local filesystem tools do not read remote files.
+
+SSM is a fallback only after establishing why alternatives cannot meet the need. Briefly state alternatives checked, their concrete limitations and why SSM is needed in the request/approval context—not in a new mandatory parameter or script comment. Weak search results, stale tool registration, a missing local file or a denied request do not establish that alternatives are unavailable.
+
+Use the existing protected SSM sender when fallback is permitted. The rule also applies to interactive SSM, the fixed temp-directory initializer, legacy wrappers and SSM embedded in generic CLI/PowerShell/SDK execution. Do not bypass denial or API-only/no-SSM instructions through another route. Preserve exact-request approval, redaction, authorization and explicitly enabled auto-approval safeguards. This instruction grants no execution permission and does not change tool parameters or execution policy.
+
+## Source and delivery
+`index.pts` descriptions are canonical bundled tool help. `ToolRegistrar.BuildToolSchema` adds concise preflight guidance to SSM-labelled wrappers at registration, including lazy loading, without duplicating it on tools that already carry the exact instruction. The SSM-specific rule is not in the core master prompt or added to unrelated generic launch tools. This name/help classification selects advisory guidance only, never authorization. Publish from the registered owning Process package source and deliver the corresponding Host build through normal Provisioning. Existing cached tool schemas need re-registration/new runtime after delivery; this does not authorize an installed package edit or production restart.
