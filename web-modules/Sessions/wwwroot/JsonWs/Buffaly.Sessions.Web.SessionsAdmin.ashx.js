@@ -10,16 +10,36 @@ if (typeof window === "undefined" || typeof window.SessionsAdminValidatorsFields
 	
 
 
-if (!SessionsAdminValidatorsFields.hasOwnProperty("SessionID")) {
-	SessionsAdminValidatorsFields.SessionID = {Validators : [Validators.Text], InvalidMessage: "Invalid SessionID"};
+if (!SessionsAdminValidatorsFields.hasOwnProperty("DelayMinutes")) {
+	SessionsAdminValidatorsFields.DelayMinutes = {Validators : [Validators.Integer], InvalidMessage: "Invalid DelayMinutes"};
+}
+	
+if (!SessionsAdminValidatorsFields.hasOwnProperty("TimeZoneID")) {
+	SessionsAdminValidatorsFields.TimeZoneID = {Validators : [Validators.Text], InvalidMessage: "Invalid TimeZoneID"};
+}
+	
+if (!SessionsAdminValidatorsFields.hasOwnProperty("RequestID")) {
+	SessionsAdminValidatorsFields.RequestID = {Validators : [Validators.Text], InvalidMessage: "Invalid RequestID"};
+}
+	
+if (!SessionsAdminValidatorsFields.hasOwnProperty("PreOptions")) {
+	SessionsAdminValidatorsFields.PreOptions = {Validators : [Validators.Text], InvalidMessage: "Invalid PreOptions"};
+}
+	
+if (!SessionsAdminValidatorsFields.hasOwnProperty("Sessions")) {
+	SessionsAdminValidatorsFields.Sessions = {Validators : [Validators.Text], InvalidMessage: "Invalid Sessions"};
+}
+	
+if (!SessionsAdminValidatorsFields.hasOwnProperty("SkipRows")) {
+	SessionsAdminValidatorsFields.SkipRows = {Validators : [Validators.Text], InvalidMessage: "Invalid SkipRows"};
 }
 	
 if (!SessionsAdminValidatorsFields.hasOwnProperty("SortAscending")) {
 	SessionsAdminValidatorsFields.SortAscending = {Validators : [Validators.Text], InvalidMessage: "Invalid SortAscending"};
 }
 	
-if (!SessionsAdminValidatorsFields.hasOwnProperty("NumRows")) {
-	SessionsAdminValidatorsFields.NumRows = {Validators : [Validators.Text], InvalidMessage: "Invalid NumRows"};
+if (!SessionsAdminValidatorsFields.hasOwnProperty("SessionKey")) {
+	SessionsAdminValidatorsFields.SessionKey = {Validators : [Validators.Text], InvalidMessage: "Invalid SessionKey"};
 }
 	
 if (!SessionsAdminValidatorsFields.hasOwnProperty("FieldName")) {
@@ -30,28 +50,28 @@ if (!SessionsAdminValidatorsFields.hasOwnProperty("Value")) {
 	SessionsAdminValidatorsFields.Value = {Validators : [Validators.Text], InvalidMessage: "Invalid Value"};
 }
 	
-if (!SessionsAdminValidatorsFields.hasOwnProperty("PreOptions")) {
-	SessionsAdminValidatorsFields.PreOptions = {Validators : [Validators.Text], InvalidMessage: "Invalid PreOptions"};
+if (!SessionsAdminValidatorsFields.hasOwnProperty("Search")) {
+	SessionsAdminValidatorsFields.Search = {Validators : [Validators.Text], InvalidMessage: "Invalid Search"};
 }
 	
-if (!SessionsAdminValidatorsFields.hasOwnProperty("SkipRows")) {
-	SessionsAdminValidatorsFields.SkipRows = {Validators : [Validators.Text], InvalidMessage: "Invalid SkipRows"};
-}
-	
-if (!SessionsAdminValidatorsFields.hasOwnProperty("SortColumn")) {
-	SessionsAdminValidatorsFields.SortColumn = {Validators : [Validators.Text], InvalidMessage: "Invalid SortColumn"};
+if (!SessionsAdminValidatorsFields.hasOwnProperty("SessionID")) {
+	SessionsAdminValidatorsFields.SessionID = {Validators : [Validators.Text], InvalidMessage: "Invalid SessionID"};
 }
 	
 if (!SessionsAdminValidatorsFields.hasOwnProperty("Name")) {
 	SessionsAdminValidatorsFields.Name = {Validators : [Validators.Text], InvalidMessage: "Invalid Name"};
 }
 	
-if (!SessionsAdminValidatorsFields.hasOwnProperty("Sessions")) {
-	SessionsAdminValidatorsFields.Sessions = {Validators : [Validators.Text], InvalidMessage: "Invalid Sessions"};
+if (!SessionsAdminValidatorsFields.hasOwnProperty("NumRows")) {
+	SessionsAdminValidatorsFields.NumRows = {Validators : [Validators.Text], InvalidMessage: "Invalid NumRows"};
 }
 	
-if (!SessionsAdminValidatorsFields.hasOwnProperty("Search")) {
-	SessionsAdminValidatorsFields.Search = {Validators : [Validators.Text], InvalidMessage: "Invalid Search"};
+if (!SessionsAdminValidatorsFields.hasOwnProperty("LocalDateTime")) {
+	SessionsAdminValidatorsFields.LocalDateTime = {Validators : [Validators.Text], InvalidMessage: "Invalid LocalDateTime"};
+}
+	
+if (!SessionsAdminValidatorsFields.hasOwnProperty("SortColumn")) {
+	SessionsAdminValidatorsFields.SortColumn = {Validators : [Validators.Text], InvalidMessage: "Invalid SortColumn"};
 }
 	
 
@@ -340,6 +360,72 @@ class SessionsAdminService {
         );
     }
 
+    GetSessionSnooze(SessionKey, RequestID, Callback) {
+        return this.GetSessionSnoozeObject({ SessionKey:SessionKey,RequestID:RequestID }, Callback);
+    }
+
+    GetSessionSnoozeObject(oObject, Callback) {
+        this._validate(oObject, SessionsAdminValidators.GetSessionSnooze, this.GetSessionSnooze.onValidationError);
+
+        var pageUrl = this.Url + "/get-session-snooze";
+        return this._invoke(
+            pageUrl,
+            "GetSessionSnooze",
+            { SessionKey: oObject.SessionKey,RequestID: oObject.RequestID },
+            this.GetSessionSnooze,
+            Callback
+        );
+    }
+
+    async GetSessionSnoozeAsync(SessionKey,RequestID) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.GetSessionSnooze,
+            [ SessionKey,RequestID ]
+        );
+    }
+
+    async GetSessionSnoozeObjectAsync(oObject) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.GetSessionSnoozeObject,
+            [ oObject ]
+        );
+    }
+
+    GetSessionSnoozeAvailable(Callback) {
+        return this.GetSessionSnoozeAvailableObject({  }, Callback);
+    }
+
+    GetSessionSnoozeAvailableObject(oObject, Callback) {
+        this._validate(oObject, SessionsAdminValidators.GetSessionSnoozeAvailable, this.GetSessionSnoozeAvailable.onValidationError);
+
+        var pageUrl = this.Url + "/get-session-snooze-available";
+        return this._invoke(
+            pageUrl,
+            "GetSessionSnoozeAvailable",
+            {  },
+            this.GetSessionSnoozeAvailable,
+            Callback
+        );
+    }
+
+    async GetSessionSnoozeAvailableAsync() {
+        return await ObjectUtil.Promisify(
+            this,
+            this.GetSessionSnoozeAvailable,
+            [  ]
+        );
+    }
+
+    async GetSessionSnoozeAvailableObjectAsync(oObject) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.GetSessionSnoozeAvailableObject,
+            [ oObject ]
+        );
+    }
+
     Initialize(Callback) {
         return this.InitializeObject({  }, Callback);
     }
@@ -373,6 +459,39 @@ class SessionsAdminService {
         );
     }
 
+    ScheduleSessionSnooze(SessionKey, RequestID, DelayMinutes, LocalDateTime, TimeZoneID, Callback) {
+        return this.ScheduleSessionSnoozeObject({ SessionKey:SessionKey,RequestID:RequestID,DelayMinutes:DelayMinutes,LocalDateTime:LocalDateTime,TimeZoneID:TimeZoneID }, Callback);
+    }
+
+    ScheduleSessionSnoozeObject(oObject, Callback) {
+        this._validate(oObject, SessionsAdminValidators.ScheduleSessionSnooze, this.ScheduleSessionSnooze.onValidationError);
+
+        var pageUrl = this.Url + "/schedule-session-snooze";
+        return this._invoke(
+            pageUrl,
+            "ScheduleSessionSnooze",
+            { SessionKey: oObject.SessionKey,RequestID: oObject.RequestID,DelayMinutes: oObject.DelayMinutes,LocalDateTime: oObject.LocalDateTime,TimeZoneID: oObject.TimeZoneID },
+            this.ScheduleSessionSnooze,
+            Callback
+        );
+    }
+
+    async ScheduleSessionSnoozeAsync(SessionKey,RequestID,DelayMinutes,LocalDateTime,TimeZoneID) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.ScheduleSessionSnooze,
+            [ SessionKey,RequestID,DelayMinutes,LocalDateTime,TimeZoneID ]
+        );
+    }
+
+    async ScheduleSessionSnoozeObjectAsync(oObject) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.ScheduleSessionSnoozeObject,
+            [ oObject ]
+        );
+    }
+
 
 
 
@@ -383,7 +502,7 @@ class SessionsAdminService {
             Params: params,
             Serialize: methodConfig.Serialize || {},
             onDataReceived: Callback ? function(oRes, iRequestID) { Callback(oRes); } : null,
-            onErrorReceived: (methodConfig.onErrorReceived != null ? methodConfig.onErrorReceived : (Page.HandleUnexpectedError ? Page.HandleUnexpectedError : null))
+            onErrorReceived: (Callback && Callback.onErrorReceived ? Callback.onErrorReceived : (methodConfig.onErrorReceived != null ? methodConfig.onErrorReceived : (Page.HandleUnexpectedError ? Page.HandleUnexpectedError : null)))
         };
 
         if (this.AuthToken) initializer.AuthToken = this.AuthToken;
@@ -436,7 +555,23 @@ var SessionsAdminValidators = {
     GetInsert : {
     },
 
+    GetSessionSnooze : {
+            SessionKey : {Validators: [Validators.Text], InvalidMessage: "Invalid SessionKey"} ,
+            RequestID : {Validators: [Validators.Text], InvalidMessage: "Invalid RequestID"} 
+    },
+
+    GetSessionSnoozeAvailable : {
+    },
+
     Initialize : {
+    },
+
+    ScheduleSessionSnooze : {
+            SessionKey : {Validators: [Validators.Text], InvalidMessage: "Invalid SessionKey"} ,
+            RequestID : {Validators: [Validators.Text], InvalidMessage: "Invalid RequestID"} ,
+            DelayMinutes : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid DelayMinutes"} ,
+            LocalDateTime : {Validators: [Validators.Text], InvalidMessage: "Invalid LocalDateTime"} ,
+            TimeZoneID : {Validators: [Validators.Text], InvalidMessage: "Invalid TimeZoneID"} 
     }
 };
 
