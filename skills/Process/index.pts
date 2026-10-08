@@ -505,15 +505,16 @@ prototype ToExecuteProtectedAwsSsmCommand : ProcessSkillAction
 	{
 		return SsmCommandService.ExecuteOnInstance(instanceId, command, region);
 	}
-	Description = @"Execute an approved PowerShell command on a Windows SSM target. The shared C# sender owns the remote scratch directory; caller supplies only instanceId, command and region. Arbitrary scripts require one-time approval.";
+	Description = @"Before calling any SSM execution tool, discover existing typed/domain-native tools and supported APIs with ToSearchCandidateActions, inspect their signatures/contracts and load appropriate tools with ToLoadProtoScriptActionTool. Prefer suitable tools/APIs; SSM is a fallback only after establishing why they cannot meet the operation, target, required data and authorized scope. Briefly state the alternatives checked, their concrete limitation and reason for SSM in the request/approval context, not in the script or new mandatory parameters. Do not bypass denial or API-only/no-SSM restrictions via wrappers, CLI, SDK or generic shells. Preserve existing exact-request approval, authorization, redaction and auto-approval safeguards. This instruction grants no approval. Execute an approved PowerShell command on a Windows SSM target. The shared C# sender owns the remote scratch directory; caller supplies only instanceId, command and region. Arbitrary scripts require one-time approval.";
 }
 
-[SemanticProgram.InfinitivePhrase("to ensure the remote temp directory exists")]
+
+[SemanticProgram.InfinitivePhrase("to ensure the remote SSM temp directory")]
 prototype ToEnsureRemoteSsmTempDirectory : ProcessSkillAction
 {
 	function Execute(string instanceId, string region) : string
 	{
 		return SsmCommandService.EnsureRemoteTempDirectory(instanceId, region);
 	}
-	Description = @"Approve once to ensure literal C:\Temp exists on the selected Windows SSM target. Creates only that fixed directory if missing; no arbitrary command/path, deletion, ACL change or restart. Returns Created, AlreadyExists or failure.";
+	Description = @"Before calling any SSM execution tool, discover existing typed/domain-native tools and supported APIs with ToSearchCandidateActions, inspect their signatures/contracts and load appropriate tools with ToLoadProtoScriptActionTool. Prefer suitable tools/APIs; SSM is a fallback only after establishing why they cannot meet the operation, target, required data and authorized scope. Briefly state the alternatives checked, their concrete limitation and reason for SSM in the request/approval context, not in the script or new mandatory parameters. Do not bypass denial or API-only/no-SSM restrictions via wrappers, CLI, SDK or generic shells. Preserve existing exact-request approval, authorization, redaction and auto-approval safeguards. This instruction grants no approval. Approve once to ensure literal C:\Temp exists on the selected Windows SSM target. Creates only that fixed directory if missing; no arbitrary command/path, deletion, ACL change or restart. Returns Created, AlreadyExists or failure.";
 }
