@@ -6,7 +6,8 @@
   "AutoApproveReadOnlySsmCommands": false,
   "AutoApproveAiApprovedSsmCommands": false,
   "CodexAutoReviewEnabled": false,
-  "SafetyAnalysisTimeoutSeconds": 60,
+  "SafetyAnalysisTimeoutSeconds": 180,
+  "CodexAutoReviewTimeoutSeconds": 180,
   "ApprovalTimeoutSeconds": 300,
   "ApprovalText": "APPROVE",
   "Rules": [
