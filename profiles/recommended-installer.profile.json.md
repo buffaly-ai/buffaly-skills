@@ -1,5 +1,9 @@
 # Recommended installer profile
 
+## 2026-10-08 Include repaired ErrorLogDispatch in Windows release
+- User explicitly requires the diagnostic provisioning repair included. Added the registered ErrorLogDispatch WebModule for Windows; Linux/Mac membership unchanged pending platform validation.
+- xAI remains an existing provider member; Windows lock now selects verified local xAI0.1.95 and ErrorLogDispatch0.1.90. Owner repair tests12/12 and xAI suite88pass2skip passed before membership update. Lock generation/validation recorded with this batch.
+
 `recommended-installer.profile.json` defines the approved expanded installer composition. It contains the recommended skills, web modules, and provider modules. `VoiceAgentDispatch` is included because the bundled realtime `voice-agent` profile uses `VoiceAgentAction` as its required semantic action root. `ComputerUse` and its Windows-only skill plus `DesktopViewer` are included so a new Windows install has the supported desktop interaction surface. `ExtensionBrowser` is included on every platform so each new Buffaly installation exposes the user-facing Buffaly Chrome Extension setup page and its origin-bound browser-agent package.
 
 `OpenRouterCloud` and `Buffaly.Provider.OpenRouter` are included so a new install can register OpenRouter from Feature-admin and run `stealth/ox-alpha` without a later optional package add. The provider also belongs in `core-installer`; the live catalog web module follows the `OllamaCloud` recommended-only pattern.
