@@ -23579,10 +23579,10 @@
       "PackageType": "WebModule",
       "Title": "CFL Cleaners Reference Agent",
       "Description": "Buffaly Web Module package for CFL Cleaners Reference Agent.",
-      "Version": "0.1.19",
+      "Version": "0.1.20",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/CFL.Cleaners.Agent",
-      "SourceUrl": "",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/CFL.Cleaners.Agent",
       "Phrases": [
         "CFL Cleaners Reference Agent",
         "CFL.Cleaners.Agent"
@@ -23590,7 +23590,7 @@
       "Files": [
         {
           "Path": "CFL.Cleaners.Agent.dll",
-          "Sha256": "f94f722fdf365444de4a3e58ebf28237f62bae64f8a9b0d4392eb994d295d437"
+          "Sha256": "11ae98136542398365d061771400052ecac2af9a478bf4a36575785cfcf692a4"
         },
         {
           "Path": "CFL.Cleaners.Contracts.dll",
@@ -23601,6 +23601,10 @@
           "Sha256": "29c7033b1f59d328b73ba48589b8e6f8e9a9e516b470bf706d2684333b760f08"
         },
         {
+          "Path": "ProjectArtifacts/Agents/customer-scrubrz-local-agent.agent.json",
+          "Sha256": "59d6fa26739df2a7f0e23d1b46a7e39281908025dcdb5f595b93b83a839a179a"
+        },
+        {
           "Path": "ProjectArtifacts/CflCleaners/Project.pts",
           "Sha256": "5a1b45deacc68e2ffc8ca2217f9f86f560b270bc29e93e665dfe39b6ed5908df"
         },
@@ -23609,14 +23613,27 @@
           "Sha256": "71f1d91d98f903a13472f3997b30c59e6071ee32083a2dfc9a2d5682088ce2fb"
         },
         {
+          "Path": "ProjectArtifacts/ScrubrzLocal/Project.pts",
+          "Sha256": "52e2113c0a8caaefb5ee1f11fe99b08126e1d0f39e8fe00687cf4366ad8ea023"
+        },
+        {
+          "Path": "ProjectArtifacts/ScrubrzLocal/Prompts/ScrubrzLocal.prompt.md",
+          "Sha256": "5eb46db2be071e8ddd3341406f254fd8ebd094673a0ed4bce7d815c2fe1e0fbc"
+        },
+        {
           "Path": "web-module.json",
-          "Sha256": "48b5d54ae4a28e54d00715fee7af8e8ff9ebaa24cb7c9b211eb6c468ccc3fd72"
+          "Sha256": "90a4913b1881adfc205c8e1d8688a09fa6cda075047614c4c3b9b02bb1ff18e8"
         }
       ],
       "ProjectArtifacts": [
         {
           "ProjectName": "Profiles/CflCleaners",
           "SourcePath": "ProjectArtifacts/CflCleaners/",
+          "InstallAsProject": false
+        },
+        {
+          "ProjectName": "Profiles/ScrubrzLocal",
+          "SourcePath": "ProjectArtifacts/ScrubrzLocal/",
           "InstallAsProject": false
         },
         {
