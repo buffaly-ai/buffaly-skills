@@ -29,6 +29,7 @@ BEGIN
 		FROM sessions session_row
 		WHERE session_row.is_archived = false
 			AND session_row.session_key NOT IN ('Browser Profiles', 'browser-profiles')
+			AND session_row.session_key IS NOT NULL AND session_row.session_key ~ U&'[^\0009\000A\000B\000C\000D\0020\0085\00A0\1680\2000\2001\2002\2003\2004\2005\2006\2007\2008\2009\200A\2028\2029\202F\205F\3000]'
 
 	),
  selected_children AS
@@ -54,17 +55,10 @@ BEGIN
 	selected_context AS
 	(
 		SELECT ancestor.session_id FROM selected_ancestors ancestor
-		UNION SELECT child.session_id FROM root_resolution resolved JOIN navigable_sessions child ON child.parent_session_id = resolved.root_session_id WHERE child.parent_session_id NOT IN (SELECT session_id FROM selected_ancestors WHERE distance_from_selected=1)
-	),
-	selected_direct_child AS
-	(
-		SELECT ancestor.session_id FROM selected_ancestors ancestor CROSS JOIN root_resolution resolved WHERE ancestor.parent_session_id = resolved.root_session_id
 	),
 	expanded_context AS
 	(
 		SELECT context_row.session_id FROM selected_context context_row
-		UNION SELECT child.session_id FROM selected_direct_child selected_child JOIN navigable_sessions child ON child.parent_session_id = selected_child.session_id
-		WHERE EXISTS (SELECT 1 FROM selected_ancestors path_row WHERE path_row.distance_from_selected > 2) AND child.parent_session_id NOT IN (SELECT session_id FROM selected_ancestors WHERE distance_from_selected=1)
 		UNION SELECT child.session_id FROM selected_children child WHERE child.child_ordinal<=200
 	),
 	hierarchy AS
