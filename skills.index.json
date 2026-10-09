@@ -1301,7 +1301,7 @@
       "SkillName": "FileSystem",
       "Title": "File System",
       "Description": "Buffaly skill package for File System.",
-      "Version": "0.1.1",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "File System",
@@ -1311,11 +1311,11 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "6b17ef33e66fc156f07902cd9f4ceffcc6bf5c53be647999e31c19db46abf4db"
+          "Sha256": "0c66fa9bdb81aadd9a43b6868a6432e8f908cc56e3af2d2d2ed320f17d4bfb2b"
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "a8a11e1d89f0b55b865de0435051b71ffb16c9079bff31dd896e843d2399f9be"
+          "Sha256": "c4857c5381b0830e7ce15bb865a0109e0d9ffc79016238af59c402a05cae6012"
         },
         {
           "Path": "Prompts/ToSearchTextInDirectoryWithRipgrep.prompt.md",
@@ -1324,7 +1324,8 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": []
+      "Prerequisites": [],
+      "PreservedFiles": []
     },
     {
       "SkillName": "GitHub",

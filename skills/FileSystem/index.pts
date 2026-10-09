@@ -211,36 +211,13 @@ prototype ToSearchTextInDirectoryWithCode : FileSystemSkillAction
 [SemanticProgram.InfinitivePhrase("to read a line range from a file")]
 prototype ToGetFileBlock : FileSystemSkillAction, CodingContext
 {
-	Description = @"directoryPath - optional base directory for relative paths. filePath - relative or absolute file path. startLine - 1-based line index. lineCount - number of lines.";
-
 	function Execute(string directoryPath, string filePath, int startLine, int lineCount) : string
 	{
-		// Return a line range from a file via FileSystemTools.GetFileBlock.
-		if (StringUtil.IsEmpty(filePath))
-		{
-			return "Error: filePath is required.";
-		}
-		if (lineCount <= 0)
-		{
-			return "Error: lineCount must be greater than zero.";
-		}
-
-		string normalizedDirectoryPath = ToNormalizeDirectoryPath(directoryPath);
-		if (StringUtil.IsEmpty(normalizedDirectoryPath))
-		{
-			if (Path.IsPathRooted(filePath))
-			{
-				normalizedDirectoryPath = Path.GetDirectoryName(filePath);
-			}
-			else
-			{
-				return "Error: directoryPath is required for relative file paths.";
-			}
-		}
-
-		return FileSystemTools.GetFileBlock(normalizedDirectoryPath, filePath, startLine, lineCount);
+		return FileSystemTools.ReadFileBlockPage(directoryPath, filePath, startLine, lineCount, 0);
 	}
+	Description = @"directoryPath - optional base directory for relative paths. filePath - relative or absolute file path. startLine - 1-based line index. lineCount - requested lines. Returns a bounded page with actual range, EOF and continuation cursor; use ToGetFileBlockPage for the next page.";
 }
+
 
 
 [SemanticProgram.InfinitivePhrase("to search for text in a file")]
@@ -393,3 +370,13 @@ prototype ToReplaceTextBlockInFile : FileSystemSkillAction
 }
 
 
+[SemanticProgram.InfinitivePhrase("to read a bounded file page")]
+[SemanticProgram.InfinitivePhrase("to continue reading a file block")]
+prototype ToGetFileBlockPage : FileSystemSkillAction, CodingContext
+{
+	function Execute(string directoryPath, string filePath, int startLine, int lineCount, int characterOffset) : string
+	{
+		return FileSystemTools.ReadFileBlockPage(directoryPath, filePath, startLine, lineCount, characterOffset);
+	}
+	Description = @"directoryPath - optional base directory. filePath - file path. startLine - 1-based line. lineCount - requested lines. characterOffset - exact decoded UTF-16 offset from the preceding page cursor; zero starts at the line beginning. Returns bounded text, actual range, EOF and next cursor.";
+}

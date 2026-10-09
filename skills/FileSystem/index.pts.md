@@ -16,3 +16,8 @@
 ## 2026-04-19
 - Added CodingContext as an additional parent on ToSearchTextInDirectoryWithRipgrep so ripgrep search is discoverable from the coding-context tool surface as well as the FileSystem skill.
 - Design: keep ripgrep available as a native file-system action while making it directly eligible for coding-context routes that need fast codebase text search.
+
+## 2026-10-09 — C6 bounded file page wrappers
+- Replaced ToGetFileBlock wrapper-side path/validation logic with the authoritative C# ReadFileBlockPage facade, preserving its four-argument caller signature and beginning at offset zero. Added ToGetFileBlockPage thin continuation wrapper with explicit characterOffset.
+- Description states actual range/EOF/cursor and bounded response semantics. Authored owning source through ProtoScriptPrototypeUpsertTools parse/upsert, not installed Matt-local files.
+- Validation: typed parse/upsert succeeded for both definitions; C# tools/test builds0errors and paging regressions pass. Full skill binding/installed staging acceptance pending.
