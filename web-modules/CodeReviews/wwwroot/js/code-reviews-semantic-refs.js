@@ -155,8 +155,16 @@
 				});
 			})
 			.then(function (response) {
-				setReviewButtonState(button, "queued", "Global review queued", text(response && response.Message) || "Grouped review queued.");
-				setReviewStatus(button, "queued", "Queued to " + (text(response && response.ReviewerSessionKey).trim() || "Buffaly.CodeReviews.Global") + ".");
+				if (typeof response.ReviewerSessionKey !== "string" || response.ReviewerSessionKey.length === 0)
+					throw new Error("Global review response is missing ReviewerSessionKey.");
+				if (!response.ShouldQueue) {
+					button.disabled = false;
+					setReviewButtonState(button, "idle", "Review whole turn globally", response.Message);
+					setReviewStatus(button, "idle", response.Message);
+					return;
+				}
+				setReviewButtonState(button, "queued", "Global review queued", response.Message);
+				setReviewStatus(button, "queued", "Queued to " + response.ReviewerSessionKey + ".");
 			})
 			.catch(function (error) {
 				button.disabled = false;

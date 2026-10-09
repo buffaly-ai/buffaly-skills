@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Buffaly Code Reviews - Agent Targets</title>
+	<title>Buffaly Code Reviews - Settings</title>
 	<link rel="stylesheet" href="styles/code-reviews-harness.css?v=20260514.1">
 </head>
 <body>
@@ -11,20 +11,23 @@
 		<header class="hero-card">
 			<div>
 				<p class="eyebrow">Buffaly Agent Tools</p>
-				<h1>Agent Targets</h1>
-				<p class="hero-copy">Manage the local JsonWs base URLs used when CodeReviews loads sessions or sends review notes.</p>
+				<h1>CodeReviews settings</h1>
+				<p class="hero-copy">Choose the global reviewer and manage the local JsonWs target URLs.</p>
 			</div>
 			<div class="hero-actions">
 				<a class="button-link" href="shortcuts.html">Shortcuts</a>
 				<a class="button-link" href="index.html">Repositories</a>
-				<button id="reloadTargetsButton" type="button">Reload targets</button>
+				<button id="reloadTargetsButton" type="button">Reload settings</button>
 			</div>
 		</header>
 		<section class="page-card">
 			<div class="page-header"><h2>Configured targets</h2><p class="subtle">Dev currently points at the Matt instance by default.</p></div>
+			<label for="globalReviewerSessionKey">Global reviewer session key</label>
+			<input id="globalReviewerSessionKey" type="text" required>
+			<p class="subtle">After saving, new reviews go here. Reviews already dispatched stay with their reviewer.</p>
 			<div id="agentTargetList" class="agent-target-list empty">Loading targets...</div>
 			<div class="annotation-modal-actions settings-actions">
-				<button id="saveTargetsButton" type="button">Save target URLs</button>
+				<button id="saveTargetsButton" type="button">Save settings</button>
 			</div>
 		</section>
 		<section class="details-panel"><h2>Status</h2><pre id="statusLog">Ready.</pre></section>
@@ -37,7 +40,7 @@
 	<script src="//static.buffa.ly/v2/js/validators.js?v=2"></script>
 	<script src="JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js?v=20260514.1"></script>
 	<script src="js/code-reviews-common.js?v=20260509.4"></script>
-	<script src="js/code-reviews-settings.js?v=20260514.1"></script>
+	<script src="js/code-reviews-settings.js?v=20261009.1"></script>
 </body>
 </html>
 

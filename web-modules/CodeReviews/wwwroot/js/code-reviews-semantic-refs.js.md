@@ -42,3 +42,8 @@
 ## Skip Non-Hex Commit Refs Before Status Lookup (2026-07-01)
 - Added client-side hex commit validation before rendering CodeReviews `git-commit` refs and before calling `GetCommitReview` from injected timeline review buttons.
 - Design Decision: keep `CodeReviewCommitReviewStore.NormalizeCommitSha(...)` strict and fail-fast for invalid service inputs while preventing malformed timeline refs from generating noisy server errors during opportunistic status lookups.
+
+## 2026-10-09 — Configurable global reviewer in existing settings
+- UC2: receipt displays returned key and honors ShouldQueue=false.
+- Implemented approved v3 design using existing agent-targets.json, settings Save and profile-backed shell provisioning. Capture the key once per dispatch; preserve old delivered completion, terminal records, queue behavior and unrelated settings. No rotation locks, new file/store, ledger, generation registry or migration.
+- Validation: owning WebHarness Debug build passed (one existing RooTrax nullable warning); all 51 non-environment CodeReviews tests and 6 core publication-contract tests passed. Existing Dev/Staging session-list integration tests failed before deployment; live rotation/endpoint/staging acceptance is recorded separately after deployment, not claimed here. Full suite initially exposed missing WebAppUtilities test compile reference and shared runtime-override test interference; both corrected in this batch.

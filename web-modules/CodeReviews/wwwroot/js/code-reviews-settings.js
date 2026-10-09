@@ -34,6 +34,7 @@
 		try {
 			var response = await CodeReviewsHarnessJsonWsService.GetAgentTargetSettingsAsync({});
 			state.targets = normalizeTargets(response);
+			C.byId("globalReviewerSessionKey").value = response.GlobalReviewerSessionKey;
 			renderTargets();
 			C.log("Loaded " + state.targets.length + " agent target" + (state.targets.length === 1 ? "" : "s") + ".");
 		} catch (error) {
@@ -57,10 +58,14 @@
 	async function saveTargets() {
 		C.log("Saving agent targets...");
 		try {
-			var response = await CodeReviewsHarnessJsonWsService.SaveAgentTargetSettingsAsync({ Targets: collectTargets() });
+			var response = await CodeReviewsHarnessJsonWsService.SaveAgentTargetSettingsAsync({
+				GlobalReviewerSessionKey: C.byId("globalReviewerSessionKey").value,
+				Targets: collectTargets()
+			});
 			state.targets = normalizeTargets(response);
+			C.byId("globalReviewerSessionKey").value = response.GlobalReviewerSessionKey;
 			renderTargets();
-			C.log("Saved agent targets.");
+			C.log("Saved settings. New reviews go to " + response.GlobalReviewerSessionKey + ".");
 		} catch (error) {
 			C.log("Failed to save agent targets: " + (error && error.message ? error.message : error));
 			throw error;
