@@ -2,15 +2,20 @@
   "Version": 1,
   "ModulePath": "Skills/CodeReviews/index.pts",
   "Prototypes": {
+    "BuffalyCodeReviewsSolution": "Skills/CodeReviews/index.pts",
     "CodeReviewsAgentToolsAction": "Skills/CodeReviews/index.pts",
     "CodeReviewsAgentToolsSkill": "Skills/CodeReviews/index.pts",
+    "GlobalCodeReviewsAgentAction": "Skills/CodeReviews/index.pts",
     "ToAttachConfiguredCodeReviewAgent": "Skills/CodeReviews/index.pts",
     "ToCompleteCodeReviewTurnWithoutFindings": "Skills/CodeReviews/index.pts",
     "ToCompleteCodeReviewWithoutFindings": "Skills/CodeReviews/index.pts",
     "ToDetachConfiguredCodeReviewAgent": "Skills/CodeReviews/index.pts",
     "ToDispatchCodeReviewTurnCompletedEvent": "Skills/CodeReviews/index.pts",
     "ToGetCodeReviewCommitDiff": "Skills/CodeReviews/index.pts",
+    "ToGetCodeReviewCommitManifestPage": "Skills/CodeReviews/index.pts",
+    "ToGetCodeReviewCommitPatchPage": "Skills/CodeReviews/index.pts",
     "ToGetCodeReviewFileAtCommit": "Skills/CodeReviews/index.pts",
+    "ToGetCodeReviewFileAtCommitPage": "Skills/CodeReviews/index.pts",
     "ToGetCodeReviewSourceSessionPlan": "Skills/CodeReviews/index.pts",
     "ToGetCodeReviewSourceSessionScratch": "Skills/CodeReviews/index.pts",
     "ToGetCodeReviewStatus": "Skills/CodeReviews/index.pts",
@@ -22,10 +27,101 @@
     "ToListCodeReviewSourceSessionTasks": "Skills/CodeReviews/index.pts",
     "ToMarkCodeReviewFailed": "Skills/CodeReviews/index.pts",
     "ToMarkCodeReviewTurnFailed": "Skills/CodeReviews/index.pts",
+    "ToReadCodeReviewSourceArtifactPage": "Skills/CodeReviews/index.pts",
     "ToReadCodeReviewSourceSessionArtifact": "Skills/CodeReviews/index.pts",
     "ToReadCodeReviewSourceSessionTask": "Skills/CodeReviews/index.pts",
     "ToRunSourceGroundedCodeReviewSkill": "Skills/CodeReviews/index.pts",
     "ToSubmitCodeReviewFindings": "Skills/CodeReviews/index.pts",
     "ToSubmitCodeReviewTurnFindings": "Skills/CodeReviews/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToAttachConfiguredCodeReviewAgent": [
+      "to attach a configured code review agent"
+    ],
+    "ToDetachConfiguredCodeReviewAgent": [
+      "to detach the code review agent"
+    ],
+    "ToGetConfiguredCodeReviewAgentStatus": [
+      "to get code review attachment status"
+    ],
+    "ToDispatchCodeReviewTurnCompletedEvent": [
+      "to dispatch a code review completed turn"
+    ],
+    "ToSubmitCodeReviewTurnFindings": [
+      "to submit grouped code review turn findings"
+    ],
+    "ToCompleteCodeReviewTurnWithoutFindings": [
+      "to complete a grouped code review turn without findings"
+    ],
+    "ToMarkCodeReviewTurnFailed": [
+      "to mark a grouped code review turn failed"
+    ],
+    "ToGetCodeReviewCommitDiff": [
+      "to inspect an exact code review commit diff"
+    ],
+    "ToGetCodeReviewFileAtCommit": [
+      "to read a code review file at an exact commit"
+    ],
+    "ToGetGlobalCodeReviewMostRecentSourceTurn": [
+      "to inspect the latest source turn for global code review"
+    ],
+    "ToGetGlobalCodeReviewRecentSourceTurns": [
+      "to inspect recent source turns for global code review"
+    ],
+    "ToGetGlobalCodeReviewLanguageGuidance": [
+      "to read authoritative language guidance for global code review"
+    ],
+    "ToGetCodeReviewCommitManifestPage": [
+      "to read a complete code review commit manifest page"
+    ],
+    "ToGetCodeReviewCommitPatchPage": [
+      "to read a complete code review patch page"
+    ],
+    "ToGetCodeReviewFileAtCommitPage": [
+      "to read a complete committed code review file page"
+    ],
+    "ToReadCodeReviewSourceArtifactPage": [
+      "to read a complete source review artifact page"
+    ],
+    "ToRunSourceGroundedCodeReviewSkill": [
+      "to review a commit against source session documentation",
+      "to run a source grounded code review"
+    ],
+    "ToSubmitCodeReviewFindings": [
+      "to deliver code review findings",
+      "to submit code review findings"
+    ],
+    "ToCompleteCodeReviewWithoutFindings": [
+      "to complete a code review without findings",
+      "to mark a code review clean"
+    ],
+    "ToGetCodeReviewSourceSessionPlan": [
+      "to read a source session plan for code review"
+    ],
+    "ToGetCodeReviewSourceSessionScratch": [
+      "to read source session scratch for code review"
+    ],
+    "ToListCodeReviewSourceSessionTasks": [
+      "to list source session tasks for code review"
+    ],
+    "ToReadCodeReviewSourceSessionTask": [
+      "to read a source session task for code review"
+    ],
+    "ToListCodeReviewSourceSessionArtifacts": [
+      "to list governing documents from a source session",
+      "to list source session artifacts for code review"
+    ],
+    "ToReadCodeReviewSourceSessionArtifact": [
+      "to read a governing document from a source session",
+      "to read a source session artifact for code review"
+    ],
+    "ToGetCodeReviewStatus": [
+      "to check code review status",
+      "to get code review status"
+    ],
+    "ToMarkCodeReviewFailed": [
+      "to mark code review failed",
+      "to record code review failure"
+    ]
   }
 }

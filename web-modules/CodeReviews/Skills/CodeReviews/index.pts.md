@@ -28,3 +28,7 @@ Commit-free turns return the typed callback result with `ShouldQueue=false`. Exi
 ## Attached Turn-Level Actions (2026-07-19)
 - Added attach/status/detach/dispatch actions and grouped completion actions. Grouped actions accept the delivered `SourceTurnContextJson` as one opaque cross-worker binding rather than separate repository paths, SHAs, or source-session keys; single-commit fallback actions remain unchanged.
 
+
+## 2026-10-11 — Complete bounded review evidence
+- Added thin complete manifest/patch/file/artifact page wrappers and extended authoritative guidance with optional offset and exact SQL/Metabase/subject tokens. Legacy whole diff/file retained for non-global callers, excluded from GlobalCodeReviewsAgentAction. Regenerated index.pts.lazy.json through canonical strict generator in fresh diagnostic process because installed host loaded old WebHarness; 31 prototypes, zero diagnostics. No installed package edits.
+- Validation performed: owning WebHarness Debug build passed; fresh serial test rebuild passed; all 63 non-environment CodeReviews tests passed, including 10 complete evidence cases and real profile/lazy module compile cases. Canonical isolated sidecar generation succeeded with no diagnostics. Host cap/core source unchanged. Existing dependency vulnerability warnings remain. No installed deployment, live model review, replay, SQL change or Matt-local restart was performed. Those are separate from source acceptance.

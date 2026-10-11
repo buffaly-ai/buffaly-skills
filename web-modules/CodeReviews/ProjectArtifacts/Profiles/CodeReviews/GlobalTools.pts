@@ -6,6 +6,7 @@ reference BasicUtilities BasicUtilities;
 import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewFindingsService CodeReviewFindingsService;
 import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewTurnAgentService CodeReviewTurnAgentService;
 import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewEvidenceService CodeReviewEvidenceService;
+import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewEvidencePages CodeReviewEvidencePages;
 import Buffaly.Agent.Host Buffaly.Agent.Host.BuffalyArtifacts BuffalyArtifacts;
 import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.SessionTools SessionTools;
 import BasicUtilities BasicUtilities.JsonUtil JsonUtil;
@@ -66,14 +67,14 @@ prototype ToMarkCodeReviewTurnFailed : CodeReviewsAgentToolsAction, GlobalCodeRe
 }
 
 [SemanticProgram.InfinitivePhrase("to inspect an exact code review commit diff")]
-prototype ToGetCodeReviewCommitDiff : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
+prototype ToGetCodeReviewCommitDiff : CodeReviewsAgentToolsAction
 {
 	Description = @"RepositoryPath - exact local repository path from SourceTurnContextJson. CommitSha - exact manifest SHA. Returns a bounded typed commit snapshot containing metadata, changed files, rename information, and per-file patches. Read every manifest commit with this action; do not substitute the working tree or a range.";
 	function Execute(string RepositoryPath, string CommitSha) : string { return CodeReviewEvidenceService.GetCommitDiffJson(RepositoryPath, CommitSha); }
 }
 
 [SemanticProgram.InfinitivePhrase("to read a code review file at an exact commit")]
-prototype ToGetCodeReviewFileAtCommit : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
+prototype ToGetCodeReviewFileAtCommit : CodeReviewsAgentToolsAction
 {
 	Description = @"RepositoryPath - exact local repository path from SourceTurnContextJson. CommitSha - exact manifest SHA. Path - repository-relative file path from the commit snapshot. Returns bounded file content from that exact commit for surrounding context; never reads the current working tree.";
 	function Execute(string RepositoryPath, string CommitSha, string Path) : string { return CodeReviewEvidenceService.GetFileAtCommitJson(RepositoryPath, CommitSha, Path); }
@@ -96,17 +97,36 @@ prototype ToGetGlobalCodeReviewRecentSourceTurns : GlobalCodeReviewsAgentAction
 [SemanticProgram.InfinitivePhrase("to read authoritative language guidance for global code review")]
 prototype ToGetGlobalCodeReviewLanguageGuidance : GlobalCodeReviewsAgentAction
 {
-	Description = @"Language - one exact token: CSharp, ProtoScript, or JavaScript. Returns the authoritative installed CodeReviews guidance through the trusted runtime prompt loader. Read every applicable language before completing the grouped review.";
-	function Execute(string Language) : string
-	{
-		String promptPath = new String();
-		if (StringUtil.EqualNoCase(Language, "CSharp")) promptPath = "../../Nodes/Personal/CodeReviews/CodeReviews.CSharp.md";
-		else if (StringUtil.EqualNoCase(Language, "ProtoScript")) promptPath = "../../Nodes/Personal/CodeReviews/CodeReviews.ProtoScript.md";
-		else if (StringUtil.EqualNoCase(Language, "JavaScript")) promptPath = "../../Nodes/Personal/CodeReviews/CodeReviews.JavaScript.md";
-		else throw "Language must be exactly CSharp, ProtoScript, or JavaScript.";
-		String promptText = _opsAgent.LoadTrustedPromptText(promptPath);
-		return promptText;
-	}
+ Description = @"Language - exact CSharp, ProtoScript, JavaScript, SQL, Metabase, Repository, Business or UseCases. CharacterOffset starts at zero; follow NextCharacterOffset to EndOfContent. Verify Identity, ContentSha256 and TotalCharacters stay identical. Reads complete canonical trusted guidance, never a summary.";
+ function Execute(string Language, int CharacterOffset = 0) : string { return CodeReviewEvidencePages.GetGuidancePageJson(_opsAgent, Language, CharacterOffset, true); }
+}
+
+[SemanticProgram.InfinitivePhrase("to read a complete code review commit manifest page")]
+prototype ToGetCodeReviewCommitManifestPage : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
+{
+ Description = @"RepositoryPath and full CommitSha come from immutable SourceTurnContextJson. StartFileIndex starts at zero. Follow NextFileIndex until EndOfManifest; reconcile TotalFiles and every FileIndex/ParentSha/Path/OriginalPath/StatusCode. No file-count preview cap.";
+ function Execute(string RepositoryPath, string CommitSha, int StartFileIndex = 0) : string { return CodeReviewEvidencePages.GetCommitManifestPageJson(RepositoryPath, CommitSha, StartFileIndex); }
+}
+
+[SemanticProgram.InfinitivePhrase("to read a complete code review patch page")]
+prototype ToGetCodeReviewCommitPatchPage : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
+{
+ Description = @"Exact repository/full SHA plus FileIndex from complete manifest. Read every entry from CharacterOffset zero through EndOfContent. Verify Identity, ParentSha, ContentSha256 and TotalCharacters on continuation. Binary metadata is not textual code review; obtain adequate evidence or fail explicitly.";
+ function Execute(string RepositoryPath, string CommitSha, int FileIndex, int CharacterOffset = 0) : string { return CodeReviewEvidencePages.GetCommitPatchPageJson(RepositoryPath, CommitSha, FileIndex, CharacterOffset); }
+}
+
+[SemanticProgram.InfinitivePhrase("to read a complete committed code review file page")]
+prototype ToGetCodeReviewFileAtCommitPage : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
+{
+ Description = @"Read exact repository-relative Path at full CommitSha, never working tree. Follow CharacterOffset zero/NextCharacterOffset to EndOfContent with stable hash/identity. Deleted/renamed old context uses manifest ParentSha. Missing blob/invalid text is explicit failure.";
+ function Execute(string RepositoryPath, string CommitSha, string Path, int CharacterOffset = 0) : string { return CodeReviewEvidencePages.GetFileAtCommitPageJson(RepositoryPath, CommitSha, Path, CharacterOffset); }
+}
+
+[SemanticProgram.InfinitivePhrase("to read a complete source review artifact page")]
+prototype ToReadCodeReviewSourceArtifactPage : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
+{
+ Description = @"SourceSessionKey from immutable context; ArtifactPath is related Plan.md, Scratch.md, task or governing design. Typed owning artifact path rules apply. Read CharacterOffset zero through EndOfContent; verify hash/length or restart changed evidence. No arbitrary filesystem access.";
+ function Execute(string SourceSessionKey, string ArtifactPath, int CharacterOffset = 0) : string { return CodeReviewEvidencePages.GetSourceArtifactPageJson(SourceSessionKey, ArtifactPath, CharacterOffset); }
 }
 
 [SemanticProgram.InfinitivePhrase("to submit code review findings")]
