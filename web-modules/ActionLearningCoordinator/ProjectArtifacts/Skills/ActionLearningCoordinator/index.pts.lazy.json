@@ -34,6 +34,7 @@
     "ToGetActionLearningPortfolio": "Skills/ActionLearningCoordinator/index.pts",
     "ToGetActionLearningSourceWorkspace": "Skills/ActionLearningCoordinator/index.pts",
     "ToGetActionLearningWorkspaceDefinition": "Skills/ActionLearningCoordinator/index.pts",
+    "ToGetCoordinatedOnlineMemoryCriticModelBenchmarkStatus": "Skills/ActionLearningCoordinator/index.pts",
     "ToGetOnlineActionCriticBatchPortfolio": "Skills/ActionLearningCoordinator/index.pts",
     "ToGetOnlineActionCriticBatchSourceWorkspace": "Skills/ActionLearningCoordinator/index.pts",
     "ToGetOnlineActionCriticBatchWorkspaceDefinition": "Skills/ActionLearningCoordinator/index.pts",
@@ -45,18 +46,121 @@
     "ToGetOntologyFoundryWorkspaceDefinition": "Skills/ActionLearningCoordinator/index.pts",
     "ToGetSessionWorkCoordinatorInfo": "Skills/ActionLearningCoordinator/index.pts",
     "ToGetSessionWorkLedger": "Skills/ActionLearningCoordinator/index.pts",
+    "ToInitializeCoordinatedOnlineMemoryCriticModelBenchmark": "Skills/ActionLearningCoordinator/index.pts",
     "ToInitializeSessionWorkLedger": "Skills/ActionLearningCoordinator/index.pts",
-    "ToInitializeOnlineMemoryCriticModelBenchmark": "Skills/ActionLearningCoordinator/index.pts",
     "ToListActionLearningCoordinatorActions": "Skills/ActionLearningCoordinator/index.pts",
     "ToListSessionWorkAttachmentChoices": "Skills/ActionLearningCoordinator/index.pts",
-    "ToRemoveSessionWorkEntry": "Skills/ActionLearningCoordinator/index.pts",
     "ToReconcileOnlineActionCriticBatchLedger": "Skills/ActionLearningCoordinator/index.pts",
     "ToReconcileOnlineMemoryCriticBatchLedger": "Skills/ActionLearningCoordinator/index.pts",
+    "ToRemoveSessionWorkEntry": "Skills/ActionLearningCoordinator/index.pts",
     "ToRunActionLearningWorkerOperation": "Skills/ActionLearningCoordinator/index.pts",
     "ToRunOnlineActionCriticBatchOperation": "Skills/ActionLearningCoordinator/index.pts",
     "ToRunOnlineMemoryCriticBatchOperation": "Skills/ActionLearningCoordinator/index.pts",
-    "ToStartOnlineMemoryCriticModelBenchmark": "Skills/ActionLearningCoordinator/index.pts",
-    "ToGetOnlineMemoryCriticModelBenchmarkStatus": "Skills/ActionLearningCoordinator/index.pts",
-    "ToRunOntologyFoundryWorkerOperation": "Skills/ActionLearningCoordinator/index.pts"
+    "ToRunOntologyFoundryWorkerOperation": "Skills/ActionLearningCoordinator/index.pts",
+    "ToStartOnlineMemoryCriticModelBenchmark": "Skills/ActionLearningCoordinator/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToGetSessionWorkCoordinatorInfo": [
+      "to get session work coordinator information"
+    ],
+    "ToGetSessionWorkLedger": [
+      "to get the session work ledger"
+    ],
+    "ToInitializeSessionWorkLedger": [
+      "to initialize the session work ledger"
+    ],
+    "ToAddSessionWorkEntry": [
+      "to add a session work entry"
+    ],
+    "ToRemoveSessionWorkEntry": [
+      "to remove a session work entry"
+    ],
+    "ToListSessionWorkAttachmentChoices": [
+      "to list session work attachment choices"
+    ],
+    "ToAttachActionLearningWorker": [
+      "to attach an action learning worker to a source session"
+    ],
+    "ToListActionLearningCoordinatorActions": [
+      "to list action learning coordinator actions"
+    ],
+    "ToGetActionLearningWorkspaceDefinition": [
+      "to get the action learning workspace definition"
+    ],
+    "ToGetActionLearningPortfolio": [
+      "to get the action learning coordinator portfolio"
+    ],
+    "ToGetActionLearningSourceWorkspace": [
+      "to get an action learning source workspace"
+    ],
+    "ToRunActionLearningWorkerOperation": [
+      "to run an action learning worker operation"
+    ],
+    "ToGetOntologyFoundryWorkspaceDefinition": [
+      "to get the ontology foundry workspace definition"
+    ],
+    "ToGetOntologyFoundryPortfolio": [
+      "to get the ontology foundry coordinator portfolio"
+    ],
+    "ToGetOntologyFoundrySourceWorkspace": [
+      "to get an ontology foundry source workspace"
+    ],
+    "ToAttachOntologyFoundryWorker": [
+      "to attach an ontology foundry worker to a source session"
+    ],
+    "ToRunOntologyFoundryWorkerOperation": [
+      "to run an ontology foundry worker operation"
+    ],
+    "ToGetOnlineMemoryCriticBatchWorkspaceDefinition": [
+      "to get the online memory critic batch workspace definition"
+    ],
+    "ToGetOnlineMemoryCriticBatchPortfolio": [
+      "to get the online memory critic batch coordinator portfolio"
+    ],
+    "ToInitializeCoordinatedOnlineMemoryCriticModelBenchmark": [
+      "to initialize a coordinated online memory critic model benchmark"
+    ],
+    "ToStartOnlineMemoryCriticModelBenchmark": [
+      "to start an online memory critic model benchmark"
+    ],
+    "ToGetCoordinatedOnlineMemoryCriticModelBenchmarkStatus": [
+      "to get coordinated online memory critic model benchmark status"
+    ],
+    "ToReconcileOnlineMemoryCriticBatchLedger": [
+      "to reconcile discovered online memory critic attachments"
+    ],
+    "ToGetOnlineMemoryCriticBatchSourceWorkspace": [
+      "to get an online memory critic batch source workspace"
+    ],
+    "ToAttachOnlineMemoryCriticBatchWorker": [
+      "to attach an online memory critic batch worker to a source session"
+    ],
+    "ToAddOnlineMemoryCriticBatchTurn": [
+      "to add an online memory critic batch turn"
+    ],
+    "ToRunOnlineMemoryCriticBatchOperation": [
+      "to run an online memory critic batch operation"
+    ],
+    "ToGetOnlineActionCriticBatchWorkspaceDefinition": [
+      "to get the online action critic batch workspace definition"
+    ],
+    "ToGetOnlineActionCriticBatchPortfolio": [
+      "to get the online action critic batch coordinator portfolio"
+    ],
+    "ToReconcileOnlineActionCriticBatchLedger": [
+      "to reconcile discovered online action critic attachments"
+    ],
+    "ToGetOnlineActionCriticBatchSourceWorkspace": [
+      "to get an online action critic batch source workspace"
+    ],
+    "ToAttachOnlineActionCriticBatchWorker": [
+      "to attach an online action critic batch worker to a source session"
+    ],
+    "ToAddOnlineActionCriticBatchTurn": [
+      "to add an online action critic batch turn"
+    ],
+    "ToRunOnlineActionCriticBatchOperation": [
+      "to run an online action critic batch operation"
+    ]
   }
 }

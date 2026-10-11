@@ -563,8 +563,8 @@ prototype ToGetOnlineMemoryCriticBatchPortfolio : OnlineMemoryCriticBatchCoordin
 	}
 }
 
-[SemanticProgram.InfinitivePhrase("to initialize an online memory critic model benchmark")]
-prototype ToInitializeOnlineMemoryCriticModelBenchmark : OnlineMemoryCriticBatchCoordinatorSkillAction
+[SemanticProgram.InfinitivePhrase("to initialize a coordinated online memory critic model benchmark")]
+prototype ToInitializeCoordinatedOnlineMemoryCriticModelBenchmark : OnlineMemoryCriticBatchCoordinatorSkillAction
 {
 	function Execute(string benchmarkRootPath, string runDefinitionJson, string corpusJson) : string
 	{
@@ -583,8 +583,8 @@ prototype ToStartOnlineMemoryCriticModelBenchmark : OnlineMemoryCriticBatchCoord
 	Description = @"Starts or resumes the deterministic native runner. Each lane admits one keyed row at a time and advances only after its exact critic turn is terminal.";
 }
 
-[SemanticProgram.InfinitivePhrase("to get an online memory critic model benchmark status")]
-prototype ToGetOnlineMemoryCriticModelBenchmarkStatus : OnlineMemoryCriticBatchCoordinatorSkillAction
+[SemanticProgram.InfinitivePhrase("to get coordinated online memory critic model benchmark status")]
+prototype ToGetCoordinatedOnlineMemoryCriticModelBenchmarkStatus : OnlineMemoryCriticBatchCoordinatorSkillAction
 {
 	function Execute(string benchmarkRootPath, string runId) : string
 	{
