@@ -1,0 +1,30 @@
+[SemanticProgram.InfinitivePhrase("to reply to the FairPath user")]
+prototype FairPath_Respond : FairPathReadAction
+{
+	function Execute(string Message) : string
+	{
+		if (StringUtil.IsEmpty(Message) || Message.Length > 100000)
+		{
+			return "Error: A bounded answer is required.";
+		}
+		return Message;
+	}
+	Description = "Required final answer. Respond in markdown using observed authorized results. No invented records or mutations.";
+	ResponseFormat = "markdown";
+	ResponseResultType = "display message";
+}
+[SemanticProgram.InfinitivePhrase("to display read-only FairPath results")]
+prototype FairPath_RespondHtml : FairPathReadAction
+{
+	function Execute(string Message) : string
+	{
+		if (StringUtil.IsEmpty(Message) || Message.Length > 100000)
+		{
+			return "Error: A bounded answer is required.";
+		}
+		return Message;
+	}
+	Description = "Final display of read-only table HTML from authorized details/grid tools. No scripts, controls or active forms.";
+	ResponseFormat = "html";
+	ResponseResultType = "display message";
+}

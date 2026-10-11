@@ -1,0 +1,19 @@
+{
+  "AgentName": "fairpath-administrator-read",
+  "DisplayName": "FairPath Administrator (read only)",
+  "Aliases": [],
+  "ProjectFilePath": "Administrator.pts",
+  "PromptFile": "Prompts/FairPathRead.prompt.md",
+  "PromptContext": "fairpath-read",
+  "RootActionPrototypeName": "FairPathReadAction",
+  "RootEntityPrototypeName": "FairPathReadEntity",
+  "DefaultModelName": "gpt-5.5",
+  "DefaultReasoningLevel": "medium",
+  "UiPage": "/buffaly-agent.html",
+  "IsReadOnly": true,
+  "IsHidden": false,
+  "CanChangeModel": false,
+  "Provider": "openai",
+  "EnableImmediateProtoScriptCommands": false,
+  "CompanionAgents": []
+}

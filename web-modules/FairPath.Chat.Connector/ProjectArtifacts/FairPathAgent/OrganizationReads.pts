@@ -1,0 +1,75 @@
+[SemanticProgram.InfinitivePhrase("to list fairpath organizations")]
+prototype Organizations_GetOrganizations : FairPathReadAction
+{
+	function Execute() : string
+	{
+		JsonObject args = new JsonObject();
+		return FairPathJsonWsService#Current.CallBusinessRoute("organizations/get-organizations", args, new JsonObject(FairPathJsonWsService#Current.OrganizationFields));
+	}
+	Description = "Calls the existing published FairPath read API using the privately bound user token. No route, token or mutation input.";
+}
+[SemanticProgram.InfinitivePhrase("to count fairpath organizations")]
+prototype Organizations_GetOrganizationCount : FairPathReadAction
+{
+	function Execute(string Search) : string
+	{
+		JsonObject args = new JsonObject();
+		args["Search"] = Search;
+		return FairPathJsonWsService#Current.CallUiRoute("organizations-admin/get-grid-count", args);
+	}
+	Description = "Calls the existing published FairPath read API using the privately bound user token. No route, token or mutation input.";
+}
+[SemanticProgram.InfinitivePhrase("to get a fairpath organization")]
+prototype Organizations_GetOrganization : FairPathReadAction
+{
+	function Execute(int OrganizationID) : string
+	{
+		JsonObject args = new JsonObject();
+		args["OrganizationID"] = OrganizationID;
+		return FairPathJsonWsService#Current.CallBusinessRoute("organizations/get-organization", args, new JsonObject(FairPathJsonWsService#Current.OrganizationFields));
+	}
+	Description = "Calls the existing published FairPath read API using the privately bound user token. No route, token or mutation input.";
+}
+[SemanticProgram.InfinitivePhrase("to find a fairpath organization by name")]
+prototype Organizations_GetOrganizationByName : FairPathReadAction
+{
+	function Execute(string OrganizationName) : string
+	{
+		JsonObject args = new JsonObject();
+		args["OrganizationName"] = OrganizationName;
+		return FairPathJsonWsService#Current.CallBusinessRoute("organizations/get-organization-by-organization-name", args, new JsonObject(FairPathJsonWsService#Current.OrganizationFields));
+	}
+	Description = "Calls the existing published FairPath read API using the privately bound user token. No route, token or mutation input.";
+}
+[SemanticProgram.InfinitivePhrase("to display fairpath organization details")]
+prototype Organizations_GetOrganizationDetailsHtml : FairPathReadAction
+{
+	function Execute(int OrganizationID) : string
+	{
+		JsonObject args = new JsonObject();
+		args["OrganizationID"] = OrganizationID.ToString();
+		return FairPathJsonWsService#Current.CallUiRoute("organizations-admin/get-details", args);
+	}
+	Description = "Calls the existing published FairPath read API using the privately bound user token. No route, token or mutation input.";
+}
+[SemanticProgram.InfinitivePhrase("to list fairpath organization statuses")]
+prototype OrganizationStatuses_GetOrganizationStatuses : FairPathReadAction
+{
+	function Execute() : string
+	{
+		JsonObject args = new JsonObject();
+		return FairPathJsonWsService#Current.CallBusinessRoute("organization-statuses/get-organization-statuses", args, new JsonObject(FairPathJsonWsService#Current.OrganizationStatusFields));
+	}
+	Description = "Calls the existing published FairPath read API using the privately bound user token. No route, token or mutation input.";
+}
+[SemanticProgram.InfinitivePhrase("to list fairpath organizations by status")]
+prototype Organizations_GetOrganizationsByStatus : FairPathReadAction
+{
+	function Execute(int OrganizationStatusID) : string
+	{
+		JsonObject args = new JsonObject();
+		args["OrganizationStatusID"] = OrganizationStatusID;
+		return FairPathJsonWsService#Current.CallBusinessRoute("organizations/get-organizations-by-status", args, new JsonObject(FairPathJsonWsService#Current.OrganizationFields));
+	}
+	Description = "Calls the existing published FairPath read API using the privately bound user token. No route, token or mutation input.";
+}

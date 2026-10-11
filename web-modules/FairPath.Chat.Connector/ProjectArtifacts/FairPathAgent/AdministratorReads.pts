@@ -1,0 +1,147 @@
+[SemanticProgram.InfinitivePhrase("to get a fairpath patient")]
+prototype Patients_GetPatient : FairPathReadAction
+{
+	function Execute(int PatientID) : string
+	{
+		JsonObject args = new JsonObject();
+		args["PatientID"] = PatientID;
+		return FairPathJsonWsService#Current.CallBusinessRoute("patients/get-patient", args, new JsonObject(FairPathJsonWsService#Current.PatientFields));
+	}
+	Description = "Calls the existing published FairPath read API using the privately bound user token. No route, token or mutation input.";
+}
+[SemanticProgram.InfinitivePhrase("to search fairpath patients")]
+prototype Patients_GetPatients : FairPathReadAction
+{
+	function Execute(int? OrganizationID, string Search, int SkipRows, int NumRows) : string
+	{
+		PatientReadWindow.Validate(Search, SkipRows, NumRows);
+		JsonObject args = new JsonObject();
+		args["Search"] = Search;
+		args["SortColumn"] = "PatientID";
+		args["SortAscending"] = true;
+		args["SkipRows"] = SkipRows;
+		args["NumRows"] = NumRows;
+		if (OrganizationID != null)
+		{
+			args["OrganizationID"] = OrganizationID;
+			return FairPathJsonWsService#Current.CallBusinessRoute("patients/get-patients-by-organization-id-sp-_-paging-sp", args, new JsonObject(FairPathJsonWsService#Current.PatientFields));
+		}
+		return FairPathJsonWsService#Current.CallBusinessRoute("patients/get-patients-sp-_-paging-sp", args, new JsonObject(FairPathJsonWsService#Current.PatientFields));
+	}
+	Description = "Calls the existing published FairPath read API using the privately bound user token. No route, token or mutation input.";
+}
+[SemanticProgram.InfinitivePhrase("to count fairpath patients")]
+prototype Patients_GetPatientCount : FairPathReadAction
+{
+	function Execute(int? OrganizationID, string Search) : string
+	{
+		JsonObject args = new JsonObject();
+		args["Search"] = Search;
+		if (OrganizationID != null)
+		{
+			args["OrganizationID"] = OrganizationID.ToString();
+			return FairPathJsonWsService#Current.CallUiRoute("patients-admin/get-grid-by-organization-id-count", args);
+		}
+		return FairPathJsonWsService#Current.CallUiRoute("patients-admin/get-grid-count", args);
+	}
+	Description = "Calls the existing published FairPath read API using the privately bound user token. No route, token or mutation input.";
+}
+[SemanticProgram.InfinitivePhrase("to display fairpath patient details")]
+prototype Patients_GetPatientDetailsHtml : FairPathReadAction
+{
+	function Execute(int PatientID) : string
+	{
+		JsonObject args = new JsonObject();
+		args["PatientID"] = PatientID.ToString();
+		return FairPathJsonWsService#Current.CallUiRoute("patients-admin/get-details", args);
+	}
+	Description = "Calls the existing published FairPath read API using the privately bound user token. No route, token or mutation input.";
+}
+[SemanticProgram.InfinitivePhrase("to display a fairpath patient grid")]
+prototype Patients_GetPatientGridHtml : FairPathReadAction
+{
+	function Execute(int? OrganizationID, string Search, int SkipRows, int NumRows) : string
+	{
+		PatientReadWindow.Validate(Search, SkipRows, NumRows);
+		JsonObject args = new JsonObject();
+		args["Search"] = Search;
+		args["SortColumn"] = "PatientID";
+		args["SortAscending"] = "true";
+		args["SkipRows"] = SkipRows.ToString();
+		args["NumRows"] = NumRows.ToString();
+		if (OrganizationID != null)
+		{
+			args["OrganizationID"] = OrganizationID.ToString();
+			return FairPathJsonWsService#Current.CallUiRoute("patients-admin/get-grid-by-organization-id-html", args);
+		}
+		return FairPathJsonWsService#Current.CallUiRoute("patients-admin/get-grid-html", args);
+	}
+	Description = "Calls the existing published FairPath read API using the privately bound user token. No route, token or mutation input.";
+}
+[SemanticProgram.InfinitivePhrase("to list fairpath users")]
+prototype Users_GetUsers : FairPathReadAction
+{
+	function Execute(int? OrganizationID) : string
+	{
+		JsonObject args = new JsonObject();
+		if (OrganizationID != null)
+		{
+			args["OrganizationID"] = OrganizationID;
+			return FairPathJsonWsService#Current.CallBusinessRoute("users/get-users-by-organization-id", args, new JsonObject(FairPathJsonWsService#Current.UserFields));
+		}
+		return FairPathJsonWsService#Current.CallBusinessRoute("users/get-users", args, new JsonObject(FairPathJsonWsService#Current.UserFields));
+	}
+	Description = "Calls the existing published FairPath read API using the privately bound user token. No route, token or mutation input.";
+}
+[SemanticProgram.InfinitivePhrase("to get a fairpath user by email")]
+prototype Users_GetUserByEmail : FairPathReadAction
+{
+	function Execute(string Email) : string
+	{
+		JsonObject args = new JsonObject();
+		args["Email"] = Email;
+		return FairPathJsonWsService#Current.CallBusinessRoute("users/get-user-by-email", args, new JsonObject(FairPathJsonWsService#Current.UserFields));
+	}
+	Description = "Calls the existing published FairPath read API using the privately bound user token. No route, token or mutation input.";
+}
+[SemanticProgram.InfinitivePhrase("to list fairpath roles")]
+prototype Roles_GetRoles : FairPathReadAction
+{
+	function Execute() : string
+	{
+		JsonObject args = new JsonObject();
+		return FairPathJsonWsService#Current.CallBusinessRoute("roles/get-roles", args, new JsonObject(FairPathJsonWsService#Current.RoleFields));
+	}
+	Description = "Calls the existing published FairPath read API using the privately bound user token. No route, token or mutation input.";
+}
+[SemanticProgram.InfinitivePhrase("to find a fairpath role")]
+prototype Roles_GetRoleByName : FairPathReadAction
+{
+	function Execute(string RoleName) : string
+	{
+		JsonObject args = new JsonObject();
+		args["RoleName"] = RoleName;
+		return FairPathJsonWsService#Current.CallBusinessRoute("roles/get-role-by-role-name", args, new JsonObject(FairPathJsonWsService#Current.RoleFields));
+	}
+	Description = "Calls the existing published FairPath read API using the privately bound user token. No route, token or mutation input.";
+}
+[SemanticProgram.InfinitivePhrase("to list fairpath patient statuses")]
+prototype PatientStatuses_GetPatientStatuses : FairPathReadAction
+{
+	function Execute() : string
+	{
+		JsonObject args = new JsonObject();
+		return FairPathJsonWsService#Current.CallBusinessRoute("patient-statuses/get-patient-statuses", args, new JsonObject(FairPathJsonWsService#Current.PatientStatusFields));
+	}
+	Description = "Calls the existing published FairPath read API using the privately bound user token. No route, token or mutation input.";
+}
+[SemanticProgram.InfinitivePhrase("to list fairpath patient import statuses")]
+prototype PatientImportStatuses_GetPatientImportStatuses : FairPathReadAction
+{
+	function Execute() : string
+	{
+		JsonObject args = new JsonObject();
+		return FairPathJsonWsService#Current.CallStagingRoute("patient-import-statuses/get-patient-import-statuses", args, new JsonObject(FairPathJsonWsService#Current.PatientImportStatusFields));
+	}
+	Description = "Calls the existing published FairPath read API using the privately bound user token. No route, token or mutation input.";
+}

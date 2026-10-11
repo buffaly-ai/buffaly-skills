@@ -1,0 +1,75 @@
+prototype BaseObject;
+prototype SemanticEntityBase : BaseObject
+{
+	String Description = new String();
+
+}
+prototype ProtoScriptAction : BaseObject
+{
+	String Description = new String();
+
+	String ResponseFormat = "text";
+
+	String ResponseResultType = "display message";
+
+}
+prototype OpsAction : ProtoScriptAction;
+prototype FairPathReadAction : OpsAction;
+prototype FairPathReadEntity : SemanticEntityBase;
+prototype FairPathJsonWsService : BaseObject
+{
+	String BaseUrl = new String();
+
+	String AuthorizationToken = new String();
+
+	String OrganizationFields = "{\"IntakeNotificationPhoneNumbers\":false,\"PartnerStageUpdatedOn\":false,\"AllowNewPatients\":false,\"HasCallForwarding\":false,\"PhoneNumber\":false,\"BillingRate\":false,\"AccountManager\":false,\"HasPartnerBillingConfiguration\":false,\"WeeklyTouchpointDayOfWeek\":false,\"EMRUser\":false,\"EnableLazyLoadProperties\":false,\"IsAnnualWellnessVisitEnabled\":false,\"IsUsingClaims\":false,\"TwilioPhoneNumbers\":false,\"Patients\":false,\"PartnerBillingRenewalDate\":false,\"Kareo_PracticeID\":false,\"AreReadingsDisabled\":false,\"IsPartnerOrganization\":false,\"IsUsingReview\":false,\"HasPracticeReminderSettings\":false,\"IsPartnerAgreementCompleted\":false,\"LeadID\":false,\"IsUsingCCM\":false,\"EmailAddresses\":false,\"EMRPassword\":false,\"IsActiveOrganization\":false,\"EIN\":false,\"WebAddress\":false,\"BillingCycleStartDate\":false,\"AbnormalAlerts\":false,\"IsUsingBilling\":false,\"OrganizationName\":true,\"PatientBillings\":false,\"PartnerType\":false,\"IsUsingOnboarding\":false,\"IsDoctorPortalLocked\":false,\"NPI\":false,\"FaxNumber\":false,\"Data\":false,\"EMR\":false,\"OrganizationStatus\":false,\"OrganizationStatusID\":true,\"AnnualWellnessVisitSettings\":false,\"HideBillingTab\":false,\"IsVaccinationClinicDayOfEnabled\":false,\"WeeklyTouchpointTime\":false,\"RequiresApprovalBeforeLetters\":false,\"ShipDevices\":false,\"CriticalAlerts\":false,\"LastUpdated\":false,\"OrganizationMobileCallFeature\":false,\"IntakeNotificationRecipients\":false,\"PrimaryLanguages\":false,\"DataObject\":false,\"Devices\":false,\"Physicians\":false,\"PartnerAgreementLink\":false,\"Users\":false,\"SalesRepresentative\":false,\"PracticeName\":false,\"SchedulingSettings\":false,\"SalesRepresentativeID\":false,\"TimeZone\":false,\"OrganizationNotes\":false,\"LinkToAccountSheet\":false,\"PracticeReminderSettings\":false,\"ParentOrganizationID\":true,\"OrganizationID\":true,\"EmailDomains\":false,\"CurrentBalance\":false,\"IsDoctorPortalIntakeEnabled\":false,\"WeeklyTouchpointTimeZone\":false,\"IsTestOrganization\":false,\"DateCreated\":false,\"PartnerPipelineStage\":false,\"PharmacyFulfillment\":false}";
+
+	String PatientFields = "{\"ShouldHaveDevice\":false,\"CCMConsentedByUserID\":false,\"IsBalanceAppEnabled\":false,\"Height\":false,\"Weight\":false,\"OnboardingLastContactAttempt\":false,\"UserID\":false,\"InsuranceGroupID\":false,\"IsConsented\":false,\"ECW_PatientID\":false,\"HasCopay\":false,\"PatientPatientTagPatientTags\":false,\"HasCompleteCcmConsentEvidence\":false,\"ApcmRequirementsData\":false,\"RTMConsentedRelationship\":false,\"PatientKey\":false,\"Messages\":false,\"InsurancePayerName\":false,\"ConsentedDate\":false,\"HasCompleteApcmConsentEvidence\":false,\"RTMConsentedByUserID\":false,\"Age\":false,\"EnableLazyLoadProperties\":false,\"IsDoNotContact\":false,\"CCMConsentRelationship\":false,\"IsQualifiedForRTM\":false,\"IsSMSAlertingAllowed\":false,\"IsRpmSupplyBillingStatusEligible\":false,\"PatientStatus\":false,\"Kareo_PatientID\":false,\"PatientPayments\":false,\"SecondaryInsurancePayerName\":false,\"PatientStatusID\":true,\"IsBillingStatusEligible\":false,\"SecondaryInsuranceNumber\":false,\"City\":false,\"HasCompleteRpmConsentEvidence\":false,\"RtmBillingCycleStartDate\":false,\"RxBIN\":false,\"Phone\":false,\"RtmBillingCyclePatientDeviceID\":false,\"ActivePatientDevices\":false,\"MobileCallFeature\":false,\"Address\":false,\"Phone2\":false,\"PatientConditions\":false,\"InvitationCodeEQ\":false,\"FirstName\":true,\"SecondaryInsuranceGroupID\":false,\"ConsentedByUserID\":false,\"OnboardingSummary\":false,\"PatientID\":true,\"RtmBillingCycleStopDate\":false,\"InvitationDateEQ\":false,\"ConsentRelationship\":false,\"IsSMSAllowed\":false,\"IsAPCMConsented\":false,\"HasApcmEnrollment\":false,\"DoNotContactReason\":false,\"ClinicalSummary\":false,\"IsRTMConsented\":false,\"PatientEvents\":false,\"BillingCycleStartDate\":false,\"CopayAmount\":false,\"Country\":false,\"PatientDevices\":false,\"Organization\":false,\"MonthlyBillingCycleStopDate\":false,\"LastName\":true,\"IsQualifiedForRPM\":false,\"RemoteCareEnrollmentPrograms\":false,\"OrganizationID\":true,\"CarePlan\":false,\"APCMConsentSignature\":false,\"HasMedicare\":false,\"IsLiveReadingsAllowed\":false,\"OrganizationName\":false,\"Gender\":false,\"CCMConsentedDate\":false,\"VitalPopValues\":false,\"PatientNotes\":false,\"MonthlyBillingCycleStartDate\":false,\"RTMConsentedSignature\":false,\"Addresses\":false,\"ConsentSignature\":false,\"IsCCMConsented\":false,\"DOB\":false,\"HasRtmEnrollment\":false,\"IsQualifiedForCCM\":false,\"User\":false,\"CCMAmount\":false,\"ReturnLabel\":false,\"APCMConsentedByUserID\":false,\"PatientContacts\":false,\"BillingCycleStopDate\":false,\"IsCapitated\":false,\"APCMConsentRelationship\":false,\"DoNotContactUntil\":false,\"InsuranceNumber\":false,\"FullName\":false,\"BilledDateOfServiceOffset_99454\":false,\"HasApcmRequirementsData\":false,\"Email\":false,\"HasCcmEnrollment\":false,\"RTMConsentedDateUtc\":false,\"Memories\":false,\"HasCompleteRtmConsentEvidence\":false,\"Line1\":false,\"Zip\":false,\"Line2\":false,\"BillerRemarks\":false,\"DataObject\":false,\"MedicareNumber\":false,\"Physician\":false,\"RxPCN\":false,\"AllowedReviewBlocks\":false,\"CCMConsentSignature\":false,\"DefunctReason\":false,\"RxGroup\":false,\"RTMConsentedDate\":false,\"State\":false,\"CCMNextContactDate\":false,\"DateCreated\":false,\"PhysicianID\":false,\"ActiveDevice\":false,\"LastUpdated\":false,\"MarketingLabel\":false,\"Label\":false,\"Apcm\":false,\"HasRpmEnrollment\":false,\"RemoteProgramTags\":false,\"PatientBillings\":false,\"PatientPatientTags\":false,\"PossibleDeviceTypes\":false,\"APCMConsentedDate\":false,\"Data\":false}";
+
+	String UserFields = "{\"OrganizationID\":true,\"RPMLastLoginDate\":false,\"Authorizations\":false,\"GAuthResult\":false,\"Password\":false,\"EnableLazyLoadProperties\":false,\"PatientEvents\":false,\"LastName\":true,\"AvailableRoles\":false,\"DataObject\":false,\"LastUpdated\":false,\"ExternalToken\":false,\"VoiceInstructions\":false,\"UserRoleRoles\":false,\"PatientNotes\":false,\"Phone\":false,\"InviteCode\":false,\"InviteExpiration\":false,\"ReviewAdministrator\":false,\"PersonalPolicy\":false,\"OrganizationNotes\":false,\"m_ReviewAdministrator\":false,\"Email\":true,\"Role\":false,\"Data\":false,\"DateCreated\":false,\"Organization\":false,\"RoleID\":true,\"FirstName\":true,\"UserRoles\":false,\"IsEnabled\":true,\"Voice\":false,\"UserID\":true}";
+
+	String RoleFields = "{\"RoleName\":true,\"LastUpdated\":false,\"RoleID\":true,\"Data\":false,\"DataObject\":false,\"EnableLazyLoadProperties\":false,\"DateCreated\":false}";
+
+	String OrganizationStatusFields = "{\"LastUpdated\":false,\"Data\":false,\"OrganizationStatus\":true,\"DataObject\":false,\"EnableLazyLoadProperties\":false,\"OrganizationStatusID\":true,\"DateCreated\":false}";
+
+	String PatientStatusFields = "{\"LastUpdated\":false,\"IsPortalViewable\":false,\"Data\":false,\"PatientStatusID\":true,\"Description\":false,\"DataObject\":false,\"FriendlyPatientStatusName\":false,\"PatientStatusName\":true,\"IsDeleted\":false,\"EnableLazyLoadProperties\":false,\"DateCreated\":false}";
+
+	String PatientImportStatusFields = "{\"LastUpdated\":false,\"Data\":false,\"DataObject\":false,\"PatientImportStatusID\":true,\"PatientStatusName\":true,\"EnableLazyLoadProperties\":false,\"DateCreated\":false}";
+
+	function ConfigureAuthorization(string BaseUrl, string AuthorizationToken) : string
+	{
+		if (StringUtil.IsEmpty(BaseUrl) || StringUtil.IsEmpty(AuthorizationToken))
+		{
+			return "Error: FairPath origin and user authorization are required.";
+		}
+		this.BaseUrl = BaseUrl;
+		this.AuthorizationToken = AuthorizationToken;
+		return "FairPath user authorization configured.";
+	}
+
+	function CallRoute(string ApiPrefix, string RoutePath, JsonObject Args, JsonObject Serialize) : string
+	{
+		string result = JsonWsHelper.CallJsonRoute(this.BaseUrl, ApiPrefix, RoutePath, this.AuthorizationToken, Args, Serialize);
+		if (result.Length > 1000000)
+		{
+			return "Error: FairPath result exceeds the assistant limit. Use a supported record or organization/status filter.";
+		}
+		return result;
+	}
+
+	function CallBusinessRoute(string RoutePath, JsonObject Args, JsonObject Serialize) : string
+	{
+		return this.CallRoute("api/fairpath.business", RoutePath, Args, Serialize);
+	}
+
+	function CallUiRoute(string RoutePath, JsonObject Args) : string
+	{
+		return this.CallRoute("api/fairpath.portal.admin.ui", RoutePath, Args, null);
+	}
+
+	function CallStagingRoute(string RoutePath, JsonObject Args, JsonObject Serialize) : string
+	{
+		return this.CallRoute("api/fairpath.staging.business", RoutePath, Args, Serialize);
+	}
+}
+partial prototype FairPathJsonWsService#Current : FairPathJsonWsService;

@@ -1,0 +1,19 @@
+{
+  "Module": {
+    "Enabled": true,
+    "Name": "FairPath.Chat.Connector",
+    "DisplayName": "FairPath private read assistant",
+    "Description": "One fixed user-delegated FairPath administrator agent. No business writes or prompt workflow skills.",
+    "AssemblyPath": "FairPath.Chat.Connector/FairPath.Chat.Connector.dll",
+    "TypeName": "FairPath.Chat.Connector.FairPathChatWebModule",
+    "LoadOrder": 870,
+    "ProjectArtifacts": [
+      {
+        "ProjectName": "FairPathAgent",
+        "SourcePath": "ProjectArtifacts/FairPathAgent/",
+        "InstallAsProject": true
+      }
+    ],
+    "Pages": []
+  }
+}

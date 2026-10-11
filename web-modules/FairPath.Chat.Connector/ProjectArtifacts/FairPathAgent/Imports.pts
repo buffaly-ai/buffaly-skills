@@ -1,0 +1,28 @@
+reference mscorlib;
+reference Ontology;
+reference Ontology.Simulation;
+reference ProtoScript.Interpretter;
+reference BasicUtilities;
+reference Buffaly.Agent.Runtime.Abstractions;
+reference Buffaly.Agent.ProtoScript.Runtime;
+reference Buffaly.Agent.Tools.SemanticDatabase;
+reference Buffaly.Agent.Tools.Http;
+reference FairPath.Chat.Connector;
+import Ontology Ontology.Collection Collection;
+import Ontology Ontology.Prototype Prototype;
+import Ontology.Simulation Ontology.Simulation.StringWrapper String;
+import Ontology.Simulation Ontology.Simulation.IntWrapper Int;
+import Ontology.Simulation Ontology.Simulation.BoolWrapper Bool;
+import BasicUtilities BasicUtilities.StringUtil StringUtil;
+import BasicUtilities BasicUtilities.JsonObject JsonObject;
+import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.IAgentRuntimeHost IAgentRuntimeHost;
+import Buffaly.Agent.ProtoScript.Runtime Buffaly.Agent.ProtoScript.Runtime.ProtoScriptRuntime ProtoScriptRuntime;
+import Buffaly.Agent.Tools.SemanticDatabase Buffaly.Agent.Tools.SemanticDatabase.SemanticDatabase SemanticDatabase;
+import Buffaly.Agent.Tools.Http Buffaly.Agent.Tools.Http.JsonWsHelper JsonWsHelper;
+import FairPath.Chat.Connector FairPath.Chat.Connector.PatientReadWindow PatientReadWindow;
+
+extern IAgentRuntimeHost _opsAgent;
+
+extern ProtoScriptRuntime _runtime;
+
+extern JsonObject UserState;
