@@ -9,3 +9,7 @@ Keep this file aligned with the operational global-review actions in `Skills/Cod
 ## 2026-10-11 — Complete bounded review evidence
 - Aligned lightweight eager global wrappers with complete evidence/catalog reads. Preserve CoreLite no PromptAction/native session DTO requirements, relative trusted paths, read-only root and grouped completion. Old whole diff/file remain outside global root.
 - Validation performed: owning WebHarness Debug build passed; fresh serial test rebuild passed; all 63 non-environment CodeReviews tests passed, including 10 complete evidence cases and real profile/lazy module compile cases. Canonical isolated sidecar generation succeeded with no diagnostics. Host cap/core source unchanged. Existing dependency vulnerability warnings remain. No installed deployment, live model review, replay, SQL change or Matt-local restart was performed. Those are separate from source acceptance.
+
+## 2026-10-11 — Complete context and exact owner discovery
+- Aligned eager profile with full skill bounded source readers and exact committed path action. Optional CharacterOffset preserves first-call arguments but results are complete-page envelopes requiring continuation. No PromptAction, broad filesystem or legacy terminal actions added to global root.
+- Validation: actual CoreLite eager compile and full lazy compile passed within all 77 non-environment tests; isolated generator succeeded with zero diagnostics. Installed replay pending. Scoped owning-source SmartPatch used because personal authoring tools cannot express external profile ownership.

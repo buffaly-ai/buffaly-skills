@@ -126,7 +126,14 @@ prototype ToGetCodeReviewFileAtCommitPage : CodeReviewsAgentToolsAction, GlobalC
 prototype ToReadCodeReviewSourceArtifactPage : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
 {
  Description = @"SourceSessionKey from immutable context; ArtifactPath is related Plan.md, Scratch.md, task or governing design. Typed owning artifact path rules apply. Read CharacterOffset zero through EndOfContent; verify hash/length or restart changed evidence. No arbitrary filesystem access.";
- function Execute(string SourceSessionKey, string ArtifactPath, int CharacterOffset = 0) : string { return CodeReviewEvidencePages.GetSourceArtifactPageJson(SourceSessionKey, ArtifactPath, CharacterOffset); }
+  function Execute(string SourceSessionKey, string ArtifactPath, int CharacterOffset = 0) : string { return CodeReviewEvidencePages.GetSourceArtifactPageJson(SourceSessionKey, ArtifactPath, CharacterOffset); }
+}
+
+[SemanticProgram.InfinitivePhrase("to find exact committed code review paths")]
+prototype ToFindCodeReviewCommitPathsPage : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
+{
+ Description = @"Exact repository and full SHA from SourceTurnContextJson. PathContains is a literal filename or path substring. Read all CharacterOffset pages through EndOfContent; Content is a JSON array of exact committed owners, not working-tree guesses. An empty complete array proves no matching filename. Read resolved owners fully.";
+ function Execute(string RepositoryPath, string CommitSha, string PathContains, int CharacterOffset = 0) : string { return CodeReviewEvidencePages.GetCommitPathsPageJson(RepositoryPath, CommitSha, PathContains, CharacterOffset); }
 }
 
 [SemanticProgram.InfinitivePhrase("to submit code review findings")]
@@ -158,9 +165,9 @@ prototype ToGetCodeReviewSourceSessionPlan : CodeReviewsAgentToolsAction, Global
 {
 	Description = @"SourceSessionKey - exact source session associated with the reviewed commit. Returns the source session Plan.md through the typed artifact service.";
 
-	function Execute(string SourceSessionKey) : string
+	function Execute(string SourceSessionKey, int CharacterOffset = 0) : string
 	{
-		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionArtifactText(SourceSessionKey, "Plan.md")).ToString();
+		return CodeReviewEvidencePages.GetSourceArtifactPageJson(SourceSessionKey, "Plan.md", CharacterOffset);
 	}
 }
 
@@ -169,9 +176,9 @@ prototype ToGetCodeReviewSourceSessionScratch : CodeReviewsAgentToolsAction, Glo
 {
 	Description = @"SourceSessionKey - exact source session associated with the reviewed commit. Returns the source session Scratch.md through the typed artifact service. Scratch is supporting evidence and must not override the user instruction, active task, or governing design.";
 
-	function Execute(string SourceSessionKey) : string
+	function Execute(string SourceSessionKey, int CharacterOffset = 0) : string
 	{
-		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionArtifactText(SourceSessionKey, "Scratch.md")).ToString();
+		return CodeReviewEvidencePages.GetSourceArtifactPageJson(SourceSessionKey, "Scratch.md", CharacterOffset);
 	}
 }
 
@@ -180,9 +187,9 @@ prototype ToListCodeReviewSourceSessionTasks : CodeReviewsAgentToolsAction, Glob
 {
 	Description = @"SourceSessionKey - exact source session associated with the reviewed commit. Returns validated root-level task artifact names through the typed artifact service.";
 
-	function Execute(string SourceSessionKey) : string
+	function Execute(string SourceSessionKey, int CharacterOffset = 0) : string
 	{
-		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionTaskArtifactNames(SourceSessionKey)).ToString();
+		return CodeReviewEvidencePages.GetSourceCatalogPageJson(SourceSessionKey, true, CharacterOffset);
 	}
 }
 
@@ -191,9 +198,9 @@ prototype ToReadCodeReviewSourceSessionTask : CodeReviewsAgentToolsAction, Globa
 {
 	Description = @"SourceSessionKey - exact source session associated with the reviewed commit. TaskArtifactFileName - exact task-*.md file name returned by ToListCodeReviewSourceSessionTasks. Returns the validated task artifact through the typed artifact service.";
 
-	function Execute(string SourceSessionKey, string TaskArtifactFileName) : string
+	function Execute(string SourceSessionKey, string TaskArtifactFileName, int CharacterOffset = 0) : string
 	{
-		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionTaskArtifactText(SourceSessionKey, TaskArtifactFileName)).ToString();
+		return CodeReviewEvidencePages.GetSourceArtifactPageJson(SourceSessionKey, TaskArtifactFileName, CharacterOffset);
 	}
 }
 
@@ -203,9 +210,9 @@ prototype ToListCodeReviewSourceSessionArtifacts : CodeReviewsAgentToolsAction, 
 {
 	Description = @"SourceSessionKey - exact source session associated with the reviewed commit. Returns the typed session artifact manifest, including discoverable files under artifacts/**. Use it to identify governing design or implementation documents. Do not inspect unrelated sessions.";
 
-	function Execute(string SourceSessionKey) : string
+	function Execute(string SourceSessionKey, int CharacterOffset = 0) : string
 	{
-		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionArtifacts(SourceSessionKey)).ToString();
+		return CodeReviewEvidencePages.GetSourceCatalogPageJson(SourceSessionKey, false, CharacterOffset);
 	}
 }
 
@@ -215,9 +222,9 @@ prototype ToReadCodeReviewSourceSessionArtifact : CodeReviewsAgentToolsAction, G
 {
 	Description = @"SourceSessionKey - exact source session associated with the reviewed commit. ArtifactPath - exact relative artifact path returned by ToListCodeReviewSourceSessionArtifacts. Returns the artifact through the typed artifact service. Read only plausible governing documents related to the reviewed change.";
 
-	function Execute(string SourceSessionKey, string ArtifactPath) : string
+	function Execute(string SourceSessionKey, string ArtifactPath, int CharacterOffset = 0) : string
 	{
-		return JsonUtil.ToStringExt(BuffalyArtifacts.GetSessionArtifactText(SourceSessionKey, ArtifactPath)).ToString();
+		return CodeReviewEvidencePages.GetSourceArtifactPageJson(SourceSessionKey, ArtifactPath, CharacterOffset);
 	}
 }
 

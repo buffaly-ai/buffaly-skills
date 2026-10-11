@@ -11,6 +11,7 @@
     "ToCompleteCodeReviewWithoutFindings": "Skills/CodeReviews/index.pts",
     "ToDetachConfiguredCodeReviewAgent": "Skills/CodeReviews/index.pts",
     "ToDispatchCodeReviewTurnCompletedEvent": "Skills/CodeReviews/index.pts",
+    "ToFindCodeReviewCommitPathsPage": "Skills/CodeReviews/index.pts",
     "ToGetCodeReviewCommitDiff": "Skills/CodeReviews/index.pts",
     "ToGetCodeReviewCommitManifestPage": "Skills/CodeReviews/index.pts",
     "ToGetCodeReviewCommitPatchPage": "Skills/CodeReviews/index.pts",
@@ -82,6 +83,9 @@
     ],
     "ToReadCodeReviewSourceArtifactPage": [
       "to read a complete source review artifact page"
+    ],
+    "ToFindCodeReviewCommitPathsPage": [
+      "to find exact committed code review paths"
     ],
     "ToRunSourceGroundedCodeReviewSkill": [
       "to review a commit against source session documentation",
