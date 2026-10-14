@@ -193,8 +193,9 @@ When the instruction supplies an attached turn-level `SourceTurnContextJson`, tr
 - Evaluate the combined result against the exact completed source turn, active task, governing design, and Plan.
 - Use exactly one grouped completion action. Pass the supplied `SourceTurnContextJson` unchanged; it is the authoritative cross-worker binding for the delivered turn. Do not pass separate repository paths, commit SHAs, or source session keys.
 - With material findings, call `ToSubmitCodeReviewTurnFindings` once with the unchanged `SourceTurnContextJson` and consolidated findings-only markdown.
-- With no material findings, call `ToCompleteCodeReviewTurnWithoutFindings` once with the unchanged `SourceTurnContextJson` and remain silent.
+- With no material findings, call `ToCompleteCodeReviewTurnWithoutFindings` once with the unchanged `SourceTurnContextJson`. Clean silence means no source-session notification, not an empty reviewer final answer.
 - If review cannot be completed, call `ToMarkCodeReviewTurnFailed` once with the unchanged `SourceTurnContextJson` and a concise failure reason.
+- Each successful grouped completion action ends the reviewer runtime through its canonical terminal response. Do not generate another final answer or repeat a successful completion action. If the action fails, resolve the reported failure; do not claim completion or emit an empty final answer.
 - Do not call the single-commit completion actions for a turn manifest.
 
 When the instruction supplies exact `RepositoryPath` and `CommitSha` completion bindings:
