@@ -43,6 +43,14 @@ Use `ToRunBrowserScript` only when you specifically need JavaScript evaluated in
 12. Every mutation must be followed by deterministic verification using URL, selector text/value, DOM state, console diagnostics, or screenshot evidence.
 13. Screenshots are audit evidence, not the sole source of truth.
 
+## Owned-tab lifecycle
+
+- Reuse your session's working tab for successive URLs. Concurrent agent sessions attach to the same configured persistent Chrome profile but must use separate agent-owned tabs; do not navigate or close another session's or the user's tabs.
+- An attached managed client may own at most four live tabs (one working tab plus three temporary tabs). At the limit, reuse or explicitly close an owned tab; never create another profile or evict somebody else's tab. Manually closed owned tabs no longer count.
+- When bounded browsing work finishes, call `ToCloseBrowserSession` unless an explicit ongoing workflow needs the attachment. Closing the attachment closes only its owned tabs, not Chrome or the saved login profile. Closing the final owned tab does not create a replacement. Cleanup is explicit; there is no automatic idle timer or crash cleanup.
+- If the user closes your tab or Chrome, the next deliberate managed open recovers through the configured launcher and the same profile. Never invent a registration key from the session ID. Inspect fresh page state after recovery; stale selectors may require deliberate navigation. Never replay a possibly completed submission, purchase, click, or paste.
+- A busy session rejects close/navigation/recovery without disturbing its in-flight action. Finish the action before deliberately retrying close; this is not permission to repeat a site search after an automation block.
+
 ## Selection receipts
 
 Browser open/navigation results must be treated as selection evidence. Preserve and report the returned backend, non-secret profile/browser key and subAgentId, created-versus-reused state, and fallback fields. A `playwright::...` identity proves an explicit Playwright backend; a `browser::managed-...` identity proves the registered managed CDP route.

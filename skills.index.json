@@ -147,7 +147,7 @@
       "SkillName": "BrowserSession",
       "Title": "Browser Session",
       "Description": "Buffaly skill package for Browser Session.",
-      "Version": "0.1.14",
+      "Version": "0.1.15",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Browser Session",
@@ -173,7 +173,11 @@
         },
         {
           "Path": "Prompts/UseBrowserSkill.prompt.md",
-          "Sha256": "c80886f679c6e64aca8aebbc18b7736fc893e7885a9506b325699cde4e5e3aff"
+          "Sha256": "36fb46ab4921efe2b4e87fa336154061800579ef3f6c74c608345b6dbb09c5a1"
+        },
+        {
+          "Path": "Prompts/UseBrowserSkill.prompt.md.md",
+          "Sha256": "a872ebe4992b0124adcb61b2d590b6ae69d0b502357fb8b3eb3608eab0f627a9"
         },
         {
           "Path": "SKILL.md",
@@ -182,7 +186,8 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": []
+      "Prerequisites": [],
+      "PreservedFiles": []
     },
     {
       "SkillName": "BuffalyCapabilityInspection",
