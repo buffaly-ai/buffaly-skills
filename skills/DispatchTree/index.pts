@@ -20,6 +20,16 @@ prototype DispatchTreeSkill : SkillEntity
 	ActionRoot = DispatchTreeSkillAction;
 }
 
+[SemanticProgram.InfinitivePhrase("to reconcile dispatch memory tags")]
+prototype ToReconcileDispatchMemoryTags : DispatchTreeSkillAction, DispatchAgentCuratedActionRoot
+{
+	Description = @"Repair current saved Dispatch Memory declarations in this session and verify their scope bindings, tag memberships and selected-provider vectors. Does not rewrite source, reset the index or restart a process. Returns Complete or Pending with exact failures.";
+	function Execute() : string
+	{
+		return RuntimeDispatchTreeFacade.ReconcileDispatchMemoryTags(_runtime, _opsAgent);
+	}
+}
+
 // Finds an exact node recursively because GetDescendants returns only immediate children.
 function FindDispatchNode(Prototype parent, string exactPrototypeName) : Prototype
 {

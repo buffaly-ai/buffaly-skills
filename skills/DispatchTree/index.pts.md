@@ -27,3 +27,7 @@ Provides bounded routing evidence and guarded local-tree writes for a normal Buf
 ## Design Decision
 
 Context judgment, evidence reads, and delivery have separate ownership: `DispatchContext` decides, DispatchTree returns bounded evidence, and the normal Buffaly agent queues the user's complete instruction through `ToSendToSession`. Tree-extension decisions remain proposal-only in this version.
+
+## 2026-10-15 — Explicit checked tag repair
+- Added ToReconcileDispatchMemoryTags at the existing curated Dispatch capability root. It invokes the typed facade to repair the current session's saved Dispatch Memory declarations and return Complete/Pending with exact failures. No source rewrite, index reset, process restart, send or queue operation.
+- Validation: actual skill-runtime compile and exact curated/public action inventory assertions passed in the serial Release Dispatch suite51/51 (one separate pre-existing stale-parent-symbol case excluded). The reflection-bound facade method is compiled and public; installed staging activation is a separate acceptance check.
