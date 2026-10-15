@@ -8357,10 +8357,10 @@
       "PackageType": "WebModule",
       "Title": "Error Log Dispatch",
       "Description": "Buffaly Web Module package for Error Log Dispatch.",
-      "Version": "0.1.101",
+      "Version": "0.1.102",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/ErrorLogDispatch",
-      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/ErrorLogDispatch",
+      "SourceUrl": "",
       "Phrases": [
         "Error Log Dispatch",
         "ErrorLogDispatch"
@@ -8371,12 +8371,28 @@
           "Sha256": "63c6b69434ec223ef85cbc3728bf7d01b661457959c439c22198ebb7e44be9af"
         },
         {
+          "Path": "Buffaly.Agent.CSharpSkill.dll",
+          "Sha256": "f5e8d129fca5c8624ca2e265f1e415321eaf8b6cd09b948e65b64acb8d5a57c2"
+        },
+        {
           "Path": "Buffaly.Agent.DispatchTree.Viewer.dll",
-          "Sha256": "64419e81436713b617225477a613c2f294fa328b6a45ba2170c1edc534ee4251"
+          "Sha256": "9dbb396f92939e8eca9a737ae7e32acdbf04f37936a66c4d81ece71737f08ef2"
+        },
+        {
+          "Path": "Buffaly.Agent.ProtoScriptAuthoring.dll",
+          "Sha256": "44746de8777ceed05bbb09f0459c9622af4a23054e04c685e0934151a2a3217b"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "adb88fc1958d87e81d936ba35fd086dd705f095b7d1956b0a198925242bf7fe7"
+          "Sha256": "2365cf39610ae3a9123c62681b471de6a54f60a2f85a594373500c9985f83e69"
+        },
+        {
+          "Path": "Buffaly.Agents.dll",
+          "Sha256": "8e54b5c8da8f1d5c578e43227dc5b05469247f0c73d7a9448b0005cd9cb60591"
+        },
+        {
+          "Path": "Buffaly.Development.Common.dll",
+          "Sha256": "42c3be641f2a882eb361fab842eb4f04177a586dd20f3c2523a90134b7004d77"
         },
         {
           "Path": "Buffaly.ErrorLogDispatch.WebModule.deps.json",
@@ -8384,7 +8400,7 @@
         },
         {
           "Path": "Buffaly.ErrorLogDispatch.WebModule.dll",
-          "Sha256": "d5ce5faf4111a6f4b13960f60fb1afbf19bdf2f05a03d8ac8c9e03a9e045e65a"
+          "Sha256": "f43e0c6bfd34404bbcc65bc64001e347b738699d0444cdfdb678d4c6ecbfc63b"
         },
         {
           "Path": "Buffaly.ErrorLogDispatch.WebModule.staticwebassets.endpoints.json",
@@ -8392,7 +8408,27 @@
         },
         {
           "Path": "Buffaly.NLMemory.dll",
-          "Sha256": "c7fe4093ce85523a0d16b8c2f886f9c7203da0c258f93d17defb42b5554e7822"
+          "Sha256": "f335494865c8ae4f2c6fa5a9f3f1ac92fe6ba6727606a21a450eab62c7dbf402"
+        },
+        {
+          "Path": "Buffaly.SemanticDB.Data.dll",
+          "Sha256": "ee10ff6403e459f4add33cd3b258fed109378c6773fa5da79ae76cbc88e1f459"
+        },
+        {
+          "Path": "Buffaly.SemanticDB.dll",
+          "Sha256": "2446e5ea3c0f61529f82df1987a61910c1031da8cd0d662b0ea52810b774ccb5"
+        },
+        {
+          "Path": "CSharp.dll",
+          "Sha256": "9d18eaef122218e852e7fd7e5aef8c889d4bc7655f88212f2d335440efd2ff8c"
+        },
+        {
+          "Path": "CSharp.Extensions.dll",
+          "Sha256": "552720f0b30e30ddf1581a148243577fa87af55caef53b6dda3b3654e7c84ba3"
+        },
+        {
+          "Path": "CSharp.Parsers.dll",
+          "Sha256": "356dbcc749389d17a2d8dd15345bd03d050317167f901ea2e68eb7bb5b094e47"
         },
         {
           "Path": "ProjectArtifacts/ContextPrompts/ErrorDiagnostic.prompt.md",
@@ -8429,6 +8465,14 @@
         {
           "Path": "ProjectArtifacts/Skills/ErrorLogDispatch/SKILL.md",
           "Sha256": "0f510d04b5dfd8fbf2753b6b2908118731a099c9d26f8a3eab7203b691d043b3"
+        },
+        {
+          "Path": "ProtoScript.CLI.Validation.dll",
+          "Sha256": "0da9b26fb87e76e08eb35f56d0eb8fc3f7a7621f58cb096189894720aace6957"
+        },
+        {
+          "Path": "ProtoScript.Workbench.Api.dll",
+          "Sha256": "0528927cbe555fe28eeb1173a3019bb0b28175a412eac1bb8c8355a8cd25af4f"
         },
         {
           "Path": "SixLabors.ImageSharp.dll",
