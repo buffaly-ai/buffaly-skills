@@ -290,6 +290,14 @@
           }
         }
       },
+      "Buffaly.Agent.ProtoScriptAuthoring/1.0.0.0": {
+        "runtime": {
+          "Buffaly.Agent.ProtoScriptAuthoring.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "Buffaly.DB.SqlServer/1.0.0.0": {
         "runtime": {
           "Buffaly.DB.SqlServer.dll": {
@@ -341,14 +349,6 @@
       "Buffaly.Agent.Tools.Secrets/1.0.0.0": {
         "runtime": {
           "Buffaly.Agent.Tools.Secrets.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
-          }
-        }
-      },
-      "Buffaly.Agent.ProtoScriptAuthoring/1.0.0.0": {
-        "runtime": {
-          "Buffaly.Agent.ProtoScriptAuthoring.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -558,6 +558,11 @@
       "serviceable": false,
       "sha512": ""
     },
+    "Buffaly.Agent.ProtoScriptAuthoring/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
     "Buffaly.DB.SqlServer/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
@@ -589,11 +594,6 @@
       "sha512": ""
     },
     "Buffaly.Agent.Tools.Secrets/1.0.0.0": {
-      "type": "reference",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "Buffaly.Agent.ProtoScriptAuthoring/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
