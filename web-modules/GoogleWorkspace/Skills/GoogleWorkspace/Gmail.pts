@@ -158,6 +158,22 @@ prototype ToSendGoogleWorkspaceEmail : GoogleWorkspaceSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to reply to a gmail message in its thread")]
+prototype ToReplyToGoogleWorkspaceMessage : GoogleWorkspaceSkillAction
+{
+	Description = @"accountKey, messageId (original Gmail message ID, not RFC Message-ID), from, to, htmlBody required. scopePreset defaults to gmail.reply (read + send). cc/bcc optional. Reads original subject/reply headers/threadId. Returns sent status plus threadMatched; sent_threading_mismatch means already sent: DO NOT resend. Use this action for replies, not standalone send.";
+
+	function Execute(string accountKey, string scopePreset, string messageId, string from, string to, string htmlBody, string cc, string bcc) : string
+	{
+		if (StringUtil.IsEmpty(scopePreset))
+			scopePreset = "gmail.reply";
+		return GoogleWorkspaceServiceHost.ReplyToMessage(
+			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey),
+			scopePreset,
+			messageId, from, to, htmlBody, cc, bcc);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to create a gmail draft")]
 [SemanticProgram.InfinitivePhrase("to create a google workspace email draft")]
 prototype ToCreateGoogleWorkspaceDraft : GoogleWorkspaceSkillAction
