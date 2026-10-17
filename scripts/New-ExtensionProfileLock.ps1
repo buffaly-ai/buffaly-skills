@@ -162,7 +162,7 @@ function New-ExtensionProfileLock {
 
     if ([string]$profile.ProfileId -eq "core-installer") {
         Assert-ExactMembership $profile "Skill" @("BrowserSession","AudioTranscription","BuffalyCapabilityInspection","BuffalyMaintenance","BuffalySelfManagement","Codex","Desktop","ErrorLogDiagnosis","FFmpeg","SessionManagement","FileSystem","LLM","Level2Watcher","GitHub","Heartbeat","HelpAgent","LocalTask","Onboarding","OnlineSessionMemoryCritic","BuffalyNLMemory","Process","ProcessManagement","Services","SessionHistory","SessionSync","SkillDirectory","SqlServer","TabularData","TailscaleExposure","Unity","UserSecrets","ValidatedPrompt","VisualStudio","Wiki") $errors
-        Assert-ExactMembership $profile "WebModule" @("Browser","Buffaly.Agent.Heartbeat","Buffaly.Agent.SkillManagement","Buffaly.Agent.Wiki","ComputerUse","CodeReviews","CodexEmbedded","OfflineOntologyCritic","Sessions") $errors
+        Assert-ExactMembership $profile "WebModule" @("Browser","Buffaly.Agent.Heartbeat","Buffaly.Agent.SkillManagement","Buffaly.Agent.Wiki","CodeReviews","CodexEmbedded","OfflineOntologyCritic","Sessions") $errors
         Assert-ExactMembership $profile "ProviderModule" @("Buffaly.Provider.Anthropic","Buffaly.Provider.Gemini","Buffaly.Provider.LlamaCpp","Buffaly.Provider.Ollama","Buffaly.Provider.OpenAi","Buffaly.Provider.OpenRouter","Buffaly.Provider.Xai") $errors
         foreach ($windowsOnlyId in @("Desktop","VisualStudio")) {
             $entry = @($profile.Packages | Where-Object { $_.PackageType -eq "Skill" -and $_.PackageId -eq $windowsOnlyId })
@@ -172,7 +172,7 @@ function New-ExtensionProfileLock {
 
     if ([string]$profile.ProfileId -eq "recommended-installer") {
 		Assert-ExactMembership $profile "Skill" @("BrowserSession","AudioTranscription","BuffalyCapabilityInspection","BuffalyMaintenance","BuffalySelfManagement","Codex","ComputerUse","Desktop","DispatchTree","ErrorLogDiagnosis","FFmpeg","SessionManagement","FileSystem","LLM","Level2Watcher","GitHub","Heartbeat","Http","HelpAgent","LocalTask","Onboarding","OnlineSessionMemoryCritic","BuffalyNLMemory","VoiceAgentDispatch","Process","ProcessManagement","Services","SessionHistory","SessionSync","SkillDirectory","SqlServer","TabularData","TailscaleExposure","TwitterXApi","UserSecrets","ValidatedPrompt","VisualStudio","Wiki") $errors
-		Assert-ExactMembership $profile "WebModule" @("Browser","ErrorLogDispatch","ExtensionBrowser","Buffaly.Agent.Heartbeat","Buffaly.Agent.SkillManagement","Buffaly.Agent.Wiki","ComputerUse","CodeReviews","CodexEmbedded","DesktopViewer","Sessions","GoogleWorkspace","OllamaCloud","OpenRouterCloud","OpenAIImageGeneration","LinkedIn") $errors
+		Assert-ExactMembership $profile "WebModule" @("Browser","ErrorLogDispatch","ExtensionBrowser","Buffaly.Agent.Heartbeat","Buffaly.Agent.SkillManagement","Buffaly.Agent.Wiki","CodeReviews","CodexEmbedded","DesktopViewer","Sessions","GoogleWorkspace","OllamaCloud","OpenRouterCloud","OpenAIImageGeneration","LinkedIn") $errors
         Assert-ExactMembership $profile "ProviderModule" @("Buffaly.Provider.Anthropic","Buffaly.Provider.Gemini","Buffaly.Provider.LlamaCpp","Buffaly.Provider.Ollama","Buffaly.Provider.OpenAi","Buffaly.Provider.OpenRouter","Buffaly.Provider.Xai") $errors
 		Assert-ExcludedMembership $profile "Skill" @("Unity","ReleaseOps","OpenAIAdmin") $errors
         Assert-ExcludedMembership $profile "WebModule" @("FeedingFrenzy.WebPropertyEditorAgent","ActionLearningCoordinator","ExtensionPublishing","DispatchTreeViewer","OfflineOntologyCritic","GoogleAds","OpenAIAdmin") $errors
