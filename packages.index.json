@@ -6,7 +6,7 @@
       "PackageType": "ProviderModule",
       "Title": "Anthropic Provider",
       "Description": "Buffaly Provider Module package for Anthropic Provider.",
-      "Version": "0.1.135",
+      "Version": "0.1.136",
       "PackageKind": "BuffalyProviderModule",
       "SourcePath": "provider-modules/Buffaly.Provider.Anthropic",
       "SourceUrl": "",
@@ -29,7 +29,7 @@
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "4308719d4c9c8b6c684139245d317e46be6d9cc3b4ba8ff48035631f337d9a42"
+          "Sha256": "7a128a40881847c1af53712e20d028d967e67ca02a1ebb9511f75b50de1fdca1"
         },
         {
           "Path": "Buffaly.NativeAgents.ClaudeCode.dll",
@@ -41,11 +41,11 @@
         },
         {
           "Path": "Buffaly.Provider.Anthropic.dll",
-          "Sha256": "69843beaedea039efd6b1232544a2cc27b49c37462c97172181eb322a4cebfa0"
+          "Sha256": "a6655d0fd720a1e8b84b8692a8caa01d159d1a763c7bfe1af17f30c77177aabc"
         },
         {
           "Path": "Buffaly.ProviderContracts.dll",
-          "Sha256": "aad8102c7b180b6cce94e7caf4cf360ef5fdf6c47ae6cff6f0ecef2b05e01300"
+          "Sha256": "c89e3c30b5f2c5d97c5e725b1ec55fa5293030209810afae68be46e92eab29e1"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -6907,7 +6907,6 @@
       "RequiresPreStartInstall": true,
       "PreStartCleanupPaths": []
     },
-
     {
       "PackageId": "DesktopViewer",
       "PackageType": "WebModule",
