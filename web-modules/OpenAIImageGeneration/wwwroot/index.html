@@ -28,7 +28,7 @@
         <p class="buffaly-subtitle">Generate, load, revise, and compare images in one Buffaly-style working canvas.</p>
       </div>
       <div class="buffaly-page-hero-actions">
-        <div id="apiStatus" class="buffaly-status-pill warning">Checking API key</div>
+        <div id="apiStatus" class="buffaly-status-pill warning">Checking Codex account backend</div>
         <button id="refreshGalleryButton" class="buffaly-button secondary" type="button">Refresh history</button>
       </div>
     </header>
@@ -90,13 +90,13 @@
             <span class="buffaly-field-label">Format</span>
             <select id="formatSelect" class="buffaly-select">
               <option value="png">PNG</option>
-              <option value="jpeg">JPEG</option>
-              <option value="webp">WebP</option>
+
+
             </select>
           </label>
           <label class="buffaly-field">
             <span class="buffaly-field-label">Compression</span>
-            <input id="compressionInput" class="buffaly-input" type="number" min="0" max="100" placeholder="JPEG/WebP">
+            <input id="compressionInput" class="buffaly-input" type="number" min="0" max="100" placeholder="Not supported by account backend" disabled>
           </label>
         </div>
       </aside>
@@ -131,7 +131,7 @@
         <div id="dropZone" class="canvas-drop-zone">
           <div class="image-stage" id="imageStage">
             <img id="activeImage" alt="Active working image">
-            <canvas id="maskCanvas"></canvas>
+            <canvas id="maskCanvas" style="pointer-events:none;display:none"></canvas>
             <div id="canvasEmpty" class="buffaly-empty-state empty-state">
               <strong>One working canvas.</strong>
               <span>Drop an image here, generate a new image, or select an item from history.</span>
@@ -139,7 +139,7 @@
           </div>
         </div>
 
-        <div class="mask-bar">
+        <div class="mask-bar" hidden>
           <div class="brush-control">
             <span class="buffaly-field-label field-label">Mask brush</span>
             <input id="brushSize" type="range" min="8" max="96" value="36">
@@ -150,10 +150,10 @@
             <button id="undoMaskButton" class="buffaly-button secondary" type="button">Undo</button>
             <button id="clearMaskButton" class="buffaly-button secondary" type="button">Clear</button>
           </div>
-          <div id="maskHint" class="mask-hint">Masking is automatic. Paint blue over the area to edit; if any mask is visible, the app sends it with the edit.</div>
+          <div id="maskHint" class="mask-hint">Account editing uses reference images. Pixel-mask editing is not supported; no API-key fallback is used.</div>
         </div>
 
-        <div class="mask-diagnostics" aria-label="Mask diagnostics">
+        <div hidden class="mask-diagnostics" aria-label="Mask diagnostics">
           <div>
             <span class="buffaly-field-label field-label">Mask diagnostics</span>
             <div id="maskDiagnostics">No mask prepared yet.</div>

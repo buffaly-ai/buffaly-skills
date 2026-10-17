@@ -11,3 +11,6 @@
 ## Initialize web module from OpenAIFeature (2026-05-30)
 - Packaged module OpenAIImageGenerationWebModuleService.Initialize and direct image actions now read OpenAIFeature.Feature.ApiKey directly.
 - Removed the image-generation JsonWs initialize route and LLMs.GetResponsesApiKeyOrEmpty dependency; direct generation/editing continues through OpenAIImageGenerationServiceRuntime.
+
+## 2026-10-17 - Account-backed image generation
+- Remove OpenAIFeature import/key getter and key-bearing facade arguments. Generate/edit retain session artifact paths and invoke typed account-only facade; action documentation states PNG/reference-edit limitation, removed mask-edit semantic alias. External owning source edited because active-project typed upsert cannot target this repository. Owning parser check passed; full runtime activation pending packaging.

@@ -1,6 +1,5 @@
 reference Buffaly.OpenAI.ImageGeneration Buffaly.OpenAI.ImageGeneration;
 import Buffaly.OpenAI.ImageGeneration Buffaly.OpenAI.ImageGeneration.OpenAIImageGenerationServiceRuntime OpenAIImageGenerationServiceRuntime;
-import Buffaly.Agent.Host Buffaly.Agent.Host.OpenAIFeature OpenAIFeature;
 import BasicUtilities BasicUtilities.StringUtil StringUtil;
 
 prototype OpenAIImageGenerationSkillAction : OpsAction
@@ -19,39 +18,29 @@ prototype OpenAIImageGenerationWebModuleService : Service
 {
 	ServiceName = "OpenAIImageGenerationWebModuleService";
 	Scope = "per-binding";
-	Description = @"Installed OpenAI image-generation web-module service using OpenAIFeature-backed configuration.";
+	Description = @"Installed OpenAI image-generation web-module service using configured Codex account authentication.";
 
 	function Initialize() : string
 	{
-		string apiKey = OpenAIFeature.Feature.ApiKey;
-		if (StringUtil.IsEmpty(apiKey))
-		{
-			throw "OpenAI feature API key is required before using the OpenAI image generation web module.";
-		}
 
-		return "OpenAIImageGenerationWebModuleService initialized (HasApiKey = true).";
+		return "OpenAIImageGenerationWebModuleService initialized (Codex account backend; no API key).";
 	}
 }
 
 [SemanticEntity("local openai image generation web module service")]
 partial prototype OpenAIImageGenerationWebModuleService#Local : OpenAIImageGenerationWebModuleService
 {
-	Description = "Local installed OpenAI image-generation web module binding using OpenAIFeature.ApiKey.";
+	Description = "Local installed OpenAI image-generation web module binding using configured Codex account authentication.";
 }
 
 [SemanticProgram.InfinitivePhrase("to generate an image with openai")]
 [SemanticProgram.InfinitivePhrase("to create an image with openai")]
 prototype ToGenerateImageWithOpenAI : OpenAIImageGenerationSkillAction
 {
-	Description = @"Creates an OpenAI image in the current Buffaly session artifacts folder and returns the operation result JSON.";
+	Description = @"Creates an image through the configured Codex account backend (PNG output, no API-key fallback) in the current Buffaly session artifacts folder and returns the operation result JSON.";
 
 	function Execute(string prompt, string size, string model, string quality, string background, string outputFormat, string outputCompression) : string
 	{
-		string apiKey = OpenAIFeature.Feature.ApiKey;
-		if (StringUtil.IsEmpty(apiKey))
-		{
-			throw "OpenAI feature API key is required before using OpenAI image generation.";
-		}
 
 		if (_opsAgent == null)
 		{
@@ -66,23 +55,18 @@ prototype ToGenerateImageWithOpenAI : OpenAIImageGenerationSkillAction
 
 		string artifactRelativeDirectory = "artifacts/images/openai-generation";
 		string outputDirectory = Path.Combine(sessionDirectory, artifactRelativeDirectory);
-		return OpenAIImageGenerationServiceRuntime.CreateImageFromParameters(apiKey, outputDirectory, artifactRelativeDirectory, prompt, size, model, quality, background, outputFormat, outputCompression);
+		return OpenAIImageGenerationServiceRuntime.CreateImageFromParameters(outputDirectory, artifactRelativeDirectory, prompt, size, model, quality, background, outputFormat, outputCompression);
 	}
 }
 
 [SemanticProgram.InfinitivePhrase("to edit an image with openai")]
-[SemanticProgram.InfinitivePhrase("to mask edit an image with openai")]
+
 prototype ToEditImageWithOpenAI : OpenAIImageGenerationSkillAction
 {
-	Description = @"Edits an image with OpenAI, writes the final image to the current Buffaly session artifacts folder, and returns the operation result JSON.";
+	Description = @"Edits a reference image through the configured Codex account backend (PNG output, no masks), writes the final image to the current Buffaly session artifacts folder, and returns the operation result JSON.";
 
 	function Execute(string prompt, string imageFilePath, string maskFilePath, string size, string model, string quality, string background, string outputFormat, string outputCompression) : string
 	{
-		string apiKey = OpenAIFeature.Feature.ApiKey;
-		if (StringUtil.IsEmpty(apiKey))
-		{
-			throw "OpenAI feature API key is required before using OpenAI image generation.";
-		}
 
 		if (_opsAgent == null)
 		{
@@ -97,6 +81,6 @@ prototype ToEditImageWithOpenAI : OpenAIImageGenerationSkillAction
 
 		string artifactRelativeDirectory = "artifacts/images/openai-generation";
 		string outputDirectory = Path.Combine(sessionDirectory, artifactRelativeDirectory);
-		return OpenAIImageGenerationServiceRuntime.EditImageFromParameters(apiKey, outputDirectory, artifactRelativeDirectory, prompt, imageFilePath, maskFilePath, size, model, quality, background, outputFormat, outputCompression);
+		return OpenAIImageGenerationServiceRuntime.EditImageFromParameters(outputDirectory, artifactRelativeDirectory, prompt, imageFilePath, maskFilePath, size, model, quality, background, outputFormat, outputCompression);
 	}
 }

@@ -232,26 +232,11 @@
     setMessage(el.editMessage, 'Preparing active canvas image...', '');
     try {
       const sourceFile = state.activeFile;
-      let mask = null;
-      let maskDiagnostics = null;
+      const maskDiagnostics = null;
       clearDebugLinks();
-      if (state.maskHasPaint) {
-        const maskBlob = await createApiMaskBlob();
-        maskDiagnostics = await analyzeMaskBlob(maskBlob);
-        setDebugDownload(el.downloadDebugSourceLink, sourceFile, 'debug-source.png');
-        setDebugDownload(el.downloadDebugMaskLink, maskBlob, 'debug-edit-mask.png');
-        renderMaskDiagnostics(maskDiagnostics);
-        mask = await fileToPayload(new File([maskBlob], 'edit-mask.png', { type: 'image/png' }));
-      } else {
-        renderMaskDiagnostics(null);
-      }
       const images = [await fileToPayload(sourceFile)];
-
-      const requestPrompt = mask
-        ? 'Inpaint only inside the transparent mask area. Preserve the original image outside the mask. Match the original scale, perspective, lighting, line style, and camera angle. Fit the requested subject completely inside the masked area. Edit request: ' + prompt
-        : prompt;
-      const request = { ...sharedRequest(), Prompt: requestPrompt, Images: images, Mask: mask };
-      setMessage(el.editMessage, mask ? 'Editing with the painted mask...' : 'Editing the whole image...', '');
+      const request = { ...sharedRequest(), Prompt: prompt, Images: images, Mask: null };
+      setMessage(el.editMessage, 'Editing through the Codex account backend...', '');
       const result = normalizeResult(await service.EditImageAsync(request));
       if (maskDiagnostics) {
         result.maskDiagnostics = maskDiagnostics;
@@ -858,13 +843,13 @@
 
   async function init() {
     updateModelOptions();
-    setMaskMode('paint');
+    setMaskMode(null);
     updateMaskHint();
     try {
       const config = await service.GetConfigAsync({ RootDirectory: state.rootDirectory, FileName: state.fileName });
       state.rootDirectory = config.RootDirectory || config.rootDirectory || state.rootDirectory;
-      const hasApiKey = config.HasApiKey === true || config.hasApiKey === true;
-      setStatus(hasApiKey ? 'API key loaded' : 'Missing API key', hasApiKey ? 'ready' : 'error');
+      const accountBackendEnabled = config.AccountBackendEnabled === true;
+      setStatus(accountBackendEnabled ? 'Codex account backend enabled' : 'Codex account backend disabled', accountBackendEnabled ? 'ready' : 'error');
       await refreshGallery();
       await loadLaunchFileFromHistory();
     } catch (error) {
