@@ -25,7 +25,7 @@ AS
 
 	DECLARE @SearchPattern NVARCHAR(257)
 	set @SearchPattern = '%' + ISNULL(@Search, '') + '%';
-	
+
 	with RootSessionActivity as
 	(
 		SELECT		p.SessionID,
@@ -95,7 +95,16 @@ AS
 					s.Data,
 					s.SessionName,
 					s.ParentSessionID,
-					s.IsArchived
+					s.IsArchived,
+					s.State,
+					s.SessionKind,
+					s.Transport,
+					s.ActiveTurnKey,
+					s.CurrentTurnStartedUtc,
+					s.LastRunPulseUtc,
+					s.LastNonRunningUtc,
+					s.EvaluateAdmissionToken,
+					s.NeedsAttention
 		FROM		Sessions s WITH (NOLOCK)
 		LEFT JOIN	RootSessionActivity a
 		ON			s.SessionID = a.SessionID
@@ -103,7 +112,7 @@ AS
 					s.[SessionKey] like @SearchPattern or
 					s.[SessionName] like @SearchPattern)
 	)
-			
+
 	SELECT	*
 	FROM	SearchTable
 	WHERE	RowNumber BETWEEN @FirstRow AND @LastRow
