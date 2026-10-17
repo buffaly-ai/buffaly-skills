@@ -39,11 +39,6 @@ prototype ToGenerateLinkedInDraftImage : LinkedInSkillAction
 
 	function Execute(string prompt, string size, string model, string quality, string background, string outputFormat, string outputCompression) : string
 	{
-		string apiKey = OpenAIFeature.Feature.ApiKey;
-		if (StringUtil.IsEmpty(apiKey))
-		{
-			throw "OpenAI feature API key is required before generating a LinkedIn draft image.";
-		}
 
 		if (_opsAgent == null)
 		{
@@ -58,7 +53,7 @@ prototype ToGenerateLinkedInDraftImage : LinkedInSkillAction
 
 		string artifactRelativeDirectory = "artifacts/images/linkedin";
 		string outputDirectory = Path.Combine(sessionDirectory, artifactRelativeDirectory);
-		return OpenAIImageGenerationServiceRuntime.CreateImageFromParameters(apiKey, outputDirectory, artifactRelativeDirectory, prompt, size, model, quality, background, outputFormat, outputCompression);
+		return OpenAIImageGenerationServiceRuntime.CreateImageFromParameters(outputDirectory, artifactRelativeDirectory, prompt, size, model, quality, background, outputFormat, outputCompression);
 	}
 }
 
