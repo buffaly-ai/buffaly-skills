@@ -14198,7 +14198,7 @@
       "PackageType": "WebModule",
       "Title": "Ollama Cloud Catalog",
       "Description": "Buffaly Web Module package for Ollama Cloud Catalog.",
-      "Version": "0.1.292",
+      "Version": "0.1.293",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/OllamaCloud",
       "SourceUrl": "",
@@ -14221,11 +14221,11 @@
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "c7457e1b533af24396ae83d5af7bde5ea3dca1350dc14fa903273be296080604"
+          "Sha256": "5f2696341f9cf49b76a658b649b931852a525951f0abc8d681a4a9c195c4b22c"
         },
         {
           "Path": "Buffaly.Agent.Tools.Secrets.dll",
-          "Sha256": "9ca986e65ce1136893da343a3214a2fcf003fc0674bbcbadd0dc6d999e5da26e"
+          "Sha256": "243f7f72b10e1186af4915cb0fffdfc540d77b4400fae47214fc53d99a6cdf93"
         },
         {
           "Path": "Buffaly.Common.dll",
@@ -14237,15 +14237,15 @@
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "aea69313b65888179f4dc670b6217f8862ab8e3f89186ae23cf2e17faba3392c"
+          "Sha256": "fce2f51e595330937b777bc4cb3c35588238ed045c11ab1d7faaeb0866869586"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "0fece56fe940bc4d58292d9c5fe2ac8bf2dafe22a66602c928ef258a4c51d40f"
+          "Sha256": "740747529ba938fa374f60dcc975955040ad1c8aaa48f38bf8251e4559ad58b6"
         },
         {
           "Path": "Buffaly.Provider.Ollama.dll",
-          "Sha256": "ddc602d8a4f2e71d0ce2fc961b2d93097ef49d4c9358b9718b363d38c47187c6"
+          "Sha256": "c1c1a40b23ded72e810d7e04af3f0d12ed0460b98af6c398a71f29b6fb17caa5"
         },
         {
           "Path": "Buffaly.Provider.Ollama.Web.deps.json",
@@ -14253,11 +14253,11 @@
         },
         {
           "Path": "Buffaly.Provider.Ollama.Web.dll",
-          "Sha256": "773677722333ab6cd7638267fe6d45e49cc9b7c0e1aaf586899d7ca7a03d24d0"
+          "Sha256": "712d4ec9ec9bf8bc6540fc5dfbb2f833a2c292f30917f42ad7e587cd4783af4c"
         },
         {
           "Path": "Buffaly.Provider.Ollama.Web.exe",
-          "Sha256": "009195fee74f92cabdbd31b4b5da39146c065a5815a9d8df546cde5e55183ef6"
+          "Sha256": "de2612f04316d54d728fa8b582bb3fdbd1e3ef742d74a30d76be1dc4862ecef6"
         },
         {
           "Path": "Buffaly.Provider.Ollama.Web.runtimeconfig.json",
@@ -14265,11 +14265,11 @@
         },
         {
           "Path": "Buffaly.ProviderContracts.dll",
-          "Sha256": "b2ad2c9b0f243ac4319d4ba03b6a2df104f15945000539d8e8cdee7fff618234"
+          "Sha256": "a156306c608fc9ef524d0487fc0403aa3d01fd208245b83da6cb4bf9de5dd5ca"
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "c5db615062bbf51b1bbc2973f98a8fc35d79c99d388ef1098aaf3c0f9a06ac5e"
+          "Sha256": "a9473a298fd9724db8a77bf103f9881bd587fabd67d0f41f9781f29d2dc26dcb"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -14922,6 +14922,10 @@
         {
           "Path": "Scripts/Sessions_GetByParentSessionIDChildWindow_Sp.sql",
           "Sha256": "7b4ca569dca65e86173586a00d1615d075e2c251820c29cdc0ebeb34ae007d83"
+        },
+        {
+          "Path": "Scripts/Sessions_GetBySessionKeysSidebarStatus_Sp.sql",
+          "Sha256": "3954caf0d162aa948a68d19b335dc26d1830b68ea6313e4e8d01c626f18aec93"
         },
         {
           "Path": "Scripts/Sessions_GetPendingAttentionSp.sql",
