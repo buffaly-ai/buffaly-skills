@@ -17839,7 +17839,7 @@
       "PackageType": "WebModule",
       "Title": "Sessions",
       "Description": "Buffaly Web Module package for Sessions.",
-      "Version": "0.1.280",
+      "Version": "0.1.281",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/Sessions",
       "SourceUrl": "",
@@ -17866,15 +17866,15 @@
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "c7457e1b533af24396ae83d5af7bde5ea3dca1350dc14fa903273be296080604"
+          "Sha256": "5f2696341f9cf49b76a658b649b931852a525951f0abc8d681a4a9c195c4b22c"
         },
         {
           "Path": "Buffaly.Agent.SemanticDatabase.DB.dll",
-          "Sha256": "db8c8d873967b5c542b1294785fa6a34c7a45152f97988a03ae2bd514b1853d8"
+          "Sha256": "fb6691520bcdef5e1f67c95331e2e35f2e5b01c4b83e606022d1548f29e14d4c"
         },
         {
           "Path": "Buffaly.Agent.Tools.Secrets.dll",
-          "Sha256": "9ca986e65ce1136893da343a3214a2fcf003fc0674bbcbadd0dc6d999e5da26e"
+          "Sha256": "243f7f72b10e1186af4915cb0fffdfc540d77b4400fae47214fc53d99a6cdf93"
         },
         {
           "Path": "Buffaly.AIProviderAPI.dll",
@@ -17882,7 +17882,7 @@
         },
         {
           "Path": "Buffaly.Business.dll",
-          "Sha256": "0928e82c295b32ad1a76d0e6bfa2a515a7cc9a06c4bfbac715c9d939e6164b5e"
+          "Sha256": "e732725812c1655a5d2e1baeff2b1fe9c15168899a6ffb8aebc00a66529fb3b7"
         },
         {
           "Path": "Buffaly.Common.dll",
@@ -17894,27 +17894,27 @@
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "aea69313b65888179f4dc670b6217f8862ab8e3f89186ae23cf2e17faba3392c"
+          "Sha256": "fce2f51e595330937b777bc4cb3c35588238ed045c11ab1d7faaeb0866869586"
         },
         {
           "Path": "Buffaly.DB.Hybrid.dll",
-          "Sha256": "fd36459643ae807e33cc1276f42013a37aa146534dead39e7563c2a2a58c1c84"
+          "Sha256": "a9f858c5b617adc040a7c4ef3a563513d1600febf46c2624e881ac60ec40c7d3"
         },
         {
           "Path": "Buffaly.DB.Postgres.dll",
-          "Sha256": "4d76c336efdc6148908fe2f74526587d769b66db55a4c4a451bbed3c4abc70bf"
+          "Sha256": "143804942adb2955e2b830faede66d9879f6199e3d00f1df77690924d9b037a7"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "0fece56fe940bc4d58292d9c5fe2ac8bf2dafe22a66602c928ef258a4c51d40f"
+          "Sha256": "740747529ba938fa374f60dcc975955040ad1c8aaa48f38bf8251e4559ad58b6"
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "c5db615062bbf51b1bbc2973f98a8fc35d79c99d388ef1098aaf3c0f9a06ac5e"
+          "Sha256": "a9473a298fd9724db8a77bf103f9881bd587fabd67d0f41f9781f29d2dc26dcb"
         },
         {
           "Path": "Buffaly.Sessions.DB.PostGres.dll",
-          "Sha256": "314f1e0614bf34d70e5ca16034dd4f909ff1e9189401e0a88eb37f2b348763a1"
+          "Sha256": "4c10eee17648735c020ffefe7578072a4a10cc60d0c70b17d83a3a47ca0e6551"
         },
         {
           "Path": "Buffaly.Sessions.Web.deps.json",
@@ -17922,11 +17922,11 @@
         },
         {
           "Path": "Buffaly.Sessions.Web.dll",
-          "Sha256": "07e86029188790a2abb2402b87f1d4df745010f1d7f69bc8421210cc4f0af4e4"
+          "Sha256": "3bde4d49e07b6ce4ed286a9e46b9096306f2eb9463705da63f91a55e656f67b4"
         },
         {
           "Path": "Buffaly.Sessions.Web.exe",
-          "Sha256": "0a4e0ed1a9e2b31b897c3ea624232ade6c637f8f8c45416ea4fe2a7886f9050c"
+          "Sha256": "39d48ae022230c0bb452857039e97ad4909e1d86f368627321126c43629d8395"
         },
         {
           "Path": "Buffaly.Sessions.Web.runtimeconfig.json",
@@ -17934,7 +17934,7 @@
         },
         {
           "Path": "Buffaly.SessionSemanticDatabase.dll",
-          "Sha256": "6e7316a05b753e9ef544a95d8dc4f41b905c4d084422546382e0247dd434516d"
+          "Sha256": "65c506c68c8157b70322d4e0b62b5f3d96166d80f17a2683209f87e267f702bb"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -18199,6 +18199,10 @@
         {
           "Path": "Scripts/034_guarded_message_writers.sql",
           "Sha256": "6a22aba27726c922eb88cd35c96337374be124c6cf953899edffdbfca49f1351"
+        },
+        {
+          "Path": "Scripts/035_sidebar_persisted_status.sql",
+          "Sha256": "9cd336051b1d6a2edf58be01c60aa5f06344e687e60391ce1cd3acb676fe528d"
         },
         {
           "Path": "Scripts/Cleanup_TestSessions_ArchiveSp.sql",
@@ -18703,6 +18707,10 @@
         {
           "Path": "Scripts/Sessions_GetByParentSessionIDChildWindow_Sp.sql",
           "Sha256": "7b4ca569dca65e86173586a00d1615d075e2c251820c29cdc0ebeb34ae007d83"
+        },
+        {
+          "Path": "Scripts/Sessions_GetBySessionKeysSidebarStatus_Sp.sql",
+          "Sha256": "3954caf0d162aa948a68d19b335dc26d1830b68ea6313e4e8d01c626f18aec93"
         },
         {
           "Path": "Scripts/Sessions_GetPendingAttentionSp.sql",
