@@ -23315,7 +23315,7 @@
       "PackageType": "WebModule",
       "Title": "FairPath private read assistant",
       "Description": "Buffaly Web Module package for FairPath private read assistant.",
-      "Version": "0.1.5",
+      "Version": "0.1.6",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/FairPath.Chat.Connector",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/FairPath.Chat.Connector",
@@ -23326,15 +23326,15 @@
       "Files": [
         {
           "Path": "Buffaly.Chat.Client.dll",
-          "Sha256": "621421c58e35606dbde63323787c5daaf818fb2f9d9ac6ed0c61086fd53b0489"
+          "Sha256": "bdfdd3a221d4e4a00c581059a8ceeeff64bdcc875d2b49fd2d765cb545de28a9"
         },
         {
           "Path": "Buffaly.Chat.Contracts.dll",
-          "Sha256": "8c05a90ae9545099ac4869e0c6c2a493d416860f732a652b77d6b9c81bc641b3"
+          "Sha256": "dd1ae58fc34992f6c96df328073bce6705bf61d91c0e120aad146093a036b1e7"
         },
         {
           "Path": "FairPath.Chat.Connector.dll",
-          "Sha256": "df1ac49e843cf798cfd778bdf08fd26387924108aa235646adcd5ddfe7b08216"
+          "Sha256": "0c5f04758e74b6a61c8e7a33b45763b2e7fa2f5a52bd9d4c80029efbed3c5619"
         },
         {
           "Path": "ProjectArtifacts/FairPathAgent/Administrator.pts",
@@ -23351,6 +23351,10 @@
         {
           "Path": "ProjectArtifacts/FairPathAgent/Annotations.pts",
           "Sha256": "5aed2fe5b004297ec832f50e90355f75b9f342a24610bff9efacf8dbbbbd7550"
+        },
+        {
+          "Path": "ProjectArtifacts/FairPathAgent/ContextPrompts/fairpath-read.prompt.md",
+          "Sha256": "9112bb3c514850cef34d9a29420e325bec8254d7f099e280f9a792075487dde0"
         },
         {
           "Path": "ProjectArtifacts/FairPathAgent/Foundation.pts",
