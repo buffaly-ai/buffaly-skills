@@ -579,7 +579,7 @@
       "SkillName": "ComputerUse",
       "Title": "Computer Use",
       "Description": "Buffaly skill package for Computer Use.",
-      "Version": "0.1.5",
+      "Version": "0.1.6",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Computer Use",
@@ -598,15 +598,12 @@
         {
           "Path": "index.pts.md",
           "Sha256": "93595420674da5870fbfd53c5814daefb705de8f1ea944909e02461e9c447b84"
-        },
-        {
-          "Path": "Prompts/RunComputerUseTask.prompt.md",
-          "Sha256": "7e8f29903c6645f3b61e253e5f1f5211fa63d9d213098c46d41058e17be315fc"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": []
+      "Prerequisites": [],
+      "PreservedFiles": []
     },
     {
       "SkillName": "Desktop",
