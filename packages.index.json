@@ -21996,7 +21996,7 @@
       "PackageType": "WebModule",
       "Title": "Wiki",
       "Description": "Buffaly Web Module package for Wiki.",
-      "Version": "0.1.248",
+      "Version": "0.1.249",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/Buffaly.Agent.Wiki",
       "SourceUrl": "",
@@ -22019,7 +22019,7 @@
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "c7457e1b533af24396ae83d5af7bde5ea3dca1350dc14fa903273be296080604"
+          "Sha256": "5f2696341f9cf49b76a658b649b931852a525951f0abc8d681a4a9c195c4b22c"
         },
         {
           "Path": "Buffaly.Agent.Wiki.deps.json",
@@ -22027,19 +22027,19 @@
         },
         {
           "Path": "Buffaly.Agent.Wiki.dll",
-          "Sha256": "bb5d6537193c307ebc7ba5b9d07e9fe5a75f1f4c8b9b7b8e03e0b843913d2e62"
+          "Sha256": "9c5f192f7d87e288ab6830227f1027eaaf4712c78cb215433caf64435d56cd06"
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "aea69313b65888179f4dc670b6217f8862ab8e3f89186ae23cf2e17faba3392c"
+          "Sha256": "fce2f51e595330937b777bc4cb3c35588238ed045c11ab1d7faaeb0866869586"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "0fece56fe940bc4d58292d9c5fe2ac8bf2dafe22a66602c928ef258a4c51d40f"
+          "Sha256": "740747529ba938fa374f60dcc975955040ad1c8aaa48f38bf8251e4559ad58b6"
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "c5db615062bbf51b1bbc2973f98a8fc35d79c99d388ef1098aaf3c0f9a06ac5e"
+          "Sha256": "a9473a298fd9724db8a77bf103f9881bd587fabd67d0f41f9781f29d2dc26dcb"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -22704,6 +22704,10 @@
         {
           "Path": "Scripts/Sessions_GetByParentSessionIDChildWindow_Sp.sql",
           "Sha256": "7b4ca569dca65e86173586a00d1615d075e2c251820c29cdc0ebeb34ae007d83"
+        },
+        {
+          "Path": "Scripts/Sessions_GetBySessionKeysSidebarStatus_Sp.sql",
+          "Sha256": "3954caf0d162aa948a68d19b335dc26d1830b68ea6313e4e8d01c626f18aec93"
         },
         {
           "Path": "Scripts/Sessions_GetPendingAttentionSp.sql",
