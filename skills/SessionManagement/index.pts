@@ -301,15 +301,17 @@ prototype ToListActiveSessions : SessionManagementSkillAction
 [SemanticProgram.InfinitivePhrase("to list persisted recent buffaly sessions")]
 [SemanticProgram.InfinitivePhrase("to list recent sessions with parent metadata")]
 [SemanticProgram.InfinitivePhrase("to get recent session hierarchy and activity")]
+[SemanticProgram.InfinitivePhrase("to search sessions by name")]
+[SemanticProgram.InfinitivePhrase("to find a session by key")]
 prototype ToListRecentSessions : SessionManagementSkillAction
 {
-	Description = @"maxCount - maximum persisted recent sessions to return (defaults to 50). skip - recent rows to skip for paging. Returns canonical SessionInfo rows ordered by activity, including ParentSessionKey, AgentName, UpdatedUtc, LastFinalMessageUtc, and MessageCount.";
-
-	function Execute(int maxCount = 50, int skip = 0) : List<SessionInfo>
+	function Execute(int maxCount = 50, int skip = 0, string search = "") : List<SessionInfo>
 	{
-		return SessionTools.ListRecentSessionsTool(maxCount, skip);
+		return SessionTools.ListRecentSessionsTool(maxCount, skip, search);
 	}
+	Description = @"maxCount - maximum persisted sessions to return, 1..200 (default 50). skip - nonnegative matching rows to skip for paging (default 0). search - optional session name or key substring; empty preserves the recent-session listing. For session discovery, search names/keys here before searching message content, then inspect the matching session directly. Returns canonical SessionInfo rows ordered by activity, including ParentSessionKey, AgentName, UpdatedUtc, LastFinalMessageUtc, and MessageCount. Searches non-archived session metadata only, not message content or archived sessions; no match does not prove a session never existed. Use explicit bounded message-content search when content or historical/archive coverage is required.";
 }
+
 
 [SemanticProgram.InfinitivePhrase("to get a session message as markdown from a session")]
 [SemanticProgram.InfinitivePhrase("to deterministically convert a session message key into markdown")]
@@ -332,8 +334,9 @@ prototype ToSearchSessionMessages : SessionManagementSkillAction
 	{
 		return SessionTools.SearchSessionMessagesTool(search, maxRows, searchScope, maxMessageScanCount);
 	}
-	Description = @"search - required content search text. maxRows - maximum returned messages, default 25; this does not cap candidates. searchScope - recent (default), deep, or all. Use recent first. maxMessageScanCount - recent 0 uses 2500 candidates; deep requires an explicit positive limit, start with 10000 and expand deliberately. all is an explicit unbounded historical scan. Results cover only the candidate window. Returns compact JSON with MessageID, SessionID, MessageKey, TurnKey, SequenceNumber, Role, Text, SearchScope, MaxMessageScanCount, and NextSearchSuggestion.";
+	Description = @"For session discovery by name or key, use ToListRecentSessions(search: ...) first, then inspect the matching session directly. Use this action for message content or historical/archive coverage; a metadata miss is not an exhaustive content search. search - required content search text. maxRows - maximum returned messages, default 25; this does not cap candidates. searchScope - recent (default), deep, or all. Use recent first. maxMessageScanCount - recent 0 uses 2500 candidates; deep requires an explicit positive limit, start with 10000 and expand deliberately. all is an explicit unbounded historical scan. Results cover only the candidate window. Returns compact JSON with MessageID, SessionID, MessageKey, TurnKey, SequenceNumber, Role, Text, SearchScope, MaxMessageScanCount, and NextSearchSuggestion.";
 }
+
 
 
 [SemanticProgram.InfinitivePhrase("to search final assistant session messages by content")]
@@ -345,8 +348,9 @@ prototype ToSearchSessionFinalAssistantMessages : SessionManagementSkillAction
 	{
 		return SessionTools.SearchSessionFinalAssistantMessagesTool(search, maxRows, searchScope, maxMessageScanCount);
 	}
-	Description = @"search - required content search text. maxRows - maximum returned messages, default 25; this does not cap candidates. searchScope - recent (default), deep, or all. Use recent first. maxMessageScanCount - recent 0 uses 2500 candidates; deep requires an explicit positive limit, start with 10000 and expand deliberately. all is an explicit unbounded historical scan. Results cover only the candidate window. Returns compact JSON with MessageID, SessionID, MessageKey, TurnKey, SequenceNumber, Role, Text, SearchScope, MaxMessageScanCount, and NextSearchSuggestion.";
+	Description = @"For session discovery by name or key, use ToListRecentSessions(search: ...) first, then inspect the matching session directly. Use this action for message content or historical/archive coverage; a metadata miss is not an exhaustive content search. search - required content search text. maxRows - maximum returned messages, default 25; this does not cap candidates. searchScope - recent (default), deep, or all. Use recent first. maxMessageScanCount - recent 0 uses 2500 candidates; deep requires an explicit positive limit, start with 10000 and expand deliberately. all is an explicit unbounded historical scan. Results cover only the candidate window. Returns compact JSON with MessageID, SessionID, MessageKey, TurnKey, SequenceNumber, Role, Text, SearchScope, MaxMessageScanCount, and NextSearchSuggestion.";
 }
+
 
 
 

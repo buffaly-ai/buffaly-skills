@@ -139,3 +139,8 @@
 - Typed parsed upsert revised ToSearchSessionMessages and ToSearchSessionFinalAssistantMessages descriptions: recent0=2500, deeppositivecount required/start10000, deliberate unboundedall and candidate-window coverage.
 - Preserved semantic annotations and pass-through signatures/default0/C# owner validation. Authoring serializer reordered Description after method without changing execution.
 - Validation: typed authoring parse/upsert succeeded and focused wrapper guidance regression passed in19/19 expanded Release run. Installed ProtoScript execution validation pending.
+
+
+## 2026-10-18 — Expose existing session metadata name/key search
+- Typed parser/upsert updated ToListRecentSessions with optional trailing search, name/key semantic phrases and metadata-first discovery guidance. Coverage explicitly excludes archived sessions/message content; no-match is not exhaustive. Content search retains deliberate recent/deep/all escalation (deep positive limit, start10000) and points identity discovery to metadata first. General and DispatchAgent curated declarations agree.
+- Validation: isolated single-thread Release build with real references and BuffalyCopyOutputToRepoDeploy=false passed;14/14 focused tests passed (defaults/invalid bounds/forwarding source contract, parsed general+curated actions, explicit content fallback and prior deep-search regressions). Initial artifact-outside-repository test run had source-root failures; corrected and rerun. Installed staging execution is tracked separately and is not claimed here.
