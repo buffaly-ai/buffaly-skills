@@ -30,6 +30,7 @@
     "ToResolveTopCandidateAndRun": "Skills/SessionManagement/index.pts",
     "ToSearchSessionFinalAssistantMessages": "Skills/SessionManagement/index.pts",
     "ToSearchSessionMessages": "Skills/SessionManagement/index.pts",
+    "ToSearchSessionsByNameOrKey": "Skills/SessionManagement/index.pts",
     "ToSendMessageToSession": "Skills/SessionManagement/index.pts",
     "ToSetBuffalySessionParent": "Skills/SessionManagement/index.pts",
     "ToUnarchiveBuffalySession": "Skills/SessionManagement/index.pts"
@@ -163,6 +164,10 @@
       "to fetch the full user state payload for a session",
       "to get user state",
       "to read stored user state by session key"
+    ],
+    "ToSearchSessionsByNameOrKey": [
+      "to find a session by key",
+      "to search sessions by name"
     ]
   }
 }
