@@ -144,3 +144,8 @@
 ## 2026-10-18 — Expose existing session metadata name/key search
 - Typed parser/upsert updated ToListRecentSessions with optional trailing search, name/key semantic phrases and metadata-first discovery guidance. Coverage explicitly excludes archived sessions/message content; no-match is not exhaustive. Content search retains deliberate recent/deep/all escalation (deep positive limit, start10000) and points identity discovery to metadata first. General and DispatchAgent curated declarations agree.
 - Validation: isolated single-thread Release build with real references and BuffalyCopyOutputToRepoDeploy=false passed;14/14 focused tests passed (defaults/invalid bounds/forwarding source contract, parsed general+curated actions, explicit content fallback and prior deep-search regressions). Initial artifact-outside-repository test run had source-root failures; corrected and rerun. Installed staging execution is tracked separately and is not claimed here.
+
+## 2026-10-18 - Preserve exact-arity session discovery callers
+- Installed validation found ProtoScript prototype calls require an exact argument count even when defaults are declared. Restored ToListRecentSessions.Execute(maxCount,skip) and the two-argument C# binary signature; retained one validated three-argument metadata owner path for filtered calls.
+- Added a separate ToSearchSessionsByNameOrKey(search,maxCount,skip) action to general and DispatchAgent curated surfaces using typed parser/upsert. Content guidance points to it while retaining explicit historical/archive fallback. No compiler, SQL, storage or auth change.
+- Added compiler regressions for existing two-argument and new filtered prototype-to-prototype calls; validation results are recorded in the task receipt after execution.
