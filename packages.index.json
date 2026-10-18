@@ -2358,7 +2358,7 @@
       "PackageType": "ProviderModule",
       "Title": "OpenAI Provider",
       "Description": "Buffaly Provider Module package for OpenAI Provider.",
-      "Version": "0.1.104",
+      "Version": "0.1.105",
       "PackageKind": "BuffalyProviderModule",
       "SourcePath": "provider-modules/Buffaly.Provider.OpenAi",
       "SourceUrl": "",
@@ -2369,23 +2369,27 @@
       "Files": [
         {
           "Path": "BasicUtilities.dll",
-          "Sha256": "57137b22392c3f9152a21e0a2609311b98652845a46d600830eb0c9c601ad1ad"
+          "Sha256": "b1462828e80064c8917852b1a2f6ebb3591671fc89a729d1255f1bce91208223"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "b69f4d9dada97dac9f3ee8e8eb8d8a7f874bbb0ca1fc1e7747f285a52f3085d7"
+          "Sha256": "469e3dd73183aff2a89f58ee834693e9d836107377cbc56693679bdecf632db0"
         },
         {
           "Path": "Buffaly.Provider.OpenAi.deps.json",
-          "Sha256": "63a2b5eba3bbabdbb582dd7b26f9b2a137832724265a81d06eb4e9ecff644b04"
+          "Sha256": "70fdae36fd0d803f9cfb732e2f7149ae06fabf5b2125ac19ef76ad66f958042e"
         },
         {
           "Path": "Buffaly.Provider.OpenAi.dll",
-          "Sha256": "b26c727f29c2cfffc10ee2a26729c0ae8a9e5baeca75805ba53ab53a9f58bce6"
+          "Sha256": "4defaae58336da13189dfc83659a3c8427a5a3e7d67d3c0e2e0402492c9aa262"
+        },
+        {
+          "Path": "Buffaly.Provider.Realtime.dll",
+          "Sha256": "085fd1bd1617675579fa99a6d02a05d7c7f4767b68ec0d6b290aa5830b3cc671"
         },
         {
           "Path": "Buffaly.ProviderContracts.dll",
-          "Sha256": "6a2aa60a933d38113872f77663629c82cd971e79eaa2844df33811c3b3967965"
+          "Sha256": "db63bfc5f42382af5ea0054d7606781ce288e6cf0ca04afe01bc39eb9888de18"
         },
         {
           "Path": "Microsoft.Data.SqlClient.dll",
@@ -2397,7 +2401,7 @@
         },
         {
           "Path": "ProviderModules.json",
-          "Sha256": "3170023775f99f8d314df48cd427dbc0778e94d0e9d0132b7c8d203556259329"
+          "Sha256": "49e06e29659508f8f1eef8eeca4830ca548f6c45e9c2a75391ce82ea5a96dc48"
         },
         {
           "Path": "SixLabors.ImageSharp.dll",
