@@ -72,3 +72,7 @@
 
 ## 2026-10-08 — brief appended note
 - Shortened only appended SSM preflight through typed native upsert; full original descriptions, signatures and sender bodies preserved. 17 prototypes parsed, 45/45 guidance/safeguard tests passed and bounded Host build passed. No remote execution or installed delivery.
+
+## 2026-10-18 — lazy Node test utility declaration
+- Imported NodeTestTools and declared include lazy NodeTests/index.pts, preserving existing eager Process actions and their signatures. Node action source and discovery sidecar are in the nested module; no CoreAction/CodingContext startup exposure added.
+- Validation: parser accepted the changed index; Utility.Tests26/26 including sidecar-only preactivation discovery and explicit Node wrapper execution. Source-only, no installed-output edits/restarts.

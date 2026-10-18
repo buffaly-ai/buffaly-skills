@@ -1,0 +1,9 @@
+[SemanticProgram.InfinitivePhrase("to run JavaScript node test files")]
+prototype ToRunNodeTestFile : ProcessSkillAction
+{
+	function Execute(string testFilePath, string workingDirectory, int timeoutSeconds) : string
+	{
+		return NodeTestTools.RunNodeTestFile(testFilePath, workingDirectory, timeoutSeconds);
+	}
+	Description = "Run an existing JavaScript file with node, without a shell. Returns ExitCode, TimedOut, stdout and stderr. timeoutSeconds must be positive. Does not force node --test; the selected file owns its test runner.";
+}

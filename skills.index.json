@@ -2096,7 +2096,7 @@
       "SkillName": "Process",
       "Title": "Process",
       "Description": "Buffaly skill package for Process.",
-      "Version": "0.1.6",
+      "Version": "0.1.7",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Process",
@@ -2106,11 +2106,23 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "9a043d63825a06057eeba0780cd06139c72eb64081de13ae68add05264be9d6c"
+          "Sha256": "f2d74c2f6b9d569fe11580fe3eb1a8b366da89cec416dab6afb3ae35a9ace7c9"
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "0cb76b5a50d310144811cdb5a65f155ee15de0233f98afe523d54e879e8ae4c9"
+          "Sha256": "73829508046bdf0ce7d283d4ea406d216b6098ef236e63f6505560981651f224"
+        },
+        {
+          "Path": "NodeTests/index.pts",
+          "Sha256": "026dbb6a054486d03b5e54718046462a0a1e5bcf6e4b1df3e9b00baa0c9d85e0"
+        },
+        {
+          "Path": "NodeTests/index.pts.lazy.json",
+          "Sha256": "c26337ddfd7025f3058fbb610ea6bb5787b64d32269bb3fef0bf579c99d5e137"
+        },
+        {
+          "Path": "NodeTests/index.pts.md",
+          "Sha256": "9bfe14d39ca23bd5fc82b6836546cb20a81acc0b3bc8b74b05e60d03d60ee223"
         },
         {
           "Path": "SKILL.md",

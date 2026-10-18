@@ -2,6 +2,8 @@ import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.Liv
 import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.LiveToolInputCollectionResultContract LiveToolInputCollectionResultContract;
 import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.RuntimeUiEventOutputContract RuntimeUiEventOutputContract;
 import Buffaly.Agent.Tools.Process Buffaly.Agent.Tools.Process.ProcessToolDisplayOptions ProcessToolDisplayOptions;
+import Buffaly.Agent.Tools.Process Buffaly.Agent.Tools.Process.NodeTestTools NodeTestTools;
+include lazy "NodeTests/index.pts";
 prototype ProcessSkillAction : OpsAction
 {
 	Description = @"Base action type for process/system command execution tools.";
