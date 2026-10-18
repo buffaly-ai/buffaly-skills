@@ -1,0 +1,19 @@
+[SemanticProgram.InfinitivePhrase("to find ancestor instruction files for a path")]
+prototype ToFindAncestorInstructionFiles : FileSystemSkillAction
+{
+	function Execute(string startPath, string fileName) : string
+	{
+		return FileSystemUtilityTools.FindAncestorInstructionFiles(startPath, fileName);
+	}
+	Description = "startPath - existing file or directory. fileName - one instruction filename, such as AGENTS.md. Returns nearest-first matching ancestor paths; does not read their content.";
+}
+[SemanticProgram.InfinitivePhrase("to verify file hashes")]
+[SemanticProgram.InfinitivePhrase("to verify claimed file hashes against actual bytes")]
+prototype ToVerifyClaimedFileHashes : FileSystemSkillAction
+{
+	function Execute(string directoryPath, string claimedHashPairs) : string
+	{
+		return FileSystemUtilityTools.VerifyClaimedFileHashes(directoryPath, claimedHashPairs);
+	}
+	Description = "directoryPath - existing base directory. claimedHashPairs - path=SHA256 claims separated by semicolons or newlines; absolute paths also allowed. Returns per-file Match/Mismatch/Missing and AllMatch. Empty or malformed claims fail explicitly.";
+}

@@ -21,3 +21,7 @@
 - Replaced ToGetFileBlock wrapper-side path/validation logic with the authoritative C# ReadFileBlockPage facade, preserving its four-argument caller signature and beginning at offset zero. Added ToGetFileBlockPage thin continuation wrapper with explicit characterOffset.
 - Description states actual range/EOF/cursor and bounded response semantics. Authored owning source through ProtoScriptPrototypeUpsertTools parse/upsert, not installed Matt-local files.
 - Validation: typed parse/upsert succeeded for both definitions; C# tools/test builds0errors and paging regressions pass. Full skill binding/installed staging acceptance pending.
+
+## 2026-10-18 — lazy read-only utility declaration
+- Imported FileSystemUtilityTools and declared include lazy Utilities/index.pts. Ancestor/hash actions remain outside eager source declarations/default context roots; no existing action signature changed.
+- Validation: changed index parsed; actual lazy maps and module wrapper execution verified in Utility.Tests26/26. Source-only, no installed activation.

@@ -1,3 +1,5 @@
+import Buffaly.Agent.Tools.FileSystem Buffaly.Agent.Tools.FileSystem.FileSystemUtilityTools FileSystemUtilityTools;
+include lazy "Utilities/index.pts";
 prototype FileSystemSkillAction : OpsAction
 {
 	Description = @"Base action type for FileSystem skill tools.";
