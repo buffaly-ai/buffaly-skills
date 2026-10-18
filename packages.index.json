@@ -10372,10 +10372,10 @@
       "PackageType": "WebModule",
       "Title": "Google Workspace",
       "Description": "Buffaly Web Module package for Google Workspace.",
-      "Version": "0.1.149",
+      "Version": "0.1.150",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/GoogleWorkspace",
-      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/GoogleWorkspace",
+      "SourceUrl": "",
       "Phrases": [
         "Google Workspace",
         "GoogleWorkspace"
@@ -10406,12 +10406,16 @@
           "Sha256": "f8c5341df184e59f844d4fc2c9ab088454ebf35ea5e95cbee667f4782639637b"
         },
         {
+          "Path": "Buffaly.Agent.Tools.Secrets.dll",
+          "Sha256": "517d7e16e1f03f46c456eebad62ed6ae1abd4f74e27d51f2e784e2cd3821ea1f"
+        },
+        {
           "Path": "Buffaly.Common.dll",
           "Sha256": "5902ebef9e4b340a834e0e405120fa3833536cbd1bc1255554a86c1b628e6a2a"
         },
         {
           "Path": "Buffaly.GoogleWorkspace.dll",
-          "Sha256": "fef731c5cc833a592b0d98ceadf6cb4ca3949d42cf08791cd18e39006a52fcf3"
+          "Sha256": "cab18e900fbff244b128902d59f2c7e0865703bb277b0ebb050f0b651e53adcb"
         },
         {
           "Path": "Buffaly.GoogleWorkspace.WebModule.deps.json",
@@ -10419,11 +10423,11 @@
         },
         {
           "Path": "Buffaly.GoogleWorkspace.WebModule.dll",
-          "Sha256": "004c5d6a0ae8f79b733d11802c1d396f56c9164664fb9074a1c010c63aeec5a9"
+          "Sha256": "6ade6aa1557c16acba65d1207ad974369ea3ae98be1487eb4fdf17bf5b448f02"
         },
         {
           "Path": "Buffaly.GoogleWorkspace.WebModule.exe",
-          "Sha256": "592b3862fb957660e04485871227e9afd0c3524cc5c5b02d4524426c90a90557"
+          "Sha256": "eeaeb3158e79da417da58d476bb6f85114e52efc94c5e6c766e3bb82103a53f4"
         },
         {
           "Path": "Buffaly.GoogleWorkspace.WebModule.runtimeconfig.json",
@@ -10626,6 +10630,14 @@
           "Sha256": "f7d51f47b1eba12021161ee39a7d08d24df1dcd52c131d1d94ee2c7e432f4cb4"
         },
         {
+          "Path": "Skills/GoogleWorkspace/Admin.pts",
+          "Sha256": "1859057eab2b1d02eead80c7aefcdeda2dfe2c51dfc79f67ca4c084d1bb488a8"
+        },
+        {
+          "Path": "Skills/GoogleWorkspace/Admin.pts.md",
+          "Sha256": "b8e1cadc809dd438985bfba8c1f95deaeafc88515d5d8e32e975c05bf352c36e"
+        },
+        {
           "Path": "Skills/GoogleWorkspace/Auth.pts",
           "Sha256": "fc87e985c227af103aacd832bac87f69ee4aa6dde309e999f69b6cc2d828a923"
         },
@@ -10687,11 +10699,15 @@
         },
         {
           "Path": "Skills/GoogleWorkspace/index.pts",
-          "Sha256": "0ecf336fb052e039b59734b4c50fd9a2d2fa9a0ce2405ffadfdaab6abdef7b64"
+          "Sha256": "041b75d446e1fd863c9c5f5dcfb364e7583e4b4ad361af29272620d7a5420cbd"
         },
         {
           "Path": "Skills/GoogleWorkspace/index.pts.lazy.json",
           "Sha256": "f18099aba8e363797ee8e8a07d6dd6e3d861bf8a1929d96dfa33e7da59c2b101"
+        },
+        {
+          "Path": "Skills/GoogleWorkspace/index.pts.md",
+          "Sha256": "c5efbc72ad91af6c50f55c06136957407e5cbce43061c4b9a954f924209e5fa6"
         },
         {
           "Path": "Skills/GoogleWorkspace/Memory.pts",

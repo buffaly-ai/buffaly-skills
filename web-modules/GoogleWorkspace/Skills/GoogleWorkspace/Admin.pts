@@ -1,0 +1,86 @@
+import Buffaly.GoogleWorkspace Buffaly.GoogleWorkspace.Admin.WorkspaceAdminCli WorkspaceAdminCli;
+
+[SemanticProgram.InfinitivePhrase("to list google workspace directory users")]
+prototype ToListGoogleWorkspaceDirectoryUsers : GoogleWorkspaceSkillAction
+{
+    Description = "Lists live directory users, not OAuth connections. status: active, suspended, archived or all. domain: explicit lowercase domain or empty for all domains.";
+    function Execute(string status, string domain) : string
+    {
+        return WorkspaceAdminCli.ListUsers(status, domain);
+    }
+}
+[SemanticProgram.InfinitivePhrase("to inspect a google workspace directory user")]
+prototype ToGetGoogleWorkspaceDirectoryUser : GoogleWorkspaceSkillAction
+{
+    Description = "Gets the exact primary-email directory user and security-readiness fields; never returns passwords.";
+    function Execute(string email) : string { return WorkspaceAdminCli.GetUser(email); }
+}
+[SemanticProgram.InfinitivePhrase("to list google workspace domains")]
+prototype ToListGoogleWorkspaceDirectoryDomains : GoogleWorkspaceSkillAction
+{
+    function Execute() : string { return WorkspaceAdminCli.ListDomains(); }
+}
+[SemanticProgram.InfinitivePhrase("to check a google workspace email address")]
+prototype ToCheckGoogleWorkspaceDirectoryAddress : GoogleWorkspaceSkillAction
+{
+    Description = "Checks current users, user aliases, groups and group aliases. directory_available is not a reservation or guarantee against unmanaged/deleted-account conflicts.";
+    function Execute(string email) : string { return WorkspaceAdminCli.CheckAddress(email); }
+}
+[SemanticProgram.InfinitivePhrase("to create a google workspace directory user")]
+prototype ToCreateGoogleWorkspaceDirectoryUser : GoogleWorkspaceSkillAction
+{
+    Description = "Preview with execute=false. execute=true requires authority for this user and any automatic OU license cost. Creates no groups, admin privileges or notifications. Returns a temporary-password secret key, never the password. Existing addresses fail; no suffixing or overwrite.";
+    function Execute(string email, string givenName, string familyName, string orgUnitPath, bool execute) : string
+    {
+        return WorkspaceAdminCli.CreateUser(email, givenName, familyName, orgUnitPath, execute);
+    }
+}
+[SemanticProgram.InfinitivePhrase("to update a google workspace user name")]
+prototype ToUpdateGoogleWorkspaceDirectoryUserName : GoogleWorkspaceSkillAction
+{
+    Description = "Changes only first and last name. No primary-email rename. execute=false previews; true requires target-specific authorization.";
+    function Execute(string email, string givenName, string familyName, bool execute) : string
+    { return WorkspaceAdminCli.UpdateName(email, givenName, familyName, execute); }
+}
+[SemanticProgram.InfinitivePhrase("to reset a google workspace user password")]
+prototype ToResetGoogleWorkspaceDirectoryUserPassword : GoogleWorkspaceSkillAction
+{
+    Description = "Disruptive, explicitly authorized reset only; execute=false previews. Stores generated password securely and requires change at next login. Never sends login instructions. Do not retry uncertain results.";
+    function Execute(string email, bool execute) : string { return WorkspaceAdminCli.ResetPassword(email, execute); }
+}
+[SemanticProgram.InfinitivePhrase("to suspend a google workspace user")]
+prototype ToSuspendGoogleWorkspaceDirectoryUser : GoogleWorkspaceSkillAction
+{
+    Description = "Explicitly authorized suspension only. execute=false previews. Retains data and license; does not cancel billing. Protected/administrator identities cannot be suspended. No delete or archive.";
+    function Execute(string email, bool execute) : string { return WorkspaceAdminCli.SetSuspended(email, true, execute); }
+}
+[SemanticProgram.InfinitivePhrase("to restore a suspended google workspace user")]
+prototype ToRestoreGoogleWorkspaceDirectoryUser : GoogleWorkspaceSkillAction
+{
+    Description = "Explicitly authorized unsuspension only. Does not restore deleted or archived accounts. execute=false previews.";
+    function Execute(string email, bool execute) : string { return WorkspaceAdminCli.SetSuspended(email, false, execute); }
+}
+[SemanticProgram.InfinitivePhrase("to add a google workspace user alias")]
+prototype ToAddGoogleWorkspaceDirectoryUserAlias : GoogleWorkspaceSkillAction
+{
+    Description = "Adds an alias to one primary-email user, not a mailbox; execute=false previews. Existing own alias is a no-op; another user's or group's address is rejected.";
+    function Execute(string email, string alias, bool execute) : string { return WorkspaceAdminCli.AddAlias(email, alias, execute); }
+}
+[SemanticProgram.InfinitivePhrase("to list google workspace business standard license assignments")]
+prototype ToListGoogleWorkspaceBusinessStandardLicenses : GoogleWorkspaceSkillAction
+{
+    function Execute() : string { return WorkspaceAdminCli.ListLicenses(); }
+}
+[SemanticProgram.InfinitivePhrase("to assign a google workspace business standard license")]
+prototype ToAssignGoogleWorkspaceBusinessStandardLicense : GoogleWorkspaceSkillAction
+{
+    Description = "SKU 1010020028 only. execute=false previews cost implications. execute=true requires explicit license/cost authority. No license removal, change of edition or purchase of a subscription.";
+    function Execute(string email, bool execute) : string { return WorkspaceAdminCli.AssignBusinessStandard(email, execute); }
+}
+
+[SemanticProgram.InfinitivePhrase("to inspect google workspace protected accounts")]
+prototype ToInspectGoogleWorkspaceProtectedAccounts : GoogleWorkspaceSkillAction
+{
+    Description = "Read-only validation of operator-owned protected user ID/email bindings. No action can change this policy. Missing or drifted bindings disable all writes; no deletion action exists.";
+    function Execute() : string { return WorkspaceAdminCli.InspectProtection(); }
+}

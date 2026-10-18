@@ -6,7 +6,7 @@ prototype GoogleWorkspaceSkillAction : OpsAction
 [SemanticEntity("google workspace skill")]
 prototype GoogleWorkspaceSkill : SkillEntity
 {
-	Description = "Google Workspace auth, Gmail, Drive, Docs, Sheets, and Calendar actions.";
+	Description = "Google Workspace auth, Gmail, Drive, Docs, Sheets, Calendar, Chat, and CLI-backed directory administration actions.";
 	ActionRoot = GoogleWorkspaceSkillAction;
 }
 
@@ -15,6 +15,7 @@ include "GoogleWorkspaceService.pts";
 include "Memory.pts";
 include "PromptActions.pts";
 include "Auth.pts";
+include "Admin.pts";
 include "Gmail.pts";
 include "Drive.pts";
 include "Docs.pts";
