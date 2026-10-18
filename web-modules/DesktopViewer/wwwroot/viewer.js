@@ -175,6 +175,7 @@
 			drawFrame(frame);
 			setStatus("Streaming remote " + (sourceSelect.value === "screen" ? "desktop" : "application window") + ".", false);
 		} catch (error) {
+			stop();
 			setStatus(error && error.message ? error.message : String(error), true);
 		} finally {
 			captureInFlight = false;

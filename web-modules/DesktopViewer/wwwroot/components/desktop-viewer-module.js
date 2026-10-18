@@ -25,6 +25,7 @@ class DesktopViewerModule extends HTMLElement {
 		this._timer = 0;
 		this._captureInFlight = false;
 		this._frameCount = 0;
+		this._failed = false;
 	}
 
 	configure(configuration) {
@@ -57,7 +58,7 @@ class DesktopViewerModule extends HTMLElement {
 		this.querySelector("h2").textContent = state.WindowTitle;
 		this.querySelector("header p").textContent = state.ProcessName;
 		await this._capture();
-		if (!this._disposed) this._timer = window.setInterval(() => { void this._capture(); }, state.FrameIntervalMs);
+		if (!this._disposed && !this._failed) this._timer = window.setInterval(() => { void this._capture(); }, state.FrameIntervalMs);
 	}
 
 	dispose() {
@@ -68,7 +69,7 @@ class DesktopViewerModule extends HTMLElement {
 	}
 
 	async _capture() {
-		if (this._disposed || this._captureInFlight) return;
+		if (this._disposed || this._failed || this._captureInFlight) return;
 		this._captureInFlight = true;
 		try {
 			const frame = await postFrame(this._configuration.state);
@@ -79,9 +80,13 @@ class DesktopViewerModule extends HTMLElement {
 			this.querySelector(".dv-frames").textContent = `${this._frameCount} frames | ${frame.width}x${frame.height}`;
 			if (this._frameCount === 1) this.dispatchEvent(new CustomEvent("buffaly-component-ready", { bubbles: true, detail: { moduleName: "DesktopViewer", screen: "window", processName: this._configuration.state.ProcessName, windowTitle: this._configuration.state.WindowTitle } }));
 		} catch (error) {
+			this._failed = true;
+			if (this._timer) window.clearInterval(this._timer);
+			this._timer = 0;
+			this.querySelector("header strong").textContent = "STOPPED";
 			this.querySelector(".dv-status").textContent = error.message;
 			this.querySelector(".dv-status").classList.add("dv-error");
-			if (this._frameCount === 0) this.dispatchEvent(new CustomEvent("buffaly-component-error", { bubbles: true, detail: { moduleName: "DesktopViewer", screen: "window", message: error.message } }));
+			this.dispatchEvent(new CustomEvent("buffaly-component-error", { bubbles: true, detail: { moduleName: "DesktopViewer", screen: "window", message: error.message } }));
 		} finally {
 			this._captureInFlight = false;
 		}
