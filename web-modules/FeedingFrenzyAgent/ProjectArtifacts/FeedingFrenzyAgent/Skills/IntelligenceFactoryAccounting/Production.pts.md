@@ -1,0 +1,4 @@
+# Production.pts history
+
+## 2026-10-19 — IF-only production rollout implementation
+Adds a separate ordinary skill entrypoint including the JsonWs foundation and Embedded actions with fixed canonical production BaseUrl and distinct production UserSecrets key; does not change default local index or embedded credential sourcing. Implementation validation: agent-module suite56/56 passed; accounting library and exact IF host publication succeeded; real generated package passed tenant-content, compiled profile and application-slug validators;13 structural accounting-package regression cases passed. Compiled connection owner accepted exact Local/Production and rejected five missing/case/cross-environment/CRM/Commerce cases (7/7). These are source/package/no-DB checks, not production acceptance. Production migration, authentication, embedded runtime, write/readback, screenshots and rollback acceptance remain unrun; no production settings or data were changed.

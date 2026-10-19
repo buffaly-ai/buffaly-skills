@@ -12,7 +12,7 @@ prototype IntelligenceFactoryAccountingGuardedWriteAction : IntelligenceFactoryA
 [SemanticEntity("IF income and expense accounting")]
 prototype IntelligenceFactoryAccountingSkill : SkillEntity
 {
-	Description = "Reports, report drill-down, Chase file checks and explicitly authorized transaction review for the local IF tenant.";
+	Description = "Reports, report drill-down, Chase file checks and explicitly authorized transaction review for the IF tenant.";
 	ActionRoot = IntelligenceFactoryAccountingAction;
 }
 prototype IntelligenceFactoryAccountingService : Service
@@ -24,8 +24,8 @@ prototype IntelligenceFactoryAccountingService : Service
 	Bool TokenIsAuthorizationToken = false;
 	function ConfigureAuthorization(string BaseUrl, string AuthorizationToken) : string
 	{
-		if (!AccountingString.Equals(BaseUrl, "http://127.0.0.1:58235") || StringUtil.IsEmpty(AuthorizationToken))
-			return "Error: Authorized local IF binding required.";
+		if ((!AccountingString.Equals(BaseUrl, "http://127.0.0.1:58235") && !AccountingString.Equals(BaseUrl, "https://ff.intelligencefactory.ai")) || StringUtil.IsEmpty(AuthorizationToken))
+			return "Error: Authorized exact IF binding required.";
 		this.BaseUrl = BaseUrl;
 		this.TokenKey = AuthorizationToken;
 		this.TokenIsAuthorizationToken = true;
@@ -33,8 +33,8 @@ prototype IntelligenceFactoryAccountingService : Service
 	}
 	function CallRoute(string Route, JsonObject Args) : string
 	{
-		if (!AccountingString.Equals(this.BaseUrl, "http://127.0.0.1:58235") || StringUtil.IsEmpty(this.TokenKey))
-			return "Error: IF local accounting authorization is not configured.";
+		if ((!AccountingString.Equals(this.BaseUrl, "http://127.0.0.1:58235") && !AccountingString.Equals(this.BaseUrl, "https://ff.intelligencefactory.ai")) || StringUtil.IsEmpty(this.TokenKey))
+			return "Error: IF accounting authorization is not configured.";
 		return this.TokenIsAuthorizationToken
 			? JsonWsHelper.CallJsonRoute(this.BaseUrl, "api/if.feedingfrenzy.accounting", Route, this.TokenKey, Args)
 			: JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, "api/if.feedingfrenzy.accounting", Route, this.TokenKey, Args);
@@ -58,5 +58,5 @@ prototype IntelligenceFactoryAccountingService : Service
 }
 partial prototype IntelligenceFactoryAccountingService#Current : IntelligenceFactoryAccountingService
 {
-	Description = "Configured by trusted embedded launch or the separate fixed-local OpsAgent entrypoint; never a model-selected URL.";
+	Description = "Configured by trusted embedded launch or the separate fixed-origin OpsAgent entrypoints; never a model-selected URL.";
 }

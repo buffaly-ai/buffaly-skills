@@ -1,0 +1,8 @@
+include "../FeedingFrenzyJsonWs/Foundation.pts";
+include "Embedded.pts";
+partial prototype IntelligenceFactoryAccountingService#Current : IntelligenceFactoryAccountingService
+{
+	BaseUrl = "https://ff.intelligencefactory.ai";
+	TokenKey = "IntelligenceFactory.Accounting.Production.ApiToken";
+	TokenIsAuthorizationToken = false;
+}
