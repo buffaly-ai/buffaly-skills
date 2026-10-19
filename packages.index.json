@@ -23510,6 +23510,57 @@
       "RequiresRestart": true,
       "RequiresPreStartInstall": true,
       "PreStartCleanupPaths": []
+    },
+    {
+      "PackageId": "VoiceLab",
+      "PackageType": "WebModule",
+      "Title": "Voice Lab",
+      "Description": "Buffaly Web Module package for Voice Lab.",
+      "Version": "0.1.0",
+      "PackageKind": "BuffalyWebModule",
+      "SourcePath": "web-modules/VoiceLab",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/VoiceLab",
+      "Phrases": [
+        "Voice Lab",
+        "VoiceLab"
+      ],
+      "Files": [
+        {
+          "Path": "Buffaly.VoiceLab.WebModule.deps.json",
+          "Sha256": "b34b14a521f582524ec1b8d06a2581332fb42b3196fa9668e8e7ff2bb990e792"
+        },
+        {
+          "Path": "Buffaly.VoiceLab.WebModule.dll",
+          "Sha256": "a1672e569f3162581bd1fd180721df98dd7747ddcacfebc51ce629ca6e941bcc"
+        },
+        {
+          "Path": "web-module.json",
+          "Sha256": "0754a07b7a3dbafcae91fd363fe261316cd67df7b383ebbc58294c4e0d3fc8f1"
+        },
+        {
+          "Path": "wwwroot/index.html",
+          "Sha256": "ba6065507863f737da75e249442a413e61e4ec3da3d73e444f5e6d821fb5a48a"
+        },
+        {
+          "Path": "wwwroot/js/audio.js",
+          "Sha256": "70c1c0e019de01e4327ab78f45ae12b603717f2103a2d7d56ae284692b8ca086"
+        },
+        {
+          "Path": "wwwroot/js/voice-lab.js",
+          "Sha256": "104d6774273b86d1f3b3ea9a4b8d05e1be7142930305c139561bad1e8e03fe5c"
+        },
+        {
+          "Path": "wwwroot/voice-lab.css",
+          "Sha256": "8eec3e9e7efaac892e66c9ff4fbe6eab4b10a7b5573fcf677208d1291f6ee200"
+        }
+      ],
+      "ProjectArtifacts": [],
+      "Dependencies": [],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "RequiresRestart": true,
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     }
   ]
 }
