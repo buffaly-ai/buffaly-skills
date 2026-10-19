@@ -3441,6 +3441,72 @@
       "Prerequisites": [
         "A compatible installed Buffaly runtime for host-boundary testing"
       ]
+    },
+    {
+      "SkillName": "IntelligenceFactoryAccounting",
+      "Title": "Intelligence Factory accounting",
+      "Description": "Buffaly skill package for Intelligence Factory accounting.",
+      "Version": "0.1.0",
+      "PackageKind": "OpsAgentProtoScriptSkill",
+      "Phrases": [
+        "Intelligence Factory accounting",
+        "IntelligenceFactoryAccounting"
+      ],
+      "Path": "skills/IntelligenceFactoryAccounting",
+      "Files": [
+        {
+          "Path": "Foundation.pts",
+          "Sha256": "eb83b07760ee6b422627f702cb6bec552e9684a93da1bdae43288206e7956ddf"
+        },
+        {
+          "Path": "Foundation.pts.md",
+          "Sha256": "a7934dc56bf6290284ba0ad2942f6acb72804d14cbc210c595feb3f6bea93344"
+        },
+        {
+          "Path": "index.pts",
+          "Sha256": "2c071cbc55adeacb682cc0e7bfc807301d492b7b7a9e787d280b71dde5f89bb2"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "a7934dc56bf6290284ba0ad2942f6acb72804d14cbc210c595feb3f6bea93344"
+        },
+        {
+          "Path": "OpsAgent.pts",
+          "Sha256": "27e267e028bc74d00248f8710cb8b8f0c776974d070d98e6456c26edf2aee0f3"
+        },
+        {
+          "Path": "OpsAgent.pts.md",
+          "Sha256": "a7934dc56bf6290284ba0ad2942f6acb72804d14cbc210c595feb3f6bea93344"
+        },
+        {
+          "Path": "Read.pts",
+          "Sha256": "f0dd4a3e0586679c8f9d2b73c612209e02ea02fe9d19e954d82f5e25b9a86d6f"
+        },
+        {
+          "Path": "Read.pts.md",
+          "Sha256": "a7934dc56bf6290284ba0ad2942f6acb72804d14cbc210c595feb3f6bea93344"
+        },
+        {
+          "Path": "Review.pts",
+          "Sha256": "3c6b84472f69d3f58359fd2d504685eae522ae2dcc614af499e8474d8080c7a5"
+        },
+        {
+          "Path": "Review.pts.md",
+          "Sha256": "a7934dc56bf6290284ba0ad2942f6acb72804d14cbc210c595feb3f6bea93344"
+        },
+        {
+          "Path": "skill-manifest.json",
+          "Sha256": "bb2247755ae359949236f63054780f6f992585b26476e49ea9cd51ce39552d88"
+        },
+        {
+          "Path": "SKILL.md",
+          "Sha256": "851cc7e56a837c37c0e5ce7e613591bd08d42e301abd4268642e6a59e4168edb"
+        }
+      ],
+      "EntryPoint": "index.pts",
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "PreservedFiles": []
     }
   ]
 }

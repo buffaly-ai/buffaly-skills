@@ -1,0 +1,17 @@
+[SemanticProgram.InfinitivePhrase("to review an IF accounting transaction")]
+prototype ToReviewIfAccountingTransaction : IntelligenceFactoryAccountingGuardedWriteAction
+{
+	Description = "Write only the user's explicitly authorized complete review-field replacement. Read current transaction first. CategoryID 0 explicitly clears category; empty Notes explicitly clears notes. Never guess tax treatment, mutate bank economics, mass-apply a rule, or automatically retry. Matched/voided restrictions remain in force. Read back after success or uncertain transport outcome.";
+	function Execute(int AccountingTransactionID, int AccountingCategoryID, string BookTreatment, string Notes, bool IsReviewed) : string
+	{
+		JsonObject input = new JsonObject();
+		input["AccountingTransactionID"] = AccountingTransactionID;
+		if (AccountingCategoryID == 0) input["AccountingCategoryID"] = null; else input["AccountingCategoryID"] = AccountingCategoryID;
+		input["BookTreatment"] = BookTreatment;
+		if (Notes == "") input["Notes"] = null; else input["Notes"] = Notes;
+		input["IsReviewed"] = IsReviewed;
+		JsonObject args = new JsonObject();
+		args["Input"] = input;
+		return IntelligenceFactoryAccountingService#Current.CallRoute("accounting-transactions/review", args);
+	}
+}
