@@ -1,5 +1,5 @@
 include "../FeedingFrenzyJsonWs/Foundation.pts";
-include "index.pts";
+include "Embedded.pts";
 partial prototype IntelligenceFactoryAccountingService#Current : IntelligenceFactoryAccountingService
 {
 	BaseUrl = "http://127.0.0.1:58235";

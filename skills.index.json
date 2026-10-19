@@ -3446,7 +3446,7 @@
       "SkillName": "IntelligenceFactoryAccounting",
       "Title": "Intelligence Factory accounting",
       "Description": "Buffaly skill package for Intelligence Factory accounting.",
-      "Version": "0.1.0",
+      "Version": "0.1.1",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Intelligence Factory accounting",
@@ -3455,28 +3455,36 @@
       "Path": "skills/IntelligenceFactoryAccounting",
       "Files": [
         {
+          "Path": "Embedded.pts",
+          "Sha256": "2c071cbc55adeacb682cc0e7bfc807301d492b7b7a9e787d280b71dde5f89bb2"
+        },
+        {
+          "Path": "Embedded.pts.md",
+          "Sha256": "79579eff2e5ff60cb62f5d68ea4c2b9f5e58297508feb02779075cd9141524ae"
+        },
+        {
           "Path": "Foundation.pts",
           "Sha256": "eb83b07760ee6b422627f702cb6bec552e9684a93da1bdae43288206e7956ddf"
         },
         {
           "Path": "Foundation.pts.md",
-          "Sha256": "a7934dc56bf6290284ba0ad2942f6acb72804d14cbc210c595feb3f6bea93344"
+          "Sha256": "80668d61d008ebba6a3a49331f2271333fab28ca9fc1448a138ea7820f5330bb"
         },
         {
           "Path": "index.pts",
-          "Sha256": "2c071cbc55adeacb682cc0e7bfc807301d492b7b7a9e787d280b71dde5f89bb2"
+          "Sha256": "1c7d43025fb9e64822e8db6355a53b98f33dfe0f54e551a53e647b4aae577d07"
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "a7934dc56bf6290284ba0ad2942f6acb72804d14cbc210c595feb3f6bea93344"
+          "Sha256": "80668d61d008ebba6a3a49331f2271333fab28ca9fc1448a138ea7820f5330bb"
         },
         {
           "Path": "OpsAgent.pts",
-          "Sha256": "27e267e028bc74d00248f8710cb8b8f0c776974d070d98e6456c26edf2aee0f3"
+          "Sha256": "05ce146a272976b243b15a834b615fb9ca4de0e2f0c48fea196f94eb53f850d9"
         },
         {
           "Path": "OpsAgent.pts.md",
-          "Sha256": "a7934dc56bf6290284ba0ad2942f6acb72804d14cbc210c595feb3f6bea93344"
+          "Sha256": "80668d61d008ebba6a3a49331f2271333fab28ca9fc1448a138ea7820f5330bb"
         },
         {
           "Path": "Read.pts",
@@ -3484,7 +3492,7 @@
         },
         {
           "Path": "Read.pts.md",
-          "Sha256": "a7934dc56bf6290284ba0ad2942f6acb72804d14cbc210c595feb3f6bea93344"
+          "Sha256": "80668d61d008ebba6a3a49331f2271333fab28ca9fc1448a138ea7820f5330bb"
         },
         {
           "Path": "Review.pts",
@@ -3492,15 +3500,19 @@
         },
         {
           "Path": "Review.pts.md",
-          "Sha256": "a7934dc56bf6290284ba0ad2942f6acb72804d14cbc210c595feb3f6bea93344"
+          "Sha256": "80668d61d008ebba6a3a49331f2271333fab28ca9fc1448a138ea7820f5330bb"
         },
         {
           "Path": "skill-manifest.json",
-          "Sha256": "bb2247755ae359949236f63054780f6f992585b26476e49ea9cd51ce39552d88"
+          "Sha256": "8b8e4ac0e917288eee02936a399b80f023368e02545a664b21c7fde4cc9663a9"
+        },
+        {
+          "Path": "skill-manifest.json.md",
+          "Sha256": "92181851b22e53c7720e7bc4d75e5a9d45080ff19f2d8f3f00b81551232d8f74"
         },
         {
           "Path": "SKILL.md",
-          "Sha256": "851cc7e56a837c37c0e5ce7e613591bd08d42e301abd4268642e6a59e4168edb"
+          "Sha256": "a0a22805dd3494ca360494ce5e948696de8d3d3e0c5b8eee70fbead27143039d"
         }
       ],
       "EntryPoint": "index.pts",

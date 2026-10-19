@@ -3,8 +3,8 @@
 Ordinary package-managed ProtoScript skill. Version 0.1.0. Requires the existing FeedingFrenzyJsonWs foundation/action root and normal OpsAgent service/JsonObject/JsonWsHelper support. No core changes or bespoke HTTP tools.
 
 ## Entrypoints
-- Directory/OpsAgent: `OpsAgent.pts` includes the fixed local binding and resolves logical UserSecrets key `IntelligenceFactory.Accounting.Local.ApiToken` inside CallJsonRouteSecure. Provision only an authorized existing IF user's API authorization; this design does not create a user/token/secret. No login-as-user helper.
-- Embedded IF administrator: include `index.pts`, NEVER `OpsAgent.pts`. The trusted host calls Current.ConfigureAuthorization with the actual logged-in user's API token. Without it, requests fail closed.
+- Directory/OpsAgent: `index.pts` includes `OpsAgent.pts`, which includes the fixed local binding and resolves logical UserSecrets key `IntelligenceFactory.Accounting.Local.ApiToken` inside CallJsonRouteSecure. Provision only an authorized existing IF user's API authorization; this design does not create a user/token/secret. No login-as-user helper.
+- Embedded IF administrator: include `Embedded.pts`, NEVER `index.pts` or `OpsAgent.pts`. The trusted host calls Current.ConfigureAuthorization with the actual logged-in user's API token. Without it, requests fail closed.
 - Feed the existing FeedingFrenzyJsonWs foundation before this package. Do not change its API prefix or Current binding.
 
 ## Tool use policy
@@ -19,4 +19,4 @@ Books are not tax positions. Original amounts/provenance and unresolved tax assu
 ## Installation and tests
 Publish package files and their actual SHA256 entries through the existing skills catalog workflow. Load FeedingFrenzyJsonWs first, then this package's catalog EntryPoint. Copy/install the same package payload under the embedded project's `Skills/IntelligenceFactoryAccounting` without the OpsAgent binding include. Validate compiled tool schemas, semantic discovery, fixed routes, actor attribution and cross-tenant denials before enabling.
 
-No APIs or tools described here have been implemented or exercised by this design artifact.
+Implemented source and actual validation are recorded in the companion histories and local deployment receipt. Publication, installation and active runtime state must be verified separately.
