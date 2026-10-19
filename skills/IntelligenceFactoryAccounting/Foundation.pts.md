@@ -12,3 +12,6 @@ Validation: complete IF administrator ProtoScript graph compiled: 39 files, 0 di
 
 ## 2026-10-19 — Preserve optional query null contract at HTTP boundary
 Actual skill cohort call proved JsonObject assignment of null produced an empty Search string rejected by the server. Query now omits absent optional filter properties, allowing the existing nullable DTO binder to own null; nonzero/negative IDs and explicit nonempty filters pass unchanged. No server coercion or fallback added. Fresh rerun follows in deployment receipt.
+
+## 2026-10-19 — Final HTTP acceptance and retained limitations
+Actual local API test saved/reloaded review on future-dated fixture192 with unchanged -1.23 economics and unrelated Data key preserved, rejected negative category and voided review, then voided fixture192. Earlier failed fixture191 was also voided. Original2025 report was byte-for-byte unchanged; original checking/card check-only calls found batches1/2 and78/106rows without importing. Anonymous401, actor2 context200/no-store. The ordinary installed skill successfully called context/report and Software category cohort61rows/5418.29 from Taxes Accounting. Full module52tests pass. Embedded module activation remains separate and currently blocked by ReleaseOps admission mutex; no Matt-local restart performed.

@@ -93,7 +93,10 @@ prototype ToExportIfAccountingTransactionCohort : IntelligenceFactoryAccountingA
 	function Execute(string StartDate, string EndDate, int AccountID, int CategoryID, string BookTreatment, bool ProfitAndLossOnly, string Search, string ReviewState, bool IncludeVoided, int Page, int PageSize) : string
 	{
 		JsonObject args = new JsonObject();
-		args["Query"] = IntelligenceFactoryAccountingService#Current.Query(StartDate, EndDate, AccountID, CategoryID, BookTreatment, ProfitAndLossOnly, Search, ReviewState, IncludeVoided, Page, PageSize);
+		JsonObject query = IntelligenceFactoryAccountingService#Current.Query(StartDate, EndDate, AccountID, CategoryID, BookTreatment, ProfitAndLossOnly, Search, ReviewState, IncludeVoided, Page, PageSize);
+        query.Remove("Page");
+        query.Remove("PageSize");
+        args["Query"] = query;
 		return IntelligenceFactoryAccountingService#Current.CallRoute("accounting-transactions/export-cohort", args);
 	}
 }
