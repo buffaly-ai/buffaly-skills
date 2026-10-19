@@ -1,0 +1,149 @@
+{
+  "Version": 1,
+  "ModulePath": "Skills/MetabaseRuntime/index.pts",
+  "Prototypes": {
+    "Applications_GetAll": "Skills/MetabaseRuntime/index.pts",
+    "Applications_InsertApplication": "Skills/MetabaseRuntime/index.pts",
+    "MetabaseRuntimeSkill": "Skills/MetabaseRuntime/index.pts",
+    "MetabaseRuntimeSkillAction": "Skills/MetabaseRuntime/index.pts",
+    "ProjectsAdmin_GetDetails": "Skills/MetabaseRuntime/index.pts",
+    "RootTraxApplication": "Skills/MetabaseRuntime/index.pts",
+    "RootTraxFeature": "Skills/MetabaseRuntime/index.pts",
+    "RootTraxMethod": "Skills/MetabaseRuntime/index.pts",
+    "RootTraxObject": "Skills/MetabaseRuntime/index.pts",
+    "RootTraxProject": "Skills/MetabaseRuntime/index.pts",
+    "RootTraxProperty": "Skills/MetabaseRuntime/index.pts",
+    "RootTraxRelationship": "Skills/MetabaseRuntime/index.pts",
+    "ToAddRelatedObjectsTabToRootTraxDetailsPageGuide": "Skills/MetabaseRuntime/index.pts",
+    "ToCopyRootTraxVdbObjectIntoApplication": "Skills/MetabaseRuntime/index.pts",
+    "ToCreateRootTraxVdbObjectSpecificationFromLLM": "Skills/MetabaseRuntime/index.pts",
+    "ToEnsureRootTraxVdbApplication": "Skills/MetabaseRuntime/index.pts",
+    "ToEnsureRootTraxVdbDatabaseMetadata": "Skills/MetabaseRuntime/index.pts",
+    "ToEnsureRootTraxVdbFeature": "Skills/MetabaseRuntime/index.pts",
+    "ToEnsureRootTraxVdbFeatureObjectLink": "Skills/MetabaseRuntime/index.pts",
+    "ToEnsureRootTraxVdbProject": "Skills/MetabaseRuntime/index.pts",
+    "ToEnsureRootTraxVdbProjectFeatureLink": "Skills/MetabaseRuntime/index.pts",
+    "ToFindRootTraxVdbObjectIdByName": "Skills/MetabaseRuntime/index.pts",
+    "ToGetLocalMetabaseObjectEditUrl": "Skills/MetabaseRuntime/index.pts",
+    "ToImplementRootTraxVdbBusinessIntoProject": "Skills/MetabaseRuntime/index.pts",
+    "ToImplementRootTraxVdbDefaultAdminKsIntoProject": "Skills/MetabaseRuntime/index.pts",
+    "ToImplementRootTraxVdbFeatureIntoProjectDatabase": "Skills/MetabaseRuntime/index.pts",
+    "ToImplementRootTraxVdbFeatureUiIntoProject": "Skills/MetabaseRuntime/index.pts",
+    "ToImplementRootTraxVdbKScriptPagesIntoProject": "Skills/MetabaseRuntime/index.pts",
+    "ToImplementRootTraxVdbObjectIntoProjectDatabase": "Skills/MetabaseRuntime/index.pts",
+    "ToImplementRootTraxVdbRepositoriesIntoProject": "Skills/MetabaseRuntime/index.pts",
+    "ToLaunchAndVerifyLocalMetabase": "Skills/MetabaseRuntime/index.pts",
+    "ToLaunchLocalRootTraxMetabaseSkill": "Skills/MetabaseRuntime/index.pts",
+    "ToRunLocalRootTraxMetabaseJsonWsWorkflowSkill": "Skills/MetabaseRuntime/index.pts",
+    "ToUpdateRootTraxVdbProjectDirectories": "Skills/MetabaseRuntime/index.pts",
+    "ToUpsertRootTraxVdbObjectDefinition": "Skills/MetabaseRuntime/index.pts",
+    "ToUseMermaidDiagramArtifactWorkflowSkill": "Skills/MetabaseRuntime/index.pts",
+    "ToUseRootTraxMetabaseSkill": "Skills/MetabaseRuntime/index.pts",
+    "ToUseRootTraxPortalArchitectureMasterGuide": "Skills/MetabaseRuntime/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToEnsureRootTraxVdbApplication": [
+      "to ensure a roottrax vdb application"
+    ],
+    "ToFindRootTraxVdbObjectIdByName": [
+      "to find a roottrax vdb object id by name"
+    ],
+    "ToCopyRootTraxVdbObjectIntoApplication": [
+      "to copy a roottrax vdb object into application"
+    ],
+    "ToEnsureRootTraxVdbDatabaseMetadata": [
+      "to ensure roottrax vdb database metadata"
+    ],
+    "ToEnsureRootTraxVdbProject": [
+      "to ensure a roottrax vdb project"
+    ],
+    "ToImplementRootTraxVdbObjectIntoProjectDatabase": [
+      "to implement roottrax vdb object into project database"
+    ],
+    "ToCreateRootTraxVdbObjectSpecificationFromLLM": [
+      "to create roottrax vdb object specification from llm"
+    ],
+    "ToUpsertRootTraxVdbObjectDefinition": [
+      "to upsert roottrax vdb object definition"
+    ],
+    "ToGetLocalMetabaseObjectEditUrl": [
+      "to build local metabase object link",
+      "to get local metabase object edit url"
+    ],
+    "ToEnsureRootTraxVdbFeature": [
+      "to ensure a roottrax vdb feature"
+    ],
+    "ToEnsureRootTraxVdbProjectFeatureLink": [
+      "to ensure roottrax vdb project feature link"
+    ],
+    "ToEnsureRootTraxVdbFeatureObjectLink": [
+      "to ensure roottrax vdb feature object link"
+    ],
+    "ToUpdateRootTraxVdbProjectDirectories": [
+      "to update roottrax vdb project directories"
+    ],
+    "ToImplementRootTraxVdbFeatureIntoProjectDatabase": [
+      "to implement roottrax vdb feature into project database"
+    ],
+    "ToImplementRootTraxVdbRepositoriesIntoProject": [
+      "to implement roottrax vdb repositories into project"
+    ],
+    "ToImplementRootTraxVdbBusinessIntoProject": [
+      "to implement roottrax vdb business layer into project"
+    ],
+    "ToImplementRootTraxVdbFeatureUiIntoProject": [
+      "to implement roottrax vdb feature ui into project"
+    ],
+    "ToImplementRootTraxVdbKScriptPagesIntoProject": [
+      "to implement roottrax vdb kscript pages into project"
+    ],
+    "ToImplementRootTraxVdbDefaultAdminKsIntoProject": [
+      "to implement roottrax vdb default admin ks into project"
+    ],
+    "Applications_GetAll": [
+      "to get all metabase applications",
+      "to list roottrax vdb applications"
+    ],
+    "Applications_InsertApplication": [
+      "to create a roottrax vdb application row",
+      "to insert a metabase application"
+    ],
+    "ProjectsAdmin_GetDetails": [
+      "to get roottrax metabase project details html",
+      "to render projects admin details html"
+    ],
+    "ToUseRootTraxMetabaseSkill": [
+      "to plan roottrax metabase application and object workflow",
+      "to use roottrax metabase",
+      "to use roottrax metabase for application scaffolding"
+    ],
+    "ToRunLocalRootTraxMetabaseJsonWsWorkflowSkill": [
+      "to run the local roottrax metabase jsonws workflow",
+      "to use local metabase jsonws runbook"
+    ],
+    "ToLaunchLocalRootTraxMetabaseSkill": [
+      "to launch metabase locally",
+      "to run rootrax metabase locally with http fallback",
+      "to start local metabase with dotnet run"
+    ],
+    "ToUseMermaidDiagramArtifactWorkflowSkill": [
+      "to create and launch a mermaid diagram artifact",
+      "to save a mermaid diagram file and open it with file query",
+      "to use the local mermaid artifact viewer workflow"
+    ],
+    "ToLaunchAndVerifyLocalMetabase": [
+      "to launch and verify local metabase",
+      "to start local metabase and validate http endpoint"
+    ],
+    "ToUseRootTraxPortalArchitectureMasterGuide": [
+      "how to create or maintain a rootrax admin portal",
+      "to audit roottrax admin portal architecture",
+      "to create a roottrax portal implementation guide",
+      "to use roottrax portal architecture master guide"
+    ],
+    "ToAddRelatedObjectsTabToRootTraxDetailsPageGuide": [
+      "to add a related objects tab to a roottrax details page",
+      "to implement related objects tabs in roottrax kscript details pages"
+    ]
+  }
+}

@@ -13,6 +13,9 @@ reference "lib/Microsoft.SqlServer.ServiceBrokerEnum.dll" Microsoft.SqlServer.Se
 reference "lib/Microsoft.SqlServer.Smo.dll" Microsoft.SqlServer.Smo;
 reference "lib/Microsoft.SqlServer.SqlEnum.dll" Microsoft.SqlServer.SqlEnum;
 
+reference Buffaly.Agent.Tools.Llm Buffaly.Agent.Tools.Llm;
+import mscorlib System.IO.File File;
+import Buffaly.Agent.Tools.Llm Buffaly.Agent.Tools.Llm.LLMs LLMs;
 import BasicUtilities BasicUtilities.StringUtil StringUtil;
 import BasicUtilities BasicUtilities.JsonObject JsonObject;
 
