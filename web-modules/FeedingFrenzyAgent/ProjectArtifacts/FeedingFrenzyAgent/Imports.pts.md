@@ -44,3 +44,6 @@
 ## Move TebraWeb To Name-Based Reference (2026-06-24)
 - Changed `Buffaly.Agent.Tools.TebraWeb` from an explicit `lib/Buffaly.Agent.Tools.TebraWeb.dll` reference to a name-based reference.
 - Design decision: TebraWeb is deployed with the app/runtime payload like BrowserSession dependencies, so ProtoScript should resolve it through the runtime assembly resolver instead of relying on a fragile `content/projects/OpsAgent/lib` copy.
+
+## 2026-10-19 — Resolve existing administrator template file helpers
+The full IF profile inherits AgreementTemplates.Admin.pts, which already uses System.IO.File and System.IO.Path. Its actual compile reported nine unresolved File/Path diagnostics. Added those explicit framework imports, not filesystem OpsActions or broad tool assemblies. Full IF graph then compiled 39 files/0 diagnostics; representative broad-capability exclusions still passed in the 52-test suite.
