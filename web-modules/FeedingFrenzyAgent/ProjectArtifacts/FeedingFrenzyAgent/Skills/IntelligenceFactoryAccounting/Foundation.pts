@@ -1,3 +1,5 @@
+import mscorlib System.String AccountingString;
+
 prototype IntelligenceFactoryAccountingAction : FeedingFrenzyJsonWsSkillAction
 {
 	Description = "Read/check actions for the IF-only accounting JsonWs service.";
@@ -22,7 +24,7 @@ prototype IntelligenceFactoryAccountingService : Service
 	Bool TokenIsAuthorizationToken = false;
 	function ConfigureAuthorization(string BaseUrl, string AuthorizationToken) : string
 	{
-		if (BaseUrl != "http://127.0.0.1:58235" || StringUtil.IsEmpty(AuthorizationToken))
+		if (!AccountingString.Equals(BaseUrl, "http://127.0.0.1:58235") || StringUtil.IsEmpty(AuthorizationToken))
 			return "Error: Authorized local IF binding required.";
 		this.BaseUrl = BaseUrl;
 		this.TokenKey = AuthorizationToken;
@@ -31,7 +33,7 @@ prototype IntelligenceFactoryAccountingService : Service
 	}
 	function CallRoute(string Route, JsonObject Args) : string
 	{
-		if (this.BaseUrl != "http://127.0.0.1:58235" || StringUtil.IsEmpty(this.TokenKey))
+		if (!AccountingString.Equals(this.BaseUrl, "http://127.0.0.1:58235") || StringUtil.IsEmpty(this.TokenKey))
 			return "Error: IF local accounting authorization is not configured.";
 		return this.TokenIsAuthorizationToken
 			? JsonWsHelper.CallJsonRoute(this.BaseUrl, "api/if.feedingfrenzy.accounting", Route, this.TokenKey, Args)
