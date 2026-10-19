@@ -44,10 +44,10 @@ prototype IntelligenceFactoryAccountingService : Service
 		query["EndDate"] = EndDate;
 		if (AccountID != 0) query["AccountingAccountID"] = AccountID;
 		if (CategoryID != 0) query["AccountingCategoryID"] = CategoryID;
-		if (BookTreatment != "") query["BookTreatment"] = BookTreatment;
+		if (!StringUtil.IsEmpty(BookTreatment)) query["BookTreatment"] = BookTreatment;
 		query["ProfitAndLossOnly"] = ProfitAndLossOnly;
-		if (Search != "") query["Search"] = Search;
-		if (ReviewState != "") query["ReviewState"] = ReviewState;
+		if (!StringUtil.IsEmpty(Search)) query["Search"] = Search;
+		if (!StringUtil.IsEmpty(ReviewState)) query["ReviewState"] = ReviewState;
 		query["IncludeVoided"] = IncludeVoided;
 		query["Page"] = Page;
 		query["PageSize"] = PageSize;
