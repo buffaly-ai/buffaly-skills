@@ -42,12 +42,12 @@ prototype IntelligenceFactoryAccountingService : Service
 		JsonObject query = new JsonObject();
 		query["StartDate"] = StartDate;
 		query["EndDate"] = EndDate;
-		if (AccountID == 0) query["AccountingAccountID"] = null; else query["AccountingAccountID"] = AccountID;
-		if (CategoryID == 0) query["AccountingCategoryID"] = null; else query["AccountingCategoryID"] = CategoryID;
-		if (BookTreatment == "") query["BookTreatment"] = null; else query["BookTreatment"] = BookTreatment;
+		if (AccountID != 0) query["AccountingAccountID"] = AccountID;
+		if (CategoryID != 0) query["AccountingCategoryID"] = CategoryID;
+		if (BookTreatment != "") query["BookTreatment"] = BookTreatment;
 		query["ProfitAndLossOnly"] = ProfitAndLossOnly;
-		if (Search == "") query["Search"] = null; else query["Search"] = Search;
-		if (ReviewState == "") query["ReviewState"] = null; else query["ReviewState"] = ReviewState;
+		if (Search != "") query["Search"] = Search;
+		if (ReviewState != "") query["ReviewState"] = ReviewState;
 		query["IncludeVoided"] = IncludeVoided;
 		query["Page"] = Page;
 		query["PageSize"] = PageSize;
