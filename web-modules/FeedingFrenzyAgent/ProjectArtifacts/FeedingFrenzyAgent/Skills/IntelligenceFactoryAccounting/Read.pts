@@ -1,0 +1,114 @@
+[SemanticProgram.InfinitivePhrase("to get the IF accounting context")]
+prototype ToGetIfAccountingContext : IntelligenceFactoryAccountingAction
+{
+	Description = "Verify the enabled actor and IF local capability. Does not disclose connection strings.";
+	function Execute() : string
+	{
+		return IntelligenceFactoryAccountingService#Current.CallRoute("accounting-context/get-context", new JsonObject());
+	}
+}
+[SemanticProgram.InfinitivePhrase("to list IF accounting accounts")]
+prototype ToListIfAccountingAccounts : IntelligenceFactoryAccountingAction
+{
+	Description = "Read account IDs, names, kind and archive state.";
+	function Execute() : string
+	{
+		return IntelligenceFactoryAccountingService#Current.CallRoute("accounting-accounts/get-all", new JsonObject());
+	}
+}
+[SemanticProgram.InfinitivePhrase("to list IF accounting categories")]
+prototype ToListIfAccountingCategories : IntelligenceFactoryAccountingAction
+{
+	Description = "Read category IDs and compatible book treatment.";
+	function Execute() : string
+	{
+		return IntelligenceFactoryAccountingService#Current.CallRoute("accounting-categories/get-all", new JsonObject());
+	}
+}
+[SemanticProgram.InfinitivePhrase("to list IF accounting import batches")]
+prototype ToListIfAccountingImportBatches : IntelligenceFactoryAccountingAction
+{
+	Description = "Read import receipts and source hashes, not raw CSV payloads.";
+	function Execute() : string
+	{
+		return IntelligenceFactoryAccountingService#Current.CallRoute("accounting-import-batches/get-all", new JsonObject());
+	}
+}
+[SemanticProgram.InfinitivePhrase("to list IF accounting review assumptions")]
+prototype ToListIfAccountingReviewAssumptions : IntelligenceFactoryAccountingAction
+{
+	Description = "Read documented assumptions; they are not proof of tax basis or filing.";
+	function Execute() : string
+	{
+		return IntelligenceFactoryAccountingService#Current.CallRoute("accounting-review-assumptions/get-all", new JsonObject());
+	}
+}
+[SemanticProgram.InfinitivePhrase("to list IF accounting transfers")]
+prototype ToListIfAccountingTransfers : IntelligenceFactoryAccountingAction
+{
+	Description = "Read existing transfer pairs. Never infer a pair from similar descriptions.";
+	function Execute() : string
+	{
+		return IntelligenceFactoryAccountingService#Current.CallRoute("accounting-transfers/get-all", new JsonObject());
+	}
+}
+[SemanticProgram.InfinitivePhrase("to get an IF accounting report")]
+prototype ToGetIfAccountingReport : IntelligenceFactoryAccountingAction
+{
+	Description = "Read the server-owned report for an inclusive YYYY-MM-DD date period. Returned amounts are authoritative, never recompute them from a ledger page.";
+	function Execute(string StartDate, string EndDate) : string
+	{
+		JsonObject args = new JsonObject();
+		args["StartDate"] = StartDate;
+		args["EndDate"] = EndDate;
+		return IntelligenceFactoryAccountingService#Current.CallRoute("accounting-reports/get-report", args);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to get an IF accounting transaction")]
+prototype ToGetIfAccountingTransaction : IntelligenceFactoryAccountingAction
+{
+	Description = "Read one transaction including immutable bank economics, review fields and provenance.";
+	function Execute(int AccountingTransactionID) : string
+	{
+		JsonObject args = new JsonObject();
+		args["AccountingTransactionID"] = AccountingTransactionID;
+		return IntelligenceFactoryAccountingService#Current.CallRoute("accounting-transactions/get", args);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to get an IF accounting transaction cohort")]
+prototype ToGetIfAccountingTransactionCohort : IntelligenceFactoryAccountingAction
+{
+	Description = "Read server-owned filtered cohort rows and full-cohort totals. Dates are inclusive YYYY-MM-DD. AccountID/CategoryID 0 means no filter, negative is invalid. Empty BookTreatment/Search/ReviewState means no filter. All flags/page fields must be explicit. Export refuses more than 5000 rows; do not silently truncate or export additional data.";
+	function Execute(string StartDate, string EndDate, int AccountID, int CategoryID, string BookTreatment, bool ProfitAndLossOnly, string Search, string ReviewState, bool IncludeVoided, int Page, int PageSize) : string
+	{
+		JsonObject args = new JsonObject();
+		args["Query"] = IntelligenceFactoryAccountingService#Current.Query(StartDate, EndDate, AccountID, CategoryID, BookTreatment, ProfitAndLossOnly, Search, ReviewState, IncludeVoided, Page, PageSize);
+		return IntelligenceFactoryAccountingService#Current.CallRoute("accounting-transactions/get-cohort", args);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to export an IF accounting transaction cohort")]
+prototype ToExportIfAccountingTransactionCohort : IntelligenceFactoryAccountingAction
+{
+	Description = "Read server-owned filtered cohort rows and full-cohort totals. Dates are inclusive YYYY-MM-DD. AccountID/CategoryID 0 means no filter, negative is invalid. Empty BookTreatment/Search/ReviewState means no filter. All flags/page fields must be explicit. Export refuses more than 5000 rows; do not silently truncate or export additional data.";
+	function Execute(string StartDate, string EndDate, int AccountID, int CategoryID, string BookTreatment, bool ProfitAndLossOnly, string Search, string ReviewState, bool IncludeVoided, int Page, int PageSize) : string
+	{
+		JsonObject args = new JsonObject();
+		args["Query"] = IntelligenceFactoryAccountingService#Current.Query(StartDate, EndDate, AccountID, CategoryID, BookTreatment, ProfitAndLossOnly, Search, ReviewState, IncludeVoided, Page, PageSize);
+		return IntelligenceFactoryAccountingService#Current.CallRoute("accounting-transactions/export-cohort", args);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to check an IF Chase CSV file")]
+prototype ToCheckIfChaseCsv : IntelligenceFactoryAccountingAction
+{
+	Description = "Read-only validation/duplicate check using the owning Chase parser. ContentBase64 is the exact selected CSV bytes (max 2 MiB), not a reserialized table. This is NOT an import. Return candidate matches/fingerprint; never silently select Skip decisions. Current parser supports BANK checking and CARD ending 0536 only.";
+	function Execute(int AccountingAccountID, string FileName, string ContentBase64) : string
+	{
+		JsonObject input = new JsonObject();
+		input["AccountingAccountID"] = AccountingAccountID;
+		input["FileName"] = FileName;
+		input["ContentBase64"] = ContentBase64;
+		JsonObject args = new JsonObject();
+		args["Input"] = input;
+		return IntelligenceFactoryAccountingService#Current.CallRoute("accounting-import-batches/check-chase-csv", args);
+	}
+}

@@ -1,0 +1,60 @@
+prototype IntelligenceFactoryAccountingAction : FeedingFrenzyJsonWsSkillAction
+{
+	Description = "Read/check actions for the IF-only accounting JsonWs service.";
+}
+prototype IntelligenceFactoryAccountingGuardedWriteAction : IntelligenceFactoryAccountingAction
+{
+	Description = "Exact user-authorized IF accounting review writes; never infer changes or retry automatically.";
+}
+[SemanticEntity("intelligence factory accounting skill")]
+[SemanticEntity("IF income and expense accounting")]
+prototype IntelligenceFactoryAccountingSkill : SkillEntity
+{
+	Description = "Reports, report drill-down, Chase file checks and explicitly authorized transaction review for the local IF tenant.";
+	ActionRoot = IntelligenceFactoryAccountingAction;
+}
+prototype IntelligenceFactoryAccountingService : Service
+{
+	ServiceName = "IntelligenceFactoryAccountingService";
+	Scope = "per-binding";
+	String BaseUrl = new String();
+	String TokenKey = new String();
+	Bool TokenIsAuthorizationToken = false;
+	function ConfigureAuthorization(string BaseUrl, string AuthorizationToken) : string
+	{
+		if (BaseUrl != "http://127.0.0.1:58235" || StringUtil.IsEmpty(AuthorizationToken))
+			return "Error: Authorized local IF binding required.";
+		this.BaseUrl = BaseUrl;
+		this.TokenKey = AuthorizationToken;
+		this.TokenIsAuthorizationToken = true;
+		return "IF accounting authorization configured for this session.";
+	}
+	function CallRoute(string Route, JsonObject Args) : string
+	{
+		if (this.BaseUrl != "http://127.0.0.1:58235" || StringUtil.IsEmpty(this.TokenKey))
+			return "Error: IF local accounting authorization is not configured.";
+		return this.TokenIsAuthorizationToken
+			? JsonWsHelper.CallJsonRoute(this.BaseUrl, "api/if.feedingfrenzy.accounting", Route, this.TokenKey, Args)
+			: JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, "api/if.feedingfrenzy.accounting", Route, this.TokenKey, Args);
+	}
+	function Query(string StartDate, string EndDate, int AccountID, int CategoryID, string BookTreatment, bool ProfitAndLossOnly, string Search, string ReviewState, bool IncludeVoided, int Page, int PageSize) : JsonObject
+	{
+		JsonObject query = new JsonObject();
+		query["StartDate"] = StartDate;
+		query["EndDate"] = EndDate;
+		if (AccountID == 0) query["AccountingAccountID"] = null; else query["AccountingAccountID"] = AccountID;
+		if (CategoryID == 0) query["AccountingCategoryID"] = null; else query["AccountingCategoryID"] = CategoryID;
+		if (BookTreatment == "") query["BookTreatment"] = null; else query["BookTreatment"] = BookTreatment;
+		query["ProfitAndLossOnly"] = ProfitAndLossOnly;
+		if (Search == "") query["Search"] = null; else query["Search"] = Search;
+		if (ReviewState == "") query["ReviewState"] = null; else query["ReviewState"] = ReviewState;
+		query["IncludeVoided"] = IncludeVoided;
+		query["Page"] = Page;
+		query["PageSize"] = PageSize;
+		return query;
+	}
+}
+partial prototype IntelligenceFactoryAccountingService#Current : IntelligenceFactoryAccountingService
+{
+	Description = "Configured by trusted embedded launch or the separate fixed-local OpsAgent entrypoint; never a model-selected URL.";
+}

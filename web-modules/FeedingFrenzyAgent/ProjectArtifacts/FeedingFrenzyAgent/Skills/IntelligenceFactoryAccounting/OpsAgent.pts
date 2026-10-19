@@ -1,0 +1,8 @@
+include "../FeedingFrenzyJsonWs/Foundation.pts";
+include "index.pts";
+partial prototype IntelligenceFactoryAccountingService#Current : IntelligenceFactoryAccountingService
+{
+	BaseUrl = "http://127.0.0.1:58235";
+	TokenKey = "IntelligenceFactory.Accounting.Local.ApiToken";
+	TokenIsAuthorizationToken = false;
+}

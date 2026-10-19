@@ -1,0 +1,19 @@
+{
+  "AgentName": "feeding-frenzy-if-accounting-administrator",
+  "DisplayName": "Intelligence Factory Accounting Administrator",
+  "Aliases": [
+    "intelligence factory accounting administrator"
+  ],
+  "ProjectFilePath": "IFAccountingAdministrator.pts",
+  "PromptFile": "Prompts/IFAccountingAdministrator.prompt.md",
+  "PromptContext": "feeding-frenzy-agent",
+  "RootActionPrototypeName": "FeedingFrenzyJsonWsSkillAction",
+  "RootEntityPrototypeName": "FeedingFrenzyAgentEntityRoot",
+  "DefaultProviderName": "openai",
+  "DefaultReasoningLevel": "medium",
+  "UiPage": "/buffaly-agent.html",
+  "IsReadOnly": false,
+  "IsHidden": false,
+  "CanChangeModel": true,
+  "DisableLevel2AutoAttach": true
+}
