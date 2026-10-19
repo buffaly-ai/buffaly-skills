@@ -1,5 +1,5 @@
 [SemanticProgram.InfinitivePhrase("to review an IF accounting transaction")]
-prototype ToReviewIfAccountingTransaction : IntelligenceFactoryAccountingGuardedWriteAction
+prototype ToReviewIfAccountingTransaction : IntelligenceFactoryAccountingAction
 {
 	Description = "Write only the user's explicitly authorized complete review-field replacement. Read current transaction first. CategoryID 0 explicitly clears category; empty Notes explicitly clears notes. Never guess tax treatment, mutate bank economics, mass-apply a rule, or automatically retry. Matched/voided restrictions remain in force. Read back after success or uncertain transport outcome.";
 	function Execute(int AccountingTransactionID, int AccountingCategoryID, string BookTreatment, string Notes, bool IsReviewed) : string

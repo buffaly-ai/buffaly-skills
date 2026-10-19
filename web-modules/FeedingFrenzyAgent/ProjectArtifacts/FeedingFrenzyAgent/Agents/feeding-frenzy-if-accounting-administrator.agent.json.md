@@ -1,5 +1,8 @@
 # Package manifest history
 
+## 2026-10-19 - Register the accounting skill ActionRoot for this profile only
+Set PromptContext=IntelligenceFactoryAccountingSkill. Existing host root composition keeps CRM root and adds this skill's accounting ActionRoot; no core registration change. The prior connected UI lacked all nested accounting tools despite callable runtime methods. Actual runtime enumeration now finds12 accounting actions;55/55 tests pass. Other installation/nonadmin profiles unchanged. Live post-publication proof belongs in the activation receipt.
+
 ## 2026-10-19 — Implement IF-local accounting skill and profile
 Implemented the approved accounting tool contract in the FeedingFrenzy owning source. Canonical package publication requires index.pts, so index includes OpsAgent.pts (fixed local logical-secret binding); the IF-only embedded entrypoint includes Embedded.pts instead and receives the actual logged-in user's credential. Both use the same Foundation/Read/Review definitions and existing JsonWs transport, not a duplicated accounting implementation. No import commit/void/match tools or tax/filing authority added.
 
