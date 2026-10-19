@@ -1798,14 +1798,12 @@
     {
       "SkillName": "MetabaseRuntime",
       "Title": "Metabase Runtime",
-      "Description": "DLL-backed RootTrax Metabase runtime skill for applications, projects, objects, and generation/materialization workflows.",
-      "Version": "0.1.1",
+      "Description": "Buffaly skill package for Metabase Runtime.",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
-        "metabase runtime",
-        "roottrax metabase runtime",
-        "dll backed metabase skill",
-        "roottrax vdb generation"
+        "Metabase Runtime",
+        "MetabaseRuntime"
       ],
       "Path": "skills/MetabaseRuntime",
       "Files": [
@@ -1819,7 +1817,15 @@
         },
         {
           "Path": "index.pts",
-          "Sha256": "c394082deb0400b139b75b9a9bdb9361c5da8572258b564e31325550724d6082"
+          "Sha256": "449f50fb07b013500e238d91e280efbfa99656dbafc59f7827e766931e01b1fd"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "7306fa776d680e06f9a21264f2671b4ae8435f8be054d2f6d3f587cad9b5952f"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "c56b4382b1c0ce2054e9c9b8035095269df0f53f512d8a5d74e580a5696b81ef"
         },
         {
           "Path": "lib/Buffaly.Data.dll",
@@ -1940,14 +1946,8 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": [
-        "Local RooTrax Metabase runtime dependencies available",
-        "Use only for explicit Metabase Runtime work"
-      ],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "Prerequisites": [],
+      "PreservedFiles": []
     },
     {
       "SkillName": "Onboarding",
