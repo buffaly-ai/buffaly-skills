@@ -23532,7 +23532,7 @@
       "PackageType": "WebModule",
       "Title": "Voice Lab",
       "Description": "Buffaly Web Module package for Voice Lab.",
-      "Version": "0.1.5",
+      "Version": "0.1.6",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/VoiceLab",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/VoiceLab",
@@ -23542,12 +23542,28 @@
       ],
       "Files": [
         {
+          "Path": "Azure.Core.dll",
+          "Sha256": "224d09cb39eae4d8c30272a0c49beb19d873c87347eae9487f0ddd859d752b56"
+        },
+        {
+          "Path": "Azure.Identity.dll",
+          "Sha256": "af18f20be25b2895c912f3ba0a9f2901a82dda823edcad76e6a19eac9886a40f"
+        },
+        {
           "Path": "Buffaly.VoiceLab.WebModule.deps.json",
           "Sha256": "b34b14a521f582524ec1b8d06a2581332fb42b3196fa9668e8e7ff2bb990e792"
         },
         {
           "Path": "Buffaly.VoiceLab.WebModule.dll",
           "Sha256": "dae1b64ec28d1c6bef2d968d2d7b8282ee7b3de2a3164ec3c5327c92c3ebf577"
+        },
+        {
+          "Path": "Npgsql.dll",
+          "Sha256": "5406d26e745aff267098f30fb0da5b1507a13080b2066ee9003b071163d887c2"
+        },
+        {
+          "Path": "SixLabors.ImageSharp.dll",
+          "Sha256": "609a57965d0a7b5ccfb79d919ea7384e7ec86c03266b0390a19bd5f2104bc353"
         },
         {
           "Path": "web-module.json",
