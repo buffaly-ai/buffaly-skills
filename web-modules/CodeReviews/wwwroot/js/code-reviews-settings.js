@@ -35,6 +35,7 @@
 			var response = await CodeReviewsHarnessJsonWsService.GetAgentTargetSettingsAsync({});
 			state.targets = normalizeTargets(response);
 			C.byId("globalReviewerSessionKey").value = response.GlobalReviewerSessionKey;
+			C.byId("useSessionReviewers").checked = response.UseSessionReviewers;
 			renderTargets();
 			C.log("Loaded " + state.targets.length + " agent target" + (state.targets.length === 1 ? "" : "s") + ".");
 		} catch (error) {
@@ -60,12 +61,14 @@
 		try {
 			var response = await CodeReviewsHarnessJsonWsService.SaveAgentTargetSettingsAsync({
 				GlobalReviewerSessionKey: C.byId("globalReviewerSessionKey").value,
+				UseSessionReviewers: C.byId("useSessionReviewers").checked,
 				Targets: collectTargets()
 			});
 			state.targets = normalizeTargets(response);
 			C.byId("globalReviewerSessionKey").value = response.GlobalReviewerSessionKey;
+			C.byId("useSessionReviewers").checked = response.UseSessionReviewers;
 			renderTargets();
-			C.log("Saved settings. New reviews go to " + response.GlobalReviewerSessionKey + ".");
+			C.log(response.UseSessionReviewers ? "Saved settings. New commit-bearing turns use lazily created per-session reviewers." : "Saved settings. New reviews go to " + response.GlobalReviewerSessionKey + ".");
 		} catch (error) {
 			C.log("Failed to save agent targets: " + (error && error.message ? error.message : error));
 			throw error;

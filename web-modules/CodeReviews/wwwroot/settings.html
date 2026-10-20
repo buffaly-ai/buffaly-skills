@@ -12,7 +12,7 @@
 			<div>
 				<p class="eyebrow">Buffaly Agent Tools</p>
 				<h1>CodeReviews settings</h1>
-				<p class="hero-copy">Choose the global reviewer and manage the local JsonWs target URLs.</p>
+				<p class="hero-copy">Choose global or per-session reviewers and manage the local JsonWs target URLs.</p>
 			</div>
 			<div class="hero-actions">
 				<a class="button-link" href="shortcuts.html">Shortcuts</a>
@@ -22,9 +22,11 @@
 		</header>
 		<section class="page-card">
 			<div class="page-header"><h2>Configured targets</h2><p class="subtle">Dev currently points at the Matt instance by default.</p></div>
+			<label><input id="useSessionReviewers" type="checkbox"> Use a separate code reviewer for each source session</label>
+			<p class="subtle">Uses the same review rules and tools as global review. A session reviewer is created only when its source first produces a reviewable commit-bearing turn. Existing queued reviews keep their assigned reviewer.</p>
 			<label for="globalReviewerSessionKey">Global reviewer session key</label>
 			<input id="globalReviewerSessionKey" type="text" required>
-			<p class="subtle">After saving, new reviews go here. Reviews already dispatched stay with their reviewer.</p>
+			<p class="subtle">Used when per-session reviewers are off. Saving this key does not create session-specific reviewers.</p>
 			<div id="agentTargetList" class="agent-target-list empty">Loading targets...</div>
 			<div class="annotation-modal-actions settings-actions">
 				<button id="saveTargetsButton" type="button">Save settings</button>
@@ -40,7 +42,7 @@
 	<script src="//static.buffa.ly/v2/js/validators.js?v=2"></script>
 	<script src="JsonWs/Buffaly.CodeReviews.WebHarness.CodeReviewsHarnessJsonWsService.ashx.js?v=20260514.1"></script>
 	<script src="js/code-reviews-common.js?v=20260509.4"></script>
-	<script src="js/code-reviews-settings.js?v=20261009.1"></script>
+	<script src="js/code-reviews-settings.js?v=20261020.1"></script>
 </body>
 </html>
 
