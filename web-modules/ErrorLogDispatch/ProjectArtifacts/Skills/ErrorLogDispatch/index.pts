@@ -39,13 +39,16 @@ prototype ToGetErrorDispatchSession : ErrorLogDispatchSkillAction, DispatchAgent
 [SemanticProgram.InfinitivePhrase("to queue a diagnostic assignment")]
 prototype ToDispatchErrorToSession : ErrorLogDispatchSkillAction, DispatchAgentCuratedActionRoot
 {
-	Description = @"Validate one dedicated diagnostic destination and one bounded assignment, queue it through the canonical typed session relay, and return the actual queue receipt. BuildOnly always fails closed.";
+	Description = @"Deliver the saved diagnostic guidance plus the original source row to the exact diagnostic tree attachment; no model-authored assignment. Return provenance and the actual queue receipt. BuildOnly always fails closed.";
 
-	function Execute(string sessionKey, string assignment, string evaluationScope = "Live") : ErrorDispatchDeliveryReceipt
+	function Execute(string sessionKey, string assignedFrame, string dispatchNodePrototypeName, string attachmentName, string routingReason, string evaluationScope = "Live") : ErrorDispatchDeliveryReceipt
 	{
 		ErrorDispatchDeliveryRequest request = new ErrorDispatchDeliveryRequest();
 		request.SessionKey = sessionKey;
-		request.Assignment = assignment;
+		request.AssignedFrame = assignedFrame;
+		request.DispatchNodePrototypeName = dispatchNodePrototypeName;
+		request.AttachmentName = attachmentName;
+		request.RoutingReason = routingReason;
 		request.EvaluationScope = evaluationScope;
 		return ErrorDispatchFacade.Dispatch(_opsAgent, request);
 	}
