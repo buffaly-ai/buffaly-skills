@@ -5,3 +5,6 @@ Adds three exact owning JsonWs route wrappers with PascalCase parameter contract
 
 ## 2026-10-07 — fresh latest lead action
 Added LeadAutomation_GetLatestLeads discovery phrases and exact JsonWs Search binding to owning GetLatestLeads endpoint. Description requires a fresh query before choosing a newest LeadID, retains conversation continuity and treats timestamp ties as equally recent. Existing wrappers preserved. Ownership is FeedingFrenzy source project, not installed/package-generated copies; current upsert tool is restricted to OpsAgent so SmartPatch used for this external owning file. Validation: exact route exercised via authenticated HTTP returns latest owned fixture4 before2 and1, excludes other rep3. Full ProtoScript project/model turn was not run; no package publication or production install.
+
+## 2026-10-20 — user identity, call transcript and Bible grounding
+Added bounded lead-authorized call index/transcript and tenant Sales Bible chunk wrappers on exact generated routes, visible through both existing role graphs. Source-owned external .pts changed through lower-level route because typed upsert targets OpsAgent only. Both actual roles compile/register all new tools; real model controlled-data regressions pass transcript-only/coaching for both roles. No installed package proof yet.

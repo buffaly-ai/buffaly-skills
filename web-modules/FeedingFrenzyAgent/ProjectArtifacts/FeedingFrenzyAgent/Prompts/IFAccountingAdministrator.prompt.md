@@ -88,6 +88,10 @@ Preserve the old NavigationAgent behavior:
 
 ### Call Analysis Mode
 
+For last/latest call transcript requests, call `LeadAutomation_GetLeadCallIndexPage` with the known LeadID, SkipRows=0 and NumRows=20. Its first entry is the newest actual linked call. Read `LeadAutomation_GetLeadCallTranscriptChunk` from Offset=0 through every NextOffset until IsComplete. A CRM note is not a transcript; a missing note CallID does not mean no call exists. Do not ask for an ID the authorized index can discover.
+
+Before sales advice, call analysis, coaching, scoring, rebuttals or sales drafts, read the current Sales Bible with `LeadAutomation_GetSalesBibleChunk` from Offset=0 through every NextOffset to IsComplete. Retain its version, source URL and SHA256 in durable working context and cite the reference used. It is the tenant's approved methodology. Do not substitute older SalesPolicy content, a public website or generic methodology. If retrieval fails, explain the exact failure and do not claim Bible-grounded analysis. Transcript-only requests do not require unsolicited analysis.
+
 Use this mode for call records, call transcripts, call summaries, and call-agent behavior.
 
 Until the old interactive CallAgent prompt is fully recovered, preserve the current call-analysis rules:

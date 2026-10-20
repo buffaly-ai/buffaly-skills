@@ -59,6 +59,44 @@ prototype LeadAutomation_GetLeadAndNotesAsMarkdown : FeedingFrenzyJsonWsSkillAct
 	Description = "Legacy full export; use bounded research brief/index/chunks for lead advice. Returns decoded Markdown, but long histories can exceed the host cap.";
 }
 
+[SemanticProgram.InfinitivePhrase("to find calls for a feeding frenzy lead")]
+prototype LeadAutomation_GetLeadCallIndexPage : FeedingFrenzyJsonWsSkillAction
+{
+	Description = "Find actual calls for an authorized lead using both note CallID and call ExternalKey linkage. Start SkipRows=0 NumRows=20; newest call first. Never infer no transcript from a missing note CallID. Follow NextSkipRows for all calls.";
+	function Execute(int LeadID, int SkipRows, int NumRows) : string
+	{
+		JsonObject args = new JsonObject();
+		args["LeadID"] = LeadID;
+		args["SkipRows"] = SkipRows;
+		args["NumRows"] = NumRows;
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-lead-call-index-page", args);
+	}
+}
+
+prototype LeadAutomation_GetLeadCallTranscriptChunk : FeedingFrenzyJsonWsSkillAction
+{
+	Description = "Read an actual authorized lead call transcript. Use CallID from GetLeadCallIndexPage, Offset=0 then every NextOffset until IsComplete. Return transcript, not CRM note paraphrase. Read-only; does not run analysis or modify the call.";
+	function Execute(int LeadID, int CallID, int Offset) : string
+	{
+		JsonObject args = new JsonObject();
+		args["LeadID"] = LeadID;
+		args["CallID"] = CallID;
+		args["Offset"] = Offset;
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-lead-call-transcript-chunk", args);
+	}
+}
+
+prototype LeadAutomation_GetSalesBibleChunk : FeedingFrenzyJsonWsSkillAction
+{
+	Description = "Read the current tenant's private Sales Bible/manual from its configured representative resource. REQUIRED before sales/call analysis or coaching. Start Offset=0 follow every NextOffset to IsComplete; retain source URL, version and SHA256. Report missing/access failure rather than invent guidance.";
+	function Execute(int Offset) : string
+	{
+		JsonObject args = new JsonObject();
+		args["Offset"] = Offset;
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-sales-bible-chunk", args);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to get a feeding frenzy lead research brief")]
 prototype LeadAutomation_GetLeadResearchBrief : FeedingFrenzyJsonWsSkillAction
 {
