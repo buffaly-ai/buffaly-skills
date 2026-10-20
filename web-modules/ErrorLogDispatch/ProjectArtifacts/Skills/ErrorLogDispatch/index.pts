@@ -21,11 +21,14 @@ prototype ErrorLogDispatchSkill : SkillEntity
 [SemanticProgram.InfinitivePhrase("to resolve a diagnostic owner session")]
 prototype ToGetErrorDispatchSession : ErrorLogDispatchSkillAction, DispatchAgentCuratedActionRoot
 {
-	Description = @"Resolve or create one dedicated diagnostic owner, apply and verify the no-companion ErrorDiagnostic policy with ResetOnLimit, persist ErrorSession or AlarmSession on the exact Dispatch node, and read it back.";
+	Description = @"Resolve WorkingSession (exact incident evidence + recent activity), PriorResearcher (established tree owner, any parent), or NewResearcher. Reuse never changes session settings; only new researchers receive no-companion ErrorDiagnostic/ResetOnLimit policy. Select explicit destinationKind and retain receipt.";
 
-	function Execute(string parentSessionKey, string dispatchNodePrototypeName, string attachmentName, string childSessionKey, string evaluationScope = "Live") : ErrorDispatchSessionReceipt
+	function Execute(string parentSessionKey, string dispatchNodePrototypeName, string attachmentName, string childSessionKey, string destinationKind, string existingSessionKey = "", string evidenceQuote = "", string evaluationScope = "Live") : ErrorDispatchSessionReceipt
 	{
 		ErrorDispatchSessionRequest request = new ErrorDispatchSessionRequest();
+		request.DestinationKind = destinationKind;
+		request.ExistingSessionKey = existingSessionKey;
+		request.EvidenceQuote = evidenceQuote;
 		request.ParentSessionKey = parentSessionKey;
 		request.DispatchNodePrototypeName = dispatchNodePrototypeName;
 		request.AttachmentName = attachmentName;
@@ -39,7 +42,7 @@ prototype ToGetErrorDispatchSession : ErrorLogDispatchSkillAction, DispatchAgent
 [SemanticProgram.InfinitivePhrase("to queue a diagnostic assignment")]
 prototype ToDispatchErrorToSession : ErrorLogDispatchSkillAction, DispatchAgentCuratedActionRoot
 {
-	Description = @"Deliver the saved diagnostic guidance plus the original source row to the exact diagnostic tree attachment; no model-authored assignment. Return provenance and the actual queue receipt. BuildOnly always fails closed.";
+	Description = @"Deliver saved guidance and original source to the exact typed destination tree attachment; recheck working-session evidence/recency or prior researcher identity. No model-authored assignment or existing-session reconfiguration. Return provenance/kind and actual queue receipt. BuildOnly fails closed.";
 
 	function Execute(string sessionKey, string assignedFrame, string dispatchNodePrototypeName, string attachmentName, string routingReason, string evaluationScope = "Live") : ErrorDispatchDeliveryReceipt
 	{
