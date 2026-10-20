@@ -1,6 +1,12 @@
 {
   "AgentName": "code-review-agent",
   "DisplayName": "Code Review Agent",
+  "Appearance": {
+    "LabelSource": "AgentDisplayName",
+    "Emphasis": "Supporting",
+    "Icon": "clipboard-check",
+    "TextColor": { "Light": "#15803D", "Dark": "#86EFAC" }
+  },
   "PromptFile": "Prompts/master.md",
   "ProjectFilePath": "Profiles/CodeReviews/Project.pts",
   "PromptContext": "CodeReviewContext",
@@ -13,5 +19,14 @@
   "IsReadOnly": false,
   "IsHidden": true,
   "CanChangeModel": true,
-  "CompanionAgents": []
+  "CompanionAgents": [],
+  "CompanionAttachment": {
+    "SessionKeyStrategy": "suffix",
+    "SessionSuffix": "-code-review-agent",
+    "SourceBinding": {
+      "SetParentSessionKey": true,
+      "ObservedSessionUserStateKey": "CodeReviewsSourceSessionKey"
+    },
+    "Events": []
+  }
 }
