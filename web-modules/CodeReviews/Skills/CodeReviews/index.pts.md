@@ -36,3 +36,8 @@ Commit-free turns return the typed callback result with `ShouldQueue=false`. Exi
 ## 2026-10-11 — Enforced complete review evidence
 - Added thin exact-commit path-discovery action and optional CharacterOffset to source Plan/Scratch/task/artifact/catalog readers; facade returns bounded coherent pages. Preserve action roots and all read-only scope limits. Regenerated index.pts.lazy.json with canonical isolated generator (32 prototypes, zero diagnostics).
 - Validation: owning Debug build and all 77 non-environment tests passed, including actual CoreLite eager profile and independent full lazy compile. Installed deployment/live review not yet performed for this batch. Active-project authoring tools do not target this externally owned module; scoped SmartPatch was used on owning source after authoring route inspection.
+
+## 2026-10-21 — Native binary inspection action
+- Added ToInspectCodeReviewCommittedBinary with exact RepositoryPath/CommitSha/FileIndex and optional ParentSide; imports the authoritative inspection service/native structured result. Includes images as native visual content, typed font validation and explicit unsupported failures. Global action root remains bounded/read-only.
+- Updated generated index.pts.lazy.json through canonical strict LazySkillIndexGenerator in isolated source-root context: 33 prototypes, zero diagnostics. Active personal authoring tools cannot target this externally owned extension; scoped SmartPatch used for the binding.
+- Validation: full owning suite 101/101 passed, including real full lazy/eager CoreLite compilation and execution of the declared native return preserving image parts. Release build/publish and original-manifest isolated validation passed; no installed update/model review/restart.

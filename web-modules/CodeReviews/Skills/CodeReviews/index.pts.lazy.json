@@ -24,6 +24,7 @@
     "ToGetGlobalCodeReviewLanguageGuidance": "Skills/CodeReviews/index.pts",
     "ToGetGlobalCodeReviewMostRecentSourceTurn": "Skills/CodeReviews/index.pts",
     "ToGetGlobalCodeReviewRecentSourceTurns": "Skills/CodeReviews/index.pts",
+    "ToInspectCodeReviewCommittedBinary": "Skills/CodeReviews/index.pts",
     "ToListCodeReviewSourceSessionArtifacts": "Skills/CodeReviews/index.pts",
     "ToListCodeReviewSourceSessionTasks": "Skills/CodeReviews/index.pts",
     "ToMarkCodeReviewFailed": "Skills/CodeReviews/index.pts",
@@ -62,6 +63,9 @@
     ],
     "ToGetCodeReviewFileAtCommit": [
       "to read a code review file at an exact commit"
+    ],
+    "ToInspectCodeReviewCommittedBinary": [
+      "to inspect a committed code review binary"
     ],
     "ToGetGlobalCodeReviewMostRecentSourceTurn": [
       "to inspect the latest source turn for global code review"

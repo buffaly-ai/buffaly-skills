@@ -9,6 +9,8 @@ import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewF
 import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewTurnAgentService CodeReviewTurnAgentService;
 import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewEvidenceService CodeReviewEvidenceService;
 import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewEvidencePages CodeReviewEvidencePages;
+import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewBinaryEvidence CodeReviewBinaryEvidence;
+import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.ReviewBinaryInspectionResult ReviewBinaryInspectionResult;
 import Buffaly.Agent.Host Buffaly.Agent.Host.BuffalyArtifacts BuffalyArtifacts;
 import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.SessionTools SessionTools;
 import Buffaly.Agent.Host Buffaly.Agent.Host.TurnSummaryContract TurnSummaryContract;
@@ -82,6 +84,13 @@ prototype ToGetCodeReviewFileAtCommit : CodeReviewsAgentToolsAction
 {
 	Description = @"RepositoryPath - exact local repository path from SourceTurnContextJson. CommitSha - exact manifest SHA. Path - repository-relative file path from the commit snapshot. Returns bounded file content from that exact commit for surrounding context; never reads the current working tree.";
 	function Execute(string RepositoryPath, string CommitSha, string Path) : string { return CodeReviewEvidenceService.GetFileAtCommitJson(RepositoryPath, CommitSha, Path); }
+}
+
+[SemanticProgram.InfinitivePhrase("to inspect a committed code review binary")]
+prototype ToInspectCodeReviewCommittedBinary : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
+{
+	Description = @"RepositoryPath and CommitSha bind the exact delivered manifest; FileIndex is its parent-specific changed-file index. Returns committed image pixels as native visual content with an exact-blob receipt, or parsed font metrics and Latin sample validation. Inspect every binary entry before completion. Modified/renamed binaries also require ParentSide=true; deletions use the parent automatically. Unsupported/corrupt formats fail explicitly. This is retrieval evidence, not proof of visual comprehension or exhaustive glyph validation.";
+	function Execute(string RepositoryPath, string CommitSha, int FileIndex, bool ParentSide = false) : ReviewBinaryInspectionResult { return CodeReviewBinaryEvidence.Inspect(RepositoryPath, CommitSha, FileIndex, ParentSide); }
 }
 
 [SemanticProgram.InfinitivePhrase("to inspect the latest source turn for global code review")]

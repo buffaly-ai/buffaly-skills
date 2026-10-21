@@ -13,3 +13,7 @@ Keep this file aligned with the operational global-review actions in `Skills/Cod
 ## 2026-10-11 — Complete context and exact owner discovery
 - Aligned eager profile with full skill bounded source readers and exact committed path action. Optional CharacterOffset preserves first-call arguments but results are complete-page envelopes requiring continuation. No PromptAction, broad filesystem or legacy terminal actions added to global root.
 - Validation: actual CoreLite eager compile and full lazy compile passed within all 77 non-environment tests; isolated generator succeeded with zero diagnostics. Installed replay pending. Scoped owning-source SmartPatch used because personal authoring tools cannot express external profile ownership.
+
+## 2026-10-21 — Eager native binary inspection tool
+- Aligned eager profile with ToInspectCodeReviewCommittedBinary service/native-result imports and exact manifest-index/ParentSide signature. Modified/renamed binaries require both sides; deleted files inspect their parent. No PromptAction, shell/filesystem or broad SessionManagement root introduced.
+- Validation: all 101 owning tests passed, including real CoreLite eager and full lazy compile checks plus native action execution. Release build/publish and isolated original-manifest acceptance passed. No installed profile edits, model review or deployment.

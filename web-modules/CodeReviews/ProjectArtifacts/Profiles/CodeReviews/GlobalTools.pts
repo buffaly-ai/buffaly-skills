@@ -7,6 +7,15 @@ import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewF
 import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewTurnAgentService CodeReviewTurnAgentService;
 import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewEvidenceService CodeReviewEvidenceService;
 import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewEvidencePages CodeReviewEvidencePages;
+import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.CodeReviewBinaryEvidence CodeReviewBinaryEvidence;
+import Buffaly.CodeReviews.WebHarness Buffaly.CodeReviews.WebHarness.ReviewBinaryInspectionResult ReviewBinaryInspectionResult;
+
+[SemanticProgram.InfinitivePhrase("to inspect a committed code review binary")]
+prototype ToInspectCodeReviewCommittedBinary : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
+{
+	Description = @"RepositoryPath and CommitSha bind the exact delivered manifest; FileIndex is its parent-specific changed-file index. Inspect every binary entry. Images return native committed-pixel previews; fonts return table and Latin sample validation. Modified/renamed entries also require ParentSide=true; deletions use the parent automatically. Unsupported/corrupt formats fail. This is retrieval evidence, not proof of visual comprehension or exhaustive glyph validation.";
+	function Execute(string RepositoryPath, string CommitSha, int FileIndex, bool ParentSide = false) : ReviewBinaryInspectionResult { return CodeReviewBinaryEvidence.Inspect(RepositoryPath, CommitSha, FileIndex, ParentSide); }
+}
 import Buffaly.Agent.Host Buffaly.Agent.Host.BuffalyArtifacts BuffalyArtifacts;
 import Buffaly.Agent.Tools.Sessions Buffaly.Agent.Tools.Sessions.SessionTools SessionTools;
 import BasicUtilities BasicUtilities.JsonUtil JsonUtil;
