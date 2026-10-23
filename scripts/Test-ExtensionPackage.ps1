@@ -182,6 +182,39 @@ function Read-JsonFile([string]$path) {
                                 }
                                 # Skip core/provided assemblies entirely - they are supplied by the host runtime
                                 if ($isCoreProvided) { continue }
+                                # Native-bearing NuGet packages are not assembly names. Resolve their exact
+                                # target entry and require every declared native/managed runtime asset.
+                                # runtimeTargets retain RID directories; resolved runtime/native assets
+                                # are published beside this deps.json. Existing file/hash checks still apply.
+                                $dependencyKey = $depName + '/' + [string]$depProp.Value
+                                $dependencyProperty = $target.Value.PSObject.Properties[$dependencyKey]
+                                $dependency = if ($null -ne $dependencyProperty) { $dependencyProperty.Value } else { $null }
+                                $nativeTargets = @($dependency.runtimeTargets.PSObject.Properties | Where-Object { $_.Value.assetType -eq 'native' })
+                                if (($null -ne $dependency.native -and @($dependency.native.PSObject.Properties).Count -gt 0) -or $nativeTargets.Count -gt 0) {
+                                    $depsDirectory = [System.IO.Path]::GetDirectoryName($relativeDepsPath) -replace '\\', '/'
+                                    $assetPaths = [System.Collections.Generic.List[string]]::new()
+                                    foreach ($section in @('runtime', 'native')) {
+                                        foreach ($asset in $dependency.$section.PSObject.Properties) {
+                                            if ([System.IO.Path]::GetFileName($asset.Name) -ne '_._' -and [System.IO.Path]::GetExtension($asset.Name) -ne '.pdb') {
+                                                $assetPaths.Add([System.IO.Path]::GetFileName($asset.Name))
+                                            }
+                                        }
+                                    }
+                                    foreach ($asset in $dependency.runtimeTargets.PSObject.Properties) {
+                                        # Publisher deliberately omits optional debug symbols, not executable assets.
+                                        if ($asset.Value.assetType -in @('runtime', 'native') -and [System.IO.Path]::GetFileName($asset.Name) -ne '_._' -and [System.IO.Path]::GetExtension($asset.Name) -ne '.pdb') {
+                                            $assetPaths.Add($asset.Name)
+                                        }
+                                    }
+                                    foreach ($assetPath in $assetPaths) {
+                                        $publishedPath = if ($depsDirectory) { $depsDirectory + '/' + $assetPath } else { $assetPath }
+                                        if (-not $indexedFileSet.ContainsKey($publishedPath)) {
+                                            $message = "Missing runtime asset '$publishedPath' for dependency '$dependencyKey' (from $($libEntry.Name) via $relativeDepsPath) in the Files array for '$packageId'."
+                                            if ($isFramework) { $warnings.Add($message) } else { $errors.Add($message) }
+                                        }
+                                    }
+                                    continue
+                                }
                                 # Check if this dependency appears anywhere in the Files array
                                 $foundInFiles = $false
                                 foreach ($indexedPath in $indexedFileSet.Keys) {

@@ -17,3 +17,8 @@
 ## 2026-07-30 Optional ClaudeCode live-runtime regression (superseded)
 - The earlier warning-only behavior was too broad because full repository and installer validation used the same path.
 - It is retained only for ordinary single-package inspection, not release validation.
+
+## 2026-10-23 — Validate native-bearing dependency assets instead of package-name DLLs
+- Build1331 exposed a false failure for CodeReviews0.1.449: SkiaSharp.NativeAssets.Win32/macOS are NuGet package names, not managed assembly names. Resolve the exact name/version entry in the same deps target when it declares native assets; require published runtime/native files relative to the deps file, preserving RID paths for runtimeTargets and flattened paths for resolved runtime/native entries. Mixed packages also require their managed runtime assets.
+- Preserve managed-only/core-provided/framework policies, indexed-file existence and SHA256 checks. Missing unindexed or wrong-RID native assets fail. NuGet _._ placeholders and optional .pdb debug symbols are not executable dependencies; the owning ExtensionPublishingService already deliberately excludes .pdb in its file manifests (lines881/962). No package-specific allowlist, fabricated files, payload edits or validation-gate suppression.
+- Actual validation: 15 public-process fixture cases passed (native-only, mixed, resolved, nested, missing, unindexed, wrong-RID, corrupt and symbol exclusions); actual CodeReviews validation passed; full repository validation117/117 passed using the existing canonical SkipReleaseRuntimeRegression mode. Existing framework/unindexed warnings remain. Failed1331 is unchanged; successor build/deployment recorded separately.
