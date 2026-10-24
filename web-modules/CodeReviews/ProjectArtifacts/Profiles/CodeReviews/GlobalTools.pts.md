@@ -28,3 +28,7 @@ Keep this file aligned with the operational global-review actions in `Skills/Cod
 - Both catalog Execute wrappers now pass the existing _opsAgent runtime to the owning C# reader so snapshots bind to the actual reviewer session/turn; caller-facing parameters and action roots are unchanged. Artifact discovery describes immutable reviewer evidence retention and explicitly preserves source-session read-only behavior. No broad artifact writer is exposed.
 - Active-project upsert still cannot target this owning module/profile; used scoped SmartPatch. No action names/phrases changed, so lazy ownership index regeneration is unnecessary.
 - Validation: full owning suite 115/115 passed, including real eager CoreLite/lazy compilation and new multi-page changing-source tests. No installed update or live review at this entry.
+
+## 2026-10-24 — Expose canonical ProtoScriptMinimum token
+- Describe the added closed canonical reference token and installed ownership so a global reviewer does not search an unrelated application commit for the required shared language reference. Execute signature, roots and infinitive phrase remain unchanged. Active-project upsert cannot edit this owning external module; scoped source SmartPatch used. No ownership-sidecar identity changed.
+- Validation: full owning suite passed 117/117, zero skipped, including real eager/lazy ProtoScript compilation. No installed-copy edits or live model claim.

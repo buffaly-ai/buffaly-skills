@@ -52,3 +52,7 @@ Commit-free turns return the typed callback result with `ShouldQueue=false`. Exi
 - Align eager/lazy catalog wrappers by passing _opsAgent to GetSourceCatalogPageJson. Native owner captures only the reviewer turn's first source catalog and persists it under the reviewer's fixed evidence path; repeat/continuation calls retain bytes while source metadata changes. Description names that retention boundary; source sessions remain read-only and no generic write action is added.
 - External owning module cannot be targeted by active-project upsert; scoped source SmartPatch used. Names/phrases and lazy ownership metadata remain unchanged, so no sidecar regeneration needed.
 - Validation: full owning suite passed 115/115, zero skipped, including real eager/lazy compilation and changing-source/task catalog tests. Deployment and live model acceptance not performed at this entry.
+
+## 2026-10-24 — Align lazy ProtoScriptMinimum guidance discovery
+- Match eager description for the closed canonical reference token and its installed project ownership; do not search reviewed application files for this shared reference. No wrapper signature, action root or phrase changed, so ownership-sidecar regeneration is unnecessary. Active-project upsert cannot target this owning source; used scoped SmartPatch rather than installed-file edits.
+- Validation: full owning suite passed 117/117, zero skipped, including real eager/lazy ProtoScript compilation. No live reviewer claim.

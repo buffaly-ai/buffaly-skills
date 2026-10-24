@@ -106,7 +106,7 @@ prototype ToGetGlobalCodeReviewRecentSourceTurns : GlobalCodeReviewsAgentAction
 [SemanticProgram.InfinitivePhrase("to read authoritative language guidance for global code review")]
 prototype ToGetGlobalCodeReviewLanguageGuidance : GlobalCodeReviewsAgentAction
 {
- Description = @"Language - exact CSharp, ProtoScript, JavaScript, SQL, Metabase, Repository, Business or UseCases. CharacterOffset starts at zero; follow NextCharacterOffset to EndOfContent. Verify Identity, ContentSha256 and TotalCharacters stay identical. Reads complete canonical trusted guidance, never a summary.";
+ Description = @"Language - exact CSharp, ProtoScript, ProtoScriptMinimum, JavaScript, SQL, Metabase, Repository, Business or UseCases. ProtoScriptMinimum reads the installed canonical project reference required for non-trivial .pts review; do not search the reviewed application for that shared reference. CharacterOffset starts at zero; follow NextCharacterOffset to EndOfContent. Verify Identity, ContentSha256 and TotalCharacters stay identical. Reads complete canonical trusted guidance, never a summary.";
  function Execute(string Language, int CharacterOffset = 0) : string { return CodeReviewEvidencePages.GetGuidancePageJson(_opsAgent, Language, CharacterOffset, true); }
 }
 
