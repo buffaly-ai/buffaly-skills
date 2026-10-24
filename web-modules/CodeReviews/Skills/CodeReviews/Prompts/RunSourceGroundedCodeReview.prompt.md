@@ -24,6 +24,7 @@ Source context and CodeReviews lifecycle:
 - `ToReadCodeReviewSourceSessionTask`
 - `ToListCodeReviewSourceSessionArtifacts`
 - `ToReadCodeReviewSourceSessionArtifact`
+- `ToReadCodeReviewSourceArtifactPage`
 - `ToSubmitCodeReviewFindings`
 - `ToCompleteCodeReviewWithoutFindings`
 - `ToMarkCodeReviewFailed`
@@ -103,7 +104,15 @@ Plan is routing evidence. It does not override the user instruction or task acce
 
 ### 4. Identify the governing design
 
-Call `ToListCodeReviewSourceSessionArtifacts`. Prefer an artifact explicitly referenced by the latest turn or task. Otherwise identify a plausible design or implementation document using its title/path and overlap with the repository, feature, symbols, and changed files. Read it with `ToReadCodeReviewSourceSessionArtifact`.
+Prefer the governing design explicitly referenced by the reviewed turn or its relevant task, Plan or design records. Resolve the exact owning session and session-relative artifact path from that reference; the design may belong to a different session from the implementation. Do not guess a session key or select a different document merely because it is easier to retrieve.
+
+Read the document with `ToReadCodeReviewSourceArtifactPage`, passing its owning session as SourceSessionKey and its session-relative path as ArtifactPath. Follow NextCharacterOffset through EndOfContent and verify stable Identity, Path, ContentSha256 and TotalCharacters. Restart from zero if the document changes.
+
+If no governing design is explicitly referenced, use `ToListCodeReviewSourceSessionArtifacts` for the reviewed source session and identify a plausible design using its title/path and overlap with the repository, feature, symbols and changed files. Do not browse unrelated sessions.
+
+An invalid-path or argument error is not proof that cross-session artifact reading is unavailable. Check the supplied owner/path against the explicit reference and correct a demonstrably malformed binding before declaring the evidence inaccessible. Do not bypass access restrictions or repeat unchanged failing calls. If required evidence remains inaccessible, report the exact document, binding and observed error.
+
+Linked-document ownership affects artifact reads only. Preserve the original reviewed source session, source turn, ordered commit manifest and SourceTurnContextJson unchanged for all completion actions.
 
 Extract:
 - target call chains,

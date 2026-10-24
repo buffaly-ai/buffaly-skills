@@ -138,7 +138,7 @@ prototype ToGetCodeReviewFileAtCommitPage : CodeReviewsAgentToolsAction, GlobalC
 [SemanticProgram.InfinitivePhrase("to read a complete source review artifact page")]
 prototype ToReadCodeReviewSourceArtifactPage : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
 {
- Description = @"SourceSessionKey from immutable context; ArtifactPath is related Plan.md, Scratch.md, task or governing design. Typed owning artifact path rules apply. Read CharacterOffset zero through EndOfContent; verify hash/length or restart changed evidence. No arbitrary filesystem access.";
+ Description = @"SourceSessionKey identifies the session that owns the requested artifact. For the reviewed source session's own documents, use its exact key from SourceTurnContextJson. For a governing document explicitly referenced by the reviewed turn or its relevant governing records, use the exact owner session established by that reference, which may differ from the reviewed session. ArtifactPath must be relative to that owner's session directory; never pass an absolute path or parent traversal. Reading a linked document does not change SourceTurnContextJson or authorize unrelated session browsing. Follow CharacterOffset zero and NextCharacterOffset through EndOfContent; verify stable Identity, Path, ContentSha256 and TotalCharacters, restarting from zero if the document changes. Existing owning artifact access and path rules remain in force.";
   function Execute(string SourceSessionKey, string ArtifactPath, int CharacterOffset = 0) : string { return CodeReviewEvidencePages.GetSourceArtifactPageJson(SourceSessionKey, ArtifactPath, CharacterOffset); }
 }
 
@@ -211,7 +211,7 @@ prototype ToListCodeReviewSourceSessionTasks : CodeReviewsAgentToolsAction, Glob
 
 	function Execute(string SourceSessionKey, int CharacterOffset = 0) : string
 	{
-		return CodeReviewEvidencePages.GetSourceCatalogPageJson(SourceSessionKey, true, CharacterOffset);
+		return CodeReviewEvidencePages.GetSourceCatalogPageJson(_opsAgent, SourceSessionKey, true, CharacterOffset);
 	}
 }
 
@@ -230,11 +230,11 @@ prototype ToReadCodeReviewSourceSessionTask : CodeReviewsAgentToolsAction, Globa
 [SemanticProgram.InfinitivePhrase("to list governing documents from a source session")]
 prototype ToListCodeReviewSourceSessionArtifacts : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
 {
-	Description = @"SourceSessionKey - exact source session associated with the reviewed commit. Returns the typed session artifact manifest, including discoverable files under artifacts/**. Use it to identify governing design or implementation documents. Do not inspect unrelated sessions.";
+	Description = @"SourceSessionKey - exact source session associated with the reviewed commit. Returns the typed session artifact manifest, including discoverable files under artifacts/**. The first read pins a catalog snapshot in this reviewer turn's evidence artifacts; later pages and offset-zero repeats use those same bytes, even if the source changes. Source files are not written. Use it to identify governing design or implementation documents. Do not inspect unrelated sessions.";
 
 	function Execute(string SourceSessionKey, int CharacterOffset = 0) : string
 	{
-		return CodeReviewEvidencePages.GetSourceCatalogPageJson(SourceSessionKey, false, CharacterOffset);
+		return CodeReviewEvidencePages.GetSourceCatalogPageJson(_opsAgent, SourceSessionKey, false, CharacterOffset);
 	}
 }
 
