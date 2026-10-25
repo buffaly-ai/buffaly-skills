@@ -62,14 +62,14 @@ prototype LeadAutomation_GetLeadAndNotesAsMarkdown : FeedingFrenzyJsonWsSkillAct
 [SemanticProgram.InfinitivePhrase("to find calls for a feeding frenzy lead")]
 prototype LeadAutomation_GetLeadCallIndexPage : FeedingFrenzyJsonWsSkillAction
 {
-	Description = "Find actual calls for an authorized lead using both note CallID and call ExternalKey linkage. Start SkipRows=0 NumRows=20; newest call first. Never infer no transcript from a missing note CallID. Follow NextSkipRows for all calls.";
+	Description = "Find actual calls for an authorized lead using both note CallID and call ExternalKey linkage. Use SkipRows=0 NumRows=1 for latest, up to20 for a requested list; newest call first. Returns Markdown. Never infer no transcript from a missing note CallID. Follow NextSkipRows for all calls.";
 	function Execute(int LeadID, int SkipRows, int NumRows) : string
 	{
 		JsonObject args = new JsonObject();
 		args["LeadID"] = LeadID;
 		args["SkipRows"] = SkipRows;
 		args["NumRows"] = NumRows;
-		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-lead-call-index-page", args);
+		return FeedingFrenzyLeadEvidenceTools.FormatCallIndexResponse(FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-lead-call-index-page", args));
 	}
 }
 
@@ -82,7 +82,7 @@ prototype LeadAutomation_GetLeadCallTranscriptChunk : FeedingFrenzyJsonWsSkillAc
 		args["LeadID"] = LeadID;
 		args["CallID"] = CallID;
 		args["Offset"] = Offset;
-		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-lead-call-transcript-chunk", args);
+		return FeedingFrenzyLeadEvidenceTools.FormatEvidenceResponse(FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-lead-call-transcript-chunk", args));
 	}
 }
 
@@ -93,7 +93,7 @@ prototype LeadAutomation_GetSalesBibleChunk : FeedingFrenzyJsonWsSkillAction
 	{
 		JsonObject args = new JsonObject();
 		args["Offset"] = Offset;
-		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-sales-bible-chunk", args);
+		return FeedingFrenzyLeadEvidenceTools.FormatEvidenceResponse(FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-sales-bible-chunk", args));
 	}
 }
 
@@ -105,9 +105,9 @@ prototype LeadAutomation_GetLeadResearchBrief : FeedingFrenzyJsonWsSkillAction
 		JsonObject args = new JsonObject();
 		args["LeadID"] = LeadID;
 		args["Offset"] = Offset;
-		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-lead-research-brief", args);
+		return FeedingFrenzyLeadEvidenceTools.FormatEvidenceResponse(FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-lead-research-brief", args));
 	}
-	Description = "Start lead advice/drafts here. Authorized lead/contact brief only, not notes. Start Offset=0 and follow NextOffset until IsComplete. Then inspect note index and relevant complete note chunks. Returns bounded JSON with Markdown and coverage.";
+	Description = "Start lead advice/drafts here. Authorized lead/contact brief only, not notes. Start Offset=0 and follow NextOffset until IsComplete. Then inspect note index and relevant complete note chunks. Returns Markdown with coverage and exact continuation.";
 }
 [SemanticProgram.InfinitivePhrase("to get a feeding frenzy lead note index page")]
 prototype LeadAutomation_GetLeadNoteIndexPage : FeedingFrenzyJsonWsSkillAction
@@ -118,7 +118,7 @@ prototype LeadAutomation_GetLeadNoteIndexPage : FeedingFrenzyJsonWsSkillAction
 		args["LeadID"] = LeadID;
 		args["SkipRows"] = SkipRows;
 		args["NumRows"] = NumRows;
-		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-lead-note-index-page", args);
+		return FeedingFrenzyLeadEvidenceTools.FormatNoteIndexResponse(FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-lead-note-index-page", args));
 	}
 	Description = "Read note IDs/dates/types, not bodies. Start SkipRows=0, NumRows=20 (1..20); follow NextSkipRows. Unique LeadNoteID DESC is traversal order, not event recency. For all-note requests visit every page and body. No snapshot promise; returns bounded JSON.";
 }
@@ -131,7 +131,7 @@ prototype LeadAutomation_GetLeadNoteMarkdownChunk : FeedingFrenzyJsonWsSkillActi
 		args["LeadID"] = LeadID;
 		args["LeadNoteID"] = LeadNoteID;
 		args["Offset"] = Offset;
-		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-lead-note-markdown-chunk", args);
+		return FeedingFrenzyLeadEvidenceTools.FormatEvidenceResponse(FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-lead-note-markdown-chunk", args));
 	}
 	Description = "Read one authorized note body as Markdown. Start Offset=0; follow NextOffset exactly until IsComplete. The completion flag covers THIS note only. Other notes remain unread. Returns bounded JSON with Markdown, date/type, offsets and coverage.";
 }

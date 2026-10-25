@@ -1,3 +1,5 @@
+reference FeedingFrenzy.Agent.Tools FeedingFrenzy.Agent.Tools;
+import FeedingFrenzy.Agent.Tools FeedingFrenzy.Agent.Tools.FeedingFrenzyLeadEvidenceTools FeedingFrenzyLeadEvidenceTools;
 [SemanticProgram.InfinitivePhrase("to get feeding frenzy follow up by lead id")]
 prototype LeadNotes_GetFollowUpByLeadID : FeedingFrenzyJsonWsSkillAction
 {
@@ -8,19 +10,5 @@ prototype LeadNotes_GetFollowUpByLeadID : FeedingFrenzyJsonWsSkillAction
 		JsonObject args = new JsonObject();
 		args["LeadID"] = LeadID;
 		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-notes/get-follow-up-by-lead-id", args);
-	}
-}
-
-[SemanticProgram.InfinitivePhrase("to get feeding frenzy appointments")]
-prototype LeadNotes_GetAppointments : FeedingFrenzyJsonWsSkillAction
-{
-	Description = @"service - required FeedingFrenzyJsonWsService binding. StartDate and StopDate should be ISO-like date strings accepted by Feeding Frenzy JsonWs DateTime binding.";
-
-	function Execute(string StartDate, string StopDate) : string
-	{
-		JsonObject args = new JsonObject();
-		args["StartDate"] = StartDate;
-		args["StopDate"] = StopDate;
-		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-notes/get-appointments", args);
 	}
 }

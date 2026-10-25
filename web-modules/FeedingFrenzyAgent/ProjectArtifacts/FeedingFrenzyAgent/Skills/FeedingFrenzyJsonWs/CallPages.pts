@@ -1,0 +1,28 @@
+reference FeedingFrenzy.Agent.Tools FeedingFrenzy.Agent.Tools;
+import FeedingFrenzy.Agent.Tools FeedingFrenzy.Agent.Tools.FeedingFrenzyLeadEvidenceTools FeedingFrenzyLeadEvidenceTools;
+[SemanticProgram.InfinitivePhrase("to get my recent feeding frenzy calls")]
+[SemanticProgram.InfinitivePhrase("to find the last lead I called")]
+prototype LeadCalls_GetMyCallsPageMarkdown : FeedingFrenzyJsonWsSkillAction
+{
+ Description = "Read actual authenticated representative outbound call activity, not lead assignments. Standard paging: Search, SortColumn, SortAscending, SkipRows, NumRows. Latest: Search empty, SortColumn CallID, SortAscending false, SkipRows0, NumRows1; max20. No date range required. Returns Markdown with lead links, persisted status and continuation; no user/rep impersonation parameters.";
+ function Execute(string Search,string SortColumn,bool SortAscending,int SkipRows,int NumRows) : string
+ {
+  JsonObject args=new JsonObject();
+  args["Search"]=Search; args["SortColumn"]=SortColumn; args["SortAscending"]=SortAscending;
+  args["SkipRows"]=SkipRows; args["NumRows"]=NumRows;
+  return FeedingFrenzyLeadEvidenceTools.DecodeMarkdownResponse(FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-calls/get-my-calls-page-markdown",args));
+ }
+}
+[SemanticProgram.InfinitivePhrase("to get feeding frenzy appointments")]
+prototype LeadNotes_GetAppointments : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"Read accessible native CRM appointments and configured Google events as Markdown through the existing endpoint. StartDate/StopDate are ISO UTC instants; native date/type/representative filtering occurs in SQL. Google failure is an operation failure, not evidence of expired Feeding Frenzy login. No representative input.";
+
+	function Execute(string StartDate, string StopDate) : string
+	{
+		JsonObject args = new JsonObject();
+		args["StartDate"] = StartDate;
+		args["StopDate"] = StopDate;
+		return FeedingFrenzyLeadEvidenceTools.FormatAppointmentsResponse(FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-notes/get-appointments", args));
+	}
+}
