@@ -6980,7 +6980,7 @@
       "PackageType": "WebModule",
       "Title": "Desktop Viewer",
       "Description": "Buffaly Web Module package for Desktop Viewer.",
-      "Version": "0.1.291",
+      "Version": "0.1.292",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/DesktopViewer",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/DesktopViewer",
@@ -6999,31 +6999,35 @@
         },
         {
           "Path": "BasicUtilities.dll",
-          "Sha256": "731f3c5df5e858671c271b37404415cbea13552cfe9ffdf2a4d913a40bbac15d"
+          "Sha256": "397b491446f13767525904a36419439952e63f0b2eb9dda2a964247baf97224e"
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "5e99a6c397a04b308991ddfd612208ff9a4f6e94047ca5f233b86bafdee52efc"
+          "Sha256": "1a3ee500385f49734242f9230e958d1636e52a8170b90e3a884d90b09d8d4db8"
+        },
+        {
+          "Path": "Buffaly.ClientSites.Common.dll",
+          "Sha256": "0577071de78db389fccd2e0427789eb5d7d30ba06b33f29d7bfbebdc6b326de9"
         },
         {
           "Path": "Buffaly.Common.dll",
-          "Sha256": "ced4df975e5b48ae7b10893295c631ab4da92d184bcc91f68da237c5462ad2c0"
+          "Sha256": "a9dff2ab980a00960e7e5cc5b459555821f7d185b235337f573e27c58639f76c"
         },
         {
           "Path": "Buffaly.Data.dll",
-          "Sha256": "ef822b9b8d2ff46d183ff94a257d54a4429fd12bfe672e7d6c490cdc3a952280"
+          "Sha256": "37fddb584dd839e58007cfe4f0ff6f51bec481307ffcad89bef1693574c13886"
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "b1f927b9e5d9011dc5cf7c5d438058fb7839410c178e219eb5dee1c0b06a7e35"
+          "Sha256": "7bab9fb2e18ac66f50072aadf7d54b186b0949f4abd50637aaa76190c888130f"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "d05a12d8c7e642a19ba129fa65057659a65fa90f319bdec5bc45aed2d3fa9380"
+          "Sha256": "9ae38cae86c5f7138c67c2cdf18783bcc6565282e4f89617f2a797cd2e8ce5f1"
         },
         {
           "Path": "Buffaly.DesktopAutomation.dll",
-          "Sha256": "e4d89ed67182f29694f17f52d38d0d00ccdbe99905451c798160baa8afd7e69b"
+          "Sha256": "35f0a69fbda3bfa1a0034845f07452c8c0b9d053f68ea06b4cb44cca9f11f794"
         },
         {
           "Path": "Buffaly.DesktopViewer.Web.deps.json",
@@ -7031,11 +7035,15 @@
         },
         {
           "Path": "Buffaly.DesktopViewer.Web.dll",
-          "Sha256": "b672e4f841ef6e649d792ce260a633eabc7da1e37155dc2168bcf82e9c459ea2"
+          "Sha256": "97a393a06c5317d3e84ae6bb4d04a1264a2e9e24efd02a64ed9223f13f9009db"
+        },
+        {
+          "Path": "Buffaly.LandingPageRouting.dll",
+          "Sha256": "33177cd013c45b875af9f6a79c67d15c908bddf391536fa65171b50c1aff86a4"
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "49e6c943100189a104e79a731978e684eca2056b78c9d23821e99e2b18d6021c"
+          "Sha256": "8cb2cf98ab5bef1915066d5ce3c7d25d23f3cea8de55686c29127fc1a5eea3ad"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -7175,15 +7183,15 @@
         },
         {
           "Path": "RooTrax.Cache.dll",
-          "Sha256": "8dde36993c7ea059b2234046bdfd76985c541bbfc17b87695aa0d2e70b426f24"
+          "Sha256": "da981e1d2c545d42c68d489a793c83011f5538ed824576e8ab0c033378dcd39b"
         },
         {
           "Path": "RooTrax.Common.DB.dll",
-          "Sha256": "a6c9bc0a932e9698585b6247717a5a5f105b726c05aea586e2c71a80fd228026"
+          "Sha256": "6478fd1cdee9bf7466458adc96f5ff45f0ee921b7ce7a652c4e8eef7240b5558"
         },
         {
           "Path": "RooTrax.Common.dll",
-          "Sha256": "f8ec64625280eed0e006a43ccafa416732ec9c71ccab8c3c65a8aaf1dd6856a9"
+          "Sha256": "88040a2d6f1e288820ced7108549b3754ae650377c61eadf26dfd3127a44c601"
         },
         {
           "Path": "runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll",
