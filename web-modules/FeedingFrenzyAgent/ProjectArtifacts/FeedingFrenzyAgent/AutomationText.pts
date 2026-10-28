@@ -1,0 +1,43 @@
+include Imports.pts;
+include "Annotations.pts";
+include "Core/CoreOntology.pts";
+include "Core/Service.pts";
+prototype AutomationTextAction : OpsAction {}
+prototype AutomationTextEntity : SemanticEntityBase {}
+prototype AutomationTextService : Service
+{
+ String BaseUrl = new String();
+ String Token = new String();
+ String Arguments = new String();
+ function Configure(string BaseUrl, string AuthorizationToken, string BoundArguments) : string
+ {
+  this.BaseUrl = BaseUrl; this.Token = AuthorizationToken; this.Arguments = BoundArguments;
+  return "Automation text configured.";
+ }
+ function Call(string Method, JsonObject args) : string
+ {
+  JsonObject bound = new JsonObject(this.Arguments);
+  args["AutomationDefinitionID"] = bound["AutomationDefinitionID"];
+  args["WorkID"] = bound["WorkID"];
+  args["LeadID"] = bound["LeadID"];
+  return JsonWsHelper.CallJsonRoute(this.BaseUrl, "api/feedingfrenzy.automations", "automation-catalog/" + Method, this.Token, args);
+ }
+}
+prototype AutomationTextService#Current : AutomationTextService {}
+[SemanticProgram.InfinitivePhrase("to read the bound automation text input")]
+prototype ReadAutomationTextInput : AutomationTextAction
+{
+ Description = "Read only this bound owner's topic or recipient-email input.";
+ function Execute() : string { return AutomationTextService#Current.Call("get-automation-text-input", new JsonObject()); }
+}
+[SemanticProgram.InfinitivePhrase("to submit prepared automation text")]
+prototype SubmitAutomationText : AutomationTextAction
+{
+ Description = "Save proposed text or a precise hold reason. This never approves, enrolls or sends.";
+ function Execute(string Title, string BodyText, string HoldReason) : string
+ {
+  JsonObject text = new JsonObject(); text["Title"] = Title; text["BodyText"] = BodyText; text["HoldReason"] = HoldReason;
+  JsonObject args = new JsonObject(); args["Text"] = text;
+  return AutomationTextService#Current.Call("submit-automation-text", args);
+ }
+}
