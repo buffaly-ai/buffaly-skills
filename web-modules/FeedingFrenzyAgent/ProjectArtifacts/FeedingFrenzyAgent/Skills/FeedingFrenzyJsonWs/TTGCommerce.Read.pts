@@ -1,3 +1,6 @@
+reference FeedingFrenzy.Agent.Tools FeedingFrenzy.Agent.Tools;
+import FeedingFrenzy.Agent.Tools FeedingFrenzy.Agent.Tools.FeedingFrenzyCommerceReadTools FeedingFrenzyCommerceReadTools;
+
 [SemanticProgram.InfinitivePhrase("to read the current customer query scope")]
 prototype Customers_GetCustomerReadScope : FeedingFrenzyJsonWsSkillAction
 {
@@ -304,28 +307,7 @@ prototype ProductsAdmin_GetProductsPage : FeedingFrenzyJsonWsSkillAction
 	Description = @"Existing ProductGridResult Rows plus long TotalRows from the same SQL call. Optional IDs zero mean null; IsEnabled/IsInStock empty mean null, otherwise exact true/false. PriceTypeID zero gives all schedules. Sort: ProductName, ProductCode, SellingPrice, VendorCost, IsEnabled, InstockQuantity, VendorProductCode or LastUpdated. Vendor mode is ProductVendor-grained: TotalRows is mappings, not distinct products. Recorded on hand is not free-to-sell availability; absent pricing is not zero. Max200.";
 	function Execute(int ProductID, int ProductVendorID, int VendorID, int CategoryID, string IsEnabled, string IsInStock, string Search, int PriceTypeID, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
 	{
-		if (ProductID < 0) return "Error: ProductID must be zero (no filter) or positive.";
-		if (ProductVendorID < 0) return "Error: ProductVendorID must be zero (no filter) or positive.";
-		if (VendorID < 0) return "Error: VendorID must be zero (no filter) or positive.";
-		if (CategoryID < 0) return "Error: CategoryID must be zero (no filter) or positive.";
-		if (PriceTypeID < 0) return "Error: PriceTypeID must be zero (no filter) or positive.";
-		if (Search == null || Search.Length > 255) return "Error: Search is required and limited to 255 characters.";
-		if (SkipRows < 0 || NumRows < 1 || NumRows > 200) return "Error: Invalid page bounds; NumRows must be 1 through 200.";
-		if (IsEnabled != "" && IsEnabled != "true" && IsEnabled != "false") return "Error: IsEnabled must be empty, true or false.";
-		if (IsInStock != "" && IsInStock != "true" && IsInStock != "false") return "Error: IsInStock must be empty, true or false.";
-		JsonObject args = new JsonObject();
-		if (ProductID == 0) args["ProductID"] = null; else args["ProductID"] = ProductID;
-		if (ProductVendorID == 0) args["ProductVendorID"] = null; else args["ProductVendorID"] = ProductVendorID;
-		if (VendorID == 0) args["VendorID"] = null; else args["VendorID"] = VendorID;
-		if (CategoryID == 0) args["CategoryID"] = null; else args["CategoryID"] = CategoryID;
-		if (IsEnabled == "") args["IsEnabled"] = null; else args["IsEnabled"] = IsEnabled == "true";
-		if (IsInStock == "") args["IsInStock"] = null; else args["IsInStock"] = IsInStock == "true";
-		args["Search"] = Search;
-		if (PriceTypeID == 0) args["PriceTypeID"] = null; else args["PriceTypeID"] = PriceTypeID;
-		args["SortColumn"] = SortColumn;
-		args["SortAscending"] = SortAscending;
-		args["SkipRows"] = SkipRows;
-		args["NumRows"] = NumRows;
+		JsonObject args = FeedingFrenzyCommerceReadTools.ProductPageArguments(ProductID, ProductVendorID, VendorID, CategoryID, IsEnabled, IsInStock, Search, PriceTypeID, SortColumn, SortAscending, SkipRows, NumRows);
 		return FeedingFrenzyJsonWsService#Current.CallUiRoute("products-admin/get-products-page", args);
 	}
 }
