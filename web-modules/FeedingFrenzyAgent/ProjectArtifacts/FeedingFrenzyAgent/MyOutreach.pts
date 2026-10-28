@@ -1,0 +1,55 @@
+include Imports.pts;
+include "Annotations.pts";
+include "Core/CoreOntology.pts";
+include "Core/Service.pts";
+
+// Isolated action root: no ordinary CRM tools, filesystem, communication or model tools.
+prototype MyOutreachAction : OpsAction {}
+prototype MyOutreachEntity : SemanticEntityBase {}
+prototype MyOutreachService : Service
+{
+	String BaseUrl = new String();
+	String Token = new String();
+	String RunID = new String();
+	function Configure(string BaseUrl, string AuthorizationToken, string RunID) : string
+	{
+		this.BaseUrl = BaseUrl;
+		this.Token = AuthorizationToken;
+		this.RunID = RunID;
+		return "Outreach run configured.";
+	}
+	function Call(string Method, JsonObject args) : string
+	{
+		string strRunID = this.RunID;
+		args["RunID"] = strRunID;
+		return JsonWsHelper.CallJsonRoute(this.BaseUrl, "api/verasol.feedingfrenzy", "my-outreach/" + Method, this.Token, args);
+	}
+}
+prototype MyOutreachService#Current : MyOutreachService {}
+
+[SemanticProgram.InfinitivePhrase("to read the current outreach run input")]
+prototype MyOutreachReadInput : MyOutreachAction
+{
+	Description = "Reads only the authenticated owner's captured instructions, business date and weekday.";
+	function Execute() : string { return MyOutreachService#Current.Call("get-my-outreach-run-input", new JsonObject()); }
+}
+[SemanticProgram.InfinitivePhrase("to prepare the current outreach list")]
+prototype MyOutreachPrepare : MyOutreachAction
+{
+	Description = "Prepares the complete owner-bound list. Focus must be Pipeline, PreApproved, Sold or Partners. The application enforces weekday, scope, exclusions, due obligations and exact tag reconciliation. It fails closed for unsupported audiences.";
+	function Execute(string Focus) : string
+	{
+		JsonObject args = new JsonObject(); args["Focus"] = Focus;
+		return MyOutreachService#Current.Call("prepare-my-outreach", args);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to record outreach instructions needing clarification")]
+prototype MyOutreachClarify : MyOutreachAction
+{
+	Description = "Records a specific missing audience/ranking configuration instead of guessing or claiming a list was built.";
+	function Execute(string Reason) : string
+	{
+		JsonObject args = new JsonObject(); args["Reason"] = Reason;
+		return MyOutreachService#Current.Call("clarify-my-outreach", args);
+	}
+}
