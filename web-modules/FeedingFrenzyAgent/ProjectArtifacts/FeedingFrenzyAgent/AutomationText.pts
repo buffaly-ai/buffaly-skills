@@ -17,9 +17,9 @@ prototype AutomationTextService : Service
  function Call(string Method, JsonObject args) : string
  {
   JsonObject bound = new JsonObject(this.Arguments);
-  args["AutomationDefinitionID"] = bound["AutomationDefinitionID"];
-  args["WorkID"] = bound["WorkID"];
-  args["LeadID"] = bound["LeadID"];
+  args["AutomationDefinitionID"] = bound.GetIntOrFail("AutomationDefinitionID", "AutomationDefinitionID is required.");
+  args["WorkID"] = bound.GetStringOrFail("WorkID", "WorkID is required.");
+  args["LeadID"] = bound.GetIntOrNull("LeadID");
   return JsonWsHelper.CallJsonRoute(this.BaseUrl, "api/feedingfrenzy.automations", "automation-catalog/" + Method, this.Token, args);
  }
 }
