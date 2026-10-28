@@ -21,7 +21,7 @@ prototype Customers_GetCustomers : FeedingFrenzyJsonWsSkillAction
 		if (LeadSubStatusID < 0) return "Error: LeadSubStatusID must be zero (no filter) or positive.";
 		if (SalesRepresentativeID < 0) return "Error: SalesRepresentativeID must be zero (no filter) or positive.";
 		if (Search == null || Search.Length > 255) return "Error: Search is required and limited to 255 characters.";
-		if (SkipRows < 0 || NumRows < 1 || NumRows > 200 || SkipRows > 2147483647 - NumRows) return "Error: Invalid page bounds; NumRows must be 1 through 200.";
+		if (SkipRows < 0 || NumRows < 1 || NumRows > 200) return "Error: Invalid page bounds; NumRows must be 1 through 200.";
 		JsonObject args = new JsonObject();
 		if (AccountID == 0) args["AccountID"] = null; else args["AccountID"] = AccountID;
 		if (TagID == 0) args["TagID"] = null; else args["TagID"] = TagID;
@@ -81,7 +81,7 @@ prototype Customers_GetCustomerAddressesPage : FeedingFrenzyJsonWsSkillAction
 	{
 		if (CustomerID <= 0) return "Error: CustomerID must be positive.";
 		if (Search == null || Search.Length > 255) return "Error: Search is required and limited to 255 characters.";
-		if (SkipRows < 0 || NumRows < 1 || NumRows > 50 || SkipRows > 2147483647 - NumRows) return "Error: Invalid page bounds; NumRows must be 1 through 50.";
+		if (SkipRows < 0 || NumRows < 1 || NumRows > 50) return "Error: Invalid page bounds; NumRows must be 1 through 50.";
 		JsonObject args = new JsonObject();
 		args["CustomerID"] = CustomerID;
 		args["Search"] = Search;
@@ -129,7 +129,7 @@ prototype Customers_GetCustomerInvoices : FeedingFrenzyJsonWsSkillAction
 	{
 		if (CustomerID <= 0) return "Error: CustomerID must be positive.";
 		if (Search == null || Search.Length > 255) return "Error: Search is required and limited to 255 characters.";
-		if (SkipRows < 0 || NumRows < 1 || NumRows > 200 || SkipRows > 2147483647 - NumRows) return "Error: Invalid page bounds; NumRows must be 1 through 200.";
+		if (SkipRows < 0 || NumRows < 1 || NumRows > 200) return "Error: Invalid page bounds; NumRows must be 1 through 200.";
 		JsonObject args = new JsonObject();
 		args["CustomerID"] = CustomerID;
 		args["Search"] = Search;
@@ -164,7 +164,7 @@ prototype Customers_GetCustomerDocumentsPage : FeedingFrenzyJsonWsSkillAction
 	{
 		if (CustomerID <= 0) return "Error: CustomerID must be positive.";
 		if (Search == null || Search.Length > 255) return "Error: Search is required and limited to 255 characters.";
-		if (SkipRows < 0 || NumRows < 1 || NumRows > 200 || SkipRows > 2147483647 - NumRows) return "Error: Invalid page bounds; NumRows must be 1 through 200.";
+		if (SkipRows < 0 || NumRows < 1 || NumRows > 200) return "Error: Invalid page bounds; NumRows must be 1 through 200.";
 		JsonObject args = new JsonObject();
 		args["CustomerID"] = CustomerID;
 		args["Search"] = Search;
@@ -198,7 +198,7 @@ prototype SalesOrdersAdmin_GetSalesOrdersPage : FeedingFrenzyJsonWsSkillAction
 	function Execute(string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
 	{
 		if (Search == null || Search.Length > 255) return "Error: Search is required and limited to 255 characters.";
-		if (SkipRows < 0 || NumRows < 1 || NumRows > 200 || SkipRows > 2147483647 - NumRows) return "Error: Invalid page bounds; NumRows must be 1 through 200.";
+		if (SkipRows < 0 || NumRows < 1 || NumRows > 200) return "Error: Invalid page bounds; NumRows must be 1 through 200.";
 		JsonObject args = new JsonObject();
 		args["Search"] = Search;
 		args["SortColumn"] = SortColumn;
@@ -256,7 +256,7 @@ prototype PurchaseOrdersAdmin_GetPurchaseOrdersPage : FeedingFrenzyJsonWsSkillAc
 	{
 		if (VendorID < 0) return "Error: VendorID must be zero (no filter) or positive.";
 		if (Search == null || Search.Length > 255) return "Error: Search is required and limited to 255 characters.";
-		if (SkipRows < 0 || NumRows < 1 || NumRows > 200 || SkipRows > 2147483647 - NumRows) return "Error: Invalid page bounds; NumRows must be 1 through 200.";
+		if (SkipRows < 0 || NumRows < 1 || NumRows > 200) return "Error: Invalid page bounds; NumRows must be 1 through 200.";
 		JsonObject args = new JsonObject();
 		if (VendorID == 0) args["VendorID"] = null; else args["VendorID"] = VendorID;
 		args["Search"] = Search;
@@ -310,7 +310,7 @@ prototype ProductsAdmin_GetProductsPage : FeedingFrenzyJsonWsSkillAction
 		if (CategoryID < 0) return "Error: CategoryID must be zero (no filter) or positive.";
 		if (PriceTypeID < 0) return "Error: PriceTypeID must be zero (no filter) or positive.";
 		if (Search == null || Search.Length > 255) return "Error: Search is required and limited to 255 characters.";
-		if (SkipRows < 0 || NumRows < 1 || NumRows > 200 || SkipRows > 2147483647 - NumRows) return "Error: Invalid page bounds; NumRows must be 1 through 200.";
+		if (SkipRows < 0 || NumRows < 1 || NumRows > 200) return "Error: Invalid page bounds; NumRows must be 1 through 200.";
 		if (IsEnabled != "" && IsEnabled != "true" && IsEnabled != "false") return "Error: IsEnabled must be empty, true or false.";
 		if (IsInStock != "" && IsInStock != "true" && IsInStock != "false") return "Error: IsInStock must be empty, true or false.";
 		JsonObject args = new JsonObject();
@@ -352,7 +352,7 @@ prototype VendorsAdmin_GetVendorsPage : FeedingFrenzyJsonWsSkillAction
 	function Execute(string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
 	{
 		if (Search == null || Search.Length > 255) return "Error: Search is required and limited to 255 characters.";
-		if (SkipRows < 0 || NumRows < 1 || NumRows > 200 || SkipRows > 2147483647 - NumRows) return "Error: Invalid page bounds; NumRows must be 1 through 200.";
+		if (SkipRows < 0 || NumRows < 1 || NumRows > 200) return "Error: Invalid page bounds; NumRows must be 1 through 200.";
 		JsonObject args = new JsonObject();
 		args["Search"] = Search;
 		args["SortColumn"] = SortColumn;
