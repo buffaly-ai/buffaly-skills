@@ -8562,7 +8562,7 @@
       "PackageType": "WebModule",
       "Title": "Feeding Frenzy Agent",
       "Description": "Buffaly Web Module package for Feeding Frenzy Agent.",
-      "Version": "0.1.142",
+      "Version": "0.1.143",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/FeedingFrenzyAgent",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/FeedingFrenzyAgent",
@@ -8572,24 +8572,296 @@
       ],
       "Files": [
         {
+          "Path": "Azure.Core.dll",
+          "Sha256": "224d09cb39eae4d8c30272a0c49beb19d873c87347eae9487f0ddd859d752b56"
+        },
+        {
+          "Path": "Azure.Identity.dll",
+          "Sha256": "af18f20be25b2895c912f3ba0a9f2901a82dda823edcad76e6a19eac9886a40f"
+        },
+        {
+          "Path": "BasicUtilities.dll",
+          "Sha256": "b7323ec6ff12c4692185766c4e104f525df683909582c4cb7a2d9ac779cc0a3a"
+        },
+        {
+          "Path": "Buffaly.Agent.Common.dll",
+          "Sha256": "ea0211ef2f033e5349dc0ec3bfbc7009dd8416377b7482a5b93e608bb4f18e62"
+        },
+        {
+          "Path": "Buffaly.Agent.Core.dll",
+          "Sha256": "3a6214f60cdd2adaea756e59f78c3f27958d52fdfe82bd48160a288c0fb0af27"
+        },
+        {
+          "Path": "Buffaly.Agent.CSharpSkill.dll",
+          "Sha256": "a969bd3964429f0f9ca926c0031b40dceb682769c6a9cd95c9de963417b0e78c"
+        },
+        {
+          "Path": "Buffaly.Agent.Host.dll",
+          "Sha256": "c100064ac32374f046e5c5c7659d00f221305959704ace123890fd163a6a2836"
+        },
+        {
+          "Path": "Buffaly.Agent.ProtoScript.Runtime.dll",
+          "Sha256": "456260dde334412b96e50d4e3991cfe9ba684112c35c12d92ccb9375b79d4af2"
+        },
+        {
+          "Path": "Buffaly.Agent.ProtoScriptAuthoring.dll",
+          "Sha256": "be66ee27e0b538b4ad96b69abe9580bc7e3ce74a11bbc15905a407b64add6bf8"
+        },
+        {
+          "Path": "Buffaly.Agent.Runtime.Abstractions.dll",
+          "Sha256": "82def51442d61ef5c0bf896044db480c3bc770c131a7ef51cd9063b5db1ebb3e"
+        },
+        {
+          "Path": "Buffaly.Agent.SemanticDatabase.DB.dll",
+          "Sha256": "1e253abb316e10bd30151d0ca6ed5f7a80939e836b4685ce1c2d1c7c6d6bbe29"
+        },
+        {
+          "Path": "Buffaly.Agent.SemanticDatabase.dll",
+          "Sha256": "c323f27ceaa3339cbc670f23c17c62db3cf7c40f8076048526e3db8c1ed5c0c2"
+        },
+        {
+          "Path": "Buffaly.Agent.Tools.Mcp.dll",
+          "Sha256": "07452fd72335cba9df5417bd03e97f97ab775866083a2872f0c3120473077307"
+        },
+        {
+          "Path": "Buffaly.Agent.Tools.Platform.dll",
+          "Sha256": "cb4130ed3f80bab589b8cc116456a0d7d09e264e9a94cdd12838e1b5e4ebe3aa"
+        },
+        {
+          "Path": "Buffaly.Agent.Tools.Process.dll",
+          "Sha256": "a06b2f4c36016294f39d73b3905f9655b97ff3c0066f0f2499c88dfdbd96d192"
+        },
+        {
+          "Path": "Buffaly.Agent.Tools.Secrets.dll",
+          "Sha256": "ef3211cbe975c0261b43ffa77b72f5a20dc367b947d5d819cb62f352d668c663"
+        },
+        {
+          "Path": "Buffaly.Agent.Tools.SemanticDatabase.dll",
+          "Sha256": "41632e758b93c1024d12f005626536aa94199565771127283d44f9df11a46ec4"
+        },
+        {
+          "Path": "Buffaly.Agent.Web.Common.dll",
+          "Sha256": "d04faeeaf3da1dd1875b15641c35a79336a397bcadb31dd5ff2751e4a21ef4e8"
+        },
+        {
+          "Path": "Buffaly.Agents.dll",
+          "Sha256": "8dee8d39be7b691287c43fc56e7744a877efb70021c00e4a2ae79eaa3e5b61c0"
+        },
+        {
+          "Path": "Buffaly.AIProviderAPI.dll",
+          "Sha256": "ce19c9c40c917e2158614d6c39ee54238384203b0f8938a8c7feb05930dc0f0c"
+        },
+        {
+          "Path": "Buffaly.Business.dll",
+          "Sha256": "85fc599b90bcc50790f873036a6071ca14a09431b20f413a32296f64517d36c4"
+        },
+        {
           "Path": "Buffaly.Chat.Contracts.dll",
-          "Sha256": "60860508d566693f3bdd78468b9e394867ddd5e82ff32500ead524816851adc8"
+          "Sha256": "b0276b4b43a2043e1d2041dfabb8805fd67be3dfc7773a504b7c14a11039b0e7"
         },
         {
           "Path": "Buffaly.Chat.Server.dll",
-          "Sha256": "93996c83f7fe0ca850b73e8a08e7ca1364b55cc1cc57fec8e33415f28c8ad28b"
+          "Sha256": "341e573354d7d1aff4d7335b0e46c4cccfd72dff6f55d80e6253c57f64fce463"
+        },
+        {
+          "Path": "Buffaly.Data.dll",
+          "Sha256": "6e39f4cb73e17eaca8fc3ce1a1d5172a07219cc6db49fa88fbd08bc4ca367112"
+        },
+        {
+          "Path": "Buffaly.DB.Core.dll",
+          "Sha256": "bf648fc5a3868aa0973e63aa866f84940e9f5d22a16659c95daee60dc39778fc"
+        },
+        {
+          "Path": "Buffaly.DB.Hybrid.dll",
+          "Sha256": "e7ea20e56fd4040c343b2bf7a1d5192b0d729dece8c2fc6870bf2c8ac6b2ca02"
+        },
+        {
+          "Path": "Buffaly.DB.Postgres.dll",
+          "Sha256": "aceb943464b4770fd2750e8515482867976b03f0b1f5bca0973dd10bd3f224d2"
+        },
+        {
+          "Path": "Buffaly.DB.SqlServer.dll",
+          "Sha256": "70bbf282201c998d8e89f301a5d77db2ba9462c0c079261f9abb5fb17a78df25"
+        },
+        {
+          "Path": "Buffaly.Development.Common.dll",
+          "Sha256": "b229702c162c4ef9459e452eb3e7a4735582ba3601b2d660f371ecec0387346a"
+        },
+        {
+          "Path": "Buffaly.ProviderContracts.dll",
+          "Sha256": "830dd53d321dd460e411c8ba67d7f814c37239bab948458828b81ddaec94b8c4"
+        },
+        {
+          "Path": "Buffaly.SemanticDB.Data.dll",
+          "Sha256": "ee10ff6403e459f4add33cd3b258fed109378c6773fa5da79ae76cbc88e1f459"
+        },
+        {
+          "Path": "Buffaly.SemanticDB.dll",
+          "Sha256": "2446e5ea3c0f61529f82df1987a61910c1031da8cd0d662b0ea52810b774ccb5"
+        },
+        {
+          "Path": "Buffaly.Sessions.DB.dll",
+          "Sha256": "31c2a7b3ddb02962a81fd0f941674ebb2b4bb873d4b28274006cc0a1b4aa5eec"
+        },
+        {
+          "Path": "Buffaly.Sessions.DB.PostGres.dll",
+          "Sha256": "333ccb0605808f13f0d094433baa5800b99b4b5037b4a6c4a9c0be71b7aa5d04"
+        },
+        {
+          "Path": "CSharp.dll",
+          "Sha256": "9d18eaef122218e852e7fd7e5aef8c889d4bc7655f88212f2d335440efd2ff8c"
+        },
+        {
+          "Path": "CSharp.Extensions.dll",
+          "Sha256": "2c9d4dc4d6a1ec319a63ff56b4900d4c5f2adf277438e61169767825cd146b9e"
+        },
+        {
+          "Path": "CSharp.Parsers.dll",
+          "Sha256": "356dbcc749389d17a2d8dd15345bd03d050317167f901ea2e68eb7bb5b094e47"
         },
         {
           "Path": "FeedingFrenzy.Agent.Tools.deps.json",
-          "Sha256": "93d8cd0e35002c4e6decbd55cdaa4e48de4dfc8c9fc4c1991248aedbeefd346e"
+          "Sha256": "b4049f02cf94390dd48f4ed3706bf52b9771708555d79b0129b56d92aae4986a"
         },
         {
           "Path": "FeedingFrenzy.Agent.Tools.dll",
-          "Sha256": "a652a0fb823d51fc094ff94487ff5b2c8ae47008f990e121f99f85256a13122c"
+          "Sha256": "0d6f9579bf15e8224b1b49f384fb2ba5f0ad1d1cf8654f8ebbdbcf67ba0140db"
+        },
+        {
+          "Path": "FeedingFrenzy.Automations.Contracts.dll",
+          "Sha256": "c7add6f341ef640d595b703d85bc420255f896460ea70df4d0e2f1e0866263a0"
         },
         {
           "Path": "FeedingFrenzy.Common.dll",
-          "Sha256": "ed46c94e111ba896cda41d8a3ae11940414a0d3a9f76804dc22b5f80db08d6ca"
+          "Sha256": "39a8e90f3fe44c0ab17895c31ddf98c719dac23ee8978b3ccd04f5788a564abc"
+        },
+        {
+          "Path": "FeedingFrenzy.Data.dll",
+          "Sha256": "ad13db46c0718d420d7e58ec7454fea0d7785a867649248d9ce5e69decb8205c"
+        },
+        {
+          "Path": "HtmlAgilityPack.dll",
+          "Sha256": "e01bd209a4efadd6357ad3a2bb1b7e2aa0951abed37c9a713fdb658f34309dcc"
+        },
+        {
+          "Path": "kScript.dll",
+          "Sha256": "0709fc97be11749a32bfe16c6ed58d6df68550b08de4482046e3bf58cf7c9055"
+        },
+        {
+          "Path": "Microsoft.Bcl.AsyncInterfaces.dll",
+          "Sha256": "136d5965cf4768e8420b547a8bddea882921f426c371833d558a858a2f0c235a"
+        },
+        {
+          "Path": "Microsoft.Bcl.Cryptography.dll",
+          "Sha256": "009a27b8e3093fdd2960bba63e4acd48eab05c4f8f8a6d9fe8c24b4657f44c4f"
+        },
+        {
+          "Path": "Microsoft.Data.SqlClient.dll",
+          "Sha256": "dd07bf0909d02c07a655b9576510d94cbf43d6fb71ced6c77218c5a3c9f7b154"
+        },
+        {
+          "Path": "Microsoft.Extensions.Caching.Abstractions.dll",
+          "Sha256": "001baee94c7cac0cac5b4a49accce3a1e9d21053ea99abe42f871710d96640ad"
+        },
+        {
+          "Path": "Microsoft.Extensions.Caching.Memory.dll",
+          "Sha256": "b2205b4ce4ca238a3d36ab36cd312d59e5189c581c5f5af5775b9853150cb871"
+        },
+        {
+          "Path": "Microsoft.Extensions.Configuration.Abstractions.dll",
+          "Sha256": "9b1458c56bad661c8f4fcfdc897eae8e4822a7c188a9dc5bef3ab83442ecad93"
+        },
+        {
+          "Path": "Microsoft.Extensions.Configuration.Binder.dll",
+          "Sha256": "403b794edf2db1faa5e0e4a0ed3906a4a1850a49e040a73ce54bd1b9268418e6"
+        },
+        {
+          "Path": "Microsoft.Extensions.Configuration.dll",
+          "Sha256": "eaa34eb245ba2fb164929ac64f7a67133159b57539685a4a4fe78561e26253fe"
+        },
+        {
+          "Path": "Microsoft.Extensions.Configuration.FileExtensions.dll",
+          "Sha256": "9b5c82e14b7297ac0d5e872f493d0e8a0c5fea708b08b2f35ef258eb176d4e4f"
+        },
+        {
+          "Path": "Microsoft.Extensions.Configuration.Json.dll",
+          "Sha256": "b6c165a45bec7645d060e66f02c8bd4ce9998ce206eeca460d32d570816de735"
+        },
+        {
+          "Path": "Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+          "Sha256": "190142694ee938f5ecd88edb959238968e68cf976a80a6e65ddd488af49f7442"
+        },
+        {
+          "Path": "Microsoft.Extensions.FileProviders.Abstractions.dll",
+          "Sha256": "4450b4d6bea01c5117221449d5d3bb8f074667d81a7c24703009ebcd675fbac6"
+        },
+        {
+          "Path": "Microsoft.Extensions.FileProviders.Physical.dll",
+          "Sha256": "97526feb64abcaa95d68cde39755f39af3124d81af6718a6fcf36ae34fce277d"
+        },
+        {
+          "Path": "Microsoft.Extensions.FileSystemGlobbing.dll",
+          "Sha256": "0ee8dd1774befd77fc2f09a2c08a8561e2de657298fdf8ce5e1603736c20f24c"
+        },
+        {
+          "Path": "Microsoft.Extensions.Logging.Abstractions.dll",
+          "Sha256": "f8422575f5591b25a70f4d32a606c0997fe3b0d0348a814ce6e51547b5446da6"
+        },
+        {
+          "Path": "Microsoft.Extensions.Options.dll",
+          "Sha256": "cee3a3432a2e7e0328d49cba4bfa57d81ca05b0b14826cefbcf6b1984153e1ad"
+        },
+        {
+          "Path": "Microsoft.Extensions.Primitives.dll",
+          "Sha256": "2e95f89589eb00f6c3fa6a786c8167fe310f8b832ea291b123f485dab23df8ee"
+        },
+        {
+          "Path": "Microsoft.Identity.Client.dll",
+          "Sha256": "10d59df4170053ea9597e3c20adc9607ad17318ad5d8747eda3d930a5a4b463a"
+        },
+        {
+          "Path": "Microsoft.Identity.Client.Extensions.Msal.dll",
+          "Sha256": "9c1f736b16cacd318afe07d3b9d707a4b4b56def5e403b0aff471c1af413aaf0"
+        },
+        {
+          "Path": "Microsoft.IdentityModel.Abstractions.dll",
+          "Sha256": "27af0812016ee6bb9a22beef2b8697a9d1eda96913f11335878458fff79a717f"
+        },
+        {
+          "Path": "Microsoft.IdentityModel.JsonWebTokens.dll",
+          "Sha256": "e6add69ec50664469f739c527fb74c37fbffa072c36e889d91e058faa64542b1"
+        },
+        {
+          "Path": "Microsoft.IdentityModel.Logging.dll",
+          "Sha256": "4eb68fb71d38d86e93e0c9145620ea3e528fc49333d82c923140f9868f1ea426"
+        },
+        {
+          "Path": "Microsoft.IdentityModel.Protocols.dll",
+          "Sha256": "4e81eb0584e24d6274916a6f470c990ac3aaa924c2f10255e64679c1a032f0e2"
+        },
+        {
+          "Path": "Microsoft.IdentityModel.Protocols.OpenIdConnect.dll",
+          "Sha256": "8e845988a113b5c146f1392e993e8f554a34756d37563a85c64bb399e45a4c0b"
+        },
+        {
+          "Path": "Microsoft.IdentityModel.Tokens.dll",
+          "Sha256": "07d46c63c931f8792e932cc131dc9580dd4575e0872cae92878d26847c9f248e"
+        },
+        {
+          "Path": "Microsoft.SqlServer.Server.dll",
+          "Sha256": "a9dca1b42bc875f966b78b2c0880e62b838f0ed6567166d7f1f07ae4b76ec4bf"
+        },
+        {
+          "Path": "Newtonsoft.Json.dll",
+          "Sha256": "a28c251dfe36d881e9e2462e171441b8b0ec156fe3f452602c9149b1b9efe05b"
+        },
+        {
+          "Path": "Ontology.dll",
+          "Sha256": "b74fa4fc36b5f0069b9a8caef29d3e4ca5f831a151b2f8a4100ced5015ca361f"
+        },
+        {
+          "Path": "Ontology.Simulation.dll",
+          "Sha256": "88980ad0f93d26ba947cc98d779978b4a44e40e32bef5869266cecbfe969840b"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Administrator.pts",
@@ -8610,6 +8882,14 @@
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Agents/feeding-frenzy-agent.agent.json.md",
           "Sha256": "b5f9c466269baae120f53dd5e713b4cd0c8a3bb2b3b463d213d4d05b282661a6"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Agents/feeding-frenzy-automation-text.agent.json",
+          "Sha256": "03059e14ec1e110574fe192bfcec0111a81c5d9c1256120b6cd21153f07d29f5"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Agents/feeding-frenzy-automation-text.agent.json.md",
+          "Sha256": "27726a81a48a6ebc58b325d379c04aff97d2831f6c6987c4c312984d546e5470"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Agents/feeding-frenzy-if-accounting-administrator.agent.json",
@@ -8640,12 +8920,28 @@
           "Sha256": "7be8eeb30d02530abf496a446362924a1ec44e6a8b4166da7abf92791e531f9c"
         },
         {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Agents/feeding-frenzy-ttg-commerce.agent.json",
+          "Sha256": "18156a5dbfa085096950c1e3bf38658809b8f7dbc7e9090206bbda5616bce9ed"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Agents/feeding-frenzy-ttg-commerce.agent.json.md",
+          "Sha256": "42f25352588f3727ca495bc1959f32e53bd84c6d83da60d1a43b3b447f67fc60"
+        },
+        {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Agents/role-bindings.json",
           "Sha256": "2b5b44f4ba3eaf94d49cae3a5f11012eb3077f061c3413fe729b6734207a366c"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Annotations.pts",
           "Sha256": "5aed2fe5b004297ec832f50e90355f75b9f342a24610bff9efacf8dbbbbd7550"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/AutomationText.pts",
+          "Sha256": "6f54f072f354efebb1c0fa7269d8f1e8e5d0a71639c644dc81748a3f130cfc39"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/AutomationText.pts.md",
+          "Sha256": "4ce44620c9cd4f437ef1a7b384e93e076bd8bf84c873d95e3fbcc01047022644"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/ContextPrompts/BrowserContext.prompt.md",
@@ -8812,6 +9108,10 @@
           "Sha256": "bd6762dd5dcc32c28b84f90da24d131ceb0eec0c1a9f242c8c075176549ff920"
         },
         {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Prompts/AutomationText.prompt.md",
+          "Sha256": "7fe8f166f364488ccedec9b26a118303b6f5606a1616b521e408ef194170a6c0"
+        },
+        {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Prompts/FeedingFrenzyAgent.prompt.md",
           "Sha256": "2a5bd30cb5d37bb19b379091701d800dfe705bdf9024533e118aa1cd5a2185e8"
         },
@@ -8830,6 +9130,10 @@
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Prompts/MyOutreach.prompt.md",
           "Sha256": "d72f77dd70f8defe338b26e29d4f400312b94595f0a2c407389341737db12321"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Prompts/TTGCommerce.prompt.md",
+          "Sha256": "893ef78a20c140479f2b10b2d517178c169155df7c4ddf12ab4ba3c63a02acf6"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/ProtoScript.Minimum.md",
@@ -9048,6 +9352,14 @@
           "Sha256": "5c25830b57f495a801b4cb8932a1716f43f7ce957dcae16018edee1173b157c3"
         },
         {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/TTGCommerce.Read.pts",
+          "Sha256": "db1f2cae2416dd8343b952bc64e6448a326522065e43e6b5be3766bcee6974b9"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/TTGCommerce.Read.pts.md",
+          "Sha256": "933a9318324555db31371adaf64e39463ff252ed14b84262253a9cecb5fd9d35"
+        },
+        {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/UserAutomation.Admin.pts",
           "Sha256": "11eeb2b05ff4e0516beef1ac67edad87d0389ce53f7519cf086070490752357e"
         },
@@ -9192,8 +9504,96 @@
           "Sha256": "94a6c1ab2796561d4c2af72fba36481cefb7ac49bbf5a361f1cb211e83c8db22"
         },
         {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/TTGCommerce.pts",
+          "Sha256": "739202c241360d1c56689535bc7f76d9e4dcad906e7df2116d8e463a13263872"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/TTGCommerce.pts.md",
+          "Sha256": "e4c6e85095653a1961f41e407bea9259d8f144495a99a4c5a9127278dce806fb"
+        },
+        {
+          "Path": "ProtoScript.CLI.Validation.dll",
+          "Sha256": "9df9e9bf687eeef62df2e2032e3a9ac4ac656b62d12b63e997750ab022b36f81"
+        },
+        {
+          "Path": "ProtoScript.dll",
+          "Sha256": "852c37b698650664edf261c626a7c82a72b28469f37fd97708bb5c8f5534d7c3"
+        },
+        {
+          "Path": "ProtoScript.Interpretter.dll",
+          "Sha256": "53fb33c0254baffa7e08e2b7f5284fe8fa242f4a6b605ca44b7cd43447e204af"
+        },
+        {
+          "Path": "ProtoScript.Parsers.dll",
+          "Sha256": "17dec3b8d6488bd916c8a7e2cfba16ad8ac7d95a431032e05a639a2fa68a473c"
+        },
+        {
+          "Path": "ProtoScript.Workbench.Api.dll",
+          "Sha256": "4090d2601590ca6ea434799cb5382431b21871fe607919a97786cfd2c2715982"
+        },
+        {
+          "Path": "ReverseMarkdown.dll",
+          "Sha256": "77032d47ba216c592bc31c6211f53df0b2b019338a929fbc14ba796955d9eca8"
+        },
+        {
+          "Path": "RooTrax.Cache.dll",
+          "Sha256": "9d2e181820e6eec9ebafc6f066caadf2753a6adea726109ea1b5055967545287"
+        },
+        {
+          "Path": "RooTrax.Common.DB.dll",
+          "Sha256": "8cd42356a3d88c492017036a631c5cb203dd5d9705e7324e31b7ff8a666c6e2e"
+        },
+        {
+          "Path": "RooTrax.Common.dll",
+          "Sha256": "b5ab9a65b9e232e6bd74d993c0e09353c5996a7dcd49a1209e35a741136bb456"
+        },
+        {
+          "Path": "RooTrax.Git.dll",
+          "Sha256": "2fc243e621ca436dbfd76044bfa1886061608aa5542b7a385bf344e62cf124bd"
+        },
+        {
+          "Path": "System.ClientModel.dll",
+          "Sha256": "ce44a4fae4c4787c12475700e19a365fc2f388ae5d0f6182557ce5ea175be7f6"
+        },
+        {
+          "Path": "System.Configuration.ConfigurationManager.dll",
+          "Sha256": "9a86cb996532ef37395fac0d64cb93350997a79d7db4d663c0f04c1d309ec5c2"
+        },
+        {
+          "Path": "System.Data.OleDb.dll",
+          "Sha256": "03476f5d5cb94f231285bebb83fec79c08b3575503f0cb24ede0e4b9ec7ca301"
+        },
+        {
+          "Path": "System.Diagnostics.EventLog.dll",
+          "Sha256": "7ebcf9c9bd0271b5d7a18828bb84623dd5bc5e80fd7d37df044f7951f043d874"
+        },
+        {
+          "Path": "System.Diagnostics.PerformanceCounter.dll",
+          "Sha256": "b197a2c107a1a04d64268efcc69b9b27c818cd1cb4a68392a34f039774836d68"
+        },
+        {
+          "Path": "System.IdentityModel.Tokens.Jwt.dll",
+          "Sha256": "8027f6bfe795fd5718b1c7bbb3951af064ba29cb92ee965bbe237f6808cfd28c"
+        },
+        {
+          "Path": "System.Memory.Data.dll",
+          "Sha256": "bae79a4ff6e8fcfb65a3d88eb53d281898e699e5471ebd780843e5616753f0c3"
+        },
+        {
+          "Path": "System.Security.Cryptography.Pkcs.dll",
+          "Sha256": "dfa1ee60ca07b74f7c4de24e3b9a93a302cb0f0e67813801562ffdf2fb89f219"
+        },
+        {
+          "Path": "System.Security.Cryptography.ProtectedData.dll",
+          "Sha256": "e82875c8fdc739b3636fc1926012fa335bb706a7eefe05621b848f997a9b49e9"
+        },
+        {
           "Path": "web-module.json",
           "Sha256": "f36ecd50a4869e2ab977130f3674e8cf23ee6977d7e235f68c5c61b3048fc708"
+        },
+        {
+          "Path": "WebAppUtilities.dll",
+          "Sha256": "7fc6255ba96bb6915aad4273677fb23e33d2be78f871ec30d3cf6a757057b32e"
         }
       ],
       "ProjectArtifacts": [
