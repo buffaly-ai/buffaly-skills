@@ -1,0 +1,21 @@
+{
+  "AgentName": "feeding-frenzy-ttg-commerce",
+  "DisplayName": "TTG Commerce Assistant",
+  "Aliases": [
+    "ttg commerce",
+    "textile trading group assistant"
+  ],
+  "ProjectFilePath": "TTGCommerce.pts",
+  "PromptFile": "Prompts/TTGCommerce.prompt.md",
+  "PromptContext": "",
+  "RootActionPrototypeName": "FeedingFrenzyJsonWsSkillAction",
+  "RootEntityPrototypeName": "FeedingFrenzyAgentEntityRoot",
+  "DefaultProviderName": "openai",
+  "DefaultReasoningLevel": "medium",
+  "UiPage": "/buffaly-agent.html",
+  "IsReadOnly": true,
+  "IsHidden": false,
+  "CanChangeModel": true,
+  "DisableLevel2AutoAttach": true,
+  "EnableImmediateProtoScriptCommands": false
+}

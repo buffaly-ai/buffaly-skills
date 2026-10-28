@@ -8562,7 +8562,7 @@
       "PackageType": "WebModule",
       "Title": "Feeding Frenzy Agent",
       "Description": "Buffaly Web Module package for Feeding Frenzy Agent.",
-      "Version": "0.1.138",
+      "Version": "0.1.139",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/FeedingFrenzyAgent",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/FeedingFrenzyAgent",
@@ -8725,19 +8725,19 @@
         },
         {
           "Path": "FeedingFrenzy.Agent.Tools.dll",
-          "Sha256": "d36dbfd782cf414bdb2d7a50b769acbca17568fad9d44edb07337ecfcf2f0229"
+          "Sha256": "61a947f329a67238725ed7d4bdf2c299187b7a325ab1e2de68ac9bb358913033"
         },
         {
           "Path": "FeedingFrenzy.Automations.Contracts.dll",
-          "Sha256": "d2b4b57e0db7b53d704f1e96aa539e7eb9b0c56d64bde8c56d3e4b224d615944"
+          "Sha256": "4ec06ff2acb93208055bdb9f60953822d4e3e377e14c478e48d5f45ac78e21c1"
         },
         {
           "Path": "FeedingFrenzy.Common.dll",
-          "Sha256": "12211cbd4c619a6cd0928084873114def2d40ee4728a71bedc08bfd4519415cf"
+          "Sha256": "8e6b2b246bd4c8111103da8f00567c1b658889911d641c4d271bae015f864fcc"
         },
         {
           "Path": "FeedingFrenzy.Data.dll",
-          "Sha256": "3c2a1b856279ac0b517369f47e5c7258749574c8d7693fd9e7fffc6d34fd7574"
+          "Sha256": "66a27e69e6dd83e2bdd3370ab834962563c312bc987718317cc1a7194ee0f722"
         },
         {
           "Path": "HtmlAgilityPack.dll",
@@ -8920,6 +8920,14 @@
           "Sha256": "7be8eeb30d02530abf496a446362924a1ec44e6a8b4166da7abf92791e531f9c"
         },
         {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Agents/feeding-frenzy-ttg-commerce.agent.json",
+          "Sha256": "18156a5dbfa085096950c1e3bf38658809b8f7dbc7e9090206bbda5616bce9ed"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Agents/feeding-frenzy-ttg-commerce.agent.json.md",
+          "Sha256": "68b6c60ef3dd5c261dfeb3b7243d0f2d5de9b24dbe567a596df97780a00d05bf"
+        },
+        {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Agents/role-bindings.json",
           "Sha256": "2b5b44f4ba3eaf94d49cae3a5f11012eb3077f061c3413fe729b6734207a366c"
         },
@@ -8933,7 +8941,7 @@
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/AutomationText.pts.md",
-          "Sha256": "498d3895eb759284bf6a060b248db64ddb15d8f54f1fb43e6b7e1114f3b24acc"
+          "Sha256": "4ce44620c9cd4f437ef1a7b384e93e076bd8bf84c873d95e3fbcc01047022644"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/ContextPrompts/BrowserContext.prompt.md",
@@ -9122,6 +9130,10 @@
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Prompts/MyOutreach.prompt.md",
           "Sha256": "d72f77dd70f8defe338b26e29d4f400312b94595f0a2c407389341737db12321"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Prompts/TTGCommerce.prompt.md",
+          "Sha256": "65662ee8b1c58ff5cb6f0d597756cb0b69ed124c4b6d616db355408d22a7eb68"
         },
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/ProtoScript.Minimum.md",
@@ -9340,6 +9352,14 @@
           "Sha256": "5c25830b57f495a801b4cb8932a1716f43f7ce957dcae16018edee1173b157c3"
         },
         {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/TTGCommerce.Read.pts",
+          "Sha256": "5107939c8897f17e58e503c7b13941203f8d2e3d31df68355e03530f170abcd6"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/TTGCommerce.Read.pts.md",
+          "Sha256": "f40214c2a2d9a521a404d0b9cfc316cff0bd316b440c898aa164e519efb6353a"
+        },
+        {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/UserAutomation.Admin.pts",
           "Sha256": "11eeb2b05ff4e0516beef1ac67edad87d0389ce53f7519cf086070490752357e"
         },
@@ -9482,6 +9502,14 @@
         {
           "Path": "ProjectArtifacts/FeedingFrenzyAgent/Sms.pts.md",
           "Sha256": "94a6c1ab2796561d4c2af72fba36481cefb7ac49bbf5a361f1cb211e83c8db22"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/TTGCommerce.pts",
+          "Sha256": "739202c241360d1c56689535bc7f76d9e4dcad906e7df2116d8e463a13263872"
+        },
+        {
+          "Path": "ProjectArtifacts/FeedingFrenzyAgent/TTGCommerce.pts.md",
+          "Sha256": "3039a33b45ebaa4e29de1b86f497c9c6ca2aabaeb74f8b961aad7171b89e07b3"
         },
         {
           "Path": "ProtoScript.CLI.Validation.dll",
