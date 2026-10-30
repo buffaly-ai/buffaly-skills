@@ -219,6 +219,7 @@
     if(event.key==='Escape'){
       const dialog=$('search-dialog').open?$('search-dialog'):$('project-dialog').open?$('project-dialog'):null;
       if(dialog){event.preventDefault();dialog.close();return;}
+      if(document.fullscreenElement){event.preventDefault();document.exitFullscreen().catch(report);return;}
       if(state.focus&&!document.fullscreenElement)setFocus(false);return;
     }
     if($('project-dialog').open||$('search-dialog').open)return;
@@ -235,7 +236,8 @@
         const root=await api('session-root',{sessionKey});await openScope({sessionKey},root.name,{path:file.replace(/^artifacts\//i,''),line});
       }else if(params.has('root')){
         const root=roots.find(item=>item.id===params.get('root'));if(!root)throw new Error('The selected source location is unavailable. Open another project.');
-        await openScope({rootId:root.id,projectPath:params.get('project')||''},root.name, file?{path:file,line}:null);
+        const projectPath=params.get('project')||'';
+        await openScope({rootId:root.id,projectPath},root.name+(projectPath?' / '+projectPath:''),file?{path:file,line}:null);
       }else picker();
     }catch(error){report(error);}
   })();
