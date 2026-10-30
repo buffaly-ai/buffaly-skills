@@ -6,3 +6,6 @@ Implemented the approved project-picker, scoped API consumption, navigation tabs
 
 ## 2026-10-30 — Local GitHub repository opening
 Repository-first project picker discovers existing github.com checkouts using only bounded local metadata under configured roots; retains folder/subproject opening. No Git process, network, credential file or config include reads. Source validation: 46 .NET tests, 6 repository UI checks and 8 workspace regression groups passed. Staging results are recorded separately after installation.
+
+## 2026-10-30 — General repository source browsing
+Expanded tree/file reads from C# only to regular files and empty folders. Strict bounded UTF-8/BOM-Unicode decoding rejects binary/control/invalid text rather than silently corrupting source. Preserved read-only scope/link/2MB protections and excluded-folder checks; tree errors explicitly at10,000entries/16levels. C# remains highlighted with Roslyn symbols; other text is escaped literal plain text with file-type labels and disabled C# navigation. Session text links supported without changing existing C# provider registration. Validation:68.NETtests,6mixed-file source UI checks and8workspace regression groups passed; installed staging proof follows separately.

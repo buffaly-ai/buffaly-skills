@@ -15,6 +15,8 @@
     return response.json();
   }
   function report(error){status(error.message,true);}
+  function isCSharp(path){return /\.cs$/i.test(path);}
+  function language(path){const ext=path.split('.').pop().toLowerCase();return ({cs:'C#',js:'JavaScript',cjs:'JavaScript',mjs:'JavaScript',ts:'TypeScript',tsx:'TSX',jsx:'JSX',html:'HTML',css:'CSS',json:'JSON',md:'Markdown',ps1:'PowerShell',py:'Python',sql:'SQL',pts:'ProtoScript',yml:'YAML',yaml:'YAML',xml:'XML',csproj:'MSBuild',props:'MSBuild',targets:'MSBuild',sh:'Shell'})[ext]||'Text';}
   function button(label,action){const node=document.createElement('button');node.type='button';node.textContent=label;node.addEventListener('click',action);return node;}
   function fileParameters(path){return state.scope.sessionKey?{sessionKey:state.scope.sessionKey,path}:{rootId:state.scope.rootId,projectPath:state.scope.projectPath,path};}
   function fileRoute(){return state.scope.sessionKey?'session-file':'project-file';}
@@ -44,7 +46,7 @@
     for(const node of nodes){
       const row=button('',()=>node.kind==='directory'?toggleFolder(row):openFile(node.path).catch(report));
       row.className='tree-row';row.style.paddingLeft=`${8+depth*14}px`;row.dataset.path=node.path;row.dataset.kind=node.kind;row.setAttribute('role','treeitem');
-      const icon=document.createElement('span');icon.className='twisty';icon.textContent=node.kind==='directory'?'▾':'C#';
+      const icon=document.createElement('span');icon.className='twisty';icon.textContent=node.kind==='directory'?'▾':isCSharp(node.path)?'C#':'≡';
       const text=document.createElement('span');text.textContent=node.name;row.append(icon,text);fragment.append(row);
       if(node.kind==='directory'){const group=document.createElement('div');group.setAttribute('role','group');group.append(renderNodes(node.children||[],depth+1));row.setAttribute('aria-expanded','true');fragment.append(group);}
     }
@@ -72,7 +74,7 @@
       const close=button('×',()=>closeTab(path));close.setAttribute('aria-label','Close '+path);item.append(open,close);$('tabs').append(item);}
   }
   function clearFile(){
-    state.current=null;$('code').replaceChildren();$('lines').textContent='';$('breadcrumb').textContent='Choose a C# file';$('metadata').textContent='READ ONLY';
+    state.current=null;$('code').replaceChildren();$('lines').textContent='';$('breadcrumb').textContent='Choose a source file';$('metadata').textContent='READ ONLY';
     $('empty').classList.remove('hidden');$('code-wrap').classList.add('hidden');
     fillSelect($('type-select'),[],'Select a file');fillSelect($('member-select'),[],'Select a type');
     for(const id of ['copy-link','copy-code','line-input','go-line','wrap-code','find-in-file'])$(id).disabled=true;
@@ -90,10 +92,10 @@
       const file=await api(fileRoute(),fileParameters(path));if(generation!==state.generation||id!==state.fileId)return;
       state.current=file;if(!state.tabs.includes(path))state.tabs.push(path);
       $('code').replaceChildren();
-      file.content.split('\n').forEach((value,index)=>{const span=document.createElement('span');span.className='source-line';span.dataset.line=String(index+1);span.innerHTML=highlight(value)||' ';$('code').append(span);});
+      file.content.split('\n').forEach((value,index)=>{const span=document.createElement('span');span.className='source-line';span.dataset.line=String(index+1);if(isCSharp(file.path))span.innerHTML=highlight(value)||' ';else span.textContent=value||' ';$('code').append(span);});
       $('lines').textContent=Array.from({length:Math.max(file.lineCount,1)},(_,index)=>index+1).join('\n');
-      $('breadcrumb').textContent=file.path;$('metadata').textContent=`READ ONLY · ${file.lineCount} lines · ${file.size.toLocaleString()} bytes`;
-      fillSelect($('type-select'),file.symbols||[],'Select a type');fillSelect($('member-select'),[],'Select a type');
+      $('breadcrumb').textContent=file.path;$('metadata').textContent=`READ ONLY · ${language(file.path)}${isCSharp(file.path)?'':' (plain text)'} · ${file.lineCount} lines · ${file.size.toLocaleString()} bytes`;
+      fillSelect($('type-select'),file.symbols||[],isCSharp(file.path)?'Select a type':'C# files only');fillSelect($('member-select'),[],isCSharp(file.path)?'Select a type':'C# files only');
       $('empty').classList.add('hidden');$('code-wrap').classList.remove('hidden');
       for(const control of ['copy-link','copy-code','line-input','go-line','wrap-code','find-in-file'])$(control).disabled=false;
       state.matches=[];state.matchIndex=-1;$('file-query').value='';$('match-count').textContent='';
@@ -122,8 +124,8 @@
       const nodes=await api(scope.sessionKey?'session-tree':'project-tree',parameters);
       if(generation!==state.generation||treeId!==state.treeId)return;
       state.tree=nodes;state.files=allFiles(nodes);state.ready=true;$('tree').append(renderNodes(nodes));$('file-count').textContent=`${state.files.length} files`;
-      for(const id of ['quick-open','collapse-all','expand-all'])$(id).disabled=false;$('find-symbol').disabled=!!scope.sessionKey;$('find-symbol').title=scope.sessionKey?'Symbol search is unavailable for session artifacts. Find file and Find text still work.':'';
-      status(state.files.length?'Project ready.':'No C# files in this folder. Open another folder.');
+      for(const id of ['quick-open','collapse-all','expand-all'])$(id).disabled=false;$('find-symbol').disabled=!!scope.sessionKey;$('find-symbol').title=scope.sessionKey?'Symbol search is unavailable for session artifacts. Find file and Find text still work.':'Search C# declarations across this project; Find file supports every file type.';
+      status(state.files.length?'Project ready. Binary files are listed but cannot be opened as text.':'This folder is empty or contains only excluded folders.');
       if(initial)await openFile(initial.path,initial.line);
     }catch(error){if(generation===state.generation)report(error);}
   }
@@ -264,7 +266,7 @@
       const params=new URLSearchParams(location.search),sessionKey=params.get('sessionKey'),file=params.get('file');const line=Number(params.get('line')||1);
       if(!Number.isInteger(line)||line<1)throw new Error('Invalid line number.');
       if(sessionKey){
-        if(!/^artifacts\/[^/].*\.cs$/i.test(file||''))throw new Error('A session C# artifact path is required.');
+        if(!/^artifacts\/[^/].*/i.test(file||''))throw new Error('A session artifact file path is required.');
         const root=await api('session-root',{sessionKey});await openScope({sessionKey},root.name,{path:file.replace(/^artifacts\//i,''),line});
       }else if(params.has('root')){
         const root=roots.find(item=>item.id===params.get('root'));if(!root)throw new Error('The selected source location is unavailable. Open another project.');
