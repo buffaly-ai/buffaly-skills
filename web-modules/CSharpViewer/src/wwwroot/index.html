@@ -3,84 +3,209 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
   <title>Repository Viewer</title>
-  <link rel="stylesheet" href="/web-modules/CSharpViewer/csharp-viewer.css">
+  <link rel="stylesheet" href="/web-modules/CSharpViewer/csharp-viewer.css?v=ui2">
 </head>
 <body>
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-search" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3.5 3.5"/></symbol>
+    <symbol id="i-sidebar" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M6 3v10"/></symbol>
+    <symbol id="i-chevron-down" viewBox="0 0 16 16"><path d="m4.5 6 3.5 3.5L11.5 6"/></symbol>
+    <symbol id="i-chevron-right" viewBox="0 0 16 16"><path d="m6 4.5 3.5 3.5L6 11.5"/></symbol>
+    <symbol id="i-repo" viewBox="0 0 16 16"><path d="M4.5 2.5h8v9h-8A1.5 1.5 0 0 0 3 13V4a1.5 1.5 0 0 1 1.5-1.5Z"/><path d="M3 13a1.5 1.5 0 0 0 1.5 1.5h8v-3"/></symbol>
+    <symbol id="i-braces" viewBox="0 0 16 16"><path d="M6 2.5c-1.4 0-2 .6-2 2V6c0 1-.5 1.6-1.5 2 1 .4 1.5 1 1.5 2v1.5c0 1.4.6 2 2 2M10 2.5c1.4 0 2 .6 2 2V6c0 1 .5 1.6 1.5 2-1 .4-1.5 1-1.5 2v1.5c0 1.4-.6 2-2 2"/></symbol>
+    <symbol id="i-focus" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5"/><circle cx="8" cy="8" r="2"/></symbol>
+    <symbol id="i-maximize" viewBox="0 0 16 16"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></symbol>
+    <symbol id="i-minimize" viewBox="0 0 16 16"><path d="M13.5 2.5 9.5 6.5M9.5 3v3.5H13M2.5 13.5l4-4M3 9.5h3.5V13"/></symbol>
+    <symbol id="i-keyboard" viewBox="0 0 16 16"><rect x="1.5" y="4" width="13" height="8" rx="1.5"/><path d="M4.5 7h.01M7 7h.01M9.5 7h.01M12 7h.01M5 9.5h6"/></symbol>
+    <symbol id="i-collapse" viewBox="0 0 16 16"><path d="m5 2.5 3 3 3-3M5 13.5l3-3 3 3"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 16 16"><path d="m5 5.5 3-3 3 3M5 10.5l3 3 3-3"/></symbol>
+    <symbol id="i-arrow-left" viewBox="0 0 16 16"><path d="M13 8H3m4-4L3 8l4 4"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></symbol>
+    <symbol id="i-arrow-up" viewBox="0 0 16 16"><path d="M8 13V3M4 7l4-4 4 4"/></symbol>
+    <symbol id="i-arrow-down" viewBox="0 0 16 16"><path d="M8 3v10m-4-4 4 4 4-4"/></symbol>
+    <symbol id="i-link" viewBox="0 0 16 16"><path d="M6.8 9.2a2.5 2.5 0 0 0 3.5 0l2.4-2.4a2.5 2.5 0 0 0-3.5-3.5l-.6.6M9.2 6.8a2.5 2.5 0 0 0-3.5 0L3.3 9.2a2.5 2.5 0 0 0 3.5 3.5l.6-.6"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 16 16"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 16 16"><path d="m3 8.5 3 3 7-7"/></symbol>
+    <symbol id="i-wrap" viewBox="0 0 16 16"><path d="M2.5 4h11M2.5 8h9a2 2 0 0 1 0 4H8m1.5-1.5L8 12l1.5 1.5M2.5 12h3"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 16 16"><rect x="3.5" y="7" width="9" height="6.5" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></symbol>
+    <symbol id="i-enter" viewBox="0 0 16 16"><path d="M13 3v5a2 2 0 0 1-2 2H3m3-3-3 3 3 3"/></symbol>
+    <symbol id="i-x" viewBox="0 0 16 16"><path d="m4.5 4.5 7 7m0-7-7 7"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 16 16"><path d="M13 8a5 5 0 1 1-1.5-3.6M13 2.5v3h-3"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 16 16"><path d="M2 4.5A1.5 1.5 0 0 1 3.5 3h2.6l1.5 1.5h4.9A1.5 1.5 0 0 1 14 6v5.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 11.5Z"/></symbol>
+    <symbol id="i-folder-tree" viewBox="0 0 16 16"><path d="M2.5 2.5v9a1.5 1.5 0 0 0 1.5 1.5h2.5M2.5 6.5h4"/><rect x="7.5" y="4" width="6" height="4.5" rx="1"/><rect x="7.5" y="10.5" width="6" height="4" rx="1"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 16 16"><path d="M8 2.2 14.5 13.5h-13Z"/><path d="M8 6.5v3M8 11.5h.01"/></symbol>
+    <symbol id="i-file" viewBox="0 0 16 16"><path d="M4 1.5h5l3.5 3.5v8.5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1Z"/><path d="M9 1.5V5h3.5"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5"/><path d="M8 5v3l2 1.5"/></symbol>
+  </svg>
+
   <header class="topbar">
-    <strong>Repository Viewer</strong>
-    <button id="open-project" type="button">Open project…</button>
-    <span id="project-name">Choose a project</span>
-    <button id="quick-open" type="button" disabled>Find file <kbd>Ctrl P</kbd></button>
-    <button id="find-symbol" type="button" disabled>Find C# type or member</button>
-    <button id="focus-code" type="button" aria-pressed="false" disabled>Focus code</button>
-    <button id="full-screen" type="button" disabled>Full screen</button>
+    <button id="toggle-explorer" class="icon-btn" type="button" aria-controls="explorer" aria-expanded="true" aria-label="Toggle Explorer" title="Toggle Explorer (Ctrl B)"><svg class="icon"><use href="#i-sidebar"/></svg></button>
+    <div class="brand" aria-hidden="true"><span class="brand-mark">{ }</span><span class="brand-name">Repository Viewer</span></div>
+    <button id="open-project" class="project-switch" type="button" aria-haspopup="dialog" title="Open another repository or folder"><svg class="icon"><use href="#i-repo"/></svg><span id="project-name">Choose a project</span><svg class="icon chevron"><use href="#i-chevron-down"/></svg></button>
+    <button id="quick-open" class="command" type="button" aria-label="Find file" title="Find file (Ctrl P)" disabled><svg class="icon"><use href="#i-search"/></svg><span class="command-label">Find file</span><kbd>Ctrl P</kbd></button>
+    <div class="top-actions">
+      <button id="find-symbol" class="tool" type="button" aria-label="Find C# type or member" title="Find C# type or member (Ctrl Shift P)" disabled><svg class="icon"><use href="#i-braces"/></svg><span class="tool-label">C# symbols</span></button>
+      <button id="focus-code" class="icon-btn" type="button" aria-pressed="false" aria-label="Focus code" title="Focus code (Alt F)" disabled><svg class="icon"><use href="#i-focus"/></svg></button>
+      <button id="full-screen" class="icon-btn" type="button" aria-label="Full screen" title="Full screen" disabled><svg class="icon"><use id="full-screen-icon" href="#i-maximize"/></svg></button>
+      <button id="show-shortcuts" class="icon-btn" type="button" aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)"><svg class="icon"><use href="#i-keyboard"/></svg></button>
+    </div>
   </header>
-  <main>
-    <aside class="sidebar" id="explorer">
-      <div class="sidebar-title"><strong>Explorer</strong><span id="file-count"></span></div>
-      <div class="tree-actions">
-        <button id="collapse-all" type="button" disabled>Collapse folders</button>
-        <button id="expand-all" type="button" disabled>Expand folders</button>
+
+  <main id="main">
+    <aside class="sidebar" id="explorer" aria-label="Explorer">
+      <div class="sidebar-head">
+        <span class="sidebar-title">Explorer</span><span id="file-count" class="count"></span>
+        <button id="collapse-all" class="icon-btn small" type="button" aria-label="Collapse folders" title="Collapse folders" disabled><svg class="icon"><use href="#i-collapse"/></svg></button>
+        <button id="expand-all" class="icon-btn small" type="button" aria-label="Expand folders" title="Expand folders" disabled><svg class="icon"><use href="#i-expand"/></svg></button>
       </div>
+      <div class="tree-filter"><svg class="icon"><use href="#i-search"/></svg><input id="tree-filter" type="search" placeholder="Filter files" aria-label="Filter files in Explorer" autocomplete="off" spellcheck="false" disabled></div>
+      <div id="tree-state" class="tree-state" role="status"></div>
       <div id="tree" class="tree" role="tree" aria-label="Project files and folders"></div>
     </aside>
+    <div id="explorer-resizer" class="resizer" role="separator" aria-orientation="vertical" aria-controls="explorer" aria-label="Resize Explorer" aria-valuemin="180" aria-valuemax="640" aria-valuenow="280" tabindex="0" title="Drag to resize, double-click to reset"></div>
+    <div id="scrim" class="scrim" aria-hidden="true"></div>
+
     <section class="workspace" aria-label="Source code">
       <div class="tabbar" id="tabs" aria-label="Open files"></div>
       <div class="file-toolbar">
-        <button id="exit-focus" type="button" class="hidden">Exit focus</button>
-        <button id="nav-back" type="button" disabled aria-label="Previous code location">Back</button>
-        <button id="nav-forward" type="button" disabled aria-label="Next code location">Forward</button>
-        <span id="breadcrumb">Open a project to begin</span>
-        <button id="copy-link" type="button" disabled>Copy link</button>
-        <button id="copy-code" type="button" disabled>Copy code</button>
+        <button id="exit-focus" class="tool accent hidden" type="button"><svg class="icon"><use href="#i-x"/></svg><span>Exit focus</span></button>
+        <div class="nav-group">
+          <button id="nav-back" class="icon-btn" type="button" disabled aria-label="Previous code location" title="Back"><svg class="icon"><use href="#i-arrow-left"/></svg></button>
+          <button id="nav-forward" class="icon-btn" type="button" disabled aria-label="Next code location" title="Forward"><svg class="icon"><use href="#i-arrow-right"/></svg></button>
+        </div>
+        <nav id="breadcrumb" class="breadcrumb" aria-label="File path"><span class="crumb-hint">Open a project to begin</span></nav>
+        <span id="file-kind" class="kind-chip hidden"></span>
+        <div class="file-actions">
+          <label class="line-field" title="Go to line (Ctrl G)"><span>Ln</span><input id="line-input" type="number" min="1" inputmode="numeric" aria-label="Go to line" disabled><button id="go-line" class="icon-btn small" type="button" aria-label="Go" disabled><svg class="icon"><use href="#i-enter"/></svg></button></label>
+          <button id="find-in-file" class="icon-btn" type="button" aria-label="Find text" title="Find in file (Ctrl F)" disabled><svg class="icon"><use href="#i-search"/></svg></button>
+          <button id="wrap-code" class="icon-btn" type="button" aria-pressed="false" aria-label="Wrap lines" title="Wrap lines (Alt Z)" disabled><svg class="icon"><use href="#i-wrap"/></svg></button>
+          <button id="copy-link" class="icon-btn" type="button" aria-label="Copy link" title="Copy link to this line" disabled><svg class="icon"><use href="#i-link"/></svg></button>
+          <button id="copy-code" class="icon-btn" type="button" aria-label="Copy code" title="Copy file contents" disabled><svg class="icon"><use href="#i-copy"/></svg></button>
+        </div>
       </div>
-      <div class="outline">
+      <div class="outline hidden" id="outline">
+        <svg class="icon"><use href="#i-braces"/></svg>
         <label for="type-select">Type</label><select id="type-select" disabled><option>Select a file</option></select>
+        <svg class="icon sep"><use href="#i-chevron-right"/></svg>
         <label for="member-select">Member</label><select id="member-select" disabled><option>Select a type</option></select>
-        <label for="line-input">Line</label><input id="line-input" type="number" min="1" aria-label="Go to line" disabled>
-        <button id="go-line" type="button" disabled>Go</button>
-        <button id="wrap-code" type="button" aria-pressed="false" disabled>Wrap lines</button>
-        <button id="find-in-file" type="button" disabled>Find text</button>
       </div>
-      <form id="file-find" class="hidden" role="search">
-        <label for="file-query">Find in file</label><input id="file-query" type="search" autocomplete="off">
-        <button type="submit">Next</button><button id="previous-match" type="button">Previous</button>
-        <span id="match-count" role="status"></span><button id="close-find" type="button">Close</button>
-      </form>
-      <div class="empty" id="empty"><strong>Choose a file in Explorer, or open a repository.</strong><p>Browse source code, scripts, configuration and documentation read only. Text files up to 2 MB open as source, never executed. C# includes highlighting and type/member navigation; other text opens as plain text.</p><button id="empty-open" type="button">Open project…</button></div>
-      <div class="code-wrap hidden" id="code-wrap" tabindex="0" aria-label="Read-only source code"><div class="lines" id="lines" aria-hidden="true"></div><pre><code id="code"></code></pre></div>
-      <footer><span id="metadata">READ ONLY</span><span id="status" role="status" aria-live="polite">Choose a project.</span></footer>
+      <div class="editor" id="editor">
+        <div id="loading-bar" class="loading-bar" hidden></div>
+        <div id="notice" class="notice hidden" role="alert"><svg class="icon"><use href="#i-alert"/></svg><span id="notice-text"></span><button id="notice-close" class="icon-btn small" type="button" aria-label="Dismiss message"><svg class="icon"><use href="#i-x"/></svg></button></div>
+        <form id="file-find" class="find-widget hidden" role="search">
+          <input id="file-query" type="search" autocomplete="off" spellcheck="false" placeholder="Find in file" aria-label="Find in file">
+          <span id="match-count" class="match-count" role="status"></span>
+          <button id="previous-match" class="icon-btn small" type="button" aria-label="Previous match" title="Previous match (Shift Enter)"><svg class="icon"><use href="#i-arrow-up"/></svg></button>
+          <button class="icon-btn small" type="submit" aria-label="Next match" title="Next match (Enter)"><svg class="icon"><use href="#i-arrow-down"/></svg></button>
+          <button id="close-find" class="icon-btn small" type="button" aria-label="Close find" title="Close (Esc)"><svg class="icon"><use href="#i-x"/></svg></button>
+        </form>
+        <div class="empty" id="empty">
+          <div class="empty-card">
+            <div class="empty-mark" aria-hidden="true">{ }</div>
+            <h1 id="empty-title">Open a repository</h1>
+            <p id="empty-text">Read local GitHub checkouts on this server. Nothing is edited, built or run.</p>
+            <div class="empty-actions">
+              <button id="empty-open" class="primary" type="button"><svg class="icon"><use href="#i-repo"/></svg>Open project…</button>
+              <button id="empty-find" class="secondary hidden" type="button"><svg class="icon"><use href="#i-search"/></svg>Find file</button>
+              <button id="empty-readme" class="secondary hidden" type="button"><svg class="icon"><use href="#i-file"/></svg>Open README</button>
+            </div>
+            <div id="empty-recent" class="recent hidden"><h2>Recent</h2><ul id="empty-recent-list"></ul></div>
+            <dl class="hints">
+              <div><dt><kbd>Ctrl P</kbd></dt><dd>Find file</dd></div>
+              <div><dt><kbd>Ctrl Shift P</kbd></dt><dd>C# symbols</dd></div>
+              <div><dt><kbd>Ctrl F</kbd></dt><dd>Find in file</dd></div>
+              <div><dt><kbd>?</kbd></dt><dd>All shortcuts</dd></div>
+            </dl>
+          </div>
+        </div>
+        <div class="code-wrap hidden" id="code-wrap" tabindex="0" aria-label="Read-only source code"><div class="lines" id="lines" aria-hidden="true" title="Click a line number to link that line"></div><pre><code id="code"></code></pre></div>
+      </div>
     </section>
   </main>
-  <dialog id="project-dialog" aria-labelledby="project-title">
-    <form method="dialog"><button class="dialog-close" aria-label="Close project picker">Close</button></form>
-    <h2 id="project-title">Open project</h2>
-    <p>Existing checkouts on the Buffaly server—not a GitHub cloud listing or files on this device. No clone, fetch, build or run.</p>
-    <div class="folder-toolbar"><button id="show-repositories" type="button" aria-pressed="true">Local GitHub repositories</button><button id="show-folders" type="button" aria-pressed="false">Browse folders</button></div>
-    <section id="repository-picker" aria-label="Local GitHub repositories">
-      <label for="repository-filter">Filter repositories</label><input id="repository-filter" type="search" placeholder="Owner, repository or local path" autocomplete="off">
-      <button id="refresh-repositories" type="button">Refresh local list</button>
-      <p id="repository-status" role="status"></p><ul id="repositories" aria-label="Local repository checkouts"></ul>
-      <p>Only github.com remotes under approved source locations are listed. Discovery is bounded to 6 levels, 5,000 folders, 500 repositories and 2 seconds. Worktree metadata must stay in the same approved source location.</p>
+
+  <footer class="statusbar">
+    <span class="status-meta"><svg class="icon"><use href="#i-lock"/></svg><span id="metadata">READ ONLY</span></span>
+    <span id="cursor-pos" class="cursor-pos"></span>
+    <span id="status" class="status" role="status" aria-live="polite">Choose a project.</span>
+  </footer>
+
+  <dialog id="project-dialog" class="sheet" aria-labelledby="project-title">
+    <div class="dialog-head">
+      <h2 id="project-title">Open project</h2>
+      <div class="segmented" aria-label="Project source">
+        <button id="show-repositories" type="button" aria-pressed="true"><svg class="icon"><use href="#i-repo"/></svg>Repositories</button>
+        <button id="show-folders" type="button" aria-pressed="false"><svg class="icon"><use href="#i-folder"/></svg>Browse folders</button>
+      </div>
+      <form method="dialog"><button class="icon-btn dialog-close" aria-label="Close project picker" title="Close (Esc)"><svg class="icon"><use href="#i-x"/></svg></button></form>
+    </div>
+    <section id="repository-picker" class="picker-body" aria-label="Local GitHub repositories">
+      <div class="search-field">
+        <svg class="icon"><use href="#i-search"/></svg>
+        <input id="repository-filter" type="search" placeholder="Filter by owner, repository or path" aria-label="Filter repositories" autocomplete="off" spellcheck="false">
+        <button id="refresh-repositories" class="icon-btn small" type="button" aria-label="Refresh local list" title="Refresh local list"><svg class="icon"><use href="#i-refresh"/></svg></button>
+      </div>
+      <div id="picker-recent" class="recent hidden"><h3>Recent</h3><ul id="picker-recent-list"></ul></div>
+      <p id="repository-status" class="picker-status" role="status"></p>
+      <ul id="repositories" class="repo-list" aria-label="Local repository checkouts"></ul>
+      <details class="about"><summary>What is listed here?</summary><p>Existing github.com checkouts under approved source locations on the Buffaly server, not a cloud listing. Discovery is bounded to 6 levels, 5,000 folders, 500 repositories and 2 seconds. Nothing is cloned, fetched, built or run.</p></details>
     </section>
-    <section id="folder-picker" class="hidden" aria-label="Browse approved source folders">
-    <p>Explorer lists files and empty folders. Binary files cannot open as text. Build/dependency folders, .git, and artifacts are excluded. Trees over 10,000 entries or 16 folder levels require opening a narrower folder.</p>
-    <label for="root-select">Approved source location</label><select id="root-select"></select>
-    <div class="folder-toolbar"><button id="folder-up" type="button">Up</button><span id="folder-path"></span></div>
-    <div id="folder-status" role="status"></div><ul id="folders" aria-label="Folders"></ul>
-    <p id="project-definitions"></p>
-    <p>If your repository is missing, an administrator must add its source location to CSHARP_VIEWER_ROOTS.</p>
-    <button id="choose-folder" type="button" disabled>Open this folder</button>
+    <section id="folder-picker" class="picker-body hidden" aria-label="Browse approved source folders">
+      <div class="folder-bar">
+        <select id="root-select" aria-label="Approved source location"></select>
+      </div>
+      <div class="folder-bar">
+        <button id="folder-up" class="icon-btn small" type="button" aria-label="Up one folder" title="Up one folder"><svg class="icon"><use href="#i-arrow-up"/></svg></button>
+        <span id="folder-path" class="folder-path"></span>
+      </div>
+      <div id="folder-status" class="picker-status" role="status"></div>
+      <ul id="folders" class="folder-list" aria-label="Folders"></ul>
+      <p id="project-definitions" class="definitions"></p>
+      <details class="about"><summary>Limits</summary><p>Explorer lists files and empty folders; binary files cannot open as text. Build and dependency folders, .git and artifacts are excluded. Trees over 10,000 entries or 16 folder levels require a narrower folder. If a repository is missing, an administrator must add its source location to CSHARP_VIEWER_ROOTS.</p></details>
+      <div class="dialog-foot"><button id="choose-folder" class="primary" type="button" disabled>Open this folder</button></div>
     </section>
   </dialog>
-  <dialog id="search-dialog" aria-labelledby="search-title">
-    <form method="dialog"><button class="dialog-close" aria-label="Close search">Close</button></form>
-    <h2 id="search-title">Find file</h2>
-    <label id="search-label" for="symbol-search">File name or path</label>
-    <input id="symbol-search" type="search" autocomplete="off" aria-describedby="search-status">
-    <p id="search-status" role="status"></p><ul id="symbol-results" aria-label="Search results"></ul>
+
+  <dialog id="search-dialog" class="palette" aria-labelledby="search-title">
+    <div class="palette-head">
+      <h2 id="search-title" class="sr-only">Find file</h2>
+      <div class="palette-modes">
+        <button id="search-mode-files" type="button" aria-pressed="true"><svg class="icon"><use href="#i-file"/></svg>Files</button>
+        <button id="search-mode-symbols" type="button" aria-pressed="false"><svg class="icon"><use href="#i-braces"/></svg>C# symbols</button>
+      </div>
+      <form method="dialog"><button class="icon-btn small dialog-close" aria-label="Close search" title="Close (Esc)"><svg class="icon"><use href="#i-x"/></svg></button></form>
+    </div>
+    <div class="palette-input">
+      <svg class="icon"><use href="#i-search"/></svg>
+      <label id="search-label" class="sr-only" for="symbol-search">File name or path</label>
+      <input id="symbol-search" type="search" autocomplete="off" spellcheck="false" aria-describedby="search-status">
+    </div>
+    <p id="search-status" class="palette-status" role="status"></p>
+    <ul id="symbol-results" class="results" aria-label="Search results"></ul>
+    <div class="palette-foot" aria-hidden="true"><span><kbd>↑</kbd><kbd>↓</kbd> move</span><span><kbd>Enter</kbd> open</span><span><kbd>Esc</kbd> close</span></div>
   </dialog>
-  <script src="/web-modules/CSharpViewer/csharp-viewer.js"></script>
+
+  <dialog id="shortcuts-dialog" class="shortcuts" aria-labelledby="shortcuts-title">
+    <div class="dialog-head">
+      <h2 id="shortcuts-title">Keyboard shortcuts</h2>
+      <form method="dialog"><button class="icon-btn dialog-close" aria-label="Close shortcuts" title="Close (Esc)"><svg class="icon"><use href="#i-x"/></svg></button></form>
+    </div>
+    <dl class="shortcut-list">
+      <div><dt><kbd>Ctrl P</kbd></dt><dd>Find file</dd></div>
+      <div><dt><kbd>Ctrl Shift P</kbd></dt><dd>Find C# type or member</dd></div>
+      <div><dt><kbd>Ctrl F</kbd></dt><dd>Find in file</dd></div>
+      <div><dt><kbd>Ctrl G</kbd></dt><dd>Go to line</dd></div>
+      <div><dt><kbd>Ctrl B</kbd></dt><dd>Show or hide Explorer</dd></div>
+      <div><dt><kbd>Alt Z</kbd></dt><dd>Wrap lines</dd></div>
+      <div><dt><kbd>Alt F</kbd></dt><dd>Focus code</dd></div>
+      <div><dt><kbd>Alt ←</kbd> <kbd>Alt →</kbd></dt><dd>Back / forward</dd></div>
+      <div><dt><kbd>Esc</kbd></dt><dd>Close dialog, find or focus mode</dd></div>
+      <div><dt><kbd>?</kbd></dt><dd>Show this list</dd></div>
+    </dl>
+    <p class="shortcut-note">Click a line number to link that line. Middle-click a tab to close it. Drag the Explorer edge to resize it; double-click to reset.</p>
+  </dialog>
+
+  <script src="/web-modules/CSharpViewer/csharp-viewer.js?v=ui2"></script>
 </body>
 </html>
