@@ -14,3 +14,8 @@ Expanded tree/file reads from C# only to regular files and empty folders. Strict
 Staging binary rejection returned the existing ASP.NET camelCase errorMessage contract; client and mock fixtures incorrectly expected PascalCase. Corrected client and fixtures to the single actual contract so binary/size/denial errors remain explicit; test-only root-relative fixture path corrected too. Validation below is recorded after rerunning source suites; prior deployed0.1.10binary message test failed honestly before this fix.
 
 Validation of error-contract correction:6mixed source UI groups and6repository source UI groups passed; errors now use actual camelCase fixtures. Final staging checks follow the new package.
+
+## 2026-10-30 — Preserve the visible left edge on long source lines
+Visual staging proof of Office365 Markdown reproduced code-wrap scrollLeft49 after jumpTo scrollIntoView hid leading characters. jumpTo now explicitly aligns inline start and resets code-pane horizontal scroll to zero. Added long-line mixed-text reload assertion. Repository regression now deliberately selects a .cs file rather than assuming the first mixed file must have C# highlighting. Validation: source mixed suite and workspace suite rerun below; final staging proof requires the new payload.
+
+Validation after long-line fix: source mixed6groups, workspace8groups and repository6groups passed; installed proof follows final package. No remaining source/test failure.

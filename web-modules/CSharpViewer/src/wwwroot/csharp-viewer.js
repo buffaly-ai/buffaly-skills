@@ -38,7 +38,7 @@
   function jumpTo(line,record=true){
     const target=$('code').querySelector(`[data-line="${line}"]`);if(!target)return;
     $('code').querySelector('.source-line.target')?.classList.remove('target');target.classList.add('target');
-    target.scrollIntoView({block:'center'});$('line-input').value=String(line);
+    target.scrollIntoView({block:'center',inline:'start'});$('code-wrap').scrollLeft=0;$('line-input').value=String(line);
     state.positions[state.current.path]=line;if(record)remember(state.current.path,line);updateLink(state.current.path,line);
   }
   function renderNodes(nodes,depth=0){
