@@ -6,7 +6,7 @@
   function highlight(source){let output='',index=0;const token=/(\/\*[\s\S]*?\*\/|\/\/[^\n]*|@?"(?:""|\\.|[^"\\])*"|'(?:\\.|[^'\\])+'|\b\d+(?:\.\d+)?\b|\b(?:abstract|as|async|await|base|bool|break|byte|case|catch|char|checked|class|const|continue|decimal|default|delegate|do|double|else|enum|event|explicit|extern|false|finally|fixed|float|for|foreach|goto|if|implicit|in|int|interface|internal|is|lock|long|namespace|new|null|object|operator|out|override|params|partial|private|protected|public|readonly|record|ref|required|return|sbyte|sealed|short|sizeof|stackalloc|static|string|struct|switch|this|throw|true|try|typeof|uint|ulong|unchecked|unsafe|ushort|using|var|virtual|void|volatile|while|with|yield)\b)/g;for(const match of source.matchAll(token)){output+=escapeHtml(source.slice(index,match.index));const text=match[0];let cls='kw';if(text.startsWith('//')||text.startsWith('/*'))cls='comment';else if(text.startsWith('"')||text.startsWith('@"')||text.startsWith("'"))cls='str';else if(/^\d/.test(text))cls='num';output+=`<span class="${cls}">${escapeHtml(text)}</span>`;index=match.index+text.length}return output+escapeHtml(source.slice(index))}
   const state = { scope:null, generation:0, tree:[], files:[], current:null, tabs:[], history:[], historyIndex:-1,
     searchId:0, fileId:0, treeId:0, browseId:0, mode:'files', results:[], resultIndex:0, folder:'', ready:false,
-    matches:[], matchIndex:-1, focus:false, fullscreenOwned:false, positions:{} };
+    matches:[], matchIndex:-1, focus:false, fullscreenOwned:false, positions:{}, repositories:[], repositoryId:0, repositoryListing:null };
   let timer;
   function status(message,error=false){ $('status').textContent=message; $('status').dataset.error=String(error); }
   async function api(route,parameters={}){
@@ -130,7 +130,36 @@
   function picker(){
     if(!$('root-select').options.length){status('No approved source locations. Ask an administrator to configure CSHARP_VIEWER_ROOTS.',true);return;}
     $('project-dialog').showModal();state.folder=state.scope?.sessionKey?'':state.scope?.projectPath||'';
-    if(state.scope?.rootId)$('root-select').value=state.scope.rootId;browse(state.folder);
+    if(state.scope?.rootId)$('root-select').value=state.scope.rootId;
+    pickerMode('repositories');loadRepositories();
+  }
+  function pickerMode(mode){
+    const repositories=mode==='repositories';
+    $('repository-picker').classList.toggle('hidden',!repositories);$('folder-picker').classList.toggle('hidden',repositories);
+    $('show-repositories').setAttribute('aria-pressed',String(repositories));$('show-folders').setAttribute('aria-pressed',String(!repositories));
+    if(!repositories)browse(state.folder);
+  }
+  function renderRepositories(){
+    const query=$('repository-filter').value.trim().toLowerCase();$('repositories').replaceChildren();
+    const matches=state.repositories.filter(repo=>(repo.fullName+' '+repo.localPath).toLowerCase().includes(query));
+    for(const repo of matches){
+      const row=document.createElement('li'),name=document.createElement('strong'),path=document.createElement('small'),actions=document.createElement('div');
+      name.textContent=repo.fullName;path.textContent=repo.localPath;path.className='repository-path';
+      actions.append(button('Open repository',()=>openScope({rootId:repo.rootId,projectPath:repo.projectPath},repo.fullName).catch(report)),
+        button('Browse subfolders',()=>{$('root-select').value=repo.rootId;state.folder=repo.projectPath;pickerMode('folders');}));
+      row.append(name,path,actions);$('repositories').append(row);
+    }
+    const listing=state.repositoryListing;if(!listing)return;
+    const warnings=(listing.truncated?' Discovery limit reached; browse folders or configure a narrower source location.':'')+
+      (listing.unavailable?' Some folders or Git metadata could not be read safely.':'');
+    $('repository-status').textContent=(matches.length?`${matches.length} of ${state.repositories.length} local GitHub checkouts.`:
+      state.repositories.length?'No repositories match this filter.':'No local GitHub checkouts found. Use Browse folders or add an approved source location.')+warnings;
+  }
+  async function loadRepositories(){
+    const id=++state.repositoryId;state.repositoryListing=null;state.repositories=[];$('repositories').replaceChildren();$('repository-status').textContent='Discovering local GitHub checkouts…';
+    try{const result=await api('repositories');if(id!==state.repositoryId||!$('project-dialog').open)return;
+      state.repositories=result.repositories;state.repositoryListing=result;renderRepositories();
+    }catch(error){if(id===state.repositoryId&&$('project-dialog').open)$('repository-status').textContent='Could not list local repositories: '+error.message+' Use Browse folders or refresh to retry.';}
   }
   async function browse(path){
     const id=++state.browseId,rootId=$('root-select').value;$('choose-folder').disabled=true;$('folders').replaceChildren();$('folder-status').textContent='Loading folders…';
@@ -187,6 +216,9 @@
   }
   function showFind(){$('file-find').classList.remove('hidden');$('file-query').focus();}
   $('open-project').onclick=picker;$('empty-open').onclick=picker;
+  $('show-repositories').onclick=()=>pickerMode('repositories');$('show-folders').onclick=()=>pickerMode('folders');
+  $('refresh-repositories').onclick=loadRepositories;$('repository-filter').oninput=renderRepositories;
+  $('project-dialog').addEventListener('close',()=>{state.repositoryId++;state.browseId++;});
   $('root-select').onchange=()=>browse('');$('folder-up').onclick=()=>browse(state.folder.split('/').slice(0,-1).join('/'));
   $('choose-folder').onclick=()=>{const rootId=$('root-select').value;const name=$('root-select').selectedOptions[0].textContent;openScope({rootId,projectPath:state.folder},name+(state.folder?' / '+state.folder:''));};
   $('collapse-all').onclick=()=>folders(false);$('expand-all').onclick=()=>folders(true);

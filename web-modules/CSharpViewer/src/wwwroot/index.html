@@ -48,7 +48,7 @@
         <button type="submit">Next</button><button id="previous-match" type="button">Previous</button>
         <span id="match-count" role="status"></span><button id="close-find" type="button">Close</button>
       </form>
-      <div class="empty" id="empty"><strong>Open a project on the Buffaly server.</strong><p>Browse an approved source location, then open a folder. C# source stays read only.</p><button id="empty-open" type="button">Open project…</button></div>
+      <div class="empty" id="empty"><strong>Open a local GitHub repository.</strong><p>Choose an existing checkout on the Buffaly server, or browse an approved source folder. C# source stays read only.</p><button id="empty-open" type="button">Open project…</button></div>
       <div class="code-wrap hidden" id="code-wrap" tabindex="0" aria-label="Read-only source code"><div class="lines" id="lines" aria-hidden="true"></div><pre><code id="code"></code></pre></div>
       <footer><span id="metadata">READ ONLY</span><span id="status" role="status" aria-live="polite">Choose a project.</span></footer>
     </section>
@@ -56,13 +56,22 @@
   <dialog id="project-dialog" aria-labelledby="project-title">
     <form method="dialog"><button class="dialog-close" aria-label="Close project picker">Close</button></form>
     <h2 id="project-title">Open project</h2>
-    <p>Folders on the Buffaly server—not files on this device. Opening a folder does not build or run it.</p>
+    <p>Existing checkouts on the Buffaly server—not a GitHub cloud listing or files on this device. No clone, fetch, build or run.</p>
+    <div class="folder-toolbar"><button id="show-repositories" type="button" aria-pressed="true">Local GitHub repositories</button><button id="show-folders" type="button" aria-pressed="false">Browse folders</button></div>
+    <section id="repository-picker" aria-label="Local GitHub repositories">
+      <label for="repository-filter">Filter repositories</label><input id="repository-filter" type="search" placeholder="Owner, repository or local path" autocomplete="off">
+      <button id="refresh-repositories" type="button">Refresh local list</button>
+      <p id="repository-status" role="status"></p><ul id="repositories" aria-label="Local repository checkouts"></ul>
+      <p>Only github.com remotes under approved source locations are listed. Discovery is bounded to 6 levels, 5,000 folders, 500 repositories and 2 seconds. Worktree metadata must stay in the same approved source location.</p>
+    </section>
+    <section id="folder-picker" class="hidden" aria-label="Browse approved source folders">
     <label for="root-select">Approved source location</label><select id="root-select"></select>
     <div class="folder-toolbar"><button id="folder-up" type="button">Up</button><span id="folder-path"></span></div>
     <div id="folder-status" role="status"></div><ul id="folders" aria-label="Folders"></ul>
     <p id="project-definitions"></p>
     <p>If your repository is missing, an administrator must add its source location to CSHARP_VIEWER_ROOTS.</p>
     <button id="choose-folder" type="button" disabled>Open this folder</button>
+    </section>
   </dialog>
   <dialog id="search-dialog" aria-labelledby="search-title">
     <form method="dialog"><button class="dialog-close" aria-label="Close search">Close</button></form>
