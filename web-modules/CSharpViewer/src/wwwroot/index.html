@@ -8,33 +8,69 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="brand"><span class="brand-mark">C#</span><span>C# Viewer</span></div>
-    <label for="root-select">Source root</label>
-    <select id="root-select" aria-label="Source root"></select>
-    <label for="symbol-search">Symbol</label>
-    <input id="symbol-search" type="search" placeholder="Search symbols…" aria-label="Search symbols across the selected root" autocomplete="off">
-    <select id="symbol-results" aria-label="Symbol search results" disabled><option value="">Type 2+ characters</option></select>
-    <span class="separator"></span>
-    <button id="collapse-all" type="button">Collapse all</button>
-    <label for="type-select">Type</label>
-    <select id="type-select" aria-label="Type in current file" disabled><option value="">Select a file</option></select>
-    <label for="member-select">Member</label>
-    <select id="member-select" aria-label="Member in selected type" disabled><option value="">Select a type</option></select>
-    <div class="status" id="status" role="status">Loading…</div>
+    <strong>C# Viewer</strong>
+    <button id="open-project" type="button">Open project…</button>
+    <span id="project-name">Choose a project</span>
+    <button id="quick-open" type="button" disabled>Find file <kbd>Ctrl P</kbd></button>
+    <button id="find-symbol" type="button" disabled>Find type or member</button>
+    <button id="focus-code" type="button" aria-pressed="false" disabled>Focus code</button>
+    <button id="full-screen" type="button" disabled>Full screen</button>
   </header>
   <main>
-    <aside class="sidebar">
-      <div class="sidebar-title">Explorer <span id="file-count"></span></div>
-      <div id="tree" class="tree" role="tree"></div>
+    <aside class="sidebar" id="explorer">
+      <div class="sidebar-title"><strong>Explorer</strong><span id="file-count"></span></div>
+      <div class="tree-actions">
+        <button id="collapse-all" type="button" disabled>Collapse folders</button>
+        <button id="expand-all" type="button" disabled>Expand folders</button>
+      </div>
+      <div id="tree" class="tree" role="tree" aria-label="Project C# files"></div>
     </aside>
-    <section class="workspace">
-      <div class="tabbar"><div class="tab" id="active-tab">No file selected</div></div>
-      <div class="breadcrumb" id="breadcrumb">Select a C# file from Explorer</div>
-      <div class="empty" id="empty"><div class="empty-mark">C#</div><strong>Real source, read only.</strong><span>Choose a file to inspect its current contents.</span></div>
-      <div class="code-wrap hidden" id="code-wrap"><div class="lines" id="lines" aria-hidden="true"></div><pre><code id="code"></code></pre></div>
-      <footer><span id="metadata">READ ONLY</span><span>C#</span><span>UTF-8</span></footer>
+    <section class="workspace" aria-label="Source code">
+      <div class="tabbar" id="tabs" aria-label="Open files"></div>
+      <div class="file-toolbar">
+        <button id="exit-focus" type="button" class="hidden">Exit focus</button>
+        <button id="nav-back" type="button" disabled aria-label="Previous code location">Back</button>
+        <button id="nav-forward" type="button" disabled aria-label="Next code location">Forward</button>
+        <span id="breadcrumb">Open a project to begin</span>
+        <button id="copy-link" type="button" disabled>Copy link</button>
+        <button id="copy-code" type="button" disabled>Copy code</button>
+      </div>
+      <div class="outline">
+        <label for="type-select">Type</label><select id="type-select" disabled><option>Select a file</option></select>
+        <label for="member-select">Member</label><select id="member-select" disabled><option>Select a type</option></select>
+        <label for="line-input">Line</label><input id="line-input" type="number" min="1" aria-label="Go to line" disabled>
+        <button id="go-line" type="button" disabled>Go</button>
+        <button id="wrap-code" type="button" aria-pressed="false" disabled>Wrap lines</button>
+        <button id="find-in-file" type="button" disabled>Find text</button>
+      </div>
+      <form id="file-find" class="hidden" role="search">
+        <label for="file-query">Find in file</label><input id="file-query" type="search" autocomplete="off">
+        <button type="submit">Next</button><button id="previous-match" type="button">Previous</button>
+        <span id="match-count" role="status"></span><button id="close-find" type="button">Close</button>
+      </form>
+      <div class="empty" id="empty"><strong>Open a project on the Buffaly server.</strong><p>Browse an approved source location, then open a folder. C# source stays read only.</p><button id="empty-open" type="button">Open project…</button></div>
+      <div class="code-wrap hidden" id="code-wrap" tabindex="0" aria-label="Read-only source code"><div class="lines" id="lines" aria-hidden="true"></div><pre><code id="code"></code></pre></div>
+      <footer><span id="metadata">READ ONLY</span><span id="status" role="status" aria-live="polite">Choose a project.</span></footer>
     </section>
   </main>
+  <dialog id="project-dialog" aria-labelledby="project-title">
+    <form method="dialog"><button class="dialog-close" aria-label="Close project picker">Close</button></form>
+    <h2 id="project-title">Open project</h2>
+    <p>Folders on the Buffaly server—not files on this device. Opening a folder does not build or run it.</p>
+    <label for="root-select">Approved source location</label><select id="root-select"></select>
+    <div class="folder-toolbar"><button id="folder-up" type="button">Up</button><span id="folder-path"></span></div>
+    <div id="folder-status" role="status"></div><ul id="folders" aria-label="Folders"></ul>
+    <p id="project-definitions"></p>
+    <p>If your repository is missing, an administrator must add its source location to CSHARP_VIEWER_ROOTS.</p>
+    <button id="choose-folder" type="button" disabled>Open this folder</button>
+  </dialog>
+  <dialog id="search-dialog" aria-labelledby="search-title">
+    <form method="dialog"><button class="dialog-close" aria-label="Close search">Close</button></form>
+    <h2 id="search-title">Find file</h2>
+    <label id="search-label" for="symbol-search">File name or path</label>
+    <input id="symbol-search" type="search" autocomplete="off" aria-describedby="search-status">
+    <p id="search-status" role="status"></p><ul id="symbol-results" aria-label="Search results"></ul>
+  </dialog>
   <script src="/web-modules/CSharpViewer/csharp-viewer.js"></script>
 </body>
 </html>
