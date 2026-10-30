@@ -9,3 +9,8 @@ Repository-first project picker discovers existing github.com checkouts using on
 
 ## 2026-10-30 — General repository source browsing
 Expanded tree/file reads from C# only to regular files and empty folders. Strict bounded UTF-8/BOM-Unicode decoding rejects binary/control/invalid text rather than silently corrupting source. Preserved read-only scope/link/2MB protections and excluded-folder checks; tree errors explicitly at10,000entries/16levels. C# remains highlighted with Roslyn symbols; other text is escaped literal plain text with file-type labels and disabled C# navigation. Session text links supported without changing existing C# provider registration. Validation:68.NETtests,6mixed-file source UI checks and8workspace regression groups passed; installed staging proof follows separately.
+
+## 2026-10-30 — Real API error contract correction
+Staging binary rejection returned the existing ASP.NET camelCase errorMessage contract; client and mock fixtures incorrectly expected PascalCase. Corrected client and fixtures to the single actual contract so binary/size/denial errors remain explicit; test-only root-relative fixture path corrected too. Validation below is recorded after rerunning source suites; prior deployed0.1.10binary message test failed honestly before this fix.
+
+Validation of error-contract correction:6mixed source UI groups and6repository source UI groups passed; errors now use actual camelCase fixtures. Final staging checks follow the new package.

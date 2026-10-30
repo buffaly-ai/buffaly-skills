@@ -11,7 +11,7 @@
   function status(message,error=false){ $('status').textContent=message; $('status').dataset.error=String(error); }
   async function api(route,parameters={}){
     const response=await fetch(base+route+'?'+new URLSearchParams(parameters),{headers:{Accept:'application/json'}});
-    if(!response.ok){ const body=await response.json().catch(()=>null); throw new Error(body?.ErrorMessage||`Request failed (${response.status})`); }
+    if(!response.ok){ const body=await response.json().catch(()=>null); throw new Error(body?.errorMessage||`Request failed (${response.status})`); }
     return response.json();
   }
   function report(error){status(error.message,true);}
