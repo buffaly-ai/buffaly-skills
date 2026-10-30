@@ -4920,32 +4920,32 @@
     {
       "PackageId": "CSharpViewer",
       "PackageType": "WebModule",
-      "Title": "Buffaly C# Viewer",
-      "Description": "Buffaly Web Module package for Buffaly C# Viewer.",
-      "Version": "0.1.5",
+      "Title": "C# Viewer",
+      "Description": "Buffaly Web Module package for C# Viewer.",
+      "Version": "0.1.6",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/CSharpViewer",
-      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/CSharpViewer",
+      "SourceUrl": "https://github.com/buffaly-ai/Buffaly.CSharpViewer",
       "Phrases": [
-        "Buffaly C# Viewer",
+        "C# Viewer",
         "CSharpViewer"
       ],
       "Files": [
         {
           "Path": "BasicUtilities.dll",
-          "Sha256": "4938647f139a04550321bbf8b9a31315583c6b57eebac906ffd0c1fc48c57c17"
+          "Sha256": "c25b400558b346d4edbd7a92db564716dbc06025fbfb772eddb60001fd9665f8"
         },
         {
           "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "7b1e2f3a5202f3e2f13ce6b4fb8845ee87f603ffc07ccea6b359615910f2e1fd"
+          "Sha256": "80b115e84cbb3640b8cf0c0fff3fda77df5cb9db98e47580cdd0b3204eaaed00"
         },
         {
           "Path": "Buffaly.CSharpViewer.deps.json",
-          "Sha256": "9fb8d39416fb3e3575072450c0f15fdbc557110a71acdccf91f86d2a955b59b7"
+          "Sha256": "c0fd30763d8fa8b0eed4c26f93a7c0cdc501558a66d89b2232a7e21f01bbf417"
         },
         {
           "Path": "Buffaly.CSharpViewer.dll",
-          "Sha256": "14e97829352802eb678764b4b6c72917556cada003921ceeb2634719fac19124"
+          "Sha256": "969507fa8fae4e4808a9fd2f295bcfec128c61713b558b057d4ec30f0182be90"
         },
         {
           "Path": "cs/Microsoft.CodeAnalysis.CSharp.resources.dll",
@@ -5012,6 +5012,14 @@
           "Sha256": "395736b2d0e02be77bedc3847b269da7a93bf8e49cd3431a4a8e68d2c52d5846"
         },
         {
+          "Path": "Microsoft.Data.SqlClient.dll",
+          "Sha256": "5a34e2fa3479b1508dbc20fbeb2c9172f18c3868bdb147a185213a446645b400"
+        },
+        {
+          "Path": "Microsoft.Identity.Client.dll",
+          "Sha256": "10d59df4170053ea9597e3c20adc9607ad17318ad5d8747eda3d930a5a4b463a"
+        },
+        {
           "Path": "pl/Microsoft.CodeAnalysis.CSharp.resources.dll",
           "Sha256": "bfd0ba4491a1e072f243b4599d0b9fe1f189ecbef4aae6b0aa4c6306079717df"
         },
@@ -5034,6 +5042,10 @@
         {
           "Path": "ru/Microsoft.CodeAnalysis.resources.dll",
           "Sha256": "9f6778a2b6d2141397b8d331fc38577ae2b398b6120eb3654db7575b62e1b0d4"
+        },
+        {
+          "Path": "SixLabors.ImageSharp.dll",
+          "Sha256": "609a57965d0a7b5ccfb79d919ea7384e7ec86c03266b0390a19bd5f2104bc353"
         },
         {
           "Path": "src/wwwroot/csharp-viewer-file-provider.js",
