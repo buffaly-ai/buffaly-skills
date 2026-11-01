@@ -53,9 +53,13 @@
  $("test").addEventListener("click", () => run($("test"), async () => { const result = await EmailObservations.TestPolicyObjectAsync({ ObservationKey: selectedEmail.Email.ObservationKey }); $("test-result").textContent = `${result.Status} · ${result.Path.join(" → ")}${result.Diagnostic ? " · " + result.Diagnostic : ""}. No work was executed.`; }));
  async function treeNodes() {
   const nodes = await EmailObservations.FindTreeNodesObjectAsync({ Search: $("tree-search").value, ParentNodeId: treeParent, SkipRows: treeSkip, NumRows: 25 });
-  $("tree-results").replaceChildren();
-  for (const n of nodes) $("tree-results").append(button(n.Name, () => openTree(n.NodeId)));
-  if (!nodes.length) $("tree-results").append(text("p", "No matching child nodes. Search the shared tree or go back."));
+   $("tree-results").replaceChildren();
+   if($("tree-search").value) {
+    const rules=await EmailObservations.FindPolicyNodesObjectAsync({Search:$("tree-search").value,SkipRows:treeSkip,NumRows:25});
+    for(const rule of rules) $("tree-results").append(button("Rule: "+rule.Name,async()=>{selectedRule=await EmailObservations.GetPolicyNodeObjectAsync({NodeId:rule.NodeId});$("editor-title").textContent=rule.Name;$("source").value=selectedRule.Source;$("editor").hidden=false;$("source").focus();}));
+   }
+   for (const n of nodes) $("tree-results").append(button(n.Name, () => openTree(n.NodeId)));
+   if (!$("tree-results").children.length) $("tree-results").append(text("p", "No matching rules or work nodes. Change your search or go back."));
   $("tree-more").hidden = nodes.length < 25;
  }
  async function openTree(id) {

@@ -9,3 +9,6 @@ Added module-owned canonical tree bootstrap/store/host and typed JsonWs tree sea
 
 ## 2026-11-01 — generated review and receipt operations
 Added real ProcessCaptured/GetReviewSummary/PrepareSuggestion/SelectRoutingNode/SendApproved calls; views distinguish proposed/held/accepted/uncertain, and accepted work has no Send. Local disposition rerenders owning data without altering receipt; actual diagnostic accepted receipt remained byte-identical across dismiss/archive/restore at390/1280. Added root hierarchy source and inert rule creation controls. Generated normal/legacy contracts, authenticated actor and server revisions remain authoritative. Full31/31 suite passes. All117 uncertain/unbound prepared frames remain review-only; no historical business execution is inferred from API authentication.
+
+## 2026-11-01 — whole-program search coverage
+The existing server search includes bounded policy declaration/prompt/destination results from generated FindPolicyNodes alongside canonical semantic nodes. Selecting a rule opens the same owning source editor. No client whole-table filter or new classification model.31/31 tests passed, including search/open source at390/1280. This closes R08's policy-source gap found in final acceptance review.

@@ -106,6 +106,39 @@ class EmailObservationsService {
         );
     }
 
+    FindPolicyNodes(Search, SkipRows, NumRows, Callback) {
+        return this.FindPolicyNodesObject({ Search:Search,SkipRows:SkipRows,NumRows:NumRows }, Callback);
+    }
+
+    FindPolicyNodesObject(oObject, Callback) {
+        this._validate(oObject, EmailObservationsValidators.FindPolicyNodes, this.FindPolicyNodes.onValidationError);
+
+        var pageUrl = this.Url + "/find-policy-nodes";
+        return this._invoke(
+            pageUrl,
+            "FindPolicyNodes",
+            { Search: oObject.Search,SkipRows: oObject.SkipRows,NumRows: oObject.NumRows },
+            this.FindPolicyNodes,
+            Callback
+        );
+    }
+
+    async FindPolicyNodesAsync(Search,SkipRows,NumRows) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.FindPolicyNodes,
+            [ Search,SkipRows,NumRows ]
+        );
+    }
+
+    async FindPolicyNodesObjectAsync(oObject) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.FindPolicyNodesObject,
+            [ oObject ]
+        );
+    }
+
     FindTreeNodes(Search, ParentNodeId, SkipRows, NumRows, Callback) {
         return this.FindTreeNodesObject({ Search:Search,ParentNodeId:ParentNodeId,SkipRows:SkipRows,NumRows:NumRows }, Callback);
     }
@@ -503,6 +536,12 @@ var EmailObservationsValidators = {
     },
 
     FindDestinations : {
+            Search : {Validators: [Validators.Text], InvalidMessage: "Invalid Search"} ,
+            SkipRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid SkipRows"} ,
+            NumRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid NumRows"} 
+    },
+
+    FindPolicyNodes : {
             Search : {Validators: [Validators.Text], InvalidMessage: "Invalid Search"} ,
             SkipRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid SkipRows"} ,
             NumRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid NumRows"} 

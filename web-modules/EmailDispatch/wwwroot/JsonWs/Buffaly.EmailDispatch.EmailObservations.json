@@ -79,6 +79,37 @@
 					"IsEnum":"false"
 				},
 				{
+					"Name":"SkipRows",
+					"IsNullable":"false",
+					"Type":"Int32",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"NumRows",
+					"IsNullable":"false",
+					"Type":"Int32",
+					"IsArray":"false",
+					"IsEnum":"false"
+				}],
+			"Name":"FindPolicyNodes",
+			"UrlName":"",
+			"KebabName":"find-policy-nodes",
+			"DataObject":{
+			},
+			"IsReturnTypeArray":"true",
+			"IsStatic":"true",
+			"ReturnType":"EmailRuleView"
+		},
+		{
+			"Parameters":[{
+					"Name":"Search",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
 					"Name":"ParentNodeId",
 					"IsNullable":"true",
 					"Type":"String",
