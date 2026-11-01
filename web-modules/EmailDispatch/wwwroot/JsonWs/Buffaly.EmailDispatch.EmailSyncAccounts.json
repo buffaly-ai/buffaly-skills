@@ -1,0 +1,34 @@
+{
+	"Assembly":"Buffaly.EmailDispatch, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+	"KebabName":"email-sync-accounts",
+	"Methods":[{
+			"Parameters":[],
+			"Name":"GetAccounts",
+			"UrlName":"",
+			"KebabName":"get-accounts",
+			"DataObject":{
+			},
+			"IsReturnTypeArray":"true",
+			"IsStatic":"true",
+			"ReturnType":"EmailAccountView"
+		},
+		{
+			"Parameters":[{
+					"Name":"AccountKey",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				}],
+			"Name":"Synchronize",
+			"UrlName":"",
+			"KebabName":"synchronize",
+			"DataObject":{
+			},
+			"IsReturnTypeArray":"false",
+			"IsStatic":"true",
+			"ReturnType":"Task`1"
+		}],
+	"Namespace":"Buffaly.EmailDispatch",
+	"Type":"Buffaly.EmailDispatch.EmailSyncAccounts"
+}

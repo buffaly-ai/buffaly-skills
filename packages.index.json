@@ -23973,6 +23973,241 @@
       "RequiresRestart": true,
       "RequiresPreStartInstall": true,
       "PreStartCleanupPaths": []
+    },
+    {
+      "PackageId": "EmailDispatch",
+      "PackageType": "WebModule",
+      "Title": "Email Dispatch",
+      "Description": "Buffaly Web Module package for Email Dispatch.",
+      "Version": "0.1.0",
+      "PackageKind": "BuffalyWebModule",
+      "SourcePath": "web-modules/EmailDispatch",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/EmailDispatch",
+      "Phrases": [
+        "Email Dispatch",
+        "EmailDispatch"
+      ],
+      "Files": [
+        {
+          "Path": "AngleSharp.dll",
+          "Sha256": "2cde96a0b20cf8c30ffb0f213615fe73bfb22247df008d1a46a03bb1c8cda734"
+        },
+        {
+          "Path": "Azure.Core.dll",
+          "Sha256": "224d09cb39eae4d8c30272a0c49beb19d873c87347eae9487f0ddd859d752b56"
+        },
+        {
+          "Path": "Azure.Identity.dll",
+          "Sha256": "af18f20be25b2895c912f3ba0a9f2901a82dda823edcad76e6a19eac9886a40f"
+        },
+        {
+          "Path": "Buffaly.Agent.DispatchTree.Viewer.dll",
+          "Sha256": "9efd2075555fbca1ffb59e790ad1c8a636495fdcfdc20f70a4e19469cc8ed351"
+        },
+        {
+          "Path": "Buffaly.EmailDispatch.Data.dll",
+          "Sha256": "c5aa56f7078d16dc399bfa018f11363ffe05c5c1637050b8811f033b93faca3a"
+        },
+        {
+          "Path": "Buffaly.EmailDispatch.dll",
+          "Sha256": "2cd14718c8d6e9c699b4007a0f9d1fffd148e170c502c8ff80503b65ddb2c653"
+        },
+        {
+          "Path": "Buffaly.EmailDispatch.Policy.dll",
+          "Sha256": "1db1ec6463f3bcc77c4bd50839c1604e067425244fcca951a2a7af1574624759"
+        },
+        {
+          "Path": "Buffaly.EmailDispatch.Web.deps.json",
+          "Sha256": "2bf3e5a78b447f825e4ec64fe73d8a9bf0f790f346ff0b2787c4bea7dec0ae3e"
+        },
+        {
+          "Path": "Buffaly.EmailDispatch.Web.dll",
+          "Sha256": "f5cebd0e6106319cf7e6d883bb3cdc8ecbcaa975e29925c031c85157de036891"
+        },
+        {
+          "Path": "Buffaly.GoogleWorkspace.dll",
+          "Sha256": "442f3f929e0623e3bfeecd921b447e4b03060727cac7578735e0a41c742fdcec"
+        },
+        {
+          "Path": "Buffaly.NLMemory.dll",
+          "Sha256": "7e93e5a9f310853a299bad9ada479371a80145d620a428bc9c5b73e0da076b6d"
+        },
+        {
+          "Path": "Defaults/DispatchContext.prompt.md",
+          "Sha256": "ad1be68fea9a8dff0d24bf5fbe49ca4de2bbd700ecb44b18b3cac7c5ceed4b1a"
+        },
+        {
+          "Path": "Defaults/DispatchRouting.prompt.md",
+          "Sha256": "0f7df05b4a00cbe17dcfded247a7bfb49fbfc53aaf52497bd727d66694067949"
+        },
+        {
+          "Path": "Defaults/Policy.references.txt",
+          "Sha256": "dd634dbd162b5a4ebf233d2471d502840434575efc6891e75cc68a1337d2f11f"
+        },
+        {
+          "Path": "Defaults/Policy.source.txt",
+          "Sha256": "b88191b877b8ec2342eafbcce1577de6365fecd3dbc5ea7bebfdf2f77556ce7d"
+        },
+        {
+          "Path": "Google.Apis.Auth.dll",
+          "Sha256": "a2a4f688c1e34bca248c2a589e73a20ac3c834a9615c13bcb08a317a78842609"
+        },
+        {
+          "Path": "Google.Apis.Calendar.v3.dll",
+          "Sha256": "9ac1463a0b1a3d3b13bb5011672063f5381306e10c4f1469b3d7739b7836359f"
+        },
+        {
+          "Path": "Google.Apis.Core.dll",
+          "Sha256": "198f959ef53b86d9c6f4b3305503960995cfaaa096252dc7bbbb803c57c58bc7"
+        },
+        {
+          "Path": "Google.Apis.dll",
+          "Sha256": "7d9abc7e9b29b2414d7ddee9286a4ce997d12cb6a55badcc1eb975ed5e1d4092"
+        },
+        {
+          "Path": "Google.Apis.Docs.v1.dll",
+          "Sha256": "3d0c8840d536394b723447e9b43299304bcf0044469a28e00fdd32d58b9b8135"
+        },
+        {
+          "Path": "Google.Apis.Drive.v3.dll",
+          "Sha256": "21b561a147e30aba369f7a71042f24d8cf442389a11a7de4382e95bb73600c7c"
+        },
+        {
+          "Path": "Google.Apis.Gmail.v1.dll",
+          "Sha256": "32468c56d7fa24742931ef36c6887539a946224a22fb0b6a175a73b2fa4d0d0b"
+        },
+        {
+          "Path": "Google.Apis.HangoutsChat.v1.dll",
+          "Sha256": "75502b01157b2959d36c9122aac3c814e96eef6bd80cda799b868ec53d950d16"
+        },
+        {
+          "Path": "Google.Apis.Sheets.v4.dll",
+          "Sha256": "6fbdbbdae9e1852388cdf6490fabca0e45f333a5cc3598f91e1b30dbc6eecf3f"
+        },
+        {
+          "Path": "Microsoft.Bcl.AsyncInterfaces.dll",
+          "Sha256": "136d5965cf4768e8420b547a8bddea882921f426c371833d558a858a2f0c235a"
+        },
+        {
+          "Path": "Newtonsoft.Json.dll",
+          "Sha256": "a28c251dfe36d881e9e2462e171441b8b0ec156fe3f452602c9149b1b9efe05b"
+        },
+        {
+          "Path": "System.ClientModel.dll",
+          "Sha256": "ce44a4fae4c4787c12475700e19a365fc2f388ae5d0f6182557ce5ea175be7f6"
+        },
+        {
+          "Path": "System.Memory.Data.dll",
+          "Sha256": "bae79a4ff6e8fcfb65a3d88eb53d281898e699e5471ebd780843e5616753f0c3"
+        },
+        {
+          "Path": "web-module.json",
+          "Sha256": "2b33c17252e6847cf62983a78d44f302c5165b630561c54a7ec672f011de1073"
+        },
+        {
+          "Path": "wwwroot/css/bootstrap.min.css",
+          "Sha256": "227fbdebd896be54e7191cba2249fdb5e7f6582864f1b35783552efec402dbab"
+        },
+        {
+          "Path": "wwwroot/index.html",
+          "Sha256": "73d0b48b78f4c51ece1cfe6d3d54f1449f1fbf642b17da83787db2671881dde6"
+        },
+        {
+          "Path": "wwwroot/index.html.md",
+          "Sha256": "a5ce14141ef58e29a540932b8d35675e539b9f56605af810c8cf16a294be1f41"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.EmailDispatch.EmailDeliveries.ashx.js",
+          "Sha256": "223e88b2077651379a6f482336e329f4220278780215d15590a0becd25df1ad7"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.EmailDispatch.EmailDeliveries.json",
+          "Sha256": "1a52d3ec37de295805359a7b8e015146bcfe312a0c2236d09e50e525b71e0292"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.EmailDispatch.EmailObservations.ashx.js",
+          "Sha256": "e823d36a262e8943e043a4eabd0703fb3cf586311bad12caa280fafd5e8e80fb"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.EmailDispatch.EmailObservations.js",
+          "Sha256": "e823d36a262e8943e043a4eabd0703fb3cf586311bad12caa280fafd5e8e80fb"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.EmailDispatch.EmailObservations.json",
+          "Sha256": "2cd86cf75f867476838745cb6bebc0018c6c8a55b52ff4c6a9c72a79689fa1ae"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.EmailDispatch.EmailSyncAccounts.ashx.js",
+          "Sha256": "97fb9446a9439d0a0ead6529b9de41c823eae3c9fd7f79fdc9ecbe4b2b7b514d"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.EmailDispatch.EmailSyncAccounts.json",
+          "Sha256": "502d5bfb012b01193039f56fce9ad851baba5d8699fd148128b46e88a629aac4"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.EmailDispatch.EmailWorks.ashx.js",
+          "Sha256": "6fc117edb3672f1cefb8c00f44874e1527e25ff55e576a5992de6c02b8999512"
+        },
+        {
+          "Path": "wwwroot/JsonWs/Buffaly.EmailDispatch.EmailWorks.json",
+          "Sha256": "af983ed728557ae37ec30b9a65fbbc0e925c040c1d62a3314de9d4ebac057b6c"
+        },
+        {
+          "Path": "wwwroot/js/email-dispatch.js",
+          "Sha256": "13f273ee5505a7e9c8e0ecaced3b2012785a6eb39109d464fd2509984bc8b038"
+        },
+        {
+          "Path": "wwwroot/js/email-dispatch.js.md",
+          "Sha256": "55387bc7091cf7f9d67e17d98a4d8d471492890f087a666c468da472b1ecb4bc"
+        },
+        {
+          "Path": "wwwroot/js/kcs/buffaly-standalone-foundation.js",
+          "Sha256": "a02438f64da2d1a932f4a991d92698b2108adc53ead198bc86c3b64eb2aa48e3"
+        },
+        {
+          "Path": "wwwroot/js/kcs/DateUtil.js",
+          "Sha256": "59a68aa1f530416b6659dead4131da83d8b46a3d32c8c2cd5d33cb7cbbd08e73"
+        },
+        {
+          "Path": "wwwroot/js/kcs/form_validation.js",
+          "Sha256": "986a465713f823925b70c466954ea846f2ac4819f748126cfece313ab3e67a67"
+        },
+        {
+          "Path": "wwwroot/js/kcs/global.js",
+          "Sha256": "747743e4c5edd6fab4f76f6f28ca375b8fffd0f92e068aff5dc10fa528d39b93"
+        },
+        {
+          "Path": "wwwroot/js/kcs/JsonMethod.js",
+          "Sha256": "cc21d85ae7dd3b366a60beabdc98fac34ca76674be9d2c2fa8d7eca0e2fc6eea"
+        },
+        {
+          "Path": "wwwroot/js/kcs/LocalStorage2.js",
+          "Sha256": "9dd1311e3442057e5b930f2ff12da6bdfc959b0c64d65aaa27acc43a970b1a12"
+        },
+        {
+          "Path": "wwwroot/js/kcs/moremoo4.js",
+          "Sha256": "d4a4647034deb89896511223e1979a3a0b462cc403429f9c0fd4578a05d714f7"
+        },
+        {
+          "Path": "wwwroot/js/kcs/stl.js",
+          "Sha256": "36d0340e8487d4a3a0fcb2f1ef7002a84f0b5322a51cb4f26896d6428e6538c2"
+        },
+        {
+          "Path": "wwwroot/js/kcs/UserMessages.js",
+          "Sha256": "6896e63241b0e096a624b227178d018524cfb8816a5fd40eff4067df2d80dd68"
+        },
+        {
+          "Path": "wwwroot/js/kcs/validators.js",
+          "Sha256": "f5ed65e3646b84b8d5a8ba27efea9af545d5210dd192a1761de04f163c39d5c6"
+        }
+      ],
+      "ProjectArtifacts": [],
+      "Dependencies": [],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "RequiresRestart": true,
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     }
   ]
 }
