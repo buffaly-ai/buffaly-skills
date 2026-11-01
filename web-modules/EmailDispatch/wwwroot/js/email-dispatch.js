@@ -3,7 +3,8 @@
  const $ = id => document.getElementById(id);
  let selectedRule = null, selectedEmail = null, skip = 0;
  let selectedTree = null, treeParent = "DispatchMemoryRoot", treeSkip = 0, recentTree = [];
- const notify = text => { $("status").textContent = text; };
+  const notify = text => { $("status").textContent = text; };
+  function focusPolicyEditor() { $("tree-editor").hidden = true; $("editor").hidden = false; $("source").focus(); }
  async function run(button, action) { if (button) button.disabled = true; try { await action(); } catch (error) { notify("The operation failed. Your input has been kept. " + (error?.Error || error?.message || "Reload the saved data and try again.")); } finally { if (button) button.disabled = false; } }
  function button(label, action, primary = false) { const b = document.createElement("button"); b.type = "button"; b.className = "btn " + (primary ? "btn-primary" : "btn-secondary") + " m-1"; b.textContent = label; b.addEventListener("click", () => run(b, action)); return b; }
  function text(tag, value) { const e = document.createElement(tag); e.textContent = value; return e; }
@@ -16,7 +17,7 @@
  }
  async function program() {
   const values = await EmailObservations.GetProgramObjectAsync({}); $("program").replaceChildren();
-  for (const rule of values) { const line = document.createElement("div"); line.className = "border-bottom py-2"; line.append(text("span", `${rule.Name} · ${rule.Enabled ? rule.Outcome : "Disabled"}${rule.Destination ? " · " + rule.Destination : ""}`), button("Edit", async () => { selectedRule = await EmailObservations.GetPolicyNodeObjectAsync({ NodeId: rule.NodeId }); $("editor-title").textContent = rule.Name; $("source").value = selectedRule.Source; $("editor").hidden = false; $("source").focus(); })); $("program").append(line); }
+   for (const rule of values) { const line = document.createElement("div"); line.className = "border-bottom py-2"; line.append(text("span", `${rule.Name} · ${rule.Enabled ? rule.Outcome : "Disabled"}${rule.Destination ? " · " + rule.Destination : ""}`), button("Edit", async () => { selectedRule = await EmailObservations.GetPolicyNodeObjectAsync({ NodeId: rule.NodeId }); $("editor-title").textContent = rule.Name; $("source").value = selectedRule.Source; focusPolicyEditor(); })); $("program").append(line); }
  }
  async function inbox() {
   const summary = await EmailWorks.GetReviewSummaryObjectAsync({}); $("outcomes").replaceChildren();
@@ -43,8 +44,8 @@
    $("works").append(section);
   }
  }
-  $("edit-policy-root").addEventListener("click", () => run($("edit-policy-root"), async () => { selectedRule = await EmailObservations.GetPolicyRootObjectAsync({}); $("editor-title").textContent = "Edit rule hierarchy"; $("source").value = selectedRule.Source; $("editor").hidden = false; $("source").focus(); }));
-  $("add-rule-form").addEventListener("submit", e => { e.preventDefault(); run($("add-rule"), async () => { const root = await EmailObservations.GetPolicyRootObjectAsync({}); selectedRule = await EmailObservations.AddPolicyChildObjectAsync({ ParentId: root.NodeId, ExpectedRevision: root.Revision, ChildId: "EmailPolicy_User_" + crypto.randomUUID().replaceAll("-", ""), EntityName: $("new-rule-name").value }); $("editor-title").textContent = $("new-rule-name").value; $("source").value = selectedRule.Source; $("editor").hidden = false; await program(); notify("Disabled rule saved. Edit its condition and outcome before enabling it."); }); });
+  $("edit-policy-root").addEventListener("click", () => run($("edit-policy-root"), async () => { selectedRule = await EmailObservations.GetPolicyRootObjectAsync({}); $("editor-title").textContent = "Edit rule hierarchy"; $("source").value = selectedRule.Source; focusPolicyEditor(); }));
+  $("add-rule-form").addEventListener("submit", e => { e.preventDefault(); run($("add-rule"), async () => { const root = await EmailObservations.GetPolicyRootObjectAsync({}); selectedRule = await EmailObservations.AddPolicyChildObjectAsync({ ParentId: root.NodeId, ExpectedRevision: root.Revision, ChildId: "EmailPolicy_User_" + crypto.randomUUID().replaceAll("-", ""), EntityName: $("new-rule-name").value }); $("editor-title").textContent = $("new-rule-name").value; $("source").value = selectedRule.Source; focusPolicyEditor(); await program(); notify("Disabled rule saved. Edit its condition and outcome before enabling it."); }); });
   $("source-form").addEventListener("submit", e => { e.preventDefault(); run($("save"), async () => { selectedRule = await EmailObservations.SavePolicyNodeObjectAsync({ NodeId: selectedRule.NodeId, ExpectedRevision: selectedRule.Revision, Source: $("source").value }); $("source").value = selectedRule.Source; await program(); notify("Saved and read back the authoritative source."); }); });
  $("cancel").addEventListener("click", () => { $("editor").hidden = true; selectedRule = null; });
  $("search-form").addEventListener("submit", e => { e.preventDefault(); skip = 0; run(null, inbox); });
@@ -56,7 +57,7 @@
    $("tree-results").replaceChildren();
    if($("tree-search").value) {
     const rules=await EmailObservations.FindPolicyNodesObjectAsync({Search:$("tree-search").value,SkipRows:treeSkip,NumRows:25});
-    for(const rule of rules) $("tree-results").append(button("Rule: "+rule.Name,async()=>{selectedRule=await EmailObservations.GetPolicyNodeObjectAsync({NodeId:rule.NodeId});$("editor-title").textContent=rule.Name;$("source").value=selectedRule.Source;$("editor").hidden=false;$("source").focus();}));
+    for(const rule of rules) $("tree-results").append(button("Rule: "+rule.Name,async()=>{selectedRule=await EmailObservations.GetPolicyNodeObjectAsync({NodeId:rule.NodeId});$("editor-title").textContent=rule.Name;$("source").value=selectedRule.Source;focusPolicyEditor();}));
    }
    for (const n of nodes) $("tree-results").append(button(n.Name, () => openTree(n.NodeId)));
    if (!$("tree-results").children.length) $("tree-results").append(text("p", "No matching rules or work nodes. Change your search or go back."));
@@ -66,7 +67,7 @@
   selectedTree = await EmailObservations.GetTreeNodeObjectAsync({ NodeId: id }); treeParent = id; treeSkip = 0;
   $("tree-title").textContent = selectedTree.Name; $("tree-name").value = selectedTree.Name; $("tree-context").value = selectedTree.Context;
   $("tree-destination").textContent = selectedTree.WorkSession ? "Work session: " + selectedTree.WorkSession : "Unbound — work is held until a destination is assigned.";
-  $("tree-editor").hidden = false; $("tree-path").replaceChildren();
+  $("editor").hidden = true; $("tree-editor").hidden = false; $("tree-path").replaceChildren();
   for (const pathId of selectedTree.Path) { const n = await EmailObservations.GetTreeNodeObjectAsync({ NodeId: pathId }); $("tree-path").append(button(n.Name, () => openTree(pathId))); }
   recentTree = [selectedTree, ...recentTree.filter(n => n.NodeId !== id)].slice(0, 6); $("tree-recent").replaceChildren(text("p", "Recently viewed"));
   for (const n of recentTree) $("tree-recent").append(button(n.Name, () => openTree(n.NodeId)));
