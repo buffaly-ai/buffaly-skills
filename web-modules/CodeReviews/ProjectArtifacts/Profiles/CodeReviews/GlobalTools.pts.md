@@ -32,3 +32,7 @@ Keep this file aligned with the operational global-review actions in `Skills/Cod
 ## 2026-10-24 — Expose canonical ProtoScriptMinimum token
 - Describe the added closed canonical reference token and installed ownership so a global reviewer does not search an unrelated application commit for the required shared language reference. Execute signature, roots and infinitive phrase remain unchanged. Active-project upsert cannot edit this owning external module; scoped source SmartPatch used. No ownership-sidecar identity changed.
 - Validation: full owning suite passed 117/117, zero skipped, including real eager/lazy ProtoScript compilation. No installed-copy edits or live model claim.
+
+## 2026-11-01 - Describe the UI guidance token
+- ToGetGlobalCodeReviewLanguageGuidance's Language description now lists UI and says it reads the UI-STD-01 standard required for user-facing markup, style and page-script changes. Execute signature, root and infinitive phrase are unchanged; scoped source SmartPatch used because active-project upsert cannot target this owning module. No ownership-sidecar identity changed.
+- Validation: Buffaly.CodeReviews.AgentRemoteJsonWs.Tests passed 119/119, zero skipped, including the new UI loader and UI gate cases and the existing real eager/lazy ProtoScript compilation tests. Solution-level dotnet test fails at restore on two pre-existing missing RooTrax project paths in buffaly.code.reviews.sln (unrelated, not changed). No installed-module update or live reviewer run at this entry.

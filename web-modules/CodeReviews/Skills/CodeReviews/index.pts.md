@@ -56,3 +56,7 @@ Commit-free turns return the typed callback result with `ShouldQueue=false`. Exi
 ## 2026-10-24 — Align lazy ProtoScriptMinimum guidance discovery
 - Match eager description for the closed canonical reference token and its installed project ownership; do not search reviewed application files for this shared reference. No wrapper signature, action root or phrase changed, so ownership-sidecar regeneration is unnecessary. Active-project upsert cannot target this owning source; used scoped SmartPatch rather than installed-file edits.
 - Validation: full owning suite passed 117/117, zero skipped, including real eager/lazy ProtoScript compilation. No live reviewer claim.
+
+## 2026-11-01 - Describe the UI guidance token (lazy profile)
+- The lazy-profile ToGetGlobalCodeReviewLanguageGuidance description mirrors the eager GlobalTools.pts change: Language lists UI, which reads the UI-STD-01 user interface standard. Execute signature, root and phrase unchanged; no index regeneration required.
+- Validation: Buffaly.CodeReviews.AgentRemoteJsonWs.Tests passed 119/119, zero skipped, including the new UI loader and UI gate cases and the existing real eager/lazy ProtoScript compilation tests. Solution-level dotnet test fails at restore on two pre-existing missing RooTrax project paths in buffaly.code.reviews.sln (unrelated, not changed). No installed-module update or live reviewer run at this entry.
