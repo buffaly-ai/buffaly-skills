@@ -182,15 +182,15 @@ function Read-JsonFile([string]$path) {
                                 }
                                 # Skip core/provided assemblies entirely - they are supplied by the host runtime
                                 if ($isCoreProvided) { continue }
-                                # Native-bearing NuGet packages are not assembly names. Resolve their exact
-                                # target entry and require every declared native/managed runtime asset.
+                                # Dependency keys are library identities, not necessarily assembly names.
+                                # Resolve the exact target entry and require its declared runtime assets.
                                 # runtimeTargets retain RID directories; resolved runtime/native assets
                                 # are published beside this deps.json. Existing file/hash checks still apply.
                                 $dependencyKey = $depName + '/' + [string]$depProp.Value
                                 $dependencyProperty = $target.Value.PSObject.Properties[$dependencyKey]
                                 $dependency = if ($null -ne $dependencyProperty) { $dependencyProperty.Value } else { $null }
                                 $nativeTargets = @($dependency.runtimeTargets.PSObject.Properties | Where-Object { $_.Value.assetType -eq 'native' })
-                                if (($null -ne $dependency.native -and @($dependency.native.PSObject.Properties).Count -gt 0) -or $nativeTargets.Count -gt 0) {
+                                if (($null -ne $dependency.runtime -and @($dependency.runtime.PSObject.Properties).Count -gt 0) -or ($null -ne $dependency.native -and @($dependency.native.PSObject.Properties).Count -gt 0) -or $nativeTargets.Count -gt 0) {
                                     $depsDirectory = [System.IO.Path]::GetDirectoryName($relativeDepsPath) -replace '\\', '/'
                                     $assetPaths = [System.Collections.Generic.List[string]]::new()
                                     foreach ($section in @('runtime', 'native')) {
@@ -207,6 +207,9 @@ function Read-JsonFile([string]$path) {
                                         }
                                     }
                                     foreach ($assetPath in $assetPaths) {
+                                        # Apply host ownership to the declared assembly, not a synthetic .Reference library key.
+                                        $assetAssembly = [System.IO.Path]::GetFileNameWithoutExtension($assetPath)
+                                        if ([System.IO.Path]::GetExtension($assetPath) -eq '.dll' -and $assetAssembly -in $coreProvidedAssemblies) { continue }
                                         $publishedPath = if ($depsDirectory) { $depsDirectory + '/' + $assetPath } else { $assetPath }
                                         if (-not $indexedFileSet.ContainsKey($publishedPath)) {
                                             $message = "Missing runtime asset '$publishedPath' for dependency '$dependencyKey' (from $($libEntry.Name) via $relativeDepsPath) in the Files array for '$packageId'."

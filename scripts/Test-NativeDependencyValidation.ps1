@@ -59,7 +59,13 @@ try {
 	Test-Case 'rid-resolved-flat-native' $resolved @('libNative.dll','Actual.Assembly.dll') $true
 	Test-Case 'rid-resolved-missing-native' $resolved @('Actual.Assembly.dll') $false 'libNative.dll'
 	Test-Case 'managed-policy-retained' @{runtime=@{'lib/net9.0/Native.Package.dll'=@{}}} @('Native.Package.dll') $true
-	Test-Case 'missing-managed-retained' @{runtime=@{'lib/net9.0/Native.Package.dll'=@{}}} @() $false 'Missing DLL dependency'
+	Test-Case 'missing-managed-retained' @{runtime=@{'lib/net9.0/Native.Package.dll'=@{}}} @() $false 'Missing runtime asset'
+	Test-Case 'managed-library-alias' @{runtime=@{'Actual.Assembly.dll'=@{}}} @('Actual.Assembly.dll') $true
+	Test-Case 'alias-name-cannot-replace-asset' @{runtime=@{'Actual.Assembly.dll'=@{}}} @('Native.Package.dll') $false 'Actual.Assembly.dll'
+	Test-Case 'managed-alias-nested' @{runtime=@{'Actual.Assembly.dll'=@{}}} @('Actual.Assembly.dll') $true '' 'nested/'
+	Test-Case 'managed-alias-host-provided' @{runtime=@{'Buffaly.Agent.Web.Common.dll'=@{}}} @() $true
+	Test-Case 'managed-alias-mixed-host-owned' @{runtime=@{'Buffaly.Agent.Web.Common.dll'=@{};'Owned.Assembly.dll'=@{}}} @() $false 'Owned.Assembly.dll'
+	Test-Case 'unresolved-managed-still-fails' @{} @() $false 'Missing DLL dependency'
 	if ($EvidenceDirectory) {
 		[IO.Directory]::CreateDirectory($EvidenceDirectory) | Out-Null
 		$results | ConvertTo-Json -Depth 10 | Set-Content (Join-Path $EvidenceDirectory 'native-dependency-regressions.json')
