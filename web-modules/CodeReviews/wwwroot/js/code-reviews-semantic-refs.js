@@ -106,16 +106,39 @@
 	}
 
 	function setReviewStatus(button, state, message) {
-		let status = button.nextElementSibling;
-		if (!status || !status.classList || !status.classList.contains("code-reviews-trigger-agent-review-status")) {
+		let status = button.reviewStatusElement;
+		if (!status) {
 			status = document.createElement("span");
 			status.className = "code-reviews-trigger-agent-review-status";
+			status.id = "code-review-status-" + (++reviewStatusSequence);
 			status.setAttribute("role", "status");
 			status.setAttribute("aria-live", "polite");
 			button.insertAdjacentElement("afterend", status);
+			button.reviewStatusElement = status;
+			button.setAttribute("aria-describedby", status.id);
 		}
 		status.setAttribute("data-code-review-state", state);
 		status.textContent = message;
+		status.hidden = isEmpty(message);
+	}
+	let reviewStatusSequence = 0;
+
+	// Trigger failures are persisted by the driver before its HTTP exception is returned.
+	// Read that exact commit once; never retrigger or replace it with a sibling's error.
+	function showTriggerFailure(request, button, error) {
+		button.disabled = false;
+		setReviewButtonState(button, "error", "Retry review", "Review could not start. Retry this commit.");
+		setReviewStatus(button, "error", "Review could not start: " + errorMessage(error));
+		return call("GetCommitReview", { RepositoryPath: request.RepositoryPath, CommitSha: request.CommitSha })
+			.then(function (response) {
+				const record = recordFromResponse(response);
+				if (button.getAttribute("data-code-review-state") === "error" && reviewStatusFromRecord(record) === "Failed" && !isEmpty(record.FailureReason)) {
+					setReviewStatus(button, "error", record.FailureReason);
+				}
+			})
+			.catch(function (lookupError) {
+				console.warn("CodeReviews trigger failure detail lookup failed", lookupError);
+			});
 	}
 
 	function triggerCodeReviewAgent(request, button) {
@@ -129,9 +152,7 @@
 				setReviewStatus(button, "queued", child ? "Queued child session " + child : "Review agent queued.");
 			})
 			.catch(function (error) {
-				button.disabled = false;
-				setReviewButtonState(button, "error", "Retry review", "Code review trigger failed: " + errorMessage(error));
-				setReviewStatus(button, "error", "Review trigger failed: " + errorMessage(error));
+				return showTriggerFailure(request, button, error);
 			});
 	}
 
@@ -203,9 +224,11 @@
 	}
 
 	function applyReviewRecordToButton(button, record) {
-		if (button.getAttribute("data-code-review-state") === "loading") return;
+		// An initial read must not overwrite a newer click outcome (or its failure detail).
+		if (button.getAttribute("data-code-review-state") !== "ready") return;
 		const status = reviewStatusFromRecord(record);
 		button.disabled = false;
+		setReviewStatus(button, "", "");
 		if (status === "Running") {
 			button.disabled = true;
 			setReviewButtonState(button, "running", "Reviewing", "Code Review Agent is already reviewing this commit.");
@@ -219,6 +242,7 @@
 
 		if (status === "Failed") {
 			setReviewButtonState(button, "failed", "Review failed", text(record && record.FailureReason) || "Retry Code Review Agent.");
+			setReviewStatus(button, "error", text(record && record.FailureReason) || "The review failed without a recorded reason. Open the commit for review details.");
 			return;
 		}
 
@@ -235,7 +259,8 @@
 			})
 			.catch(function (error) {
 				console.warn("CodeReviews review status lookup failed", error);
-				setReviewButtonState(button, "ready", "Review commit only", "Review this commit separately");
+				if (button.getAttribute("data-code-review-state") === "ready")
+					setReviewButtonState(button, "ready", "Review commit only", "Review this commit separately");
 			});
 	}
 
@@ -278,7 +303,8 @@
 			+ ".code-reviews-trigger-agent-review[data-code-review-state='queued'],.code-reviews-trigger-agent-review[data-code-review-state='reviewed']{background:linear-gradient(135deg,#16a34a 0%,#0d9488 100%);box-shadow:0 5px 14px rgba(13,148,136,.24),inset 0 1px 0 rgba(255,255,255,.24);}\n"
 			+ ".code-reviews-trigger-agent-review[data-code-review-state='running']{background:linear-gradient(135deg,#2563eb 0%,#0891b2 100%);box-shadow:0 5px 14px rgba(37,99,235,.2),inset 0 1px 0 rgba(255,255,255,.24);}\n"
 			+ ".code-reviews-trigger-agent-review[data-code-review-state='error'],.code-reviews-trigger-agent-review[data-code-review-state='failed']{background:linear-gradient(135deg,#f97316 0%,#dc2626 100%);box-shadow:0 5px 14px rgba(220,38,38,.22),inset 0 1px 0 rgba(255,255,255,.24);}\n"
-			+ ".code-reviews-trigger-agent-review-status{display:inline-flex;align-items:center;margin-left:.38rem;padding:.15rem .45rem;border-radius:999px;font:600 11px/1.2 system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#eef2ff;color:#3730a3;vertical-align:baseline;}\n"
+			+ ".code-reviews-trigger-agent-review-status{display:block;margin:.35rem 0;padding:.35rem .5rem;border-radius:.35rem;font:inherit;background:#eef2ff;color:#3730a3;white-space:pre-wrap;overflow-wrap:anywhere;}\n"
+			+ ".code-reviews-trigger-agent-review-status[hidden]{display:none;}\n"
 			+ ".code-reviews-trigger-agent-review-status[data-code-review-state='queued']{background:#dcfce7;color:#166534;}\n"
 			+ ".code-reviews-trigger-agent-review-status[data-code-review-state='error']{background:#fee2e2;color:#991b1b;}\n"
 			+ "@keyframes codeReviewsReviewSpin{to{transform:rotate(360deg);}}\n";
