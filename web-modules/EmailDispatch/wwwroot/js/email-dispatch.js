@@ -23,13 +23,13 @@
   $("subject").textContent=selectedEmail.Email.Subject||"No subject"; $("sender").textContent=selectedEmail.Email.Sender; $("received").textContent=date(selectedEmail.Email.ReceivedUtc); $("body").textContent=selectedEmail.Frame.BodyText||"No readable message body."; $("test-result").textContent=""; works(); $("subject").focus({preventScroll:true,focusVisible:false});
  }
  async function refreshEmail() { await openEmail(selectedEmail.Email.ObservationKey); }
- function works() {
-  $("works").replaceChildren();
-  if(!selectedEmail.Works.length) { $("works").append(text("p","This email has not been classified yet.","ed-empty"),link("Review processing evidence","#evidence")); return; }
-  for(const work of selectedEmail.Works) {
-   const section=document.createElement("section"); section.className="ed-region"; const heading=document.createElement("div");heading.className="ed-heading";const headings={AgentEvaluationRequired:"Suggestions",PreparationFailed:"Suggestions",NeedsReview:"Routing",Suggested:"Proposed work",Accepted:"Delivery",PreviouslyHandled:"Existing work",DeliveryUnknown:"Delivery",Unclassified:"Rule match",AutomaticReady:"Processor",NoAction:"Review",Notice:"Notice",WakeRecorded:"Processor",Conflict:"Routing",Error:"Review",Failed:"Review",Prepared:"Suggestions"};heading.append(text("h2",headings[work.State]||"Review"),status(work.LocalDisposition||work.State));section.append(heading);
-   if(work.Destination) section.append(text("p","Destination: "+work.Destination,"ed-fact"));
-    if(work.ProposedWork) section.append(text("div",work.ProposedWork,"ed-instruction"));
+  function works() {
+   $("works").replaceChildren();$("proposals").replaceChildren();
+   if(!selectedEmail.Works.length) { $("works").append(status("Unclassified")); return; }
+   for(const work of selectedEmail.Works) {
+    const section=document.createElement("section");section.className="ed-work-commands";section.setAttribute("aria-label",EmailDispatchUi.state(work.State)[0]+(work.Destination?" · "+work.Destination:""));section.append(status(work.LocalDisposition||work.State));
+    if(work.Destination) section.append(text("span",work.Destination,"ed-work-destination"));
+    if(work.ProposedWork) {const proposal=document.createElement("section");proposal.className="ed-proposal";proposal.append(text("h2",work.Destination?"Proposed work · "+work.Destination:"Proposed work"),text("div",work.ProposedWork,"ed-instruction"));$("proposals").append(proposal);}
    const actions=document.createElement("div");actions.className="ed-actions";
    if(["AgentEvaluationRequired","PreparationFailed"].includes(work.State)) actions.append(button("Prepare suggestions",async()=>{notify("Preparing suggestions…");await request(EmailWorks,"PrepareSuggestion",{WorkKey:work.WorkKey});await refreshEmail();notify("Suggestions saved for review.");},true));
    if(["NeedsReview","Suggested"].includes(work.State)) actions.append(button(work.Destination?"Change destination":"Choose destination",async()=>{routingWork=work;treeParent="DispatchMemoryRoot";treeSkip=0;$("tree-search").value="";location.hash="#routing";},!work.Destination));

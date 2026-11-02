@@ -3,15 +3,14 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Email Dispatch</title>
-<link rel="stylesheet" href="/css/bootstrap.min.css?v=0.1.10"><link rel="stylesheet" href="/css/email-dispatch.css?v=0.1.10">
-<script src="/js/kcs/buffaly-standalone-foundation.js?v=0.1.10"></script><script src="/js/kcs/grid4.js?v=0.1.10"></script>
-<script src="/JsonWs/Buffaly.EmailDispatch.EmailObservations.ashx.js?v=0.1.10"></script><script src="/JsonWs/Buffaly.EmailDispatch.EmailWorks.ashx.js?v=0.1.10"></script><script src="/JsonWs/Buffaly.EmailDispatch.EmailSyncAccounts.ashx.js?v=0.1.10"></script>
-<script defer src="/js/email-dispatch-ui.js?v=0.1.10"></script><script defer src="/js/email-dispatch.js?v=0.1.10"></script>
+<link rel="stylesheet" href="/css/bootstrap.min.css?v=0.1.11"><link rel="stylesheet" href="/css/email-dispatch.css?v=0.1.11">
+<script src="/js/kcs/buffaly-standalone-foundation.js?v=0.1.11"></script><script src="/js/kcs/grid4.js?v=0.1.11"></script>
+<script src="/JsonWs/Buffaly.EmailDispatch.EmailObservations.ashx.js?v=0.1.11"></script><script src="/JsonWs/Buffaly.EmailDispatch.EmailWorks.ashx.js?v=0.1.11"></script><script src="/JsonWs/Buffaly.EmailDispatch.EmailSyncAccounts.ashx.js?v=0.1.11"></script>
+<script defer src="/js/email-dispatch-ui.js?v=0.1.11"></script><script defer src="/js/email-dispatch.js?v=0.1.11"></script>
 </head>
 <body>
 <a class="ed-skip" href="#main">Skip to content</a>
-<header class="ed-header"><div class="ed-shell ed-header-inner"><a class="ed-brand" href="#inbox">Email Dispatch</a><span class="ed-account">matt@intelligencefactory.ai</span></div></header>
-<nav class="ed-nav" aria-label="Main"><div class="ed-shell"><a href="#inbox">Review</a><a href="#rules">Rules</a><a href="#routing">Routing</a><a href="#accounts">Accounts</a></div></nav>
+<header class="ed-header"><div class="ed-shell ed-header-inner"><a class="ed-brand" href="#inbox">Email Dispatch</a><nav class="ed-nav" aria-label="Main"><a href="#inbox">Review</a><a href="#rules">Rules</a><a href="#routing">Routing</a><a href="#accounts">Accounts</a></nav><span class="ed-account">matt@intelligencefactory.ai</span></div></header>
 <main class="ed-shell" id="main">
 <div id="status" class="ed-message" role="status" aria-live="polite" hidden></div>
 <section id="view-inbox" class="ed-view" aria-labelledby="inbox-title">
@@ -21,11 +20,10 @@
 <div id="inbox-pager" class="ed-pager" aria-label="Email pages"></div>
 </section>
 <section id="view-email" class="ed-view" hidden aria-labelledby="subject">
-<a href="#inbox" class="ed-back">Back to inbox</a><div class="ed-heading"><h1 id="subject" class="ed-subject" tabindex="-1"></h1></div>
-<div id="email"><p id="sender" class="ed-sender"></p><p id="received" class="ed-meta"></p>
-<section class="ed-region" aria-label="Email content"><div id="body" class="ed-email-body" tabindex="0"></div></section>
-<div id="works"></div><div class="ed-secondary-actions"><button id="test" type="button" class="btn btn-outline-secondary">Check saved rules</button><a id="email-evidence" href="#evidence">View evidence</a></div><p id="test-result" class="ed-result" role="status"></p>
-</div></section>
+<div class="ed-message-tools" aria-label="Message commands"><a href="#inbox" class="ed-back" aria-label="Back to inbox">← Inbox</a><div id="works"></div><div class="ed-message-secondary"><button id="test" type="button" class="btn btn-outline-secondary">Check saved rules</button><a id="email-evidence" href="#evidence">View evidence</a></div></div>
+<p id="test-result" class="ed-result" role="status"></p>
+<article id="email" class="ed-reading-surface"><h1 id="subject" class="ed-subject" tabindex="-1"></h1><div class="ed-message-meta"><p id="sender" class="ed-sender"></p><p id="received" class="ed-meta"></p></div>
+<div id="body" class="ed-email-body"></div></article><div id="proposals"></div></section>
 <section id="view-rules" class="ed-view" hidden aria-labelledby="rules-title">
 <div class="ed-heading"><div><h1 id="rules-title" tabindex="-1">Rules</h1></div><button id="new-rule" class="btn btn-primary" type="button">New rule</button></div>
 <form id="rule-search-form" class="ed-search"><label for="rule-search" class="visually-hidden">Search rules</label><input id="rule-search" class="form-control" type="search" placeholder="Rule name, condition or destination"><button class="btn btn-outline-secondary" type="submit">Search</button></form><div id="program" class="ed-grid-host"><p class="ed-empty">Loading rules…</p></div><div id="rule-pager" class="ed-pager" aria-label="Rule pages"></div><div class="ed-secondary-actions"><a href="#source/EmailPolicyRoot">Edit rule order</a></div>
