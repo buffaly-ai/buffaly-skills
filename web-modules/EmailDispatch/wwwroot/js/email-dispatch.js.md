@@ -15,3 +15,8 @@ The existing server search includes bounded policy declaration/prompt/destinatio
 
 ## 2026-11-01 — one focused program editor
 Opening any policy editor hides the tree editor; opening a semantic node hides policy source. Selection and source are retained, but two active editors cannot stack. Shared helper covers root/add/search/list. Browser tests35/35 pass including both transitions at390/1280 and async completion waits; no overflow. Explicit collapsed-panel user override remains.
+
+
+## 2026-11-02 — focused UI redesign (UI-STD-01)
+Focused navigation/tasks replace stacked configuration dump. Server-paged mailbox/rules search, explicit reviewed state/behavior vocabulary, concise task headings, no raw reason/envelope outside Evidence. Full AST-backed editor, cancel/failure retention, saved-rule test, canonical routing/session and unchanged explicit SendApproved. Presentation-only candidate suffix removal. Pointer/initial heading focus no box, keyboard focus retained by shared modality owner. Generated client transport/request error lifetime reused; no hand HTTP/core edits. Fixture-only browser mutations; actual configured-model synthetic preparation/owner selection yields no Send or receipt.
+Validation: source routine48/48 and separate actual-model UI1/1 passed; final package-backed receipt and parent visual acceptance recorded separately in focused UI handoff. No ordinary business Send, protected restart or shared-core change.

@@ -1,83 +1,106 @@
 "use strict";
 (() => {
- const $ = id => document.getElementById(id);
- let selectedRule = null, selectedEmail = null, skip = 0;
- let selectedTree = null, treeParent = "DispatchMemoryRoot", treeSkip = 0, recentTree = [];
-  const notify = text => { $("status").textContent = text; };
-  function focusPolicyEditor() { $("tree-editor").hidden = true; $("editor").hidden = false; $("source").focus(); }
- async function run(button, action) { if (button) button.disabled = true; try { await action(); } catch (error) { notify("The operation failed. Your input has been kept. " + (error?.Error || error?.message || "Reload the saved data and try again.")); } finally { if (button) button.disabled = false; } }
- function button(label, action, primary = false) { const b = document.createElement("button"); b.type = "button"; b.className = "btn " + (primary ? "btn-primary" : "btn-secondary") + " m-1"; b.textContent = label; b.addEventListener("click", () => run(b, action)); return b; }
- function text(tag, value) { const e = document.createElement(tag); e.textContent = value; return e; }
+ const {$,text,escape,link,notify,run,request,button,status,date,facts,listItem,PagedGrid}=EmailDispatchUi;
+ let selectedEmail=null, selectedRule=null, selectedTree=null, routingWork=null, sendingWork=null, pendingSession=null;
+ let treeParent="DispatchMemoryRoot", treeSkip=0, recentTree=[];
+ const ruleName=rule=>rule.NodeId==="EmailPolicy_DirectClient"?"Direct client correspondence":rule.NodeId==="EmailPolicy_Dmarc"?"DMARC aggregate reports":rule.Name;
+ const behavior = rule => {
+  if(rule.Outcome==="ExistingProcessor") return rule.Destination||"Process DMARC reports";
+  if(rule.Outcome==="AgentSuggestion") return "Prepare suggestions";
+  if(rule.Outcome==="Notice") return rule.Children.length?"OpenAI task routing":"Record notice";
+  return "Review routing";
+ };
+ function show(name) { document.querySelectorAll(".ed-view").forEach(view=>view.hidden=view.id!=="view-"+name); const nav = ["email","send","inbox","evidence"].includes(name)?"inbox":["rule","source","rule-new"].includes(name)?"rules":["tree","session"].includes(name)?"routing":name; document.querySelectorAll(".ed-nav a").forEach(a=>a.toggleAttribute("aria-current",a.hash==="#"+nav)); document.querySelectorAll('.ed-nav a[aria-current]').forEach(a=>a.setAttribute("aria-current","page")); window.scrollTo(0,0); const heading=$("view-"+name).querySelector("h1"); heading?.focus({preventScroll:true,focusVisible:false}); }
+ const inboxGrid=new PagedGrid("inbox","inbox-pager","search", args=>request(EmailObservations,"GetInbox",{AccountKey:"work-main",State:$("state").value,...args}), items=>`<table class="ed-grid Grid"><thead><tr><th class="ed-sender-cell">From</th><th>Email</th><th class="ed-time-cell">Received</th><th class="ed-state-cell">Status</th></tr></thead><tbody>${items.map(item=>{const [name,kind]=EmailDispatchUi.state(item.ReviewState);return `<tr><td class="ed-sender-cell"><span class="ed-cell-secondary" title="${escape(item.Sender)}">${escape(item.Sender)}</span></td><td><a href="#email/${encodeURIComponent(item.ObservationKey)}" title="${escape(item.Subject)}">${escape(item.Subject||"No subject")}</a><span class="ed-cell-secondary ed-mobile-meta">${escape(item.Sender)} · ${escape(date(item.ReceivedUtc))}</span></td><td class="ed-time-cell">${escape(date(item.ReceivedUtc))}</td><td class="ed-state-cell"><span class="ed-status ed-status-${kind}">${escape(name)}</span></td></tr>`;}).join("")}</tbody></table>`,"No emails match. Change the search or filter.");
+ const rulesGrid=new PagedGrid("program","rule-pager","rule-search",args=>request(EmailObservations,"GetRulePage",args),items=>`<table class="ed-grid ed-grid-rules Grid"><thead><tr><th class="ed-rule-name">Rule</th><th>What happens</th><th class="ed-rule-state">Status</th></tr></thead><tbody>${items.map(rule=>`<tr><td><a href="#rule/${encodeURIComponent(rule.NodeId)}" title="${escape(ruleName(rule))}">${escape(ruleName(rule))}</a></td><td class="ed-rule-behavior">${escape(behavior(rule))}</td><td><span class="ed-status ed-status-${rule.Enabled?"success":"neutral"}">${escape(rule.Status)}</span></td></tr>`).join("")}</tbody></table>`,`No rules match. <a href="#rule-new">New rule</a>`);
  async function accounts() {
-  const values = await EmailSyncAccounts.GetAccountsObjectAsync({}); $("accounts").replaceChildren();
-  for (const a of values) { const section = document.createElement("section"); section.className = "mb-3"; section.append(text("h3", a.Email), text("p", a.Available ? `${a.Phase} · ${a.EnumeratedCount} emails captured across ${a.PageCount} pages` : "Unavailable — this account needs reauthorization."));
-   if (a.WindowStartUtc) section.append(text("p", `Window: ${DateUtil ? new Date(a.WindowStartUtc).toLocaleString() : a.WindowStartUtc} — ${new Date(a.WindowEndUtc).toLocaleString()}`));
-   if (a.Available) section.append(button("Synchronize Gmail", async () => { notify("Synchronizing this account; no dispatch effects run."); await EmailSyncAccounts.SynchronizeObjectAsync({ AccountKey: a.AccountKey }); await accounts(); await inbox(); notify("Gmail synchronization saved."); }, true)); $("accounts").append(section);
-  }
+  const values=await request(EmailSyncAccounts,"GetAccounts",{}); $("accounts").replaceChildren();
+  for(const account of values) { const section=document.createElement("section"); section.append(text("h2",account.Email),facts([["Connection",account.Available?"Connected":"Unavailable — reauthorization required"],["Synchronization",account.Phase==="Current"?"Up to date":account.Phase],["Captured emails",account.EnumeratedCount],["Mailbox","Work account only"]])); $("accounts").append(section); $("sync-status").textContent=account.Available?(account.Phase==="Current"?"Gmail up to date":"Gmail synchronizing"):"Gmail unavailable"; $("sync-status").className="ed-status ed-status-"+(account.Available?"success":"warning"); $("synchronize").disabled=!account.Available; }
+  $("sync-evidence").textContent=JSON.stringify(values,null,2);
  }
- async function program() {
-  const values = await EmailObservations.GetProgramObjectAsync({}); $("program").replaceChildren();
-   for (const rule of values) { const line = document.createElement("div"); line.className = "border-bottom py-2"; line.append(text("span", `${rule.Name} · ${rule.Enabled ? rule.Outcome : "Disabled"}${rule.Destination ? " · " + rule.Destination : ""}`), button("Edit", async () => { selectedRule = await EmailObservations.GetPolicyNodeObjectAsync({ NodeId: rule.NodeId }); $("editor-title").textContent = rule.Name; $("source").value = selectedRule.Source; focusPolicyEditor(); })); $("program").append(line); }
+ async function openEmail(key) {
+  selectedEmail=await request(EmailObservations,"GetEmail",{ObservationKey:key}); show("email");
+  $("subject").textContent=selectedEmail.Email.Subject||"No subject"; $("sender").textContent=selectedEmail.Email.Sender; $("received").textContent=date(selectedEmail.Email.ReceivedUtc); $("body").textContent=selectedEmail.Frame.BodyText||"No readable message body."; $("test-result").textContent=""; works(); $("subject").focus({preventScroll:true,focusVisible:false});
  }
- async function inbox() {
-  const summary = await EmailWorks.GetReviewSummaryObjectAsync({}); $("outcomes").replaceChildren();
-  for(const item of summary.Outcomes) $("outcomes").append(text("p", `${item.Outcome.replace(/([a-z])([A-Z])/g,"$1 $2")} — ${item.Count}`));
-  const page = await EmailObservations.GetInboxObjectAsync({ AccountKey: "work-main", State: "", Search: $("search").value, SkipRows: skip, NumRows: 25 }); $("inbox").replaceChildren();
-  if (!page.Items.length) $("inbox").append(text("p", "No captured emails match. Synchronize Gmail or change your search."));
-  for (const item of page.Items) { const line = document.createElement("div"); line.className = "border-bottom py-2"; line.append(text("p", item.Sender), button(item.Subject || "No subject", async () => { selectedEmail = await EmailObservations.GetEmailObjectAsync({ ObservationKey: item.ObservationKey }); $("email").hidden = false; $("subject").textContent = item.Subject; $("sender").textContent = item.Sender; $("body").textContent = selectedEmail.Frame.BodyText; $("test-result").textContent = ""; works(); $("subject").scrollIntoView({ block: "start" }); })); $("inbox").append(line); } $("more").hidden = !page.HasMore;
- }
- async function refreshEmail() { selectedEmail = await EmailObservations.GetEmailObjectAsync({ ObservationKey: selectedEmail.Email.ObservationKey }); works(); }
+ async function refreshEmail() { await openEmail(selectedEmail.Email.ObservationKey); }
  function works() {
   $("works").replaceChildren();
-  const names = { AgentEvaluationRequired: "Ready to prepare suggestions", PreparationFailed: "Preparation failed", Prepared: "Suggestions prepared", NeedsReview: "Needs routing review", Suggested: "Proposed work — not sent", PreviouslyHandled: "Existing processing evidence — held", DeliveryUnknown: "Delivery uncertain — do not resend", Accepted: "Accepted by destination", Unclassified: "No matching rule", AutomaticReady: "Existing processor ready" };
-  for (const w of selectedEmail.Works) {
-   const section = document.createElement("section"); section.className="py-3 border-bottom";
-   section.append(text("h3", names[w.State] || w.State), text("p", w.Reason || ""));
-   if(w.Destination) section.append(text("p", "Destination: " + w.Destination));
-    if(w.Instruction) { const instruction = text("pre",w.Instruction); instruction.className = "text-wrap"; section.append(instruction); }
-   if(w.Delivery) section.append(text("p", "Delivery: " + w.Delivery.Status + (w.Delivery.Accepted ? " — accepted admission, not completed work." : " — no completion is inferred.")));
-   if(["AgentEvaluationRequired","PreparationFailed"].includes(w.State)) section.append(button("Prepare suggestions — no delivery", async()=>{notify("Preparing bounded frames against the shared tree; no work will be sent.");await EmailWorks.PrepareSuggestionObjectAsync({WorkKey:w.WorkKey});await refreshEmail();notify("Suggestions saved for review.");},true));
-   if(["NeedsReview","Suggested"].includes(w.State) && selectedTree?.WorkSession) section.append(button("Use selected tree destination",async()=>{await EmailWorks.SelectRoutingNodeObjectAsync({WorkKey:w.WorkKey,ExpectedProposalRevision:w.ProposalRevision,NodeId:selectedTree.NodeId});await refreshEmail();notify("Routing selected. Review the instruction before Send.");}));
-   if(["Suggested","AutomaticReady"].includes(w.State) && w.Destination) section.append(button("Approve and send to " + w.Destination,async()=>{await EmailWorks.SendApprovedObjectAsync({WorkKey:w.WorkKey,ExpectedPolicyRevision:w.PolicyRevision,ExpectedProposalRevision:w.ProposalRevision});await refreshEmail();notify("Actual admission receipt saved. Acceptance is not completed work.");},true));
-   if (w.LocalDisposition) section.append(text("p", w.LocalDisposition));
-   for (const [label, disposition] of [["Dismiss locally", "Dismissed"], ["Archive locally", "Archived"], ["Restore locally", null]]) section.append(button(label, async () => { await EmailWorks.SetDispositionObjectAsync({ WorkKey: w.WorkKey, Disposition: disposition }); await refreshEmail(); notify("Local disposition saved. Gmail and delivery receipts were not changed."); }));
-   $("works").append(section);
+  if(!selectedEmail.Works.length) { $("works").append(text("p","This email has not been classified yet.","ed-empty"),link("Review processing evidence","#evidence")); return; }
+  for(const work of selectedEmail.Works) {
+   const section=document.createElement("section"); section.className="ed-region"; const heading=document.createElement("div");heading.className="ed-heading";const headings={AgentEvaluationRequired:"Suggestions",PreparationFailed:"Suggestions",NeedsReview:"Routing",Suggested:"Proposed work",Accepted:"Delivery",PreviouslyHandled:"Existing work",DeliveryUnknown:"Delivery",Unclassified:"Rule match",AutomaticReady:"Processor",NoAction:"Review",Notice:"Notice",WakeRecorded:"Processor",Conflict:"Routing",Error:"Review",Failed:"Review",Prepared:"Suggestions"};heading.append(text("h2",headings[work.State]||"Review"),status(work.LocalDisposition||work.State));section.append(heading);
+   if(work.Destination) section.append(text("p","Destination: "+work.Destination,"ed-fact"));
+    if(work.ProposedWork) section.append(text("div",work.ProposedWork,"ed-instruction"));
+   const actions=document.createElement("div");actions.className="ed-actions";
+   if(["AgentEvaluationRequired","PreparationFailed"].includes(work.State)) actions.append(button("Prepare suggestions",async()=>{notify("Preparing suggestions…");await request(EmailWorks,"PrepareSuggestion",{WorkKey:work.WorkKey});await refreshEmail();notify("Suggestions saved for review.");},true));
+   if(["NeedsReview","Suggested"].includes(work.State)) actions.append(button(work.Destination?"Change destination":"Choose destination",async()=>{routingWork=work;treeParent="DispatchMemoryRoot";treeSkip=0;$("tree-search").value="";location.hash="#routing";},!work.Destination));
+   if(["Suggested","AutomaticReady"].includes(work.State)&&work.Destination) actions.append(button("Review delivery",()=>{sendingWork=work;location.hash="#send";},true));
+    if(work.LocalDisposition) actions.append(button("Restore locally",async()=>setDisposition(work,null)));
+   else { actions.append(button("Archive locally",async()=>setDisposition(work,"Archived")),button("Dismiss locally",async()=>setDisposition(work,"Dismissed"))); }
+   section.append(actions);$("works").append(section);
   }
  }
-  $("edit-policy-root").addEventListener("click", () => run($("edit-policy-root"), async () => { selectedRule = await EmailObservations.GetPolicyRootObjectAsync({}); $("editor-title").textContent = "Edit rule hierarchy"; $("source").value = selectedRule.Source; focusPolicyEditor(); }));
-  $("add-rule-form").addEventListener("submit", e => { e.preventDefault(); run($("add-rule"), async () => { const root = await EmailObservations.GetPolicyRootObjectAsync({}); selectedRule = await EmailObservations.AddPolicyChildObjectAsync({ ParentId: root.NodeId, ExpectedRevision: root.Revision, ChildId: "EmailPolicy_User_" + crypto.randomUUID().replaceAll("-", ""), EntityName: $("new-rule-name").value }); $("editor-title").textContent = $("new-rule-name").value; $("source").value = selectedRule.Source; focusPolicyEditor(); await program(); notify("Disabled rule saved. Edit its condition and outcome before enabling it."); }); });
-  $("source-form").addEventListener("submit", e => { e.preventDefault(); run($("save"), async () => { selectedRule = await EmailObservations.SavePolicyNodeObjectAsync({ NodeId: selectedRule.NodeId, ExpectedRevision: selectedRule.Revision, Source: $("source").value }); $("source").value = selectedRule.Source; await program(); notify("Saved and read back the authoritative source."); }); });
- $("cancel").addEventListener("click", () => { $("editor").hidden = true; selectedRule = null; });
- $("search-form").addEventListener("submit", e => { e.preventDefault(); skip = 0; run(null, inbox); });
- $("process").addEventListener("click",()=>run($("process"),async()=>{await EmailWorks.ProcessCapturedObjectAsync({AccountKey:"work-main"});await inbox();notify("Saved deterministic classifications. No delivery ran.");}));
- $("more").addEventListener("click", () => { skip += 25; run($("more"), inbox); });
- $("test").addEventListener("click", () => run($("test"), async () => { const result = await EmailObservations.TestPolicyObjectAsync({ ObservationKey: selectedEmail.Email.ObservationKey }); $("test-result").textContent = `${result.Status} · ${result.Path.join(" → ")}${result.Diagnostic ? " · " + result.Diagnostic : ""}. No work was executed.`; }));
+ async function setDisposition(work,disposition) {await request(EmailWorks,"SetDisposition",{WorkKey:work.WorkKey,Disposition:disposition});await refreshEmail();notify("Local disposition saved.");}
+ async function openRule(id,sourceMode) {
+  if(sourceMode) { selectedRule=await request(EmailObservations,"GetPolicyNode",{NodeId:id});show("source");$("source").value=selectedRule.Source;$("source-back").href=id==="EmailPolicyRoot"?"#rules":"#rule/"+id;$("source-title").textContent=id==="EmailPolicyRoot"?"Edit rule order":"Advanced rule source";return; }
+  selectedRule=await request(EmailObservations,"GetRuleEditor",{NodeId:id});show("rule");$("editor-title").textContent=selectedRule.Name;$("rule-name").value=selectedRule.Name;$("rule-enabled").value=String(selectedRule.Enabled);$("rule-matches").value=selectedRule.Matches;$("advanced-source").href="#source/"+id;$("rule-test-form").hidden=true;
+  const rules=await request(EmailObservations,"GetProgram",{});const rule=rules.find(value=>value.NodeId===id);$("rule-behavior").textContent=rule?"Then: "+behavior(rule):"";
+ }
  async function treeNodes() {
-  const nodes = await EmailObservations.FindTreeNodesObjectAsync({ Search: $("tree-search").value, ParentNodeId: treeParent, SkipRows: treeSkip, NumRows: 25 });
-   $("tree-results").replaceChildren();
-   if($("tree-search").value) {
-    const rules=await EmailObservations.FindPolicyNodesObjectAsync({Search:$("tree-search").value,SkipRows:treeSkip,NumRows:25});
-    for(const rule of rules) $("tree-results").append(button("Rule: "+rule.Name,async()=>{selectedRule=await EmailObservations.GetPolicyNodeObjectAsync({NodeId:rule.NodeId});$("editor-title").textContent=rule.Name;$("source").value=selectedRule.Source;focusPolicyEditor();}));
-   }
-   for (const n of nodes) $("tree-results").append(button(n.Name, () => openTree(n.NodeId)));
-   if (!$("tree-results").children.length) $("tree-results").append(text("p", "No matching rules or work nodes. Change your search or go back."));
-  $("tree-more").hidden = nodes.length < 25;
+  $("tree-results").replaceChildren(text("p","Loading routing…","ed-empty"));
+  const nodes=await request(EmailObservations,"FindTreeNodes",{Search:$("tree-search").value,ParentNodeId:treeParent,SkipRows:treeSkip,NumRows:25});$("tree-results").replaceChildren();
+  for(const node of nodes) $("tree-results").append(listItem(node.Name,node.WorkSession?"Owner: "+node.WorkSession:"No owning session — delivery held","#tree/"+encodeURIComponent(node.NodeId)));
+  if(!nodes.length)$("tree-results").append(text("p","No routing nodes match. Change your search or go up one level.","ed-empty"));
+  $("tree-more").hidden=nodes.length<25;$("tree-previous").hidden=treeSkip===0;
+  $("tree-back").hidden=!treeParent||treeParent==="DispatchMemoryRoot";
  }
  async function openTree(id) {
-  selectedTree = await EmailObservations.GetTreeNodeObjectAsync({ NodeId: id }); treeParent = id; treeSkip = 0;
-  $("tree-title").textContent = selectedTree.Name; $("tree-name").value = selectedTree.Name; $("tree-context").value = selectedTree.Context;
-  $("tree-destination").textContent = selectedTree.WorkSession ? "Work session: " + selectedTree.WorkSession : "Unbound — work is held until a destination is assigned.";
-  $("editor").hidden = true; $("tree-editor").hidden = false; $("tree-path").replaceChildren();
-  for (const pathId of selectedTree.Path) { const n = await EmailObservations.GetTreeNodeObjectAsync({ NodeId: pathId }); $("tree-path").append(button(n.Name, () => openTree(pathId))); }
-  recentTree = [selectedTree, ...recentTree.filter(n => n.NodeId !== id)].slice(0, 6); $("tree-recent").replaceChildren(text("p", "Recently viewed"));
-  for (const n of recentTree) $("tree-recent").append(button(n.Name, () => openTree(n.NodeId)));
-  await treeNodes(); $("tree-title").setAttribute("tabindex", "-1"); $("tree-title").focus();
+  selectedTree=await request(EmailObservations,"GetTreeNode",{NodeId:id});show("tree");$("tree-title").textContent=selectedTree.Name;$("tree-name").value=selectedTree.Name;$("tree-context").value=selectedTree.Context;$("tree-destination").textContent=selectedTree.WorkSession?"Owning session: "+selectedTree.WorkSession:"No owning session — delivery is held.";$("route-selection").hidden=!routingWork;$("use-destination").disabled=!selectedTree.WorkSession;
+  $("tree-context-form").hidden=!!routingWork;$("tree-path").replaceChildren();
+  for(const pathId of selectedTree.Path){const node=await request(EmailObservations,"GetTreeNode",{NodeId:pathId});$("tree-path").append(link(node.Name,"#tree/"+pathId));}
+  recentTree=[selectedTree,...recentTree.filter(node=>node.NodeId!==id)].slice(0,5);$("tree-recent").replaceChildren(text("span","Recent:","ed-meta"));for(const node of recentTree)$("tree-recent").append(link(node.Name,"#tree/"+node.NodeId));
+  $("tree-title").focus({preventScroll:true,focusVisible:false});
  }
- $("tree-search-form").addEventListener("submit", e => { e.preventDefault(); treeParent = ""; treeSkip = 0; run(null, treeNodes); });
- $("tree-back").addEventListener("click", () => run($("tree-back"), () => openTree(selectedTree?.Path.at(-2) || "DispatchMemoryRoot")));
- $("tree-more").addEventListener("click", () => { treeSkip += 25; run($("tree-more"), treeNodes); });
- $("tree-context-form").addEventListener("submit", e => { e.preventDefault(); run($("tree-save"), async () => { selectedTree = await EmailObservations.SaveTreeContextObjectAsync({ NodeId: selectedTree.NodeId, ExpectedRevision: selectedTree.Revision, Name: $("tree-name").value, Context: $("tree-context").value }); await openTree(selectedTree.NodeId); notify("Context saved and read back from canonical ProtoScript."); }); });
- $("destination-search-form").addEventListener("submit", e => { e.preventDefault(); run(null, async () => { const rows = await EmailObservations.FindDestinationsObjectAsync({ Search: $("destination-search").value, SkipRows: 0, NumRows: 25 }); $("destination-results").replaceChildren(); for (const d of rows) $("destination-results").append(button("Assign " + d.Name, async () => { selectedTree = await EmailObservations.SetWorkSessionObjectAsync({ NodeId: selectedTree.NodeId, ExpectedRevision: selectedTree.Revision, SessionKey: d.SessionKey }); await openTree(selectedTree.NodeId); notify("Work session saved. Other attachments and examples were preserved."); })); }); });
- $("destination-clear").addEventListener("click", () => run($("destination-clear"), async () => { selectedTree = await EmailObservations.SetWorkSessionObjectAsync({ NodeId: selectedTree.NodeId, ExpectedRevision: selectedTree.Revision, SessionKey: "" }); await openTree(selectedTree.NodeId); notify("Work session cleared; other attachments remain."); }));
- run(null, async () => { await accounts(); await program(); await treeNodes(); await inbox(); notify("Loaded saved policy, canonical tree and durable Gmail observations."); });
+ async function evidence() {
+  await accounts(); const summary=await request(EmailWorks,"GetReviewSummary",{});$("outcomes").replaceChildren();
+  const list=document.createElement("dl");list.className="ed-facts";for(const outcome of summary.Outcomes)list.append(text("dt",EmailDispatchUi.state(outcome.Outcome)[0]),text("dd",outcome.Count));$("outcomes").append(list);
+  $("receipt-results").replaceChildren();$("evidence-empty").hidden=!!selectedEmail;
+   if(selectedEmail){$("receipt-results").append(text("h3",selectedEmail.Email.Subject)); for(const work of selectedEmail.Works){const region=document.createElement("section");region.className="ed-region";region.append(status(work.State),facts([["Reason",work.Reason],["Work identity",work.WorkKey],["Message identity",work.MessageKey],["Destination",work.Destination],["Local disposition",work.LocalDisposition||"None"],["Policy revision",work.PolicyRevision],["Proposal revision",work.ProposalRevision]]));if(work.Instruction)region.append(text("pre",work.Instruction,"ed-evidence"));if(work.Delivery)region.append(text("pre",JSON.stringify(work.Delivery,null,2),"ed-evidence"));else region.append(text("p","No delivery receipt.","ed-meta"));$("receipt-results").append(region);}}
+ }
+ async function route() {
+  const [name,id]=location.hash.slice(1).split("/");
+  if(name==="email"&&id) await openEmail(decodeURIComponent(id));
+  else if(name==="rules"){show("rules");rulesGrid.Refresh(true);}
+  else if(name==="rule"&&id)await openRule(decodeURIComponent(id),false);
+  else if(name==="source"&&id)await openRule(decodeURIComponent(id),true);
+  else if(name==="rule-new"){show("rule-new");$("new-rule-name").value="";}
+  else if(name==="routing"){show("routing");await treeNodes();}
+  else if(name==="tree"&&id)await openTree(decodeURIComponent(id));
+  else if(name==="session"&&selectedTree){show("session");$("session-back").href="#tree/"+selectedTree.NodeId;$("session-current").textContent=selectedTree.Name+" · "+(selectedTree.WorkSession||"No owning session");$("session-confirm").hidden=true;$("assign-session").textContent="Assign session";$("destination-results").replaceChildren();$("destination-clear").hidden=!selectedTree.WorkSession;}
+  else if(name==="evidence"){show("evidence");await evidence();}
+  else if(name==="accounts"){show("accounts");await accounts();}
+   else if(name==="send"&&sendingWork){show("send");$("send-facts").replaceChildren(facts([["Email",selectedEmail.Email.Subject],["Destination",sendingWork.Destination]]));$("send-instruction").textContent=sendingWork.ProposedWork||"Run the matched processor for this email.";$("send-back").href="#email/"+selectedEmail.Email.ObservationKey;}
+  else {show("inbox");inboxGrid.Refresh(true);await accounts();}
+ }
+ function submit(id,control,action){$(id).addEventListener("submit",event=>{event.preventDefault();run($(control),action);});}
+ function click(id,action){$(id).addEventListener("click",()=>run($(id),action));}
+ click("new-rule",()=>{location.hash="#rule-new";});
+ submit("search-form","search-form",()=>inboxGrid.reset());$("state").addEventListener("change",()=>inboxGrid.reset());submit("rule-search-form","rule-search-form",()=>rulesGrid.reset());
+ submit("rule-form","save-rule",async()=>{selectedRule=await request(EmailObservations,"SaveRuleEditor",{NodeId:selectedRule.NodeId,ExpectedRevision:selectedRule.Revision,Name:$("rule-name").value,Enabled:$("rule-enabled").value==="true",Matches:$("rule-matches").value});$("rule-name").value=selectedRule.Name;$("rule-matches").value=selectedRule.Matches;$("editor-title").textContent=selectedRule.Name;notify("Rule saved and read back.");});
+ click("cancel-rule",()=>{location.hash="#rules";});
+ submit("source-form","save",async()=>{selectedRule=await request(EmailObservations,"SavePolicyNode",{NodeId:selectedRule.NodeId,ExpectedRevision:selectedRule.Revision,Source:$("source").value});$("source").value=selectedRule.Source;notify("Saved and read back the authoritative source.");});
+ click("cancel",()=>{location.hash=selectedRule.NodeId==="EmailPolicyRoot"?"#rules":"#rule/"+selectedRule.NodeId;});
+ submit("add-rule-form","add-rule",async()=>{const root=await request(EmailObservations,"GetPolicyRoot",{});const result=await request(EmailObservations,"AddPolicyChild",{ParentId:root.NodeId,ExpectedRevision:root.Revision,ChildId:"EmailPolicy_User_"+crypto.randomUUID().replaceAll("-",""),EntityName:$("new-rule-name").value});notify("Disabled draft created.");location.hash="#rule/"+result.NodeId;});
+ async function testPolicy(key,target){const result=await request(EmailObservations,"TestPolicy",{ObservationKey:key});const labels={ProcessorSelected:"Existing processor matched",AgentEvaluationRequired:"Suggestions required",Notice:"Notice only",Disabled:"Rule is off",Unclassified:"No saved rule matched",NeedsReview:"Needs review",Conflict:"Conflicting rules",Error:"Rule check failed"};$(target).textContent=`${labels[result.Status]||"Rule check completed"}. No work was executed.`;}
+ click("test",()=>testPolicy(selectedEmail.Email.ObservationKey,"test-result"));click("rule-test",()=>{$("rule-test-form").hidden=false;$("rule-email-search").focus();});
+ submit("rule-test-form","rule-test",async()=>{const page=await request(EmailObservations,"GetInbox",{AccountKey:"work-main",State:"",Search:$("rule-email-search").value,SkipRows:0,NumRows:10});$("rule-email-results").replaceChildren();for(const email of page.Items)$("rule-email-results").append(button(email.Subject,()=>testPolicy(email.ObservationKey,"rule-test-result")));if(!page.Items.length)$("rule-email-results").append(text("p","No matching email.","ed-empty"));});
+ submit("tree-search-form","tree-search-form",async()=>{treeParent="";treeSkip=0;await treeNodes();});click("tree-previous",async()=>{treeSkip=Math.max(0,treeSkip-25);await treeNodes();});click("tree-more",async()=>{treeSkip+=25;await treeNodes();});click("tree-back",async()=>{treeParent=selectedTree?.Path.at(-2)||"DispatchMemoryRoot";treeSkip=0;$("tree-search").value="";await treeNodes();});
+ submit("tree-context-form","tree-save",async()=>{selectedTree=await request(EmailObservations,"SaveTreeContext",{NodeId:selectedTree.NodeId,ExpectedRevision:selectedTree.Revision,Name:$("tree-name").value,Context:$("tree-context").value});await openTree(selectedTree.NodeId);notify("Context saved and read back.");});
+ click("tree-cancel",()=>{location.hash="#routing";});$("browse-children").addEventListener("click",()=>{treeParent=selectedTree.NodeId;treeSkip=0;$("tree-search").value="";});
+ click("cancel-routing",()=>{routingWork=null;location.hash="#email/"+selectedEmail.Email.ObservationKey;});click("use-destination",async()=>{await request(EmailWorks,"SelectRoutingNode",{WorkKey:routingWork.WorkKey,ExpectedProposalRevision:routingWork.ProposalRevision,NodeId:selectedTree.NodeId});routingWork=null;await refreshEmail();location.hash="#email/"+selectedEmail.Email.ObservationKey;notify("Destination selected. No work was sent.");});
+ submit("destination-search-form","destination-search-form",async()=>{const rows=await request(EmailObservations,"FindDestinations",{Search:$("destination-search").value,SkipRows:0,NumRows:25});$("destination-results").replaceChildren();for(const destination of rows)$("destination-results").append(button(destination.Name,()=>{pendingSession=destination;$("session-confirm-title").textContent=destination.Name;$("session-confirm-purpose").textContent=destination.Purpose||"Assign this session as the node's work owner.";$("session-confirm").hidden=false;$("assign-session").focus();}));if(!rows.length)$("destination-results").append(text("p","No sessions match.","ed-empty"));});
+ click("cancel-session",()=>{$("session-confirm").hidden=true;});click("assign-session",async()=>{selectedTree=await request(EmailObservations,"SetWorkSession",{NodeId:selectedTree.NodeId,ExpectedRevision:selectedTree.Revision,SessionKey:pendingSession.SessionKey});notify("Owning session saved.");location.hash="#tree/"+selectedTree.NodeId;});
+ click("destination-clear",()=>{pendingSession={SessionKey:"",Name:"Remove owning session"};$("session-confirm-title").textContent="Remove owning session?";$("session-confirm-purpose").textContent="Work for this node will remain held until an owner is assigned.";$("session-confirm").hidden=false;$("assign-session").textContent="Remove session";});
+ click("synchronize",async()=>{notify("Synchronizing Gmail. No dispatch work will run.");await request(EmailSyncAccounts,"Synchronize",{AccountKey:"work-main"});await accounts();notify("Gmail synchronization saved.");});click("process",async()=>{await request(EmailWorks,"ProcessCaptured",{AccountKey:"work-main"});await evidence();notify("Saved deterministic classifications. No work was delivered.");});
+ click("send-cancel",()=>{location.hash="#email/"+selectedEmail.Email.ObservationKey;sendingWork=null;});click("send-confirm",async()=>{await request(EmailWorks,"SendApproved",{WorkKey:sendingWork.WorkKey,ExpectedPolicyRevision:sendingWork.PolicyRevision,ExpectedProposalRevision:sendingWork.ProposalRevision});sendingWork=null;location.hash="#email/"+selectedEmail.Email.ObservationKey;notify("Delivery acceptance saved.");});
+ window.addEventListener("hashchange",()=>run(null,route));run(null,route);
 })();

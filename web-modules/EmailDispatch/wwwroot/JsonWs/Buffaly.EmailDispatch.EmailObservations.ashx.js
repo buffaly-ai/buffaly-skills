@@ -2,21 +2,23 @@
     	    	
 var EmailObservationsValidatorsFields = {
 	
-		ParentId : {Validators : [Validators.String], InvalidMessage: "Invalid ParentId. " + ValidatorDescriptions.Length(1, 255) },
-		ParentNodeId : {Validators : [Validators.String], InvalidMessage: "Invalid ParentNodeId. " + ValidatorDescriptions.Length(1, 255) },
-		SessionKey : {Validators : [Validators.String], InvalidMessage: "Invalid SessionKey. " + ValidatorDescriptions.Length(1, 255) },
-		Name : {Validators : [Validators.String], InvalidMessage: "Invalid Name. " + ValidatorDescriptions.Length(1, 255) },
 		EntityName : {Validators : [Validators.String], InvalidMessage: "Invalid EntityName. " + ValidatorDescriptions.Length(1, 255) },
-		State : {Validators : [Validators.String], InvalidMessage: "Invalid State. " + ValidatorDescriptions.Length(1, 255) },
-		NodeId : {Validators : [Validators.String], InvalidMessage: "Invalid NodeId. " + ValidatorDescriptions.Length(1, 255) },
-		ChildId : {Validators : [Validators.String], InvalidMessage: "Invalid ChildId. " + ValidatorDescriptions.Length(1, 255) },
-		ExpectedRevision : {Validators : [Validators.String], InvalidMessage: "Invalid ExpectedRevision. " + ValidatorDescriptions.Length(1, 255) },
+		ParentId : {Validators : [Validators.String], InvalidMessage: "Invalid ParentId. " + ValidatorDescriptions.Length(1, 255) },
 		ObservationKey : {Validators : [Validators.String], InvalidMessage: "Invalid . " + ValidatorDescriptions.Length(1, 255) },
+		ExpectedRevision : {Validators : [Validators.String], InvalidMessage: "Invalid ExpectedRevision. " + ValidatorDescriptions.Length(1, 255) },
+		ParentNodeId : {Validators : [Validators.String], InvalidMessage: "Invalid ParentNodeId. " + ValidatorDescriptions.Length(1, 255) },
 		Source : {Validators : [Validators.String], InvalidMessage: "Invalid Source. " + ValidatorDescriptions.Length(1, 255) },
+		Enabled : {Validators : [Validators.Boolean], InvalidMessage: "Invalid Enabled. " + ValidatorDescriptions.Boolean() },
 		SkipRows : {Validators : [Validators.Integer], InvalidMessage: "Invalid SkipRows. " + ValidatorDescriptions.Integer() },
+		NodeId : {Validators : [Validators.String], InvalidMessage: "Invalid NodeId. " + ValidatorDescriptions.Length(1, 255) },
+		SessionKey : {Validators : [Validators.String], InvalidMessage: "Invalid SessionKey. " + ValidatorDescriptions.Length(1, 255) },
+		ChildId : {Validators : [Validators.String], InvalidMessage: "Invalid ChildId. " + ValidatorDescriptions.Length(1, 255) },
 		Search : {Validators : [Validators.String], InvalidMessage: "Invalid Search. " + ValidatorDescriptions.Length(1, 255) },
+		State : {Validators : [Validators.String], InvalidMessage: "Invalid State. " + ValidatorDescriptions.Length(1, 255) },
+		Name : {Validators : [Validators.String], InvalidMessage: "Invalid Name. " + ValidatorDescriptions.Length(1, 255) },
 		AccountKey : {Validators : [Validators.String], InvalidMessage: "Invalid . " + ValidatorDescriptions.Length(1, 255) },
 		NumRows : {Validators : [Validators.Integer], InvalidMessage: "Invalid NumRows. " + ValidatorDescriptions.Integer() },
+		Matches : {Validators : [Validators.String], InvalidMessage: "Invalid Matches. " + ValidatorDescriptions.Length(1, 255) },
 		Context : {Validators : [Validators.String], InvalidMessage: "Invalid Context. " + ValidatorDescriptions.Length(1, 255) }	
 }
 		
@@ -337,6 +339,72 @@ class EmailObservationsService {
         );
     }
 
+    GetRuleEditor(NodeId, Callback) {
+        return this.GetRuleEditorObject({ NodeId:NodeId }, Callback);
+    }
+
+    GetRuleEditorObject(oObject, Callback) {
+        this._validate(oObject, EmailObservationsValidators.GetRuleEditor, this.GetRuleEditor.onValidationError);
+
+        var pageUrl = this.Url + "/get-rule-editor";
+        return this._invoke(
+            pageUrl,
+            "GetRuleEditor",
+            { NodeId: oObject.NodeId },
+            this.GetRuleEditor,
+            Callback
+        );
+    }
+
+    async GetRuleEditorAsync(NodeId) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.GetRuleEditor,
+            [ NodeId ]
+        );
+    }
+
+    async GetRuleEditorObjectAsync(oObject) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.GetRuleEditorObject,
+            [ oObject ]
+        );
+    }
+
+    GetRulePage(Search, SkipRows, NumRows, Callback) {
+        return this.GetRulePageObject({ Search:Search,SkipRows:SkipRows,NumRows:NumRows }, Callback);
+    }
+
+    GetRulePageObject(oObject, Callback) {
+        this._validate(oObject, EmailObservationsValidators.GetRulePage, this.GetRulePage.onValidationError);
+
+        var pageUrl = this.Url + "/get-rule-page";
+        return this._invoke(
+            pageUrl,
+            "GetRulePage",
+            { Search: oObject.Search,SkipRows: oObject.SkipRows,NumRows: oObject.NumRows },
+            this.GetRulePage,
+            Callback
+        );
+    }
+
+    async GetRulePageAsync(Search,SkipRows,NumRows) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.GetRulePage,
+            [ Search,SkipRows,NumRows ]
+        );
+    }
+
+    async GetRulePageObjectAsync(oObject) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.GetRulePageObject,
+            [ oObject ]
+        );
+    }
+
     GetTreeNode(NodeId, Callback) {
         return this.GetTreeNodeObject({ NodeId:NodeId }, Callback);
     }
@@ -399,6 +467,39 @@ class EmailObservationsService {
         return await ObjectUtil.Promisify(
             this,
             this.SavePolicyNodeObject,
+            [ oObject ]
+        );
+    }
+
+    SaveRuleEditor(NodeId, ExpectedRevision, Name, Enabled, Matches, Callback) {
+        return this.SaveRuleEditorObject({ NodeId:NodeId,ExpectedRevision:ExpectedRevision,Name:Name,Enabled:Enabled,Matches:Matches }, Callback);
+    }
+
+    SaveRuleEditorObject(oObject, Callback) {
+        this._validate(oObject, EmailObservationsValidators.SaveRuleEditor, this.SaveRuleEditor.onValidationError);
+
+        var pageUrl = this.Url + "/save-rule-editor";
+        return this._invoke(
+            pageUrl,
+            "SaveRuleEditor",
+            { NodeId: oObject.NodeId,ExpectedRevision: oObject.ExpectedRevision,Name: oObject.Name,Enabled: oObject.Enabled,Matches: oObject.Matches },
+            this.SaveRuleEditor,
+            Callback
+        );
+    }
+
+    async SaveRuleEditorAsync(NodeId,ExpectedRevision,Name,Enabled,Matches) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.SaveRuleEditor,
+            [ NodeId,ExpectedRevision,Name,Enabled,Matches ]
+        );
+    }
+
+    async SaveRuleEditorObjectAsync(oObject) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.SaveRuleEditorObject,
             [ oObject ]
         );
     }
@@ -576,6 +677,16 @@ var EmailObservationsValidators = {
     GetProgram : {
     },
 
+    GetRuleEditor : {
+            NodeId : {Validators: [Validators.Text], InvalidMessage: "Invalid NodeId"} 
+    },
+
+    GetRulePage : {
+            Search : {Validators: [Validators.Text], InvalidMessage: "Invalid Search"} ,
+            SkipRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid SkipRows"} ,
+            NumRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid NumRows"} 
+    },
+
     GetTreeNode : {
             NodeId : {Validators: [Validators.Text], InvalidMessage: "Invalid NodeId"} 
     },
@@ -584,6 +695,14 @@ var EmailObservationsValidators = {
             NodeId : {Validators: [Validators.Text], InvalidMessage: "Invalid NodeId"} ,
             ExpectedRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedRevision"} ,
             Source : {Validators: [Validators.Text], InvalidMessage: "Invalid Source"} 
+    },
+
+    SaveRuleEditor : {
+            NodeId : {Validators: [Validators.Text], InvalidMessage: "Invalid NodeId"} ,
+            ExpectedRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedRevision"} ,
+            Name : {Validators: [Validators.Text], InvalidMessage: "Invalid Name"} ,
+            Enabled : {Validators: [Validators.MakeRequired(Validators.Boolean)], InvalidMessage: "Invalid Enabled"} ,
+            Matches : {Validators: [Validators.Text], InvalidMessage: "Invalid Matches"} 
     },
 
     SaveTreeContext : {

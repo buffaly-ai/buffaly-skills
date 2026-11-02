@@ -248,6 +248,54 @@
 					"IsArray":"false",
 					"IsEnum":"false"
 				}],
+			"Name":"GetRuleEditor",
+			"UrlName":"",
+			"KebabName":"get-rule-editor",
+			"DataObject":{
+			},
+			"IsReturnTypeArray":"false",
+			"IsStatic":"true",
+			"ReturnType":"EmailRuleEditorView"
+		},
+		{
+			"Parameters":[{
+					"Name":"Search",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"SkipRows",
+					"IsNullable":"false",
+					"Type":"Int32",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"NumRows",
+					"IsNullable":"false",
+					"Type":"Int32",
+					"IsArray":"false",
+					"IsEnum":"false"
+				}],
+			"Name":"GetRulePage",
+			"UrlName":"",
+			"KebabName":"get-rule-page",
+			"DataObject":{
+			},
+			"IsReturnTypeArray":"false",
+			"IsStatic":"true",
+			"ReturnType":"EmailRulePage"
+		},
+		{
+			"Parameters":[{
+					"Name":"NodeId",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				}],
 			"Name":"GetTreeNode",
 			"UrlName":"",
 			"KebabName":"get-tree-node",
@@ -287,6 +335,51 @@
 			"IsReturnTypeArray":"false",
 			"IsStatic":"true",
 			"ReturnType":"EmailDeclarationView"
+		},
+		{
+			"Parameters":[{
+					"Name":"NodeId",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"ExpectedRevision",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"Name",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"Enabled",
+					"IsNullable":"false",
+					"Type":"Boolean",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"Matches",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				}],
+			"Name":"SaveRuleEditor",
+			"UrlName":"",
+			"KebabName":"save-rule-editor",
+			"DataObject":{
+			},
+			"IsReturnTypeArray":"false",
+			"IsStatic":"true",
+			"ReturnType":"EmailRuleEditorView"
 		},
 		{
 			"Parameters":[{
