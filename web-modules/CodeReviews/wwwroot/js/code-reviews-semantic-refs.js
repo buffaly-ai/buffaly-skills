@@ -73,9 +73,25 @@
 
 	function errorMessage(error) {
 		if (!error) return "Unknown error";
-		if (typeof error === "string") return error;
+		if (typeof error === "string") {
+			// JsonWs error callbacks may carry its canonical Error response as serialized text.
+			try { const response = JSON.parse(error); if (typeof response.Error === "string") return response.Error; } catch (_) { }
+			return error;
+		}
 		try { return error.Message || error.message || error.Error || error.error || JSON.stringify(error) || String(error); }
 		catch (_) { return String(error); }
+	}
+
+	function failureMessage(record) {
+		const reason = text(record && record.FailureReason);
+		// The saved worker diagnostic also contains endpoints and raw JSON. Keep that on
+		// the existing commit details view; name its failed operation and HTTP result here.
+		const context = reason.indexOf(" WorkerRequestContext: ");
+		if (context >= 0 && reason.indexOf("; method=create-child-session;", context) >= 0) {
+			const status = /; status=(\d{3});/.exec(reason.substring(context));
+			if (status) return reason.substring(0, context) + ". Review agent creation returned HTTP " + status[1] + ".";
+		}
+		return reason;
 	}
 
 	function buildRequestFromAnchor(anchor) {
@@ -100,7 +116,7 @@
 
 	function setReviewButtonState(button, state, label, title) {
 		button.setAttribute("data-code-review-state", state);
-		button.innerHTML = '<span class="code-reviews-trigger-agent-review-icon" aria-hidden="true">&#x2726;</span><span class="code-reviews-trigger-agent-review-label"></span>';
+		button.innerHTML = '<i class="fas fa-search code-reviews-trigger-agent-review-icon" aria-hidden="true"></i><span class="code-reviews-trigger-agent-review-label"></span>';
 		button.querySelector(".code-reviews-trigger-agent-review-label").textContent = label;
 		button.title = title;
 	}
@@ -125,15 +141,15 @@
 
 	// Trigger failures are persisted by the driver before its HTTP exception is returned.
 	// Read that exact commit once; never retrigger or replace it with a sibling's error.
-	function showTriggerFailure(request, button, error) {
+	function showTriggerFailure(request, button, error, attempt) {
 		button.disabled = false;
 		setReviewButtonState(button, "error", "Retry review", "Review could not start. Retry this commit.");
 		setReviewStatus(button, "error", "Review could not start: " + errorMessage(error));
 		return call("GetCommitReview", { RepositoryPath: request.RepositoryPath, CommitSha: request.CommitSha })
 			.then(function (response) {
 				const record = recordFromResponse(response);
-				if (button.getAttribute("data-code-review-state") === "error" && reviewStatusFromRecord(record) === "Failed" && !isEmpty(record.FailureReason)) {
-					setReviewStatus(button, "error", record.FailureReason);
+				if (button.reviewTriggerAttempt === attempt && button.getAttribute("data-code-review-state") === "error" && reviewStatusFromRecord(record) === "Failed" && !isEmpty(record.FailureReason)) {
+					setReviewStatus(button, "error", failureMessage(record));
 				}
 			})
 			.catch(function (lookupError) {
@@ -142,6 +158,8 @@
 	}
 
 	function triggerCodeReviewAgent(request, button) {
+		const attempt = (button.reviewTriggerAttempt || 0) + 1;
+		button.reviewTriggerAttempt = attempt;
 		button.disabled = true;
 		setReviewButtonState(button, "loading", "Reviewing", "Starting Code Review Agent...");
 		setReviewStatus(button, "loading", "Starting review agent...");
@@ -152,7 +170,7 @@
 				setReviewStatus(button, "queued", child ? "Queued child session " + child : "Review agent queued.");
 			})
 			.catch(function (error) {
-				return showTriggerFailure(request, button, error);
+				return showTriggerFailure(request, button, error, attempt);
 			});
 	}
 
@@ -242,7 +260,7 @@
 
 		if (status === "Failed") {
 			setReviewButtonState(button, "failed", "Review failed", text(record && record.FailureReason) || "Retry Code Review Agent.");
-			setReviewStatus(button, "error", text(record && record.FailureReason) || "The review failed without a recorded reason. Open the commit for review details.");
+			setReviewStatus(button, "error", failureMessage(record) || "The review failed without a recorded reason. Open the commit for review details.");
 			return;
 		}
 
@@ -293,12 +311,12 @@
 		const style = document.createElement("style");
 		style.id = "code-reviews-semantic-ref-styles";
 		style.textContent = "\n"
-			+ ".code-reviews-trigger-agent-review{appearance:none;border:0;border-radius:999px;margin-left:.45rem;padding:.23rem .62rem .25rem .5rem;display:inline-flex;align-items:center;gap:.32rem;vertical-align:baseline;font:600 11px/1.2 system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#fff;background:linear-gradient(135deg,#7c3aed 0%,#2563eb 52%,#06b6d4 100%);box-shadow:0 5px 14px rgba(37,99,235,.24),inset 0 1px 0 rgba(255,255,255,.26);cursor:pointer;transition:transform .14s ease,box-shadow .14s ease,filter .14s ease;white-space:nowrap;}\n"
+			+ ".code-reviews-trigger-agent-review{appearance:none;border:0;border-radius:999px;margin-left:.45rem;padding:.23rem .62rem .25rem .5rem;min-height:24px;display:inline-flex;align-items:center;gap:.32rem;vertical-align:baseline;font:inherit;color:#fff;background:linear-gradient(135deg,#7c3aed 0%,#2563eb 52%,#06b6d4 100%);box-shadow:0 5px 14px rgba(37,99,235,.24),inset 0 1px 0 rgba(255,255,255,.26);cursor:pointer;transition:transform .14s ease,box-shadow .14s ease,filter .14s ease;white-space:nowrap;}\n"
 			+ ".code-reviews-trigger-agent-review:hover:not(:disabled){transform:translateY(-1px);filter:saturate(1.08);box-shadow:0 7px 18px rgba(37,99,235,.32),inset 0 1px 0 rgba(255,255,255,.32);}\n"
 			+ ".code-reviews-trigger-agent-review:active:not(:disabled){transform:translateY(0);box-shadow:0 3px 10px rgba(37,99,235,.24),inset 0 1px 0 rgba(255,255,255,.22);}\n"
-			+ ".code-reviews-trigger-agent-review:focus-visible{outline:2px solid rgba(6,182,212,.55);outline-offset:2px;}\n"
+			+ ".code-reviews-trigger-agent-review:focus{outline:2px solid #2563eb;outline-offset:2px;}\n"
 			+ ".code-reviews-trigger-agent-review:disabled{cursor:default;opacity:.92;}\n"
-			+ ".code-reviews-trigger-agent-review-icon{display:inline-grid;place-items:center;width:1.05em;height:1.05em;border-radius:999px;background:rgba(255,255,255,.2);font-size:10px;line-height:1;}\n"
+			+ ".code-reviews-trigger-agent-review-icon{display:inline-grid;place-items:center;width:1.05em;height:1.05em;border-radius:999px;background:rgba(255,255,255,.2);line-height:1;}\n"
 			+ ".code-reviews-trigger-agent-review[data-code-review-state='loading'] .code-reviews-trigger-agent-review-icon{animation:codeReviewsReviewSpin .9s linear infinite;}\n"
 			+ ".code-reviews-trigger-agent-review[data-code-review-state='queued'],.code-reviews-trigger-agent-review[data-code-review-state='reviewed']{background:linear-gradient(135deg,#16a34a 0%,#0d9488 100%);box-shadow:0 5px 14px rgba(13,148,136,.24),inset 0 1px 0 rgba(255,255,255,.24);}\n"
 			+ ".code-reviews-trigger-agent-review[data-code-review-state='running']{background:linear-gradient(135deg,#2563eb 0%,#0891b2 100%);box-shadow:0 5px 14px rgba(37,99,235,.2),inset 0 1px 0 rgba(255,255,255,.24);}\n"
