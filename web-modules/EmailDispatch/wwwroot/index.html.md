@@ -24,3 +24,6 @@ At Matt's direction, replaced the two-row global header and separate Back/subjec
 
 ## 2026-11-02 — recipient-group repair asset refresh
 Advanced shell static asset query version to0.1.13 for the repaired nullable-frame and honest Spam/error presentation. No layout/command contract change. Actual clean package-backed1440/390/200% browser and full56/56 routine pass; canonical install64files verified. No login, unsafe HTML or main integration added.
+
+## 2026-11-02 — healthcare projection/feedback shell refresh
+Advanced existing versioned asset references to0.1.15 for task-scoped feedback cleanup. No layout, navigation, security or command change. Source59/59 passes with published assets; actual installed healthcare1440/390/200% and prior Spam projection receipts are recorded in the healthcare completion evidence.

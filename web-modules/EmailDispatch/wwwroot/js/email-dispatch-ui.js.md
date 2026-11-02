@@ -5,3 +5,6 @@ Created one module-wide visual/control adapter used by every focused view: safe 
 
 ## 2026-11-02 — explicit projection and Spam states
 Added reviewed human vocabulary ProjectionFailed=Email could not be read and Spam=Spam · not dispatched. State comes from the owning server projection, never raw enum splitting or client classification. Same shared badge sizes/contrast used across inbox/detail. Clean1440/390/200% actual-message/error/Evidence assertions and package-backed56/56 pass0fail/skip44sec; technical parser reasons remain outside task content.
+
+## 2026-11-02 — shared feedback reset
+Added clearNotice, the single task-navigation feedback reset: clears UserMessages count and hides/empties status. Route ownership invokes it; no page-local notification variant or command change. Source59/59 passes; installed healthcare browser fixture verifies stale acceptance feedback cannot survive message navigation without executing Send. Final browser/package proof is recorded separately.

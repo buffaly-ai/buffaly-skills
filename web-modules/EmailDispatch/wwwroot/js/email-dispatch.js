@@ -66,8 +66,9 @@
   $("receipt-results").replaceChildren();$("evidence-empty").hidden=!!selectedEmail;
    if(selectedEmail){$("receipt-results").append(text("h3",selectedEmail.Email.Subject),facts([["Projection error",selectedEmail.ProjectionError],["Observation identity",selectedEmail.Email.ObservationKey]])); for(const work of selectedEmail.Works){const region=document.createElement("section");region.className="ed-region";region.append(status(work.State),facts([["Reason",work.Reason],["Work identity",work.WorkKey],["Message identity",work.MessageKey],["Destination",work.Destination],["Local disposition",work.LocalDisposition||"None"],["Policy revision",work.PolicyRevision],["Proposal revision",work.ProposalRevision]]));if(work.Instruction)region.append(text("pre",work.Instruction,"ed-evidence"));if(work.Delivery)region.append(text("pre",JSON.stringify(work.Delivery,null,2),"ed-evidence"));else region.append(text("p","No delivery receipt.","ed-meta"));$("receipt-results").append(region);}}
  }
- async function route() {
-  const [name,id]=location.hash.slice(1).split("/");
+  async function route() {
+   EmailDispatchUi.clearNotice();
+   const [name,id]=location.hash.slice(1).split("/");
   if(name==="email"&&id) await openEmail(decodeURIComponent(id));
   else if(name==="rules"){show("rules");rulesGrid.Refresh(true);}
   else if(name==="rule"&&id)await openRule(decodeURIComponent(id),false);

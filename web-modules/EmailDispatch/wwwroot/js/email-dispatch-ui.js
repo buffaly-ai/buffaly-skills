@@ -10,6 +10,7 @@ window.EmailDispatchUi = (() => {
  const escape = value => { const element = text("span", value); return element.innerHTML.replaceAll('"', "&quot;"); };
  const link = (label, href, className = "") => { const element = text("a", label, className); element.href = href; return element; };
  const notify = (message, kind = "Success") => { UserMessages._CurrentMessageCount = 0; UserMessages.DisplayNow(message, kind, false); };
+ const clearNotice = () => { UserMessages._CurrentMessageCount = 0; $("status").hidden = true; $("status").textContent = ""; };
  UserMessages.OnFulfillMessage = message => { $("status").hidden = false; $("status").className = "ed-message " + message.Class; $("status").textContent = message.Message; };
  async function run(control, action) { if (control) control.disabled = true; try { return await action(); } catch (error) { console.error("Email Dispatch operation failed", error); notify("Could not complete this action. Your edits are still here. Try again or reload the saved version.", "Error"); return undefined; } finally { if (control) control.disabled = false; } }
  // The generated ObjectAsync wrapper sets an error handler on FooObject, while
@@ -43,5 +44,5 @@ window.EmailDispatchUi = (() => {
   BindCount() { const pager=$(this.PagingControlID); pager.replaceChildren(); pager.hidden=this.skip===0&&!this.page.HasMore; const count=this.page.Items.length; pager.append(text("span",count?`${this.skip+1}–${this.skip+count}`:"No results","ed-page-range")); const previous=button("Previous",()=>{this.skip=Math.max(0,this.skip-this.SkipSize);this.Refresh(true);}); previous.disabled=this.skip===0; const next=button("Next",()=>{this.skip+=this.SkipSize;this.Refresh(true);}); next.disabled=!this.page.HasMore; pager.append(previous,next); }
   reset() { this.skip=0; this.Refresh(true); }
  }
- return {$,text,escape,link,notify,run,request,button,state,status,date,facts,listItem,PagedGrid};
+ return {$,text,escape,link,notify,clearNotice,run,request,button,state,status,date,facts,listItem,PagedGrid};
 })();
