@@ -1,5 +1,10 @@
 # CSharpViewer file provider history
 
+## 2026-11-02 — Link-attached default menu and Windows artifact identity
+Matt rejected the header dropdown and confirmed a tiny chevron on the file link itself. Removed the header mount. Each owned C# timeline anchor now has one adjacent compact Bootstrap dropdown trigger; closed state adds only a caret, with two menu radio choices when opened. Choosing a viewer saves the default and updates existing/new native anchor destinations; keyboard arrows/Escape, focus return, outside dismissal, cross-tab checks and observer cleanup are handled. Existing shared Bootstrap classes used without new CSS/icons. This supersedes the earlier header UX acceptance.
+
+Confirmed review P2 by reproducing missing Current session key on artifacts\\Example.cs in the priority provider. Use the existing slash convention only for artifact-identity recognition; keep original relative path/range in the launch URL and preserve explicit origin context. No server containment or authorization weakened. Validation: provider regression failed null versus Current before fix; Node suite now passes both viewer choices, backslash identity/range, link-attached UI, keyboard/persistence/startup and cross-tab cases. All72 .NET tests pass including both separator forms to both viewers with range and traversal rejection. Installed menu acceptance follows delivery.
+
 ## 2026-11-02 — Narrow-screen picker correction
 Installed390px acceptance showed full viewer option labels extending27px past viewport. Shortened only option display text to Source/Repository under the existing C# viewer label; values, preference and routes unchanged. Reused shared select sizing without new CSS. Node picker suite passed; installed responsive acceptance rerun after publication.
 
