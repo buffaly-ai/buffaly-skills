@@ -12,6 +12,7 @@ import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseScrollRequ
 import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseDragRequest ComputerUseDragRequest;
 import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUsePressKeyRequest ComputerUsePressKeyRequest;
 import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseTypeTextRequest ComputerUseTypeTextRequest;
+import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseHoverRequest ComputerUseHoverRequest;
 
 prototype ComputerUseSkillAction : OpsAction
 {
@@ -40,12 +41,26 @@ prototype list_apps : ComputerUseSkillAction
 [SemanticProgram.InfinitivePhrase("to observe a desktop app")]
 prototype get_app_state : ComputerUseSkillAction
 {
-	Description = @"opaqueWindowId - exact opaque WindowId returned by list_apps for the selected window. Returns a screenshot, accessibility tree, and ObservationId for that exact target. Call immediately before mutation and reuse the returned ObservationId only for the next action on this same opaqueWindowId. This tool is part of plugin Computer Use.";
+	Description = @"Observe the exact opaqueWindowId returned by list_apps. Returns screenshot, accessibility state and ObservationId. Observe again after successful input. Use discover_app_state for bounded search, subtree or continuation options.";
 	function Execute(string opaqueWindowId) : ComputerUseToolResult
 	{
 		string sessionKey = ComputerUseToolService.GetCurrentSessionKey();
 		ComputerUseTargetSelector target = new ComputerUseTargetSelector(); target.WindowId = opaqueWindowId;
 		ComputerUseGetAppStateRequest request = new ComputerUseGetAppStateRequest(); request.Target = target;
+		return ComputerUseToolService.GetAppState(sessionKey, request);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to discover bounded computer app elements")]
+prototype discover_app_state : ComputerUseSkillAction
+{
+	Description = @"Observe the exact opaqueWindowId returned by list_apps. maxElements bounds output (1..1000); visitBudget bounds traversal work (1..2000). searchText filters names. For continuationToken or subtreeElementIndex, supply expectedObservationId from the current page in this session; do not combine continuation and subtree. Continuation preserves searchText and consumes the retained frontier, not an offset rescan. Each page replaces prior element/action leases for this window. Use empty strings for unused discovery fields, maxElements300 and visitBudget600 for defaults. Returns the screenshot, bounded accessibility state, truncation and a fresh ObservationId. Observe again after every successful mutation.";
+	function Execute(string opaqueWindowId, int maxElements = 300, int visitBudget = 600, string searchText = "", string continuationToken = "", string subtreeElementIndex = "", string expectedObservationId = "") : ComputerUseToolResult
+	{
+		string sessionKey = ComputerUseToolService.GetCurrentSessionKey();
+		ComputerUseTargetSelector target = new ComputerUseTargetSelector(); target.WindowId = opaqueWindowId;
+		ComputerUseGetAppStateRequest request = new ComputerUseGetAppStateRequest(); request.Target = target;
+		request.MaxElements = maxElements; request.VisitBudget = visitBudget; request.SearchText = searchText; request.ContinuationToken = continuationToken; request.SubtreeElementIndex = subtreeElementIndex; request.ExpectedObservationId = expectedObservationId;
 		return ComputerUseToolService.GetAppState(sessionKey, request);
 	}
 }
@@ -96,6 +111,32 @@ prototype drag : ComputerUseSkillAction
 {
 	Description = @"opaqueWindowId, expectedObservationId, and screenshot coordinates fromX, fromY, toX, toY. opaqueWindowId is the exact WindowId selected from list_apps/get_app_state. expectedObservationId is the exact ObservationId from the immediately preceding get_app_state for that same window. Every successful mutation invalidates the prior observation; call get_app_state again before reusing element ids or observation ids. This tool is part of plugin Computer Use.";
 	function Execute(string opaqueWindowId, string expectedObservationId, double fromX, double fromY, double toX, double toY) : ComputerUseActionResult { string sessionKey = ComputerUseToolService.GetCurrentSessionKey(); ComputerUseTargetSelector target = new ComputerUseTargetSelector(); target.WindowId = opaqueWindowId; ComputerUseDragRequest request = new ComputerUseDragRequest(); request.Target = target; request.ExpectedObservationId = expectedObservationId; request.FromX = fromX; request.FromY = fromY; request.ToX = toX; request.ToY = toY; return ComputerUseToolService.Drag(sessionKey, request); }
+}
+
+[SemanticProgram.InfinitivePhrase("to scroll a chosen computer pane")]
+prototype scroll_at : ComputerUseSkillAction
+{
+	Description = @"Scroll the chosen pane at paired x/y coordinates in the selected observation screenshot. No elementIndex is combined with coordinates. direction is up/down/left/right; pages is greater than zero and at most100. Observe again after success.";
+	function Execute(string opaqueWindowId, string expectedObservationId, double x, double y, string direction, double pages = 1) : ComputerUseActionResult
+	{
+		string sessionKey = ComputerUseToolService.GetCurrentSessionKey();
+		ComputerUseTargetSelector target = new ComputerUseTargetSelector(); target.WindowId = opaqueWindowId;
+		ComputerUseScrollRequest request = new ComputerUseScrollRequest(); request.Target = target; request.ExpectedObservationId = expectedObservationId; request.X = x; request.Y = y; request.Direction = direction; request.Pages = pages;
+		return ComputerUseToolService.Scroll(sessionKey, request);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to hover over a computer app")]
+prototype hover : ComputerUseSkillAction
+{
+	Description = @"Move the pointer without clicking in the exact observed window. x/y use selected screenshot coordinates. dwellMilliseconds is bounded to 0..3000. A successful mutation requires a fresh get_app_state before another action.";
+	function Execute(string opaqueWindowId, string expectedObservationId, double x, double y, int dwellMilliseconds = 500) : ComputerUseActionResult
+	{
+		string sessionKey = ComputerUseToolService.GetCurrentSessionKey();
+		ComputerUseTargetSelector target = new ComputerUseTargetSelector(); target.WindowId = opaqueWindowId;
+		ComputerUseHoverRequest request = new ComputerUseHoverRequest(); request.Target = target; request.ExpectedObservationId = expectedObservationId; request.X = x; request.Y = y; request.DwellMilliseconds = dwellMilliseconds;
+		return ComputerUseToolService.Hover(sessionKey, request);
+	}
 }
 
 [SemanticProgram.InfinitivePhrase("to press a key in a computer app")]

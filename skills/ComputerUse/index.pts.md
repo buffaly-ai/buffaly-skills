@@ -6,3 +6,13 @@
 - `get_app_state(opaqueWindowId)` builds a typed `ComputerUseGetAppStateRequest` with `Target.WindowId` and preserves the native structured screenshot-plus-accessibility return value for same-session model continuation.
 - All mutation tools accept `opaqueWindowId` and `expectedObservationId`, build typed requests with `Target.WindowId` plus `ExpectedObservationId`, and intentionally do not expose or set the retired free-form `App` input.
 - The model must call `get_app_state` before interaction and re-observe after every successful mutation before reusing element ids or observation ids.
+
+## 2026-11-01 — Discovery and pointer wrapper draft (in progress)
+- Added direct typed forwarding of bounded observation search, continuation, subtree and visit/output limits, plus observed hover and paired-coordinate scroll_at without changing existing scroll/drag signatures.
+- Draft drag_path forwards the authoritative ComputerUseDragRequest and retains all bounded waypoints, modifiers and independent destination observation fields. It is not ready for publication: actual registration exposes only a native type name and current argument binding requires an existing native token instead of materializing model JSON.
+- Six isolated source/compile and boundary-reproduction tests pass. This does not prove installed tool reachability or positive advanced-request materialization; the parent is coordinating the required boundary decision.
+
+## 2026-11-02 — Independent scalar wrapper checkpoint
+- Retained get_app_state's original one-argument signature and added discover_app_state for bounded options, plus hover and scroll_at. This avoids relying on optional argument metadata that the current registrar advertises as required. Existing click, scroll and drag signatures remain unchanged.
+- Removed the unusable advanced drag draft from publication source; its exact DTO schema/binder reproduction lives only in the temporary isolated test fixture while the protected boundary decision is pending.
+- Six tests pass, including actual registrar parameter counts (get_app_state1, discovery7, hover5, scroll_at6) and positive runtime binding of all five hover arguments. Package publication and installed staging invocation remain outstanding.
