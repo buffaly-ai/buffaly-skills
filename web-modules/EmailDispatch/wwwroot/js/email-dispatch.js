@@ -20,12 +20,12 @@
  }
  async function openEmail(key) {
   selectedEmail=await request(EmailObservations,"GetEmail",{ObservationKey:key}); show("email");
-  $("subject").textContent=selectedEmail.Email.Subject||"No subject"; $("sender").textContent=selectedEmail.Email.Sender; $("received").textContent=date(selectedEmail.Email.ReceivedUtc); $("body").textContent=selectedEmail.Frame.BodyText||"No readable message body."; $("test-result").textContent=""; works(); $("subject").focus({preventScroll:true,focusVisible:false});
+   $("subject").textContent=selectedEmail.Email.Subject||"No subject"; $("sender").textContent=selectedEmail.Email.Sender; $("received").textContent=date(selectedEmail.Email.ReceivedUtc); $("body").textContent=selectedEmail.Frame?selectedEmail.Frame.BodyText||"This message has no readable text.":"This email could not be read. View evidence for details."; $("test").hidden=!selectedEmail.Frame||selectedEmail.Email.ReviewState==="Spam"; $("test-result").textContent=""; works(); $("subject").focus({preventScroll:true,focusVisible:false});
  }
  async function refreshEmail() { await openEmail(selectedEmail.Email.ObservationKey); }
   function works() {
    $("works").replaceChildren();$("proposals").replaceChildren();
-   if(!selectedEmail.Works.length) { $("works").append(status("Unclassified")); return; }
+    if(!selectedEmail.Frame||selectedEmail.Email.ReviewState==="Spam"||!selectedEmail.Works.length) { $("works").append(status(selectedEmail.Email.ReviewState)); return; }
    for(const work of selectedEmail.Works) {
     const section=document.createElement("section");section.className="ed-work-commands";section.setAttribute("aria-label",EmailDispatchUi.state(work.State)[0]+(work.Destination?" · "+work.Destination:""));section.append(status(work.LocalDisposition||work.State));
     if(work.Destination) section.append(text("span",work.Destination,"ed-work-destination"));
@@ -64,7 +64,7 @@
   await accounts(); const summary=await request(EmailWorks,"GetReviewSummary",{});$("outcomes").replaceChildren();
   const list=document.createElement("dl");list.className="ed-facts";for(const outcome of summary.Outcomes)list.append(text("dt",EmailDispatchUi.state(outcome.Outcome)[0]),text("dd",outcome.Count));$("outcomes").append(list);
   $("receipt-results").replaceChildren();$("evidence-empty").hidden=!!selectedEmail;
-   if(selectedEmail){$("receipt-results").append(text("h3",selectedEmail.Email.Subject)); for(const work of selectedEmail.Works){const region=document.createElement("section");region.className="ed-region";region.append(status(work.State),facts([["Reason",work.Reason],["Work identity",work.WorkKey],["Message identity",work.MessageKey],["Destination",work.Destination],["Local disposition",work.LocalDisposition||"None"],["Policy revision",work.PolicyRevision],["Proposal revision",work.ProposalRevision]]));if(work.Instruction)region.append(text("pre",work.Instruction,"ed-evidence"));if(work.Delivery)region.append(text("pre",JSON.stringify(work.Delivery,null,2),"ed-evidence"));else region.append(text("p","No delivery receipt.","ed-meta"));$("receipt-results").append(region);}}
+   if(selectedEmail){$("receipt-results").append(text("h3",selectedEmail.Email.Subject),facts([["Projection error",selectedEmail.ProjectionError],["Observation identity",selectedEmail.Email.ObservationKey]])); for(const work of selectedEmail.Works){const region=document.createElement("section");region.className="ed-region";region.append(status(work.State),facts([["Reason",work.Reason],["Work identity",work.WorkKey],["Message identity",work.MessageKey],["Destination",work.Destination],["Local disposition",work.LocalDisposition||"None"],["Policy revision",work.PolicyRevision],["Proposal revision",work.ProposalRevision]]));if(work.Instruction)region.append(text("pre",work.Instruction,"ed-evidence"));if(work.Delivery)region.append(text("pre",JSON.stringify(work.Delivery,null,2),"ed-evidence"));else region.append(text("p","No delivery receipt.","ed-meta"));$("receipt-results").append(region);}}
  }
  async function route() {
   const [name,id]=location.hash.slice(1).split("/");

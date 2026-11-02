@@ -650,6 +650,14 @@
           }
         }
       },
+      "MimeKitLite/4.18.0": {
+        "runtime": {
+          "lib/net8.0/MimeKitLite.dll": {
+            "assemblyVersion": "4.18.0.0",
+            "fileVersion": "4.18.0.0"
+          }
+        }
+      },
       "Newtonsoft.Json/13.0.4": {
         "runtime": {
           "lib/net6.0/Newtonsoft.Json.dll": {
@@ -1153,7 +1161,8 @@
           "Buffaly.Agent.Host": "1.0.0",
           "Buffaly.EmailDispatch.Data": "1.0.0",
           "Buffaly.EmailDispatch.Policy": "1.0.0",
-          "Buffaly.GoogleWorkspace": "1.0.1"
+          "Buffaly.GoogleWorkspace": "1.0.1",
+          "MimeKitLite": "4.18.0"
         },
         "runtime": {
           "Buffaly.EmailDispatch.dll": {
@@ -1778,6 +1787,13 @@
       "sha512": "sha512-e5XPUkAqgBY/Bv4/ENLBXwbJFgQVioc+AOzarAS4AVI/NT/INejKcTivwGCWOJFKYbMXzF80nPXPlsIuvPZ8pQ==",
       "path": "microsoft.win32.registry.accesscontrol/9.0.1",
       "hashPath": "microsoft.win32.registry.accesscontrol.9.0.1.nupkg.sha512"
+    },
+    "MimeKitLite/4.18.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-zo/BAscwcl6pdgBIAN+QEKV53TWtyNTFLusaNrXhLZaSlD7FLPXVx4m/nyr99k4CLzazt+r8/2b7Z9Y2hHbh8g==",
+      "path": "mimekitlite/4.18.0",
+      "hashPath": "mimekitlite.4.18.0.nupkg.sha512"
     },
     "Newtonsoft.Json/13.0.4": {
       "type": "package",

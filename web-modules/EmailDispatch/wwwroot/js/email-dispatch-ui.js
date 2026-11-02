@@ -25,6 +25,7 @@ window.EmailDispatchUi = (() => {
  }
  function button(label, action, primary = false) { const element = text("button", label, "btn " + (primary ? "btn-primary" : "btn-outline-secondary")); element.type = "button"; element.addEventListener("click", () => run(element, action)); return element; }
  const stateNames = {
+  ProjectionFailed:["Email could not be read","danger"], Spam:["Spam · not dispatched","neutral"],
   NotReviewed:["Not yet reviewed","neutral"], ReviewedLocally:["Reviewed locally","neutral"], AgentEvaluationRequired:["Needs suggestions","warning"], PreparationFailed:["Suggestion needs retry","danger"], Prepared:["Suggestions ready","info"], NeedsReview:["Needs routing review","warning"], Suggested:["Ready for approval","warning"], PreviouslyHandled:["Already handled · held","neutral"], DeliveryUnknown:["Delivery uncertain · held","danger"], Accepted:["Accepted by destination","success"], Unclassified:["No matching rule","neutral"], AutomaticReady:["Processor ready","info"], NoAction:["No action needed","neutral"], Notice:["Notice only","neutral"], WakeRecorded:["Wake recorded","info"], Conflict:["Conflicting rules · held","danger"], Error:["Review failed","danger"], Failed:["Review needs retry","danger"], Archived:["Archived locally","neutral"], Dismissed:["Dismissed locally","neutral"]
  };
  const state = value => stateNames[value] ?? ["Needs inspection", "warning"];
