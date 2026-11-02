@@ -1,0 +1,4 @@
+# CSharpViewer file provider history
+
+## 2026-11-02 — Explicit project/session navigation context
+Preserved existing session-artifact precedence, accepting an explicit originating session key before current-page context. Both session and new explicit project provider preserve line/endLine. Project links require the existing root ID, root-relative project and project-relative file; reject rooted/traversal/control paths instead of guessing a checkout or basename. Absolute paths without explicit project context continue through SourceViewer. Removed stale version0.1.5 query. Validation: tests/SourceLinkProviderTests.cjs passed with spaces, literal # session names, explicit ranges, no-context source fallback and invalid relative paths. 68 .NET tests passed. Source-owned Chrome fixture opened exact project file and lines113–125. No package publication or install.

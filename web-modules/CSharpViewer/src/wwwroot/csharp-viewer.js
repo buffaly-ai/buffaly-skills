@@ -88,7 +88,7 @@
   }
   function jumpTo(line,record=true){
     const target=$('code').querySelector(`[data-line="${line}"]`);if(!target)return;
-    $('code').querySelector('.source-line.target')?.classList.remove('target');target.classList.add('target');
+    $('code').querySelectorAll('.source-line.target').forEach(node=>node.classList.remove('target'));target.classList.add('target');
     // Keep inline-start alignment, then reset horizontal scroll so long lines never hide leading characters.
     target.scrollIntoView({block:'center',inline:'start'});$('code-wrap').scrollLeft=0;$('line-input').value=String(line);
     $('cursor-pos').textContent=`Ln ${line} of ${Math.max(state.current.lineCount,1)}`;
@@ -496,6 +496,13 @@
         const projectPath=params.get('project')||'';
         await openScope({rootId:root.id,projectPath},root.name+(projectPath?' / '+projectPath:''),file?{path:file,line}:null);
       }else picker();
+      // Retain an explicitly linked range after openFile's ordinary single-line navigation.
+      if(params.has('endLine')){
+        const end=Number(params.get('endLine'));
+        if(!file||!Number.isSafeInteger(end)||end<line||!state.current||end>state.current.lineCount)throw new Error('The requested source line range is unavailable.');
+        for(let selected=line;selected<=end;selected++)$('code').querySelector(`[data-line="${selected}"]`)?.classList.add('target');
+        const url=new URL(location.href);url.searchParams.set('endLine',String(end));history.replaceState(null,'',url);
+      }
     }catch(error){report(error);}
   })();
 })();
