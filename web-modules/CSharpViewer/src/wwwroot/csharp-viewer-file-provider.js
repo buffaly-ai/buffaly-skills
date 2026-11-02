@@ -39,7 +39,7 @@
       select.className = "ops-v2-session-filter-select";
       select.setAttribute("data-csharp-viewer-default", "");
       select.setAttribute("aria-label", "Default C# viewer");
-      for (const [value, text] of [["source", "Source Viewer"], ["repository", "Repository Viewer"]]) {
+      for (const [value, text] of [["source", "Source"], ["repository", "Repository"]]) {
         const option = document.createElement("option"); option.value = value; option.textContent = text; select.append(option);
       }
       select.value = selectedViewer();

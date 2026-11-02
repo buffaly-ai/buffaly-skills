@@ -1,5 +1,8 @@
 # CSharpViewer file provider history
 
+## 2026-11-02 — Narrow-screen picker correction
+Installed390px acceptance showed full viewer option labels extending27px past viewport. Shortened only option display text to Source/Repository under the existing C# viewer label; values, preference and routes unchanged. Reused shared select sizing without new CSS. Node picker suite passed; installed responsive acceptance rerun after publication.
+
 ## 2026-11-02 — Compact user default picker
 Matt rejected model-selected viewers and expanded per-file choices. Added one labeled native dropdown in the existing sessionHeader.context extension slot, using shared shell select styling. Saves source/repository choice per browser origin; changes update existing module-open hrefs and new registry resolutions, preserving native anchors, text, target/rel and line ranges. Cross-tab storage changes synchronize. A priority C# provider routes through module-owned authorized server resolution so model project context cannot override selection and ordinary absolute paths can open the repository workspace. Session artifact identities remain scoped. No core edits, per-link controls, new CSS/icons or auto-viewer fallback. Validation: Node DOM suite covers both startup orders, persistence, selector, old/new hrefs, storage synchronization, sessions/ranges and non-C# behavior; all72 .NET tests passed. UI/installed proof follows publication.
 
