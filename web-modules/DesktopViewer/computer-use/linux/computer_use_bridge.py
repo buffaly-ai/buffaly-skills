@@ -406,10 +406,46 @@ class Desktop:
 		return [r.x, r.y, r.width, r.height]
 
 	def observe(self, request):
+		# Discovery carries retained native traversal references, never caller-supplied object paths.
+		previous = getattr(self, 'discovery', None)
+		old_elements = getattr(self, 'elements', {})
+		old_observed = getattr(self, 'observed_target', None)
+		old_binding = getattr(self, 'focus_binding', None)
 		self.elements = {}
 		self.observed_target = None
 		self.focus_binding = None
+		self.discovery = None
+		maximum, budget = request.get('MaxElements', 300), request.get('VisitBudget', 600)
+		search = request.get('SearchText', '')
+		token, subtree = request.get('ContinuationToken', ''), request.get('SubtreeElementIndex', '')
+		if not 1 <= maximum <= 1000 or not 1 <= budget <= 2000:
+			raise NativeError('invalid_discovery', 'MaxElements must be 1..1000 and VisitBudget 1..2000.')
+		if token and subtree:
+			raise NativeError('invalid_discovery', 'Choose continuation or subtree, not both.')
+		pending = None
+		if token or subtree:
+			if old_observed != (request['WindowId'], request.get('ExpectedObservationId')) or previous is None or old_binding is None:
+				raise NativeError('stale_observation', 'Discovery requires the latest observation of this exact window.')
+			if token and (token != previous['token'] or search != previous['search']):
+				raise NativeError('stale_continuation', 'Continuation token and SearchText must match the latest page.')
 		window = self.window(request['WindowId'])
+		if token or subtree:
+			if self.node_identity(window) != previous['identity'] or self.process_start(window.get_process_id()) != previous['start']:
+				raise NativeError('stale_observation', 'Discovery window identity changed.')
+			if subtree:
+				element = old_elements.get(subtree)
+				if element is None:
+					raise NativeError('invalid_element_id', 'Subtree must be present in the latest observation.')
+				if self.node_identity(element) != old_binding[2][subtree]:
+					raise NativeError('stale_observation', 'Subtree native identity changed.')
+				self.verify_discovery_ancestry(window, element)
+				pending = [(element, None)]
+			else:
+				pending = list(previous['pending'])
+				for (node, _), identity in zip(pending, previous['pending_identities']):
+					if self.node_identity(node) != identity:
+						raise NativeError('stale_continuation', 'A retained traversal object identity changed.')
+					self.verify_discovery_ancestry(window, node)
 		self.connect()
 		bounds = self.bounds(window)
 		# A full monitor frame remains unscaled; screenshot-relative coordinates map directly to portal coordinates.
@@ -434,35 +470,75 @@ class Desktop:
 			data = png.get_buffer().extract_dup(0, png.get_buffer().get_size())
 		finally:
 			encoder.set_state(Gst.State.NULL)
-		elements, tree = self.read_elements(window)
+		elements, tree, pending, visited = self.read_discovery(window, maximum, budget, search, pending)
 		# Store native object identities at observation, never reconstruct focus authority from indices.
 		identity = self.node_identity(window)
 		start = self.process_start(identity[2])
+		# Index0 always retains the top-level window so focus/ALERT guards work on filtered and continuation pages too.
 		focus_binding = (identity, start, {key: self.node_identity(value) for key, value in elements.items()})
+		continuation = uuid.uuid4().hex if pending else ''
 		result = {'Window': {'Id': request['WindowId'], 'App': str(window.get_process_id()),
 			'Title': window.get_name() or '', 'ProcessId': window.get_process_id()},
 			'Bounds': bounds, 'Tree': tree, 'Png': base64.b64encode(data).decode('ascii'),
+			'Truncated': bool(pending), 'VisitedElements': visited, 'VisitBudgetExhausted': bool(pending) and visited >= budget,
+			'ContinuationToken': continuation,
 			'Width': width, 'Height': height, 'OriginX': self.stream[1][0], 'OriginY': self.stream[1][1]}
 		self.elements = elements
 		self.observed_target = (request['WindowId'], request['ObservationId'])
 		self.focus_binding = focus_binding
+		self.discovery = {'token': continuation, 'search': search, 'pending': pending,
+			'pending_identities': [self.node_identity(node) for node, _ in pending], 'identity': identity, 'start': start}
 		return result
 
 	def read_elements(self, window):
-		elements = {}
-		lines = []
-		def visit(element, depth):
-			if len(lines) >= 300 or depth > 20:
-				return
+		# Existing callers use one bounded default page; observation publishes the truthful metadata separately.
+		elements, tree, _, _ = self.read_discovery(window, 300, 600, '', None)
+		return elements, tree
+
+	def read_discovery(self, window, maximum, budget, search, pending):
+		# Child/sibling cursors keep both native calls and retained references bounded even for very wide trees.
+		elements, lines, visited = {'0': window}, [], 0
+		pending = [(window, None)] if pending is None else list(pending)
+		while pending and visited < budget and len(lines) < maximum:
+			element, child_index = pending.pop()
 			if element is None:
 				raise NativeError('accessibility_tree_changed', 'AT-SPI child disappeared during observation; observe again.')
-			index = str(len(lines))
+			element.clear_cache()
+			if child_index is not None:
+				if child_index < element.get_child_count():
+					if child_index + 1 < element.get_child_count():
+						pending.append((element, child_index + 1))
+					pending.append((element.get_child_at_index(child_index), None))
+				continue
+			visited += 1
+			# Exact ancestry/owner checks apply to every retained action target, including filtered pages.
+			if self.node_identity(element)[:1] != self.node_identity(window)[:1] or element.get_process_id() != window.get_process_id():
+				raise NativeError('focus_target_mismatch', 'Discovery descendant belongs to another application.')
+			if element.get_child_count() > 0:
+				pending.append((element, 0))
+			name = element.get_name() or ''
+			if search and search.casefold() not in name.casefold():
+				continue
+			index = '0' if self.node_identity(element) == self.node_identity(window) else str(len(elements))
 			elements[index] = element
-			lines.append(index + ' ' + element.get_role_name() + ' ' + (element.get_name() or ''))
-			for i in range(min(element.get_child_count(), 300 - len(lines))):
-				visit(element.get_child_at_index(i), depth + 1)
-		visit(window, 0)
-		return elements, '\n'.join(lines)
+			lines.append(index + ' ' + element.get_role_name() + ' ' + name)
+		return elements, '\n'.join(lines), pending, visited
+
+	def verify_discovery_ancestry(self, window, element):
+		# Retained same-process objects may be reparented between pages; reject that before capture.
+		expected, seen = self.node_identity(window), set()
+		for _ in range(2000):
+			if element is None:
+				break
+			element.clear_cache()
+			identity = self.node_identity(element)
+			if identity == expected:
+				return
+			if identity in seen:
+				break
+			seen.add(identity)
+			element = element.get_parent()
+		raise NativeError('stale_continuation', 'Discovery target no longer has bounded ancestry to the observed window.')
 
 	@staticmethod
 	def node_identity(element):
@@ -603,6 +679,7 @@ class Desktop:
 		raise NativeError('pointer_target_unverifiable', 'Global pointer injection is disabled: compositor-authoritative target ownership is unavailable.')
 
 	def action(self, request):
+		self.discovery = None  # A mutation attempt retires traversal tokens, even if the provider refuses it.
 		if request['Operation'] == 'FocusElement':
 			return self.focus_element(request)
 		if request['Operation'] == 'PerformSecondaryAction' and getattr(self, 'focus_binding', None) is not None:
