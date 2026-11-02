@@ -12,3 +12,6 @@ Added real ProcessCaptured/GetReviewSummary/PrepareSuggestion/SelectRoutingNode/
 
 ## 2026-11-01 — whole-program search coverage
 The existing server search includes bounded policy declaration/prompt/destination results from generated FindPolicyNodes alongside canonical semantic nodes. Selecting a rule opens the same owning source editor. No client whole-table filter or new classification model.31/31 tests passed, including search/open source at390/1280. This closes R08's policy-source gap found in final acceptance review.
+
+## 2026-11-01 — one focused program editor
+Opening any policy editor hides the tree editor; opening a semantic node hides policy source. Selection and source are retained, but two active editors cannot stack. Shared helper covers root/add/search/list. Browser tests35/35 pass including both transitions at390/1280 and async completion waits; no overflow. Explicit collapsed-panel user override remains.
