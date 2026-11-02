@@ -34,5 +34,4 @@ This repository is a finalized Buffaly extension/package distribution repository
 
 ## UI standard
 
-- Any package UI (web module pages, scripts, stylesheets, templates) follows UI-STD-01: `C:\inetpub\wwwroot\matt.buffaly.local\content\projects\OpsAgent\Nodes\Personal\CodeReviews\CodeReviews.UI.md`.
-- Fix UI in the owning source repository and republish; do not hand-edit published UI here. Do not publish a package whose changed UI has not passed the guide's Rule 10 walkthrough and screenshot review.
+- All UI work follows UI-STD-01: `C:\inetpub\wwwroot\matt.buffaly.local\content\projects\OpsAgent\Nodes\Personal\CodeReviews\CodeReviews.UI.md`.
