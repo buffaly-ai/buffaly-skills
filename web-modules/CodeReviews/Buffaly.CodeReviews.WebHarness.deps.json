@@ -10,6 +10,7 @@
         "dependencies": {
           "Buffaly.CodeReviews": "1.0.0",
           "Buffaly.CodeReviews.AgentRemoteJsonWs": "1.0.0",
+          "ICSharpCode.Decompiler": "9.1.0.7988",
           "SixLabors.Fonts": "1.0.0",
           "SkiaSharp": "4.153.1",
           "SkiaSharp.NativeAssets.Win32": "4.153.1",
@@ -50,6 +51,18 @@
           "lib/net8.0/Azure.Identity.dll": {
             "assemblyVersion": "1.14.2.0",
             "fileVersion": "1.1400.225.36004"
+          }
+        }
+      },
+      "ICSharpCode.Decompiler/9.1.0.7988": {
+        "dependencies": {
+          "System.Collections.Immutable": "6.0.0",
+          "System.Reflection.Metadata": "6.0.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/ICSharpCode.Decompiler.dll": {
+            "assemblyVersion": "9.1.0.7988",
+            "fileVersion": "9.1.0.7988"
           }
         }
       },
@@ -422,6 +435,11 @@
           }
         }
       },
+      "System.Collections.Immutable/6.0.0": {
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
+        }
+      },
       "System.Configuration.ConfigurationManager/9.0.4": {
         "dependencies": {
           "System.Diagnostics.EventLog": "9.0.4",
@@ -474,6 +492,11 @@
             "assemblyVersion": "8.0.0.1",
             "fileVersion": "8.0.1024.46610"
           }
+        }
+      },
+      "System.Reflection.Metadata/6.0.0": {
+        "dependencies": {
+          "System.Collections.Immutable": "6.0.0"
         }
       },
       "System.Runtime.CompilerServices.Unsafe/6.0.0": {},
@@ -939,6 +962,13 @@
       "path": "azure.identity/1.14.2",
       "hashPath": "azure.identity.1.14.2.nupkg.sha512"
     },
+    "ICSharpCode.Decompiler/9.1.0.7988": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-N5HEh7n/9GpnkH6ojwPbzWbO1Ma+SFZCKafz69uRLnkt/bWzPON7wf7NLxTdU/fGWPnG2TEXRsu5DnRyvIQSaQ==",
+      "path": "icsharpcode.decompiler/9.1.0.7988",
+      "hashPath": "icsharpcode.decompiler.9.1.0.7988.nupkg.sha512"
+    },
     "Microsoft.AspNetCore.Http.Abstractions/2.3.0": {
       "type": "package",
       "serviceable": true,
@@ -1128,6 +1158,13 @@
       "path": "system.clientmodel/1.5.1",
       "hashPath": "system.clientmodel.1.5.1.nupkg.sha512"
     },
+    "System.Collections.Immutable/6.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-l4zZJ1WU2hqpQQHXz1rvC3etVZN+2DLmQMO79FhOTZHMn8tDRr+WU287sbomD0BETlmKDn0ygUgVy9k5xkkJdA==",
+      "path": "system.collections.immutable/6.0.0",
+      "hashPath": "system.collections.immutable.6.0.0.nupkg.sha512"
+    },
     "System.Configuration.ConfigurationManager/9.0.4": {
       "type": "package",
       "serviceable": true,
@@ -1169,6 +1206,13 @@
       "sha512": "sha512-BVYuec3jV23EMRDeR7Dr1/qhx7369dZzJ9IWy2xylvb4YfXsrUxspWc4UWYid/tj4zZK58uGZqn2WQiaDMhmAg==",
       "path": "system.memory.data/8.0.1",
       "hashPath": "system.memory.data.8.0.1.nupkg.sha512"
+    },
+    "System.Reflection.Metadata/6.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-sffDOcex1C3HO5kDolOYcWXTwRpZY/LvJujM6SMjn63fWMJWchYAAmkoAJXlbpZ5yf4d+KMgxd+LeETa4gD9sQ==",
+      "path": "system.reflection.metadata/6.0.0",
+      "hashPath": "system.reflection.metadata.6.0.0.nupkg.sha512"
     },
     "System.Runtime.CompilerServices.Unsafe/6.0.0": {
       "type": "package",
