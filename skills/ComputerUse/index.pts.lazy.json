@@ -4,15 +4,80 @@
   "Prototypes": {
     "ComputerUseSkill": "Skills/ComputerUse/index.pts",
     "ComputerUseSkillAction": "Skills/ComputerUse/index.pts",
+    "add_drag_modifier": "Skills/ComputerUse/index.pts",
+    "add_drag_waypoint": "Skills/ComputerUse/index.pts",
     "click": "Skills/ComputerUse/index.pts",
+    "create_drag_request": "Skills/ComputerUse/index.pts",
+    "discover_app_state": "Skills/ComputerUse/index.pts",
     "drag": "Skills/ComputerUse/index.pts",
+    "execute_drag_request": "Skills/ComputerUse/index.pts",
     "get_app_state": "Skills/ComputerUse/index.pts",
+    "hover": "Skills/ComputerUse/index.pts",
     "list_apps": "Skills/ComputerUse/index.pts",
     "perform_secondary_action": "Skills/ComputerUse/index.pts",
     "press_key": "Skills/ComputerUse/index.pts",
     "scroll": "Skills/ComputerUse/index.pts",
+    "scroll_at": "Skills/ComputerUse/index.pts",
     "select_text": "Skills/ComputerUse/index.pts",
+    "set_drag_destination": "Skills/ComputerUse/index.pts",
     "set_value": "Skills/ComputerUse/index.pts",
     "type_text": "Skills/ComputerUse/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "create_drag_request": [
+      "to create a computer drag request"
+    ],
+    "add_drag_waypoint": [
+      "to add a computer drag waypoint"
+    ],
+    "add_drag_modifier": [
+      "to add a computer drag modifier"
+    ],
+    "set_drag_destination": [
+      "to set a computer drag destination"
+    ],
+    "execute_drag_request": [
+      "to execute a computer drag request"
+    ],
+    "list_apps": [
+      "to list computer use apps"
+    ],
+    "get_app_state": [
+      "to get computer app state",
+      "to observe a desktop app"
+    ],
+    "discover_app_state": [
+      "to discover bounded computer app elements"
+    ],
+    "click": [
+      "to click a computer app"
+    ],
+    "perform_secondary_action": [
+      "to perform a secondary computer app action"
+    ],
+    "set_value": [
+      "to set a computer app value"
+    ],
+    "select_text": [
+      "to select text in a computer app"
+    ],
+    "scroll": [
+      "to scroll a computer app"
+    ],
+    "drag": [
+      "to drag in a computer app"
+    ],
+    "scroll_at": [
+      "to scroll a chosen computer pane"
+    ],
+    "hover": [
+      "to hover over a computer app"
+    ],
+    "press_key": [
+      "to press a key in a computer app"
+    ],
+    "type_text": [
+      "to type text in a computer app"
+    ]
   }
 }
