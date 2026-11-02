@@ -1,5 +1,8 @@
 # CSharpViewer file provider history
 
+## 2026-11-02 — Caret hit-target sizing
+Installed click proof passed but measured the caret button16x32px. Reused Bootstrap horizontal spacing px-2 so its hit target meets24px minimum while visible affordance remains only a caret. No font/icon/custom styling change. Node regression passed; final installed sizing and screenshot check follows publication.
+
 ## 2026-11-02 — Link-attached default menu and Windows artifact identity
 Matt rejected the header dropdown and confirmed a tiny chevron on the file link itself. Removed the header mount. Each owned C# timeline anchor now has one adjacent compact Bootstrap dropdown trigger; closed state adds only a caret, with two menu radio choices when opened. Choosing a viewer saves the default and updates existing/new native anchor destinations; keyboard arrows/Escape, focus return, outside dismissal, cross-tab checks and observer cleanup are handled. Existing shared Bootstrap classes used without new CSS/icons. This supersedes the earlier header UX acceptance.
 

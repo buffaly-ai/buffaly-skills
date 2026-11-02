@@ -56,7 +56,7 @@
       wrapper.setAttribute("data-csharp-viewer-picker", "");
       anchor.replaceWith(wrapper); wrapper.append(anchor);
       const trigger = document.createElement("button");
-      trigger.type = "button"; trigger.className = "btn btn-link dropdown-toggle p-1 border-0";
+      trigger.type = "button"; trigger.className = "btn btn-link dropdown-toggle p-1 px-2 border-0";
       trigger.title = "Choose default viewer";
       trigger.setAttribute("aria-label", "Default viewer for " + anchor.textContent.trim());
       trigger.setAttribute("aria-haspopup", "menu"); trigger.setAttribute("aria-expanded", "false");
