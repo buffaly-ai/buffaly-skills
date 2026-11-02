@@ -260,3 +260,10 @@ prototype ToMarkCodeReviewFailed : CodeReviewsAgentToolsAction
 		return CodeReviewFindingsService.MarkFailedJson(RepositoryPath, CommitSha, FailureReason);
 	}
 }
+
+[SemanticProgram.InfinitivePhrase("to search an exact committed managed assembly")]
+prototype ToSearchCodeReviewManagedAssemblyPage : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
+{
+ Description = @"Search every line of a complete passive managed DLL listing at exact RepositoryPath/CommitSha/Path for case-sensitive Literal. Returns ALL matching lines and five context lines each side, exact blob/listing hashes and a match count; no match cap. Zero matches proves only literal absence. Follow CharacterOffset/NextCharacterOffset through EndOfContent. Use this before opening a whole large DLL to investigate source/package correspondence. It does not replace complete patches, both binary receipts, required guides, source context or behavior tests.";
+ function Execute(string RepositoryPath, string CommitSha, string Path, string Literal, int CharacterOffset = 0) : string { return CodeReviewEvidencePages.GetManagedAssemblySearchPageJson(RepositoryPath, CommitSha, Path, Literal, CharacterOffset); }
+}

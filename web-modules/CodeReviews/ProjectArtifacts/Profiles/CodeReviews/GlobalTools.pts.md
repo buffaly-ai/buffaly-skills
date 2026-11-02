@@ -36,3 +36,8 @@ Keep this file aligned with the operational global-review actions in `Skills/Cod
 ## 2026-11-01 - Describe the UI guidance token
 - ToGetGlobalCodeReviewLanguageGuidance's Language description now lists UI and says it reads the UI-STD-01 standard required for user-facing markup, style and page-script changes. Execute signature, root and infinitive phrase are unchanged; scoped source SmartPatch used because active-project upsert cannot target this owning module. No ownership-sidecar identity changed.
 - Validation: Buffaly.CodeReviews.AgentRemoteJsonWs.Tests passed 119/119, zero skipped, including the new UI loader and UI gate cases and the existing real eager/lazy ProtoScript compilation tests. Solution-level dotnet test fails at restore on two pre-existing missing RooTrax project paths in buffaly.code.reviews.sln (unrelated, not changed). No installed-module update or live reviewer run at this entry.
+
+## 2026-11-02 — Exact passive assembly search in eager profile
+- Add ToSearchCodeReviewManagedAssemblyPage with exact repository/SHA/path/literal/offset parameters and existing CodeReviewEvidencePages import. Search covers every listing line, all literal matches and bounded surrounding context; no match cap or full-listing coverage waiver. No broad read/write tools added.
+- Authored through ProtoScriptProjectFileTools.ParseSinglePrototypeDefinitionOrThrow and InsertOrUpdatePrototypeDefinitionInProject against this owning external project, not the installed copy.
+- Validation: full140/140owning suite passes, including real eager/lazy compilation and exact approved global surface. Canonical lazy sidecar generator resolves34prototypes/zero diagnostics; live staging acceptance follows separately.

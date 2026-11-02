@@ -60,3 +60,8 @@ Commit-free turns return the typed callback result with `ShouldQueue=false`. Exi
 ## 2026-11-01 - Describe the UI guidance token (lazy profile)
 - The lazy-profile ToGetGlobalCodeReviewLanguageGuidance description mirrors the eager GlobalTools.pts change: Language lists UI, which reads the UI-STD-01 user interface standard. Execute signature, root and phrase unchanged; no index regeneration required.
 - Validation: Buffaly.CodeReviews.AgentRemoteJsonWs.Tests passed 119/119, zero skipped, including the new UI loader and UI gate cases and the existing real eager/lazy ProtoScript compilation tests. Solution-level dotnet test fails at restore on two pre-existing missing RooTrax project paths in buffaly.code.reviews.sln (unrelated, not changed). No installed-module update or live reviewer run at this entry.
+
+## 2026-11-02 — Exact passive assembly context search
+- Add ToSearchCodeReviewManagedAssemblyPage mirrored with eager profile: exact repository/SHA/path/literal and bounded offset paging over all matches in the complete passive listing. It supplements rather than replaces patches/receipts/guides, and exposes no generic filesystem or mutation.
+- Authored with the typed ProtoScriptProjectFileTools parse/project-upsert API against this owning source. Regenerated index.pts.lazy.json with canonical LazySkillIndexGenerator in an isolated temporary CoreLite project:34prototypes,zero diagnostics; maps the added action and phrase. Generated sidecar ownership belongs here.
+- Validation: full140/140owning tests pass, zero skipped, including eager/lazy compile and complete/missing/tampered search coverage. Installed model acceptance is separate.
