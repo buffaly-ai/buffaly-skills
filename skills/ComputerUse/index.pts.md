@@ -16,3 +16,8 @@
 - Retained get_app_state's original one-argument signature and added discover_app_state for bounded options, plus hover and scroll_at. This avoids relying on optional argument metadata that the current registrar advertises as required. Existing click, scroll and drag signatures remain unchanged.
 - Removed the unusable advanced drag draft from publication source; its exact DTO schema/binder reproduction lives only in the temporary isolated test fixture while the protected boundary decision is pending.
 - Six tests pass, including actual registrar parameter counts (get_app_state1, discovery7, hover5, scroll_at6) and positive runtime binding of all five hover arguments. Package publication and installed staging invocation remain outstanding.
+
+## 2026-11-02 — Approved no-Host native drag builder chain
+- Added create_drag_request, add_drag_waypoint, add_drag_modifier and set_drag_destination returning Prototype references through the existing native formatter. execute_drag_request consumes the authoritative ComputerUseDragRequest and dispatches through the existing ambient-session service.
+- Existing thirteen scalar tools and simple drag signatures remain unchanged. Builder descriptions explain same-session references, new-reference chaining, no desktop input during construction, coordinate spaces and execution-time freshness/bounds. No JSON parser, DTO materializer, Host, provider or shared-schema change.
+- Validation: wrapper suite passed 6/6, including actual ProtoScript builder execution, actual eighteen-action schemas, production formatter/binder round-trip, immutable earlier request and invented/wrong-type/cross-session rejection. DesktopAutomation passed 122/122. Publication and live advanced agent drag are still pending.

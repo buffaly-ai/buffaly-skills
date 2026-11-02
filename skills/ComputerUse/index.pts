@@ -10,6 +10,7 @@ import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseSetValueRe
 import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseSelectTextRequest ComputerUseSelectTextRequest;
 import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseScrollRequest ComputerUseScrollRequest;
 import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseDragRequest ComputerUseDragRequest;
+import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseDragRequestBuilder ComputerUseDragRequestBuilder;
 import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUsePressKeyRequest ComputerUsePressKeyRequest;
 import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseTypeTextRequest ComputerUseTypeTextRequest;
 import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseHoverRequest ComputerUseHoverRequest;
@@ -17,6 +18,57 @@ import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseHoverReque
 prototype ComputerUseSkillAction : OpsAction
 {
 	Description = @"Base action type for exact-window Computer Use tools. Use opaqueWindowId values returned by list_apps; do not infer or construct native handles.";
+}
+
+[SemanticProgram.InfinitivePhrase("to create a computer drag request")]
+prototype create_drag_request : ComputerUseSkillAction
+{
+	Description = @"Build a drag request without sending input. Supply the exact source opaqueWindowId and current expectedObservationId. Coordinates are screenshot coordinates. Returns an opaque native request reference, not JSON. Pass that reference to the drag builder tools or execute_drag_request in this same session. Construction does not refresh an observation. For a cross-window drop, observe both windows and set the destination before execution; toX/toY then use destination screenshot space.";
+	function Execute(string opaqueWindowId, string expectedObservationId, double fromX, double fromY, double toX, double toY) : Prototype
+	{
+		return ComputerUseDragRequestBuilder.Create(opaqueWindowId, expectedObservationId, fromX, fromY, toX, toY);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to add a computer drag waypoint")]
+prototype add_drag_waypoint : ComputerUseSkillAction
+{
+	Description = @"Pass the opaque request reference returned by a drag builder, not a JSON object. Returns a new request reference with one appended waypoint; the original is unchanged. Use the NEW reference for subsequent steps. Waypoint x/y use source screenshot space. Existing execution limits apply: at most 32 waypoints, each dwell 0..1000ms, total dwell at most 5000ms. No input is sent.";
+	function Execute(ComputerUseDragRequest request, double x, double y, int dwellMilliseconds) : Prototype
+	{
+		return ComputerUseDragRequestBuilder.AddWaypoint(request, x, y, dwellMilliseconds);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to add a computer drag modifier")]
+prototype add_drag_modifier : ComputerUseSkillAction
+{
+	Description = @"Pass an opaque drag request reference. Append one exact modifier: ctrl, shift or alt. Returns a new reference; use it for subsequent steps. Duplicate or unsupported modifiers are rejected at execution. No input is sent and no key is held while building.";
+	function Execute(ComputerUseDragRequest request, string modifier) : Prototype
+	{
+		return ComputerUseDragRequestBuilder.AddModifier(request, modifier);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to set a computer drag destination")]
+prototype set_drag_destination : ComputerUseSkillAction
+{
+	Description = @"Pass an opaque drag request reference and the exact destination opaqueWindowId/current expectedObservationId. Returns a new request reference. The request's toX/toY now use destination screenshot space; source and waypoint coordinates remain in source screenshot space. Both observations must still be valid at execution. No input is sent.";
+	function Execute(ComputerUseDragRequest request, string opaqueWindowId, string expectedObservationId) : Prototype
+	{
+		return ComputerUseDragRequestBuilder.SetDestination(request, opaqueWindowId, expectedObservationId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to execute a computer drag request")]
+prototype execute_drag_request : ComputerUseSkillAction
+{
+	Description = @"Execute the final opaque request reference returned by the drag builders in this same session. Do not supply JSON or invent a reference. Uses the existing Computer Use drag implementation and its platform support, observation, geometry, ownership and bounded-input validation. Construction does not reserve desktop state. After success, observe affected windows again before further input.";
+	function Execute(ComputerUseDragRequest request) : ComputerUseActionResult
+	{
+		string sessionKey = ComputerUseToolService.GetCurrentSessionKey();
+		return ComputerUseToolService.Drag(sessionKey, request);
+	}
 }
 
 [SemanticEntity("computer use skill")]
