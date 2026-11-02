@@ -1,5 +1,8 @@
 # CSharpViewer file provider history
 
+## 2026-11-02 — Menu positioning review
+Visual review caught Bootstrap menu using static-position fallback and covering the file link. Added existing top-100/start-0 utilities to place the menu below the link wrapper, with no custom CSS. Node suite passed; final staging screenshot and installed menu bounds checked after publication.
+
 ## 2026-11-02 — Caret hit-target sizing
 Installed click proof passed but measured the caret button16x32px. Reused Bootstrap horizontal spacing px-2 so its hit target meets24px minimum while visible affordance remains only a caret. No font/icon/custom styling change. Node regression passed; final installed sizing and screenshot check follows publication.
 

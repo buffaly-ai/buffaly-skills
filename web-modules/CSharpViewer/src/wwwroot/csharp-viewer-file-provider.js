@@ -61,7 +61,7 @@
       trigger.setAttribute("aria-label", "Default viewer for " + anchor.textContent.trim());
       trigger.setAttribute("aria-haspopup", "menu"); trigger.setAttribute("aria-expanded", "false");
       const menu = document.createElement("span");
-      menu.className = "dropdown-menu"; menu.setAttribute("role", "menu"); menu.setAttribute("aria-label", "Default C# viewer");
+      menu.className = "dropdown-menu top-100 start-0"; menu.setAttribute("role", "menu"); menu.setAttribute("aria-label", "Default C# viewer");
       const choices = ["source", "repository"].map(value => {
         const button = document.createElement("button"); button.type = "button"; button.className = "dropdown-item";
         button.dataset.csharpViewerChoice = value; button.setAttribute("role", "menuitemradio"); button.tabIndex = -1;
