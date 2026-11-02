@@ -1,7 +1,8 @@
 (function () {
   "use strict";
+  function registerProviders() {
   const registry = window.BuffalyFilePresentationProviders;
-  if (!registry || typeof registry.register !== "function") return;
+  if (!registry || typeof registry.register !== "function") throw new Error("CSharpViewer requires the shell file-presentation registry.");
   function text(value) { return value == null ? "" : String(value).trim(); }
   function sessionLaunch(context) {
     const normalized = text(context.Path).replace(/\\/g, "/");
@@ -41,4 +42,10 @@
   });
   registry.register({ id: "csharp-viewer-project", priority: 21,
     canOpen: context => !!context.RootId, buildLaunch: projectLaunch });
+  }
+  // Installed extensions are parser-loaded before the deferred core bundle. Register
+  // after that bundle has run, or immediately when the registry already exists.
+  if (window.BuffalyFilePresentationProviders) registerProviders();
+  else if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", registerProviders, { once: true });
+  else registerProviders();
 })();
