@@ -199,6 +199,7 @@ class Desktop:
 		self.bus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
 		self.windows = {}
 		self.elements = {}
+		self.focus_binding = None
 		self.session = None
 		self.stream = None
 		self.fd = None
@@ -361,12 +362,26 @@ class Desktop:
 		root = Atspi.get_desktop(0)
 		for i in range(min(root.get_child_count(), 300)):
 			app = root.get_child_at_index(i)
+			if app is None:
+				raise NativeError('accessibility_tree_changed', 'AT-SPI application disappeared during enumeration; list again.')
 			pid = app.get_process_id()
 			windows = []
 			for j in range(min(app.get_child_count(), 100)):
 				window = app.get_child_at_index(j)
-				if window.get_role() not in (Atspi.Role.FRAME, Atspi.Role.DIALOG, Atspi.Role.WINDOW):
+				if window is None:
+					raise NativeError('accessibility_tree_changed', 'AT-SPI window disappeared during enumeration; list again.')
+				role = window.get_role()
+				if role not in (Atspi.Role.FRAME, Atspi.Role.DIALOG, Atspi.Role.WINDOW, Atspi.Role.ALERT):
 					continue
+				# Chromium exposes real top-level confirmations as ALERT, not DIALOG.
+				# Admit only a usable surface; this does not relax action-time ACTIVE or focus checks.
+				if role == Atspi.Role.ALERT:
+					component = window.get_component_iface()
+					if component is None:
+						continue
+					extents = component.get_extents(Atspi.CoordType.SCREEN)
+					if extents.width <= 0 or extents.height <= 0:
+						continue
 				key = str(pid) + ':' + str(j)
 				live.add(key)
 				if key not in self.windows or self.windows[key][1] != window:
@@ -393,6 +408,7 @@ class Desktop:
 	def observe(self, request):
 		self.elements = {}
 		self.observed_target = None
+		self.focus_binding = None
 		window = self.window(request['WindowId'])
 		self.connect()
 		bounds = self.bounds(window)
@@ -419,12 +435,17 @@ class Desktop:
 		finally:
 			encoder.set_state(Gst.State.NULL)
 		elements, tree = self.read_elements(window)
+		# Store native object identities at observation, never reconstruct focus authority from indices.
+		identity = self.node_identity(window)
+		start = self.process_start(identity[2])
+		focus_binding = (identity, start, {key: self.node_identity(value) for key, value in elements.items()})
 		result = {'Window': {'Id': request['WindowId'], 'App': str(window.get_process_id()),
 			'Title': window.get_name() or '', 'ProcessId': window.get_process_id()},
 			'Bounds': bounds, 'Tree': tree, 'Png': base64.b64encode(data).decode('ascii'),
 			'Width': width, 'Height': height, 'OriginX': self.stream[1][0], 'OriginY': self.stream[1][1]}
 		self.elements = elements
 		self.observed_target = (request['WindowId'], request['ObservationId'])
+		self.focus_binding = focus_binding
 		return result
 
 	def read_elements(self, window):
@@ -433,6 +454,8 @@ class Desktop:
 		def visit(element, depth):
 			if len(lines) >= 300 or depth > 20:
 				return
+			if element is None:
+				raise NativeError('accessibility_tree_changed', 'AT-SPI child disappeared during observation; observe again.')
 			index = str(len(lines))
 			elements[index] = element
 			lines.append(index + ' ' + element.get_role_name() + ' ' + (element.get_name() or ''))
@@ -440,6 +463,136 @@ class Desktop:
 				visit(element.get_child_at_index(i), depth + 1)
 		visit(window, 0)
 		return elements, '\n'.join(lines)
+
+	@staticmethod
+	def node_identity(element):
+		if element is None or not element.app or not element.app.bus_name or not element.app.bus_name.startswith(':') or not element.path:
+			raise NativeError('focus_identity_unavailable', 'Exact AT-SPI bus owner and object path are required.')
+		return (element.app.bus_name, element.path, element.get_process_id())
+
+	@staticmethod
+	def process_start(pid):
+		try:
+			with open('/proc/' + str(pid) + '/stat', encoding='utf-8') as source:
+				value = source.read(8192)
+			return int(value[value.rfind(')') + 2:].split()[19])
+		except (OSError, ValueError, IndexError):
+			raise NativeError('target_closed', 'Target process lifetime is unavailable.') from None
+
+	def verify_focus_identity(self, window, element, binding, element_identity):
+		# Revalidate both references and ancestry without consulting the mutable pid:index window map.
+		window.clear_cache()
+		element.clear_cache()
+		if self.node_identity(window) != binding[0] or self.process_start(binding[0][2]) != binding[1] or self.node_identity(element) != element_identity:
+			raise NativeError('stale_observation', 'Observed native focus identity changed.')
+		if window.get_state_set().contains(Atspi.StateType.DEFUNCT) or element.get_state_set().contains(Atspi.StateType.DEFUNCT):
+			raise NativeError('target_closed', 'Observed focus target disappeared.')
+		current = element
+		for _ in range(32):
+			if current is None:
+				break
+			current.clear_cache()
+			if self.node_identity(current) == binding[0]:
+				return
+			current = current.get_parent()
+		raise NativeError('focus_target_mismatch', 'Focus element is no longer a descendant of the observed window.')
+
+	def focus_element(self, request):
+		# Extract exact retained references, then consume ALL native authority before any attempt/failure.
+		observed = getattr(self, 'observed_target', None)
+		binding = getattr(self, 'focus_binding', None)
+		elements = self.elements
+		window = elements.get('0')
+		element = elements.get(request.get('ElementIndex'))
+		self.elements = {}
+		self.observed_target = None
+		self.focus_binding = None
+		if observed != (request['WindowId'], request['ObservationId']) or binding is None:
+			raise NativeError('stale_observation', 'Observe the exact focus target again.')
+		if window is None:
+			raise NativeError('stale_observation', 'Observed native window reference is unavailable.')
+		if element is None or request['ElementIndex'] not in binding[2]:
+			raise NativeError('invalid_element_id', 'Focus requires an observed element index.')
+		element_identity = binding[2][request['ElementIndex']]
+		self.verify_focus_identity(window, element, binding, element_identity)
+		if self.bounds(window) != request['Bounds']:
+			raise NativeError('stale_observation', 'Window geometry changed before focus.')
+		state = element.get_state_set()
+		if not all(state.contains(flag) for flag in (Atspi.StateType.FOCUSABLE, Atspi.StateType.ENABLED, Atspi.StateType.SENSITIVE)):
+			raise NativeError('unsupported_focus', 'Observed element is not focusable and usable.')
+		component = element.get_component_iface()
+		if component is None:
+			raise NativeError('unsupported_focus', 'Observed element exposes no Component focus interface.')
+		if not component.grab_focus():
+			raise NativeError('focus_refused', 'The application refused the single focus request.')
+		# Process cancellation/timeout kills this owned bridge from managed Send; no keyboard is injected here.
+		deadline = time.monotonic() + 2.0
+		while True:
+			self.verify_focus_identity(window, element, binding, element_identity)
+			if self.bounds(window) != request['Bounds']:
+				raise NativeError('stale_observation', 'Window geometry changed during focus.')
+			if window.get_state_set().contains(Atspi.StateType.ACTIVE) and element.get_state_set().contains(Atspi.StateType.FOCUSED):
+				return True
+			if time.monotonic() >= deadline:
+				raise NativeError('focus_not_confirmed', 'Exact observed window ACTIVE and element FOCUSED were not confirmed; no input was sent.')
+			time.sleep(0.05)
+
+	def press_alert_button(self, request):
+		# A semantic call to an exact focused ALERT control is not global desktop input.
+		observed, binding, elements = self.observed_target, self.focus_binding, self.elements
+		window, element = elements.get('0'), elements.get(request.get('ElementIndex'))
+		self.elements, self.observed_target, self.focus_binding = {}, None, None
+		if observed != (request['WindowId'], request['ObservationId']) or binding is None:
+			raise NativeError('stale_observation', 'Observe the exact alert again.')
+		if window is None or element is None or request.get('ElementIndex') not in binding[2]:
+			raise NativeError('invalid_element_id', 'An observed alert button is required.')
+		identity = binding[2][request['ElementIndex']]
+		self.verify_focus_identity(window, element, binding, identity)
+		if request.get('Action') != 'press' or window.get_role() != Atspi.Role.ALERT or element.get_role() != Atspi.Role.PUSH_BUTTON:
+			raise NativeError('unsupported_accessibility_action', 'Only explicit press on an observed alert button is supported.')
+		parent = window.get_parent()
+		if parent is None or parent.get_role() != Atspi.Role.APPLICATION or parent.app.bus_name != binding[0][0] or parent.get_process_id() != binding[0][2]:
+			raise NativeError('focus_target_mismatch', 'Alert must remain a top-level child of its owning application.')
+		if self.bounds(window) != request['Bounds']:
+			raise NativeError('stale_observation', 'Alert geometry changed.')
+		usable = (Atspi.StateType.ENABLED, Atspi.StateType.SENSITIVE, Atspi.StateType.SHOWING, Atspi.StateType.VISIBLE)
+		if not all(window.get_state_set().contains(flag) for flag in usable):
+			raise NativeError('alert_not_usable', 'Alert is not usable and showing.')
+		# Complete bounded traversal: unknown or truncated focus authority is never accepted.
+		stack, visited, focused = [(window, 0)], set(), []
+		while stack:
+			node, depth = stack.pop()
+			if node is None:
+				raise NativeError('accessibility_tree_changed', 'Alert descendant disappeared.')
+			node.clear_cache()
+			native_id = self.node_identity(node)
+			if depth > 20 or len(visited) >= 300 or native_id in visited:
+				raise NativeError('alert_focus_unverifiable', 'Alert focus traversal is truncated or cyclic.')
+			visited.add(native_id)
+			if native_id[0] != binding[0][0] or native_id[2] != binding[0][2]:
+				raise NativeError('focus_target_mismatch', 'Alert descendant owner changed.')
+			if node.get_role() == Atspi.Role.PUSH_BUTTON and node.get_state_set().contains(Atspi.StateType.FOCUSED):
+				focused.append(native_id)
+			count = node.get_child_count()
+			if count < 0 or count > 300 - len(visited) - len(stack):
+				raise NativeError('alert_focus_unverifiable', 'Alert child count exceeds the complete focus budget.')
+			for index in range(count):
+				stack.append((node.get_child_at_index(index), depth + 1))
+		if focused != [identity]:
+			raise NativeError('alert_focus_unverifiable', 'The exact button must be the only focused alert button.')
+		self.verify_focus_identity(window, element, binding, identity)
+		parent = window.get_parent()
+		if parent is None or parent.get_role() != Atspi.Role.APPLICATION or parent.app.bus_name != binding[0][0] or parent.get_process_id() != binding[0][2]:
+			raise NativeError('focus_target_mismatch', 'Alert application ancestry changed during verification.')
+		if window.get_role() != Atspi.Role.ALERT or element.get_role() != Atspi.Role.PUSH_BUTTON or self.bounds(window) != request['Bounds'] or not all(window.get_state_set().contains(flag) for flag in usable) or not all(element.get_state_set().contains(flag) for flag in (*usable, Atspi.StateType.FOCUSABLE, Atspi.StateType.FOCUSED)):
+			raise NativeError('alert_focus_unverifiable', 'Exact alert button focus or geometry changed.')
+		action = element.get_action_iface()
+		matches = [] if action is None else [i for i in range(action.get_n_actions()) if action.get_action_name(i) == 'press']
+		if len(matches) != 1:
+			raise NativeError('unsupported_accessibility_action', 'Exact alert button must advertise one press action.')
+		if not action.do_action(matches[0]):
+			raise NativeError('accessibility_action_failed', 'The exact alert button rejected press.')
+		return True
 
 	def notify(self, method, signature, values):
 		self.call('org.freedesktop.portal.RemoteDesktop', method, '(oa{sv}' + signature + ')',
@@ -450,6 +603,16 @@ class Desktop:
 		raise NativeError('pointer_target_unverifiable', 'Global pointer injection is disabled: compositor-authoritative target ownership is unavailable.')
 
 	def action(self, request):
+		if request['Operation'] == 'FocusElement':
+			return self.focus_element(request)
+		if request['Operation'] == 'PerformSecondaryAction' and getattr(self, 'focus_binding', None) is not None:
+			try:
+				is_alert = self.elements.get('0') is not None and self.elements['0'].get_role() == Atspi.Role.ALERT
+			except Exception:
+				self.elements, self.observed_target, self.focus_binding = {}, None, None
+				raise
+			if is_alert:
+				return self.press_alert_button(request)
 		if getattr(self, 'observed_target', None) != (request['WindowId'], request['ObservationId']):
 			raise NativeError('stale_observation', 'Native elements do not belong to this exact window and observation.')
 		if request['Operation'] in ('Drag', 'Scroll') or (request['Operation'] == 'Click' and not request.get('ElementIndex')):
