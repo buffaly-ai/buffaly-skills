@@ -3,6 +3,51 @@
   function registerProviders() {
   const registry = window.BuffalyFilePresentationProviders;
   if (!registry || typeof registry.register !== "function") throw new Error("CSharpViewer requires the shell file-presentation registry.");
+  const preferenceKey = "buffaly.csharp-viewer.default";
+  function selectedViewer() {
+    const value = window.localStorage.getItem(preferenceKey) || "source";
+    if (!["source", "repository"].includes(value)) throw new Error("The saved C# viewer selection is invalid.");
+    return value;
+  }
+  function preferredLaunch(context) {
+    const query = new URLSearchParams({ path: context.Path, viewer: selectedViewer() });
+    if (context.RootId) { query.set("root", context.RootId); query.set("project", context.ProjectPath || ""); }
+    if (context.SessionKey) query.set("sessionKey", context.SessionKey);
+    else if (/^artifacts\//.test(context.Path)) query.set("sessionKey", new URLSearchParams(window.location.search).get("sessionKey") || "");
+    const artifact = context.Path.replace(/\\/g, "/").match(/\/data\/sessions\/([^/]+)\/(artifacts\/.+\.cs)$/i);
+    if (artifact) { query.set("sessionKey", artifact[1]); query.set("path", artifact[2]); }
+    if (context.Line != null) query.set("line", context.Line);
+    if (context.EndLine != null) query.set("endLine", context.EndLine);
+    return { Url: "/api/web-modules/CSharpViewer/open?" + query.toString() };
+  }
+  registry.register({ id: "csharp-viewer-preference", priority: 5, canOpen: context => context.Extension === ".cs", buildLaunch: preferredLaunch });
+  function updateLinks() {
+    document.querySelectorAll('a[href]').forEach(anchor => {
+      const url = new URL(anchor.href, window.location.href);
+      if (url.origin !== window.location.origin || url.pathname !== "/api/web-modules/CSharpViewer/open") return;
+      url.searchParams.set("viewer", selectedViewer());
+      anchor.setAttribute("href", url.pathname + url.search);
+    });
+  }
+  window.addEventListener("storage", event => { if (event.key === preferenceKey) { updateLinks(); document.querySelectorAll('[data-csharp-viewer-default]').forEach(select => { select.value = selectedViewer(); }); } });
+  if (window.BuffalyAgentNextExtensions) window.BuffalyAgentNextExtensions.register({
+    id: "csharp-viewer-default", slot: "sessionHeader.context", priority: 30,
+    mount(context) {
+      const label = document.createElement("label");
+      label.append(document.createTextNode("C# viewer "));
+      const select = document.createElement("select");
+      select.className = "ops-v2-session-filter-select";
+      select.setAttribute("data-csharp-viewer-default", "");
+      select.setAttribute("aria-label", "Default C# viewer");
+      for (const [value, text] of [["source", "Source Viewer"], ["repository", "Repository Viewer"]]) {
+        const option = document.createElement("option"); option.value = value; option.textContent = text; select.append(option);
+      }
+      select.value = selectedViewer();
+      select.addEventListener("change", () => { window.localStorage.setItem(preferenceKey, select.value); updateLinks(); });
+      label.append(select); context.slotElement.append(label);
+      return { dispose() { label.remove(); } };
+    }
+  });
   function text(value) { return value == null ? "" : String(value).trim(); }
   function sessionLaunch(context) {
     const normalized = text(context.Path).replace(/\\/g, "/");
