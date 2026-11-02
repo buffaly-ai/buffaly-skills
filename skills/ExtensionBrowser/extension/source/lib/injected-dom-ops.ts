@@ -207,7 +207,8 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
     if (pressed) (el as HTMLElement).focus?.();
     el.dispatchEvent(new PointerEvent('pointerup', { ...position, pointerId: 1, pointerType: 'mouse', isPrimary: true, buttons: 0 }));
     el.dispatchEvent(new MouseEvent('mouseup', { ...position, buttons: 0 }));
-    (el as HTMLElement).click();
+    if (el instanceof HTMLElement) el.click();
+    else el.dispatchEvent(new MouseEvent('click', { ...position, buttons: 0 }));
     return ok(registry, { clicked: true, executed: true, synthetic: true, verified: false, verification: 'DOM pointer/mouse press-release and click dispatched; await a page postcondition before claiming task success.', selector: resolved.selector, elementId: resolved.elementId });
   }
 
@@ -217,11 +218,12 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
     const el = resolved.element;
     const interactable = validateInteractable(el, 'hover');
     if (!interactable.ok) return fail(interactable.code, interactable.error, registry.documentToken);
-    (el as HTMLElement).scrollIntoView({ block: 'center', inline: 'center' });
+    const obstruction = obstructionAtCenter(el);
+    if (obstruction) return fail('ELEMENT_OBSTRUCTED', obstruction, registry.documentToken);
     const rect = el.getBoundingClientRect();
     const eventInit = { bubbles: true, cancelable: true, clientX: rect.left + rect.width / 2, clientY: rect.top + rect.height / 2 };
-    el.dispatchEvent(new MouseEvent('mousemove', eventInit));
-    el.dispatchEvent(new MouseEvent('mouseover', eventInit));
+    el.dispatchEvent(new MouseEvent('mousemove', { ...eventInit, composed: true }));
+    el.dispatchEvent(new MouseEvent('mouseover', { ...eventInit, composed: true }));
     return ok(registry, { hovered: true, dispatched: true, verified: false, selector: resolved.selector, elementId: resolved.elementId });
   }
   function typeText(registry: RegistryState, args: Record<string, unknown>): InjectedDomOperationResult {
@@ -244,7 +246,7 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
     if (isTextInput(el)) {
       const input = el;
       input.focus();
-      if (document.activeElement !== input) return fail('FOCUS_FAILED', 'Target input did not receive focus before type_text.', registry.documentToken);
+      if (deepActiveElement() !== input) return fail('FOCUS_FAILED', 'Target input did not receive focus before type_text.', registry.documentToken);
       const prior = input.value;
       const next = mode === 'append' ? prior + replacement : replacement;
       if (canSetInputSelection(input)) input.setSelectionRange(mode === 'append' ? prior.length : 0, prior.length);
@@ -259,7 +261,7 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
     if (isContentEditable(el)) {
       const target = el as HTMLElement;
       target.focus();
-      if (document.activeElement !== target) return fail('FOCUS_FAILED', 'Target contenteditable did not receive focus before type_text.', registry.documentToken);
+      if (deepActiveElement() !== target) return fail('FOCUS_FAILED', 'Target contenteditable did not receive focus before type_text.', registry.documentToken);
       const prior = target.textContent ?? '';
       const next = mode === 'append' ? prior + replacement : replacement;
       selectEditableText(target, mode === 'append' ? prior.length : 0, prior.length);
@@ -285,19 +287,21 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
     const key = stringArg(args, 'key');
     if (!key) return fail('KEY_REQUIRED', 'press_key requires key.', registry.documentToken);
     const target = resolveElement(registry, args, false);
-    let eventTarget: Element | Document = document.activeElement || document;
+    let eventTarget: Element | Document = deepActiveElement() || document;
     let selector: string | undefined;
     let elementId: string | undefined;
     if (target.ok) {
+      if (isDisabled(target.element)) return fail('ELEMENT_DISABLED', 'Target keyboard element is disabled.', registry.documentToken);
       eventTarget = target.element;
       selector = target.selector;
       elementId = target.elementId;
       (target.element as HTMLElement).focus?.();
+      if (deepActiveElement() !== target.element) return fail('FOCUS_FAILED', 'Target element did not receive focus before press_key.', registry.documentToken);
     } else if (stringArg(args, 'selector') || stringArg(args, 'elementId')) {
       return fail(target.code, target.error, registry.documentToken);
     }
     const modifiers = modifiersFromArgs(args);
-    const eventInit: KeyboardEventInit = { key, bubbles: true, cancelable: true, ...modifiers };
+    const eventInit: KeyboardEventInit = { key, bubbles: true, cancelable: true, composed: true, ...modifiers };
     eventTarget.dispatchEvent(new KeyboardEvent('keydown', eventInit));
     eventTarget.dispatchEvent(new KeyboardEvent('keyup', eventInit));
     return ok(registry, { pressed: true, key, dispatched: true, synthetic: true, verifiedNativeAction: false, selector, elementId, modifiers });
@@ -310,11 +314,15 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
     if (!resolved.ok) return fail(resolved.code, resolved.error, registry.documentToken);
     const el = resolved.element;
     if (!(el instanceof HTMLSelectElement)) return fail('UNSUPPORTED_TARGET', `select_option requires a <select> target, got <${el.tagName.toLowerCase()}>.`, registry.documentToken);
-    if (el.disabled) return fail('ELEMENT_DISABLED', 'Target select is disabled.', registry.documentToken);
+    const interactable = validateInteractable(el, 'select an option in');
+    if (!interactable.ok) return fail(interactable.code, interactable.error, registry.documentToken);
     const option = Array.from(el.options).find((o) => o.value === value);
     if (!option) return fail('OPTION_NOT_FOUND', `No option with value ${JSON.stringify(value)} exists in the target select.`, registry.documentToken);
+    if (isDisabled(option)) return fail('OPTION_DISABLED', 'Target option is disabled.', registry.documentToken);
+    const obstruction = obstructionAtCenter(el);
+    if (obstruction) return fail('ELEMENT_OBSTRUCTED', obstruction, registry.documentToken);
     el.value = value;
-    el.dispatchEvent(new Event('input', { bubbles: true }));
+    el.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
     el.dispatchEvent(new Event('change', { bubbles: true }));
     if (el.value !== value) return fail('READBACK_MISMATCH', `Select readback mismatch after select_option. Expected ${JSON.stringify(value)} but found ${JSON.stringify(el.value)}.`, registry.documentToken);
     return ok(registry, { selected: true, selector: resolved.selector, elementId: resolved.elementId, value });
@@ -347,7 +355,11 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
     const rect = el.getBoundingClientRect();
     if (rect.width <= 0 || rect.height <= 0) return { ok: false, code: 'ELEMENT_NOT_VISIBLE', error: `Cannot ${operation} an element with empty bounds.` };
     const hiddenAncestor = firstHiddenAncestor(el);
-    if (hiddenAncestor) return { ok: false, code: 'ELEMENT_NOT_INTERACTABLE', error: `Cannot ${operation} an element hidden by <${hiddenAncestor.tagName.toLowerCase()}> or its styles.` };
+    if (hiddenAncestor) {
+      const style = window.getComputedStyle(hiddenAncestor);
+      const reason = style.display === 'none' ? 'display:none' : ['hidden', 'collapse'].includes(style.visibility) ? `visibility:${style.visibility}` : Number(style.opacity) === 0 ? 'opacity:0' : 'pointer-events:none';
+      return { ok: false, code: 'ELEMENT_NOT_INTERACTABLE', error: `Cannot ${operation}: ${hiddenAncestor === el ? 'target' : 'ancestor'} <${hiddenAncestor.tagName.toLowerCase()}> has ${reason}.` };
+    }
     return { ok: true };
   }
 
@@ -355,14 +367,29 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
     return el.getClientRects().length > 0;
   }
 
+  function composedParent(el: Element): Element | null {
+    if (el.assignedSlot) return el.assignedSlot;
+    if (el.parentElement) return el.parentElement;
+    const root = el.getRootNode();
+    return root instanceof ShadowRoot ? root.host : null;
+  }
+
+  function deepActiveElement(): Element | null {
+    let active = document.activeElement;
+    while (active?.shadowRoot?.activeElement) active = active.shadowRoot.activeElement;
+    return active;
+  }
+
   function firstHiddenAncestor(el: Element): HTMLElement | SVGElement | null {
     let current: Element | null = el;
     while (current) {
       if (current instanceof HTMLElement || current instanceof SVGElement) {
         const style = window.getComputedStyle(current);
-        if (style.visibility === 'hidden' || style.display === 'none' || style.pointerEvents === 'none' || Number(style.opacity) === 0) return current;
+        // Descendants can restore pointer-events:auto under a none ancestor.
+        // The target's computed value already includes unoverridden inheritance.
+        if ((current === el && (style.visibility === 'hidden' || style.visibility === 'collapse')) || (current === el && style.pointerEvents === 'none') || style.display === 'none' || Number(style.opacity) === 0) return current;
       }
-      current = current.parentElement;
+      current = composedParent(current);
     }
     return null;
   }
@@ -373,16 +400,23 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
     const x = rect.left + rect.width / 2;
     const y = rect.top + rect.height / 2;
     if (x < 0 || y < 0 || x > window.innerWidth || y > window.innerHeight) return 'Element center is outside the viewport after scroll.';
-    const top = document.elementFromPoint(x, y);
+    let top = document.elementFromPoint(x, y);
+    // Document hit tests retarget shadow descendants to their host. Resolve the
+    // actual topmost element through every open root; never accept the host alone.
+    while (top?.shadowRoot) {
+      const inner = top.shadowRoot.elementFromPoint(x, y);
+      if (!inner || inner === top) break;
+      top = inner;
+    }
     if (!top) return 'No element is present at target center point.';
-    if (top === el || el.contains(top)) return null;
-    const root = el.getRootNode();
-    if (root instanceof ShadowRoot && root.host === top) return null;
+    for (let hit: Element | null = top; hit; hit = composedParent(hit)) {
+      if (hit === el) return null;
+    }
     return `Element center is obstructed by <${top.tagName.toLowerCase()}>.`;
   }
 
   function isDisabled(el: Element): boolean {
-    return el instanceof HTMLButtonElement || el instanceof HTMLInputElement || el instanceof HTMLSelectElement || el instanceof HTMLTextAreaElement || el instanceof HTMLOptionElement ? el.disabled : el.getAttribute('aria-disabled') === 'true';
+    return el.matches(':disabled') || el.getAttribute('aria-disabled') === 'true';
   }
 
   function isHiddenForTyping(el: Element): boolean {
@@ -394,9 +428,9 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
     while (current) {
       if (current instanceof HTMLElement || current instanceof SVGElement) {
         const style = window.getComputedStyle(current);
-        if (style.display === 'none' || style.visibility === 'hidden' || Number(style.opacity) === 0) return true;
+        if (style.display === 'none' || (current === el && (style.visibility === 'hidden' || style.visibility === 'collapse')) || Number(style.opacity) === 0) return true;
       }
-      current = current.parentElement;
+      current = composedParent(current);
     }
     return false;
   }

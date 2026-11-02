@@ -28,3 +28,13 @@ The extension routes DOM discovery and fixed DOM actions through `extension/sour
 - `type_text` supports native text input/textarea value setting with readback validation. Hidden, disabled, readonly, unsupported, unfocused, or obstructed targets fail with `ok:false` before mutation when detectable.
 - `contenteditable` typing uses plain-text `textContent` semantics with readback validation. It does not claim rich-editor document-model success.
 - Fixed DOM actions do not automatically fall back to debugger control.
+
+## Rendered controls and open shadow roots (2026-10-31)
+
+- Visibility and pointer-events use the target's computed inherited value: a visible/auto child can override a hidden/none ancestor. Ancestor display:none and opacity:0 still block interaction, including across open shadow hosts and assigned slots.
+- Focus verification descends nested open shadow roots. Hit testing also descends open roots and checks the composed ancestry of the actual topmost target; a shadow host alone is not evidence that its covered child is actionable.
+- SVG targets receive a synthetic MouseEvent click after the existing press/release lifecycle. HTML elements retain HTMLElement.click activation. Neither reports page-task verification.
+- Effective disabledness uses :disabled (including fieldsets, the first-legend exception and disabled optgroups) plus explicit target aria-disabled.
+- Hover rejects obstruction and its mouse events cross shadow boundaries. Keyboard events target the deepest focused element and are composed. Explicit keyboard targets must be enabled and actually receive focus; readonly focusable fields can still receive keys.
+- select_option applies the shared rendered/disabled/obstruction guards, rejects disabled options before mutation and dispatches a composed input event. The change event remains non-composed, matching native select behavior. Value readback remains required.
+- Run npm run release:check in extension/source. This now requires real Chrome (CHROME_PATH overrides the Windows default); missing Chrome fails rather than skipping. It includes the 29-check pointer-events suite and 56-check DOM matrix. These execute the full production function in real Chrome without debugger access, not the installed MV3 transport.

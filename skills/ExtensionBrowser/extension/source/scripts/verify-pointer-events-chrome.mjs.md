@@ -1,0 +1,6 @@
+# Real Chrome pointer-events regression history
+
+## 2026-10-31
+Added verify-pointer-events-chrome.mjs and npm test:dom-chrome. Transpiles the entire production injectedDomOperation and executes it in real headless Chrome against a temporary local fixture. No live profile, account, CDP/debugger attachment or installed extension modification. Baseline mode restores the former guard in memory and asserts its rejection; corrected mode passed29 checks. Matching requires a numeric PASS marker, not script-source text; module transpilation uses ES2022. Test exits unsuccessfully if Chrome fails or no executed marker exists and cleans its temporary profile.
+
+Checks preserve target/inherited none rejection, hidden/disabled/read-only/no-box/opacity/overlay protections, fixed-position input, actionable/disconnected refs, document token guard, GoDaddy press-release sequence and four-field typing/cancel mechanics. This is DOM integration coverage, not extension transport/frame-preflight or live Meta/GoDaddy site validation. Validated npm run test:dom-chrome and npm run release:check successfully. CHROME_PATH can override the default Windows Chrome executable. Keep this explicit browser prerequisite separate from browser-free release checks.
