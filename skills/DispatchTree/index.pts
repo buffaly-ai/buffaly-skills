@@ -6,6 +6,8 @@ reference Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer;
 import Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer.RuntimeDispatchTreeFacade RuntimeDispatchTreeFacade;
 import Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer.DispatchNodeSummary DispatchNodeSummary;
 import Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer.DispatchAttachment DispatchAttachmentContract;
+import Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer.DispatchNodeState DispatchNodeState;
+import Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer.DispatchNodeStatePage DispatchNodeStatePage;
 import Buffaly.Agent.DispatchTree.Viewer Buffaly.Agent.DispatchTree.Viewer.OntologyTreeRuntimeReader OntologyTreeRuntimeReader;
 
 prototype DispatchTreeSkillAction : OpsAction
@@ -177,6 +179,30 @@ prototype ToGetDispatchAttachment : DispatchTreeSkillAction, DispatchAgentCurate
 	function Execute(string prototypeName, string attachmentName) : DispatchAttachmentContract
 	{
 		return RuntimeDispatchTreeFacade.GetAttachment(_runtime, prototypeName, attachmentName);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get a dispatch node state")]
+[SemanticProgram.InfinitivePhrase("to read one dispatch node with its path and attachments")]
+prototype ToGetDispatchNodeState : DispatchTreeSkillAction, DispatchAgentCuratedActionRoot
+{
+	Description = @"prototypeName - exact Dispatch node. Returns one DispatchNodeState: compact node fields, the ordered root-to-node Path of prototype names, and every named Attachment (Name, Value), including EmailRule, EmailOutcome, EmailProcessor and WorkSession. It never mutates memory, creates sessions, queues, or delivers.";
+
+	function Execute(string prototypeName) : DispatchNodeState
+	{
+		return RuntimeDispatchTreeFacade.GetNodeState(_runtime, prototypeName);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to find dispatch nodes with an attachment")]
+[SemanticProgram.InfinitivePhrase("to list deterministic dispatch rule nodes")]
+prototype ToFindDispatchNodeStates : DispatchTreeSkillAction
+{
+	Description = @"attachmentName - exact attachment name, for example EmailRule. skip - zero-based offset. take - page size, capped at 25. Returns one DispatchNodeStatePage(Items, HasMore) of nodes carrying that exact attachment, ordered by prototype name. Read-only. Not curated for the agent: the EmailDispatch module calls it to load rule nodes.";
+
+	function Execute(string attachmentName, int skip = 0, int take = 25) : DispatchNodeStatePage
+	{
+		return RuntimeDispatchTreeFacade.FindNodeStates(_runtime, attachmentName, skip, take);
 	}
 }
 
