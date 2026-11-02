@@ -82,16 +82,24 @@
 		catch (_) { return String(error); }
 	}
 
-	function failureMessage(record) {
-		const reason = text(record && record.FailureReason);
-		// The saved worker diagnostic also contains endpoints and raw JSON. Keep that on
-		// the existing commit details view; name its failed operation and HTTP result here.
-		const context = reason.indexOf(" WorkerRequestContext: ");
-		if (context >= 0 && reason.indexOf("; method=create-child-session;", context) >= 0) {
-			const status = /; status=(\d{3});/.exec(reason.substring(context));
-			if (status) return reason.substring(0, context) + ". Review agent creation returned HTTP " + status[1] + ".";
-		}
-		return reason;
+	// This timeline is a task view, not the commit evidence view. Classify diagnostics,
+	// but never interpolate them: even an otherwise readable reason may contain a receipt.
+	function failureMessage(reason) {
+		const diagnostic = text(reason);
+		if (isEmpty(diagnostic)) return "The review failed without a recorded reason. Open the commit for details.";
+		if (/Unsupported committed binary inspection format|Mandatory exact-blob binary evidence is unavailable|Required DLL inspection is unsupported/i.test(diagnostic))
+			return "The reviewer cannot inspect a required file. Open the commit for details.";
+		if (/Incomplete applicable guidance:|Incomplete review coverage:|Required .* evidence .* unavailable/i.test(diagnostic))
+			return "The review could not finish reading required evidence. Open the commit for details.";
+		if (/; method=create-child-session;|Cross-session create-child-session relay failed|No callable semantic programs were discovered/.test(diagnostic))
+			return "The review agent could not start. Open the commit for details.";
+		if (/WorkerRequestContext:|Cross-session .* relay failed/.test(diagnostic))
+			return "The review service could not complete the request. Open the commit for details.";
+		if (/timed out|timeout/i.test(diagnostic))
+			return "The review request timed out. Open the commit for details.";
+		if (/service unavailable/i.test(diagnostic))
+			return "The review service is unavailable. Try again later.";
+		return "The review failed. Open the commit for details.";
 	}
 
 	function buildRequestFromAnchor(anchor) {
@@ -144,12 +152,12 @@
 	function showTriggerFailure(request, button, error, attempt) {
 		button.disabled = false;
 		setReviewButtonState(button, "error", "Retry review", "Review could not start. Retry this commit.");
-		setReviewStatus(button, "error", "Review could not start: " + errorMessage(error));
+		setReviewStatus(button, "error", failureMessage(errorMessage(error)));
 		return call("GetCommitReview", { RepositoryPath: request.RepositoryPath, CommitSha: request.CommitSha })
 			.then(function (response) {
 				const record = recordFromResponse(response);
 				if (button.reviewTriggerAttempt === attempt && button.getAttribute("data-code-review-state") === "error" && reviewStatusFromRecord(record) === "Failed" && !isEmpty(record.FailureReason)) {
-					setReviewStatus(button, "error", failureMessage(record));
+					setReviewStatus(button, "error", failureMessage(record.FailureReason));
 				}
 			})
 			.catch(function (lookupError) {
@@ -207,8 +215,9 @@
 			})
 			.catch(function (error) {
 				button.disabled = false;
-				setReviewButtonState(button, "error", "Retry global review", "Global review trigger failed: " + errorMessage(error));
-				setReviewStatus(button, "error", "Global review trigger failed: " + errorMessage(error));
+				const message = failureMessage(errorMessage(error));
+				setReviewButtonState(button, "error", "Retry global review", message);
+				setReviewStatus(button, "error", message);
 			});
 	}
 
@@ -259,8 +268,9 @@
 		}
 
 		if (status === "Failed") {
-			setReviewButtonState(button, "failed", "Review failed", text(record && record.FailureReason) || "Retry Code Review Agent.");
-			setReviewStatus(button, "error", failureMessage(record) || "The review failed without a recorded reason. Open the commit for review details.");
+			const message = failureMessage(record.FailureReason);
+			setReviewButtonState(button, "failed", "Review failed", message);
+			setReviewStatus(button, "error", message);
 			return;
 		}
 
