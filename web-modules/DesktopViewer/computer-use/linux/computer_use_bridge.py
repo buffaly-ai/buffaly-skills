@@ -670,6 +670,42 @@ class Desktop:
 			raise NativeError('accessibility_action_failed', 'The exact alert button rejected press.')
 		return True
 
+	def scroll_element(self, request):
+		# One advertised directional page on the exact retained object; never global input or ancestor fallback.
+		observed, binding, elements = self.observed_target, self.focus_binding, self.elements
+		window, element = elements.get('0'), elements.get(request.get('ElementIndex'))
+		self.elements, self.observed_target, self.focus_binding = {}, None, None
+		if observed != (request['WindowId'], request['ObservationId']) or binding is None:
+			raise NativeError('stale_observation', 'Observe the exact scroll target again.')
+		if request.get('X') is not None or request.get('Y') is not None:
+			raise NativeError('unsupported_scroll_target', 'Screenshot-targeted scrolling is unsupported; use an observed element index.')
+		if window is None or element is None or request.get('ElementIndex') not in binding[2]:
+			raise NativeError('unsupported_scroll_target', 'Linux scrolling requires an explicit observed scrollable element.')
+		directions = {'up': 'scrollUp', 'down': 'scrollDown', 'left': 'scrollLeft', 'right': 'scrollRight'}
+		if request.get('Direction') not in directions:
+			raise NativeError('invalid_scroll', 'Use up/down/left/right.')
+		if request.get('Pages') != 1:
+			raise NativeError('unsupported_scroll_amount', 'Linux supports one provider-defined page per fresh observation (Pages=1).')
+		identity = binding[2][request['ElementIndex']]
+		self.verify_focus_identity(window, element, binding, identity)
+		action = element.get_action_iface()
+		name = directions[request['Direction']]
+		matches = [] if action is None else [i for i in range(action.get_n_actions()) if action.get_action_name(i) == name]
+		if len(matches) != 1:
+			raise NativeError('unsupported_scroll_target', 'The exact element must advertise one ' + name + ' action; select the scrollable container itself.')
+		# Revalidate after querying provider actions, immediately before the only semantic dispatch.
+		self.verify_focus_identity(window, element, binding, identity)
+		if self.bounds(window) != request['Bounds']:
+			raise NativeError('stale_observation', 'Window geometry changed before scrolling.')
+		if not window.get_state_set().contains(Atspi.StateType.ACTIVE):
+			raise NativeError('target_not_active', 'Activate the owned target window before scrolling.')
+		usable = (Atspi.StateType.ENABLED, Atspi.StateType.SENSITIVE, Atspi.StateType.SHOWING, Atspi.StateType.VISIBLE)
+		if not all(window.get_state_set().contains(flag) and element.get_state_set().contains(flag) for flag in usable):
+			raise NativeError('unsupported_scroll_target', 'The exact scroll target must be enabled, sensitive, showing and visible.')
+		if not action.do_action(matches[0]):
+			raise NativeError('accessibility_action_failed', 'The exact scroll target rejected its directional action.')
+		return True
+
 	def notify(self, method, signature, values):
 		self.call('org.freedesktop.portal.RemoteDesktop', method, '(oa{sv}' + signature + ')',
 			(self.session, {}, *values))
@@ -682,6 +718,8 @@ class Desktop:
 		self.discovery = None  # A mutation attempt retires traversal tokens, even if the provider refuses it.
 		if request['Operation'] == 'FocusElement':
 			return self.focus_element(request)
+		if request['Operation'] == 'Scroll':
+			return self.scroll_element(request)
 		if request['Operation'] == 'PerformSecondaryAction' and getattr(self, 'focus_binding', None) is not None:
 			try:
 				is_alert = self.elements.get('0') is not None and self.elements['0'].get_role() == Atspi.Role.ALERT
@@ -692,7 +730,7 @@ class Desktop:
 				return self.press_alert_button(request)
 		if getattr(self, 'observed_target', None) != (request['WindowId'], request['ObservationId']):
 			raise NativeError('stale_observation', 'Native elements do not belong to this exact window and observation.')
-		if request['Operation'] in ('Drag', 'Scroll') or (request['Operation'] == 'Click' and not request.get('ElementIndex')):
+		if request['Operation'] == 'Drag' or (request['Operation'] == 'Click' and not request.get('ElementIndex')):
 			raise NativeError('pointer_target_unverifiable', 'Global pointer injection is disabled: compositor-authoritative target ownership is unavailable.')
 		window = self.window(request['WindowId'])
 		if self.bounds(window) != request['Bounds']:
