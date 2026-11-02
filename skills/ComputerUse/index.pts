@@ -14,6 +14,7 @@ import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseDragReques
 import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUsePressKeyRequest ComputerUsePressKeyRequest;
 import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseTypeTextRequest ComputerUseTypeTextRequest;
 import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseHoverRequest ComputerUseHoverRequest;
+import Buffaly.DesktopAutomation Buffaly.DesktopAutomation.ComputerUseFocusElementRequest ComputerUseFocusElementRequest;
 
 prototype ComputerUseSkillAction : OpsAction
 {
@@ -206,3 +207,19 @@ prototype type_text : ComputerUseSkillAction
 }
 
 
+[SemanticProgram.InfinitivePhrase("to focus an observed computer element")]
+prototype focus_element : ComputerUseSkillAction
+{
+	function Execute(string opaqueWindowId, string expectedObservationId, string elementIndex) : ComputerUseActionResult
+	{
+		string sessionKey = ComputerUseToolService.GetCurrentSessionKey();
+		ComputerUseTargetSelector target = new ComputerUseTargetSelector();
+		target.WindowId = opaqueWindowId;
+		ComputerUseFocusElementRequest request = new ComputerUseFocusElementRequest();
+		request.Target = target;
+		request.ExpectedObservationId = expectedObservationId;
+		request.ElementIndex = elementIndex;
+		return ComputerUseToolService.FocusElement(sessionKey, request);
+	}
+	Description = @"Explicitly request focus on one observed element in the exact window. Requires opaqueWindowId, expectedObservationId and elementIndex. Linux binds native object identity, process lifetime and ancestry, requests focus once, then verifies the exact window ACTIVE and exact element FOCUSED. The attempt consumes the observation even on failure; call get_app_state again before any further action. Other input does not activate automatically. Unsupported platforms reject explicitly. This is not an advertised native secondary action and sends no keyboard or pointer input.";
+}
