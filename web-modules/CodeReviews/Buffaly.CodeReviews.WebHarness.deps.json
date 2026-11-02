@@ -10,6 +10,7 @@
         "dependencies": {
           "Buffaly.CodeReviews": "1.0.0",
           "Buffaly.CodeReviews.AgentRemoteJsonWs": "1.0.0",
+          "DiffPlex": "1.8.0",
           "ICSharpCode.Decompiler": "9.1.0.7988",
           "SixLabors.Fonts": "1.0.0",
           "SkiaSharp": "4.153.1",
@@ -51,6 +52,14 @@
           "lib/net8.0/Azure.Identity.dll": {
             "assemblyVersion": "1.14.2.0",
             "fileVersion": "1.1400.225.36004"
+          }
+        }
+      },
+      "DiffPlex/1.8.0": {
+        "runtime": {
+          "lib/net6.0/DiffPlex.dll": {
+            "assemblyVersion": "1.8.0.0",
+            "fileVersion": "1.8.0.0"
           }
         }
       },
@@ -961,6 +970,13 @@
       "sha512": "sha512-YhNMwOTwT+I2wIcJKSdP0ADyB2aK+JaYWZxO8LSRDm5w77LFr0ykR9xmt2ZV5T1gaI7xU6iNFIh/yW1dAlpddQ==",
       "path": "azure.identity/1.14.2",
       "hashPath": "azure.identity.1.14.2.nupkg.sha512"
+    },
+    "DiffPlex/1.8.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-gnyDsNbi0/mdW3qOXtmsuD3ZtbdKn4FIai7znhUPviuIHvV20bjWIt15gbky7RgH6Q8MMWyXhv8nk52HW37BAQ==",
+      "path": "diffplex/1.8.0",
+      "hashPath": "diffplex.1.8.0.nupkg.sha512"
     },
     "ICSharpCode.Decompiler/9.1.0.7988": {
       "type": "package",
