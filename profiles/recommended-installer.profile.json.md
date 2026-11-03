@@ -1,5 +1,10 @@
 # Recommended installer profile
 
+## 2026-11-03 Windows DispatchTree CLR dependency closure
+- Preparing the requested DispatchTree 0.1.38 / DispatchTreeViewer 0.1.175 build revealed that the recommended profile included the new script but explicitly excluded its CLR contract provider. Added WebModule/DispatchTreeViewer on Windows and changed the owning generator's exact-membership, exclusion and platform checks accordingly. This supersedes the historical Viewer exclusion below; no Linux/Mac Viewer membership is added.
+- Regenerated all three recommended locks through New-ExtensionProfileLock.ps1. All three generations passed; Windows resolves the exact requested pair. Existing CodeReviews locks reconcile 0.1.481 to already-published 0.1.483 on all platforms; no other package versions or identities changed. This clears the observed stale CodeReviews selection rather than bypassing preflight.
+- Build-only scope: no Matt install, restart, runtime reset, tree mutation or business replay. Package build/validation evidence is separate from profile validation and is not yet claimed here.
+
 ## 2026-10-08 Windows ErrorLogDispatch dependency closure
 - Matt authorized adding the existing DispatchTree skill to the Windows distribution and finishing isolated headless acceptance, with production untouched.
 - Build 1160's global ErrorLogDispatch actions inherit DispatchAgentCuratedActionRoot, but the prior profile omitted its DispatchTree Contracts.pts provider. Ordinary eager initialization failed; working Matt-local carries that existing skill. Add Windows-only Skill/DispatchTree without altering either action implementation or adding the viewer UI. Linux/Mac membership is unchanged.
