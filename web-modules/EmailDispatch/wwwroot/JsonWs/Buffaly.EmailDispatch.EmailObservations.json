@@ -44,6 +44,23 @@
 		},
 		{
 			"Parameters":[{
+					"Name":"ObservationKey",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				}],
+			"Name":"GetFormattedBody",
+			"UrlName":"",
+			"KebabName":"get-formatted-body",
+			"DataObject":{
+			},
+			"IsReturnTypeArray":"false",
+			"IsStatic":"true",
+			"ReturnType":"Task`1"
+		},
+		{
+			"Parameters":[{
 					"Name":"AccountKey",
 					"IsNullable":"true",
 					"Type":"String",

@@ -4,7 +4,7 @@
 // he chooses. Every call goes through the generated JsonWs clients; the server owns every guard and state change.
 (() => {
  const {$,text,escape,link,notify,run,request,button,status,date,facts,PagedGrid,dialog}=EmailDispatchUi;
- let selectedEmail=null, selectedRule=null, ruleSession="", actingWork=null, pickMode="send", picked=null, pollTimer=0, inboxTimer=0, syncBusy=false, syncAvailable=false;
+ let selectedEmail=null, selectedRule=null, ruleSession="", actingWork=null, pickMode="send", picked=null, pollTimer=0, inboxTimer=0, syncBusy=false, syncAvailable=false, bodyRequest=0, bodyToken=null;
  // Mirrors EmailDispatchActions.OpenStates and Confirm's state check, so a command is shown only where the server accepts it.
  const openStates=["Pending","Suggested","AutomaticReady","NeedsDestination","Notice","NoAction","Unclassified","Conflict","NeedsReview","Error","PreviouslyHandled","Prepared","AgentEvaluationRequired","PreparationFailed","Disabled"];
  const isOpen=work=>!work.MessageKey&&!work.LocalDisposition&&openStates.includes(work.State);
@@ -43,10 +43,31 @@
  }
  async function load(key) { selectedEmail=await request(EmailObservations,"GetEmail",{ObservationKey:key}); }
  async function openEmail(key) {
+  const bodyVersion=++bodyRequest; bodyToken=null; $("body-html").hidden=true; $("body-html").removeAttribute("srcdoc"); $("body").hidden=false; $("body-loading").hidden=true;
   await load(key); show("email");
   $("subject").textContent=selectedEmail.Email.Subject||"No subject"; $("sender").textContent=selectedEmail.Email.Sender; $("received").textContent=date(selectedEmail.Email.ReceivedUtc); $("body").textContent=selectedEmail.Frame?selectedEmail.Frame.BodyText||"This message has no readable text.":"This email could not be read. View evidence for details."; $("test").hidden=!selectedEmail.Frame||selectedEmail.Email.ReviewState==="Spam"; $("test-result").textContent="";
   works(); schedule(); $("subject").focus({preventScroll:true,focusVisible:false});
+  if(selectedEmail.Frame) void formattedBody(key,bodyVersion);
  }
+ // Presentation is fetched once per open, not by the decision poll. A late response cannot replace another email.
+ async function formattedBody(key,version) {
+  const loading=$("body-loading"); loading.textContent="Loading formatted email…"; loading.hidden=false;
+  try {
+   const body=await request(EmailObservations,"GetFormattedBody",{ObservationKey:key});
+   if(version!==bodyRequest||location.hash!=="#email/"+encodeURIComponent(key)) return;
+   if(body.HtmlDocument!==null) { bodyToken=body.ResizeToken; $("body-html").style.height="600px"; $("body-html").srcdoc=body.HtmlDocument; $("body-html").hidden=false; $("body").hidden=true; }
+   loading.hidden=true;
+  } catch(error) {
+   if(version!==bodyRequest||location.hash!=="#email/"+encodeURIComponent(key)) return;
+   loading.textContent="Formatted email could not be loaded. Showing the captured text.";
+  }
+ }
+ // The opaque-origin frame can report its size only, never commands or arbitrary DOM mutations.
+ window.addEventListener("message",event=>{
+  const frame=$("body-html"), data=event.data;
+  if(event.source!==frame.contentWindow||event.origin!=="null"||!bodyToken||data?.kind!=="email-body-size"||data.token!==bodyToken||!Number.isFinite(data.height)||data.height<1||data.height>200000) return;
+  frame.style.height=(data.height+2)+"px";
+ });
  async function reload(focus) { await load(selectedEmail.Email.ObservationKey); works(); schedule(); if(focus) $("works").querySelector(".ed-decision")?.focus({preventScroll:true}); }
  // The feed worker decides noted email, and learns after a send, in the background. While either is pending the open email
  // is re-read every 10 seconds (one bounded GetEmail read), never while a dialog is open, so no Refresh command is needed.

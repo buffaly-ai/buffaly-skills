@@ -103,6 +103,39 @@ class EmailObservationsService {
         );
     }
 
+    GetFormattedBody(ObservationKey, Callback) {
+        return this.GetFormattedBodyObject({ ObservationKey:ObservationKey }, Callback);
+    }
+
+    GetFormattedBodyObject(oObject, Callback) {
+        this._validate(oObject, EmailObservationsValidators.GetFormattedBody, this.GetFormattedBody.onValidationError);
+
+        var pageUrl = this.Url + "/get-formatted-body";
+        return this._invoke(
+            pageUrl,
+            "GetFormattedBody",
+            { ObservationKey: oObject.ObservationKey },
+            this.GetFormattedBody,
+            Callback
+        );
+    }
+
+    async GetFormattedBodyAsync(ObservationKey) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.GetFormattedBody,
+            [ ObservationKey ]
+        );
+    }
+
+    async GetFormattedBodyObjectAsync(oObject) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.GetFormattedBodyObject,
+            [ oObject ]
+        );
+    }
+
     GetInbox(AccountKey, State, Search, SkipRows, NumRows, Callback) {
         return this.GetInboxObject({ AccountKey:AccountKey,State:State,Search:Search,SkipRows:SkipRows,NumRows:NumRows }, Callback);
     }
@@ -333,6 +366,10 @@ var EmailObservationsValidators = {
     },
 
     GetEmail : {
+            ObservationKey : {Validators: [Validators.Text], InvalidMessage: "Invalid ObservationKey"} 
+    },
+
+    GetFormattedBody : {
             ObservationKey : {Validators: [Validators.Text], InvalidMessage: "Invalid ObservationKey"} 
     },
 
