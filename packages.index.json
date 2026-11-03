@@ -7024,10 +7024,10 @@
       "PackageType": "WebModule",
       "Title": "Desktop Viewer",
       "Description": "Buffaly Web Module package for Desktop Viewer.",
-      "Version": "0.1.305",
+      "Version": "0.1.306",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/DesktopViewer",
-      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/DesktopViewer",
+      "SourceUrl": "",
       "Phrases": [
         "Desktop Viewer",
         "DesktopViewer"
@@ -7047,7 +7047,7 @@
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "8a12ee9b7135454501f4d94f66a6e82d2d4570ff1e96e86e45a3dbfff1db4116"
+          "Sha256": "abef84c469182e651f687d88d7cc8144c64e7141d0439be73b61a2cc08a012be"
         },
         {
           "Path": "Buffaly.ClientSites.Common.dll",
@@ -7063,15 +7063,15 @@
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "beedae9af28d6e2fc385e97406121ec28f6d8bf354f4ccbf201c9b7359519729"
+          "Sha256": "424a9ddeeda54634487dd0464005165dca0acfe2793c9c5c44522cf052aacb46"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "24862d17efba1f3783eaaad8d8bd4f464372c96f3de73d5bd0ecbec445a8081b"
+          "Sha256": "fd18baa1fc83f510297a70093beb804e34ab6e3a96ea5cec2a54b4165c87155a"
         },
         {
           "Path": "Buffaly.DesktopAutomation.dll",
-          "Sha256": "8b40e76e3433fb3bc58909d3ca7d451be71144c5ea9f645c3f62c0e6af81bf8c"
+          "Sha256": "d19e6823dfb9c805a8d587e4df79a7ea0f974862d7d2831bec233f3d7272a20b"
         },
         {
           "Path": "Buffaly.DesktopViewer.Web.deps.json",
@@ -7079,7 +7079,7 @@
         },
         {
           "Path": "Buffaly.DesktopViewer.Web.dll",
-          "Sha256": "89466a1ff145065af46c73fb46ac12292eb560f7cb8f8ea75789fbfed12467bf"
+          "Sha256": "be25311d5ef00e7602b4ea82520d50f4a1ec83cc4ba816f29542184539fc49fa"
         },
         {
           "Path": "Buffaly.LandingPageRouting.dll",
@@ -7087,7 +7087,7 @@
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "e046bc2d4d09e2de17c7812d3df6d3e6b157a56062cab582bb4c53a6a26d24fc"
+          "Sha256": "f87de06277f87ccf8b3948db1395e7d0ccf92feaa4ecd3d07c0a4f65d35b8d6f"
         },
         {
           "Path": "computer-use/linux/computer_use_bridge.py",
@@ -7692,6 +7692,10 @@
         {
           "Path": "Scripts/Messages_UpdateSessionEventStatusSp.sql",
           "Sha256": "8a487ae17b1167b8f4ba6c59da64cb8fefabc84a79dc33e4301174a2c5487eee"
+        },
+        {
+          "Path": "Scripts/Message_FindFirstTextMatch_Sp.sql",
+          "Sha256": "bbae7e4102e60307d67c0ff222069be3ba77b2840faa50aa895ee03b9e49cbe6"
         },
         {
           "Path": "Scripts/Message_RemoveUnlinked_Sp.sql",
