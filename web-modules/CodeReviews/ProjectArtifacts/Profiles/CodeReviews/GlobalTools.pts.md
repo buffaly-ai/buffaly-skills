@@ -41,3 +41,9 @@ Keep this file aligned with the operational global-review actions in `Skills/Cod
 - Add ToSearchCodeReviewManagedAssemblyPage with exact repository/SHA/path/literal/offset parameters and existing CodeReviewEvidencePages import. Search covers every listing line, all literal matches and bounded surrounding context; no match cap or full-listing coverage waiver. No broad read/write tools added.
 - Authored through ProtoScriptProjectFileTools.ParseSinglePrototypeDefinitionOrThrow and InsertOrUpdatePrototypeDefinitionInProject against this owning external project, not the installed copy.
 - Validation: full140/140owning suite passes, including real eager/lazy compilation and exact approved global surface. Canonical lazy sidecar generator resolves34prototypes/zero diagnostics; live staging acceptance follows separately.
+
+
+## 2026-11-03 — Align optional asset and assembly context policy
+- Mirror lazy tool descriptions: optional targeted binary inspection, explicit nonfatal Unavailable decoder result, invalid-request rejection and no routine package validation. Optional assembly searches do not impose both-side receipts or completion prerequisites. Root/signatures/phrases unchanged; no new filesystem/writer tools.
+- Initial source description patch followed external-source ownership; search refinement uses typed parse/project-upsert API. No installed profile edit.
+- Validation: full156/156owning suite, including real eager/lazy compilation/native structured tool execution, and30/30JS passed. Release publish passed; actual staging acceptance follows separately.

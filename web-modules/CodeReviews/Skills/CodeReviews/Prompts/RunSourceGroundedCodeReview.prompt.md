@@ -58,6 +58,12 @@ Read and follow every guidance file corresponding to the changed file types. The
 4. If the target is ambiguous, use safe git and file discovery before asking a question.
 5. Do not submit findings for a different commit from a reused child session.
 
+## Binary and asset scope
+
+Binary and asset scope: account for every changed file through its exact Git patch, but do not routinely decode fonts/images or disassemble packaged DLLs. These are optional, targeted evidence only when relevant to the requested behavior, a binary-only implementation or an evidenced source/package mismatch. ToInspectCodeReviewCommittedBinary returns an explicit Unavailable result for unsupported/corrupt/undecodable assets; record the limitation and continue source review. One unavailable asset, missing optional receipt or unfinished optional assembly search must not cause failed code-review completion or fail sibling commits. Never claim an unreadable asset valid or a package validated. Report a relevant evidenced defect as a finding, not a tool-failure finding. Source, SQL, configuration and script patches, required context and guidance remain mandatory.
+
+Package validation is separate from code review. Do not turn decoding/disassembly capabilities into universal completion prerequisites. Preserve exact manifest and patch accounting for binary additions, modifications, renames and deletions. Successful optional receipts bind exact committed bytes but are not proof of model comprehension or exhaustive validation.
+
 ## Source-Session-Grounded Workflow
 
 Apply this section whenever the review instruction supplies a source session.

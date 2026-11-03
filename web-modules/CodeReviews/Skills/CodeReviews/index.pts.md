@@ -65,3 +65,9 @@ Commit-free turns return the typed callback result with `ShouldQueue=false`. Exi
 - Add ToSearchCodeReviewManagedAssemblyPage mirrored with eager profile: exact repository/SHA/path/literal and bounded offset paging over all matches in the complete passive listing. It supplements rather than replaces patches/receipts/guides, and exposes no generic filesystem or mutation.
 - Authored with the typed ProtoScriptProjectFileTools parse/project-upsert API against this owning source. Regenerated index.pts.lazy.json with canonical LazySkillIndexGenerator in an isolated temporary CoreLite project:34prototypes,zero diagnostics; maps the added action and phrase. Generated sidecar ownership belongs here.
 - Validation: full140/140owning tests pass, zero skipped, including eager/lazy compile and complete/missing/tampered search coverage. Installed model acceptance is separate.
+
+
+## 2026-11-03 — Optional asset tool and search scope
+- ToInspectCodeReviewCommittedBinary description now states optional targeted use, explicit nonfatal Unavailable decoder result, invalid-binding rejection and no sibling failure/asset-validity claim. ToSearchCodeReviewManagedAssemblyPage removes obsolete required both-receipt language and states search limitations do not become source-completion failures. Action identities/signatures/roots unchanged; lazy ownership index does not change.
+- Owning-source scoped patch used for initial description; subsequent search refinement parsed/upserted through ProtoScriptProjectFileTools against this external project. No installed package edited.
+- Validation: full156/156owning tests passed, including real eager/lazy compilation and native inspection binding;30/30JS and Release publish passed. Installed/live staging acceptance is separate.
