@@ -110,7 +110,7 @@ prototype ToGetGlobalCodeReviewRecentSourceTurns : GlobalCodeReviewsAgentAction
 [SemanticProgram.InfinitivePhrase("to read authoritative language guidance for global code review")]
 prototype ToGetGlobalCodeReviewLanguageGuidance : GlobalCodeReviewsAgentAction
 {
-	Description = @"Language - exact CSharp, ProtoScript, ProtoScriptMinimum, JavaScript, SQL, Metabase, Repository, Business, UseCases or UI. ProtoScriptMinimum reads the installed canonical project reference required for non-trivial .pts review; do not search the reviewed application for that shared reference. UI reads the UI-STD-01 user interface standard required for user-facing markup, style and page-script changes. CharacterOffset starts at zero; follow NextCharacterOffset to EndOfContent. Verify Identity, ContentSha256 and TotalCharacters stay identical. Reads complete canonical trusted guidance, never a summary.";
+	Description = @"Language - exact CSharp, ProtoScript, ProtoScriptMinimum, JavaScript, SQL, Metabase, Repository, Business, UseCases, UI or Sidebar. ProtoScriptMinimum reads the installed canonical project reference required for non-trivial .pts review; do not search the reviewed application for that shared reference. UI reads the UI-STD-01 user interface standard required for user-facing markup, style and page-script changes. CharacterOffset starts at zero; follow NextCharacterOffset to EndOfContent. Verify Identity, ContentSha256 and TotalCharacters stay identical. Sidebar reads the canonical installed Nodes/Personal/Coding/SidebarGoverningRules.md required for Buffaly session sidebar work or an explicit governing reference; do not search the reviewed application for that shared document. Reads complete canonical trusted guidance, never a summary.";
 	function Execute(string Language, int CharacterOffset = 0) : string { return CodeReviewEvidencePages.GetGuidancePageJson(_opsAgent, Language, CharacterOffset, false); }
 }
 
@@ -280,4 +280,5 @@ prototype ToSearchCodeReviewManagedAssemblyPage : CodeReviewsAgentToolsAction, G
  Description = @"Search every line of a complete passive managed DLL listing at exact RepositoryPath/CommitSha/Path for case-sensitive Literal. Returns ALL matching lines and five context lines each side, exact blob/listing hashes and a match count; no match cap. Zero matches proves only literal absence. Follow CharacterOffset/NextCharacterOffset through EndOfContent. Use this before opening a whole large DLL to investigate source/package correspondence. It does not replace mandatory source patches, required guides, source context or behavior tests. This search is optional; failure or an incomplete search is an evidence limitation, not a code-review completion failure.";
  function Execute(string RepositoryPath, string CommitSha, string Path, string Literal, int CharacterOffset = 0) : string { return CodeReviewEvidencePages.GetManagedAssemblySearchPageJson(RepositoryPath, CommitSha, Path, Literal, CharacterOffset); }
 }
+
 
