@@ -31,3 +31,6 @@ Advanced existing versioned asset references to0.1.15 for task-scoped feedback c
 
 ## 2026-11-03 - asset refresh for the b284867 review fixes
 Advanced email-dispatch.css, email-dispatch-ui.js and email-dispatch.js to ?v=0.2.1 (vendor assets stay at 0.2.0) so browsers holding the 0.2.0 copies load the retired-suggestion, focus, spinner and time-cell fixes. No layout, navigation or command change. The walkthrough loaded email-dispatch-ui.js?v=0.2.1 and passed 1/1; flow and seed 20/20; routine 40/40.
+## 2026-11-03 — inbox polling cache key
+Advanced only email-dispatch.js to 0.2.2 so a page reload fetches the inbox polling fix. No layout/default-filter changes. Validation: targeted InboxRefreshTests 1/1, routine 42/42 and ReviewWalkthroughTests 1/1 passed against current assets.
+

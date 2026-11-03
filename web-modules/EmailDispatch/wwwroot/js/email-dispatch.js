@@ -4,7 +4,7 @@
 // he chooses. Every call goes through the generated JsonWs clients; the server owns every guard and state change.
 (() => {
  const {$,text,escape,link,notify,run,request,button,status,date,facts,PagedGrid,dialog}=EmailDispatchUi;
- let selectedEmail=null, selectedRule=null, ruleSession="", actingWork=null, pickMode="send", picked=null, pollTimer=0;
+ let selectedEmail=null, selectedRule=null, ruleSession="", actingWork=null, pickMode="send", picked=null, pollTimer=0, inboxTimer=0;
  // Mirrors EmailDispatchActions.OpenStates and Confirm's state check, so a command is shown only where the server accepts it.
  const openStates=["Pending","Suggested","AutomaticReady","NeedsDestination","Notice","NoAction","Unclassified","Conflict","NeedsReview","Error","PreviouslyHandled","Prepared","AgentEvaluationRequired","PreparationFailed","Disabled"];
  const isOpen=work=>!work.MessageKey&&!work.LocalDisposition&&openStates.includes(work.State);
@@ -121,8 +121,21 @@
    $("receipt-results").append(region);
   }
  }
+ // Refresh only the current server-paged inbox. Keep its search, filter and page, and never
+ // replace a focused row or overlap a pending read. Detail polling remains separate.
+ function scheduleInbox() {
+  clearTimeout(inboxTimer);
+  inboxTimer=setTimeout(async()=>{
+   if($("view-inbox").hidden) return;
+   if(!document.hidden&&!document.querySelector("dialog[open]")&&!$("inbox").contains(document.activeElement)&&$("inbox").getAttribute("aria-busy")!=="true") {
+    inboxGrid.Refresh(true);
+    await run(null,accounts);
+   }
+   if(!$("view-inbox").hidden) scheduleInbox();
+  },10000);
+ }
  async function route() {
-  EmailDispatchUi.clearNotice(); clearTimeout(pollTimer);
+  EmailDispatchUi.clearNotice(); clearTimeout(pollTimer); clearTimeout(inboxTimer);
   for(const open of document.querySelectorAll("dialog[open]")) open.close();
   const [name,id]=location.hash.slice(1).split("/");
   if(name==="email"&&id) await openEmail(decodeURIComponent(id));
@@ -130,7 +143,7 @@
   else if(name==="rule"&&id) await openRule(decodeURIComponent(id));
   else if(name==="evidence"){show("evidence");await evidence();}
   else if(name==="accounts"){show("accounts");await accounts();}
-  else {show("inbox");inboxGrid.Refresh(true);await accounts();}
+  else {show("inbox");inboxGrid.Refresh(true);scheduleInbox();await accounts();}
  }
  function submit(id,control,action){$(id).addEventListener("submit",event=>{event.preventDefault();run($(control),action);});}
  function click(id,action){$(id).addEventListener("click",()=>run($(id),action));}

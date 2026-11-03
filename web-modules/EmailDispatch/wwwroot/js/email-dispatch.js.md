@@ -1,5 +1,9 @@
 # email-dispatch.js history
 
+## 2026-11-03 — refresh the inbox, not only open email
+Added a separate ten-second inbox timer owned by route()/scheduleInbox(). Reuses the bounded server-paged grid and retains filter, search and page. Skips hidden documents, open dialogs, focused email links and in-flight inbox reads; stops when leaving the inbox. Account status is re-read alongside it. NeedsAttention remains decision-only; Pending mail remains available through Waiting for the dispatch agent or All email. Confirm/Note/Pick and detail polling are unchanged. The missing inbox timer was reproduced in the installed 0.2.1 asset; its only poll was the open-email schedule().
+Validation: InboxRefreshTests 1/1, routine 42/42 and ReviewWalkthroughTests 1/1 passed. Live package validation follows separately; no delivery or protected-process restart used.
+
 ## 2026-11-01
 Added real generated-client account/sync, source editor/readback, paged server search, email body review, effect-free saved-policy test and local disposition behavior. Preserves failed input, uses busy guards and safe textContent, no client mailbox filter or model routing. Explicit collapsed panels follow the user's override.24/24 tests passed with Playwright390/1280 against547 real messages; no page errors or overflow. This milestone has no semantic editor, preparation or send controls, which remain implementation work.
 
