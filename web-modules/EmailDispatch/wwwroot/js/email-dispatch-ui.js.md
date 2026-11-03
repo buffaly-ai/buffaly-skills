@@ -1,5 +1,8 @@
 # email-dispatch-ui.js — shared controls
 
+## 2026-11-03 — opt-in live server search
+PagedGrid.liveSearch debounces input by 250ms, invalidates old requests immediately, shows Searching, resets paging through the existing grid and supports clearing/composition. cancelSearch cancels pending timers and obsolete responses; MakeDataRequest now drops results unless they are the newest requested version, not merely newer than the last rendered version. Stale success/error paths balance the outstanding-call counter. Existing inbox/rules stay submit-driven; destination pickers opt in. Validation: live-search and compact decision browser fixtures passed 2/2; archive, inbox interaction, polling and exact-command regression checks passed 4/4 in a broader six-test run. Its other failures were an installed-inbox test hard-coded to old asset v0.2.2 and the previously documented empty Rules prerequisite. No generated grid/core code was edited.
+
 ## 2026-11-03 — shared row link target
 Added delegated data-row-href navigation for ordinary primary clicks outside inner interactive controls. Keeps subject anchor native behavior, modifier clicks and text selection; dynamically refreshed grids need no rebinding. No business command runs on row opening. Focused fixture browser suite passed 2/2 for row navigation and existing polling; added inner-button assertion is verified in the final batch. Installed acceptance is separate.
 

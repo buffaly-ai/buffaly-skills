@@ -56,3 +56,6 @@ Advanced only email-dispatch.js cache key0.2.5→0.2.6 so the bounded iframe-siz
 
 ## 2026-11-03 — approved compact decision layout
 Moved Archive host to the message toolbar and Check saved rules into existing evidence; renamed reconsideration/picker prompts and submit labels to state their effects. Shared UI/behavior asset keys0.2.4/0.2.7. No routing/API/guard changes. Combined sourceUI8/8 and exact-command+layout2/2 passed; routine43/43. Deployment evidence recorded separately.
+# 2026-11-03 — live picker assets
+Bumped shared UI and application script query versions to 0.2.5/0.2.8 so the installed app loads live destination search. No layout or command changes in this file. Source live-search and compact decision browser tests passed 2/2.
+

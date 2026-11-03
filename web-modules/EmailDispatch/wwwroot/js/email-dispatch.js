@@ -22,6 +22,8 @@
  // Pick a session: Buffaly's recent sessions, server-searched and paged; archived sessions and the dispatch agent are excluded by the server.
  const pickGrid=new PagedGrid("pick-grid","pick-pager","pick-search",args=>request(EmailObservations,"GetRecentSessions",{...args,Search:args.Search??""}),items=>`<table class="ed-grid Grid"><thead><tr><th class="ed-pick-cell"><span class="visually-hidden">Select</span></th><th>Session</th><th class="ed-time-cell">Last active</th></tr></thead><tbody>${items.map((session,index)=>`<tr><td class="ed-pick-cell"><input type="radio" name="pick-session" id="pick-${index}" value="${escape(session.SessionKey)}" data-name="${escape(session.Name)}"${picked?.SessionKey===session.SessionKey?" checked":""}></td><td><label for="pick-${index}" class="ed-pick-label">${escape(session.Name)}</label><span class="ed-cell-secondary">${escape(session.Purpose)}</span></td><td class="ed-time-cell">${escape(date(session.LastUpdated))}</td></tr>`).join("")}</tbody></table>`,"No sessions match. Change the search.");
  pickGrid.SkipSize=10;
+ pickGrid.liveSearch(()=>{picked=null;pickSelection();},()=>$("pick-dialog").open);
+ $("pick-dialog").addEventListener("close",()=>pickGrid.cancelSearch());
  async function accounts() {
   const values=await request(EmailSyncAccounts,"GetAccounts",{}); $("accounts").replaceChildren();
   syncAvailable=values.some(account=>account.Available); syncControls();
