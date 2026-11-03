@@ -49,3 +49,10 @@ Advanced only email-dispatch.js to 0.2.2 so a page reload fetches the inbox poll
 
 ## 2026-11-03 — isolated formatted HTML email
 Added titled sandbox iframe without allow-same-origin/forms/top-navigation and separate formatted-body loading region; retained captured #body for plain messages and failure. App-owned nonce script alone reports height; email scripts removed/CSPblocked. Advanced CSS/behavior/EmailObservations client cache keys0.2.5. Generated EmailObservations .ashx.js/.json map new typed read. CombinedUI6/6/routine43/43 pass; live screenshot verification follows.
+
+## 2026-11-03 — review P2: resize fix asset revision
+Advanced only email-dispatch.js cache key0.2.5→0.2.6 so the bounded iframe-sizing listener replaces the earlier feedback-prone behavior when distributed. No markup, command or sandbox-permission changes. Source browser validation formatted4/4, combinedUI7/7 and routine43/43 pass. Installed package remains unchanged by this review follow-up.
+
+
+## 2026-11-03 — approved compact decision layout
+Moved Archive host to the message toolbar and Check saved rules into existing evidence; renamed reconsideration/picker prompts and submit labels to state their effects. Shared UI/behavior asset keys0.2.4/0.2.7. No routing/API/guard changes. Combined sourceUI8/8 and exact-command+layout2/2 passed; routine43/43. Deployment evidence recorded separately.

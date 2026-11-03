@@ -62,11 +62,14 @@
    loading.textContent="Formatted email could not be loaded. Showing the captured text.";
   }
  }
+ // Bound auto-expansion: retained vh/percentage CSS can otherwise grow with every parent resize.
+ // Larger mail scrolls inside the frame; saturation ends the feedback without discarding content.
  // The opaque-origin frame can report its size only, never commands or arbitrary DOM mutations.
  window.addEventListener("message",event=>{
   const frame=$("body-html"), data=event.data;
-  if(event.source!==frame.contentWindow||event.origin!=="null"||!bodyToken||data?.kind!=="email-body-size"||data.token!==bodyToken||!Number.isFinite(data.height)||data.height<1||data.height>200000) return;
-  frame.style.height=(data.height+2)+"px";
+  if(event.source!==frame.contentWindow||event.origin!=="null"||!bodyToken||data?.kind!=="email-body-size"||data.token!==bodyToken||!Number.isFinite(data.height)||data.height<1) return;
+  const height=Math.max(120,Math.min(2400,Math.ceil(data.height)+2))+"px";
+  if(frame.style.height!==height) frame.style.height=height;
  });
  async function reload(focus) { await load(selectedEmail.Email.ObservationKey); works(); schedule(); if(focus) $("works").querySelector(".ed-decision")?.focus({preventScroll:true}); }
  // The feed worker decides noted email, and learns after a send, in the background. While either is pending the open email
@@ -78,41 +81,33 @@
   pollTimer=setTimeout(()=>run(null,async()=>{ if(location.hash!=="#email/"+encodeURIComponent(key)) return; if(document.querySelector("dialog[open]")) { schedule(); return; } await reload(false); }),10000);
  }
  function works() {
-  $("works").replaceChildren();
+   $("works").replaceChildren(); $("email-archive-actions").replaceChildren();
   // Only current decisions. A decision the requeue replaced (Superseded) is history: the evidence view shows it with what
   // it held, never as a second "Send to" beside the new decision (UI-STD-01 Principle 13).
-  const current=selectedEmail.Works.filter(work=>work.State!=="Superseded");
+   const current=selectedEmail.Works.filter(work=>work.State!=="Superseded");
+   $("email-evidence").href="#evidence/"+encodeURIComponent(selectedEmail.Email.ObservationKey);
   if(!selectedEmail.Frame||selectedEmail.Email.ReviewState==="Spam"||!current.length) { $("works").append(status(selectedEmail.Email.ReviewState)); return; }
   // The exact text a destination receives quotes the whole email twice inside the dispatch envelope, so it is not printed
   // under the message. Each decision links to it in the evidence view instead (UI-STD-01 Principle 4).
   for(const work of current) $("works").append(decision(work));
  }
- // One work as Matt sees it: the status and where it goes, then only the commands that apply, then who decided and why,
- // learning, a link to the exact text the destination receives, and his notes. The commands come before the agent's
- // reason, which can run to several paragraphs, so Confirm stays in view on a phone.
+  // The reading view answers what happened and what to do next. The full reasoning stays in evidence.
  function decision(work) {
   const state=work.LocalDisposition||work.State, section=document.createElement("section");
-  section.className="ed-decision"; section.tabIndex=-1; section.setAttribute("aria-label",EmailDispatchUi.state(state)[0]);
-  const head=document.createElement("div"); head.className="ed-decision-head"; head.append(status(state));
-  if(work.Destination) head.append(text("span",(work.MessageKey?"Sent to ":"Send to ")+work.Destination,"ed-work-destination"));
+   section.className="ed-decision"; section.tabIndex=-1; section.setAttribute("aria-label",EmailDispatchUi.state(state,work.Destination)[0]);
+   const head=document.createElement("div"); head.className="ed-decision-head"; head.append(status(state,work.Destination));
   section.append(head);
   const actions=document.createElement("div"); actions.className="ed-actions";
-   if(isConfirmable(work)) actions.append(button("Confirm",control=>openConfirm(work,control),true,"fa-check"));
+   if(isConfirmable(work)) actions.append(button("Send to "+work.Destination,control=>openConfirm(work,control),true,"fa-check"));
    const processed=!work.LocalDisposition&&["Accepted","NoAction","Notice","WakeRecorded","PreviouslyHandled"].includes(work.State);
-   if(processed) actions.append(button("Archive",()=>setDisposition(work,"Archived"),true,"fa-archive"));
-  if(isOpen(work)) actions.append(button("Add a note",control=>openNote(work,control)),button("Pick a session",control=>openPick("send",work,control)));
-  if(["Failed","Uncertain"].includes(work.LearningState)) actions.append(button("Retry learning",async()=>{await request(EmailWorks,"RetryLearning",{WorkKey:work.WorkKey});await reload(true);notify("Learning runs again on the next pass.");}));
-  if(actions.childElementCount) section.append(actions);
-  section.append(facts([["Decided by",deciders[work.Source]],["Why",work.Source==="Agent"?work.Decision?.Rationale:null],["Learning",learning[work.LearningState]]]));
-  if(work.Instruction) { const exact=document.createElement("p"); exact.className="ed-exact"; exact.append(link("See exactly what "+(work.Destination||"the destination")+(work.MessageKey?" received":" receives"),"#evidence/"+encodeURIComponent(selectedEmail.Email.ObservationKey)+"/"+encodeURIComponent(work.WorkKey))); section.append(exact); }
-  if(work.Notes.length) { const list=document.createElement("ul"); list.className="ed-notes"; for(const note of work.Notes) list.append(text("li",note.Text+" · "+date(note.Utc))); section.append(text("p","Your notes","ed-notes-label"),list); }
-  const secondary=document.createElement("div"); secondary.className="ed-secondary-actions";
-  const node=work.LearnedDecision?.TerminalPrototypeName||work.Decision?.TerminalPrototypeName;
-  if(work.Source==="Rule"&&work.RuleNode) secondary.append(link("Open rule","#rule/"+encodeURIComponent(work.RuleNode)));
-  else if(node) secondary.append(link("Make this a rule","#rule/"+encodeURIComponent(node)));
-   if(work.LocalDisposition) secondary.append(button("Restore to review",()=>setDisposition(work,null),false,"fa-undo"));
-   else { if(!processed) secondary.append(button("Archive",()=>setDisposition(work,"Archived"),false,"fa-archive")); secondary.append(button("Dismiss locally",()=>setDisposition(work,"Dismissed"))); }
-  section.append(secondary);
+   if(isOpen(work)) {
+    const canPick=work.State!=="Pending";
+    if(canPick) actions.append(button("Choose destination and send",control=>openPick("send",work,control),!isConfirmable(work)&&work.State!=="Error"));
+    actions.append(button("Ask the agent to reconsider",control=>openNote(work,control),work.State==="Error"));
+   }
+   if(work.LocalDisposition) actions.append(button("Restore to review",()=>setDisposition(work,null),true,"fa-undo"));
+   else $("email-archive-actions").append(button("Archive",()=>setDisposition(work,"Archived"),processed,"fa-archive"));
+   if(actions.childElementCount) section.append(actions);
   return section;
  }
   async function setDisposition(work,disposition) {
@@ -122,7 +117,7 @@
   }
  function openConfirm(work,control) { actingWork=work; $("confirm-subject").textContent=selectedEmail.Email.Subject||"No subject"; $("confirm-sentence").textContent="Sends this email to "+work.Destination+"."; confirmDialog.open(control); }
  function openNote(work,control) { if(actingWork?.WorkKey!==work.WorkKey) $("note-text").value=""; actingWork=work; $("note-subject").textContent=selectedEmail.Email.Subject||"No subject"; noteDialog.open(control); }
- function openPick(mode,work,control) { pickMode=mode; actingWork=work; picked=null; $("pick-title").textContent=mode==="send"?"Pick a session":"Choose the rule's session"; $("pick-subject").textContent=mode==="send"?(selectedEmail.Email.Subject||"No subject"):selectedRule.EntityName; $("pick-note-field").hidden=mode!=="send"; $("pick-note").value=""; $("pick-search").value=""; $("pick-confirm").lastChild.textContent=mode==="send"?"Send":"Use this session"; pickSelection(); pickDialog.open(control); pickGrid.reset(); }
+  function openPick(mode,work,control) { pickMode=mode; actingWork=work; picked=null; $("pick-title").textContent=mode==="send"?"Choose destination and send":"Choose the rule's session"; $("pick-subject").textContent=mode==="send"?(selectedEmail.Email.Subject||"No subject"):selectedRule.EntityName; $("pick-note-field").hidden=mode!=="send"; $("pick-note").value=""; $("pick-search").value=""; $("pick-confirm").lastChild.textContent=mode==="send"?"Send to selected session":"Use this session"; pickSelection(); pickDialog.open(control); pickGrid.reset(); }
  function pickSelection() { $("pick-count").textContent=picked?"Selected: "+picked.Name:"No session selected"; $("pick-confirm").disabled=!picked; }
  // Reports the work's new state, so a send the destination did not accept is never described as sent.
  async function finishSend(control,key) { control.close(); await reload(true); const work=selectedEmail.Works.find(value=>value.WorkKey===key); notify(EmailDispatchUi.state(work?.State)[0]+".",work?.State==="Accepted"?"Success":"Warning"); }
@@ -153,6 +148,14 @@
   $("receipt-results").append(text("h3",selectedEmail.Email.Subject),facts([["Projection error",selectedEmail.ProjectionError],["Observation identity",selectedEmail.Email.ObservationKey]]));
   for(const work of selectedEmail.Works) {
    const region=document.createElement("section"); region.className="ed-region";
+   region.append(facts([["Decided by",deciders[work.Source]],["Why",work.Source==="Agent"?work.Decision?.Rationale:null],["Learning",learning[work.LearningState]]]));
+   const commands=document.createElement("div"); commands.className="ed-secondary-actions";
+   const node=work.LearnedDecision?.TerminalPrototypeName||work.Decision?.TerminalPrototypeName;
+   if(work.Source==="Rule"&&work.RuleNode) commands.append(link("Open rule","#rule/"+encodeURIComponent(work.RuleNode)));
+   else if(node) commands.append(link("Make this a rule","#rule/"+encodeURIComponent(node)));
+   if(["Failed","Uncertain"].includes(work.LearningState)) commands.append(button("Retry learning",async()=>{await request(EmailWorks,"RetryLearning",{WorkKey:work.WorkKey});await load(selectedEmail.Email.ObservationKey);await evidence();notify("Learning runs again on the next pass.");}));
+   region.append(commands);
+   if(work.Notes.length) { const list=document.createElement("ul"); list.className="ed-notes"; for(const note of work.Notes) list.append(text("li",note.Text+" · "+date(note.Utc))); region.append(text("p","Your instructions","ed-notes-label"),list); }
    region.append(status(work.State),facts([["Reason",work.Reason],["Work identity",work.WorkKey],["Message identity",work.MessageKey],["Destination",work.Destination],["Local disposition",work.LocalDisposition||"None"],["Decision revision",work.DecisionRevision],["Decided by",work.Source],["Rule node",work.RuleNode],["Rule path",work.RulePath?.join(" › ")],["Learning",work.LearningState],["Learning detail",work.LearningDetail],
     // What the legacy requeue replaced (EmailLegacyRequeue): the row's earlier state, processor, destination and reason.
     ["Requeued",work.Requeue&&date(work.Requeue.AtUtc)],["Before the requeue",work.Requeue&&EmailDispatchUi.state(work.Requeue.State)[0]],["Processor before the requeue",work.Requeue?.ProcessorKey],["Destination before the requeue",work.Requeue?.Destination],["Reason before the requeue",work.Requeue?.Reason]]));
@@ -201,7 +204,7 @@
  function click(id,action){$(id).addEventListener("click",()=>run($(id),action));}
  submit("search-form","search-form",()=>inboxGrid.reset());$("state").addEventListener("change",()=>inboxGrid.reset());submit("rule-search-form","rule-search-form",()=>rulesGrid.reset());
  submit("confirm-form","confirm-send",async()=>{await request(EmailWorks,"ConfirmDispatch",{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision});await finishSend(confirmDialog,actingWork.WorkKey);});
- submit("note-form","note-save",async()=>{await request(EmailWorks,"AddDispatchNote",{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,Note:$("note-text").value});$("note-text").value="";noteDialog.close();await reload(true);notify("Note saved. Waiting for the dispatch agent.");});
+  submit("note-form","note-save",async()=>{await request(EmailWorks,"AddDispatchNote",{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,Note:$("note-text").value});$("note-text").value="";noteDialog.close();await reload(true);notify("Waiting for the dispatch agent.");});
  $("pick-grid").addEventListener("change",event=>{const input=event.target.closest("input[name=pick-session]");if(!input)return;picked={SessionKey:input.value,Name:input.dataset.name};pickSelection();});
  submit("pick-search-form","pick-search-form",()=>{picked=null;pickSelection();pickGrid.reset();});
  click("pick-confirm",async()=>{
