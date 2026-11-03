@@ -124,7 +124,7 @@ prototype ToGetCodeReviewCommitManifestPage : CodeReviewsAgentToolsAction, Globa
 [SemanticProgram.InfinitivePhrase("to read a complete code review patch page")]
 prototype ToGetCodeReviewCommitPatchPage : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
 {
- Description = @"Exact repository/full SHA plus FileIndex from complete manifest. Read every entry from CharacterOffset zero through EndOfContent. Verify Identity, ParentSha, ContentSha256 and TotalCharacters on continuation. Binary metadata is not textual code review; obtain adequate evidence or fail explicitly.";
+ Description = @"Exact repository/full SHA plus FileIndex from complete manifest. Read every entry from CharacterOffset zero through EndOfContent; verify stable Identity, ParentSha, ContentSha256 and TotalCharacters. Long-line text may use Complete exact text changes v1: every changed span plus context and exact offsets, with only ordinally identical text omitted and both committed-text hashes. This is complete evidence, not a generated-file exemption; do not also fetch the raw minified bundle. Binary marker patches account for assets without routine decoding or disassembly; unavailable optional inspection does not fail source review.";
  function Execute(string RepositoryPath, string CommitSha, int FileIndex, int CharacterOffset = 0) : string { return CodeReviewEvidencePages.GetCommitPatchPageJson(RepositoryPath, CommitSha, FileIndex, CharacterOffset); }
 }
 
@@ -280,3 +280,4 @@ prototype ToSearchCodeReviewManagedAssemblyPage : CodeReviewsAgentToolsAction, G
  Description = @"Search every line of a complete passive managed DLL listing at exact RepositoryPath/CommitSha/Path for case-sensitive Literal. Returns ALL matching lines and five context lines each side, exact blob/listing hashes and a match count; no match cap. Zero matches proves only literal absence. Follow CharacterOffset/NextCharacterOffset through EndOfContent. Use this before opening a whole large DLL to investigate source/package correspondence. It does not replace mandatory source patches, required guides, source context or behavior tests. This search is optional; failure or an incomplete search is an evidence limitation, not a code-review completion failure.";
  function Execute(string RepositoryPath, string CommitSha, string Path, string Literal, int CharacterOffset = 0) : string { return CodeReviewEvidencePages.GetManagedAssemblySearchPageJson(RepositoryPath, CommitSha, Path, Literal, CharacterOffset); }
 }
+

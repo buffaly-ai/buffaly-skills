@@ -54,6 +54,7 @@ Read and follow every guidance file corresponding to the changed file types. The
 
 1. Resolve the exact requested target from the instruction and supplied bindings.
 2. Inspect direct evidence for that target: commit, diff, patch, changed files, tests, and necessary surrounding code.
+   The bounded patch reader may return `Complete exact text changes v1` for long-line text, including minified generated bundles. Read every returned page and changed range; exact offsets and committed-text hashes bind both sides, and only ordinally equal spans are omitted. This is complete change evidence, not a generated-file exemption. Do not reopen megabytes of raw minified text or require package/generator validation merely because the output is generated; review the authored changes and relevant callers normally. No filename, size or generation claim waives changed code.
 3. If one commit is named, review that commit rather than searching history for another target.
 4. If the target is ambiguous, use safe git and file discovery before asking a question.
 5. Do not submit findings for a different commit from a reused child session.
