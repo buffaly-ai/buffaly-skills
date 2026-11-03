@@ -9,6 +9,14 @@ window.EmailDispatchUi = (() => {
  const text = (tag, value, className = "") => { const element = document.createElement(tag); element.textContent = value ?? ""; element.className = className; return element; };
  const escape = value => { const element = text("span", value); return element.innerHTML.replaceAll('"', "&quot;"); };
  const link = (label, href, className = "") => { const element = text("a", label, className); element.href = href; return element; };
+ // Row navigation extends the existing link target without stealing inner controls or text selection.
+ document.addEventListener("click", event => {
+  if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+  const row = event.target.closest("tr[data-row-href]");
+  if (!row || event.target.closest("a,button,input,select,textarea,label,[contenteditable]")) return;
+  if (window.getSelection()?.toString()) return;
+  location.hash = row.dataset.rowHref;
+ });
  const notify = (message, kind = "Success") => { UserMessages._CurrentMessageCount = 0; UserMessages.DisplayNow(message, kind, false); };
  // A message raised while a dialog is open is shown inside that dialog: showModal() makes #status inert and the backdrop covers it.
  const hideMessage = element => { element.hidden = true; element.textContent = ""; };

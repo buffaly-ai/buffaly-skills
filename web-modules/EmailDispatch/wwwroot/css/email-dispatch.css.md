@@ -1,5 +1,8 @@
 # Email Dispatch shared visual owner
 
+## 2026-11-03 — sync command and row affordance
+Added shared ed-sync-tools grouping and ed-icon-button compact padding, plus pointer affordance for navigable data-row-href rows. Existing shared type/button/theme/status styles remain; no local font or icon library. Header markup uses a normal button with Font Awesome refresh icon beside status. Focused fixture browser tests 2/2 pass; live visual validation recorded separately.
+
 `email-dispatch.css` is the sole module visual language. Every task view loads it after the source-linked Bootstrap baseline. It owns body/headings/control sizes, spacing, shell/nav, grid/ellipsis/status, subject/body/instruction, read-only facts, empty/error/success, section, evidence, focus and risky-command presentation. Do not add per-view font/button variants.
 
 Shared markup:

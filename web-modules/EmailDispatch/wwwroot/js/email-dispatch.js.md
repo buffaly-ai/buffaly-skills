@@ -1,5 +1,8 @@
 # email-dispatch.js history
 
+## 2026-11-03 — whole-row inbox navigation and Gmail check now
+Inbox rows expose their existing detail link to the shared navigation owner. Added one checkGmail operation shared by the Accounts command and inbox refresh icon; it calls the existing generated Synchronize client for work-main, guards simultaneous clicks, refreshes account status and the existing inbox grid without resetting search/filter/page. Existing run owns spinner/error feedback; no dispatch/delivery operation added. UI-STD-01 Rule 10: inbox task remains review mail; row opens detail, header icon checks Gmail, search/filter/page remain unchanged. Focused fixture tests 2/2 passed (row sender/date/status/blank targets, subject link, sync busy/error, view preservation, zero send requests, existing polling regression); actual installed verification follows in session evidence.
+
 ## 2026-11-03 — refresh the inbox, not only open email
 Added a separate ten-second inbox timer owned by route()/scheduleInbox(). Reuses the bounded server-paged grid and retains filter, search and page. Skips hidden documents, open dialogs, focused email links and in-flight inbox reads; stops when leaving the inbox. Account status is re-read alongside it. NeedsAttention remains decision-only; Pending mail remains available through Waiting for the dispatch agent or All email. Confirm/Note/Pick and detail polling are unchanged. The missing inbox timer was reproduced in the installed 0.2.1 asset; its only poll was the open-email schedule().
 Validation: InboxRefreshTests 1/1, routine 42/42 and ReviewWalkthroughTests 1/1 passed. Live package validation follows separately; no delivery or protected-process restart used.

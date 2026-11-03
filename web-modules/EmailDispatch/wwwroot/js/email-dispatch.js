@@ -4,7 +4,7 @@
 // he chooses. Every call goes through the generated JsonWs clients; the server owns every guard and state change.
 (() => {
  const {$,text,escape,link,notify,run,request,button,status,date,facts,PagedGrid,dialog}=EmailDispatchUi;
- let selectedEmail=null, selectedRule=null, ruleSession="", actingWork=null, pickMode="send", picked=null, pollTimer=0, inboxTimer=0;
+ let selectedEmail=null, selectedRule=null, ruleSession="", actingWork=null, pickMode="send", picked=null, pollTimer=0, inboxTimer=0, syncBusy=false, syncAvailable=false;
  // Mirrors EmailDispatchActions.OpenStates and Confirm's state check, so a command is shown only where the server accepts it.
  const openStates=["Pending","Suggested","AutomaticReady","NeedsDestination","Notice","NoAction","Unclassified","Conflict","NeedsReview","Error","PreviouslyHandled","Prepared","AgentEvaluationRequired","PreparationFailed","Disabled"];
  const isOpen=work=>!work.MessageKey&&!work.LocalDisposition&&openStates.includes(work.State);
@@ -16,7 +16,7 @@
  const testLabels={RouteSelected:"A rule sends it to a session",ProcessorSelected:"A processor rule matched",AgentEvaluationRequired:"The dispatch agent decides",Notice:"Notice only",Disabled:"The matching rule is off, so the dispatch agent decides",Unclassified:"No rule matched, so the dispatch agent decides",NeedsReview:"Needs review",Conflict:"Two rules matched",Error:"The rule check failed"};
  const confirmDialog=dialog("confirm-dialog"), noteDialog=dialog("note-dialog"), pickDialog=dialog("pick-dialog"), clearDialog=dialog("clear-dialog");
  function show(name) { document.querySelectorAll(".ed-view").forEach(view=>view.hidden=view.id!=="view-"+name); const nav=["email","inbox","evidence"].includes(name)?"inbox":name==="rule"?"rules":name; document.querySelectorAll(".ed-nav a").forEach(a=>a.toggleAttribute("aria-current",a.hash==="#"+nav)); document.querySelectorAll('.ed-nav a[aria-current]').forEach(a=>a.setAttribute("aria-current","page")); window.scrollTo(0,0); const heading=$("view-"+name).querySelector("h1"); heading?.focus({preventScroll:true,focusVisible:false}); }
- const inboxGrid=new PagedGrid("inbox","inbox-pager","search", args=>request(EmailObservations,"GetInbox",{AccountKey:"work-main",State:$("state").value,...args}), items=>`<table class="ed-grid Grid"><thead><tr><th class="ed-sender-cell">From</th><th>Email</th><th class="ed-time-cell">Received</th><th class="ed-state-cell">Status</th></tr></thead><tbody>${items.map(item=>{const [name,kind]=EmailDispatchUi.state(item.ReviewState);return `<tr><td class="ed-sender-cell"><span class="ed-cell-secondary" title="${escape(item.Sender)}">${escape(item.Sender)}</span></td><td><a href="#email/${encodeURIComponent(item.ObservationKey)}" title="${escape(item.Subject)}">${escape(item.Subject||"No subject")}</a><span class="ed-cell-secondary ed-mobile-meta">${escape(item.Sender)} · ${escape(date(item.ReceivedUtc))}</span></td><td class="ed-time-cell">${escape(date(item.ReceivedUtc))}</td><td class="ed-state-cell"><span class="ed-status ed-status-${kind}">${escape(name)}</span></td></tr>`;}).join("")}</tbody></table>`,"No emails match. Change the search or filter.");
+ const inboxGrid=new PagedGrid("inbox","inbox-pager","search", args=>request(EmailObservations,"GetInbox",{AccountKey:"work-main",State:$("state").value,...args}), items=>`<table class="ed-grid Grid"><thead><tr><th class="ed-sender-cell">From</th><th>Email</th><th class="ed-time-cell">Received</th><th class="ed-state-cell">Status</th></tr></thead><tbody>${items.map(item=>{const [name,kind]=EmailDispatchUi.state(item.ReviewState);return `<tr data-row-href="#email/${encodeURIComponent(item.ObservationKey)}"><td class="ed-sender-cell"><span class="ed-cell-secondary" title="${escape(item.Sender)}">${escape(item.Sender)}</span></td><td><a href="#email/${encodeURIComponent(item.ObservationKey)}" title="${escape(item.Subject)}">${escape(item.Subject||"No subject")}</a><span class="ed-cell-secondary ed-mobile-meta">${escape(item.Sender)} · ${escape(date(item.ReceivedUtc))}</span></td><td class="ed-time-cell">${escape(date(item.ReceivedUtc))}</td><td class="ed-state-cell"><span class="ed-status ed-status-${kind}">${escape(name)}</span></td></tr>`;}).join("")}</tbody></table>`,"No emails match. Change the search or filter.");
  // Rule nodes come from the published rule snapshot, so the list never waits on the dispatch agent's session.
  const rulesGrid=new PagedGrid("program","rule-pager","rule-search",args=>request(EmailObservations,"GetRuleNodes",{...args,Search:args.Search??""}),items=>`<table class="ed-grid ed-grid-rules Grid"><thead><tr><th class="ed-rule-name">Rule</th><th>What happens</th><th class="ed-rule-state">Status</th></tr></thead><tbody>${items.map(rule=>`<tr><td><a href="#rule/${encodeURIComponent(rule.PrototypeName)}" title="${escape(rule.EntityName)}">${escape(rule.EntityName)}</a></td><td class="ed-rule-behavior">${escape(behavior(rule))}</td><td><span class="ed-status ed-status-${rule.Outcome==="Disabled"?"neutral":"success"}">${rule.Outcome==="Disabled"?"Off":"Active"}</span></td></tr>`).join("")}</tbody></table>`,"No rules match. To add one, open an email and choose Make this a rule.");
  // Pick a session: Buffaly's recent sessions, server-searched and paged; archived sessions and the dispatch agent are excluded by the server.
@@ -24,8 +24,22 @@
  pickGrid.SkipSize=10;
  async function accounts() {
   const values=await request(EmailSyncAccounts,"GetAccounts",{}); $("accounts").replaceChildren();
+  syncAvailable=values.some(account=>account.Available); syncControls();
   for(const account of values) { const section=document.createElement("section"); section.append(text("h2",account.Email),facts([["Connection",account.Available?"Connected":"Unavailable — reauthorization required"],["Synchronization",account.Phase==="Current"?"Up to date":account.Phase],["Captured emails",account.EnumeratedCount],["Mailbox","Work account only"]])); $("accounts").append(section); $("sync-status").textContent=account.Available?(account.Phase==="Current"?"Gmail up to date":"Gmail synchronizing"):"Gmail unavailable"; $("sync-status").className="ed-status ed-status-"+(account.Available?"success":"warning"); $("synchronize").disabled=!account.Available; }
   $("sync-evidence").textContent=JSON.stringify(values,null,2);
+  syncControls();
+ }
+ function syncControls() { for(const id of ["check-now","synchronize"]) $(id).disabled=syncBusy||!syncAvailable; }
+ async function checkGmail() {
+  if(syncBusy||!syncAvailable) return;
+  syncBusy=true; syncControls();
+  try {
+   notify("Checking Gmail…");
+   await request(EmailSyncAccounts,"Synchronize",{AccountKey:"work-main"});
+   await accounts();
+   inboxGrid.Refresh(true);
+   notify("Gmail checked.");
+  } finally { syncBusy=false; syncControls(); }
  }
  async function load(key) { selectedEmail=await request(EmailObservations,"GetEmail",{ObservationKey:key}); }
  async function openEmail(key) {
@@ -171,6 +185,6 @@
  submit("clear-form","clear-confirm",async()=>{selectedRule=await request(EmailObservations,"ClearRule",{PrototypeName:selectedRule.PrototypeName,ExpectedRulesRevision:selectedRule.RulesRevision});clearDialog.close();renderRule();notify("This node is no longer a rule. It stays in the dispatch tree.");});
  click("test",()=>testRules(selectedEmail.Email.ObservationKey,"test-result"));click("rule-test",()=>{$("rule-test-form").hidden=false;$("rule-email-search").focus();});
  submit("rule-test-form","rule-test",async()=>{const page=await request(EmailObservations,"GetInbox",{AccountKey:"work-main",State:"",Search:$("rule-email-search").value,SkipRows:0,NumRows:10});$("rule-email-results").replaceChildren();for(const email of page.Items)$("rule-email-results").append(button(email.Subject,()=>testRules(email.ObservationKey,"rule-test-result")));if(!page.Items.length)$("rule-email-results").append(text("p","No matching email.","ed-empty"));});
- click("synchronize",async()=>{notify("Synchronizing Gmail. No dispatch work will run.");await request(EmailSyncAccounts,"Synchronize",{AccountKey:"work-main"});await accounts();notify("Gmail synchronization saved.");});
+ click("synchronize",checkGmail); click("check-now",checkGmail);
  window.addEventListener("hashchange",()=>run(null,route));run(null,route);
 })();

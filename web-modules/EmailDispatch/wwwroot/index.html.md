@@ -1,5 +1,8 @@
 # Email Dispatch standalone milestone
 
+## 2026-11-03 — inbox check-now icon
+Placed a compact Font Awesome 5 refresh button beside the owning Gmail synchronization status, labelled Check Gmail now. Reuses existing Accounts synchronization operation and shared button/spinner owner; no send or routing change. Versioned module assets to0.2.3. Focused fixture tests 2/2 pass for row targets/check-now/preserved paging and polling; installed validation follows separately.
+
 2026-11-01: Added module-owned single-column intake/editor/inbox page and generated-client behavior. User explicitly requires collapsed/expanded panels, overriding UI-STD-01's general no-collapse default; explicit editable ProtoScript also requires source display. Uses the shared Bootstrap and Buffaly standalone foundation assets by source-linked packaging, no forked button/font styles. Server handles paging/search; email bodies use textContent, no email HTML execution. Real source Save readback, policy test and local disposition call generated ObjectAsync clients. JsonWsStubGenerator emitted the six descriptor/client files from Buffaly.EmailDispatch using canonical Metabase project5059. No manual transport/stubs.
 
 Validation:24/24 tests passed, including real SQL, both route families and isolated Playwright390/1280. Eight saved rules and25 of547 live observed work-main emails rendered. Screenshots/receipt in delivering session artifacts/standalone-browser. Source/host is an incomplete milestone: no semantic editor, preparation/delivery UI or publication is claimed by this batch. Parent received the stable URL and exact window. Remote password submission untested; installation-token auth tested. Shared asset link update was build-validated.

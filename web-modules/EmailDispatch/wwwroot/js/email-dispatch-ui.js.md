@@ -1,5 +1,8 @@
 # email-dispatch-ui.js — shared controls
 
+## 2026-11-03 — shared row link target
+Added delegated data-row-href navigation for ordinary primary clicks outside inner interactive controls. Keeps subject anchor native behavior, modifier clicks and text selection; dynamically refreshed grids need no rebinding. No business command runs on row opening. Focused fixture browser suite passed 2/2 for row navigation and existing polling; added inner-button assertion is verified in the final batch. Installed acceptance is separate.
+
 ## 2026-11-02
 Created one module-wide visual/control adapter used by every focused view: safe text/links/facts/status/DateUtil/UserMessages, busy guards, keyboard input modality and JsonWsGrid3 HasMore adapter. Existing Buffaly source foundation/grid own mechanics; no copied portal UI or hand-owned HTTP. Grid server requests retain bounded Search/SkipRows/NumRows, display honest range, hide needless pager and recover from loading/error/empty. Promise adapter calls generated FooObject with supported per-callback error handler via ObjectUtil.Promisify; needed because generated FooObjectAsync error handler sits on different method than generated invoke reads. No protected core/generated patch. Actual failed-save browser test now retains edits, clears busy and succeeds on next valid save. Meaning-reviewed status vocabulary; unknowns show Needs inspection, not automatic enum splitting. CSS owns look, not this source. All routine48/48 and real configured-model synthetic UI1/1 pass; final package/parent visual acceptance recorded separately.
 
