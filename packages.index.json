@@ -24011,7 +24011,7 @@
       "PackageType": "WebModule",
       "Title": "Email Dispatch",
       "Description": "Buffaly Web Module package for Email Dispatch.",
-      "Version": "0.1.26",
+      "Version": "0.1.27",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/EmailDispatch",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/EmailDispatch",
@@ -24034,19 +24034,19 @@
         },
         {
           "Path": "Buffaly.Agent.DispatchTree.Viewer.dll",
-          "Sha256": "6ea12cb950c0066d989b28932f25158ae5bd07508c5b0157f6098516a4748938"
+          "Sha256": "9d10167fad7ac07a0130fe6cfb397596d5d50cced55bf837167f6dda52f46a69"
         },
         {
           "Path": "Buffaly.EmailDispatch.Data.dll",
-          "Sha256": "b1dad42674bf2da8a6dd926f63cdee5a1c341cf0dfeab8a76f4d0c2e725dc1e6"
+          "Sha256": "f77d547aaafa48addc3d028a067cb4eaeded8379f9cd1116de80525e3079a65a"
         },
         {
           "Path": "Buffaly.EmailDispatch.dll",
-          "Sha256": "83f0a8d533c60a756a25b2f41e95f599a504f3ca152fcc6a92ee31280f2d6477"
+          "Sha256": "9cc5f677b0f2e70b1e264a4bc31b91c408bfcce9c084b6cf041819d1ac044c20"
         },
         {
           "Path": "Buffaly.EmailDispatch.Policy.dll",
-          "Sha256": "518df956b50fd30672c5fc9a3e38008f5b85b9e77103890e74370634a2ebd819"
+          "Sha256": "4129fa97a169b8bc29058619218b798841c0bd362020e28ec07cddfa2612bd85"
         },
         {
           "Path": "Buffaly.EmailDispatch.Web.deps.json",
@@ -24054,7 +24054,7 @@
         },
         {
           "Path": "Buffaly.EmailDispatch.Web.dll",
-          "Sha256": "2c8b63e094b09828629417703a97a4e74d002ad0ef6599a3f8b7aa4ff67c9241"
+          "Sha256": "6066b5a51d43bd36f238d0212c7f59f2699f9720f03ac2989e15c8d4ff607f65"
         },
         {
           "Path": "Buffaly.GoogleWorkspace.dll",
@@ -24067,6 +24067,10 @@
         {
           "Path": "Database/EmailWorkQueries.sql",
           "Sha256": "f316d4c286290c076558d512dd08e6e8fac2280b6ee3f126f7f7ffe0babc1bf9"
+        },
+        {
+          "Path": "Database/Message_GetLegacyEmailEvidence_Sp.sql",
+          "Sha256": "a0f7bfe335a7d1f84442fbc969b89eaa89fbea9a1c6f593f0e262bc21d4c0d37"
         },
         {
           "Path": "Database/Sessions_GetByAgentNameForEmailDestination_Sp.sql",
