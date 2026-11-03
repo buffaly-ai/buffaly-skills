@@ -27,3 +27,6 @@ Added clearNotice, the single task-navigation feedback reset: clears UserMessage
 
 ## 2026-11-03 — approved compact decision layout
 Shared vocabulary now names missing destination as Not sent — choose a destination, Suggested as Ready to send, Error as The dispatch agent could not decide, Archived as Archived. state/status accept optional destination for Ready to send to/Accepted by, not speculative candidate data. Unknown delivery unchanged. No persisted state remapping. Source layout/combinedUI tests pass8/8 and exact command+layout2/2; routine43/43.
+
+## 2026-11-03 — stable Buffaly-only destination picker
+PagedGrid.liveSearch preserves rendered rows while a new search is pending instead of replacing the table each keystroke. Shared busy(true/false) makes results/pager inert to prevent selecting obsolete rows and clears on success/error; debounce, immediate selection invalidation, stale rejection and cancel remain. New geometry+endpoint2/2, existingUI5/5 and routine43/43 pass. No generated grid edit.

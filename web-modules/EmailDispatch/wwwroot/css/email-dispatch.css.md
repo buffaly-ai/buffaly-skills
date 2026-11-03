@@ -48,3 +48,6 @@ Parent accepted the desktop reading structure but measured excessive mobile tool
 
 ## 2026-11-03 — isolated formatted HTML email
 Shared ed-email-frame style supplies full-width borderless email surface without inheriting app CSS or clipping the email body. No app font or command changes. Formatting/isolation fixture1440/390 passes; auto-height stable and original email CSS retained inside frame. CombinedUI6/6, routine43/43 pass.
+
+## 2026-11-03 — stable Buffaly-only destination picker
+Added shared ed-dialog-picker geometry: viewport-bounded fixed dialog/frame, scrolling body/results, stable scrollbar gutter and reserved pager/footer. Both destination modes reuse it; confirmation/note sizing unchanged. Fixes intrinsic resizing on result changes. Per-animation-frame1440/390 typing/loading/empty/paging/selection/error geometry test passes; five existing UI regressions pass.

@@ -24011,7 +24011,7 @@
       "PackageType": "WebModule",
       "Title": "Email Dispatch",
       "Description": "Buffaly Web Module package for Email Dispatch.",
-      "Version": "0.1.25",
+      "Version": "0.1.26",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/EmailDispatch",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/EmailDispatch",
@@ -24034,19 +24034,19 @@
         },
         {
           "Path": "Buffaly.Agent.DispatchTree.Viewer.dll",
-          "Sha256": "7536bb4bf3e3fc892c646c0e19f68b6e732e044e218e9fbd7ddfe3e91c5a179f"
+          "Sha256": "6ea12cb950c0066d989b28932f25158ae5bd07508c5b0157f6098516a4748938"
         },
         {
           "Path": "Buffaly.EmailDispatch.Data.dll",
-          "Sha256": "ac2e9be04a418170cc3e166c922eaadf50a3897d30df031843d1abf3b61d1775"
+          "Sha256": "b1dad42674bf2da8a6dd926f63cdee5a1c341cf0dfeab8a76f4d0c2e725dc1e6"
         },
         {
           "Path": "Buffaly.EmailDispatch.dll",
-          "Sha256": "13dcefe7e994028080ee0faac75452be946af9dfe22cfde8366d539ae8eb9d0c"
+          "Sha256": "83f0a8d533c60a756a25b2f41e95f599a504f3ca152fcc6a92ee31280f2d6477"
         },
         {
           "Path": "Buffaly.EmailDispatch.Policy.dll",
-          "Sha256": "55d9227b5e02fe6333c355497f0be19238010e994c39bf6ca225892baba2109a"
+          "Sha256": "518df956b50fd30672c5fc9a3e38008f5b85b9e77103890e74370634a2ebd819"
         },
         {
           "Path": "Buffaly.EmailDispatch.Web.deps.json",
@@ -24054,7 +24054,7 @@
         },
         {
           "Path": "Buffaly.EmailDispatch.Web.dll",
-          "Sha256": "5573ac8614d4809ccbf095caadaef97810fefe268879919629fddc3f42033a85"
+          "Sha256": "2c8b63e094b09828629417703a97a4e74d002ad0ef6599a3f8b7aa4ff67c9241"
         },
         {
           "Path": "Buffaly.GoogleWorkspace.dll",
@@ -24067,6 +24067,10 @@
         {
           "Path": "Database/EmailWorkQueries.sql",
           "Sha256": "f316d4c286290c076558d512dd08e6e8fac2280b6ee3f126f7f7ffe0babc1bf9"
+        },
+        {
+          "Path": "Database/Sessions_GetByAgentNameForEmailDestination_Sp.sql",
+          "Sha256": "cdaba95a748a1f2f050fabf67d4a6b9cc0a35c2c461d29e9523190d3ed92b5c4"
         },
         {
           "Path": "Defaults/Policy.references.txt",
@@ -24154,11 +24158,11 @@
         },
         {
           "Path": "wwwroot/css/email-dispatch.css",
-          "Sha256": "c335c5bfd5d021c283c416c8cac48a4dbcf2e4b174295b651cf9366c75823ac8"
+          "Sha256": "4c21c8386fc3856e45f39878660b75064a7fcb9037b088dc4ac6880c1f94fe2c"
         },
         {
           "Path": "wwwroot/css/email-dispatch.css.md",
-          "Sha256": "b82c08ef1ebe24ba19b85bac612442ea76352b2016c16cf98f8333402215be7e"
+          "Sha256": "ef35fc0afc5819ade63c1461405a4602cd05db3417aba47360dfaed012cef8e8"
         },
         {
           "Path": "wwwroot/css/icons.min.css",
@@ -24178,11 +24182,11 @@
         },
         {
           "Path": "wwwroot/index.html",
-          "Sha256": "43a53a0e3e9fc2aae89c1e2c744c50ce94840f4eb833ee55e9bbf629c97794a6"
+          "Sha256": "439842973745d69d1e4a184da0eaed04dd6ea46a77a56577f06e61e116406660"
         },
         {
           "Path": "wwwroot/index.html.md",
-          "Sha256": "29b72044a8c077075d87d7fda0a71476001a43030d3085806d9bc76c4ebf7583"
+          "Sha256": "41102efb9f58d5575cfc4da942427fc08087eabb672e7b33937253bdc6b472a8"
         },
         {
           "Path": "wwwroot/JsonWs/Buffaly.EmailDispatch.EmailDeliveries.ashx.js",
@@ -24218,11 +24222,11 @@
         },
         {
           "Path": "wwwroot/js/email-dispatch-ui.js",
-          "Sha256": "5c26fb113cff48dde87330e3f26030c8bd06f48b8f0f67dacbac6ee2fda4cdf6"
+          "Sha256": "e055a0a78ec29f29efa1996d4ac9415accbfa9d48894a6194548fbf9f57547f7"
         },
         {
           "Path": "wwwroot/js/email-dispatch-ui.js.md",
-          "Sha256": "7fe8be630a966acbc3bc02dd5e81cb96ce1228d40873f9e6cb69f66964831fa0"
+          "Sha256": "4ce95202d29371f19729875f3dabe7461928dfef5fb66afdc89439c503150f99"
         },
         {
           "Path": "wwwroot/js/email-dispatch.js",

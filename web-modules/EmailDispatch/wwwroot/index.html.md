@@ -59,3 +59,7 @@ Moved Archive host to the message toolbar and Check saved rules into existing ev
 # 2026-11-03 — live picker assets
 Bumped shared UI and application script query versions to 0.2.5/0.2.8 so the installed app loads live destination search. No layout or command changes in this file. Source live-search and compact decision browser tests passed 2/2.
 
+
+## 2026-11-03 — stable Buffaly-only destination picker
+Applied shared ed-dialog-picker class to the common destination picker and advanced stylesheet/shared control asset versions to0.2.6. No command or generated client change. Source geometry/endpoint2/2, existingUI5/5 and routine43/43 pass; installed verification follows.
+
