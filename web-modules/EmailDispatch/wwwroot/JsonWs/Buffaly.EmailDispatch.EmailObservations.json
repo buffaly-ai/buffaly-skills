@@ -3,141 +3,27 @@
 	"KebabName":"email-observations",
 	"Methods":[{
 			"Parameters":[{
-					"Name":"ParentId",
+					"Name":"PrototypeName",
 					"IsNullable":"true",
 					"Type":"String",
 					"IsArray":"false",
 					"IsEnum":"false"
 				},
 				{
-					"Name":"ExpectedRevision",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				},
-				{
-					"Name":"ChildId",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				},
-				{
-					"Name":"EntityName",
+					"Name":"ExpectedRulesRevision",
 					"IsNullable":"true",
 					"Type":"String",
 					"IsArray":"false",
 					"IsEnum":"false"
 				}],
-			"Name":"AddPolicyChild",
+			"Name":"ClearRule",
 			"UrlName":"",
-			"KebabName":"add-policy-child",
+			"KebabName":"clear-rule",
 			"DataObject":{
 			},
 			"IsReturnTypeArray":"false",
 			"IsStatic":"true",
-			"ReturnType":"EmailDeclarationView"
-		},
-		{
-			"Parameters":[{
-					"Name":"Search",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				},
-				{
-					"Name":"SkipRows",
-					"IsNullable":"false",
-					"Type":"Int32",
-					"IsArray":"false",
-					"IsEnum":"false"
-				},
-				{
-					"Name":"NumRows",
-					"IsNullable":"false",
-					"Type":"Int32",
-					"IsArray":"false",
-					"IsEnum":"false"
-				}],
-			"Name":"FindDestinations",
-			"UrlName":"",
-			"KebabName":"find-destinations",
-			"DataObject":{
-			},
-			"IsReturnTypeArray":"true",
-			"IsStatic":"true",
-			"ReturnType":"EmailDestinationView"
-		},
-		{
-			"Parameters":[{
-					"Name":"Search",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				},
-				{
-					"Name":"SkipRows",
-					"IsNullable":"false",
-					"Type":"Int32",
-					"IsArray":"false",
-					"IsEnum":"false"
-				},
-				{
-					"Name":"NumRows",
-					"IsNullable":"false",
-					"Type":"Int32",
-					"IsArray":"false",
-					"IsEnum":"false"
-				}],
-			"Name":"FindPolicyNodes",
-			"UrlName":"",
-			"KebabName":"find-policy-nodes",
-			"DataObject":{
-			},
-			"IsReturnTypeArray":"true",
-			"IsStatic":"true",
-			"ReturnType":"EmailRuleView"
-		},
-		{
-			"Parameters":[{
-					"Name":"Search",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				},
-				{
-					"Name":"ParentNodeId",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				},
-				{
-					"Name":"SkipRows",
-					"IsNullable":"false",
-					"Type":"Int32",
-					"IsArray":"false",
-					"IsEnum":"false"
-				},
-				{
-					"Name":"NumRows",
-					"IsNullable":"false",
-					"Type":"Int32",
-					"IsArray":"false",
-					"IsEnum":"false"
-				}],
-			"Name":"FindTreeNodes",
-			"UrlName":"",
-			"KebabName":"find-tree-nodes",
-			"DataObject":{
-			},
-			"IsReturnTypeArray":"true",
-			"IsStatic":"true",
-			"ReturnType":"EmailTreeNode"
+			"ReturnType":"EmailRuleNodeView"
 		},
 		{
 			"Parameters":[{
@@ -203,59 +89,51 @@
 		},
 		{
 			"Parameters":[{
-					"Name":"NodeId",
+					"Name":"Search",
 					"IsNullable":"true",
 					"Type":"String",
 					"IsArray":"false",
 					"IsEnum":"false"
+				},
+				{
+					"Name":"SkipRows",
+					"IsNullable":"false",
+					"Type":"Int32",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"NumRows",
+					"IsNullable":"false",
+					"Type":"Int32",
+					"IsArray":"false",
+					"IsEnum":"false"
 				}],
-			"Name":"GetPolicyNode",
+			"Name":"GetRecentSessions",
 			"UrlName":"",
-			"KebabName":"get-policy-node",
+			"KebabName":"get-recent-sessions",
 			"DataObject":{
 			},
 			"IsReturnTypeArray":"false",
 			"IsStatic":"true",
-			"ReturnType":"EmailDeclarationView"
-		},
-		{
-			"Parameters":[],
-			"Name":"GetPolicyRoot",
-			"UrlName":"",
-			"KebabName":"get-policy-root",
-			"DataObject":{
-			},
-			"IsReturnTypeArray":"false",
-			"IsStatic":"true",
-			"ReturnType":"EmailDeclarationView"
-		},
-		{
-			"Parameters":[],
-			"Name":"GetProgram",
-			"UrlName":"",
-			"KebabName":"get-program",
-			"DataObject":{
-			},
-			"IsReturnTypeArray":"true",
-			"IsStatic":"true",
-			"ReturnType":"EmailRuleView"
+			"ReturnType":"EmailDestinationPage"
 		},
 		{
 			"Parameters":[{
-					"Name":"NodeId",
+					"Name":"PrototypeName",
 					"IsNullable":"true",
 					"Type":"String",
 					"IsArray":"false",
 					"IsEnum":"false"
 				}],
-			"Name":"GetRuleEditor",
+			"Name":"GetRuleNode",
 			"UrlName":"",
-			"KebabName":"get-rule-editor",
+			"KebabName":"get-rule-node",
 			"DataObject":{
 			},
 			"IsReturnTypeArray":"false",
 			"IsStatic":"true",
-			"ReturnType":"EmailRuleEditorView"
+			"ReturnType":"EmailRuleNodeView"
 		},
 		{
 			"Parameters":[{
@@ -279,176 +157,73 @@
 					"IsArray":"false",
 					"IsEnum":"false"
 				}],
-			"Name":"GetRulePage",
+			"Name":"GetRuleNodes",
 			"UrlName":"",
-			"KebabName":"get-rule-page",
+			"KebabName":"get-rule-nodes",
 			"DataObject":{
 			},
 			"IsReturnTypeArray":"false",
 			"IsStatic":"true",
-			"ReturnType":"EmailRulePage"
+			"ReturnType":"EmailRuleNodePage"
 		},
 		{
 			"Parameters":[{
-					"Name":"NodeId",
+					"Name":"PrototypeName",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"ExpectedRulesRevision",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"Rule",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"Outcome",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"Processor",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"WorkSession",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"Anchor",
 					"IsNullable":"true",
 					"Type":"String",
 					"IsArray":"false",
 					"IsEnum":"false"
 				}],
-			"Name":"GetTreeNode",
+			"Name":"SaveRuleNode",
 			"UrlName":"",
-			"KebabName":"get-tree-node",
+			"KebabName":"save-rule-node",
 			"DataObject":{
 			},
 			"IsReturnTypeArray":"false",
 			"IsStatic":"true",
-			"ReturnType":"EmailTreeNode"
-		},
-		{
-			"Parameters":[{
-					"Name":"NodeId",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				},
-				{
-					"Name":"ExpectedRevision",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				},
-				{
-					"Name":"Source",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				}],
-			"Name":"SavePolicyNode",
-			"UrlName":"",
-			"KebabName":"save-policy-node",
-			"DataObject":{
-			},
-			"IsReturnTypeArray":"false",
-			"IsStatic":"true",
-			"ReturnType":"EmailDeclarationView"
-		},
-		{
-			"Parameters":[{
-					"Name":"NodeId",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				},
-				{
-					"Name":"ExpectedRevision",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				},
-				{
-					"Name":"Name",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				},
-				{
-					"Name":"Enabled",
-					"IsNullable":"false",
-					"Type":"Boolean",
-					"IsArray":"false",
-					"IsEnum":"false"
-				},
-				{
-					"Name":"Matches",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				}],
-			"Name":"SaveRuleEditor",
-			"UrlName":"",
-			"KebabName":"save-rule-editor",
-			"DataObject":{
-			},
-			"IsReturnTypeArray":"false",
-			"IsStatic":"true",
-			"ReturnType":"EmailRuleEditorView"
-		},
-		{
-			"Parameters":[{
-					"Name":"NodeId",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				},
-				{
-					"Name":"ExpectedRevision",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				},
-				{
-					"Name":"Name",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				},
-				{
-					"Name":"Context",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				}],
-			"Name":"SaveTreeContext",
-			"UrlName":"",
-			"KebabName":"save-tree-context",
-			"DataObject":{
-			},
-			"IsReturnTypeArray":"false",
-			"IsStatic":"true",
-			"ReturnType":"EmailTreeNode"
-		},
-		{
-			"Parameters":[{
-					"Name":"NodeId",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				},
-				{
-					"Name":"ExpectedRevision",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				},
-				{
-					"Name":"SessionKey",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				}],
-			"Name":"SetWorkSession",
-			"UrlName":"",
-			"KebabName":"set-work-session",
-			"DataObject":{
-			},
-			"IsReturnTypeArray":"false",
-			"IsStatic":"true",
-			"ReturnType":"EmailTreeNode"
+			"ReturnType":"EmailRuleNodeView"
 		},
 		{
 			"Parameters":[{
@@ -458,14 +233,14 @@
 					"IsArray":"false",
 					"IsEnum":"false"
 				}],
-			"Name":"TestPolicy",
+			"Name":"TestRules",
 			"UrlName":"",
-			"KebabName":"test-policy",
+			"KebabName":"test-rules",
 			"DataObject":{
 			},
 			"IsReturnTypeArray":"false",
 			"IsStatic":"true",
-			"ReturnType":"PolicySelection"
+			"ReturnType":"EmailRuleTestView"
 		}],
 	"Namespace":"Buffaly.EmailDispatch",
 	"Type":"Buffaly.EmailDispatch.EmailObservations"

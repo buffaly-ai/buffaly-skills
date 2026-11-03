@@ -2,24 +2,19 @@
     	    	
 var EmailObservationsValidatorsFields = {
 	
-		EntityName : {Validators : [Validators.String], InvalidMessage: "Invalid EntityName. " + ValidatorDescriptions.Length(1, 255) },
-		ParentId : {Validators : [Validators.String], InvalidMessage: "Invalid ParentId. " + ValidatorDescriptions.Length(1, 255) },
-		ObservationKey : {Validators : [Validators.String], InvalidMessage: "Invalid . " + ValidatorDescriptions.Length(1, 255) },
-		ExpectedRevision : {Validators : [Validators.String], InvalidMessage: "Invalid ExpectedRevision. " + ValidatorDescriptions.Length(1, 255) },
-		ParentNodeId : {Validators : [Validators.String], InvalidMessage: "Invalid ParentNodeId. " + ValidatorDescriptions.Length(1, 255) },
-		Source : {Validators : [Validators.String], InvalidMessage: "Invalid Source. " + ValidatorDescriptions.Length(1, 255) },
-		Enabled : {Validators : [Validators.Boolean], InvalidMessage: "Invalid Enabled. " + ValidatorDescriptions.Boolean() },
-		SkipRows : {Validators : [Validators.Integer], InvalidMessage: "Invalid SkipRows. " + ValidatorDescriptions.Integer() },
-		NodeId : {Validators : [Validators.String], InvalidMessage: "Invalid NodeId. " + ValidatorDescriptions.Length(1, 255) },
-		SessionKey : {Validators : [Validators.String], InvalidMessage: "Invalid SessionKey. " + ValidatorDescriptions.Length(1, 255) },
-		ChildId : {Validators : [Validators.String], InvalidMessage: "Invalid ChildId. " + ValidatorDescriptions.Length(1, 255) },
-		Search : {Validators : [Validators.String], InvalidMessage: "Invalid Search. " + ValidatorDescriptions.Length(1, 255) },
+		WorkSession : {Validators : [Validators.String], InvalidMessage: "Invalid WorkSession. " + ValidatorDescriptions.Length(1, 255) },
+		Anchor : {Validators : [Validators.String], InvalidMessage: "Invalid Anchor. " + ValidatorDescriptions.Length(1, 255) },
 		State : {Validators : [Validators.String], InvalidMessage: "Invalid State. " + ValidatorDescriptions.Length(1, 255) },
-		Name : {Validators : [Validators.String], InvalidMessage: "Invalid Name. " + ValidatorDescriptions.Length(1, 255) },
+		Rule : {Validators : [Validators.String], InvalidMessage: "Invalid Rule. " + ValidatorDescriptions.Length(1, 255) },
+		ObservationKey : {Validators : [Validators.String], InvalidMessage: "Invalid . " + ValidatorDescriptions.Length(1, 255) },
+		PrototypeName : {Validators : [Validators.String], InvalidMessage: "Invalid PrototypeName. " + ValidatorDescriptions.Length(1, 255) },
+		ExpectedRulesRevision : {Validators : [Validators.String], InvalidMessage: "Invalid ExpectedRulesRevision. " + ValidatorDescriptions.Length(1, 255) },
+		SkipRows : {Validators : [Validators.Integer], InvalidMessage: "Invalid SkipRows. " + ValidatorDescriptions.Integer() },
+		Search : {Validators : [Validators.String], InvalidMessage: "Invalid Search. " + ValidatorDescriptions.Length(1, 255) },
+		Outcome : {Validators : [Validators.String], InvalidMessage: "Invalid Outcome. " + ValidatorDescriptions.Length(1, 255) },
 		AccountKey : {Validators : [Validators.String], InvalidMessage: "Invalid . " + ValidatorDescriptions.Length(1, 255) },
-		NumRows : {Validators : [Validators.Integer], InvalidMessage: "Invalid NumRows. " + ValidatorDescriptions.Integer() },
-		Matches : {Validators : [Validators.String], InvalidMessage: "Invalid Matches. " + ValidatorDescriptions.Length(1, 255) },
-		Context : {Validators : [Validators.String], InvalidMessage: "Invalid Context. " + ValidatorDescriptions.Length(1, 255) }	
+		Processor : {Validators : [Validators.String], InvalidMessage: "Invalid Processor. " + ValidatorDescriptions.Length(1, 255) },
+		NumRows : {Validators : [Validators.Integer], InvalidMessage: "Invalid NumRows. " + ValidatorDescriptions.Integer() }	
 }
 		
 class EmailObservationsService {
@@ -42,134 +37,35 @@ class EmailObservationsService {
     }
 
 
-    AddPolicyChild(ParentId, ExpectedRevision, ChildId, EntityName, Callback) {
-        return this.AddPolicyChildObject({ ParentId:ParentId,ExpectedRevision:ExpectedRevision,ChildId:ChildId,EntityName:EntityName }, Callback);
+    ClearRule(PrototypeName, ExpectedRulesRevision, Callback) {
+        return this.ClearRuleObject({ PrototypeName:PrototypeName,ExpectedRulesRevision:ExpectedRulesRevision }, Callback);
     }
 
-    AddPolicyChildObject(oObject, Callback) {
-        this._validate(oObject, EmailObservationsValidators.AddPolicyChild, this.AddPolicyChild.onValidationError);
+    ClearRuleObject(oObject, Callback) {
+        this._validate(oObject, EmailObservationsValidators.ClearRule, this.ClearRule.onValidationError);
 
-        var pageUrl = this.Url + "/add-policy-child";
+        var pageUrl = this.Url + "/clear-rule";
         return this._invoke(
             pageUrl,
-            "AddPolicyChild",
-            { ParentId: oObject.ParentId,ExpectedRevision: oObject.ExpectedRevision,ChildId: oObject.ChildId,EntityName: oObject.EntityName },
-            this.AddPolicyChild,
+            "ClearRule",
+            { PrototypeName: oObject.PrototypeName,ExpectedRulesRevision: oObject.ExpectedRulesRevision },
+            this.ClearRule,
             Callback
         );
     }
 
-    async AddPolicyChildAsync(ParentId,ExpectedRevision,ChildId,EntityName) {
+    async ClearRuleAsync(PrototypeName,ExpectedRulesRevision) {
         return await ObjectUtil.Promisify(
             this,
-            this.AddPolicyChild,
-            [ ParentId,ExpectedRevision,ChildId,EntityName ]
+            this.ClearRule,
+            [ PrototypeName,ExpectedRulesRevision ]
         );
     }
 
-    async AddPolicyChildObjectAsync(oObject) {
+    async ClearRuleObjectAsync(oObject) {
         return await ObjectUtil.Promisify(
             this,
-            this.AddPolicyChildObject,
-            [ oObject ]
-        );
-    }
-
-    FindDestinations(Search, SkipRows, NumRows, Callback) {
-        return this.FindDestinationsObject({ Search:Search,SkipRows:SkipRows,NumRows:NumRows }, Callback);
-    }
-
-    FindDestinationsObject(oObject, Callback) {
-        this._validate(oObject, EmailObservationsValidators.FindDestinations, this.FindDestinations.onValidationError);
-
-        var pageUrl = this.Url + "/find-destinations";
-        return this._invoke(
-            pageUrl,
-            "FindDestinations",
-            { Search: oObject.Search,SkipRows: oObject.SkipRows,NumRows: oObject.NumRows },
-            this.FindDestinations,
-            Callback
-        );
-    }
-
-    async FindDestinationsAsync(Search,SkipRows,NumRows) {
-        return await ObjectUtil.Promisify(
-            this,
-            this.FindDestinations,
-            [ Search,SkipRows,NumRows ]
-        );
-    }
-
-    async FindDestinationsObjectAsync(oObject) {
-        return await ObjectUtil.Promisify(
-            this,
-            this.FindDestinationsObject,
-            [ oObject ]
-        );
-    }
-
-    FindPolicyNodes(Search, SkipRows, NumRows, Callback) {
-        return this.FindPolicyNodesObject({ Search:Search,SkipRows:SkipRows,NumRows:NumRows }, Callback);
-    }
-
-    FindPolicyNodesObject(oObject, Callback) {
-        this._validate(oObject, EmailObservationsValidators.FindPolicyNodes, this.FindPolicyNodes.onValidationError);
-
-        var pageUrl = this.Url + "/find-policy-nodes";
-        return this._invoke(
-            pageUrl,
-            "FindPolicyNodes",
-            { Search: oObject.Search,SkipRows: oObject.SkipRows,NumRows: oObject.NumRows },
-            this.FindPolicyNodes,
-            Callback
-        );
-    }
-
-    async FindPolicyNodesAsync(Search,SkipRows,NumRows) {
-        return await ObjectUtil.Promisify(
-            this,
-            this.FindPolicyNodes,
-            [ Search,SkipRows,NumRows ]
-        );
-    }
-
-    async FindPolicyNodesObjectAsync(oObject) {
-        return await ObjectUtil.Promisify(
-            this,
-            this.FindPolicyNodesObject,
-            [ oObject ]
-        );
-    }
-
-    FindTreeNodes(Search, ParentNodeId, SkipRows, NumRows, Callback) {
-        return this.FindTreeNodesObject({ Search:Search,ParentNodeId:ParentNodeId,SkipRows:SkipRows,NumRows:NumRows }, Callback);
-    }
-
-    FindTreeNodesObject(oObject, Callback) {
-        this._validate(oObject, EmailObservationsValidators.FindTreeNodes, this.FindTreeNodes.onValidationError);
-
-        var pageUrl = this.Url + "/find-tree-nodes";
-        return this._invoke(
-            pageUrl,
-            "FindTreeNodes",
-            { Search: oObject.Search,ParentNodeId: oObject.ParentNodeId,SkipRows: oObject.SkipRows,NumRows: oObject.NumRows },
-            this.FindTreeNodes,
-            Callback
-        );
-    }
-
-    async FindTreeNodesAsync(Search,ParentNodeId,SkipRows,NumRows) {
-        return await ObjectUtil.Promisify(
-            this,
-            this.FindTreeNodes,
-            [ Search,ParentNodeId,SkipRows,NumRows ]
-        );
-    }
-
-    async FindTreeNodesObjectAsync(oObject) {
-        return await ObjectUtil.Promisify(
-            this,
-            this.FindTreeNodesObject,
+            this.ClearRuleObject,
             [ oObject ]
         );
     }
@@ -240,365 +136,167 @@ class EmailObservationsService {
         );
     }
 
-    GetPolicyNode(NodeId, Callback) {
-        return this.GetPolicyNodeObject({ NodeId:NodeId }, Callback);
+    GetRecentSessions(Search, SkipRows, NumRows, Callback) {
+        return this.GetRecentSessionsObject({ Search:Search,SkipRows:SkipRows,NumRows:NumRows }, Callback);
     }
 
-    GetPolicyNodeObject(oObject, Callback) {
-        this._validate(oObject, EmailObservationsValidators.GetPolicyNode, this.GetPolicyNode.onValidationError);
+    GetRecentSessionsObject(oObject, Callback) {
+        this._validate(oObject, EmailObservationsValidators.GetRecentSessions, this.GetRecentSessions.onValidationError);
 
-        var pageUrl = this.Url + "/get-policy-node";
+        var pageUrl = this.Url + "/get-recent-sessions";
         return this._invoke(
             pageUrl,
-            "GetPolicyNode",
-            { NodeId: oObject.NodeId },
-            this.GetPolicyNode,
-            Callback
-        );
-    }
-
-    async GetPolicyNodeAsync(NodeId) {
-        return await ObjectUtil.Promisify(
-            this,
-            this.GetPolicyNode,
-            [ NodeId ]
-        );
-    }
-
-    async GetPolicyNodeObjectAsync(oObject) {
-        return await ObjectUtil.Promisify(
-            this,
-            this.GetPolicyNodeObject,
-            [ oObject ]
-        );
-    }
-
-    GetPolicyRoot(Callback) {
-        return this.GetPolicyRootObject({  }, Callback);
-    }
-
-    GetPolicyRootObject(oObject, Callback) {
-        this._validate(oObject, EmailObservationsValidators.GetPolicyRoot, this.GetPolicyRoot.onValidationError);
-
-        var pageUrl = this.Url + "/get-policy-root";
-        return this._invoke(
-            pageUrl,
-            "GetPolicyRoot",
-            {  },
-            this.GetPolicyRoot,
-            Callback
-        );
-    }
-
-    async GetPolicyRootAsync() {
-        return await ObjectUtil.Promisify(
-            this,
-            this.GetPolicyRoot,
-            [  ]
-        );
-    }
-
-    async GetPolicyRootObjectAsync(oObject) {
-        return await ObjectUtil.Promisify(
-            this,
-            this.GetPolicyRootObject,
-            [ oObject ]
-        );
-    }
-
-    GetProgram(Callback) {
-        return this.GetProgramObject({  }, Callback);
-    }
-
-    GetProgramObject(oObject, Callback) {
-        this._validate(oObject, EmailObservationsValidators.GetProgram, this.GetProgram.onValidationError);
-
-        var pageUrl = this.Url + "/get-program";
-        return this._invoke(
-            pageUrl,
-            "GetProgram",
-            {  },
-            this.GetProgram,
-            Callback
-        );
-    }
-
-    async GetProgramAsync() {
-        return await ObjectUtil.Promisify(
-            this,
-            this.GetProgram,
-            [  ]
-        );
-    }
-
-    async GetProgramObjectAsync(oObject) {
-        return await ObjectUtil.Promisify(
-            this,
-            this.GetProgramObject,
-            [ oObject ]
-        );
-    }
-
-    GetRuleEditor(NodeId, Callback) {
-        return this.GetRuleEditorObject({ NodeId:NodeId }, Callback);
-    }
-
-    GetRuleEditorObject(oObject, Callback) {
-        this._validate(oObject, EmailObservationsValidators.GetRuleEditor, this.GetRuleEditor.onValidationError);
-
-        var pageUrl = this.Url + "/get-rule-editor";
-        return this._invoke(
-            pageUrl,
-            "GetRuleEditor",
-            { NodeId: oObject.NodeId },
-            this.GetRuleEditor,
-            Callback
-        );
-    }
-
-    async GetRuleEditorAsync(NodeId) {
-        return await ObjectUtil.Promisify(
-            this,
-            this.GetRuleEditor,
-            [ NodeId ]
-        );
-    }
-
-    async GetRuleEditorObjectAsync(oObject) {
-        return await ObjectUtil.Promisify(
-            this,
-            this.GetRuleEditorObject,
-            [ oObject ]
-        );
-    }
-
-    GetRulePage(Search, SkipRows, NumRows, Callback) {
-        return this.GetRulePageObject({ Search:Search,SkipRows:SkipRows,NumRows:NumRows }, Callback);
-    }
-
-    GetRulePageObject(oObject, Callback) {
-        this._validate(oObject, EmailObservationsValidators.GetRulePage, this.GetRulePage.onValidationError);
-
-        var pageUrl = this.Url + "/get-rule-page";
-        return this._invoke(
-            pageUrl,
-            "GetRulePage",
+            "GetRecentSessions",
             { Search: oObject.Search,SkipRows: oObject.SkipRows,NumRows: oObject.NumRows },
-            this.GetRulePage,
+            this.GetRecentSessions,
             Callback
         );
     }
 
-    async GetRulePageAsync(Search,SkipRows,NumRows) {
+    async GetRecentSessionsAsync(Search,SkipRows,NumRows) {
         return await ObjectUtil.Promisify(
             this,
-            this.GetRulePage,
+            this.GetRecentSessions,
             [ Search,SkipRows,NumRows ]
         );
     }
 
-    async GetRulePageObjectAsync(oObject) {
+    async GetRecentSessionsObjectAsync(oObject) {
         return await ObjectUtil.Promisify(
             this,
-            this.GetRulePageObject,
+            this.GetRecentSessionsObject,
             [ oObject ]
         );
     }
 
-    GetTreeNode(NodeId, Callback) {
-        return this.GetTreeNodeObject({ NodeId:NodeId }, Callback);
+    GetRuleNode(PrototypeName, Callback) {
+        return this.GetRuleNodeObject({ PrototypeName:PrototypeName }, Callback);
     }
 
-    GetTreeNodeObject(oObject, Callback) {
-        this._validate(oObject, EmailObservationsValidators.GetTreeNode, this.GetTreeNode.onValidationError);
+    GetRuleNodeObject(oObject, Callback) {
+        this._validate(oObject, EmailObservationsValidators.GetRuleNode, this.GetRuleNode.onValidationError);
 
-        var pageUrl = this.Url + "/get-tree-node";
+        var pageUrl = this.Url + "/get-rule-node";
         return this._invoke(
             pageUrl,
-            "GetTreeNode",
-            { NodeId: oObject.NodeId },
-            this.GetTreeNode,
+            "GetRuleNode",
+            { PrototypeName: oObject.PrototypeName },
+            this.GetRuleNode,
             Callback
         );
     }
 
-    async GetTreeNodeAsync(NodeId) {
+    async GetRuleNodeAsync(PrototypeName) {
         return await ObjectUtil.Promisify(
             this,
-            this.GetTreeNode,
-            [ NodeId ]
+            this.GetRuleNode,
+            [ PrototypeName ]
         );
     }
 
-    async GetTreeNodeObjectAsync(oObject) {
+    async GetRuleNodeObjectAsync(oObject) {
         return await ObjectUtil.Promisify(
             this,
-            this.GetTreeNodeObject,
+            this.GetRuleNodeObject,
             [ oObject ]
         );
     }
 
-    SavePolicyNode(NodeId, ExpectedRevision, Source, Callback) {
-        return this.SavePolicyNodeObject({ NodeId:NodeId,ExpectedRevision:ExpectedRevision,Source:Source }, Callback);
+    GetRuleNodes(Search, SkipRows, NumRows, Callback) {
+        return this.GetRuleNodesObject({ Search:Search,SkipRows:SkipRows,NumRows:NumRows }, Callback);
     }
 
-    SavePolicyNodeObject(oObject, Callback) {
-        this._validate(oObject, EmailObservationsValidators.SavePolicyNode, this.SavePolicyNode.onValidationError);
+    GetRuleNodesObject(oObject, Callback) {
+        this._validate(oObject, EmailObservationsValidators.GetRuleNodes, this.GetRuleNodes.onValidationError);
 
-        var pageUrl = this.Url + "/save-policy-node";
+        var pageUrl = this.Url + "/get-rule-nodes";
         return this._invoke(
             pageUrl,
-            "SavePolicyNode",
-            { NodeId: oObject.NodeId,ExpectedRevision: oObject.ExpectedRevision,Source: oObject.Source },
-            this.SavePolicyNode,
+            "GetRuleNodes",
+            { Search: oObject.Search,SkipRows: oObject.SkipRows,NumRows: oObject.NumRows },
+            this.GetRuleNodes,
             Callback
         );
     }
 
-    async SavePolicyNodeAsync(NodeId,ExpectedRevision,Source) {
+    async GetRuleNodesAsync(Search,SkipRows,NumRows) {
         return await ObjectUtil.Promisify(
             this,
-            this.SavePolicyNode,
-            [ NodeId,ExpectedRevision,Source ]
+            this.GetRuleNodes,
+            [ Search,SkipRows,NumRows ]
         );
     }
 
-    async SavePolicyNodeObjectAsync(oObject) {
+    async GetRuleNodesObjectAsync(oObject) {
         return await ObjectUtil.Promisify(
             this,
-            this.SavePolicyNodeObject,
+            this.GetRuleNodesObject,
             [ oObject ]
         );
     }
 
-    SaveRuleEditor(NodeId, ExpectedRevision, Name, Enabled, Matches, Callback) {
-        return this.SaveRuleEditorObject({ NodeId:NodeId,ExpectedRevision:ExpectedRevision,Name:Name,Enabled:Enabled,Matches:Matches }, Callback);
+    SaveRuleNode(PrototypeName, ExpectedRulesRevision, Rule, Outcome, Processor, WorkSession, Anchor, Callback) {
+        return this.SaveRuleNodeObject({ PrototypeName:PrototypeName,ExpectedRulesRevision:ExpectedRulesRevision,Rule:Rule,Outcome:Outcome,Processor:Processor,WorkSession:WorkSession,Anchor:Anchor }, Callback);
     }
 
-    SaveRuleEditorObject(oObject, Callback) {
-        this._validate(oObject, EmailObservationsValidators.SaveRuleEditor, this.SaveRuleEditor.onValidationError);
+    SaveRuleNodeObject(oObject, Callback) {
+        this._validate(oObject, EmailObservationsValidators.SaveRuleNode, this.SaveRuleNode.onValidationError);
 
-        var pageUrl = this.Url + "/save-rule-editor";
+        var pageUrl = this.Url + "/save-rule-node";
         return this._invoke(
             pageUrl,
-            "SaveRuleEditor",
-            { NodeId: oObject.NodeId,ExpectedRevision: oObject.ExpectedRevision,Name: oObject.Name,Enabled: oObject.Enabled,Matches: oObject.Matches },
-            this.SaveRuleEditor,
+            "SaveRuleNode",
+            { PrototypeName: oObject.PrototypeName,ExpectedRulesRevision: oObject.ExpectedRulesRevision,Rule: oObject.Rule,Outcome: oObject.Outcome,Processor: oObject.Processor,WorkSession: oObject.WorkSession,Anchor: oObject.Anchor },
+            this.SaveRuleNode,
             Callback
         );
     }
 
-    async SaveRuleEditorAsync(NodeId,ExpectedRevision,Name,Enabled,Matches) {
+    async SaveRuleNodeAsync(PrototypeName,ExpectedRulesRevision,Rule,Outcome,Processor,WorkSession,Anchor) {
         return await ObjectUtil.Promisify(
             this,
-            this.SaveRuleEditor,
-            [ NodeId,ExpectedRevision,Name,Enabled,Matches ]
+            this.SaveRuleNode,
+            [ PrototypeName,ExpectedRulesRevision,Rule,Outcome,Processor,WorkSession,Anchor ]
         );
     }
 
-    async SaveRuleEditorObjectAsync(oObject) {
+    async SaveRuleNodeObjectAsync(oObject) {
         return await ObjectUtil.Promisify(
             this,
-            this.SaveRuleEditorObject,
+            this.SaveRuleNodeObject,
             [ oObject ]
         );
     }
 
-    SaveTreeContext(NodeId, ExpectedRevision, Name, Context, Callback) {
-        return this.SaveTreeContextObject({ NodeId:NodeId,ExpectedRevision:ExpectedRevision,Name:Name,Context:Context }, Callback);
+    TestRules(ObservationKey, Callback) {
+        return this.TestRulesObject({ ObservationKey:ObservationKey }, Callback);
     }
 
-    SaveTreeContextObject(oObject, Callback) {
-        this._validate(oObject, EmailObservationsValidators.SaveTreeContext, this.SaveTreeContext.onValidationError);
+    TestRulesObject(oObject, Callback) {
+        this._validate(oObject, EmailObservationsValidators.TestRules, this.TestRules.onValidationError);
 
-        var pageUrl = this.Url + "/save-tree-context";
+        var pageUrl = this.Url + "/test-rules";
         return this._invoke(
             pageUrl,
-            "SaveTreeContext",
-            { NodeId: oObject.NodeId,ExpectedRevision: oObject.ExpectedRevision,Name: oObject.Name,Context: oObject.Context },
-            this.SaveTreeContext,
-            Callback
-        );
-    }
-
-    async SaveTreeContextAsync(NodeId,ExpectedRevision,Name,Context) {
-        return await ObjectUtil.Promisify(
-            this,
-            this.SaveTreeContext,
-            [ NodeId,ExpectedRevision,Name,Context ]
-        );
-    }
-
-    async SaveTreeContextObjectAsync(oObject) {
-        return await ObjectUtil.Promisify(
-            this,
-            this.SaveTreeContextObject,
-            [ oObject ]
-        );
-    }
-
-    SetWorkSession(NodeId, ExpectedRevision, SessionKey, Callback) {
-        return this.SetWorkSessionObject({ NodeId:NodeId,ExpectedRevision:ExpectedRevision,SessionKey:SessionKey }, Callback);
-    }
-
-    SetWorkSessionObject(oObject, Callback) {
-        this._validate(oObject, EmailObservationsValidators.SetWorkSession, this.SetWorkSession.onValidationError);
-
-        var pageUrl = this.Url + "/set-work-session";
-        return this._invoke(
-            pageUrl,
-            "SetWorkSession",
-            { NodeId: oObject.NodeId,ExpectedRevision: oObject.ExpectedRevision,SessionKey: oObject.SessionKey },
-            this.SetWorkSession,
-            Callback
-        );
-    }
-
-    async SetWorkSessionAsync(NodeId,ExpectedRevision,SessionKey) {
-        return await ObjectUtil.Promisify(
-            this,
-            this.SetWorkSession,
-            [ NodeId,ExpectedRevision,SessionKey ]
-        );
-    }
-
-    async SetWorkSessionObjectAsync(oObject) {
-        return await ObjectUtil.Promisify(
-            this,
-            this.SetWorkSessionObject,
-            [ oObject ]
-        );
-    }
-
-    TestPolicy(ObservationKey, Callback) {
-        return this.TestPolicyObject({ ObservationKey:ObservationKey }, Callback);
-    }
-
-    TestPolicyObject(oObject, Callback) {
-        this._validate(oObject, EmailObservationsValidators.TestPolicy, this.TestPolicy.onValidationError);
-
-        var pageUrl = this.Url + "/test-policy";
-        return this._invoke(
-            pageUrl,
-            "TestPolicy",
+            "TestRules",
             { ObservationKey: oObject.ObservationKey },
-            this.TestPolicy,
+            this.TestRules,
             Callback
         );
     }
 
-    async TestPolicyAsync(ObservationKey) {
+    async TestRulesAsync(ObservationKey) {
         return await ObjectUtil.Promisify(
             this,
-            this.TestPolicy,
+            this.TestRules,
             [ ObservationKey ]
         );
     }
 
-    async TestPolicyObjectAsync(oObject) {
+    async TestRulesObjectAsync(oObject) {
         return await ObjectUtil.Promisify(
             this,
-            this.TestPolicyObject,
+            this.TestRulesObject,
             [ oObject ]
         );
     }
@@ -629,30 +327,9 @@ class EmailObservationsService {
 var EmailObservationsValidators = {
     
 
-    AddPolicyChild : {
-            ParentId : {Validators: [Validators.Text], InvalidMessage: "Invalid ParentId"} ,
-            ExpectedRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedRevision"} ,
-            ChildId : {Validators: [Validators.Text], InvalidMessage: "Invalid ChildId"} ,
-            EntityName : {Validators: [Validators.Text], InvalidMessage: "Invalid EntityName"} 
-    },
-
-    FindDestinations : {
-            Search : {Validators: [Validators.Text], InvalidMessage: "Invalid Search"} ,
-            SkipRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid SkipRows"} ,
-            NumRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid NumRows"} 
-    },
-
-    FindPolicyNodes : {
-            Search : {Validators: [Validators.Text], InvalidMessage: "Invalid Search"} ,
-            SkipRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid SkipRows"} ,
-            NumRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid NumRows"} 
-    },
-
-    FindTreeNodes : {
-            Search : {Validators: [Validators.Text], InvalidMessage: "Invalid Search"} ,
-            ParentNodeId : {Validators: [Validators.Text], InvalidMessage: "Invalid ParentNodeId"} ,
-            SkipRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid SkipRows"} ,
-            NumRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid NumRows"} 
+    ClearRule : {
+            PrototypeName : {Validators: [Validators.Text], InvalidMessage: "Invalid PrototypeName"} ,
+            ExpectedRulesRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedRulesRevision"} 
     },
 
     GetEmail : {
@@ -667,58 +344,33 @@ var EmailObservationsValidators = {
             NumRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid NumRows"} 
     },
 
-    GetPolicyNode : {
-            NodeId : {Validators: [Validators.Text], InvalidMessage: "Invalid NodeId"} 
-    },
-
-    GetPolicyRoot : {
-    },
-
-    GetProgram : {
-    },
-
-    GetRuleEditor : {
-            NodeId : {Validators: [Validators.Text], InvalidMessage: "Invalid NodeId"} 
-    },
-
-    GetRulePage : {
+    GetRecentSessions : {
             Search : {Validators: [Validators.Text], InvalidMessage: "Invalid Search"} ,
             SkipRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid SkipRows"} ,
             NumRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid NumRows"} 
     },
 
-    GetTreeNode : {
-            NodeId : {Validators: [Validators.Text], InvalidMessage: "Invalid NodeId"} 
+    GetRuleNode : {
+            PrototypeName : {Validators: [Validators.Text], InvalidMessage: "Invalid PrototypeName"} 
     },
 
-    SavePolicyNode : {
-            NodeId : {Validators: [Validators.Text], InvalidMessage: "Invalid NodeId"} ,
-            ExpectedRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedRevision"} ,
-            Source : {Validators: [Validators.Text], InvalidMessage: "Invalid Source"} 
+    GetRuleNodes : {
+            Search : {Validators: [Validators.Text], InvalidMessage: "Invalid Search"} ,
+            SkipRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid SkipRows"} ,
+            NumRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid NumRows"} 
     },
 
-    SaveRuleEditor : {
-            NodeId : {Validators: [Validators.Text], InvalidMessage: "Invalid NodeId"} ,
-            ExpectedRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedRevision"} ,
-            Name : {Validators: [Validators.Text], InvalidMessage: "Invalid Name"} ,
-            Enabled : {Validators: [Validators.MakeRequired(Validators.Boolean)], InvalidMessage: "Invalid Enabled"} ,
-            Matches : {Validators: [Validators.Text], InvalidMessage: "Invalid Matches"} 
+    SaveRuleNode : {
+            PrototypeName : {Validators: [Validators.Text], InvalidMessage: "Invalid PrototypeName"} ,
+            ExpectedRulesRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedRulesRevision"} ,
+            Rule : {Validators: [Validators.Text], InvalidMessage: "Invalid Rule"} ,
+            Outcome : {Validators: [Validators.Text], InvalidMessage: "Invalid Outcome"} ,
+            Processor : {Validators: [Validators.Text], InvalidMessage: "Invalid Processor"} ,
+            WorkSession : {Validators: [Validators.Text], InvalidMessage: "Invalid WorkSession"} ,
+            Anchor : {Validators: [Validators.Text], InvalidMessage: "Invalid Anchor"} 
     },
 
-    SaveTreeContext : {
-            NodeId : {Validators: [Validators.Text], InvalidMessage: "Invalid NodeId"} ,
-            ExpectedRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedRevision"} ,
-            Name : {Validators: [Validators.Text], InvalidMessage: "Invalid Name"} ,
-            Context : {Validators: [Validators.Text], InvalidMessage: "Invalid Context"} 
-    },
-
-    SetWorkSession : {
-            NodeId : {Validators: [Validators.Text], InvalidMessage: "Invalid NodeId"} ,
-            ExpectedRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedRevision"} ,
-            SessionKey : {Validators: [Validators.Text], InvalidMessage: "Invalid SessionKey"} 
-    },
-
-    TestPolicy : {
+    TestRules : {
             ObservationKey : {Validators: [Validators.Text], InvalidMessage: "Invalid ObservationKey"} 
     }
 };

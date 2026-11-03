@@ -30,3 +30,13 @@ Validation: modern/legacy fixture and clean actual Tailscale browser2/2; exact o
 
 ## 2026-11-02 — task-scoped feedback lifetime
 The route owner clears shared feedback before opening a different task, including a different message, so a previous Delivery acceptance saved banner cannot imply acceptance of the new email. The shared UI owner resets UserMessages and status safely; real command/approval/receipt semantics are unchanged. Asset version0.1.15 invalidates the old shell. Source routine59/59 passes; the focused installed-browser regression reproduces the banner without calling Send, navigates to the actual healthcare email and verifies hidden feedback, owner/state/body and immutable work/diagnostic. Final installed results live in the healthcare completion evidence.
+
+## 2026-11-02 - Disabled is open
+- Added `Disabled` to `openStates`, matching `EmailDispatchActions.OpenStates`, so Add a Note and Pick appear for it.
+- Validation: web build 0 errors; no browser run.
+
+## 2026-11-03 - Retired decisions are history only
+- works() drops Superseded rows from the decision list, so the detail screen shows only the current decision and its Send to. evidence() shows a retired row's facts before the requeue (state, processor, destination) and its old instruction, labelled as history.
+- Why: review finding P2 on b284867 (UI-STD-01 Principle 13).
+- Asset version advanced to 0.2.1 in index.html (Finding 2 batch).
+- Validation (2026-11-03, before commit): EmailDispatch.Tests Debug build 0 errors. EmailDispatchFlowTests and EmailRuleSeedTests (FakeDispatchAgent, fake transports, their own fixture rows only) 20/20. Routine EmailDispatch.Tests filter (TestCategory not LiveStandalone, TailscaleWalkthrough, ExplicitRepair or MailboxBoundary) 40/40. ReviewWalkthroughTests 1/1: a fixture whose retired suggestion named a different session shows only the new destination in the inbox and the detail screen at 1440px, 390px and 200% zoom, and the evidence view shows the old destination and instruction as "before the requeue". Read-only SQL check after the runs: 0 fixture observations left, 0 rows with Requeue evidence, 0 Superseded rows. The requeue was not run on real mail and nothing was deployed.

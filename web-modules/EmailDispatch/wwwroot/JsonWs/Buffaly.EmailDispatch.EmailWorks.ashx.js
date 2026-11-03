@@ -3,11 +3,10 @@
 var EmailWorksValidatorsFields = {
 	
 		MessageKey : {Validators : [Validators.String], InvalidMessage: "Invalid . " + ValidatorDescriptions.Length(1, 255) },
-		ExpectedProposalRevision : {Validators : [Validators.String], InvalidMessage: "Invalid ExpectedProposalRevision. " + ValidatorDescriptions.Length(1, 255) },
-		ExpectedPolicyRevision : {Validators : [Validators.String], InvalidMessage: "Invalid ExpectedPolicyRevision. " + ValidatorDescriptions.Length(1, 255) },
+		SessionKey : {Validators : [Validators.String], InvalidMessage: "Invalid SessionKey. " + ValidatorDescriptions.Length(1, 255) },
 		Disposition : {Validators : [Validators.String], InvalidMessage: "Invalid Disposition. " + ValidatorDescriptions.Length(1, 255) },
-		NodeId : {Validators : [Validators.String], InvalidMessage: "Invalid NodeId. " + ValidatorDescriptions.Length(1, 255) },
-		AccountKey : {Validators : [Validators.String], InvalidMessage: "Invalid AccountKey. " + ValidatorDescriptions.Length(1, 255) },
+		Note : {Validators : [Validators.String], InvalidMessage: "Invalid Note. " + ValidatorDescriptions.Length(1, 255) },
+		ExpectedDecisionRevision : {Validators : [Validators.String], InvalidMessage: "Invalid ExpectedDecisionRevision. " + ValidatorDescriptions.Length(1, 255) },
 		WorkKey : {Validators : [Validators.String], InvalidMessage: "Invalid . " + ValidatorDescriptions.Length(1, 255) }	
 }
 		
@@ -30,6 +29,72 @@ class EmailWorksService {
         }
     }
 
+
+    AddDispatchNote(WorkKey, ExpectedDecisionRevision, Note, Callback) {
+        return this.AddDispatchNoteObject({ WorkKey:WorkKey,ExpectedDecisionRevision:ExpectedDecisionRevision,Note:Note }, Callback);
+    }
+
+    AddDispatchNoteObject(oObject, Callback) {
+        this._validate(oObject, EmailWorksValidators.AddDispatchNote, this.AddDispatchNote.onValidationError);
+
+        var pageUrl = this.Url + "/add-dispatch-note";
+        return this._invoke(
+            pageUrl,
+            "AddDispatchNote",
+            { WorkKey: oObject.WorkKey,ExpectedDecisionRevision: oObject.ExpectedDecisionRevision,Note: oObject.Note },
+            this.AddDispatchNote,
+            Callback
+        );
+    }
+
+    async AddDispatchNoteAsync(WorkKey,ExpectedDecisionRevision,Note) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.AddDispatchNote,
+            [ WorkKey,ExpectedDecisionRevision,Note ]
+        );
+    }
+
+    async AddDispatchNoteObjectAsync(oObject) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.AddDispatchNoteObject,
+            [ oObject ]
+        );
+    }
+
+    ConfirmDispatch(WorkKey, ExpectedDecisionRevision, Callback) {
+        return this.ConfirmDispatchObject({ WorkKey:WorkKey,ExpectedDecisionRevision:ExpectedDecisionRevision }, Callback);
+    }
+
+    ConfirmDispatchObject(oObject, Callback) {
+        this._validate(oObject, EmailWorksValidators.ConfirmDispatch, this.ConfirmDispatch.onValidationError);
+
+        var pageUrl = this.Url + "/confirm-dispatch";
+        return this._invoke(
+            pageUrl,
+            "ConfirmDispatch",
+            { WorkKey: oObject.WorkKey,ExpectedDecisionRevision: oObject.ExpectedDecisionRevision },
+            this.ConfirmDispatch,
+            Callback
+        );
+    }
+
+    async ConfirmDispatchAsync(WorkKey,ExpectedDecisionRevision) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.ConfirmDispatch,
+            [ WorkKey,ExpectedDecisionRevision ]
+        );
+    }
+
+    async ConfirmDispatchObjectAsync(oObject) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.ConfirmDispatchObject,
+            [ oObject ]
+        );
+    }
 
     GetDelivery(MessageKey, Callback) {
         return this.GetDeliveryObject({ MessageKey:MessageKey }, Callback);
@@ -97,134 +162,68 @@ class EmailWorksService {
         );
     }
 
-    PrepareSuggestion(WorkKey, Callback) {
-        return this.PrepareSuggestionObject({ WorkKey:WorkKey }, Callback);
+    PickSession(WorkKey, ExpectedDecisionRevision, SessionKey, Note, Callback) {
+        return this.PickSessionObject({ WorkKey:WorkKey,ExpectedDecisionRevision:ExpectedDecisionRevision,SessionKey:SessionKey,Note:Note }, Callback);
     }
 
-    PrepareSuggestionObject(oObject, Callback) {
-        this._validate(oObject, EmailWorksValidators.PrepareSuggestion, this.PrepareSuggestion.onValidationError);
+    PickSessionObject(oObject, Callback) {
+        this._validate(oObject, EmailWorksValidators.PickSession, this.PickSession.onValidationError);
 
-        var pageUrl = this.Url + "/prepare-suggestion";
+        var pageUrl = this.Url + "/pick-session";
         return this._invoke(
             pageUrl,
-            "PrepareSuggestion",
-            { WorkKey: oObject.WorkKey },
-            this.PrepareSuggestion,
+            "PickSession",
+            { WorkKey: oObject.WorkKey,ExpectedDecisionRevision: oObject.ExpectedDecisionRevision,SessionKey: oObject.SessionKey,Note: oObject.Note },
+            this.PickSession,
             Callback
         );
     }
 
-    async PrepareSuggestionAsync(WorkKey) {
+    async PickSessionAsync(WorkKey,ExpectedDecisionRevision,SessionKey,Note) {
         return await ObjectUtil.Promisify(
             this,
-            this.PrepareSuggestion,
+            this.PickSession,
+            [ WorkKey,ExpectedDecisionRevision,SessionKey,Note ]
+        );
+    }
+
+    async PickSessionObjectAsync(oObject) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.PickSessionObject,
+            [ oObject ]
+        );
+    }
+
+    RetryLearning(WorkKey, Callback) {
+        return this.RetryLearningObject({ WorkKey:WorkKey }, Callback);
+    }
+
+    RetryLearningObject(oObject, Callback) {
+        this._validate(oObject, EmailWorksValidators.RetryLearning, this.RetryLearning.onValidationError);
+
+        var pageUrl = this.Url + "/retry-learning";
+        return this._invoke(
+            pageUrl,
+            "RetryLearning",
+            { WorkKey: oObject.WorkKey },
+            this.RetryLearning,
+            Callback
+        );
+    }
+
+    async RetryLearningAsync(WorkKey) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.RetryLearning,
             [ WorkKey ]
         );
     }
 
-    async PrepareSuggestionObjectAsync(oObject) {
+    async RetryLearningObjectAsync(oObject) {
         return await ObjectUtil.Promisify(
             this,
-            this.PrepareSuggestionObject,
-            [ oObject ]
-        );
-    }
-
-    ProcessCaptured(AccountKey, Callback) {
-        return this.ProcessCapturedObject({ AccountKey:AccountKey }, Callback);
-    }
-
-    ProcessCapturedObject(oObject, Callback) {
-        this._validate(oObject, EmailWorksValidators.ProcessCaptured, this.ProcessCaptured.onValidationError);
-
-        var pageUrl = this.Url + "/process-captured";
-        return this._invoke(
-            pageUrl,
-            "ProcessCaptured",
-            { AccountKey: oObject.AccountKey },
-            this.ProcessCaptured,
-            Callback
-        );
-    }
-
-    async ProcessCapturedAsync(AccountKey) {
-        return await ObjectUtil.Promisify(
-            this,
-            this.ProcessCaptured,
-            [ AccountKey ]
-        );
-    }
-
-    async ProcessCapturedObjectAsync(oObject) {
-        return await ObjectUtil.Promisify(
-            this,
-            this.ProcessCapturedObject,
-            [ oObject ]
-        );
-    }
-
-    SelectRoutingNode(WorkKey, ExpectedProposalRevision, NodeId, Callback) {
-        return this.SelectRoutingNodeObject({ WorkKey:WorkKey,ExpectedProposalRevision:ExpectedProposalRevision,NodeId:NodeId }, Callback);
-    }
-
-    SelectRoutingNodeObject(oObject, Callback) {
-        this._validate(oObject, EmailWorksValidators.SelectRoutingNode, this.SelectRoutingNode.onValidationError);
-
-        var pageUrl = this.Url + "/select-routing-node";
-        return this._invoke(
-            pageUrl,
-            "SelectRoutingNode",
-            { WorkKey: oObject.WorkKey,ExpectedProposalRevision: oObject.ExpectedProposalRevision,NodeId: oObject.NodeId },
-            this.SelectRoutingNode,
-            Callback
-        );
-    }
-
-    async SelectRoutingNodeAsync(WorkKey,ExpectedProposalRevision,NodeId) {
-        return await ObjectUtil.Promisify(
-            this,
-            this.SelectRoutingNode,
-            [ WorkKey,ExpectedProposalRevision,NodeId ]
-        );
-    }
-
-    async SelectRoutingNodeObjectAsync(oObject) {
-        return await ObjectUtil.Promisify(
-            this,
-            this.SelectRoutingNodeObject,
-            [ oObject ]
-        );
-    }
-
-    SendApproved(WorkKey, ExpectedPolicyRevision, ExpectedProposalRevision, Callback) {
-        return this.SendApprovedObject({ WorkKey:WorkKey,ExpectedPolicyRevision:ExpectedPolicyRevision,ExpectedProposalRevision:ExpectedProposalRevision }, Callback);
-    }
-
-    SendApprovedObject(oObject, Callback) {
-        this._validate(oObject, EmailWorksValidators.SendApproved, this.SendApproved.onValidationError);
-
-        var pageUrl = this.Url + "/send-approved";
-        return this._invoke(
-            pageUrl,
-            "SendApproved",
-            { WorkKey: oObject.WorkKey,ExpectedPolicyRevision: oObject.ExpectedPolicyRevision,ExpectedProposalRevision: oObject.ExpectedProposalRevision },
-            this.SendApproved,
-            Callback
-        );
-    }
-
-    async SendApprovedAsync(WorkKey,ExpectedPolicyRevision,ExpectedProposalRevision) {
-        return await ObjectUtil.Promisify(
-            this,
-            this.SendApproved,
-            [ WorkKey,ExpectedPolicyRevision,ExpectedProposalRevision ]
-        );
-    }
-
-    async SendApprovedObjectAsync(oObject) {
-        return await ObjectUtil.Promisify(
-            this,
-            this.SendApprovedObject,
+            this.RetryLearningObject,
             [ oObject ]
         );
     }
@@ -288,6 +287,17 @@ class EmailWorksService {
 var EmailWorksValidators = {
     
 
+    AddDispatchNote : {
+            WorkKey : {Validators: [Validators.Text], InvalidMessage: "Invalid WorkKey"} ,
+            ExpectedDecisionRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedDecisionRevision"} ,
+            Note : {Validators: [Validators.Text], InvalidMessage: "Invalid Note"} 
+    },
+
+    ConfirmDispatch : {
+            WorkKey : {Validators: [Validators.Text], InvalidMessage: "Invalid WorkKey"} ,
+            ExpectedDecisionRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedDecisionRevision"} 
+    },
+
     GetDelivery : {
             MessageKey : {Validators: [Validators.Text], InvalidMessage: "Invalid MessageKey"} 
     },
@@ -295,24 +305,15 @@ var EmailWorksValidators = {
     GetReviewSummary : {
     },
 
-    PrepareSuggestion : {
+    PickSession : {
+            WorkKey : {Validators: [Validators.Text], InvalidMessage: "Invalid WorkKey"} ,
+            ExpectedDecisionRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedDecisionRevision"} ,
+            SessionKey : {Validators: [Validators.Text], InvalidMessage: "Invalid SessionKey"} ,
+            Note : {Validators: [Validators.Text], InvalidMessage: "Invalid Note"} 
+    },
+
+    RetryLearning : {
             WorkKey : {Validators: [Validators.Text], InvalidMessage: "Invalid WorkKey"} 
-    },
-
-    ProcessCaptured : {
-            AccountKey : {Validators: [Validators.Text], InvalidMessage: "Invalid AccountKey"} 
-    },
-
-    SelectRoutingNode : {
-            WorkKey : {Validators: [Validators.Text], InvalidMessage: "Invalid WorkKey"} ,
-            ExpectedProposalRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedProposalRevision"} ,
-            NodeId : {Validators: [Validators.Text], InvalidMessage: "Invalid NodeId"} 
-    },
-
-    SendApproved : {
-            WorkKey : {Validators: [Validators.Text], InvalidMessage: "Invalid WorkKey"} ,
-            ExpectedPolicyRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedPolicyRevision"} ,
-            ExpectedProposalRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedProposalRevision"} 
     },
 
     SetDisposition : {

@@ -27,3 +27,7 @@ Advanced shell static asset query version to0.1.13 for the repaired nullable-fra
 
 ## 2026-11-02 — healthcare projection/feedback shell refresh
 Advanced existing versioned asset references to0.1.15 for task-scoped feedback cleanup. No layout, navigation, security or command change. Source59/59 passes with published assets; actual installed healthcare1440/390/200% and prior Spam projection receipts are recorded in the healthcare completion evidence.
+
+
+## 2026-11-03 - asset refresh for the b284867 review fixes
+Advanced email-dispatch.css, email-dispatch-ui.js and email-dispatch.js to ?v=0.2.1 (vendor assets stay at 0.2.0) so browsers holding the 0.2.0 copies load the retired-suggestion, focus, spinner and time-cell fixes. No layout, navigation or command change. The walkthrough loaded email-dispatch-ui.js?v=0.2.1 and passed 1/1; flow and seed 20/20; routine 40/40.

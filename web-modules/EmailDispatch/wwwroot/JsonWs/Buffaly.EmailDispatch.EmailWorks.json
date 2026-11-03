@@ -3,6 +3,61 @@
 	"KebabName":"email-works",
 	"Methods":[{
 			"Parameters":[{
+					"Name":"WorkKey",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"ExpectedDecisionRevision",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"Note",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				}],
+			"Name":"AddDispatchNote",
+			"UrlName":"",
+			"KebabName":"add-dispatch-note",
+			"DataObject":{
+			},
+			"IsReturnTypeArray":"false",
+			"IsStatic":"true",
+			"ReturnType":"EmailWorkView"
+		},
+		{
+			"Parameters":[{
+					"Name":"WorkKey",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"ExpectedDecisionRevision",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				}],
+			"Name":"ConfirmDispatch",
+			"UrlName":"",
+			"KebabName":"confirm-dispatch",
+			"DataObject":{
+			},
+			"IsReturnTypeArray":"false",
+			"IsStatic":"true",
+			"ReturnType":"Task`1"
+		},
+		{
+			"Parameters":[{
 					"Name":"MessageKey",
 					"IsNullable":"true",
 					"Type":"String",
@@ -36,10 +91,31 @@
 					"Type":"String",
 					"IsArray":"false",
 					"IsEnum":"false"
+				},
+				{
+					"Name":"ExpectedDecisionRevision",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"SessionKey",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"Note",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
 				}],
-			"Name":"PrepareSuggestion",
+			"Name":"PickSession",
 			"UrlName":"",
-			"KebabName":"prepare-suggestion",
+			"KebabName":"pick-session",
 			"DataObject":{
 			},
 			"IsReturnTypeArray":"false",
@@ -48,82 +124,20 @@
 		},
 		{
 			"Parameters":[{
-					"Name":"AccountKey",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				}],
-			"Name":"ProcessCaptured",
-			"UrlName":"",
-			"KebabName":"process-captured",
-			"DataObject":{
-			},
-			"IsReturnTypeArray":"false",
-			"IsStatic":"true",
-			"ReturnType":"EmailProcessingSummary"
-		},
-		{
-			"Parameters":[{
 					"Name":"WorkKey",
 					"IsNullable":"true",
 					"Type":"String",
 					"IsArray":"false",
 					"IsEnum":"false"
-				},
-				{
-					"Name":"ExpectedProposalRevision",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				},
-				{
-					"Name":"NodeId",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
 				}],
-			"Name":"SelectRoutingNode",
+			"Name":"RetryLearning",
 			"UrlName":"",
-			"KebabName":"select-routing-node",
+			"KebabName":"retry-learning",
 			"DataObject":{
 			},
 			"IsReturnTypeArray":"false",
 			"IsStatic":"true",
-			"ReturnType":"Void"
-		},
-		{
-			"Parameters":[{
-					"Name":"WorkKey",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				},
-				{
-					"Name":"ExpectedPolicyRevision",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				},
-				{
-					"Name":"ExpectedProposalRevision",
-					"IsNullable":"true",
-					"Type":"String",
-					"IsArray":"false",
-					"IsEnum":"false"
-				}],
-			"Name":"SendApproved",
-			"UrlName":"",
-			"KebabName":"send-approved",
-			"DataObject":{
-			},
-			"IsReturnTypeArray":"false",
-			"IsStatic":"true",
-			"ReturnType":"Task`1"
+			"ReturnType":"EmailWorkView"
 		},
 		{
 			"Parameters":[{
