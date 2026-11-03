@@ -22512,7 +22512,7 @@
       "PackageType": "WebModule",
       "Title": "Wiki",
       "Description": "Buffaly Web Module package for Wiki.",
-      "Version": "0.1.280",
+      "Version": "0.1.281",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/Buffaly.Agent.Wiki",
       "SourceUrl": "",
@@ -22535,7 +22535,7 @@
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "49eb358bb93313e96c7ece481583cc5fa68081ebb3fce351d28013129b330b79"
+          "Sha256": "a4e831085a14622ed0a95ad7135d115ae23347dde6d4fc270dbfbedaf441506b"
         },
         {
           "Path": "Buffaly.Agent.Wiki.deps.json",
@@ -22543,19 +22543,19 @@
         },
         {
           "Path": "Buffaly.Agent.Wiki.dll",
-          "Sha256": "37b128ed49804d4398034b203e674ed07b0f9ffc1b5b7966138500e9c9697602"
+          "Sha256": "e0c3ff43f2998218775221c8b69b4d9a84ba567abc7a0a450252a793bdadb89d"
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "3b9d0fe42481bac4a6dd2f5b8215825d805a15a52a9a7d90fa02a1e4ce9c400e"
+          "Sha256": "a84df993e7c77fcb33c26ab80559f9e1c7b1d1d6e6c099c88270f049f6cd94f1"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "c3741256bced484baabaa3cda6507a0058289271219b36269751a2936c5c3901"
+          "Sha256": "5934a7e75dd67470cef94cd6f0b08f866199a7ad5bc352b0ea40e2f2389a1609"
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "abaf966c045372237ce818ff5d9d3686c0e840de0b0237c2b37f390598a763ed"
+          "Sha256": "58172f9e690d2a51f850cafa7c433151ad7518dba51a7b499dd624208c6227e3"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -23136,6 +23136,10 @@
         {
           "Path": "Scripts/Messages_UpdateSessionEventStatusSp.sql",
           "Sha256": "8a487ae17b1167b8f4ba6c59da64cb8fefabc84a79dc33e4301174a2c5487eee"
+        },
+        {
+          "Path": "Scripts/Message_FindFirstTextMatch_Sp.sql",
+          "Sha256": "bbae7e4102e60307d67c0ff222069be3ba77b2840faa50aa895ee03b9e49cbe6"
         },
         {
           "Path": "Scripts/Message_RemoveUnlinked_Sp.sql",
