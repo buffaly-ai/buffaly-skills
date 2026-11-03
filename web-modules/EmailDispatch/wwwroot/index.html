@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Email Dispatch</title>
-<link rel="stylesheet" href="/css/bootstrap.min.css?v=0.2.0"><link rel="stylesheet" href="/css/icons.min.css?v=0.2.0"><link rel="stylesheet" href="/css/email-dispatch.css?v=0.2.3">
+<link rel="stylesheet" href="/css/bootstrap.min.css?v=0.2.0"><link rel="stylesheet" href="/css/icons.min.css?v=0.2.0"><link rel="stylesheet" href="/css/email-dispatch.css?v=0.2.4">
 <script src="/js/kcs/buffaly-standalone-foundation.js?v=0.2.0"></script><script src="/js/kcs/grid4.js?v=0.2.0"></script>
 <script src="/JsonWs/Buffaly.EmailDispatch.EmailObservations.ashx.js?v=0.2.0"></script><script src="/JsonWs/Buffaly.EmailDispatch.EmailWorks.ashx.js?v=0.2.0"></script><script src="/JsonWs/Buffaly.EmailDispatch.EmailSyncAccounts.ashx.js?v=0.2.0"></script>
- <script defer src="/js/email-dispatch-ui.js?v=0.2.3"></script><script defer src="/js/email-dispatch.js?v=0.2.3"></script>
+ <script defer src="/js/email-dispatch-ui.js?v=0.2.3"></script><script defer src="/js/email-dispatch.js?v=0.2.4"></script>
 </head>
 <body>
 <a class="ed-skip" href="#main">Skip to content</a>
@@ -15,7 +15,7 @@
 <div id="status" class="ed-message" role="status" aria-live="polite" hidden></div>
 <section id="view-inbox" class="ed-view" aria-labelledby="inbox-title">
 <div class="ed-heading"><div><h1 id="inbox-title" tabindex="-1">Email review</h1></div><div class="ed-sync-tools"><span id="sync-status" class="ed-status ed-status-neutral">Loading Gmail…</span><button id="check-now" class="btn btn-outline-secondary ed-icon-button" type="button" title="Check Gmail now" aria-label="Check Gmail now" disabled><i class="fas fa-sync-alt" aria-hidden="true"></i></button></div></div>
-<form id="search-form" class="ed-toolbar"><div class="ed-search"><label class="visually-hidden" for="search">Search email</label><input id="search" class="form-control" type="search" placeholder="Search sender or subject"><button class="btn btn-primary" type="submit"><i class="fas fa-search" aria-hidden="true"></i>Search</button></div><div class="ed-filter"><label for="state">Show</label><select id="state" class="form-select"><option value="NeedsAttention" selected>Needs my decision</option><option value="Suggested">Ready to confirm</option><option value="Pending">Waiting for the dispatch agent</option><option value="Accepted">Accepted by destination</option><option value="Reviewed">Reviewed</option><option value="">All email</option></select></div></form>
+<form id="search-form" class="ed-toolbar"><div class="ed-search"><label class="visually-hidden" for="search">Search email</label><input id="search" class="form-control" type="search" placeholder="Search sender or subject"><button class="btn btn-primary" type="submit"><i class="fas fa-search" aria-hidden="true"></i>Search</button></div><div class="ed-filter"><label for="state">Show</label><select id="state" class="form-select"><option value="NeedsAttention" selected>Needs my decision</option><option value="Suggested">Ready to confirm</option><option value="Pending">Waiting for the dispatch agent</option><option value="Accepted">Accepted by destination</option><option value="Reviewed">Processed &amp; archived</option><option value="">All email</option></select></div></form>
 <div id="inbox" class="ed-grid-host" aria-busy="true"><p class="ed-empty">Loading email…</p></div>
 <div id="inbox-pager" class="ed-pager" aria-label="Email pages"></div>
 </section>
@@ -24,7 +24,7 @@
 <p id="test-result" class="ed-result" role="status"></p>
 <article id="email" class="ed-reading-surface"><h1 id="subject" class="ed-subject" tabindex="-1"></h1><div class="ed-message-meta"><p id="sender" class="ed-sender"></p><p id="received" class="ed-meta"></p></div>
 <div id="works" class="ed-decisions" aria-label="Dispatch decision"></div>
-<div id="body" class="ed-email-body"></div></article><div id="proposals"></div></section>
+<div id="body" class="ed-email-body"></div></article></section>
 <section id="view-rules" class="ed-view" hidden aria-labelledby="rules-title">
 <div class="ed-heading"><div><h1 id="rules-title" tabindex="-1">Rules</h1></div></div>
 <form id="rule-search-form" class="ed-search"><label for="rule-search" class="visually-hidden">Search rules</label><input id="rule-search" class="form-control" type="search" placeholder="Node name or rule text"><button class="btn btn-primary" type="submit"><i class="fas fa-search" aria-hidden="true"></i>Search</button></form><div id="program" class="ed-grid-host"><p class="ed-empty">Loading rules…</p></div><div id="rule-pager" class="ed-pager" aria-label="Rule pages"></div>

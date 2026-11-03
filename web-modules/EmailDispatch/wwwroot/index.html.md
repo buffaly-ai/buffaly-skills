@@ -1,5 +1,8 @@
 # Email Dispatch standalone milestone
 
+## 2026-11-03 — processed-mail archive discovery and integrated validation
+Renamed the existing Reviewed filter to Processed & archived; its server filter and paging/search contract remain unchanged. Final CSS/behavior cache keys are 0.2.4; UI helper remains 0.2.3. Archive reuses existing local disposition and preserves Gmail and receipts. Combined source-host browser validation passed 3/3: archive/restore with real SQL synthetic fixture at 1440/390, inbox row/check-now safeguards, and long-body detail walkthrough including exact-instruction evidence navigation/reload at desktop/mobile/zoom. This supersedes the sibling's earlier unrun walkthrough limitation for the integrated source, not its accurately recorded historical test outcomes. Installed package validation follows separately.
+
 ## 2026-11-03 — inbox check-now icon
 Placed a compact Font Awesome 5 refresh button beside the owning Gmail synchronization status, labelled Check Gmail now. Reuses existing Accounts synchronization operation and shared button/spinner owner; no send or routing change. Versioned module assets to0.2.3. Focused fixture tests 2/2 pass for row targets/check-now/preserved paging and polling; installed validation follows separately.
 
@@ -37,3 +40,9 @@ Advanced email-dispatch.css, email-dispatch-ui.js and email-dispatch.js to ?v=0.
 ## 2026-11-03 — inbox polling cache key
 Advanced only email-dispatch.js to 0.2.2 so a page reload fetches the inbox polling fix. No layout/default-filter changes. Validation: targeted InboxRefreshTests 1/1, routine 42/42 and ReviewWalkthroughTests 1/1 passed against current assets.
 
+
+## 2026-11-03 - Detail readability (detail hunks only)
+- Removed the empty <div id="proposals"></div> after the message article; works() no longer fills it.
+- Advanced email-dispatch.css and email-dispatch.js to ?v=0.2.4 so browsers load the changed detail assets. email-dispatch-ui.js stays at 0.2.3 because it did not change. The concurrent archive batch also changes this file (the Reviewed filter label and a cache key); the integrating owner sets the final keys.
+- Kept the #sender, #received and #body ids that ProjectionBrowserTests read.
+- Validation (2026-11-03, source only; nothing committed or deployed): Buffaly.Dispatch.sln Debug build 0 errors (the 18 warnings are existing NU1902/NU1903, CA2200 and SYSLIB0014 warnings from buffaly-development). The routine EmailDispatch.Tests filter ran on the shared tree, which also held the concurrent archive edits: 34 passed, 58 failed, 3 skipped of 95 without the documented environment variables; 72 passed, 23 failed of 95 with only EMAIL_DISPATCH_CONFIG set. The six failure messages read were setup failures (ExactMessageProjectionTests: explicit capture or repair flag required; HealthcareProcessorTests: ArgumentNullException for path). The other 17 were not inspected, flow and seed were not run together, and EMAIL_DISPATCH_EVIDENCE was not set. ReviewWalkthroughTests (LiveStandalone) was not run after this change, so there are no screenshots of it yet. Integration, final validation and the commit were handed to Email Dispatching 11-3.

@@ -57,40 +57,48 @@
   pollTimer=setTimeout(()=>run(null,async()=>{ if(location.hash!=="#email/"+encodeURIComponent(key)) return; if(document.querySelector("dialog[open]")) { schedule(); return; } await reload(false); }),10000);
  }
  function works() {
-  $("works").replaceChildren(); $("proposals").replaceChildren();
+  $("works").replaceChildren();
   // Only current decisions. A decision the requeue replaced (Superseded) is history: the evidence view shows it with what
   // it held, never as a second "Send to" beside the new decision (UI-STD-01 Principle 13).
   const current=selectedEmail.Works.filter(work=>work.State!=="Superseded");
   if(!selectedEmail.Frame||selectedEmail.Email.ReviewState==="Spam"||!current.length) { $("works").append(status(selectedEmail.Email.ReviewState)); return; }
-  for(const work of current) {
-   $("works").append(decision(work));
-   // What Confirm sends, after the message, so the decision block stays short.
-   if(isConfirmable(work)&&work.Instruction) { const proposal=document.createElement("section"); proposal.className="ed-proposal"; proposal.append(text("h2","What "+work.Destination+" receives"),text("div",work.Instruction,"ed-instruction")); $("proposals").append(proposal); }
-  }
+  // The exact text a destination receives quotes the whole email twice inside the dispatch envelope, so it is not printed
+  // under the message. Each decision links to it in the evidence view instead (UI-STD-01 Principle 4).
+  for(const work of current) $("works").append(decision(work));
  }
- // One work as Matt sees it: the status, where it goes, who decided and why, his notes, learning, and only the commands that apply.
+ // One work as Matt sees it: the status and where it goes, then only the commands that apply, then who decided and why,
+ // learning, a link to the exact text the destination receives, and his notes. The commands come before the agent's
+ // reason, which can run to several paragraphs, so Confirm stays in view on a phone.
  function decision(work) {
   const state=work.LocalDisposition||work.State, section=document.createElement("section");
   section.className="ed-decision"; section.tabIndex=-1; section.setAttribute("aria-label",EmailDispatchUi.state(state)[0]);
   const head=document.createElement("div"); head.className="ed-decision-head"; head.append(status(state));
   if(work.Destination) head.append(text("span",(work.MessageKey?"Sent to ":"Send to ")+work.Destination,"ed-work-destination"));
-  section.append(head,facts([["Decided by",deciders[work.Source]],["Why",work.Source==="Agent"?work.Decision?.Rationale:null],["Learning",learning[work.LearningState]]]));
-  if(work.Notes.length) { const list=document.createElement("ul"); list.className="ed-notes"; for(const note of work.Notes) list.append(text("li",note.Text+" · "+date(note.Utc))); section.append(text("p","Your notes","ed-notes-label"),list); }
+  section.append(head);
   const actions=document.createElement("div"); actions.className="ed-actions";
-  if(isConfirmable(work)) actions.append(button("Confirm",control=>openConfirm(work,control),true,"fa-check"));
+   if(isConfirmable(work)) actions.append(button("Confirm",control=>openConfirm(work,control),true,"fa-check"));
+   const processed=!work.LocalDisposition&&["Accepted","NoAction","Notice","WakeRecorded","PreviouslyHandled"].includes(work.State);
+   if(processed) actions.append(button("Archive",()=>setDisposition(work,"Archived"),true,"fa-archive"));
   if(isOpen(work)) actions.append(button("Add a note",control=>openNote(work,control)),button("Pick a session",control=>openPick("send",work,control)));
   if(["Failed","Uncertain"].includes(work.LearningState)) actions.append(button("Retry learning",async()=>{await request(EmailWorks,"RetryLearning",{WorkKey:work.WorkKey});await reload(true);notify("Learning runs again on the next pass.");}));
   if(actions.childElementCount) section.append(actions);
+  section.append(facts([["Decided by",deciders[work.Source]],["Why",work.Source==="Agent"?work.Decision?.Rationale:null],["Learning",learning[work.LearningState]]]));
+  if(work.Instruction) { const exact=document.createElement("p"); exact.className="ed-exact"; exact.append(link("See exactly what "+(work.Destination||"the destination")+(work.MessageKey?" received":" receives"),"#evidence/"+encodeURIComponent(selectedEmail.Email.ObservationKey)+"/"+encodeURIComponent(work.WorkKey))); section.append(exact); }
+  if(work.Notes.length) { const list=document.createElement("ul"); list.className="ed-notes"; for(const note of work.Notes) list.append(text("li",note.Text+" · "+date(note.Utc))); section.append(text("p","Your notes","ed-notes-label"),list); }
   const secondary=document.createElement("div"); secondary.className="ed-secondary-actions";
   const node=work.LearnedDecision?.TerminalPrototypeName||work.Decision?.TerminalPrototypeName;
   if(work.Source==="Rule"&&work.RuleNode) secondary.append(link("Open rule","#rule/"+encodeURIComponent(work.RuleNode)));
   else if(node) secondary.append(link("Make this a rule","#rule/"+encodeURIComponent(node)));
-  if(work.LocalDisposition) secondary.append(button("Restore locally",()=>setDisposition(work,null)));
-  else secondary.append(button("Archive locally",()=>setDisposition(work,"Archived")),button("Dismiss locally",()=>setDisposition(work,"Dismissed")));
+   if(work.LocalDisposition) secondary.append(button("Restore to review",()=>setDisposition(work,null),false,"fa-undo"));
+   else { if(!processed) secondary.append(button("Archive",()=>setDisposition(work,"Archived"),false,"fa-archive")); secondary.append(button("Dismiss locally",()=>setDisposition(work,"Dismissed"))); }
   section.append(secondary);
   return section;
  }
- async function setDisposition(work,disposition) {await request(EmailWorks,"SetDisposition",{WorkKey:work.WorkKey,Disposition:disposition});await reload(true);notify("Local disposition saved.");}
+  async function setDisposition(work,disposition) {
+   await request(EmailWorks,"SetDisposition",{WorkKey:work.WorkKey,Disposition:disposition});
+   if(disposition) { if($("state").value!=="NeedsAttention") { $("state").value="NeedsAttention"; inboxGrid.skip=0; } location.hash="#inbox"; }
+   else { await reload(true); notify("Restored to review."); }
+  }
  function openConfirm(work,control) { actingWork=work; $("confirm-subject").textContent=selectedEmail.Email.Subject||"No subject"; $("confirm-sentence").textContent="Sends this email to "+work.Destination+"."; confirmDialog.open(control); }
  function openNote(work,control) { if(actingWork?.WorkKey!==work.WorkKey) $("note-text").value=""; actingWork=work; $("note-subject").textContent=selectedEmail.Email.Subject||"No subject"; noteDialog.open(control); }
  function openPick(mode,work,control) { pickMode=mode; actingWork=work; picked=null; $("pick-title").textContent=mode==="send"?"Pick a session":"Choose the rule's session"; $("pick-subject").textContent=mode==="send"?(selectedEmail.Email.Subject||"No subject"):selectedRule.EntityName; $("pick-note-field").hidden=mode!=="send"; $("pick-note").value=""; $("pick-search").value=""; $("pick-confirm").lastChild.textContent=mode==="send"?"Send":"Use this session"; pickSelection(); pickDialog.open(control); pickGrid.reset(); }
@@ -130,7 +138,8 @@
    if(work.Requeue?.Instruction) region.append(text("p","Instruction before the requeue","ed-meta"),text("pre",work.Requeue.Instruction,"ed-evidence"));
    if(work.Decision||work.LearnedDecision) region.append(text("pre",JSON.stringify({Decision:work.Decision,LearnedDecision:work.LearnedDecision},null,2),"ed-evidence"));
    if(work.Replay?.length) region.append(text("pre",JSON.stringify(work.Replay,null,2),"ed-evidence"));
-   if(work.Instruction) region.append(text("pre",work.Instruction,"ed-evidence"));
+   // The exact instruction (what Confirm sends), labelled; the decision's "See exactly" link lands on this label.
+   if(work.Instruction) { const label=text("p","What "+(work.Destination||"the destination")+(work.MessageKey?" received":work.State==="Superseded"?" would have received":" receives"),"ed-meta"); label.id="instruction-"+work.WorkKey; label.tabIndex=-1; region.append(label,text("pre",work.Instruction,"ed-evidence")); }
    if(work.Delivery) region.append(text("pre",JSON.stringify(work.Delivery,null,2),"ed-evidence")); else region.append(text("p","No delivery receipt.","ed-meta"));
    $("receipt-results").append(region);
   }
@@ -148,14 +157,22 @@
    if(!$("view-inbox").hidden) scheduleInbox();
   },10000);
  }
+ // #evidence/<ObservationKey>/<WorkKey> opens that email's evidence at the exact instruction of that work, also after a
+ // reload. Plain #evidence keeps showing the email opened last.
+ async function openEvidence(key,workKey) {
+  if(key&&selectedEmail?.Email.ObservationKey!==key) await load(key);
+  show("evidence"); await evidence();
+  const label=workKey&&document.getElementById("instruction-"+workKey);
+  if(label) { label.scrollIntoView({block:"start"}); label.focus({preventScroll:true,focusVisible:false}); }
+ }
  async function route() {
   EmailDispatchUi.clearNotice(); clearTimeout(pollTimer); clearTimeout(inboxTimer);
   for(const open of document.querySelectorAll("dialog[open]")) open.close();
-  const [name,id]=location.hash.slice(1).split("/");
+  const [name,id,part]=location.hash.slice(1).split("/");
   if(name==="email"&&id) await openEmail(decodeURIComponent(id));
   else if(name==="rules"){show("rules");rulesGrid.Refresh(true);}
   else if(name==="rule"&&id) await openRule(decodeURIComponent(id));
-  else if(name==="evidence"){show("evidence");await evidence();}
+  else if(name==="evidence") await openEvidence(id&&decodeURIComponent(id),part&&decodeURIComponent(part));
   else if(name==="accounts"){show("accounts");await accounts();}
   else {show("inbox");inboxGrid.Refresh(true);scheduleInbox();await accounts();}
  }
