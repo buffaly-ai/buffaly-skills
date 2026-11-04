@@ -106,3 +106,9 @@ Advanced email-dispatch.js cache key0.2.16 for typed held-outcome/error refresh 
 
 ### 2026-11-04 — shared historical-state wording
 Both shells now request shared UI0.2.9, labeling matching historical source Prior email found · held rather than claiming already handled. No commands or layout changes. Held-state and Conversations browser7/7 passed.
+
+## 2026-11-04 — failed-draft retention asset
+Advance Review script0.2.16 to0.2.17 so a later normal package release loads the error-refresh confirmation-draft fix. No markup/layout/commands changed. Focused browser10/10 and routine47/47 pass against source. Not published/installed in this review correction batch.
+
+## 2026-11-04 — shared shell Conversations entry
+Moved existing conversation list/thread/read-only-message markup into this shell and changed nav to #conversations. Incoming captured messages use existing email view/decision/dialog markup, Back link gets current thread; no second picker/rendered command copy. Added module script0.2.0 before Review0.2.18, same shared styles and body sandbox. Focused15/15 and routine47/47 pass including desktop1440/phone390 and previous held-note protection. No business/DTO/schema/core changes; publication/installed proof in session artifact.

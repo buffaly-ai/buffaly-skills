@@ -8,3 +8,6 @@ Added a Review dispatch navigation link alongside Back to conversation using exi
 
 ## 2026-11-04 — shared label asset alignment
 Shared UI cache0.2.9 matches Review after historical-state wording correction; page-specific conversation behavior unchanged. Held-state and Conversations browser7/7 pass.
+
+## 2026-11-04 — legacy URL forwarding to integrated Conversations
+Replaced independent read-only shell with location.replace to root preserving existing #thread/#message deep links or default #conversations. Existing list/thread/body markup now owned once by index.html, preserving functions while showing same dispatch controls on captured incoming messages. No alias of message identity or sending on redirect; fallback link opens conversations. Desktop/phone browser exercises legacy entry/deep-link/reload, cursor/search/sent/draft and exact picker commands through shared owner; focused15/15 routine47/47 pass. Installed verification separate.

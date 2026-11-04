@@ -7,7 +7,9 @@
   let selectedEmail=null, selectedRule=null, ruleSession="", actingWork=null, confirmMethod="ConfirmDispatch", pickMode="send", picked=null, pollTimer=0, inboxTimer=0, syncBusy=false, syncAvailable=false, bodyRequest=0, bodyToken=null;
  // Mirrors EmailDispatchActions.OpenStates and Confirm's state check, so a command is shown only where the server accepts it.
  const openStates=["Pending","Suggested","AutomaticReady","NeedsDestination","Notice","NoAction","Unclassified","Conflict","NeedsReview","Error","PreviouslyHandled","Prepared","AgentEvaluationRequired","PreparationFailed","Disabled"];
- const submissions=new Set(), failedInstructions=new Map();
+  const submissions=new Set(), failedInstructions=new Map();
+  let emailHash=null,conversationThread=null;
+  const isCurrentEmail=key=>location.hash===emailHash&&selectedEmail?.Email.ObservationKey===key;
  const isOpen=work=>!submissions.has(work.WorkKey)&&!work.MessageKey&&!work.LocalDisposition&&openStates.includes(work.State);
  const isConfirmable=work=>isOpen(work)&&["Suggested","AutomaticReady"].includes(work.State)&&!!work.Destination;
  const deciders={Rule:"A rule",Agent:"The dispatch agent",Operator:"You"};
@@ -16,7 +18,7 @@
  const behavior=rule=>(behaviors[rule.Outcome]??behaviors.Agent)(rule);
  const testLabels={RouteSelected:"A rule sends it to a session",ProcessorSelected:"A processor rule matched",AgentEvaluationRequired:"The dispatch agent decides",Notice:"Notice only",Disabled:"The matching rule is off, so the dispatch agent decides",Unclassified:"No rule matched, so the dispatch agent decides",NeedsReview:"Needs review",Conflict:"Two rules matched",Error:"The rule check failed"};
  const confirmDialog=dialog("confirm-dialog"), noteDialog=dialog("note-dialog"), pickDialog=dialog("pick-dialog"), clearDialog=dialog("clear-dialog");
- function show(name) { document.querySelectorAll(".ed-view").forEach(view=>view.hidden=view.id!=="view-"+name); const nav=["email","inbox","evidence"].includes(name)?"inbox":name==="rule"?"rules":name; document.querySelectorAll(".ed-nav a").forEach(a=>a.toggleAttribute("aria-current",a.hash==="#"+nav)); document.querySelectorAll('.ed-nav a[aria-current]').forEach(a=>a.setAttribute("aria-current","page")); window.scrollTo(0,0); const heading=$("view-"+name).querySelector("h1"); heading?.focus({preventScroll:true,focusVisible:false}); }
+  function show(name) { document.querySelectorAll(".ed-view").forEach(view=>view.hidden=view.id!=="view-"+name); const nav=["conversation","conversations","message"].includes(name)||(name==="email"&&conversationThread)?"conversations":["email","inbox","evidence"].includes(name)?"inbox":name==="rule"?"rules":name; document.querySelectorAll(".ed-nav a").forEach(a=>a.toggleAttribute("aria-current",a.hash==="#"+nav)); document.querySelectorAll('.ed-nav a[aria-current]').forEach(a=>a.setAttribute("aria-current","page")); window.scrollTo(0,0); const heading=$("view-"+name).querySelector("h1"); heading?.focus({preventScroll:true,focusVisible:false}); }
  const inboxGrid=new PagedGrid("inbox","inbox-pager","search", args=>request(EmailObservations,"GetInbox",{AccountKey:"work-main",State:$("state").value,...args}), items=>`<table class="ed-grid Grid"><thead><tr><th class="ed-sender-cell">From</th><th>Email</th><th class="ed-time-cell">Received</th><th class="ed-state-cell">Status</th></tr></thead><tbody>${items.map(item=>{const [name,kind]=EmailDispatchUi.state(item.ReviewState);return `<tr data-row-href="#email/${encodeURIComponent(item.ObservationKey)}"><td class="ed-sender-cell"><span class="ed-cell-secondary" title="${escape(item.Sender)}">${escape(item.Sender)}</span></td><td><a href="#email/${encodeURIComponent(item.ObservationKey)}" title="${escape(item.Subject)}">${escape(item.Subject||"No subject")}</a><span class="ed-cell-secondary ed-mobile-meta">${escape(item.Sender)} · ${escape(date(item.ReceivedUtc))}</span></td><td class="ed-time-cell">${escape(date(item.ReceivedUtc))}</td><td class="ed-state-cell"><span class="ed-status ed-status-${kind}">${escape(name)}</span></td></tr>`;}).join("")}</tbody></table>`,"No emails match. Change the search or filter.");
  // Rule nodes come from the published rule snapshot, so the list never waits on the dispatch agent's session.
  const rulesGrid=new PagedGrid("program","rule-pager","rule-search",args=>request(EmailObservations,"GetRuleNodes",{...args,Search:args.Search??""}),items=>`<table class="ed-grid ed-grid-rules Grid"><thead><tr><th class="ed-rule-name">Rule</th><th>What happens</th><th class="ed-rule-state">Status</th></tr></thead><tbody>${items.map(rule=>`<tr><td><a href="#rule/${encodeURIComponent(rule.PrototypeName)}" title="${escape(rule.EntityName)}">${escape(rule.EntityName)}</a></td><td class="ed-rule-behavior">${escape(behavior(rule))}</td><td><span class="ed-status ed-status-${rule.Outcome==="Disabled"?"neutral":"success"}">${rule.Outcome==="Disabled"?"Off":"Active"}</span></td></tr>`).join("")}</tbody></table>`,"No rules match. To add one, open an email and choose Make this a rule.");
@@ -45,9 +47,14 @@
   } finally { syncBusy=false; syncControls(); }
  }
  async function load(key) { selectedEmail=await request(EmailObservations,"GetEmail",{ObservationKey:key}); }
- async function openEmail(key) {
-  const bodyVersion=++bodyRequest; bodyToken=null; $("body-html").hidden=true; $("body-html").removeAttribute("srcdoc"); $("body").hidden=false; $("body-loading").hidden=true;
-  await load(key); show("email");
+  async function openEmail(key,thread=null,conversationVersion=null) {
+   const expectedHash=location.hash;
+   $("subject").textContent="Loading email…";$("works").replaceChildren();$("email-archive-actions").replaceChildren();
+   const bodyVersion=++bodyRequest; bodyToken=null; $("body-html").hidden=true; $("body-html").removeAttribute("srcdoc"); $("body").hidden=false; $("body-loading").hidden=true;
+   const updated=await request(EmailObservations,"GetEmail",{ObservationKey:key});
+   if(location.hash!==expectedHash||bodyVersion!==bodyRequest||(conversationVersion!==null&&!EmailConversations.isCurrent(conversationVersion)))return;
+   selectedEmail=updated;emailHash=expectedHash;conversationThread=thread;
+   $("email-back").href=thread?"#thread/"+encodeURIComponent(thread):"#inbox";$("email-back").textContent=thread?"Back to conversation":"← Inbox";$("email-back").setAttribute("aria-label",thread?"Back to conversation":"Back to inbox");show("email");
   $("subject").textContent=selectedEmail.Email.Subject||"No subject"; $("sender").textContent=selectedEmail.Email.Sender; $("received").textContent=date(selectedEmail.Email.ReceivedUtc); $("body").textContent=selectedEmail.Frame?selectedEmail.Frame.BodyText||"This message has no readable text.":"This email could not be read. View evidence for details."; $("test").hidden=!selectedEmail.Frame||selectedEmail.Email.ReviewState==="Spam"; $("test-result").textContent="";
   works(); schedule(); $("subject").focus({preventScroll:true,focusVisible:false});
   if(selectedEmail.Frame) void formattedBody(key,bodyVersion);
@@ -57,11 +64,11 @@
   const loading=$("body-loading"); loading.textContent="Loading formatted email…"; loading.hidden=false;
   try {
    const body=await request(EmailObservations,"GetFormattedBody",{ObservationKey:key});
-   if(version!==bodyRequest||location.hash!=="#email/"+encodeURIComponent(key)) return;
+    if(version!==bodyRequest||!isCurrentEmail(key)) return;
    if(body.HtmlDocument!==null) { bodyToken=body.ResizeToken; $("body-html").style.height="600px"; $("body-html").srcdoc=body.HtmlDocument; $("body-html").hidden=false; $("body").hidden=true; }
    loading.hidden=true;
   } catch(error) {
-   if(version!==bodyRequest||location.hash!=="#email/"+encodeURIComponent(key)) return;
+    if(version!==bodyRequest||!isCurrentEmail(key)) return;
    loading.textContent="Formatted email could not be loaded. Showing the captured text.";
   }
  }
@@ -69,14 +76,14 @@
  // Larger mail scrolls inside the frame; saturation ends the feedback without discarding content.
  // The opaque-origin frame can report its size only, never commands or arbitrary DOM mutations.
   EmailDispatchUi.bindEmailFrame($("body-html"),()=>bodyToken);
- async function reload(focus) { await load(selectedEmail.Email.ObservationKey); works(); schedule(); if(focus) $("works").querySelector(".ed-decision")?.focus({preventScroll:true}); }
+  async function reload(focus) { const key=selectedEmail.Email.ObservationKey,hash=emailHash; const updated=await request(EmailObservations,"GetEmail",{ObservationKey:key}); if(emailHash!==hash||!isCurrentEmail(key))return; selectedEmail=updated;works(); schedule(); if(focus) $("works").querySelector(".ed-decision")?.focus({preventScroll:true}); }
   // The feed worker and other tabs can change an open decision. While it is actionable or learning is pending the email
  // is re-read every 10 seconds (one bounded GetEmail read), never while a dialog is open, so no Refresh command is needed.
  function schedule() {
   clearTimeout(pollTimer);
    if(!selectedEmail.Works.some(work=>isOpen(work)||work.LearningState==="Pending")) return;
   const key=selectedEmail.Email.ObservationKey;
-  pollTimer=setTimeout(()=>run(null,async()=>{ if(location.hash!=="#email/"+encodeURIComponent(key)) return; if(document.querySelector("dialog[open]")) { schedule(); return; } await reload(false); }),10000);
+   pollTimer=setTimeout(()=>run(null,async()=>{ if(!isCurrentEmail(key)) return; if(document.querySelector("dialog[open]")) { schedule(); return; } await reload(false); }),10000);
  }
  function works() {
    $("works").replaceChildren(); $("email-archive-actions").replaceChildren();
@@ -114,7 +121,7 @@
  }
   async function setDisposition(work,disposition) {
    await request(EmailWorks,"SetDisposition",{WorkKey:work.WorkKey,Disposition:disposition});
-   if(disposition) { if($("state").value!=="NeedsAttention") { $("state").value="NeedsAttention"; inboxGrid.skip=0; } location.hash="#inbox"; }
+    if(disposition) { if(conversationThread){location.hash="#thread/"+encodeURIComponent(conversationThread);return;} if($("state").value!=="NeedsAttention") { $("state").value="NeedsAttention"; inboxGrid.skip=0; } location.hash="#inbox"; }
    else { await reload(true); notify("Restored to review."); }
   }
   function openConfirm(work,control,repeat=false) { actingWork=work; confirmMethod=repeat?"SendAgain":"ConfirmDispatch"; $("confirm-title").textContent=repeat?"Send again":"Confirm dispatch"; $("confirm-send").lastChild.textContent=repeat?"Send again":"Send"; $("confirm-subject").textContent=selectedEmail.Email.Subject||"No subject"; $("confirm-sentence").textContent=(repeat?"Sends another copy of this email to ":"Sends this email to ")+work.Destination+"."; $("confirm-note").value=failedInstructions.get(confirmMethod+":"+work.WorkKey)?.Note??""; confirmDialog.open(control); }
@@ -134,22 +141,24 @@
     failedInstructions.delete(method+":"+work.WorkKey);
     submissions.delete(work.WorkKey);
     // Never let a late command completion reload, focus or overwrite a different email/view.
-    if(location.hash==="#email/"+encodeURIComponent(key)&&selectedEmail?.Email.ObservationKey===key&&!document.querySelector("dialog[open]")) await run(null,async()=>{
-     const updated=await request(EmailObservations,"GetEmail",{ObservationKey:key});
-     if(location.hash==="#email/"+encodeURIComponent(key)&&selectedEmail?.Email.ObservationKey===key&&!document.querySelector("dialog[open]")) { selectedEmail=updated; works(); schedule(); }
+     if(isCurrentEmail(key)&&!document.querySelector("dialog[open]")) await run(null,async()=>{
+      const updated=await request(EmailObservations,"GetEmail",{ObservationKey:key});
+      if(isCurrentEmail(key)&&!document.querySelector("dialog[open]")) { selectedEmail=updated; works(); schedule(); }
     });
     if(method==="AddDispatchNote") notify("Instructions saved. Waiting for the dispatch agent.");
     else notify(result.Status==="PreviouslyHandled"?"Prior email evidence found. Review the updated decision before sending again.":EmailDispatchUi.state(result.Status)[0]+".",result.Accepted===true?"Success":"Warning");
    } catch(error) {
     submissions.delete(work.WorkKey);
     failedInstructions.set(method+":"+work.WorkKey,{...values,Selection:selection});
-    if(location.hash==="#email/"+encodeURIComponent(key)&&selectedEmail?.Email.ObservationKey===key&&!document.querySelector("dialog[open]")) {
-     // A refused command may have changed durable state. Read it before restoring any command.
-     const updated=await request(EmailObservations,"GetEmail",{ObservationKey:key});
-     if(location.hash==="#email/"+encodeURIComponent(key)&&selectedEmail?.Email.ObservationKey===key&&!document.querySelector("dialog[open]")) {
-      selectedEmail=updated;works();schedule();
-      const current=updated.Works.find(item=>item.WorkKey===work.WorkKey);
-      if(current?.DecisionRevision===work.DecisionRevision){restore(current);failedInstructions.delete(method+":"+work.WorkKey);}
+     if(isCurrentEmail(key)&&!document.querySelector("dialog[open]")) {
+      // A refused command may have changed durable state. Read it before restoring any command.
+      const updated=await request(EmailObservations,"GetEmail",{ObservationKey:key});
+      if(isCurrentEmail(key)&&!document.querySelector("dialog[open]")) {
+       selectedEmail=updated;works();schedule();
+       const current=updated.Works.find(item=>item.WorkKey===work.WorkKey);
+       // A lost confirmation response may leave only explicit repeat available; keep its proposed note reachable.
+       if(method==="ConfirmDispatch"&&current?.CanSendAgain&&values.Note)failedInstructions.set("SendAgain:"+work.WorkKey,{Note:values.Note});
+       if(current?.DecisionRevision===work.DecisionRevision){restore(current);failedInstructions.delete(method+":"+work.WorkKey);}
      }
     }
     // The shared error owner reports the failure; retained fields allow correction, never automatic retry.
@@ -226,9 +235,11 @@
  }
  async function route() {
   EmailDispatchUi.clearNotice(); clearTimeout(pollTimer); clearTimeout(inboxTimer);
+   emailHash=null;conversationThread=null;EmailConversations.cancel();++bodyRequest;
   for(const open of document.querySelectorAll("dialog[open]")) open.close();
   const [name,id,part]=location.hash.slice(1).split("/");
-  if(name==="email"&&id) await openEmail(decodeURIComponent(id));
+   if(["conversations","thread","message"].includes(name)) await EmailConversations.route(show,openEmail);
+   else if(name==="email"&&id) await openEmail(decodeURIComponent(id));
   else if(name==="rules"){show("rules");rulesGrid.Refresh(true);}
   else if(name==="rule"&&id) await openRule(decodeURIComponent(id));
   else if(name==="evidence") await openEvidence(id&&decodeURIComponent(id),part&&decodeURIComponent(part));

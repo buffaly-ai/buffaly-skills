@@ -5,3 +5,6 @@ Added page glue for generated GetConversations/GetConversation/GetConversationBo
 
 ## 2026-11-04 — restore access to dispatch from message reading
 Added Review dispatch navigation in shared message-tools; it links to existing /#email/<ObservationKey> rather than duplicating commands/dialogs. Hidden and href removed on every open until authoritative response provides saved identity; route version rejects stale response. No send on navigation. Desktop1440/phone390 tests pass exact route, existing picker and absent link for sent/draft/uncaptured messages; focused5/5/routine51/51. Cache version in owning HTML incremented.
+
+## 2026-11-04 — one application shell with dispatch controls
+Converted isolated self-routing page into EmailConversations navigation module hosted by existing Review shell. Received body with authoritative saved ObservationKey calls shared openEmail without hash redirection; thread id and route version passed for Back/current-view guards. Sent/draft/uncaptured keep existing sandbox reader. Shell owns routes/status/nav, cancel invalidates pending reads on all navigation. Shared grids/search/paging remain, no copied picker/commands or provider writes. Focused15/15 with1440/390 exact intercepted send request and error draft recovery, sent/draft/cursor/sandbox/back checks pass; routine47/47. No real email dispatched; installed proof separate.
