@@ -97,3 +97,6 @@ Advanced shared UI script to0.2.7 and review script to0.2.13 for visible saved-s
 
 ## 2026-11-04 — current decision-owner reason cache key
 Advanced only email-dispatch.js cache key0.2.13 to0.2.14 for Source-selected summary reason. Shared details/evidence, markup, defaults and command contracts unchanged. New ownership browser6/6, focused14/14 and configured routine39/39 pass. Wider installed rule-row walkthrough timeout remains outside the passing focused batch; see email-dispatch.js history for actual limitations. Source-only; no publication/installation or real sends.
+
+## 2026-11-04 — additive Conversations navigation
+Add normal /conversations.html navigation link alongside intact Review/Rules/Accounts. Update shared UI and Review script cache versions for shared sandbox sizing owner. Existing Review markup/commands untouched. New page uses same shared styles/foundation/generated client. Conversation browser1440/390 confirms return to Review. Source build succeeds; package verification recorded with delivery.

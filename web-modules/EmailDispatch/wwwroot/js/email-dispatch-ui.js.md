@@ -34,3 +34,9 @@ PagedGrid.liveSearch preserves rendered rows while a new search is pending inste
 
 ## 2026-11-04 — shared read-only Inputs table
 Added details(values) renderer using standard Inputs table table-condensed markup, td.InputLabel labels and shared Bootstrap table-light alternate rows. Uses existing safe textContent owner for values, no page-specific CSS or innerHTML. Decision summary is its first caller; existing facts owner/callers untouched to avoid unrelated layout migration. Main task: read identified session and reason before deciding about email; existing commands stay in their owner. Source UI7/7 verifies rationale priority, no selection/absent reason, safe markup text, Superseded exclusion, desktop/phone placement and unchanged requests; routine39/39 passed. No server/generated/SQL changes.
+
+## 2026-11-04 — additive Conversations shared controls
+Added exact Replied/AwaitingReply/Draft display vocabulary, CursorGrid extending existing PagedGrid for Gmail opaque tokens, and bindEmailFrame as the single source/origin/token/bounded-height owner shared with Review. No new stylesheet/transport/framework; base grid search/busy/error/range owners preserved. Cursor reset clears server tokens, search stays server-side. New conversation browser1440/390 and foreign-mailbox/projection4/4 pass including Review navigation; prior renderer regression/live proof recorded before commit.
+
+### Final verification
+2026-11-04: No reply yet display replaces initial Awaiting your reply so notifications do not imply response obligation. Cursor reset version prevents stale search responses repopulating tokens. Focused12/12 includes existing Review resize/sandbox/inbox; routine44/44 and actual-Gmail walkthrough+Gavin decode2/2 pass. Shared sizing behavior retained; installed proof separate.

@@ -68,12 +68,7 @@
  // Bound auto-expansion: retained vh/percentage CSS can otherwise grow with every parent resize.
  // Larger mail scrolls inside the frame; saturation ends the feedback without discarding content.
  // The opaque-origin frame can report its size only, never commands or arbitrary DOM mutations.
- window.addEventListener("message",event=>{
-  const frame=$("body-html"), data=event.data;
-  if(event.source!==frame.contentWindow||event.origin!=="null"||!bodyToken||data?.kind!=="email-body-size"||data.token!==bodyToken||!Number.isFinite(data.height)||data.height<1) return;
-  const height=Math.max(120,Math.min(2400,Math.ceil(data.height)+2))+"px";
-  if(frame.style.height!==height) frame.style.height=height;
- });
+  EmailDispatchUi.bindEmailFrame($("body-html"),()=>bodyToken);
  async function reload(focus) { await load(selectedEmail.Email.ObservationKey); works(); schedule(); if(focus) $("works").querySelector(".ed-decision")?.focus({preventScroll:true}); }
  // The feed worker decides noted email, and learns after a send, in the background. While either is pending the open email
  // is re-read every 10 seconds (one bounded GetEmail read), never while a dialog is open, so no Refresh command is needed.

@@ -78,7 +78,12 @@ window.EmailDispatchUi = (() => {
    close() { if (element.open) element.close(); }
   };
  }
- const stateNames = {
+  // One sandbox sizing/identity owner for Review and Conversations.
+  function bindEmailFrame(frame, token) {
+   window.addEventListener("message",event=>{const data=event.data;if(event.source!==frame.contentWindow||event.origin!=="null"||!token()||data?.kind!=="email-body-size"||data.token!==token()||!Number.isFinite(data.height)||data.height<1)return;const height=Math.max(120,Math.min(2400,Math.ceil(data.height)+2))+"px";if(frame.style.height!==height)frame.style.height=height;});
+  }
+  const stateNames = {
+   Replied:["You replied","success"], AwaitingReply:["No reply yet","neutral"], Draft:["Draft reply","warning"],
   ProjectionFailed:["Email could not be read","danger"], Spam:["Spam · not dispatched","neutral"],
   NotReviewed:["Not yet reviewed","neutral"], ReviewedLocally:["Reviewed locally","neutral"], Pending:["Waiting for the dispatch agent","info"], Suggested:["Ready to send","warning"], AutomaticReady:["Processor ready to send","warning"], NeedsDestination:["Not sent — choose a destination","warning"], AgentEvaluationRequired:["Not decided yet","warning"], PreparationFailed:["Not decided yet","warning"], Prepared:["Suggestions ready","info"], NeedsReview:["Needs routing review","warning"], PreviouslyHandled:["Already handled · held","neutral"], DeliveryUnknown:["Delivery uncertain · held","danger"], Accepted:["Accepted by destination","success"], Rejected:["Rejected by destination","danger"], Unclassified:["Not decided yet","warning"], Disabled:["Not decided yet","warning"], Superseded:["Replaced by a newer decision","neutral"], NoAction:["No action needed","neutral"], Notice:["Notice only","neutral"], WakeRecorded:["Wake recorded","info"], Conflict:["Conflicting rules · held","danger"], Error:["The dispatch agent could not decide","danger"], Failed:["Review needs retry","danger"], Archived:["Archived","neutral"], Dismissed:["Dismissed locally","neutral"]
  };
@@ -109,5 +114,14 @@ window.EmailDispatchUi = (() => {
   cancelSearch() { clearTimeout(this.searchTimer);this.searchTimer=0;this.request++; }
   reset() { this.cancelSearch();this.skip=0; this.Refresh(true); }
  }
-  return {$,text,escape,link,notify,clearNotice,run,request,button,dialog,state,status,date,facts,details,PagedGrid};
+  // Gmail's opaque cursors are adapted here, not translated into guessed offsets or downloaded whole-mailbox rows.
+  class CursorGrid extends PagedGrid {
+   constructor(content,pager,search,load,render,empty) {
+    const state={tokens:new Map([[0,""]]),version:0};
+    super(content,pager,search,args=>{const version=state.version;return load({Search:args.Search??"",PageToken:state.tokens.get(args.SkipRows),NumRows:args.NumRows}).then(page=>{if(version===state.version){if(page.NextPageToken)state.tokens.set(args.SkipRows+args.NumRows,page.NextPageToken);else state.tokens.delete(args.SkipRows+args.NumRows);}return {Items:page.Items,HasMore:!!page.NextPageToken};});},render,empty);
+    this.cursorState=state;
+   }
+   reset(){this.cursorState.version++;this.cursorState.tokens.clear();this.cursorState.tokens.set(0,"");super.reset();}
+  }
+   return {$,text,escape,link,notify,clearNotice,run,request,button,dialog,state,status,date,facts,details,PagedGrid,CursorGrid,bindEmailFrame};
 })();

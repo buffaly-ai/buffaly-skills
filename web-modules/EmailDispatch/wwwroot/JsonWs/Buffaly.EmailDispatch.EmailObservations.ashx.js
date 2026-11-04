@@ -2,6 +2,7 @@
     	    	
 var EmailObservationsValidatorsFields = {
 	
+		ThreadId : {Validators : [Validators.String], InvalidMessage: "Invalid . " + ValidatorDescriptions.Length(1, 255) },
 		WorkSession : {Validators : [Validators.String], InvalidMessage: "Invalid WorkSession. " + ValidatorDescriptions.Length(1, 255) },
 		Anchor : {Validators : [Validators.String], InvalidMessage: "Invalid Anchor. " + ValidatorDescriptions.Length(1, 255) },
 		State : {Validators : [Validators.String], InvalidMessage: "Invalid State. " + ValidatorDescriptions.Length(1, 255) },
@@ -9,6 +10,8 @@ var EmailObservationsValidatorsFields = {
 		ObservationKey : {Validators : [Validators.String], InvalidMessage: "Invalid . " + ValidatorDescriptions.Length(1, 255) },
 		PrototypeName : {Validators : [Validators.String], InvalidMessage: "Invalid PrototypeName. " + ValidatorDescriptions.Length(1, 255) },
 		ExpectedRulesRevision : {Validators : [Validators.String], InvalidMessage: "Invalid ExpectedRulesRevision. " + ValidatorDescriptions.Length(1, 255) },
+		MessageId : {Validators : [Validators.String], InvalidMessage: "Invalid . " + ValidatorDescriptions.Length(1, 255) },
+		PageToken : {Validators : [Validators.String], InvalidMessage: "Invalid PageToken. " + ValidatorDescriptions.Length(1, 255) },
 		SkipRows : {Validators : [Validators.Integer], InvalidMessage: "Invalid SkipRows. " + ValidatorDescriptions.Integer() },
 		Search : {Validators : [Validators.String], InvalidMessage: "Invalid Search. " + ValidatorDescriptions.Length(1, 255) },
 		Outcome : {Validators : [Validators.String], InvalidMessage: "Invalid Outcome. " + ValidatorDescriptions.Length(1, 255) },
@@ -66,6 +69,105 @@ class EmailObservationsService {
         return await ObjectUtil.Promisify(
             this,
             this.ClearRuleObject,
+            [ oObject ]
+        );
+    }
+
+    GetConversation(AccountKey, ThreadId, SkipRows, NumRows, Callback) {
+        return this.GetConversationObject({ AccountKey:AccountKey,ThreadId:ThreadId,SkipRows:SkipRows,NumRows:NumRows }, Callback);
+    }
+
+    GetConversationObject(oObject, Callback) {
+        this._validate(oObject, EmailObservationsValidators.GetConversation, this.GetConversation.onValidationError);
+
+        var pageUrl = this.Url + "/get-conversation";
+        return this._invoke(
+            pageUrl,
+            "GetConversation",
+            { AccountKey: oObject.AccountKey,ThreadId: oObject.ThreadId,SkipRows: oObject.SkipRows,NumRows: oObject.NumRows },
+            this.GetConversation,
+            Callback
+        );
+    }
+
+    async GetConversationAsync(AccountKey,ThreadId,SkipRows,NumRows) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.GetConversation,
+            [ AccountKey,ThreadId,SkipRows,NumRows ]
+        );
+    }
+
+    async GetConversationObjectAsync(oObject) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.GetConversationObject,
+            [ oObject ]
+        );
+    }
+
+    GetConversationBody(AccountKey, ThreadId, MessageId, Callback) {
+        return this.GetConversationBodyObject({ AccountKey:AccountKey,ThreadId:ThreadId,MessageId:MessageId }, Callback);
+    }
+
+    GetConversationBodyObject(oObject, Callback) {
+        this._validate(oObject, EmailObservationsValidators.GetConversationBody, this.GetConversationBody.onValidationError);
+
+        var pageUrl = this.Url + "/get-conversation-body";
+        return this._invoke(
+            pageUrl,
+            "GetConversationBody",
+            { AccountKey: oObject.AccountKey,ThreadId: oObject.ThreadId,MessageId: oObject.MessageId },
+            this.GetConversationBody,
+            Callback
+        );
+    }
+
+    async GetConversationBodyAsync(AccountKey,ThreadId,MessageId) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.GetConversationBody,
+            [ AccountKey,ThreadId,MessageId ]
+        );
+    }
+
+    async GetConversationBodyObjectAsync(oObject) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.GetConversationBodyObject,
+            [ oObject ]
+        );
+    }
+
+    GetConversations(AccountKey, Search, PageToken, NumRows, Callback) {
+        return this.GetConversationsObject({ AccountKey:AccountKey,Search:Search,PageToken:PageToken,NumRows:NumRows }, Callback);
+    }
+
+    GetConversationsObject(oObject, Callback) {
+        this._validate(oObject, EmailObservationsValidators.GetConversations, this.GetConversations.onValidationError);
+
+        var pageUrl = this.Url + "/get-conversations";
+        return this._invoke(
+            pageUrl,
+            "GetConversations",
+            { AccountKey: oObject.AccountKey,Search: oObject.Search,PageToken: oObject.PageToken,NumRows: oObject.NumRows },
+            this.GetConversations,
+            Callback
+        );
+    }
+
+    async GetConversationsAsync(AccountKey,Search,PageToken,NumRows) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.GetConversations,
+            [ AccountKey,Search,PageToken,NumRows ]
+        );
+    }
+
+    async GetConversationsObjectAsync(oObject) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.GetConversationsObject,
             [ oObject ]
         );
     }
@@ -363,6 +465,26 @@ var EmailObservationsValidators = {
     ClearRule : {
             PrototypeName : {Validators: [Validators.Text], InvalidMessage: "Invalid PrototypeName"} ,
             ExpectedRulesRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedRulesRevision"} 
+    },
+
+    GetConversation : {
+            AccountKey : {Validators: [Validators.Text], InvalidMessage: "Invalid AccountKey"} ,
+            ThreadId : {Validators: [Validators.Text], InvalidMessage: "Invalid ThreadId"} ,
+            SkipRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid SkipRows"} ,
+            NumRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid NumRows"} 
+    },
+
+    GetConversationBody : {
+            AccountKey : {Validators: [Validators.Text], InvalidMessage: "Invalid AccountKey"} ,
+            ThreadId : {Validators: [Validators.Text], InvalidMessage: "Invalid ThreadId"} ,
+            MessageId : {Validators: [Validators.Text], InvalidMessage: "Invalid MessageId"} 
+    },
+
+    GetConversations : {
+            AccountKey : {Validators: [Validators.Text], InvalidMessage: "Invalid AccountKey"} ,
+            Search : {Validators: [Validators.Text], InvalidMessage: "Invalid Search"} ,
+            PageToken : {Validators: [Validators.Text], InvalidMessage: "Invalid PageToken"} ,
+            NumRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid NumRows"} 
     },
 
     GetEmail : {
