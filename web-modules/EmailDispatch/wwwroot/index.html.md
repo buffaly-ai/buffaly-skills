@@ -63,3 +63,6 @@ Bumped shared UI and application script query versions to 0.2.5/0.2.8 so the ins
 ## 2026-11-03 — stable Buffaly-only destination picker
 Applied shared ed-dialog-picker class to the common destination picker and advanced stylesheet/shared control asset versions to0.2.6. No command or generated client change. Source geometry/endpoint2/2, existingUI5/5 and routine43/43 pass; installed verification follows.
 
+
+## 2026-11-04 — Send to the routed session with an optional note
+Added Note to the agent (optional) textarea (maxlength2000) inside existing routed confirmation dialog, reusing form/dialog owners. No extra command or rerouting. Incremented EmailWorks client and app JS cache keys. UI task: open destination Send, type optional note, Send or Cancel; cancellation sends nothing. Focus trap/browser exact argument and error-retains-note regression passed with16/16 flow+browser suite; installed desktop/phone checks follow.

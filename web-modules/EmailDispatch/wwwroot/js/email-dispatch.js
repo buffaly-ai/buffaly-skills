@@ -117,7 +117,7 @@
    if(disposition) { if($("state").value!=="NeedsAttention") { $("state").value="NeedsAttention"; inboxGrid.skip=0; } location.hash="#inbox"; }
    else { await reload(true); notify("Restored to review."); }
   }
- function openConfirm(work,control) { actingWork=work; $("confirm-subject").textContent=selectedEmail.Email.Subject||"No subject"; $("confirm-sentence").textContent="Sends this email to "+work.Destination+"."; confirmDialog.open(control); }
+ function openConfirm(work,control) { actingWork=work; $("confirm-subject").textContent=selectedEmail.Email.Subject||"No subject"; $("confirm-sentence").textContent="Sends this email to "+work.Destination+"."; $("confirm-note").value=""; confirmDialog.open(control); }
  function openNote(work,control) { if(actingWork?.WorkKey!==work.WorkKey) $("note-text").value=""; actingWork=work; $("note-subject").textContent=selectedEmail.Email.Subject||"No subject"; noteDialog.open(control); }
   function openPick(mode,work,control) { pickMode=mode; actingWork=work; picked=null; $("pick-title").textContent=mode==="send"?"Choose destination and send":"Choose the rule's session"; $("pick-subject").textContent=mode==="send"?(selectedEmail.Email.Subject||"No subject"):selectedRule.EntityName; $("pick-note-field").hidden=mode!=="send"; $("pick-note").value=""; $("pick-search").value=""; $("pick-confirm").lastChild.textContent=mode==="send"?"Send to selected session":"Use this session"; pickSelection(); pickDialog.open(control); pickGrid.reset(); }
  function pickSelection() { $("pick-count").textContent=picked?"Selected: "+picked.Name:"No session selected"; $("pick-confirm").disabled=!picked; }
@@ -205,7 +205,7 @@
  function submit(id,control,action){$(id).addEventListener("submit",event=>{event.preventDefault();run($(control),action);});}
  function click(id,action){$(id).addEventListener("click",()=>run($(id),action));}
  submit("search-form","search-form",()=>inboxGrid.reset());$("state").addEventListener("change",()=>inboxGrid.reset());submit("rule-search-form","rule-search-form",()=>rulesGrid.reset());
- submit("confirm-form","confirm-send",async()=>{await request(EmailWorks,"ConfirmDispatch",{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision});await finishSend(confirmDialog,actingWork.WorkKey);});
+ submit("confirm-form","confirm-send",async()=>{await request(EmailWorks,"ConfirmDispatch",{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,Note:$("confirm-note").value});await finishSend(confirmDialog,actingWork.WorkKey);});
   submit("note-form","note-save",async()=>{await request(EmailWorks,"AddDispatchNote",{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,Note:$("note-text").value});$("note-text").value="";noteDialog.close();await reload(true);notify("Waiting for the dispatch agent.");});
  $("pick-grid").addEventListener("change",event=>{const input=event.target.closest("input[name=pick-session]");if(!input)return;picked={SessionKey:input.value,Name:input.dataset.name};pickSelection();});
  submit("pick-search-form","pick-search-form",()=>{picked=null;pickSelection();pickGrid.reset();});

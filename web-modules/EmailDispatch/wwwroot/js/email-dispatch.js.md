@@ -71,3 +71,6 @@ Reading decision now contains one shared status and state-appropriate primary se
 # 2026-11-03 — destination filtering while typing
 Both send and rule destination pickers opt into shared PagedGrid live server search. Any input change clears the picked session and disables confirmation; close cancels pending search. Existing bounded GetRecentSessions arguments, search submit, paging and explicit send command are unchanged. Validation: new debounce/clear/paging/stale-response/cancel/no-write browser test and existing compact decision test passed 2/2; exact-command, archive and inbox shared-grid regressions passed. No real mail command executed.
 
+
+## 2026-11-04 — Send to the routed session with an optional note
+Routed confirmation clears note on each open and passes exact multiline Note through generated ConfirmDispatch client. Failure leaves dialog/note visible; the existing shared command disable and finishSend path unchanged. Reconsider and picker remain separate. Focus trap and exact request/error/note-reset regression passed; flow+browser16/16 and routine43/43 pass. No live TTG send authorized or performed.

@@ -63,8 +63,8 @@ class EmailWorksService {
         );
     }
 
-    ConfirmDispatch(WorkKey, ExpectedDecisionRevision, Callback) {
-        return this.ConfirmDispatchObject({ WorkKey:WorkKey,ExpectedDecisionRevision:ExpectedDecisionRevision }, Callback);
+    ConfirmDispatch(WorkKey, ExpectedDecisionRevision, Note, Callback) {
+        return this.ConfirmDispatchObject({ WorkKey:WorkKey,ExpectedDecisionRevision:ExpectedDecisionRevision,Note:Note }, Callback);
     }
 
     ConfirmDispatchObject(oObject, Callback) {
@@ -74,17 +74,17 @@ class EmailWorksService {
         return this._invoke(
             pageUrl,
             "ConfirmDispatch",
-            { WorkKey: oObject.WorkKey,ExpectedDecisionRevision: oObject.ExpectedDecisionRevision },
+            { WorkKey: oObject.WorkKey,ExpectedDecisionRevision: oObject.ExpectedDecisionRevision,Note: oObject.Note },
             this.ConfirmDispatch,
             Callback
         );
     }
 
-    async ConfirmDispatchAsync(WorkKey,ExpectedDecisionRevision) {
+    async ConfirmDispatchAsync(WorkKey,ExpectedDecisionRevision,Note) {
         return await ObjectUtil.Promisify(
             this,
             this.ConfirmDispatch,
-            [ WorkKey,ExpectedDecisionRevision ]
+            [ WorkKey,ExpectedDecisionRevision,Note ]
         );
     }
 
@@ -295,7 +295,8 @@ var EmailWorksValidators = {
 
     ConfirmDispatch : {
             WorkKey : {Validators: [Validators.Text], InvalidMessage: "Invalid WorkKey"} ,
-            ExpectedDecisionRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedDecisionRevision"} 
+            ExpectedDecisionRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedDecisionRevision"} ,
+            Note : {Validators: [Validators.Text], InvalidMessage: "Invalid Note"} 
     },
 
     GetDelivery : {
