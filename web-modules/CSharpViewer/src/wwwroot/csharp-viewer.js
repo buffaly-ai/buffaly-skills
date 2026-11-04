@@ -58,7 +58,7 @@
     if(dy<0||Math.abs(dx)>Math.max(12,Math.abs(dy))){finishPull();return;}
     // Claim the first downward scroll update, even below the feedback threshold.
     // Otherwise the browser owns the sequence and later moves cannot be cancelled.
-    if(dy<=0)return;
+    if(dy<=0){finishPull();return;}
     if(!event.cancelable){finishPull();return;}
     event.preventDefault();
     gesture.armed=dy>=80;
