@@ -100,3 +100,6 @@ Advanced only email-dispatch.js cache key0.2.13 to0.2.14 for Source-selected sum
 
 ## 2026-11-04 — additive Conversations navigation
 Add normal /conversations.html navigation link alongside intact Review/Rules/Accounts. Update shared UI and Review script cache versions for shared sandbox sizing owner. Existing Review markup/commands untouched. New page uses same shared styles/foundation/generated client. Conversation browser1440/390 confirms return to Review. Source build succeeds; package verification recorded with delivery.
+
+## 2026-11-04 — current held-state refresh asset
+Advanced email-dispatch.js cache key0.2.16 for typed held-outcome/error refresh and open-decision polling. No markup, commands or styling change. Focused10/10 and routine51/51 passed at current source; desktop/phone screenshots from regression. Installed activation recorded separately.

@@ -70,11 +70,11 @@
  // The opaque-origin frame can report its size only, never commands or arbitrary DOM mutations.
   EmailDispatchUi.bindEmailFrame($("body-html"),()=>bodyToken);
  async function reload(focus) { await load(selectedEmail.Email.ObservationKey); works(); schedule(); if(focus) $("works").querySelector(".ed-decision")?.focus({preventScroll:true}); }
- // The feed worker decides noted email, and learns after a send, in the background. While either is pending the open email
+  // The feed worker and other tabs can change an open decision. While it is actionable or learning is pending the email
  // is re-read every 10 seconds (one bounded GetEmail read), never while a dialog is open, so no Refresh command is needed.
  function schedule() {
   clearTimeout(pollTimer);
-  if(!selectedEmail.Works.some(work=>work.State==="Pending"||work.LearningState==="Pending")) return;
+   if(!selectedEmail.Works.some(work=>isOpen(work)||work.LearningState==="Pending")) return;
   const key=selectedEmail.Email.ObservationKey;
   pollTimer=setTimeout(()=>run(null,async()=>{ if(location.hash!=="#email/"+encodeURIComponent(key)) return; if(document.querySelector("dialog[open]")) { schedule(); return; } await reload(false); }),10000);
  }
@@ -129,7 +129,8 @@
    submissions.add(work.WorkKey); control.close(); works();
    notify("Submitting instructions…","Info");
    try {
-    const result=await request(EmailWorks,method,values);
+     const result=await request(EmailWorks,method,values);
+     if(result.Status==="PreviouslyHandled"&&values.Note)failedInstructions.set("SendAgain:"+work.WorkKey,{Note:values.Note});
     failedInstructions.delete(method+":"+work.WorkKey);
     submissions.delete(work.WorkKey);
     // Never let a late command completion reload, focus or overwrite a different email/view.
@@ -138,13 +139,18 @@
      if(location.hash==="#email/"+encodeURIComponent(key)&&selectedEmail?.Email.ObservationKey===key&&!document.querySelector("dialog[open]")) { selectedEmail=updated; works(); schedule(); }
     });
     if(method==="AddDispatchNote") notify("Instructions saved. Waiting for the dispatch agent.");
-    else notify(EmailDispatchUi.state(result.Status)[0]+".",result.Accepted===true?"Success":"Warning");
+    else notify(result.Status==="PreviouslyHandled"?"Prior email evidence found. Review the updated decision before sending again.":EmailDispatchUi.state(result.Status)[0]+".",result.Accepted===true?"Success":"Warning");
    } catch(error) {
     submissions.delete(work.WorkKey);
     failedInstructions.set(method+":"+work.WorkKey,{...values,Selection:selection});
     if(location.hash==="#email/"+encodeURIComponent(key)&&selectedEmail?.Email.ObservationKey===key&&!document.querySelector("dialog[open]")) {
-     // Reinitialize through the dialog's owner: another email or rule may have reused its labels and mode.
-     works(); restore(work); failedInstructions.delete(method+":"+work.WorkKey);
+     // A refused command may have changed durable state. Read it before restoring any command.
+     const updated=await request(EmailObservations,"GetEmail",{ObservationKey:key});
+     if(location.hash==="#email/"+encodeURIComponent(key)&&selectedEmail?.Email.ObservationKey===key&&!document.querySelector("dialog[open]")) {
+      selectedEmail=updated;works();schedule();
+      const current=updated.Works.find(item=>item.WorkKey===work.WorkKey);
+      if(current?.DecisionRevision===work.DecisionRevision){restore(current);failedInstructions.delete(method+":"+work.WorkKey);}
+     }
     }
     // The shared error owner reports the failure; retained fields allow correction, never automatic retry.
     throw error;
