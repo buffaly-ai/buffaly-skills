@@ -93,3 +93,7 @@ Advanced review-script cache key0.2.11 to0.2.12 for owner-based restoration of f
 
 ## 2026-11-04 — session/reason summary asset refresh
 Advanced shared UI script to0.2.7 and review script to0.2.13 for visible saved-session/decision-reason Inputs table above body. No markup or command changes. Source UI7/7 and routine39/39 passed; initial test geometry targeted hidden text body, corrected to visible HTML frame. Installed acceptance recorded separately. Includes prior committed late-failure context correction in same normal release.
+
+
+## 2026-11-04 — current decision-owner reason cache key
+Advanced only email-dispatch.js cache key0.2.13 to0.2.14 for Source-selected summary reason. Shared details/evidence, markup, defaults and command contracts unchanged. New ownership browser6/6, focused14/14 and configured routine39/39 pass. Wider installed rule-row walkthrough timeout remains outside the passing focused batch; see email-dispatch.js history for actual limitations. Source-only; no publication/installation or real sends.

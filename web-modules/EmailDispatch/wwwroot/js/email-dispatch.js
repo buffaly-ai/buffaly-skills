@@ -100,7 +100,8 @@
    section.className="ed-decision"; section.tabIndex=-1; section.setAttribute("aria-label",EmailDispatchUi.state(state,work.Destination)[0]);
     const head=document.createElement("div"); head.className="ed-decision-head"; head.append(submissions.has(work.WorkKey)?text("span","Submitting instructions…","ed-status ed-status-info"):status(state,work.Destination));
     section.append(head);
-    section.append(EmailDispatchUi.details([["Identified session",work.Destination||"No session selected"],["Decision reason",work.Decision?.Rationale||work.Reason||"No decision reason recorded"]]));
+    const reason=work.Source==="Agent"?work.Decision?.Rationale:work.Reason;
+    section.append(EmailDispatchUi.details([["Identified session",work.Destination||"No session selected"],["Decision reason",reason||"No decision reason recorded"]]));
     if(submissions.has(work.WorkKey)) return section;
   const actions=document.createElement("div"); actions.className="ed-actions";
     if(isConfirmable(work)) actions.append(button("Send to "+work.Destination,control=>openConfirm(work,control),true,"fa-check"));
