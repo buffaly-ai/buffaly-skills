@@ -1,5 +1,5 @@
 "use strict";
-// An additive, read-only task view. Search and thread membership are server/provider owned.
+// Live conversation reads navigate to the existing exact-message Review; no dispatch commands are duplicated here.
 (() => {
  const {$,text,escape,request,date,status,PagedGrid,CursorGrid,run}=EmailDispatchUi;
  let threadId="", bodyToken=null, version=0;
@@ -13,10 +13,12 @@
  function show(name){document.querySelectorAll(".ed-view").forEach(view=>view.hidden=view.id!=="view-"+name);window.scrollTo(0,0);$("view-"+name).querySelector("h1")?.focus({preventScroll:true,focusVisible:false});}
  EmailDispatchUi.bindEmailFrame($("message-html"),()=>bodyToken);
  async function openMessage(id,messageId,current){
+  $("review-dispatch").hidden=true;$("review-dispatch").removeAttribute("href");
   show("message");$("back-thread").href="#thread/"+encodeURIComponent(id);$("message-subject").textContent="Message";$("message-facts").replaceChildren();
   $("message-loading").textContent="Loading email…";$("message-html").hidden=true;$("message-html").removeAttribute("srcdoc");$("message-text").textContent="";$("message-text").hidden=false;
   const result=await request(EmailObservations,"GetConversationBody",{AccountKey:"work-main",ThreadId:id,MessageId:messageId});
   if(current!==version)return;
+  if(result.ObservationKey){$("review-dispatch").href="/#email/"+encodeURIComponent(result.ObservationKey);$("review-dispatch").hidden=false;}
   const metadata=result.Message;$("message-subject").textContent=metadata.Subject||"No subject";$("message-facts").append(EmailDispatchUi.details([["From",metadata.Sender],["To",metadata.To],["When",date(metadata.ReceivedUtc)],["Message",metadata.Direction==="Sent"?"Sent":metadata.Direction==="Draft"?"Draft":"Received"]]));
   $("message-loading").textContent="";$("message-text").textContent=result.Text||"This message has no readable text.";
   if(result.Body.HtmlDocument!==null){bodyToken=result.Body.ResizeToken;$("message-html").style.height="600px";$("message-html").srcdoc=result.Body.HtmlDocument;$("message-html").hidden=false;$("message-text").hidden=true;}
