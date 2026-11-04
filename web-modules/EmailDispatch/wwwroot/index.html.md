@@ -82,3 +82,6 @@ Local package 0.1.32 Installed after exact owning DLL parity and normal hash ver
 
 ## 2026-11-04 — unreachable footer asset refresh
 Advanced only email-dispatch.css cache key0.2.6 to0.2.7 to load the shared picker zoom/height fix. No dialog markup, delivery arguments or command changes. Source footer six-view/hit-test/intercepted-Send test and stable picker/exact arguments/background modal suite4/4 pass. Installed verification follows.
+
+## 2026-11-04 — repeat-send client freshness
+Bumped EmailWorks generated client cache key0.2.2 and review script0.2.11 for new SendAgain endpoint/command. No markup/layout/style changes. Source browser1/1 passed; actual route payload and footer verified on synthetic data, no real send.

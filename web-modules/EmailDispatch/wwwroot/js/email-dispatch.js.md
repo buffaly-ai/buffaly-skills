@@ -82,3 +82,6 @@ Send, reconsider and chosen-destination submission now capture their exact exist
 
 ## 2026-11-04 — installed background submission
 Canonical 0.1.31 then 0.1.32 installed; delayed-response and late-failure tests passed 2/2 on 0.1.31 and final combined 4/4 on 0.1.32. Source exact-request/timing/recovery 3/3, routine43/43. No server command contract changed; modal test routes intercepted, no real delivery. Report and screenshots: Email Dispatching 11-3/artifacts/inbox-freshness/report.md and background-modal/installed. No protected Matt process or core source change.
+
+## 2026-11-04 — explicit repeat-send UI
+Added server-projected CanSendAgain command, reused shared confirmation for SendAgain with another-copy sentence and retained optional note/error drafts. Existing normal confirm/choose/reconsider commands unchanged; choose no longer primary when repeat is main action. Generated client only, no new styles. Source browser1/1 verifies exact command, Cancel/footer/phone+desktop and intercepted accepted feedback, with no real delivery. Broader61/62 has combined HoldAttempts assertion, isolated pass; installed proof in repeat-send feature receipt.

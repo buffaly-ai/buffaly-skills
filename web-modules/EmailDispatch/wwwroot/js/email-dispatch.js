@@ -4,7 +4,7 @@
 // he chooses. Every call goes through the generated JsonWs clients; the server owns every guard and state change.
 (() => {
  const {$,text,escape,link,notify,run,request,button,status,date,facts,PagedGrid,dialog}=EmailDispatchUi;
- let selectedEmail=null, selectedRule=null, ruleSession="", actingWork=null, pickMode="send", picked=null, pollTimer=0, inboxTimer=0, syncBusy=false, syncAvailable=false, bodyRequest=0, bodyToken=null;
+  let selectedEmail=null, selectedRule=null, ruleSession="", actingWork=null, confirmMethod="ConfirmDispatch", pickMode="send", picked=null, pollTimer=0, inboxTimer=0, syncBusy=false, syncAvailable=false, bodyRequest=0, bodyToken=null;
  // Mirrors EmailDispatchActions.OpenStates and Confirm's state check, so a command is shown only where the server accepts it.
  const openStates=["Pending","Suggested","AutomaticReady","NeedsDestination","Notice","NoAction","Unclassified","Conflict","NeedsReview","Error","PreviouslyHandled","Prepared","AgentEvaluationRequired","PreparationFailed","Disabled"];
  const submissions=new Set(), failedInstructions=new Map();
@@ -102,11 +102,12 @@
    section.append(head);
    if(submissions.has(work.WorkKey)) return section;
   const actions=document.createElement("div"); actions.className="ed-actions";
-   if(isConfirmable(work)) actions.append(button("Send to "+work.Destination,control=>openConfirm(work,control),true,"fa-check"));
+    if(isConfirmable(work)) actions.append(button("Send to "+work.Destination,control=>openConfirm(work,control),true,"fa-check"));
+    if(work.CanSendAgain) actions.append(button("Send again to "+work.Destination,control=>openConfirm(work,control,true),true,"fa-check"));
    const processed=!work.LocalDisposition&&["Accepted","NoAction","Notice","WakeRecorded","PreviouslyHandled"].includes(work.State);
    if(isOpen(work)) {
     const canPick=work.State!=="Pending";
-    if(canPick) actions.append(button("Choose destination and send",control=>openPick("send",work,control),!isConfirmable(work)&&work.State!=="Error"));
+    if(canPick) actions.append(button("Choose destination and send",control=>openPick("send",work,control),!isConfirmable(work)&&!work.CanSendAgain&&work.State!=="Error"));
     actions.append(button("Ask the agent to reconsider",control=>openNote(work,control),work.State==="Error"));
    }
    if(work.LocalDisposition) actions.append(button("Restore to review",()=>setDisposition(work,null),true,"fa-undo"));
@@ -119,7 +120,7 @@
    if(disposition) { if($("state").value!=="NeedsAttention") { $("state").value="NeedsAttention"; inboxGrid.skip=0; } location.hash="#inbox"; }
    else { await reload(true); notify("Restored to review."); }
   }
-  function openConfirm(work,control) { actingWork=work; $("confirm-subject").textContent=selectedEmail.Email.Subject||"No subject"; $("confirm-sentence").textContent="Sends this email to "+work.Destination+"."; $("confirm-note").value=failedInstructions.get("ConfirmDispatch:"+work.WorkKey)?.Note??""; confirmDialog.open(control); }
+  function openConfirm(work,control,repeat=false) { actingWork=work; confirmMethod=repeat?"SendAgain":"ConfirmDispatch"; $("confirm-title").textContent=repeat?"Send again":"Confirm dispatch"; $("confirm-send").lastChild.textContent=repeat?"Send again":"Send"; $("confirm-subject").textContent=selectedEmail.Email.Subject||"No subject"; $("confirm-sentence").textContent=(repeat?"Sends another copy of this email to ":"Sends this email to ")+work.Destination+"."; $("confirm-note").value=failedInstructions.get(confirmMethod+":"+work.WorkKey)?.Note??""; confirmDialog.open(control); }
   function openNote(work,control) { actingWork=work; $("note-text").value=failedInstructions.get("AddDispatchNote:"+work.WorkKey)?.Note??""; $("note-subject").textContent=selectedEmail.Email.Subject||"No subject"; noteDialog.open(control); }
   function openPick(mode,work,control) { const failed=mode==="send"?failedInstructions.get("PickSession:"+work.WorkKey):null; pickMode=mode; actingWork=work; picked=failed?.Selection??null; $("pick-title").textContent=mode==="send"?"Choose destination and send":"Choose the rule's session"; $("pick-subject").textContent=mode==="send"?(selectedEmail.Email.Subject||"No subject"):selectedRule.EntityName; $("pick-note-field").hidden=mode!=="send"; $("pick-note").value=failed?.Note??""; $("pick-search").value=""; $("pick-confirm").lastChild.textContent=mode==="send"?"Send to selected session":"Use this session"; pickSelection(); pickDialog.open(control); pickGrid.reset(); }
  function pickSelection() { $("pick-count").textContent=picked?"Selected: "+picked.Name:"No session selected"; $("pick-confirm").disabled=!picked; }
@@ -233,7 +234,7 @@
  function submit(id,control,action,background=false){$(id).addEventListener("submit",event=>{event.preventDefault();run(background?null:$(control),action);});}
  function click(id,action,background=false){$(id).addEventListener("click",()=>run(background?null:$(id),action));}
  submit("search-form","search-form",()=>inboxGrid.reset());$("state").addEventListener("change",()=>inboxGrid.reset());submit("rule-search-form","rule-search-form",()=>rulesGrid.reset());
-  submit("confirm-form","confirm-send",()=>{const note=$("confirm-note").value;return submitInstructions(confirmDialog,"ConfirmDispatch",{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,Note:note},()=>{$("confirm-note").value=note;});},true);
+  submit("confirm-form","confirm-send",()=>{const note=$("confirm-note").value;return submitInstructions(confirmDialog,confirmMethod,{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,Note:note},()=>{$("confirm-note").value=note;});},true);
   submit("note-form","note-save",()=>{const note=$("note-text").value;return submitInstructions(noteDialog,"AddDispatchNote",{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,Note:note},()=>{$("note-text").value=note;});},true);
  $("pick-grid").addEventListener("change",event=>{const input=event.target.closest("input[name=pick-session]");if(!input)return;picked={SessionKey:input.value,Name:input.dataset.name};pickSelection();});
  submit("pick-search-form","pick-search-form",()=>{picked=null;pickSelection();pickGrid.reset();});

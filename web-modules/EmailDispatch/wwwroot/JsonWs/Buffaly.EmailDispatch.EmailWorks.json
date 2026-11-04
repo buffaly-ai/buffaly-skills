@@ -155,6 +155,37 @@
 					"IsEnum":"false"
 				},
 				{
+					"Name":"ExpectedDecisionRevision",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"Note",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				}],
+			"Name":"SendAgain",
+			"UrlName":"",
+			"KebabName":"send-again",
+			"DataObject":{
+			},
+			"IsReturnTypeArray":"false",
+			"IsStatic":"true",
+			"ReturnType":"Task`1"
+		},
+		{
+			"Parameters":[{
+					"Name":"WorkKey",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
 					"Name":"Disposition",
 					"IsNullable":"true",
 					"Type":"String",

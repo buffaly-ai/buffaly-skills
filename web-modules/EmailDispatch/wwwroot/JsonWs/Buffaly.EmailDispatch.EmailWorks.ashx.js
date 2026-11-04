@@ -228,6 +228,39 @@ class EmailWorksService {
         );
     }
 
+    SendAgain(WorkKey, ExpectedDecisionRevision, Note, Callback) {
+        return this.SendAgainObject({ WorkKey:WorkKey,ExpectedDecisionRevision:ExpectedDecisionRevision,Note:Note }, Callback);
+    }
+
+    SendAgainObject(oObject, Callback) {
+        this._validate(oObject, EmailWorksValidators.SendAgain, this.SendAgain.onValidationError);
+
+        var pageUrl = this.Url + "/send-again";
+        return this._invoke(
+            pageUrl,
+            "SendAgain",
+            { WorkKey: oObject.WorkKey,ExpectedDecisionRevision: oObject.ExpectedDecisionRevision,Note: oObject.Note },
+            this.SendAgain,
+            Callback
+        );
+    }
+
+    async SendAgainAsync(WorkKey,ExpectedDecisionRevision,Note) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.SendAgain,
+            [ WorkKey,ExpectedDecisionRevision,Note ]
+        );
+    }
+
+    async SendAgainObjectAsync(oObject) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.SendAgainObject,
+            [ oObject ]
+        );
+    }
+
     SetDisposition(WorkKey, Disposition, Callback) {
         return this.SetDispositionObject({ WorkKey:WorkKey,Disposition:Disposition }, Callback);
     }
@@ -315,6 +348,12 @@ var EmailWorksValidators = {
 
     RetryLearning : {
             WorkKey : {Validators: [Validators.Text], InvalidMessage: "Invalid WorkKey"} 
+    },
+
+    SendAgain : {
+            WorkKey : {Validators: [Validators.Text], InvalidMessage: "Invalid WorkKey"} ,
+            ExpectedDecisionRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedDecisionRevision"} ,
+            Note : {Validators: [Validators.Text], InvalidMessage: "Invalid Note"} 
     },
 
     SetDisposition : {
