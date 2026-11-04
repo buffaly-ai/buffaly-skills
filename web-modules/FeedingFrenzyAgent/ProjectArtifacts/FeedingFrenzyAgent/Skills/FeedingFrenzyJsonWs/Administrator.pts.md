@@ -33,3 +33,11 @@ Validation actually performed: full FF Admin Release build passes; 32 focused MS
 ## 2026-10-25 — Final role inventory reconciliation
 
 Full59-case module suite exposed an unintended additional representative action: moving LeadNotes.Admin.pts also exposed LeadNotes_GetFollowUpByLeadID. Restore that include to Administrator; CallPages already owns the shared appointment action. The representative inventory is exactly36 (prior34 plus call paging and appointment), Administrator retains the existing follow-up action. No endpoint/auth behavior is widened and no test is excluded. Validation: full59module tests pass0fail0skip; both source role graphs and installed final-module validation are recorded separately in release evidence.
+
+## 2026-11-02 - Include the automation writer actions
+Trial patch for the external-driver design (2026-11-02). Authored in the scratch clone only; not applied to C:\dev\FeedingFrenzy.
+- Added `include "Automations.Admin.pts";` so administrators get the due-list, attach and writing-workflow actions. Sales representatives do not, because the server requires `HasSuperAdminAccess`.
+- Validation: parsed with ProtoScript.Parsers. The role-composition module suite was not run.
+
+## 2026-11-02 - Applied to main
+Applied the reviewed trial patch to C:\dev\FeedingFrenzy main, approved by Matt on 2026-11-02 for external-driver design v1. No code change from the trial entry above. Because IFAccountingAdministrator.pts includes Administrator.pts, the embedded administrator profile of the if-local installation gains the automation writer actions once the project is installed. At commit time this ProtoScript had parse-only evidence from the trial; live load is recorded in the design ledger.

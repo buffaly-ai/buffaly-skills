@@ -1,0 +1,18 @@
+{
+  "AgentName": "feeding-frenzy-verasol-help",
+  "DisplayName": "Verasol Help",
+  "Aliases": ["verasol help"],
+  "ProjectFilePath": "VerasolHelp.pts",
+  "PromptFile": "Prompts/VerasolHelp.prompt.md",
+  "PromptContext": "",
+  "RootActionPrototypeName": "FeedingFrenzyJsonWsSkillAction",
+  "RootEntityPrototypeName": "FeedingFrenzyAgentEntityRoot",
+  "DefaultProviderName": "openai",
+  "DefaultReasoningLevel": "medium",
+  "UiPage": "/buffaly-agent.html",
+  "IsReadOnly": true,
+  "IsHidden": false,
+  "CanChangeModel": true,
+  "DisableLevel2AutoAttach": true,
+  "EnableImmediateProtoScriptCommands": false
+}
