@@ -74,3 +74,11 @@ Advanced only email-dispatch.js cache key 0.2.9 to 0.2.10 so existing browsers r
 
 ## 2026-11-04 — show recent arrivals by default
 Changed selected review filter from NeedsAttention to All email after Matt reported a stale inbox despite newer mail. Direct bounded database reads proved sync Current at 01:49 UTC, incoming mail through 01:31 UTC, and exact screenshot reproduced by NeedsAttention: newer rows were Notice/Accepted/NoAction/Archived, not absent. The decision-only default originated in 2cb0f8a; preserve it as an explicit filter and preserve archive return to decision queue, server search/paging and ten-second polling. No SQL, Gmail, routing or send semantics changed. UI task: see newest email and its current outcome, then optionally narrow to decisions. Archive regression passes; accelerated polling test failed once at focused-link timing in a combined run, isolated rerun passes; no production timer change. Installed real polling verification follows.
+
+
+## 2026-11-04 — installed freshness and background modal acceptance
+Local package 0.1.32 Installed after exact owning DLL parity and normal hash verification; only standalone process restarted. Live unmocked inbox test 1/1 passed: default newest New Refill request for St. Martin Pharmacy, decision filter newest Sales by Style, reads 3 to 5 over 22 seconds; desktop/phone screenshots in Email Dispatching 11-3/artifacts/inbox-freshness/installed/live. Final combined polling/archive/installed modal timing+recovery 4/4 passed. Earlier background modal source tests 3/3 and routine 43/43 passed. Prior source-only confirmation-preflight fix eeae282c is included in the canonical rebuild. No real send commands executed for this validation. Separate historical Hold/research launch acceptance is not claimed by these checks.
+
+
+## 2026-11-04 — unreachable footer asset refresh
+Advanced only email-dispatch.css cache key0.2.6 to0.2.7 to load the shared picker zoom/height fix. No dialog markup, delivery arguments or command changes. Source footer six-view/hit-test/intercepted-Send test and stable picker/exact arguments/background modal suite4/4 pass. Installed verification follows.
