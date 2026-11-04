@@ -86,8 +86,15 @@
   const timeline = document.getElementById("opsV2Messages");
   if (timeline) {
     attachPickers(); const observer = new MutationObserver(attachPickers);
-    observer.observe(timeline, { childList: true, subtree: true, attributes: true, attributeFilter: ["href"] });
-    window.addEventListener("pagehide", () => { observer.disconnect(); closePicker(false); }, { once: true });
+    function observeTimeline() { observer.observe(timeline, { childList: true, subtree: true, attributes: true, attributeFilter: ["href"] }); }
+    observeTimeline();
+    window.addEventListener("pagehide", () => { observer.disconnect(); closePicker(false); });
+    // BFCache restores this realm without rerunning startup. Reuse the single
+    // observer and refresh defaults that may have changed while this page slept.
+    window.addEventListener("pageshow", event => {
+      if (!event.persisted) return;
+      updateLinks(); attachPickers(); observeTimeline();
+    });
   }
   function text(value) { return value == null ? "" : String(value).trim(); }
   function sessionLaunch(context) {

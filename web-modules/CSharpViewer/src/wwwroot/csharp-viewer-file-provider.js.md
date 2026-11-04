@@ -1,5 +1,10 @@
 # CSharpViewer file provider history
 
+## 2026-11-02 — Resume picker observation after BFCache restore
+Confirmed review P2 against current pagehide cleanup and governing existing/new-link requirement: persisted pagehide disconnected the observer permanently because startup does not rerun on cached return. Kept actual teardown cleanup, removed one-shot pagehide handling, and reused the same MutationObserver on persisted pageshow. Restore refreshes saved-default hrefs and attaches any missing pickers before observing subsequent updates; existing wrapper deduplication and native filename anchors unchanged. No visual, authorization or server-route changes.
+
+Validation: new Node persisted pagehide/pageshow regression failed before fix on missing picker, passed after fix over two cycles including hidden-period insertion and one menu/caret per resumed link. SourceLinkBfCacheBrowserTests.cjs passed two real headed Chrome BFCache returns with same realm token and persisted=true, saved preference changes while away, existing/new native hrefs and ranges, one caret/menu and no browser errors. Default headless Chromium did not cache (masked not-restored reason); headed Chrome with BFCache enabled did. All72 .NET tests passed. Source-level validation only; no staging delivery in this review batch.
+
 ## 2026-11-02 — Menu positioning review
 Visual review caught Bootstrap menu using static-position fallback and covering the file link. Added existing top-100/start-0 utilities to place the menu below the link wrapper, with no custom CSS. Node suite passed; final staging screenshot and installed menu bounds checked after publication.
 
