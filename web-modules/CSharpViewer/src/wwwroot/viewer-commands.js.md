@@ -1,0 +1,4 @@
+# viewer-commands.js history
+
+## 2026-11-04 — Shared module command owner
+Created a reusable commandButton owner for Repository Viewer module pages, mapping nextPage to Font Awesome5 Free fa-chevron-down through the host /css/icons.min.css and font assets. Uses existing shared secondary button styling, a short visible label and decorative aria-hidden icon; no copied stylesheet, glyph, inline SVG or new page-local styles. Unknown command identities fail explicitly. Paging is the initial caller; existing legacy SVG controls are not migrated by this scoped correction. Validation: 13 review Chromium cases include retained accessible label, icon class, secondary styling, no tree-row semantics, next offset exactly once per attempt, retry/current error, no file navigation; existing24browsergroups and78.NETtests pass. Installed glyph verification recorded after staging delivery.

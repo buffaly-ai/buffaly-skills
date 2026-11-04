@@ -119,14 +119,19 @@
         group.querySelector(':scope > .folder-next')?.remove();
         group.append(renderNodes(page.entries,Number(group.dataset.depth||0)));group.dataset.loaded='true';
         group.dataset.next=page.nextOffset===null?'':String(page.nextOffset);
-        if(page.nextOffset!==null){const more=button('Load more files and folders',()=>loadFolder(group,page.nextOffset).catch(report));more.className='tree-row folder-next';group.append(more);}
+        if(page.nextOffset!==null){const more=window.CSharpViewerCommands.commandButton('nextPage','Load more files and folders',()=>loadFolder(group,page.nextOffset).catch(error=>{if(generation===state.generation&&group.isConnected)report(error);}));more.classList.add('folder-next');group.append(more);}
         for(const file of page.entries.filter(node=>node.kind==='file'))if(!state.files.some(item=>item.path===file.path))state.files.push(file);
         if(!path)state.tree.push(...page.entries);
         $('file-count').textContent=`${state.files.length.toLocaleString()} files loaded`;
-      }finally{if(generation===state.generation){group.removeAttribute('aria-busy');group.loading=null;}}
+      }catch(error){
+        // A failed old request is just as stale as a successful old response. Suppress it
+        // here so paging and automatic ancestor reveal cannot report into another scope.
+        if(generation!==state.generation||!group.isConnected)return;
+        throw error;
+      }finally{if(generation===state.generation&&group.isConnected){group.removeAttribute('aria-busy');group.loading=null;}}
     })();group.loading=request;return request;
   }
-  async function toggleFolder(row,expanded){const group=row.nextElementSibling,open=expanded??group.hidden;group.hidden=!open;row.setAttribute('aria-expanded',String(open));if(open&&!group.dataset.loaded)try{await loadFolder(group);}catch(error){group.hidden=true;row.setAttribute('aria-expanded','false');report(error);}}
+  async function toggleFolder(row,expanded){const generation=state.generation,group=row.nextElementSibling,open=expanded??group.hidden;group.hidden=!open;row.setAttribute('aria-expanded',String(open));if(open&&!group.dataset.loaded)try{await loadFolder(group);}catch(error){if(generation!==state.generation||!row.isConnected||!group.isConnected)return;group.hidden=true;row.setAttribute('aria-expanded','false');report(error);}}
   function folders(expanded){$('tree').querySelectorAll('[data-kind=directory]').forEach(row=>{if(!expanded||row.nextElementSibling.dataset.loaded)toggleFolder(row,expanded);});}
   function findRow(path){return [...$('tree').querySelectorAll('.tree-row')].find(item=>item.dataset.path===path);}
   function visibleRows(){return [...$('tree').querySelectorAll('.tree-row')].filter(item=>item.getClientRects().length);}
