@@ -38,27 +38,31 @@
   function finishPull(reload=false){
     const gesture=pull;pull=null;if(!gesture)return;
     const current=gesture.generation===state.generation&&gesture.url===location.href;
-    if(current&&reload&&!refreshing&&narrow.matches&&gesture.pane.isConnected&&gesture.pane.scrollTop===0&&$('status').textContent===gesture.message&&!document.querySelector('dialog[open]')&&!String(window.getSelection()||'')&&performance.now()-gesture.time<=1500){refreshing=true;status('Refreshing\u2026');location.reload();return;}
+    if(current&&reload&&!refreshing&&gesture.pane.isConnected&&gesture.pane.scrollTop===0&&$('status').textContent===gesture.message&&!document.querySelector('dialog[open]')&&!String(window.getSelection()||'')){refreshing=true;status('Refreshing\u2026');location.reload();return;}
     if(current&&gesture.message&&$('status').textContent===gesture.message)status(gesture.status,gesture.error);
   }
   document.addEventListener('touchstart',event=>{
     finishPull();
-    if(refreshing||!narrow.matches||event.touches.length!==1||document.querySelector('dialog[open]')||String(window.getSelection()||''))return;
+    if(refreshing||event.touches.length!==1||document.querySelector('dialog[open]')||String(window.getSelection()||''))return;
     const target=event.target instanceof Element?event.target:null;
     if(!target||target.closest('input,select,textarea,a,[contenteditable=true],button:not(.tree-row),.resizer'))return;
     const pane=target.closest('#code-wrap,#tree,#empty');
     if(!pane||pane.scrollTop>0)return;
-    const touch=event.touches[0];pull={pane,id:touch.identifier,x:touch.clientX,y:touch.clientY,time:performance.now(),generation:state.generation,url:location.href,status:$('status').textContent,error:$('status').dataset.error==='true',armed:false,message:''};
+    const touch=event.touches[0];pull={pane,id:touch.identifier,x:touch.clientX,y:touch.clientY,generation:state.generation,url:location.href,status:$('status').textContent,error:$('status').dataset.error==='true',armed:false,message:''};
   },{passive:true});
   document.addEventListener('touchmove',event=>{
     if(!pull)return;
     const gesture=pull,touch=event.touches[0];
-    if(event.touches.length!==1||touch.identifier!==gesture.id||!gesture.pane.isConnected||gesture.pane.scrollTop>0||gesture.generation!==state.generation||gesture.url!==location.href||String(window.getSelection()||'')||performance.now()-gesture.time>1500){finishPull();return;}
+    if(event.touches.length!==1||touch.identifier!==gesture.id||!gesture.pane.isConnected||gesture.pane.scrollTop>0||gesture.generation!==state.generation||gesture.url!==location.href||String(window.getSelection()||'')){finishPull();return;}
     const dx=touch.clientX-gesture.x,dy=touch.clientY-gesture.y;
     if(dy<0||Math.abs(dx)>Math.max(12,Math.abs(dy))){finishPull();return;}
-    if(dy<12)return;
+    // Claim the first downward scroll update, even below the feedback threshold.
+    // Otherwise the browser owns the sequence and later moves cannot be cancelled.
+    if(dy<=0)return;
     if(!event.cancelable){finishPull();return;}
-    event.preventDefault();gesture.armed=dy>=80;
+    event.preventDefault();
+    gesture.armed=dy>=80;
+    if(dy<12&&!gesture.message)return;
     // Do not restore an old status over a newer API/file result when a gesture is cancelled.
     if($('status').textContent!==(gesture.message||gesture.status)){finishPull();return;}
     gesture.message=gesture.armed?'Release to refresh':'Pull down to refresh';status(gesture.message);
