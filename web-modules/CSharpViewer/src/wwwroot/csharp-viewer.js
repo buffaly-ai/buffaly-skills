@@ -32,6 +32,39 @@
     }finally{busy(-1);}
   }
   function report(error){status(error.message,true);showNotice(error.message);}
+  // The viewport-sized workspace intentionally scrolls its panes, not the document.
+  // Provide the mobile refresh gesture at a pane's top without replacing normal pan/selection.
+  let pull=null,refreshing=false;
+  function finishPull(reload=false){
+    const gesture=pull;pull=null;if(!gesture)return;
+    const current=gesture.generation===state.generation&&gesture.url===location.href;
+    if(current&&reload&&!refreshing&&narrow.matches&&gesture.pane.isConnected&&gesture.pane.scrollTop===0&&$('status').textContent===gesture.message&&!document.querySelector('dialog[open]')&&!String(window.getSelection()||'')&&performance.now()-gesture.time<=1500){refreshing=true;status('Refreshing\u2026');location.reload();return;}
+    if(current&&gesture.message&&$('status').textContent===gesture.message)status(gesture.status,gesture.error);
+  }
+  document.addEventListener('touchstart',event=>{
+    finishPull();
+    if(refreshing||!narrow.matches||event.touches.length!==1||document.querySelector('dialog[open]')||String(window.getSelection()||''))return;
+    const target=event.target instanceof Element?event.target:null;
+    if(!target||target.closest('input,select,textarea,a,[contenteditable=true],button:not(.tree-row),.resizer'))return;
+    const pane=target.closest('#code-wrap,#tree,#empty');
+    if(!pane||pane.scrollTop>0)return;
+    const touch=event.touches[0];pull={pane,id:touch.identifier,x:touch.clientX,y:touch.clientY,time:performance.now(),generation:state.generation,url:location.href,status:$('status').textContent,error:$('status').dataset.error==='true',armed:false,message:''};
+  },{passive:true});
+  document.addEventListener('touchmove',event=>{
+    if(!pull)return;
+    const gesture=pull,touch=event.touches[0];
+    if(event.touches.length!==1||touch.identifier!==gesture.id||!gesture.pane.isConnected||gesture.pane.scrollTop>0||gesture.generation!==state.generation||gesture.url!==location.href||String(window.getSelection()||'')||performance.now()-gesture.time>1500){finishPull();return;}
+    const dx=touch.clientX-gesture.x,dy=touch.clientY-gesture.y;
+    if(dy<0||Math.abs(dx)>Math.max(12,Math.abs(dy))){finishPull();return;}
+    if(dy<12)return;
+    if(!event.cancelable){finishPull();return;}
+    event.preventDefault();gesture.armed=dy>=80;
+    // Do not restore an old status over a newer API/file result when a gesture is cancelled.
+    if($('status').textContent!==(gesture.message||gesture.status)){finishPull();return;}
+    gesture.message=gesture.armed?'Release to refresh':'Pull down to refresh';status(gesture.message);
+  },{passive:false});
+  document.addEventListener('touchend',event=>{if(pull)finishPull(pull.armed&&event.touches.length===0);},{passive:true});
+  document.addEventListener('touchcancel',()=>finishPull(),{passive:true});
   function isCSharp(path){return /\.cs$/i.test(path);}
   function extension(path){const name=path.split('/').pop();return name.includes('.')?name.split('.').pop().toLowerCase():'';}
   function language(path){const ext=path.split('.').pop().toLowerCase();return ({cs:'C#',js:'JavaScript',cjs:'JavaScript',mjs:'JavaScript',ts:'TypeScript',tsx:'TSX',jsx:'JSX',html:'HTML',css:'CSS',json:'JSON',md:'Markdown',ps1:'PowerShell',py:'Python',sql:'SQL',pts:'ProtoScript',yml:'YAML',yaml:'YAML',xml:'XML',csproj:'MSBuild',props:'MSBuild',targets:'MSBuild',sh:'Shell'})[ext]||'Text';}
@@ -86,6 +119,7 @@
     url.searchParams.set('line',String(line));history.replaceState(null,'',url);
   }
   function jumpTo(line,record=true){
+    finishPull();
     const target=$('code').querySelector(`[data-line="${line}"]`);if(!target)return;
     $('code').querySelectorAll('.source-line.target').forEach(node=>node.classList.remove('target'));target.classList.add('target');
     // Keep inline-start alignment, then reset horizontal scroll so long lines never hide leading characters.
@@ -267,6 +301,7 @@
     state.historyIndex=next;updateNavigation();const item=state.history[next];await openFile(item.path,item.line,false);
   }
   async function openScope(scope,label,initial=null){
+    finishPull();
     if(sameScope(scope,state.scope)&&state.ready&&!initial){$('project-dialog').close();return;}
     const url=new URL(location.href);url.search='';
     if(scope.sessionKey)url.searchParams.set('sessionKey',scope.sessionKey);
