@@ -92,7 +92,9 @@ window.EmailDispatchUi = (() => {
  // Local time with relative age (UI-STD-01 Principle 4). DateUtil owns the UTC-to-local conversion.
  function age(local) { const minutes = Math.round((Date.now() - local.getTime()) / 60000); if (minutes < 1) return "just now"; if (minutes < 60) return minutes + " min ago"; const hours = Math.round(minutes / 60); if (hours < 24) return hours + (hours === 1 ? " hour ago" : " hours ago"); const days = Math.round(hours / 24); return days + (days === 1 ? " day ago" : " days ago"); }
  const date = value => { const local = DateUtil.UTCToLocal(value); return DateUtil.ToShortDateTime(local) + " · " + age(local); };
- function facts(values) { const list = document.createElement("dl"); list.className = "ed-facts"; for (const [label,value] of values) if (value !== null && value !== undefined && value !== "") list.append(text("dt", label),text("dd", value)); return list; }
+  function facts(values) { const list = document.createElement("dl"); list.className = "ed-facts"; for (const [label,value] of values) if (value !== null && value !== undefined && value !== "") list.append(text("dt", label),text("dd", value)); return list; }
+  // Shared read-only record details use the standard Inputs table, not a page-specific facts layout.
+  function details(values) { const table = text("table", "", "Inputs table table-condensed"); const body = document.createElement("tbody"); for (const [label,value] of values) { const row = document.createElement("tr"); if (body.childElementCount % 2 === 0) row.className = "table-light"; row.append(text("td",label,"InputLabel"),text("td",value)); body.append(row); } table.append(body); return table; }
  // JsonWsGrid3 owns search/request ordering/row rendering. Its exact-total span pager is not
  // applicable to the existing HasMore DTO; this single shared adapter uses honest ranges
  // and native keyboard buttons, without fabricating counts or downloading all records.
@@ -107,5 +109,5 @@ window.EmailDispatchUi = (() => {
   cancelSearch() { clearTimeout(this.searchTimer);this.searchTimer=0;this.request++; }
   reset() { this.cancelSearch();this.skip=0; this.Refresh(true); }
  }
- return {$,text,escape,link,notify,clearNotice,run,request,button,dialog,state,status,date,facts,PagedGrid};
+  return {$,text,escape,link,notify,clearNotice,run,request,button,dialog,state,status,date,facts,details,PagedGrid};
 })();

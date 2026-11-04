@@ -85,3 +85,11 @@ Advanced only email-dispatch.css cache key0.2.6 to0.2.7 to load the shared picke
 
 ## 2026-11-04 — repeat-send client freshness
 Bumped EmailWorks generated client cache key0.2.2 and review script0.2.11 for new SendAgain endpoint/command. No markup/layout/style changes. Source browser1/1 passed; actual route payload and footer verified on synthetic data, no real send.
+
+
+## 2026-11-04 — late-failure context asset version
+Advanced review-script cache key0.2.11 to0.2.12 for owner-based restoration of failed email dialogs after another email/rule reused them. No markup/default filter/contract change. Source UI9/9, routine39/39 pass; new four delayed-failure regressions fail before JS fix/pass after. Existing combined timing failures and isolated passes recorded in JS/test histories. Source-only, no installation/publication.
+
+
+## 2026-11-04 — session/reason summary asset refresh
+Advanced shared UI script to0.2.7 and review script to0.2.13 for visible saved-session/decision-reason Inputs table above body. No markup or command changes. Source UI7/7 and routine39/39 passed; initial test geometry targeted hidden text body, corrected to visible HTML frame. Installed acceptance recorded separately. Includes prior committed late-failure context correction in same normal release.

@@ -94,13 +94,14 @@
   // under the message. Each decision links to it in the evidence view instead (UI-STD-01 Principle 4).
   for(const work of current) $("works").append(decision(work));
  }
-  // The reading view answers what happened and what to do next. The full reasoning stays in evidence.
+ // Show the saved session and human decision rationale before the email; technical evidence stays separate.
  function decision(work) {
   const state=work.LocalDisposition||work.State, section=document.createElement("section");
    section.className="ed-decision"; section.tabIndex=-1; section.setAttribute("aria-label",EmailDispatchUi.state(state,work.Destination)[0]);
     const head=document.createElement("div"); head.className="ed-decision-head"; head.append(submissions.has(work.WorkKey)?text("span","Submitting instructions…","ed-status ed-status-info"):status(state,work.Destination));
-   section.append(head);
-   if(submissions.has(work.WorkKey)) return section;
+    section.append(head);
+    section.append(EmailDispatchUi.details([["Identified session",work.Destination||"No session selected"],["Decision reason",work.Decision?.Rationale||work.Reason||"No decision reason recorded"]]));
+    if(submissions.has(work.WorkKey)) return section;
   const actions=document.createElement("div"); actions.className="ed-actions";
     if(isConfirmable(work)) actions.append(button("Send to "+work.Destination,control=>openConfirm(work,control),true,"fa-check"));
     if(work.CanSendAgain) actions.append(button("Send again to "+work.Destination,control=>openConfirm(work,control,true),true,"fa-check"));
@@ -146,7 +147,8 @@
     submissions.delete(work.WorkKey);
     failedInstructions.set(method+":"+work.WorkKey,{...values,Selection:selection});
     if(location.hash==="#email/"+encodeURIComponent(key)&&selectedEmail?.Email.ObservationKey===key&&!document.querySelector("dialog[open]")) {
-     works(); actingWork=work; restore(); control.open(); failedInstructions.delete(method+":"+work.WorkKey);
+     // Reinitialize through the dialog's owner: another email or rule may have reused its labels and mode.
+     works(); restore(work); failedInstructions.delete(method+":"+work.WorkKey);
     }
     // The shared error owner reports the failure; retained fields allow correction, never automatic retry.
     throw error;
@@ -234,14 +236,14 @@
  function submit(id,control,action,background=false){$(id).addEventListener("submit",event=>{event.preventDefault();run(background?null:$(control),action);});}
  function click(id,action,background=false){$(id).addEventListener("click",()=>run(background?null:$(id),action));}
  submit("search-form","search-form",()=>inboxGrid.reset());$("state").addEventListener("change",()=>inboxGrid.reset());submit("rule-search-form","rule-search-form",()=>rulesGrid.reset());
-  submit("confirm-form","confirm-send",()=>{const note=$("confirm-note").value;return submitInstructions(confirmDialog,confirmMethod,{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,Note:note},()=>{$("confirm-note").value=note;});},true);
-  submit("note-form","note-save",()=>{const note=$("note-text").value;return submitInstructions(noteDialog,"AddDispatchNote",{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,Note:note},()=>{$("note-text").value=note;});},true);
+  submit("confirm-form","confirm-send",()=>{const note=$("confirm-note").value, method=confirmMethod;return submitInstructions(confirmDialog,method,{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,Note:note},work=>{openConfirm(work,null,method==="SendAgain");$("confirm-note").value=note;});},true);
+  submit("note-form","note-save",()=>{const note=$("note-text").value;return submitInstructions(noteDialog,"AddDispatchNote",{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,Note:note},work=>{openNote(work);$("note-text").value=note;});},true);
  $("pick-grid").addEventListener("change",event=>{const input=event.target.closest("input[name=pick-session]");if(!input)return;picked={SessionKey:input.value,Name:input.dataset.name};pickSelection();});
  submit("pick-search-form","pick-search-form",()=>{picked=null;pickSelection();pickGrid.reset();});
  click("pick-confirm",async()=>{
   if(pickMode==="rule"){ruleSession=picked.SessionKey;sessionField();pickDialog.close();return;}
    const session=picked, note=$("pick-note").value;
-   await submitInstructions(pickDialog,"PickSession",{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,SessionKey:session.SessionKey,Note:note},()=>{picked=session;$("pick-note").value=note;pickSelection();});
+   await submitInstructions(pickDialog,"PickSession",{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,SessionKey:session.SessionKey,Note:note},work=>{openPick("send",work);picked=session;$("pick-note").value=note;pickSelection();});
   },true);
   $("rule-outcome").addEventListener("change",sessionField);
  click("rule-session-pick",control=>openPick("rule",null,control));

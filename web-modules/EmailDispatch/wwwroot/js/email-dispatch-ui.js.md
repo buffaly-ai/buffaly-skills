@@ -30,3 +30,7 @@ Shared vocabulary now names missing destination as Not sent — choose a destina
 
 ## 2026-11-03 — stable Buffaly-only destination picker
 PagedGrid.liveSearch preserves rendered rows while a new search is pending instead of replacing the table each keystroke. Shared busy(true/false) makes results/pager inert to prevent selecting obsolete rows and clears on success/error; debounce, immediate selection invalidation, stale rejection and cancel remain. New geometry+endpoint2/2, existingUI5/5 and routine43/43 pass. No generated grid edit.
+
+
+## 2026-11-04 — shared read-only Inputs table
+Added details(values) renderer using standard Inputs table table-condensed markup, td.InputLabel labels and shared Bootstrap table-light alternate rows. Uses existing safe textContent owner for values, no page-specific CSS or innerHTML. Decision summary is its first caller; existing facts owner/callers untouched to avoid unrelated layout migration. Main task: read identified session and reason before deciding about email; existing commands stay in their owner. Source UI7/7 verifies rationale priority, no selection/absent reason, safe markup text, Superseded exclusion, desktop/phone placement and unchanged requests; routine39/39 passed. No server/generated/SQL changes.
