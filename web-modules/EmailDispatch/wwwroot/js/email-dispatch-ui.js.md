@@ -40,3 +40,6 @@ Added exact Replied/AwaitingReply/Draft display vocabulary, CursorGrid extending
 
 ### Final verification
 2026-11-04: No reply yet display replaces initial Awaiting your reply so notifications do not imply response obligation. Cursor reset version prevents stale search responses repopulating tokens. Focused12/12 includes existing Review resize/sandbox/inbox; routine44/44 and actual-Gmail walkthrough+Gavin decode2/2 pass. Shared sizing behavior retained; installed proof separate.
+
+## 2026-11-04 — describe historical evidence without claiming completion
+Changed shared PreviouslyHandled label from Already handled · held to Prior email found · held. Existing state represents matching source text, not a successful module receipt or completed work; current Sales by Style walkthrough exposed misleading wording. No state/capability/transport change. Updated source UI assertion; held-success/error desktop/phone plus Conversations shared-owner regression7/7 passed. Both shells use shared asset0.2.9. Other state vocabulary unchanged.

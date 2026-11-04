@@ -103,3 +103,6 @@ Add normal /conversations.html navigation link alongside intact Review/Rules/Acc
 
 ## 2026-11-04 — current held-state refresh asset
 Advanced email-dispatch.js cache key0.2.16 for typed held-outcome/error refresh and open-decision polling. No markup, commands or styling change. Focused10/10 and routine51/51 passed at current source; desktop/phone screenshots from regression. Installed activation recorded separately.
+
+### 2026-11-04 — shared historical-state wording
+Both shells now request shared UI0.2.9, labeling matching historical source Prior email found · held rather than claiming already handled. No commands or layout changes. Held-state and Conversations browser7/7 passed.

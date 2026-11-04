@@ -5,3 +5,6 @@ Added separate conversations.html and js/email-conversations.js, paired with sam
 
 ## 2026-11-04 — exact message dispatch access
 Added a Review dispatch navigation link alongside Back to conversation using existing message-tools styling; script cache version0.1.1. No page CSS, duplicate picker or direct send. Reading task now permits review/dispatch of the same captured incoming message. Links navigate; existing Review buttons act. UI-STD-01 walkthrough: Back returns to thread, Review dispatch opens current saved review, header switches tasks; no explanatory paragraphs needed. Source1440/390 navigation/picker tests pass5/5 focused, routine51/51; installed screenshots recorded separately.
+
+## 2026-11-04 — shared label asset alignment
+Shared UI cache0.2.9 matches Review after historical-state wording correction; page-specific conversation behavior unchanged. Held-state and Conversations browser7/7 pass.
