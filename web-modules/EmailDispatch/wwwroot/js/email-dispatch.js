@@ -49,7 +49,7 @@
  async function load(key) { selectedEmail=await request(EmailObservations,"GetEmail",{ObservationKey:key}); }
   async function openEmail(key,thread=null,conversationVersion=null) {
    const expectedHash=location.hash;
-   $("subject").textContent="Loading email…";$("works").replaceChildren();$("email-archive-actions").replaceChildren();
+    $("subject").textContent="Loading email…";$("works").replaceChildren();
    const bodyVersion=++bodyRequest; bodyToken=null; $("body-html").hidden=true; $("body-html").removeAttribute("srcdoc"); $("body").hidden=false; $("body-loading").hidden=true;
    const updated=await request(EmailObservations,"GetEmail",{ObservationKey:key});
    if(location.hash!==expectedHash||bodyVersion!==bodyRequest||(conversationVersion!==null&&!EmailConversations.isCurrent(conversationVersion)))return;
@@ -86,15 +86,19 @@
    pollTimer=setTimeout(()=>run(null,async()=>{ if(!isCurrentEmail(key)) return; if(document.querySelector("dialog[open]")) { schedule(); return; } await reload(false); }),10000);
  }
  function works() {
-   $("works").replaceChildren(); $("email-archive-actions").replaceChildren();
+    $("works").replaceChildren();
   // Only current decisions. A decision the requeue replaced (Superseded) is history: the evidence view shows it with what
   // it held, never as a second "Send to" beside the new decision (UI-STD-01 Principle 13).
    const current=selectedEmail.Works.filter(work=>work.State!=="Superseded");
-   $("email-evidence").href="#evidence/"+encodeURIComponent(selectedEmail.Email.ObservationKey);
-  if(!selectedEmail.Frame||selectedEmail.Email.ReviewState==="Spam"||!current.length) { $("works").append(status(selectedEmail.Email.ReviewState)); return; }
+   if(!selectedEmail.Frame||selectedEmail.Email.ReviewState==="Spam"||!current.length) $("works").append(status(selectedEmail.Email.ReviewState));
+   else for(const work of current) $("works").append(decision(work));
   // The exact text a destination receives quotes the whole email twice inside the dispatch envelope, so it is not printed
   // under the message. Each decision links to it in the evidence view instead (UI-STD-01 Principle 4).
-  for(const work of current) $("works").append(decision(work));
+   const evidence=link("","#evidence/"+encodeURIComponent(selectedEmail.Email.ObservationKey));evidence.id="email-evidence";
+   const icon=document.createElement("i");icon.className="fas fa-search";icon.setAttribute("aria-hidden","true");evidence.append(icon,document.createTextNode("View evidence"));
+   let commands=$("works").querySelector(".ed-decision:last-child .ed-actions");
+   if(!commands){commands=document.createElement("div");commands.className="ed-actions";($("works").lastElementChild?.classList.contains("ed-decision")?$("works").lastElementChild:$("works")).append(commands);}
+   commands.append(evidence);
  }
  // Show the saved session and human decision rationale before the email; technical evidence stays separate.
  function decision(work) {
@@ -115,7 +119,7 @@
     actions.append(button("Ask the agent to reconsider",control=>openNote(work,control),work.State==="Error"));
    }
    if(work.LocalDisposition) actions.append(button("Restore to review",()=>setDisposition(work,null),true,"fa-undo"));
-   else $("email-archive-actions").append(button("Archive",()=>setDisposition(work,"Archived"),processed,"fa-archive"));
+    else actions.append(button("Archive",()=>setDisposition(work,"Archived"),processed&&!actions.querySelector(".btn-primary"),"fa-archive"));
    if(actions.childElementCount) section.append(actions);
   return section;
  }

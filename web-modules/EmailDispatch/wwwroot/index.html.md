@@ -118,3 +118,7 @@ Advanced shared UI cache key0.2.9 to0.2.10 for In Trash vocabulary. No shell lay
 
 ## 2026-11-04 — combined thread workspace
 Wrapped existing thread grid/pager in thread-context and added conversation-reader slot; same shared exact-review/read-only readers are moved there, never copied or rebuilt, and restored for Review. One-message context hidden with reader immediately open; multi-message reader appears under selected compact header. Review section markup unchanged. Cache keys Conversations0.3.0, dispatch0.2.19, shared CSS0.2.8. Focused9/9 + routine48/48 and real-provider read-only1/1 pass; broad UI baseline limitations in session report. No backend/core/schema/dispatch behavior change.
+
+
+## 2026-11-04 — remove separate secondary message toolbar
+Removed top-strip Archive/evidence containers; shared decision command owner now renders both with other exact-message controls. Retained Back navigation unchanged and advanced Conversations0.3.1/dispatch0.2.20 cache keys. No new styles, routes, command arguments or Review workspace changes. Focused conversation/layout10/10, routine48/48, actual Gmail read-only1/1 pass; installed acceptance follows normal package release.
