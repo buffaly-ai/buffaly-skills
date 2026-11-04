@@ -993,6 +993,13 @@ function OnFormatGrid(ctrl, oGrid) {
 		return;
 
 	OnFormatDate(ctrl)
+	// Aggregate reports carry calendar dates, not UTC instants, and exact integer counts.
+	ControlUtil.GetControl(ctrl).querySelectorAll(".CalendarDate").forEach(function (el) {
+		el.textContent = new Date(el.getAttribute("data-calendar-date") + "T12:00:00").toLocaleDateString();
+	});
+	ControlUtil.GetControl(ctrl).querySelectorAll(".IntegerNumber").forEach(function (el) {
+		el.textContent = Number(el.getAttribute("data-integer")).toLocaleString(undefined, { maximumFractionDigits: 0 });
+	});
 	ControlUtil.GetControl(ctrl).querySelectorAll("table.Grid").forEach(x => {
 		ControlUtil.RemoveClass(x, "table-striped");
 		ControlUtil.AddClass(x, "table table-striped-even table-bordered datatables dataTable");

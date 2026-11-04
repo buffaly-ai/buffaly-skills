@@ -3,6 +3,7 @@
 
 	var state = {
 		Range: "day",
+		TimeZoneID: Intl.DateTimeFormat().resolvedOptions().timeZone,
 		Provider: "",
 		ModelName: "",
 		Transport: "",
@@ -12,8 +13,7 @@
 	var lazyGraphs = {
 		cache: false,
 		requests: false,
-		latency: false,
-		limits: false
+		latency: false
 	};
 
 	var palette = ["#2563eb", "#16a34a", "#9333ea", "#d97706", "#0f766e", "#be123c", "#475569", "#0891b2", "#ca8a04"];
@@ -104,12 +104,14 @@
 			var response = await fetch(buildUrl(), { headers: { "Accept": "application/json" } });
 			var payload = await response.json();
 			if (!response.ok) {
-				renderWarning(payload.Error || "Usage dashboard query failed.");
+				clearDashboardData();
+				renderWarning(payload.Error || (payload.Warnings && payload.Warnings.join(" ")) || "Usage dashboard query failed.");
 				return;
 			}
 			renderDashboard(payload);
 		}
 		catch (err) {
+			clearDashboardData();
 			Page.HandleUnexpectedError(err);
 			renderWarning("Usage dashboard query failed.");
 		}
@@ -121,6 +123,7 @@
 	function buildUrl() {
 		var params = new URLSearchParams();
 		params.set("range", state.Range);
+		params.set("timeZoneId", state.TimeZoneID);
 		params.set("provider", state.Provider);
 		params.set("modelName", state.ModelName);
 		params.set("transport", state.Transport);
@@ -137,10 +140,9 @@
 		renderAggregatePies(response.Summary, response.ProviderModelRows);
 		renderLazyGraphs();
 		renderChart(response.TimeBuckets);
-		renderLimit(response.LatestProviderLimit);
+		renderDailyRows(response.TimeBuckets);
 		renderProviderRows(response.ProviderModelRows);
 		renderSessionRows(response.SessionRows);
-		renderDetailRows(response.DetailRows);
 	}
 
 	function renderFilters(filters) {
@@ -269,7 +271,7 @@
 
 	function renderPieCard(title, subtitle, slices, colors, unitLabel) {
 		if (!slices || slices.length === 0) {
-			return "<div class=\"usage-pie-card\"><h4 class=\"mb-1\">" + escapeHtml(title) + "</h4><div class=\"text-muted\">" + escapeHtml(subtitle) + "</div><div class=\"usage-empty\">No usage rows for this filter.</div></div>";
+			return "<div class=\"usage-pie-card\"><h4 class=\"mb-1\">" + escapeHtml(title) + "</h4><div class=\"text-muted\">" + escapeHtml(subtitle) + "</div><div class=\"usage-empty\">No usage for this selection. Choose a wider range or clear filters.</div></div>";
 		}
 		var total = slices.reduce(function (sum, slice) { return sum + slice.Value; }, 0);
 		var pieStyle = buildConicGradient(slices, colors, total);
@@ -300,7 +302,6 @@
 		lazyGraphs.cache = false;
 		lazyGraphs.requests = false;
 		lazyGraphs.latency = false;
-		lazyGraphs.limits = false;
 		document.querySelectorAll("[data-lazy-graph]").forEach(function (button) {
 			button.disabled = false;
 		});
@@ -327,12 +328,6 @@
 		}
 		if (lazyGraphs.latency) {
 			cards.push(renderTrendCard("Average latency over time", "Average provider callout latency per bucket.", buildLatencyTrend(lastResponse.TimeBuckets), "latency", "#c2410c"));
-		}
-		if (lazyGraphs.limits) {
-			var limitTrend = buildProviderLimitTrend(lastResponse.ProviderLimitHistory);
-			cards.push(limitTrend.some(function (series) { return series.Points.length > 0; })
-				? renderLineTrendCard("Available Codex usage over time", "Remaining provider limit percentage from captured Codex snapshots.", limitTrend, "%", "#be123c")
-				: renderTrendUnavailableCard("Available Codex usage over time", "No provider-limit snapshots with remaining and limit values are available for this filter."));
 		}
 		container.style.display = cards.length > 0 ? "grid" : "none";
 		container.innerHTML = cards.join("");
@@ -374,49 +369,6 @@
 		});
 	}
 
-	function buildProviderLimitTrend(rows) {
-		var fiveHourPoints = [];
-		var weeklyPoints = [];
-		(rows || []).forEach(function (row) {
-			var snapshotUtc = row.SnapshotDateCreatedUtc || row.UpdatedAtUtc;
-			var primaryPoint = buildProviderLimitWindowPoint(row, row.Primary, "5-hour", snapshotUtc);
-			if (primaryPoint) {
-				fiveHourPoints.push(primaryPoint);
-			}
-			var secondaryPoint = buildProviderLimitWindowPoint(row, row.Secondary, "weekly", snapshotUtc);
-			if (secondaryPoint) {
-				weeklyPoints.push(secondaryPoint);
-			}
-		});
-		return [
-			{ Label: "5-hour", Color: "#be123c", Points: fiveHourPoints },
-			{ Label: "Weekly", Color: "#2563eb", Points: weeklyPoints }
-		].filter(function (series) { return series.Points.length > 0; });
-	}
-
-	function buildProviderLimitWindowPoint(row, window, label, snapshotUtc) {
-		if (!snapshotUtc) {
-			return null;
-		}
-		if (!window && label === "5-hour" && row.Remaining != null) {
-			window = { RemainingPercent: row.Remaining, ResetsAtUtc: row.ResetAtUtc };
-		}
-		if (!window) {
-			return null;
-		}
-		var percent = Number(window.RemainingPercent);
-		if (!Number.isFinite(percent)) {
-			return null;
-		}
-		var reset = window.ResetsAtUtc ? "; resets " + formatDateTime(window.ResetsAtUtc) : "";
-		return {
-			BucketStartUtc: snapshotUtc,
-			Label: formatSnapshotTime(snapshotUtc),
-			Value: Math.max(0, Math.min(100, percent)),
-			Title: label + " limit at " + formatDateTime(snapshotUtc) + ": " + formatPercent(percent) + " remaining" + reset
-		};
-	}
-
 	function aggregateTimeBuckets(rows) {
 		var buckets = {};
 		(rows || []).forEach(function (row) {
@@ -438,7 +390,7 @@
 
 	function renderTrendCard(title, subtitle, points, unitLabel, color) {
 		if (!points || points.length === 0) {
-			return "<div class=\"usage-pie-card\"><h4 class=\"mb-1\">" + escapeHtml(title) + "</h4><div class=\"text-muted\">" + escapeHtml(subtitle) + "</div><div class=\"usage-empty\">No usage rows for this filter.</div></div>";
+			return "<div class=\"usage-pie-card\"><h4 class=\"mb-1\">" + escapeHtml(title) + "</h4><div class=\"text-muted\">" + escapeHtml(subtitle) + "</div><div class=\"usage-empty\">No usage for this selection. Choose a wider range or clear filters.</div></div>";
 		}
 		var maxValue = Math.max.apply(null, points.map(function (point) { return point.Value; }));
 		var scaleMax = unitLabel === "%" ? Math.max(100, maxValue) : maxValue;
@@ -447,60 +399,6 @@
 			return "<div class=\"usage-line-point\"><div class=\"usage-line-bar\" title=\"" + escapeHtml(point.Title) + "\" style=\"height:" + height + "px;background:" + color + ";\"></div><div class=\"usage-chart-label\">" + escapeHtml(point.Label || formatBucket(point.BucketStartUtc)) + "</div></div>";
 		}).join("");
 		return "<div class=\"usage-pie-card\"><h4 class=\"mb-1\">" + escapeHtml(title) + "</h4><div class=\"text-muted\">" + escapeHtml(subtitle) + "</div>" + renderScaledChart(scaleMax, unitLabel, "<div class=\"usage-line-chart\">" + bars + "</div>") + "<div class=\"text-muted small mt-2\">Peak: " + escapeHtml(formatScaleValue(maxValue, unitLabel)) + "</div></div>";
-	}
-
-	function renderLineTrendCard(title, subtitle, seriesList, unitLabel, color) {
-		if (!seriesList || seriesList.length === 0) {
-			return "<div class=\"usage-pie-card\"><h4 class=\"mb-1\">" + escapeHtml(title) + "</h4><div class=\"text-muted\">" + escapeHtml(subtitle) + "</div><div class=\"usage-empty\">No usage rows for this filter.</div></div>";
-		}
-		var flatPoints = seriesList.reduce(function (all, series) { return all.concat(series.Points); }, []);
-		if (flatPoints.length === 0) {
-			return "<div class=\"usage-pie-card\"><h4 class=\"mb-1\">" + escapeHtml(title) + "</h4><div class=\"text-muted\">" + escapeHtml(subtitle) + "</div><div class=\"usage-empty\">No usage rows for this filter.</div></div>";
-		}
-		var sortedPoints = flatPoints.slice().sort(function (left, right) {
-			return new Date(left.BucketStartUtc).getTime() - new Date(right.BucketStartUtc).getTime();
-		});
-		var maxValue = Math.max.apply(null, sortedPoints.map(function (point) { return point.Value; }));
-		var scaleMax = unitLabel === "%" ? Math.max(100, maxValue) : maxValue;
-		return "<div class=\"usage-pie-card\"><h4 class=\"mb-1\">" + escapeHtml(title) + "</h4><div class=\"text-muted\">" + escapeHtml(subtitle) + "</div>" + renderScaledChart(scaleMax, unitLabel, renderLineChart(seriesList, sortedPoints, scaleMax, color)) + renderLineLegend(seriesList) + "</div>";
-	}
-
-	function renderLineChart(seriesList, allPoints, scaleMax, color) {
-		var plotWidth = 640;
-		var plotHeight = 160;
-		var topPadding = 12;
-		var minTime = new Date(allPoints[0].BucketStartUtc).getTime();
-		var maxTime = new Date(allPoints[allPoints.length - 1].BucketStartUtc).getTime();
-		var timeRange = Math.max(1, maxTime - minTime);
-		var seriesMarkup = seriesList.map(function (series) {
-			var coordinates = series.Points.map(function (point) {
-				var time = new Date(point.BucketStartUtc).getTime();
-				var x = series.Points.length === 1 ? plotWidth / 2 : Math.round((time - minTime) / timeRange * plotWidth);
-				var y = topPadding + Math.round((1 - point.Value / scaleMax) * plotHeight);
-				return { X: x, Y: y, Point: point };
-			});
-			var path = coordinates.map(function (coordinate, index) {
-				return (index === 0 ? "M" : "L") + coordinate.X + " " + coordinate.Y;
-			}).join(" ");
-			var markers = coordinates.map(function (coordinate) {
-				return "<circle cx=\"" + coordinate.X + "\" cy=\"" + coordinate.Y + "\" r=\"4\" fill=\"" + series.Color + "\" stroke=\"#fff\" stroke-width=\"1.5\"><title>" + escapeHtml(coordinate.Point.Title) + "</title></circle>";
-			}).join("");
-			return "<path d=\"" + path + "\" fill=\"none\" stroke=\"" + (series.Color || color) + "\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"4\"></path>" + markers;
-		}).join("");
-		return "<div class=\"usage-line-graph\"><svg viewBox=\"0 0 " + plotWidth + " 190\" preserveAspectRatio=\"none\" role=\"img\" aria-label=\"Usage trend line\">" + seriesMarkup + "</svg>" + renderLineAxisLabels(allPoints) + "</div>";
-	}
-
-	function renderLineLegend(seriesList) {
-		return "<div class=\"usage-line-legend\">" + seriesList.map(function (series) {
-			return "<span><i style=\"background:" + escapeHtml(series.Color) + ";\"></i>" + escapeHtml(series.Label) + "</span>";
-		}).join("") + "</div>";
-	}
-
-	function renderLineAxisLabels(points) {
-		var first = points[0];
-		var middle = points[Math.floor(points.length / 2)];
-		var last = points[points.length - 1];
-		return "<div class=\"usage-line-axis-labels\"><span>" + escapeHtml(formatAxisTime(first.BucketStartUtc)) + "</span><span>" + escapeHtml(formatAxisTime(middle.BucketStartUtc)) + "</span><span>" + escapeHtml(formatAxisTime(last.BucketStartUtc)) + "</span></div>";
 	}
 
 	function renderTrendUnavailableCard(title, message) {
@@ -528,21 +426,21 @@
 		var container = document.querySelector("[data-time-chart]");
 		var legend = getChartLegend(container);
 		if (!rows || rows.length === 0) {
-			container.innerHTML = "<div class=\"usage-empty\">No usage rows for this filter.</div>";
+			container.innerHTML = "<div class=\"usage-empty\">No usage for this selection. Choose a wider range or clear filters.</div>";
 			if (legend) {
 				legend.innerHTML = "";
 			}
 			return;
 		}
 
-		var providers = [...new Set(rows.map(function (row) { return formatProviderModelKey(row); }))];
+		var providers = [...new Set(rows.map(function (row) { return row.Provider || "(unknown provider)"; }))];
 		var buckets = {};
 		rows.forEach(function (row) {
 			var key = row.BucketStartUtc;
 			if (!buckets[key]) {
 				buckets[key] = {};
 			}
-			buckets[key][formatProviderModelKey(row)] = Number(row.TotalTokens || 0);
+			buckets[key][row.Provider || "(unknown provider)"] = Number(row.TotalTokens || 0);
 		});
 		var maxBucketTotal = Math.max.apply(null, Object.keys(buckets).map(function (bucket) {
 			return providers.reduce(function (total, provider) { return total + (buckets[bucket][provider] || 0); }, 0);
@@ -567,12 +465,6 @@
 				return "<span class=\"usage-chart-legend-item\"><span class=\"usage-chart-legend-swatch\" style=\"background:" + getSeriesColor(provider, index) + ";\"></span>" + escapeHtml(provider) + "</span>";
 			}).join("");
 		}
-	}
-
-	function formatProviderModelKey(row) {
-		var provider = row.Provider || "(unknown)";
-		var model = row.ModelName || "(unknown model)";
-		return provider + " / " + model;
 	}
 
 	function getChartLegend(container) {
@@ -617,27 +509,29 @@
 		document.head.appendChild(style);
 	}
 
-	function renderLimit(limit) {
-		var panel = document.querySelector("[data-limit-panel]");
-		var content = document.querySelector("[data-limit-content]");
-		if (!limit) {
-			panel.style.display = "none";
-			content.innerHTML = "";
-			return;
-		}
-		panel.style.display = "";
-		content.innerHTML = [
-			["Summary", limit.Summary || "Captured usage-limit snapshot"],
-			["Scope", limit.Scope || "(unknown)"],
-			["Remaining", limit.Remaining == null ? "not exposed" : formatNumber(limit.Remaining) + "%"],
-			["Used", limit.Used == null ? "not exposed" : formatNumber(limit.Used) + "%"],
-			["Reset", limit.ResetAtUtc ? formatDate(limit.ResetAtUtc) : "not exposed"],
-			["Plan", limit.PlanType || "not exposed"],
-			["Credits", limit.CreditBalance == null ? "not exposed" : formatNumber(limit.CreditBalance)],
-			["Source", limit.Source || "not exposed"]
-		].map(function (item) {
-			return "<div class=\"usage-card\"><div class=\"usage-label\">" + escapeHtml(item[0]) + "</div><div class=\"fw-bold mt-2\">" + escapeHtml(item[1]) + "</div></div>";
+	// Reuse filtered aggregates for exact local-calendar counts; server day buckets use the same time zone.
+	function renderDailyRows(rows) {
+		var days = {};
+		rows.forEach(function (row) {
+			var date = new Intl.DateTimeFormat("en-CA", { timeZone: state.TimeZoneID, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(row.BucketStartUtc));
+			if (!days[date]) {
+				days[date] = { Requests: 0, TotalTokens: 0 };
+			}
+			days[date].Requests += row.Requests;
+			days[date].TotalTokens += row.TotalTokens;
+		});
+		var dates = Object.keys(days).sort().reverse();
+		document.querySelector("[data-daily-caption]").textContent = {
+			hour: "Token usage in the last hour",
+			day: "Token usage today",
+			sevenDays: "Daily token usage over the last 7 days",
+			thirtyDays: "Daily token usage over the last 30 days",
+			all: "Daily token usage for all dates"
+		}[state.Range];
+		document.querySelector("[data-daily-rows]").innerHTML = dates.length === 0 ? emptyRow(3) : dates.map(function (date) {
+			return "<tr><td class=\"CalendarDate\" data-calendar-date=\"" + escapeHtml(date) + "\"></td><td class=\"IntegerNumber text-end\" data-integer=\"" + days[date].Requests + "\"></td><td class=\"IntegerNumber text-end\" data-integer=\"" + days[date].TotalTokens + "\"></td></tr>";
 		}).join("");
+		OnFormatGrid("usage-daily-grid");
 	}
 
 	function renderProviderRows(rows) {
@@ -662,19 +556,8 @@
 		}).join("");
 	}
 
-	function renderDetailRows(rows) {
-		var body = document.querySelector("[data-detail-rows]");
-		if (!rows || rows.length === 0) {
-			body.innerHTML = emptyRow(11);
-			return;
-		}
-		body.innerHTML = rows.map(function (row) {
-			return "<tr><td>" + escapeHtml(formatDate(row.DateCreatedUtc)) + "</td><td>" + escapeHtml(row.SessionName || row.SessionKey) + "</td><td>" + escapeHtml(row.Provider || "(unknown)") + "</td><td>" + escapeHtml(row.ModelName || "(unknown)") + "</td><td>" + escapeHtml(row.Transport || "(unknown)") + "</td><td class=\"text-end\">" + formatNumber(row.InputTokens) + "</td><td class=\"text-end\">" + formatNumber(row.OutputTokens) + "</td><td class=\"text-end\">" + formatDimension(row.CachedTokens, row.DimensionAvailability.CachedTokensAvailable) + "</td><td class=\"text-end\">" + formatDimension(row.ReasoningTokens, row.DimensionAvailability.ReasoningTokensAvailable) + "</td><td class=\"text-end fw-bold\">" + formatNumber(row.TotalTokens) + "</td><td class=\"text-end\">" + escapeHtml(formatMilliseconds(row.LatencyMs)) + "</td></tr>";
-		}).join("");
-	}
-
 	function emptyRow(colspan) {
-		return "<tr><td colspan=\"" + colspan + "\" class=\"usage-empty\">No usage rows for this filter.</td></tr>";
+		return "<tr><td colspan=\"" + colspan + "\" class=\"usage-empty\">No usage for this selection. Choose a wider range or clear filters.</td></tr>";
 	}
 
 	function formatDimension(value, available) {
@@ -696,29 +579,27 @@
 		return formatNumber(value) + " ms";
 	}
 
-	function formatDate(value) {
-		return new Date(value).toLocaleString();
-	}
-
 	function formatDateTime(value) {
 		return new Date(value).toLocaleString();
-	}
-
-	function formatSnapshotTime(value) {
-		return new Date(value).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
-	}
-
-	function formatAxisTime(value) {
-		return state.Range === "month" || state.Range === "all"
-			? new Date(value).toLocaleDateString(undefined, { month: "short", day: "numeric" })
-			: new Date(value).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
 	}
 
 	function formatBucket(value) {
 		var date = new Date(value);
 		return state.Range === "hour" || state.Range === "day"
-			? date.toLocaleTimeString(undefined, { hour: "numeric" })
-			: date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+			? date.toLocaleTimeString(undefined, { hour: "numeric", timeZone: state.TimeZoneID })
+			: date.toLocaleDateString(undefined, { month: "short", day: "numeric", timeZone: state.TimeZoneID });
+	}
+
+	// Failed requests must not present the previous range/filter totals as current data.
+	function clearDashboardData() {
+		lastResponse = null;
+		["[data-summary-cards]", "[data-daily-rows]", "[data-provider-rows]", "[data-session-rows]", "[data-time-chart]", "[data-chart-legend]", "[data-aggregate-pies]", "[data-progressive-eviction-savings]"].forEach(function (selector) {
+			var element = document.querySelector(selector);
+			if (element) {
+				element.innerHTML = "";
+			}
+		});
+		resetLazyGraphs();
 	}
 
 	function renderWarning(message) {
