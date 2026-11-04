@@ -122,3 +122,7 @@ Wrapped existing thread grid/pager in thread-context and added conversation-read
 
 ## 2026-11-04 — remove separate secondary message toolbar
 Removed top-strip Archive/evidence containers; shared decision command owner now renders both with other exact-message controls. Retained Back navigation unchanged and advanced Conversations0.3.1/dispatch0.2.20 cache keys. No new styles, routes, command arguments or Review workspace changes. Focused conversation/layout10/10, routine48/48, actual Gmail read-only1/1 pass; installed acceptance follows normal package release.
+
+
+## 2026-11-04 — evidence button asset
+Review script cache key0.2.21 activates actual shared View evidence button, per Matt's explicit button-only correction. No layout, route or command contract change. Focused2/2 and routine48/48 pass; installed verification separately recorded.

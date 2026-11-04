@@ -94,8 +94,8 @@
    else for(const work of current) $("works").append(decision(work));
   // The exact text a destination receives quotes the whole email twice inside the dispatch envelope, so it is not printed
   // under the message. Each decision links to it in the evidence view instead (UI-STD-01 Principle 4).
-   const evidence=link("","#evidence/"+encodeURIComponent(selectedEmail.Email.ObservationKey));evidence.id="email-evidence";
-   const icon=document.createElement("i");icon.className="fas fa-search";icon.setAttribute("aria-hidden","true");evidence.append(icon,document.createTextNode("View evidence"));
+   const evidenceHash="#evidence/"+encodeURIComponent(selectedEmail.Email.ObservationKey);
+   const evidence=button("View evidence",()=>{location.hash=evidenceHash;},false,"fa-search");evidence.id="email-evidence";
    let commands=$("works").querySelector(".ed-decision:last-child .ed-actions");
    if(!commands){commands=document.createElement("div");commands.className="ed-actions";($("works").lastElementChild?.classList.contains("ed-decision")?$("works").lastElementChild:$("works")).append(commands);}
    commands.append(evidence);
