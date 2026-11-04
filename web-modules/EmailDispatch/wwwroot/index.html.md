@@ -115,3 +115,6 @@ Moved existing conversation list/thread/read-only-message markup into this shell
 
 ## 2026-11-04 — excluded conversation shared status asset
 Advanced shared UI cache key0.2.9 to0.2.10 for In Trash vocabulary. No shell layout/commands changed. Excluded thread fixture2/2 overall and routine48/48 pass; installed verification separate.
+
+## 2026-11-04 — combined thread workspace
+Wrapped existing thread grid/pager in thread-context and added conversation-reader slot; same shared exact-review/read-only readers are moved there, never copied or rebuilt, and restored for Review. One-message context hidden with reader immediately open; multi-message reader appears under selected compact header. Review section markup unchanged. Cache keys Conversations0.3.0, dispatch0.2.19, shared CSS0.2.8. Focused9/9 + routine48/48 and real-provider read-only1/1 pass; broad UI baseline limitations in session report. No backend/core/schema/dispatch behavior change.

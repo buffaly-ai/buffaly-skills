@@ -27,3 +27,14 @@ html[data-keyboard=false] [id^=instruction-]:focus{outline:none}
 /* Dialog owner: native <dialog> at Bootstrap's modal-sm, default and modal-lg widths (UI-STD-01 Rule 1). The body scrolls; the footer commands stay visible. */
 .ed-dialog{border:0;border-radius:var(--ed-radius);padding:0;width:min(31.25rem,calc(100vw - 2rem));max-height:calc(100vh - 2rem);color:var(--ed-text);background:#fff;box-shadow:0 .5rem 2rem rgba(23,43,67,.25)}.ed-dialog-sm{width:min(18.75rem,calc(100vw - 2rem))}.ed-dialog-lg{width:min(50rem,calc(100vw - 2rem))}.ed-dialog::backdrop{background:rgba(23,43,67,.45)}.ed-dialog-frame{display:flex;flex-direction:column;max-height:calc(100vh - 2rem);margin:0}.ed-dialog-body{padding:1.25rem 1.25rem .5rem;overflow:auto;min-height:0}.ed-dialog-title{margin:0 0 .5rem}.ed-subject-line{color:var(--ed-muted);overflow-wrap:anywhere;margin:0 0 .75rem}.ed-dialog-message{margin:0 0 .75rem}.ed-dialog-footer{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:.6rem;padding:1rem 1.25rem;border-top:1px solid var(--ed-border)}.ed-dialog-count{margin-right:auto;color:var(--ed-muted);font-size:.875rem;overflow-wrap:anywhere}.ed-pick-grid{margin-top:.75rem}.ed-grid .ed-pick-cell{width:3rem;text-align:center}.ed-pick-label{margin:0;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
 @media(max-width:700px){.ed-dialog,.ed-dialog-sm,.ed-dialog-lg{width:calc(100vw - 1rem);max-height:calc(100vh - 1rem)}.ed-dialog-frame{max-height:calc(100vh - 1rem)}.ed-dialog-body{padding:1rem 1rem .5rem}.ed-dialog-footer{padding:.75rem 1rem}.ed-dialog-count{flex-basis:100%}}
+
+/* Shared thread workspace: compact message headers with the selected shared reader expanded inline. */
+#conversation-reader .ed-back,#conversation-reader .ed-subject{display:none}
+#conversation-reader .ed-message-tools:has(.ed-back:only-child){display:none}
+.ed-grid .ed-thread-open>td{padding:0;vertical-align:top}
+.ed-grid a[aria-current=true]{color:var(--ed-text)}
+#conversation-reader .ed-reading-surface{padding:1rem;}
+#conversation-reader .ed-email-frame{margin-bottom:1rem}
+#conversation-reader .ed-message-tools{padding:.5rem 1rem}
+#conversation-reader .ed-message-secondary{margin-left:0}
+#conversation-reader .ed-grid{table-layout:fixed}
