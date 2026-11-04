@@ -7,7 +7,8 @@
  let selectedEmail=null, selectedRule=null, ruleSession="", actingWork=null, pickMode="send", picked=null, pollTimer=0, inboxTimer=0, syncBusy=false, syncAvailable=false, bodyRequest=0, bodyToken=null;
  // Mirrors EmailDispatchActions.OpenStates and Confirm's state check, so a command is shown only where the server accepts it.
  const openStates=["Pending","Suggested","AutomaticReady","NeedsDestination","Notice","NoAction","Unclassified","Conflict","NeedsReview","Error","PreviouslyHandled","Prepared","AgentEvaluationRequired","PreparationFailed","Disabled"];
- const isOpen=work=>!work.MessageKey&&!work.LocalDisposition&&openStates.includes(work.State);
+ const submissions=new Set(), failedInstructions=new Map();
+ const isOpen=work=>!submissions.has(work.WorkKey)&&!work.MessageKey&&!work.LocalDisposition&&openStates.includes(work.State);
  const isConfirmable=work=>isOpen(work)&&["Suggested","AutomaticReady"].includes(work.State)&&!!work.Destination;
  const deciders={Rule:"A rule",Agent:"The dispatch agent",Operator:"You"};
  const learning={Pending:"Waiting to learn from this decision",Learned:"Learned from this decision",Uncertain:"Not learned · the agent was unsure",Failed:"Learning failed"};
@@ -97,8 +98,9 @@
  function decision(work) {
   const state=work.LocalDisposition||work.State, section=document.createElement("section");
    section.className="ed-decision"; section.tabIndex=-1; section.setAttribute("aria-label",EmailDispatchUi.state(state,work.Destination)[0]);
-   const head=document.createElement("div"); head.className="ed-decision-head"; head.append(status(state,work.Destination));
-  section.append(head);
+    const head=document.createElement("div"); head.className="ed-decision-head"; head.append(submissions.has(work.WorkKey)?text("span","Submitting instructions…","ed-status ed-status-info"):status(state,work.Destination));
+   section.append(head);
+   if(submissions.has(work.WorkKey)) return section;
   const actions=document.createElement("div"); actions.className="ed-actions";
    if(isConfirmable(work)) actions.append(button("Send to "+work.Destination,control=>openConfirm(work,control),true,"fa-check"));
    const processed=!work.LocalDisposition&&["Accepted","NoAction","Notice","WakeRecorded","PreviouslyHandled"].includes(work.State);
@@ -117,12 +119,38 @@
    if(disposition) { if($("state").value!=="NeedsAttention") { $("state").value="NeedsAttention"; inboxGrid.skip=0; } location.hash="#inbox"; }
    else { await reload(true); notify("Restored to review."); }
   }
- function openConfirm(work,control) { actingWork=work; $("confirm-subject").textContent=selectedEmail.Email.Subject||"No subject"; $("confirm-sentence").textContent="Sends this email to "+work.Destination+"."; $("confirm-note").value=""; confirmDialog.open(control); }
- function openNote(work,control) { if(actingWork?.WorkKey!==work.WorkKey) $("note-text").value=""; actingWork=work; $("note-subject").textContent=selectedEmail.Email.Subject||"No subject"; noteDialog.open(control); }
-  function openPick(mode,work,control) { pickMode=mode; actingWork=work; picked=null; $("pick-title").textContent=mode==="send"?"Choose destination and send":"Choose the rule's session"; $("pick-subject").textContent=mode==="send"?(selectedEmail.Email.Subject||"No subject"):selectedRule.EntityName; $("pick-note-field").hidden=mode!=="send"; $("pick-note").value=""; $("pick-search").value=""; $("pick-confirm").lastChild.textContent=mode==="send"?"Send to selected session":"Use this session"; pickSelection(); pickDialog.open(control); pickGrid.reset(); }
+  function openConfirm(work,control) { actingWork=work; $("confirm-subject").textContent=selectedEmail.Email.Subject||"No subject"; $("confirm-sentence").textContent="Sends this email to "+work.Destination+"."; $("confirm-note").value=failedInstructions.get("ConfirmDispatch:"+work.WorkKey)?.Note??""; confirmDialog.open(control); }
+  function openNote(work,control) { actingWork=work; $("note-text").value=failedInstructions.get("AddDispatchNote:"+work.WorkKey)?.Note??""; $("note-subject").textContent=selectedEmail.Email.Subject||"No subject"; noteDialog.open(control); }
+  function openPick(mode,work,control) { const failed=mode==="send"?failedInstructions.get("PickSession:"+work.WorkKey):null; pickMode=mode; actingWork=work; picked=failed?.Selection??null; $("pick-title").textContent=mode==="send"?"Choose destination and send":"Choose the rule's session"; $("pick-subject").textContent=mode==="send"?(selectedEmail.Email.Subject||"No subject"):selectedRule.EntityName; $("pick-note-field").hidden=mode!=="send"; $("pick-note").value=failed?.Note??""; $("pick-search").value=""; $("pick-confirm").lastChild.textContent=mode==="send"?"Send to selected session":"Use this session"; pickSelection(); pickDialog.open(control); pickGrid.reset(); }
  function pickSelection() { $("pick-count").textContent=picked?"Selected: "+picked.Name:"No session selected"; $("pick-confirm").disabled=!picked; }
  // Reports the work's new state, so a send the destination did not accept is never described as sent.
- async function finishSend(control,key) { control.close(); await reload(true); const work=selectedEmail.Works.find(value=>value.WorkKey===key); notify(EmailDispatchUi.state(work?.State)[0]+".",work?.State==="Accepted"?"Success":"Warning"); }
+  async function submitInstructions(control,method,values,restore) {
+   const work=actingWork, key=selectedEmail.Email.ObservationKey, selection=method==="PickSession"?picked:null;
+   if(submissions.has(work.WorkKey)) return;
+   // Capture the exact command before closing: another email/dialog may become active while it runs.
+   submissions.add(work.WorkKey); control.close(); works();
+   notify("Submitting instructions…","Info");
+   try {
+    const result=await request(EmailWorks,method,values);
+    failedInstructions.delete(method+":"+work.WorkKey);
+    submissions.delete(work.WorkKey);
+    // Never let a late command completion reload, focus or overwrite a different email/view.
+    if(location.hash==="#email/"+encodeURIComponent(key)&&selectedEmail?.Email.ObservationKey===key&&!document.querySelector("dialog[open]")) await run(null,async()=>{
+     const updated=await request(EmailObservations,"GetEmail",{ObservationKey:key});
+     if(location.hash==="#email/"+encodeURIComponent(key)&&selectedEmail?.Email.ObservationKey===key&&!document.querySelector("dialog[open]")) { selectedEmail=updated; works(); schedule(); }
+    });
+    if(method==="AddDispatchNote") notify("Instructions saved. Waiting for the dispatch agent.");
+    else notify(EmailDispatchUi.state(result.Status)[0]+".",result.Accepted===true?"Success":"Warning");
+   } catch(error) {
+    submissions.delete(work.WorkKey);
+    failedInstructions.set(method+":"+work.WorkKey,{...values,Selection:selection});
+    if(location.hash==="#email/"+encodeURIComponent(key)&&selectedEmail?.Email.ObservationKey===key&&!document.querySelector("dialog[open]")) {
+     works(); actingWork=work; restore(); control.open(); failedInstructions.delete(method+":"+work.WorkKey);
+    }
+    // The shared error owner reports the failure; retained fields allow correction, never automatic retry.
+    throw error;
+   }
+  }
  // Listed rules come from the published snapshot (GetRuleNodes), which never waits on the agent session. Only a node that is
  // not yet a rule ("Make this a rule") is read from the tree (GetRuleNode), which fails fast while a classification pass runs.
  async function openRule(name) {
@@ -202,19 +230,19 @@
   else if(name==="accounts"){show("accounts");await accounts();}
   else {show("inbox");inboxGrid.Refresh(true);scheduleInbox();await accounts();}
  }
- function submit(id,control,action){$(id).addEventListener("submit",event=>{event.preventDefault();run($(control),action);});}
- function click(id,action){$(id).addEventListener("click",()=>run($(id),action));}
+ function submit(id,control,action,background=false){$(id).addEventListener("submit",event=>{event.preventDefault();run(background?null:$(control),action);});}
+ function click(id,action,background=false){$(id).addEventListener("click",()=>run(background?null:$(id),action));}
  submit("search-form","search-form",()=>inboxGrid.reset());$("state").addEventListener("change",()=>inboxGrid.reset());submit("rule-search-form","rule-search-form",()=>rulesGrid.reset());
- submit("confirm-form","confirm-send",async()=>{await request(EmailWorks,"ConfirmDispatch",{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,Note:$("confirm-note").value});await finishSend(confirmDialog,actingWork.WorkKey);});
-  submit("note-form","note-save",async()=>{await request(EmailWorks,"AddDispatchNote",{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,Note:$("note-text").value});$("note-text").value="";noteDialog.close();await reload(true);notify("Waiting for the dispatch agent.");});
+  submit("confirm-form","confirm-send",()=>{const note=$("confirm-note").value;return submitInstructions(confirmDialog,"ConfirmDispatch",{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,Note:note},()=>{$("confirm-note").value=note;});},true);
+  submit("note-form","note-save",()=>{const note=$("note-text").value;return submitInstructions(noteDialog,"AddDispatchNote",{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,Note:note},()=>{$("note-text").value=note;});},true);
  $("pick-grid").addEventListener("change",event=>{const input=event.target.closest("input[name=pick-session]");if(!input)return;picked={SessionKey:input.value,Name:input.dataset.name};pickSelection();});
  submit("pick-search-form","pick-search-form",()=>{picked=null;pickSelection();pickGrid.reset();});
  click("pick-confirm",async()=>{
   if(pickMode==="rule"){ruleSession=picked.SessionKey;sessionField();pickDialog.close();return;}
-  await request(EmailWorks,"PickSession",{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,SessionKey:picked.SessionKey,Note:$("pick-note").value});
-  await finishSend(pickDialog,actingWork.WorkKey);
- });
- $("rule-outcome").addEventListener("change",sessionField);
+   const session=picked, note=$("pick-note").value;
+   await submitInstructions(pickDialog,"PickSession",{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,SessionKey:session.SessionKey,Note:note},()=>{picked=session;$("pick-note").value=note;pickSelection();});
+  },true);
+  $("rule-outcome").addEventListener("change",sessionField);
  click("rule-session-pick",control=>openPick("rule",null,control));
  submit("rule-form","save-rule",async()=>{
   const outcome=$("rule-outcome").value;
