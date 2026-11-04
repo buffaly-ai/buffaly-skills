@@ -58,3 +58,8 @@ Keep this file aligned with the operational global-review actions in `Skills/Cod
 ## 2026-11-03 — Describe canonical Sidebar guidance route
 - ToGetGlobalCodeReviewLanguageGuidance mirrors the lazy definition's exact Sidebar token and canonical Coding document. Existing signature, phrase and root are unchanged. Parsed and upserted through typed ProtoScriptProjectFileTools against the owning source; no installed profile edit or arbitrary path reader.
 - Validation: 161/161 owning tests passed, zero skipped, including eager/lazy compilation and both trusted guidance bases. Installed acceptance follows separately.
+
+
+## 2026-11-04 — Eager recorded-data scope action
+- Added ToGetCodeReviewRecordedDataPage to the closed reviewer surface with exact repository/SHA/index, authored ProducerPath, explicit ReviewReason and CharacterOffset. Shared EvidencePages owner returns exact-bound aggregate/sample evidence; complete producer context and ordinary source/configuration coverage remain mandatory. Typed external-project upsert used; installed copies not edited.
+- Validation: 166 owning tests passed, zero skipped, including CoreLite eager and cold lazy compilation, exact reported corpus and tamper/missing producer/source negatives. Strict lazy sidecar regenerated from the matching skill owner with zero diagnostics. Release publish succeeded with existing RooTrax warning. Live staging acceptance remains separate.

@@ -281,4 +281,9 @@ prototype ToSearchCodeReviewManagedAssemblyPage : CodeReviewsAgentToolsAction, G
  function Execute(string RepositoryPath, string CommitSha, string Path, string Literal, int CharacterOffset = 0) : string { return CodeReviewEvidencePages.GetManagedAssemblySearchPageJson(RepositoryPath, CommitSha, Path, Literal, CharacterOffset); }
 }
 
-
+[SemanticProgram.InfinitivePhrase("to review recorded diagnostic observations")]
+prototype ToGetCodeReviewRecordedDataPage : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
+{
+ Description = @"Explicit alternative only for non-executable recorded JSON observations after establishing diagnostic purpose from exact producer/report evidence. RepositoryPath, CommitSha and FileIndex bind the full manifest entry. ProducerPath must be exact committed authored source; ReviewReason must explain output purpose and evidence of no runtime/configuration use. Read this receipt from CharacterOffset zero to EndOfContent and the entire producer with ToGetCodeReviewFileAtCommitPage. Receipt hashes both sides and traverses all nodes for aggregates; complete first/last observations are samples, not full measurement validation. Root observation arrays and Rows observation envelopes are supported. Never use this for source, configuration, SQL, schemas, manifests, golden expectations or executable generated code. Raw exact readers remain available for necessary investigation; a complete accepted receipt supersedes only this entry's raw patch.";
+ function Execute(string RepositoryPath, string CommitSha, int FileIndex, string ProducerPath, string ReviewReason, int CharacterOffset = 0) : string { return CodeReviewEvidencePages.GetRecordedDataPageJson(RepositoryPath, CommitSha, FileIndex, ProducerPath, ReviewReason, CharacterOffset); }
+}
