@@ -112,3 +112,6 @@ Advance Review script0.2.16 to0.2.17 so a later normal package release loads the
 
 ## 2026-11-04 — shared shell Conversations entry
 Moved existing conversation list/thread/read-only-message markup into this shell and changed nav to #conversations. Incoming captured messages use existing email view/decision/dialog markup, Back link gets current thread; no second picker/rendered command copy. Added module script0.2.0 before Review0.2.18, same shared styles and body sandbox. Focused15/15 and routine47/47 pass including desktop1440/phone390 and previous held-note protection. No business/DTO/schema/core changes; publication/installed proof in session artifact.
+
+## 2026-11-04 — excluded conversation shared status asset
+Advanced shared UI cache key0.2.9 to0.2.10 for In Trash vocabulary. No shell layout/commands changed. Excluded thread fixture2/2 overall and routine48/48 pass; installed verification separate.

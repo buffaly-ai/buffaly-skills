@@ -43,3 +43,6 @@ Added exact Replied/AwaitingReply/Draft display vocabulary, CursorGrid extending
 
 ## 2026-11-04 — describe historical evidence without claiming completion
 Changed shared PreviouslyHandled label from Already handled · held to Prior email found · held. Existing state represents matching source text, not a successful module receipt or completed work; current Sales by Style walkthrough exposed misleading wording. No state/capability/transport change. Updated source UI assertion; held-success/error desktop/phone plus Conversations shared-owner regression7/7 passed. Both shells use shared asset0.2.9. Other state vocabulary unchanged.
+
+## 2026-11-04 — Trash vocabulary for excluded direct conversations
+Shared status owner now maps exact Trash token to In Trash, reusing existing neutral status presentation. Existing Spam token/wording unchanged. Server owns label classification; no client inference or dispatch capability changes. Excluded-only thread/read-only message fixture passes SPAM/TRASH at1440/390 (2/2 new checks overall); routine48/48 pass. Shell cache key advanced0.2.10; installed proof follows.
