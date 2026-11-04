@@ -49,7 +49,6 @@
   function fileParameters(path){return state.scope.sessionKey?{sessionKey:state.scope.sessionKey,path}:{rootId:state.scope.rootId,projectPath:state.scope.projectPath,path};}
   function fileRoute(){return state.scope.sessionKey?'session-file':'project-file';}
   function sameScope(a,b){return JSON.stringify(a)===JSON.stringify(b);}
-  function allFiles(nodes){return nodes.flatMap(node=>node.kind==='file'?[node]:allFiles(node.children||[]));}
   function locationRecord(path,line=1){return {path,line};}
 
   // ---- Explorer visibility, drawer and resizing ------------------------------------------------------------------
@@ -105,39 +104,63 @@
       if(node.kind==='directory'){const twisty=document.createElement('span');twisty.className='twisty';twisty.append(icon('i-chevron-right'));row.append(twisty,icon('i-folder','folder-icon'),name);}
       else {const spacer=document.createElement('span');spacer.className='spacer';row.append(spacer,fileBadge(node.path),name);}
       fragment.append(row);
-      if(node.kind==='directory'){const group=document.createElement('div');group.setAttribute('role','group');group.style.setProperty('--guide-left',`${15+depth*14}px`);group.append(renderNodes(node.children||[],depth+1));row.setAttribute('aria-expanded','true');fragment.append(group);}
+      if(node.kind==='directory'){const group=document.createElement('div');group.setAttribute('role','group');group.dataset.path=node.path;group.dataset.depth=String(depth+1);group.hidden=true;group.style.setProperty('--guide-left',`${15+depth*14}px`);row.setAttribute('aria-expanded','false');fragment.append(group);}
     }
     return fragment;
   }
-  function toggleFolder(row,expanded){const group=row.nextElementSibling;const open=expanded??group.hidden;group.hidden=!open;row.setAttribute('aria-expanded',String(open));}
-  function folders(expanded){$('tree').querySelectorAll('[data-kind=directory]').forEach(row=>toggleFolder(row,expanded));}
+  async function loadFolder(group,offset=0){
+    if(group.loading)return group.loading;
+    const generation=state.generation,scope=state.scope,path=group.dataset.path||'';
+    const request=(async()=>{
+      group.setAttribute('aria-busy','true');
+      try{
+        const page=await api(scope.sessionKey?'session-entries':'project-entries',{...fileParameters(path),offset});
+        if(generation!==state.generation||!group.isConnected)return;
+        group.querySelector(':scope > .folder-next')?.remove();
+        group.append(renderNodes(page.entries,Number(group.dataset.depth||0)));group.dataset.loaded='true';
+        group.dataset.next=page.nextOffset===null?'':String(page.nextOffset);
+        if(page.nextOffset!==null){const more=button('Load more files and folders',()=>loadFolder(group,page.nextOffset).catch(report));more.className='tree-row folder-next';group.append(more);}
+        for(const file of page.entries.filter(node=>node.kind==='file'))if(!state.files.some(item=>item.path===file.path))state.files.push(file);
+        if(!path)state.tree.push(...page.entries);
+        $('file-count').textContent=`${state.files.length.toLocaleString()} files loaded`;
+      }finally{if(generation===state.generation){group.removeAttribute('aria-busy');group.loading=null;}}
+    })();group.loading=request;return request;
+  }
+  async function toggleFolder(row,expanded){const group=row.nextElementSibling,open=expanded??group.hidden;group.hidden=!open;row.setAttribute('aria-expanded',String(open));if(open&&!group.dataset.loaded)try{await loadFolder(group);}catch(error){group.hidden=true;row.setAttribute('aria-expanded','false');report(error);}}
+  function folders(expanded){$('tree').querySelectorAll('[data-kind=directory]').forEach(row=>{if(!expanded||row.nextElementSibling.dataset.loaded)toggleFolder(row,expanded);});}
   function findRow(path){return [...$('tree').querySelectorAll('.tree-row')].find(item=>item.dataset.path===path);}
   function visibleRows(){return [...$('tree').querySelectorAll('.tree-row')].filter(item=>item.getClientRects().length);}
   function expandAncestors(row){let parent=row.parentElement;while(parent&&parent!==$('tree')){if(parent.getAttribute('role')==='group')toggleFolder(parent.previousElementSibling,true);parent=parent.parentElement;}}
-  function reveal(path){
+  async function ensureRow(path){
+    const generation=state.generation;let group=$('tree');const parts=path.split('/');
+    for(let index=0;index<parts.length;index++){
+      const part=parts.slice(0,index+1).join('/');let row=findRow(part);
+      while(!row&&group.dataset.next&&generation===state.generation){await loadFolder(group,Number(group.dataset.next));row=findRow(part);}
+      if(generation!==state.generation)return null;
+      if(!row)return null;
+      if(index===parts.length-1)return row;
+      await toggleFolder(row,true);if(generation!==state.generation)return null;group=row.nextElementSibling;
+    }
+  }
+  async function reveal(path){
     $('tree').querySelector('.active')?.classList.remove('active');
-    const row=findRow(path);if(!row)return;
+    const generation=state.generation,row=await ensureRow(path);if(!row||generation!==state.generation||state.current?.path!==path)return;
     if(row.classList.contains('filtered')){$('tree-filter').value='';filterTree();}
     expandAncestors(row);row.classList.add('active');row.scrollIntoView({block:'nearest'});
   }
-  function revealFolder(path){
-    const row=findRow(path);if(!row)return;
+  async function revealFolder(path){
+    const row=await ensureRow(path);if(!row)return;
     if(row.classList.contains('filtered')){$('tree-filter').value='';filterTree();}
     expandAncestors(row);toggleFolder(row,true);
     if(narrow.matches)setDrawer(true);else if(state.explorerHidden){state.explorerHidden=false;syncExplorer();}
     row.scrollIntoView({block:'start'});row.focus({preventScroll:true});
   }
   function treeState(message,kind=''){$('tree-state').textContent=message;$('tree-state').className='tree-state'+(kind?' '+kind:'');}
-  function defaultTreeState(){treeState(state.ready&&!state.files.length?'This folder is empty or contains only excluded folders.':'');}
+  function defaultTreeState(){treeState(state.ready&&!state.tree.length?'This folder is empty or contains only excluded folders.':'');}
   // Filters in place so the folder hierarchy stays visible; collapsed state is preserved for when the filter is cleared.
   function filterTree(){
-    const query=$('tree-filter').value.trim().toLowerCase();$('tree').classList.toggle('filtering',!!query);let count=0;
-    const visit=container=>{let any=false;for(const row of container.children){if(!row.classList.contains('tree-row'))continue;let show;
-      if(row.dataset.kind==='directory'){const group=row.nextElementSibling,inner=visit(group);show=!query||inner||row.dataset.path.toLowerCase().includes(query);group.classList.toggle('filtered',!show);}
-      else {show=!query||row.dataset.path.toLowerCase().includes(query);if(show&&query)count++;}
-      row.classList.toggle('filtered',!show);any=any||show;}return any;};
-    visit($('tree'));
-    if(query)treeState(count?`${count.toLocaleString()} matching file${count===1?'':'s'}`:'No files match this filter.');else defaultTreeState();
+    const query=$('tree-filter').value.trim();if(!query){defaultTreeState();return;}
+    $('tree-filter').value='';search('files');$('symbol-search').value=query;searchSymbols();
   }
 
   // ---- Outline, tabs, breadcrumb and empty state -----------------------------------------------------------------
@@ -187,9 +210,9 @@
     $(containerId).classList.toggle('hidden',!items.length);
   }
   function renderEmpty(){
-    const scope=state.scope,ready=!!scope&&state.ready,hasFiles=ready&&state.files.length>0;
+    const scope=state.scope,ready=!!scope&&state.ready,hasFiles=ready&&state.tree.length>0;
     $('empty-title').textContent=scope?state.label:'Open a repository';
-    $('empty-text').textContent=!scope?'Read local GitHub checkouts on this server. Nothing is edited, built or run.':state.treeError||(!state.ready?'Loading files\u2026':hasFiles?`${state.files.length.toLocaleString()} files. Choose one in Explorer or find it by name.`:'This folder is empty or contains only excluded folders.');
+    $('empty-text').textContent=!scope?'Read local GitHub checkouts on this server. Nothing is edited, built or run.':state.treeError||(!state.ready?'Loading files\u2026':hasFiles?'Choose a folder in Explorer or find a file by name.':'This folder is empty or contains only excluded folders.');
     const readme=hasFiles?state.files.find(file=>/^readme(\.[a-z0-9]+)?$/i.test(file.path)):null;state.readme=readme?readme.path:null;
     $('empty-open').className=hasFiles?'secondary':'primary';
     $('empty-find').classList.toggle('hidden',!hasFiles);$('empty-readme').classList.toggle('hidden',!readme);
@@ -231,7 +254,7 @@
       for(const control of fileControls)$(control).disabled=false;
       state.matches=[];state.matchIndex=-1;$('file-query').value='';$('match-count').textContent='';
       hideNotice();if(narrow.matches&&state.drawerOpen)setDrawer(false);
-      reveal(path);renderTabs();jumpTo(Math.min(Math.max(line,1),Math.max(file.lineCount,1)),record);status('Loaded '+file.name);
+      renderTabs();jumpTo(Math.min(Math.max(line,1),Math.max(file.lineCount,1)),record);status('Loaded '+file.name);reveal(path).catch(report);
     }catch(error){if(generation===state.generation&&id===state.fileId)report(error);}
   }
   async function navigateHistory(delta){
@@ -246,24 +269,23 @@
     history.replaceState(null,'',url);
     state.scope=scope;state.label=label;state.generation++;state.fileId++;state.searchId++;state.treeId++;state.ready=false;state.treeError='';
     state.tabs=[];state.history=[];state.historyIndex=-1;state.tree=[];state.files=[];state.positions={};hideNotice();clearFile();renderTabs();updateNavigation();
-    $('tree').replaceChildren();$('tree').classList.remove('filtering');$('tree-filter').value='';$('tree-filter').disabled=true;treeState('Loading files\u2026','loading');
+    $('tree').replaceChildren();$('tree').loading=null;delete $('tree').dataset.loaded;delete $('tree').dataset.next;$('tree').dataset.path='';$('tree').dataset.depth='0';$('tree').classList.remove('filtering');$('tree-filter').value='';$('tree-filter').placeholder='Find a file in this project';$('tree-filter').disabled=true;treeState('Loading files\u2026','loading');
     $('file-count').textContent='';$('project-name').textContent=label;$('open-project').title=label+' \u2014 open another project';$('project-dialog').close();
     if($('search-dialog').open)$('search-dialog').close();$('symbol-results').replaceChildren();$('symbol-search').value='';
     for(const id of ['quick-open','find-symbol','collapse-all','expand-all'])$(id).disabled=true;
     $('focus-code').disabled=false;$('full-screen').disabled=!document.documentElement.requestFullscreen;
     const generation=state.generation,treeId=state.treeId;status('Loading project\u2026');
     try{
-      const parameters=scope.sessionKey?{sessionKey:scope.sessionKey}:{rootId:scope.rootId,projectPath:scope.projectPath};
-      const nodes=await api(scope.sessionKey?'session-tree':'project-tree',parameters);
+      await loadFolder($('tree'));
       if(generation!==state.generation||treeId!==state.treeId)return;
-      state.tree=nodes;state.files=allFiles(nodes);state.ready=true;$('tree').append(renderNodes(nodes));$('file-count').textContent=`${state.files.length.toLocaleString()} files`;
+      state.ready=true;
       defaultTreeState();$('tree-filter').disabled=false;
       for(const id of ['quick-open','collapse-all','expand-all'])$(id).disabled=false;$('find-symbol').disabled=!!scope.sessionKey;$('find-symbol').title=scope.sessionKey?'Symbol search is unavailable for session artifacts. Find file and Find text still work.':'Find C# type or member (Ctrl Shift P). Find file supports every file type.';
-      status(state.files.length?'Project ready. Binary files are listed but cannot be opened as text.':'This folder is empty or contains only excluded folders.');
+      status(state.tree.length?'Project ready.':'This folder is empty or contains only excluded folders.');
       if(!scope.sessionKey)rememberRecent(scope,label);
       renderEmpty();
       if(initial)await openFile(initial.path,initial.line);
-      else if(narrow.matches&&state.files.length)setDrawer(true);
+      else if(narrow.matches&&state.tree.length)setDrawer(true);
     }catch(error){if(generation===state.generation){report(error);state.treeError=error.message;treeState(error.message,'error');renderEmpty();}}
   }
 
@@ -346,21 +368,18 @@
     $('symbol-results').querySelector('[aria-current="true"]')?.scrollIntoView({block:'nearest'});
     $('search-status').textContent=state.results.length?`${state.results.length} matches${state.results.length===100?' (first 100)':''}. Use Up/Down and Enter, or click a result.`:'No matches.';
   }
-  function rankFiles(query){
-    const needle=query.toLowerCase();
-    return state.files.flatMap(file=>{const name=file.name.toLowerCase(),full=file.path.toLowerCase();if(!full.includes(needle))return [];return [{file,rank:name===needle?0:name.startsWith(needle)?1:name.includes(needle)?2:3}];})
-      .sort((a,b)=>a.rank-b.rank||a.file.path.length-b.file.path.length||a.file.path.localeCompare(b.file.path)).slice(0,100)
-      .map(({file})=>({path:file.path,line:1,label:file.name,detail:file.path.includes('/')?file.path.slice(0,file.path.lastIndexOf('/')):'/'}));
-  }
   async function searchSymbols(){
     const query=$('symbol-search').value.trim(),id=++state.searchId,generation=state.generation;
     state.results=[];$('symbol-results').replaceChildren();
     if(query.length<(state.mode==='files'?1:2)){$('search-status').textContent=state.mode==='files'?'Start typing a file name.':'Enter at least two characters.';return;}
     $('search-status').textContent='Searching\u2026';
     try{
-      const results=state.mode==='files'?rankFiles(query):
-        (await api('project-symbols',{rootId:state.scope.rootId,projectPath:state.scope.projectPath,query})).map(result=>({path:result.filePath,line:result.line,kind:result.kind,label:result.displayName,detail:`${result.filePath}:${result.line}`}));
-      if(id!==state.searchId||generation!==state.generation)return;state.results=results;state.resultIndex=0;renderResults();
+      let results,truncated=false;
+      if(state.mode==='files'){
+        const listing=await api(state.scope.sessionKey?'session-files':'project-files',{...fileParameters(''),query});
+        results=listing.matches.map(file=>({path:file.path,line:1,label:file.name,detail:file.path}));truncated=listing.truncated;
+      }else results=(await api('project-symbols',{rootId:state.scope.rootId,projectPath:state.scope.projectPath,query})).map(result=>({path:result.filePath,line:result.line,kind:result.kind,label:result.displayName,detail:`${result.filePath}:${result.line}`}));
+      if(id!==state.searchId||generation!==state.generation)return;state.results=results;state.resultIndex=0;renderResults();if(truncated)$('search-status').textContent='Showing a limited set of matches. Refine the file name to narrow the search.';
     }catch(error){if(id===state.searchId&&generation===state.generation)$('search-status').textContent=error.message;}
   }
   async function openSearchResult(index){const result=state.results[index];if(!result)return;$('search-dialog').close();state.searchId++;await openFile(result.path,result.line);}
@@ -419,11 +438,10 @@
   $('root-select').onchange=()=>browse('');$('folder-up').onclick=()=>browse(state.folder.split('/').slice(0,-1).join('/'));
   $('choose-folder').onclick=()=>{const rootId=$('root-select').value;const name=$('root-select').selectedOptions[0].textContent.split(' \u2014 ')[0];openScope({rootId,projectPath:state.folder},name+(state.folder?' / '+state.folder:''));};
   $('collapse-all').onclick=()=>folders(false);$('expand-all').onclick=()=>folders(true);
-  $('tree-filter').addEventListener('input',filterTree);
   $('tree-filter').addEventListener('keydown',event=>{
     if(event.key==='Escape'&&$('tree-filter').value){event.preventDefault();event.stopPropagation();$('tree-filter').value='';filterTree();}
     else if(event.key==='ArrowDown'){event.preventDefault();visibleRows()[0]?.focus();}
-    else if(event.key==='Enter'){const first=visibleRows().find(row=>row.dataset.kind==='file');if(first){event.preventDefault();first.click();}}
+    else if(event.key==='Enter'){event.preventDefault();filterTree();}
   });
   $('tree').addEventListener('keydown',event=>{
     const row=event.target.closest('.tree-row');if(!row)return;
@@ -431,7 +449,7 @@
     const index=rows.indexOf(row);
     if(event.key==='ArrowDown'||event.key==='ArrowUp'){event.preventDefault();rows[Math.min(rows.length-1,Math.max(0,index+(event.key==='ArrowDown'?1:-1)))]?.focus();}
     if(event.key==='Home'||event.key==='End'){event.preventDefault();(event.key==='Home'?rows[0]:rows[rows.length-1])?.focus();}
-    if(event.key==='ArrowRight'&&row.dataset.kind==='directory'){event.preventDefault();toggleFolder(row,true);row.nextElementSibling.querySelector('.tree-row:not(.filtered)')?.focus();}
+    if(event.key==='ArrowRight'&&row.dataset.kind==='directory'){event.preventDefault();toggleFolder(row,true).then(()=>row.nextElementSibling.querySelector('.tree-row:not(.filtered)')?.focus());}
     if(event.key==='ArrowLeft'){event.preventDefault();if(row.dataset.kind==='directory'&&row.getAttribute('aria-expanded')==='true')toggleFolder(row,false);else if(row.parentElement.getAttribute('role')==='group')row.parentElement.previousElementSibling.focus();}
   });
   $('quick-open').onclick=()=>search('files');$('find-symbol').onclick=()=>search('symbols');
