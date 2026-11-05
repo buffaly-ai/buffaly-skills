@@ -18,6 +18,14 @@ window.EmailConversations = (() => {
  function parkReader(){document.getElementById("view-conversation").append(document.getElementById("conversation-reader"));}
  function restoreReaders(){parkReader();readers.forEach((reader,index)=>homes[index].after(reader));}
  const conversationGrid=new CursorGrid("conversations","conversation-pager","conversation-search",args=>request(EmailObservations,"GetConversations",{AccountKey:"work-main",...args}),items=>`<table class="ed-grid Grid"><thead><tr><th class="ed-sender-cell">From</th><th>Conversation</th><th class="ed-time-cell">Latest incoming</th><th class="ed-state-cell">Reply</th></tr></thead><tbody>${items.map(item=>{const [name,kind]=EmailDispatchUi.state(item.ReplyState);return `<tr data-row-href="#thread/${encodeURIComponent(item.ThreadId)}"><td class="ed-sender-cell"><span class="ed-cell-secondary" title="${escape(item.Sender)}">${escape(item.Sender)}</span></td><td><a href="#thread/${encodeURIComponent(item.ThreadId)}" title="${escape(item.Subject||"No subject")}">${escape(item.Subject||"No subject")}</a><span class="ed-cell-secondary">${item.MessageCount} ${item.MessageCount===1?"message":"messages"}</span><span class="ed-cell-secondary ed-mobile-meta">${escape(item.Sender)} · ${escape(date(item.ReceivedUtc))}</span></td><td class="ed-time-cell">${escape(date(item.ReceivedUtc))}</td><td class="ed-state-cell"><span class="ed-status ed-status-${kind}">${escape(name)}</span></td></tr>`;}).join("")}</tbody></table>`,"No conversations match. Change the search.");
+ const selection=new EmailDispatchUi.GridSelection(conversationGrid,document.getElementById("conversation-commands"),item=>item.ThreadId,item=>item.Subject||"No subject","Archive selected",async(items,control)=>{
+  const current=version,failed=[];let archived=0;
+  for(const item of items){try{await request(EmailObservations,"ArchiveConversation",{AccountKey:"work-main",ThreadId:item.ThreadId});control.selected.delete(item.ThreadId);archived++;}catch(error){failed.push(item.Subject||"No subject");console.error("Conversation archive failed",error);}}
+  if(current===version&&location.hash==="#conversations"){
+   notify(failed.length?`${archived} archived. Could not archive: ${failed.join("; ")}. Those conversations remain selected. Try Archive selected again.`:`${archived} ${archived===1?"conversation archived":"conversations archived"}.`,failed.length?"Error":"Success");
+   control.refresh();
+  }else control.clear();
+ },"fa-archive");
  const messagesGrid=new PagedGrid("thread-messages","thread-pager","conversation-search",async args=>{
   const id=threadId, current=version;
   let page=await request(EmailObservations,"GetConversation",{AccountKey:"work-main",ThreadId:id,SkipRows:args.SkipRows,NumRows:args.NumRows});
@@ -47,6 +55,7 @@ window.EmailConversations = (() => {
   async function route(showView,openDispatch){
    show=showView;openReview=openDispatch;
    const current=++version;bodyToken=null;conversationGrid.cancelSearch();messagesGrid.cancelSearch();
+  selection.clear();
   const [name,id,messageId]=location.hash.slice(1).split("/");
   if((name==="thread"||name==="message")&&id){threadId=decodeURIComponent(id);selectedMessage=name==="message"&&messageId?decodeURIComponent(messageId):"";pendingOpen=!!selectedMessage;mountReaders();show("conversation");if(name==="message"&&loadedThread===threadId){pendingOpen=false;markSelected();await openMessage(threadId,selectedMessage,current);}else{loadedThread="";canArchive=false;$("thread-subject").textContent="Conversation";$("thread-status").replaceChildren();$("thread-context").hidden=false;$("thread-messages").replaceChildren(text("p","Loading conversation…","ed-empty"));messagesGrid.reset();}}
   else{show("conversations");conversationGrid.Refresh(true);}

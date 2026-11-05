@@ -130,3 +130,6 @@ Review script cache key0.2.21 activates actual shared View evidence button, per 
 
 ## 2026-11-05 — sent-message command area and archive assets
 Added existing ed-actions command area under read-only message metadata for the shared Gmail Archive button. No separate toolbar or page styles; incoming shares its existing decision commands. Advanced generated observations0.2.6, conversations0.3.2 and review0.2.22 cache keys. Explicit button-only override retained. UI task walkthrough: finish reading/reviewing conversation, Archive removes it from inbox and returns to list; existing dispatch/evidence commands remain grouped and serve selected received message. Source conversation/localarchive13/13 pass at desktop/phone; installed acceptance follows release.
+
+## 2026-11-05 — list selection command slot
+Added conversation-commands in existing heading command row for reusable selected count and Archive selected; checkbox cells are injected by shared grid selection. Updated UI0.2.11/conversations0.3.3 cache keys, other styles/Review shell unchanged. Source17/17 desktop/phone passes; broad55=54pass/1 known absent Rules row timeout. No real Gmail mutation. Installed proof follows release.

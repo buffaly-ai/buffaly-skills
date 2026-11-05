@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="/css/bootstrap.min.css?v=0.2.0"><link rel="stylesheet" href="/css/icons.min.css?v=0.2.0"><link rel="stylesheet" href="/css/email-dispatch.css?v=0.2.8">
 <script src="/js/kcs/buffaly-standalone-foundation.js?v=0.2.0"></script><script src="/js/kcs/grid4.js?v=0.2.0"></script>
 <script src="/JsonWs/Buffaly.EmailDispatch.EmailObservations.ashx.js?v=0.2.6"></script><script src="/JsonWs/Buffaly.EmailDispatch.EmailWorks.ashx.js?v=0.2.2"></script><script src="/JsonWs/Buffaly.EmailDispatch.EmailSyncAccounts.ashx.js?v=0.2.0"></script>
-  <script defer src="/js/email-dispatch-ui.js?v=0.2.10"></script><script defer src="/js/email-conversations.js?v=0.3.2"></script><script defer src="/js/email-dispatch.js?v=0.2.22"></script>
+  <script defer src="/js/email-dispatch-ui.js?v=0.2.11"></script><script defer src="/js/email-conversations.js?v=0.3.3"></script><script defer src="/js/email-dispatch.js?v=0.2.22"></script>
 </head>
 <body>
 <a class="ed-skip" href="#main">Skip to content</a>
@@ -26,7 +26,7 @@
 <div id="works" class="ed-decisions" aria-label="Dispatch decision"></div>
 <div id="body-loading" class="ed-result" role="status" hidden></div><iframe id="body-html" class="ed-email-frame" title="Formatted email" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" hidden></iframe><div id="body" class="ed-email-body"></div></article></section>
 <section id="view-conversations" class="ed-view" hidden>
-<div class="ed-heading"><h1 tabindex="-1">Conversations</h1></div>
+<div class="ed-heading"><h1 tabindex="-1">Conversations</h1><div id="conversation-commands" class="ed-actions"></div></div>
 <form id="conversation-search-form" class="ed-search"><label class="visually-hidden" for="conversation-search">Search conversations</label><input id="conversation-search" class="form-control" type="search" placeholder="Search sender or subject"><button class="btn btn-primary" type="submit"><i class="fas fa-search" aria-hidden="true"></i>Search</button></form>
 <div id="conversations" class="ed-grid-host" aria-busy="true"><p class="ed-empty">Loading conversations…</p></div><div id="conversation-pager" class="ed-pager" aria-label="Conversation pages"></div>
 </section>

@@ -123,5 +123,39 @@ window.EmailDispatchUi = (() => {
    }
    reset(){this.cursorState.version++;this.cursorState.tokens.clear();this.cursorState.tokens.set(0,"");super.reset();}
   }
-   return {$,text,escape,link,notify,clearNotice,run,request,button,dialog,state,status,date,facts,details,PagedGrid,CursorGrid,bindEmailFrame};
+   // Opt-in page selection, owned beside paging so no view copies checkbox or lifecycle handling.
+   class GridSelection {
+    constructor(grid,commands,key,label,actionLabel,action,icon=""){
+     this.grid=grid;this.key=key;this.label=label;this.selected=new Map();this.running=false;this.loading=true;this.retain=false;
+     this.count=text("span","","ed-page-range");this.command=button(actionLabel,()=>this.execute(action),true,icon);commands.append(this.count,this.command);
+     const before=grid.OnBeforeRefresh,complete=grid.OnComplete,busy=grid.busy.bind(grid);
+     grid.busy=value=>{busy(value);this.loading=value;this.update();};
+     grid.OnBeforeRefresh=()=>{if(!this.retain)this.selected.clear();this.retain=false;before();this.update();};
+     grid.OnComplete=()=>{complete();this.render();};
+     this.update();
+    }
+    clear(){this.selected.clear();this.update();}
+    update(){
+     this.count.textContent=this.selected.size?`${this.selected.size} selected`:"";this.command.hidden=!this.selected.size;
+     this.command.disabled=this.running||this.loading;
+     const host=document.getElementById(this.grid.ContentControlID);
+     host.inert=this.running||this.loading;document.getElementById(this.grid.PagingControlID).inert=this.running||this.loading;
+     const search=document.getElementById(this.grid.SearchControlID)?.closest("form");if(search)search.inert=this.running;
+     host.querySelectorAll("input[data-grid-select]").forEach(input=>{input.disabled=this.running||this.loading;});
+     const all=host.querySelector("input[data-grid-select-all]");
+     if(all){const count=this.grid.page.Items.filter(item=>this.selected.has(this.key(item))).length;all.checked=count>0&&count===this.grid.page.Items.length;all.indeterminate=count>0&&!all.checked;all.disabled=this.running||this.loading;}
+    }
+    render(){
+     const ids=new Set(this.grid.page.Items.map(item=>this.key(item)));for(const id of this.selected.keys())if(!ids.has(id))this.selected.delete(id);
+     const host=document.getElementById(this.grid.ContentControlID),table=host.querySelector("table");if(!table){this.update();return;}
+     const checkbox=(name)=>{const input=document.createElement("input");input.type="checkbox";input.setAttribute("aria-label",name);return input;};
+     const head=document.createElement("th"),all=checkbox("Select all on this page");all.dataset.gridSelectAll="";head.className="ed-pick-cell";head.append(all);table.tHead.rows[0].prepend(head);
+     all.addEventListener("change",()=>{for(const item of this.grid.page.Items){const id=this.key(item);if(all.checked)this.selected.set(id,item);else this.selected.delete(id);}host.querySelectorAll("input[data-grid-select]").forEach(input=>input.checked=all.checked);this.update();});
+     [...table.tBodies[0].rows].forEach((row,index)=>{const item=this.grid.page.Items[index],id=this.key(item),cell=document.createElement("td"),input=checkbox("Select "+this.label(item));cell.className="ed-pick-cell";input.dataset.gridSelect=id;input.checked=this.selected.has(id);input.addEventListener("change",()=>{if(input.checked)this.selected.set(id,item);else this.selected.delete(id);this.update();});cell.append(input);row.prepend(cell);});
+     this.update();
+    }
+    async execute(action){if(this.running||this.loading||!this.selected.size)return;this.running=true;this.update();try{await action([...this.selected.values()],this);}finally{this.running=false;this.update();}}
+    refresh(){this.retain=true;this.grid.Refresh(true);}
+   }
+    return {$,text,escape,link,notify,clearNotice,run,request,button,dialog,state,status,date,facts,details,PagedGrid,CursorGrid,GridSelection,bindEmailFrame};
 })();
