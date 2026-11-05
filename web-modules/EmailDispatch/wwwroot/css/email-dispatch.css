@@ -1,4 +1,6 @@
 /* Module-wide visual owner: every task uses these elements; no per-view theme variants. */
+/* Heading commands share the title baseline; search commands keep their icon and label together. */
+.ed-heading .ed-actions{margin-top:0}.ed-search>.btn{flex:0 0 auto;white-space:nowrap}
 .ed-sync-tools{display:flex;align-items:center;gap:.5rem}.btn.ed-icon-button{padding:.35rem .55rem;min-height:0}.ed-grid tr[data-row-href]{cursor:pointer}
 .ed-email-frame{display:block;width:100%;min-height:120px;border:0;margin:1rem 0 2rem;background:#fff}
 :root{--ed-text:#172b43;--ed-muted:#526176;--ed-border:#dce3eb;--ed-surface:#f5f7fa;--ed-accent:#2459b7;--ed-radius:.5rem;--bs-body-color:var(--ed-text);--bs-body-bg:#fff;--bs-body-font-size:1rem;--bs-body-line-height:1.5}
