@@ -4,9 +4,10 @@ AS
 BEGIN
  SET NOCOUNT ON;
  IF @SkipRows<0 OR @NumRows<1 OR @NumRows>51 THROW 51000,'Invalid page bounds.',1;
- -- Preserve the existing review cohort, predicates and deterministic ordering exactly.
+ -- Exclude Gmail spam before search, status and paging; retain observations for direct evidence/history.
  SELECT o.* INTO #Page FROM dbo.EmailObservations o
  WHERE (@AccountKey=N'' OR o.AccountKey=@AccountKey)
+ AND NOT EXISTS(SELECT 1 FROM OPENJSON(o.Data,'$.Frame.Labels') label WHERE label.[value]=N'SPAM')
  AND (@Search=N'' OR o.MessageId=@Search OR o.ThreadId=@Search
       OR JSON_VALUE(o.Data,'$.Frame.Subject') LIKE N'%'+@Search+N'%'
       OR JSON_VALUE(o.Data,'$.Frame.Sender') LIKE N'%'+@Search+N'%')
