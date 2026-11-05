@@ -382,3 +382,12 @@ prototype ToGetFileBlockPage : FileSystemSkillAction, CodingContext
 	}
 	Description = @"directoryPath - optional base directory. filePath - file path. startLine - 1-based line. lineCount - requested lines. characterOffset - exact decoded UTF-16 offset from the preceding page cursor; zero starts at the line beginning. Returns bounded text, actual range, EOF and next cursor.";
 }
+[SemanticProgram.InfinitivePhrase("to read a bounded document")]
+prototype ToReadFileDocument : FileSystemSkillAction, CodingContext
+{
+	function Execute(string directoryPath, string filePath, int startLine, int characterOffset) : Prototype
+	{
+		return FileSystemTools.ReadFileDocument(directoryPath, filePath, startLine, characterOffset);
+	}
+	Description = @"Read a complete authoritative text document in one bounded result (maximum 32768 rendered characters). directoryPath is optional for absolute filePath. Start with startLine=1, characterOffset=0; continue with the exact returned cursor until EOF. Preserves source whitespace, newlines and Unicode; no silent truncation. Use narrow search/pages when full document evidence is unnecessary.";
+}

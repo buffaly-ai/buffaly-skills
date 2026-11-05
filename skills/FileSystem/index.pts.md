@@ -25,3 +25,7 @@
 ## 2026-10-18 — lazy read-only utility declaration
 - Imported FileSystemUtilityTools and declared include lazy Utilities/index.pts. Ancestor/hash actions remain outside eager source declarations/default context roots; no existing action signature changed.
 - Validation: changed index parsed; actual lazy maps and module wrapper execution verified in Utility.Tests26/26. Source-only, no installed activation.
+
+## 2026-11-05 — Coding-context bounded document reader
+- Added ToReadFileDocument as a thin Prototype-returning FileSystemSkillAction/CodingContext facade. Start at 1/0; continue with its exact returned line/UTF-16 offset until EOF. Describes the 32768 rendered-character maximum and when narrow search/pages are preferable. Existing actions and inheritance are unchanged.
+- Validation: actual definition parsed/upserted into a disposable project with the typed authoring service, compiled, executed and registered through real ToolRegistrar/TooledAgent dispatch. Full 25000-character source reaches structured ContentParts intact; scoped 47/47 regressions pass. Not deployed to staging or Matt-local.
