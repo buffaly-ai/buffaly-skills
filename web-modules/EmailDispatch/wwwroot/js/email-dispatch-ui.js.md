@@ -52,3 +52,7 @@ Added opt-in GridSelection beside shared PagedGrid/CursorGrid, injecting checkbo
 
 ## 2026-11-05 — reuse loaded pages and shared archive action
 PagedGrid retains only displayed page with view/search/filter/page identity and bounded10s activation age; callers can invalidate, Conversations30s. Busy/cancelled reads cannot become reusable complete pages. CursorGrid labels actual conversation count rather than fabricated offset ranges. Shared archiveSelection deduplicates selected ThreadIds, calls existing authenticated Gmail owner once, applies optional existing local disposition callback, retains failures, invalidates affected lists. GridSelection clear resets rendered checks and repeat render removes old cells. Existing shared styles/buttons/transport unchanged. Tests6/6 desktop/phone selection/polling/warm navigation/partial retry and old Conversations action pass; broad55/56 includes known Rules timeout. No real archive/send; installed verification follows.
+
+
+## 2026-11-05 — dispatch evidence vocabulary
+Shared state/status owner adds explicit Dispatched/Not dispatched/Ready to dispatch/Dispatch uncertain/Dispatch rejected/Needs dispatch review/prior evidence/local review/no action tokens. Destination-aware wording comes only from server evidence, not reply inference. Existing Review vocabulary untouched; source list/header browser tests1440/390 and routine56/56 pass. No styles, transport or command changes.

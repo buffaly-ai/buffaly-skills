@@ -144,3 +144,7 @@ Reused Review's ed-toolbar/inner ed-search and heading/title/command wrapper on 
 
 ## 2026-11-05 — invalidate-after-clear behavior cache key
 Advanced email-dispatch.js query key0.2.23 to0.2.24 for confirmed P2 ClearRule success invalidation. No markup/styles/command arguments changed. New source desktop/phone regression reproduces old stale Active row before fix then passes; focused4/4 routine54/54. No real rule clear or mail writes; installed proof pending.
+
+
+## 2026-11-05 — latest incoming dispatch labels
+Advance shared UI script0.2.13 and Conversations0.3.5 so installed browsers receive latest incoming dispatch status alongside reply chronology. Existing shell/layout/styles/actions unchanged. Source1440/390 browser and routine56/56 pass; live installation proof separate.

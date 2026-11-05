@@ -83,6 +83,7 @@ window.EmailDispatchUi = (() => {
    window.addEventListener("message",event=>{const data=event.data;if(event.source!==frame.contentWindow||event.origin!=="null"||!token()||data?.kind!=="email-body-size"||data.token!==token()||!Number.isFinite(data.height)||data.height<1)return;const height=Math.max(120,Math.min(2400,Math.ceil(data.height)+2))+"px";if(frame.style.height!==height)frame.style.height=height;});
   }
   const stateNames = {
+   Dispatched:["Dispatched","success"], NotDispatched:["Not dispatched","warning"], DispatchReady:["Ready to dispatch","warning"], DispatchUncertain:["Dispatch uncertain · check delivery","danger"], DispatchRejected:["Dispatch rejected","danger"], DispatchNeedsReview:["Needs dispatch review","warning"], DispatchPriorEvidence:["Prior email found · held","neutral"], DispatchReviewed:["Reviewed · not dispatched","neutral"], DispatchNoAction:["No dispatch needed","neutral"],
    Replied:["You replied","success"], AwaitingReply:["No reply yet","neutral"], Draft:["Draft reply","warning"],
    ProjectionFailed:["Email could not be read","danger"], Spam:["Spam · not dispatched","neutral"], Trash:["In Trash","neutral"],
   NotReviewed:["Not yet reviewed","neutral"], ReviewedLocally:["Reviewed locally","neutral"], Pending:["Waiting for the dispatch agent","info"], Suggested:["Ready to send","warning"], AutomaticReady:["Processor ready to send","warning"], NeedsDestination:["Not sent — choose a destination","warning"], AgentEvaluationRequired:["Not decided yet","warning"], PreparationFailed:["Not decided yet","warning"], Prepared:["Suggestions ready","info"], NeedsReview:["Needs routing review","warning"], PreviouslyHandled:["Prior email found · held","neutral"], DeliveryUnknown:["Delivery uncertain · held","danger"], Accepted:["Accepted by destination","success"], Rejected:["Rejected by destination","danger"], Unclassified:["Not decided yet","warning"], Disabled:["Not decided yet","warning"], Superseded:["Replaced by a newer decision","neutral"], NoAction:["No action needed","neutral"], Notice:["Notice only","neutral"], WakeRecorded:["Wake recorded","info"], Conflict:["Conflicting rules · held","danger"], Error:["The dispatch agent could not decide","danger"], Failed:["Review needs retry","danger"], Archived:["Archived","neutral"], Dismissed:["Dismissed locally","neutral"]
@@ -90,7 +91,9 @@ window.EmailDispatchUi = (() => {
   const state = (value,destination) => {
    const result=stateNames[value] ?? ["Needs inspection", "warning"];
    if(destination&&["Suggested","AutomaticReady"].includes(value)) return [result[0]+" to "+destination,result[1]];
-   if(destination&&value==="Accepted") return ["Accepted by "+destination,result[1]];
+    if(destination&&value==="Accepted") return ["Accepted by "+destination,result[1]];
+    if(destination&&value==="Dispatched") return ["Dispatched to "+destination,result[1]];
+    if(destination&&value==="DispatchReady") return ["Ready to dispatch to "+destination,result[1]];
    return result;
   };
   const status = (value,destination) => { const [name, kind] = state(value,destination); return text("span", name, "ed-status ed-status-" + kind); };

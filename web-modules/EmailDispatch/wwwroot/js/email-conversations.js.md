@@ -25,3 +25,7 @@ Corrected scope after Matt clarified list-level archive, not only opened-message
 
 ## 2026-11-05 — shared list archive and warm navigation
 Conversations calls shared archiveSelection instead of duplicating command loop, invalidates Review on Gmail archive (including single message command), activates existing displayed page up to30s rather than unconditionally reloading. Passes already loaded formatted body to exact Review reader to avoid reading/formatting the same message twice. Existing exact-observation/version guards and reply chronology unchanged. New Review+Conversations warm navigation and old archive fixtures pass at1440/390; actual Gmail read-only walkthrough1/1. No new styles, client mailbox filtering or real mail writes. Installed proof follows.
+
+
+## 2026-11-05 — latest incoming status in list and header
+Replaced reply-only list heading with Latest incoming status. One conversationStatus renderer reused by list and thread header shows server-owned dispatch badge with destination and separate existing reply text. Shared status/text/escaping/Grid owners retained; no new styles/columns/actions/client evidence lookup. Main task: see whether the newest incoming message has been dispatched and whether replied. Existing Search/navigation/selection/archive/send commands unchanged. Focused3/3 including desktop1440/phone390 confirms list/header agree, destination and No reply yet coexist, and zero dispatch writes; routine56/56 passes. Source fixture screenshots are not installed proof; live screenshots follow.
