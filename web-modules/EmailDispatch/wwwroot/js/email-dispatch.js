@@ -284,7 +284,7 @@
  });
  click("cancel-rule",()=>{location.hash="#rules";});
  click("rule-clear",control=>{$("clear-subject").textContent=selectedRule.EntityName;clearDialog.open(control);});
- submit("clear-form","clear-confirm",async()=>{selectedRule=await request(EmailObservations,"ClearRule",{PrototypeName:selectedRule.PrototypeName,ExpectedRulesRevision:selectedRule.RulesRevision});clearDialog.close();renderRule();notify("This node is no longer a rule. It stays in the dispatch tree.");});
+  submit("clear-form","clear-confirm",async()=>{selectedRule=await request(EmailObservations,"ClearRule",{PrototypeName:selectedRule.PrototypeName,ExpectedRulesRevision:selectedRule.RulesRevision});rulesGrid.invalidate();clearDialog.close();renderRule();notify("This node is no longer a rule. It stays in the dispatch tree.");});
  click("test",()=>testRules(selectedEmail.Email.ObservationKey,"test-result"));click("rule-test",()=>{$("rule-test-form").hidden=false;$("rule-email-search").focus();});
  submit("rule-test-form","rule-test",async()=>{const page=await request(EmailObservations,"GetInbox",{AccountKey:"work-main",State:"",Search:$("rule-email-search").value,SkipRows:0,NumRows:10});$("rule-email-results").replaceChildren();for(const email of page.Items)$("rule-email-results").append(button(email.Subject,()=>testRules(email.ObservationKey,"rule-test-result")));if(!page.Items.length)$("rule-email-results").append(text("p","No matching email.","ed-empty"));});
  click("synchronize",checkGmail); click("check-now",checkGmail);

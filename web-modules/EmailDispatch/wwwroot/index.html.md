@@ -140,3 +140,7 @@ Added review-commands beside existing heading/check Gmail command row. Shared ow
 
 ## 2026-11-05 — Conversations uses Review's existing list shell
 Reused Review's ed-toolbar/inner ed-search and heading/title/command wrapper on Conversations; added labelled heading without renaming IDs used by existing scripts. CSS cache key0.2.9. Corrects missing search/grid separation and command alignment, not feed/DTO/search/paging/selection/dispatch changes. Shared search button keeps one-line icon/label; conversation count/reply and Review filter/sync remain. Source computed-style/spacing1440/3901/1; focused existing archive/provider/Review retry/poll/warm plus parity4/4 and routine54/54 pass, no real mail writes. Installed comparison follows normal package route.
+
+
+## 2026-11-05 — invalidate-after-clear behavior cache key
+Advanced email-dispatch.js query key0.2.23 to0.2.24 for confirmed P2 ClearRule success invalidation. No markup/styles/command arguments changed. New source desktop/phone regression reproduces old stale Active row before fix then passes; focused4/4 routine54/54. No real rule clear or mail writes; installed proof pending.
