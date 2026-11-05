@@ -4,6 +4,8 @@ import Buffaly.Agent.Runtime.Abstractions Buffaly.Agent.Runtime.Abstractions.Run
 import Buffaly.Agent.Tools.Process Buffaly.Agent.Tools.Process.ProcessToolDisplayOptions ProcessToolDisplayOptions;
 import Buffaly.Agent.Tools.Process Buffaly.Agent.Tools.Process.NodeTestTools NodeTestTools;
 include lazy "NodeTests/index.pts";
+import Buffaly.Agent.Tools.Process Buffaly.Agent.Tools.Process.QaWebAppTools QaWebAppTools;
+import Buffaly.Agent.Tools.Process Buffaly.Agent.Tools.Process.QaWebAppRequest QaWebAppRequest;
 prototype ProcessSkillAction : OpsAction
 {
 	Description = @"Base action type for process/system command execution tools.";
@@ -532,3 +534,39 @@ Before SSM, discover typed tools/APIs, inspect contracts and load suitable tools
 
 
 
+[SemanticProgram.InfinitivePhrase("to launch a local dotnet web app for browser QA")]
+prototype ToLaunchLocalDotNetWebAppForQa : ProcessSkillAction
+{
+	function Execute(string projectDirectory, string port, string configuration) : Prototype
+	{
+		return QaWebAppTools.Launch(_opsAgent, projectDirectory, port, configuration);
+	}
+	Description = @"Launch or reuse an exact already-built local QA app with a 15-minute maximum validation lease. The current turn owns the lease: completion or Stop releases it automatically. Explicitly retain a preview before ending the turn when a human needs its URL. No detached shell or dotnet-run wrapper. projectDirectory must contain exactly one built project; port is a required loopback port; configuration is the existing build configuration. Uses Development environment, no launch profile, root GET200 readiness; use ToAcquireLocalDotNetWebAppForQa for explicit profile/environment/readiness. Returns a native typed lease with URL, PID, identity, deadline and unique log paths. Existing unmanaged listeners are not adopted or stopped.";
+}
+[SemanticProgram.InfinitivePhrase("to acquire a bounded local dotnet QA application")]
+prototype ToAcquireLocalDotNetWebAppForQa : ProcessSkillAction
+{
+	function Execute(QaWebAppRequest request) : Prototype
+	{
+		return QaWebAppTools.Acquire(_opsAgent, request);
+	}
+	Description = @"Acquire a job-owned QA app using one typed QaWebAppRequest. Required fields identify project/configuration/port/isolation/profile, environment, relative readiness path and expected status, startup deadline and maximum validation lifetime. Reuses verified identical inputs across workers. Does not build, submit forms or adopt existing processes. Caller is the current session/turn. Release after checks; turn completion and lease expiry enforce cleanup.";
+}
+[SemanticProgram.InfinitivePhrase("to release a local dotnet QA application")]
+prototype ToReleaseLocalDotNetWebAppForQa : ProcessSkillAction
+{
+	function Execute(string leaseId) : Prototype
+	{
+		return QaWebAppTools.Release(_opsAgent, leaseId);
+	}
+	Description = @"Release this session's explicit QA lease by LeaseId. Stops the owned instance only when no caller remains; never terminates an unowned PID or another session's lease. Idempotent for an already-released lease.";
+}
+[SemanticProgram.InfinitivePhrase("to retain a local dotnet QA preview")]
+prototype ToRetainLocalDotNetWebAppPreview : ProcessSkillAction
+{
+	function Execute(string leaseId, int lifetimeSeconds) : Prototype
+	{
+		return QaWebAppTools.RetainPreview(_opsAgent, leaseId, lifetimeSeconds);
+	}
+	Description = @"Explicitly retain this session's QA lease as a human preview across turn completion and Stop. lifetimeSeconds is required1..86400; retention expires at the returned deadline, not HTTP idleness. Owner-worker exit still closes the job; this is not an installed IIS site or durable service. No new process is launched.";
+}
