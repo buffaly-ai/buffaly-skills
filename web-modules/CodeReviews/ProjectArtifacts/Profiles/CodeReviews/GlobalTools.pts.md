@@ -63,3 +63,8 @@ Keep this file aligned with the operational global-review actions in `Skills/Cod
 ## 2026-11-04 — Eager recorded-data scope action
 - Added ToGetCodeReviewRecordedDataPage to the closed reviewer surface with exact repository/SHA/index, authored ProducerPath, explicit ReviewReason and CharacterOffset. Shared EvidencePages owner returns exact-bound aggregate/sample evidence; complete producer context and ordinary source/configuration coverage remain mandatory. Typed external-project upsert used; installed copies not edited.
 - Validation: 166 owning tests passed, zero skipped, including CoreLite eager and cold lazy compilation, exact reported corpus and tamper/missing producer/source negatives. Strict lazy sidecar regenerated from the matching skill owner with zero diagnostics. Release publish succeeded with existing RooTrax warning. Live staging acceptance remains separate.
+
+
+## 2026-11-05 — Mirror shared code-only review scope
+- Typed-upserted manifest/patch descriptions to mark mandatory code entries with RequiresCodeReview, retaining exact parent/original rename metadata. Optional recorded-data aggregation no longer substitutes for compulsory raw data because raw non-code coverage itself is removed. No installed profile edits or executable signature/root changes; shared dispatch and workflow agree.
+- Validation: full 181-test suite passed, zero skipped, including eager/lazy compile, exact reported mixed-file commit and tampered/missing code, manifest and source-turn negatives. Strict lazy generator succeeded with 35 prototypes and no diagnostics. Release publish passed; live activation is separate.

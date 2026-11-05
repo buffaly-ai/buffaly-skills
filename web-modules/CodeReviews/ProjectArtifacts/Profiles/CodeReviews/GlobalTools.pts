@@ -113,14 +113,14 @@ prototype ToGetGlobalCodeReviewLanguageGuidance : GlobalCodeReviewsAgentAction
 [SemanticProgram.InfinitivePhrase("to read a complete code review commit manifest page")]
 prototype ToGetCodeReviewCommitManifestPage : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
 {
- Description = @"RepositoryPath and full CommitSha come from immutable SourceTurnContextJson. StartFileIndex starts at zero. Follow NextFileIndex until EndOfManifest; reconcile TotalFiles and every FileIndex/ParentSha/Path/OriginalPath/StatusCode. No file-count preview cap.";
+ Description = @"RepositoryPath and full CommitSha come from immutable SourceTurnContextJson. StartFileIndex starts at zero. Follow NextFileIndex until EndOfManifest; reconcile TotalFiles and every FileIndex/ParentSha/Path/OriginalPath/StatusCode. RequiresCodeReview identifies mandatory code patches from the shared source/SQL/script/markup/style classifier, including either side of renames. Keep non-code entries for manifest accounting, not compulsory raw review.";
  function Execute(string RepositoryPath, string CommitSha, int StartFileIndex = 0) : string { return CodeReviewEvidencePages.GetCommitManifestPageJson(RepositoryPath, CommitSha, StartFileIndex); }
 }
 
 [SemanticProgram.InfinitivePhrase("to read a complete code review patch page")]
 prototype ToGetCodeReviewCommitPatchPage : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
 {
- Description = @"Exact repository/full SHA plus FileIndex from complete manifest. Read every entry from CharacterOffset zero through EndOfContent; verify stable Identity, ParentSha, ContentSha256 and TotalCharacters. Long-line text may use Complete exact text changes v1: every changed span plus context and exact offsets, with only ordinally identical text omitted and both committed-text hashes. This is complete evidence, not a generated-file exemption; do not also fetch the raw minified bundle. Binary marker patches account for assets without routine decoding or disassembly; unavailable optional inspection does not fail source review.";
+ Description = @"Exact repository/full SHA plus FileIndex from complete manifest. Read RequiresCodeReview=true entries from CharacterOffset zero through EndOfContent; verify stable Identity, ParentSha, ContentSha256 and TotalCharacters. Non-code patches are optional targeted context, not completion obligations. Long-line code may use Complete exact text changes v1: every changed span plus context, exact offsets and both hashes; do not also fetch raw minified bundles. Generated code remains in scope; datasets, documentation and assets do not require receipts or whole producers.";
  function Execute(string RepositoryPath, string CommitSha, int FileIndex, int CharacterOffset = 0) : string { return CodeReviewEvidencePages.GetCommitPatchPageJson(RepositoryPath, CommitSha, FileIndex, CharacterOffset); }
 }
 
@@ -271,6 +271,6 @@ prototype ToSearchCodeReviewManagedAssemblyPage : CodeReviewsAgentToolsAction, G
 [SemanticProgram.InfinitivePhrase("to review recorded diagnostic observations")]
 prototype ToGetCodeReviewRecordedDataPage : CodeReviewsAgentToolsAction, GlobalCodeReviewsAgentAction
 {
- Description = @"Explicit alternative only for non-executable recorded JSON observations after establishing diagnostic purpose from exact producer/report evidence. RepositoryPath, CommitSha and FileIndex bind the full manifest entry. ProducerPath must be exact committed authored source; ReviewReason must explain output purpose and evidence of no runtime/configuration use. Read this receipt from CharacterOffset zero to EndOfContent and the entire producer with ToGetCodeReviewFileAtCommitPage. Receipt hashes both sides and traverses all nodes for aggregates; complete first/last observations are samples, not full measurement validation. Root observation arrays and Rows observation envelopes are supported. Never use this for source, configuration, SQL, schemas, manifests, golden expectations or executable generated code. Raw exact readers remain available for necessary investigation; a complete accepted receipt supersedes only this entry's raw patch.";
+ Description = @"Optional diagnostic JSON aggregation for a concrete relevant evidence question, never a code-review completion requirement. Code-diff scope excludes non-code artifacts without a receipt or producer read. RepositoryPath, CommitSha and FileIndex bind the exact entry; ProducerPath and ReviewReason establish provenance if this optional tool is useful. Aggregates traverse all nodes and samples are not full measurement validation. Raw readers remain available; do not ingest datasets just for coverage.";
  function Execute(string RepositoryPath, string CommitSha, int FileIndex, string ProducerPath, string ReviewReason, int CharacterOffset = 0) : string { return CodeReviewEvidencePages.GetRecordedDataPageJson(RepositoryPath, CommitSha, FileIndex, ProducerPath, ReviewReason, CharacterOffset); }
 }
