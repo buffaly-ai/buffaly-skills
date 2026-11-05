@@ -125,3 +125,7 @@ Moved Archive into each existing decision's ed-actions alongside Send/Choose/Rec
 
 ## 2026-11-04 — button-only message command row
 Matt explicitly corrected mixed links/buttons. View evidence now uses existing shared button owner (outline-secondary/fa-search) and captures exact observation hash in its click handler, instead of an anchor. No navigation target/command guard/backend change. Scoped override of navigation-link default; Review and Conversations share same owner. Source layout+combined2/2 (desktop/phone, no command anchors, exact evidence hash, zero mutations) and routine48/48 pass; installed acceptance follows normal release.
+
+
+## 2026-11-05 — conversation archive shares selected message commands
+Conversation context now gets Gmail thread Archive from the single EmailConversations command owner beside View evidence/dispatch commands; it no longer displays the different local-disposition Archive there. Review outside Conversations retains local Archive/restore and receipts unchanged. Existing local Restore to review remains available in either context, preserving prior workflow. No automatic archive after send or changed send guard. Source conversation+local archive13/13 passed including shared row/one primary, exact dispatch interception and real synthetic local disposition/receipt preservation. No real mail mutated; installed validation follows package release.

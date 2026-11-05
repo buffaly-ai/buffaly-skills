@@ -3,6 +3,30 @@
 	"KebabName":"email-observations",
 	"Methods":[{
 			"Parameters":[{
+					"Name":"AccountKey",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"ThreadId",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				}],
+			"Name":"ArchiveConversation",
+			"UrlName":"",
+			"KebabName":"archive-conversation",
+			"DataObject":{
+			},
+			"IsReturnTypeArray":"false",
+			"IsStatic":"true",
+			"ReturnType":"Task"
+		},
+		{
+			"Parameters":[{
 					"Name":"PrototypeName",
 					"IsNullable":"true",
 					"Type":"String",

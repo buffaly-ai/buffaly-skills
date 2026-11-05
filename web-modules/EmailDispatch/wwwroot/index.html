@@ -5,8 +5,8 @@
 <title>Email Dispatch</title>
 <link rel="stylesheet" href="/css/bootstrap.min.css?v=0.2.0"><link rel="stylesheet" href="/css/icons.min.css?v=0.2.0"><link rel="stylesheet" href="/css/email-dispatch.css?v=0.2.8">
 <script src="/js/kcs/buffaly-standalone-foundation.js?v=0.2.0"></script><script src="/js/kcs/grid4.js?v=0.2.0"></script>
-<script src="/JsonWs/Buffaly.EmailDispatch.EmailObservations.ashx.js?v=0.2.5"></script><script src="/JsonWs/Buffaly.EmailDispatch.EmailWorks.ashx.js?v=0.2.2"></script><script src="/JsonWs/Buffaly.EmailDispatch.EmailSyncAccounts.ashx.js?v=0.2.0"></script>
-  <script defer src="/js/email-dispatch-ui.js?v=0.2.10"></script><script defer src="/js/email-conversations.js?v=0.3.1"></script><script defer src="/js/email-dispatch.js?v=0.2.21"></script>
+<script src="/JsonWs/Buffaly.EmailDispatch.EmailObservations.ashx.js?v=0.2.6"></script><script src="/JsonWs/Buffaly.EmailDispatch.EmailWorks.ashx.js?v=0.2.2"></script><script src="/JsonWs/Buffaly.EmailDispatch.EmailSyncAccounts.ashx.js?v=0.2.0"></script>
+  <script defer src="/js/email-dispatch-ui.js?v=0.2.10"></script><script defer src="/js/email-conversations.js?v=0.3.2"></script><script defer src="/js/email-dispatch.js?v=0.2.22"></script>
 </head>
 <body>
 <a class="ed-skip" href="#main">Skip to content</a>
@@ -31,7 +31,7 @@
 <div id="conversations" class="ed-grid-host" aria-busy="true"><p class="ed-empty">Loading conversations…</p></div><div id="conversation-pager" class="ed-pager" aria-label="Conversation pages"></div>
 </section>
 <section id="view-conversation" class="ed-view" hidden><div class="ed-message-tools"><a class="ed-back" href="#conversations">Back to conversations</a></div><div class="ed-heading"><h1 id="thread-subject" tabindex="-1"></h1><div id="thread-status"></div></div><div id="thread-context" hidden><div id="thread-messages" class="ed-grid-host"></div><div id="thread-pager" class="ed-pager" aria-label="Message pages"></div></div><div id="conversation-reader"></div></section>
-<section id="view-message" class="ed-view" hidden><div class="ed-message-tools"><a id="back-thread" class="ed-back" href="#conversations">Back to conversation</a></div><article class="ed-reading-surface"><h1 id="message-subject" class="ed-subject" tabindex="-1"></h1><div id="message-facts"></div><div id="message-loading" class="ed-result" role="status"></div><iframe id="message-html" class="ed-email-frame" title="Formatted email" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" hidden></iframe><div id="message-text" class="ed-email-body"></div></article></section>
+<section id="view-message" class="ed-view" hidden><div class="ed-message-tools"><a id="back-thread" class="ed-back" href="#conversations">Back to conversation</a></div><article class="ed-reading-surface"><h1 id="message-subject" class="ed-subject" tabindex="-1"></h1><div id="message-facts"></div><div id="message-commands" class="ed-actions"></div><div id="message-loading" class="ed-result" role="status"></div><iframe id="message-html" class="ed-email-frame" title="Formatted email" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" hidden></iframe><div id="message-text" class="ed-email-body"></div></article></section>
 <section id="view-rules" class="ed-view" hidden aria-labelledby="rules-title">
 <div class="ed-heading"><div><h1 id="rules-title" tabindex="-1">Rules</h1></div></div>
 <form id="rule-search-form" class="ed-search"><label for="rule-search" class="visually-hidden">Search rules</label><input id="rule-search" class="form-control" type="search" placeholder="Node name or rule text"><button class="btn btn-primary" type="submit"><i class="fas fa-search" aria-hidden="true"></i>Search</button></form><div id="program" class="ed-grid-host"><p class="ed-empty">Loading rules…</p></div><div id="rule-pager" class="ed-pager" aria-label="Rule pages"></div>

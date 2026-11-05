@@ -98,6 +98,7 @@
    const evidence=button("View evidence",()=>{location.hash=evidenceHash;},false,"fa-search");evidence.id="email-evidence";
    let commands=$("works").querySelector(".ed-decision:last-child .ed-actions");
    if(!commands){commands=document.createElement("div");commands.className="ed-actions";($("works").lastElementChild?.classList.contains("ed-decision")?$("works").lastElementChild:$("works")).append(commands);}
+   if(conversationThread)EmailConversations.appendArchive(commands);
    commands.append(evidence);
  }
  // Show the saved session and human decision rationale before the email; technical evidence stays separate.
@@ -119,7 +120,7 @@
     actions.append(button("Ask the agent to reconsider",control=>openNote(work,control),work.State==="Error"));
    }
    if(work.LocalDisposition) actions.append(button("Restore to review",()=>setDisposition(work,null),true,"fa-undo"));
-    else actions.append(button("Archive",()=>setDisposition(work,"Archived"),processed&&!actions.querySelector(".btn-primary"),"fa-archive"));
+   else if(!conversationThread) actions.append(button("Archive",()=>setDisposition(work,"Archived"),processed&&!actions.querySelector(".btn-primary"),"fa-archive"));
    if(actions.childElementCount) section.append(actions);
   return section;
  }

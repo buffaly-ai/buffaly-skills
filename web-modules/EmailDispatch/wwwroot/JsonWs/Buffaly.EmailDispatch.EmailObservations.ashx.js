@@ -40,6 +40,39 @@ class EmailObservationsService {
     }
 
 
+    ArchiveConversation(AccountKey, ThreadId, Callback) {
+        return this.ArchiveConversationObject({ AccountKey:AccountKey,ThreadId:ThreadId }, Callback);
+    }
+
+    ArchiveConversationObject(oObject, Callback) {
+        this._validate(oObject, EmailObservationsValidators.ArchiveConversation, this.ArchiveConversation.onValidationError);
+
+        var pageUrl = this.Url + "/archive-conversation";
+        return this._invoke(
+            pageUrl,
+            "ArchiveConversation",
+            { AccountKey: oObject.AccountKey,ThreadId: oObject.ThreadId },
+            this.ArchiveConversation,
+            Callback
+        );
+    }
+
+    async ArchiveConversationAsync(AccountKey,ThreadId) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.ArchiveConversation,
+            [ AccountKey,ThreadId ]
+        );
+    }
+
+    async ArchiveConversationObjectAsync(oObject) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.ArchiveConversationObject,
+            [ oObject ]
+        );
+    }
+
     ClearRule(PrototypeName, ExpectedRulesRevision, Callback) {
         return this.ClearRuleObject({ PrototypeName:PrototypeName,ExpectedRulesRevision:ExpectedRulesRevision }, Callback);
     }
@@ -461,6 +494,11 @@ class EmailObservationsService {
 
 var EmailObservationsValidators = {
     
+
+    ArchiveConversation : {
+            AccountKey : {Validators: [Validators.Text], InvalidMessage: "Invalid AccountKey"} ,
+            ThreadId : {Validators: [Validators.Text], InvalidMessage: "Invalid ThreadId"} 
+    },
 
     ClearRule : {
             PrototypeName : {Validators: [Validators.Text], InvalidMessage: "Invalid PrototypeName"} ,

@@ -126,3 +126,7 @@ Removed top-strip Archive/evidence containers; shared decision command owner now
 
 ## 2026-11-04 — evidence button asset
 Review script cache key0.2.21 activates actual shared View evidence button, per Matt's explicit button-only correction. No layout, route or command contract change. Focused2/2 and routine48/48 pass; installed verification separately recorded.
+
+
+## 2026-11-05 — sent-message command area and archive assets
+Added existing ed-actions command area under read-only message metadata for the shared Gmail Archive button. No separate toolbar or page styles; incoming shares its existing decision commands. Advanced generated observations0.2.6, conversations0.3.2 and review0.2.22 cache keys. Explicit button-only override retained. UI task walkthrough: finish reading/reviewing conversation, Archive removes it from inbox and returns to list; existing dispatch/evidence commands remain grouped and serve selected received message. Source conversation/localarchive13/13 pass at desktop/phone; installed acceptance follows release.
