@@ -8,6 +8,7 @@ window.EmailConversations = (() => {
   const id=threadId;
   commands.append(button("Archive",async()=>{
    await request(EmailObservations,"ArchiveConversation",{AccountKey:"work-main",ThreadId:id});
+   conversationGrid.invalidate();document.dispatchEvent(new Event("email-archive"));
    notify("Conversation archived.");
    if(threadId===id&&(location.hash==="#thread/"+encodeURIComponent(id)||location.hash.startsWith("#message/"+encodeURIComponent(id)+"/")))location.hash="#conversations";
   },!commands.querySelector(".btn-primary"),"fa-archive"));
@@ -18,14 +19,7 @@ window.EmailConversations = (() => {
  function parkReader(){document.getElementById("view-conversation").append(document.getElementById("conversation-reader"));}
  function restoreReaders(){parkReader();readers.forEach((reader,index)=>homes[index].after(reader));}
  const conversationGrid=new CursorGrid("conversations","conversation-pager","conversation-search",args=>request(EmailObservations,"GetConversations",{AccountKey:"work-main",...args}),items=>`<table class="ed-grid Grid"><thead><tr><th class="ed-sender-cell">From</th><th>Conversation</th><th class="ed-time-cell">Latest incoming</th><th class="ed-state-cell">Reply</th></tr></thead><tbody>${items.map(item=>{const [name,kind]=EmailDispatchUi.state(item.ReplyState);return `<tr data-row-href="#thread/${encodeURIComponent(item.ThreadId)}"><td class="ed-sender-cell"><span class="ed-cell-secondary" title="${escape(item.Sender)}">${escape(item.Sender)}</span></td><td><a href="#thread/${encodeURIComponent(item.ThreadId)}" title="${escape(item.Subject||"No subject")}">${escape(item.Subject||"No subject")}</a><span class="ed-cell-secondary">${item.MessageCount} ${item.MessageCount===1?"message":"messages"}</span><span class="ed-cell-secondary ed-mobile-meta">${escape(item.Sender)} · ${escape(date(item.ReceivedUtc))}</span></td><td class="ed-time-cell">${escape(date(item.ReceivedUtc))}</td><td class="ed-state-cell"><span class="ed-status ed-status-${kind}">${escape(name)}</span></td></tr>`;}).join("")}</tbody></table>`,"No conversations match. Change the search.");
- const selection=new EmailDispatchUi.GridSelection(conversationGrid,document.getElementById("conversation-commands"),item=>item.ThreadId,item=>item.Subject||"No subject","Archive selected",async(items,control)=>{
-  const current=version,failed=[];let archived=0;
-  for(const item of items){try{await request(EmailObservations,"ArchiveConversation",{AccountKey:"work-main",ThreadId:item.ThreadId});control.selected.delete(item.ThreadId);archived++;}catch(error){failed.push(item.Subject||"No subject");console.error("Conversation archive failed",error);}}
-  if(current===version&&location.hash==="#conversations"){
-   notify(failed.length?`${archived} archived. Could not archive: ${failed.join("; ")}. Those conversations remain selected. Try Archive selected again.`:`${archived} ${archived===1?"conversation archived":"conversations archived"}.`,failed.length?"Error":"Success");
-   control.refresh();
-  }else control.clear();
- },"fa-archive");
+ const selection=EmailDispatchUi.archiveSelection(conversationGrid,document.getElementById("conversation-commands"),item=>item.ThreadId,()=>location.hash==="#conversations",async()=>{},()=>document.dispatchEvent(new Event("email-archive")));
  const messagesGrid=new PagedGrid("thread-messages","thread-pager","conversation-search",async args=>{
   const id=threadId, current=version;
   let page=await request(EmailObservations,"GetConversation",{AccountKey:"work-main",ThreadId:id,SkipRows:args.SkipRows,NumRows:args.NumRows});
@@ -46,7 +40,7 @@ window.EmailConversations = (() => {
   $("message-loading").textContent="Loading email…";$("message-html").hidden=true;$("message-html").removeAttribute("srcdoc");$("message-text").textContent="";$("message-text").hidden=false;
   const result=await request(EmailObservations,"GetConversationBody",{AccountKey:"work-main",ThreadId:id,MessageId:messageId});
   if(current!==version)return;
-   if(result.ObservationKey){await openReview(result.ObservationKey,id,current);return;}
+   if(result.ObservationKey){await openReview(result.ObservationKey,id,current,result);return;}
   const metadata=result.Message;$("message-subject").textContent=metadata.Subject||"No subject";$("message-facts").append(EmailDispatchUi.details([["From",metadata.Sender],["To",metadata.To],["When",date(metadata.ReceivedUtc)],["Message",metadata.Direction==="Sent"?"Sent":metadata.Direction==="Draft"?"Draft":"Received"]]));
   appendArchive($("message-commands"));
   $("message-loading").textContent="";$("message-text").textContent=result.Text||"This message has no readable text.";
@@ -58,8 +52,9 @@ window.EmailConversations = (() => {
   selection.clear();
   const [name,id,messageId]=location.hash.slice(1).split("/");
   if((name==="thread"||name==="message")&&id){threadId=decodeURIComponent(id);selectedMessage=name==="message"&&messageId?decodeURIComponent(messageId):"";pendingOpen=!!selectedMessage;mountReaders();show("conversation");if(name==="message"&&loadedThread===threadId){pendingOpen=false;markSelected();await openMessage(threadId,selectedMessage,current);}else{loadedThread="";canArchive=false;$("thread-subject").textContent="Conversation";$("thread-status").replaceChildren();$("thread-context").hidden=false;$("thread-messages").replaceChildren(text("p","Loading conversation…","ed-empty"));messagesGrid.reset();}}
-  else{show("conversations");conversationGrid.Refresh(true);}
+  else{show("conversations");conversationGrid.activate(30000);}
  }
  $("conversation-search-form").addEventListener("submit",event=>{event.preventDefault();conversationGrid.reset();});
-  return {route,appendArchive,cancel:()=>{++version;if(!location.hash.startsWith("#message/"+encodeURIComponent(threadId)+"/"))loadedThread="";conversationGrid.cancelSearch();messagesGrid.cancelSearch();restoreReaders();},isCurrent:current=>current===version};
+  document.addEventListener("email-archive",()=>conversationGrid.invalidate());
+  return {route,appendArchive,invalidate:()=>conversationGrid.invalidate(),cancel:()=>{++version;if(!location.hash.startsWith("#message/"+encodeURIComponent(threadId)+"/"))loadedThread="";conversationGrid.cancelSearch();messagesGrid.cancelSearch();restoreReaders();},isCurrent:current=>current===version};
 })();

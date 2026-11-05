@@ -27,9 +27,16 @@
  pickGrid.SkipSize=10;
  pickGrid.liveSearch(()=>{picked=null;pickSelection();},()=>$("pick-dialog").open);
  $("pick-dialog").addEventListener("close",()=>pickGrid.cancelSearch());
- async function accounts() {
+  inboxGrid.extraKey=()=>$('state').value;
+  const inboxSelection=EmailDispatchUi.archiveSelection(inboxGrid,document.getElementById("review-commands"),item=>item.ObservationKey,()=>!$("view-inbox").hidden,async item=>{
+   const email=await request(EmailObservations,"GetEmail",{ObservationKey:item.ObservationKey});
+   for(const work of email.Works)if(!work.LocalDisposition&&work.State!=="Superseded")await request(EmailWorks,"SetDisposition",{WorkKey:work.WorkKey,Disposition:"Archived"});
+  },()=>EmailConversations.invalidate());
+  document.addEventListener("email-archive",()=>inboxGrid.invalidate());
+  let accountsAt=0;
+  async function accounts() {
   const values=await request(EmailSyncAccounts,"GetAccounts",{}); $("accounts").replaceChildren();
-  syncAvailable=values.some(account=>account.Available); syncControls();
+   accountsAt=Date.now();syncAvailable=values.some(account=>account.Available); syncControls();
   for(const account of values) { const section=document.createElement("section"); section.append(text("h2",account.Email),facts([["Connection",account.Available?"Connected":"Unavailable — reauthorization required"],["Synchronization",account.Phase==="Current"?"Up to date":account.Phase],["Captured emails",account.EnumeratedCount],["Mailbox","Work account only"]])); $("accounts").append(section); $("sync-status").textContent=account.Available?(account.Phase==="Current"?"Gmail up to date":"Gmail synchronizing"):"Gmail unavailable"; $("sync-status").className="ed-status ed-status-"+(account.Available?"success":"warning"); $("synchronize").disabled=!account.Available; }
   $("sync-evidence").textContent=JSON.stringify(values,null,2);
   syncControls();
@@ -41,13 +48,13 @@
   try {
    notify("Checking Gmail…");
    await request(EmailSyncAccounts,"Synchronize",{AccountKey:"work-main"});
-   await accounts();
-   inboxGrid.Refresh(true);
+    await accounts();
+    inboxGrid.invalidate();EmailConversations.invalidate();inboxGrid.Refresh(true);
    notify("Gmail checked.");
   } finally { syncBusy=false; syncControls(); }
  }
  async function load(key) { selectedEmail=await request(EmailObservations,"GetEmail",{ObservationKey:key}); }
-  async function openEmail(key,thread=null,conversationVersion=null) {
+   async function openEmail(key,thread=null,conversationVersion=null,presentation=null) {
    const expectedHash=location.hash;
     $("subject").textContent="Loading email…";$("works").replaceChildren();
    const bodyVersion=++bodyRequest; bodyToken=null; $("body-html").hidden=true; $("body-html").removeAttribute("srcdoc"); $("body").hidden=false; $("body-loading").hidden=true;
@@ -57,7 +64,7 @@
    $("email-back").href=thread?"#thread/"+encodeURIComponent(thread):"#inbox";$("email-back").textContent=thread?"Back to conversation":"← Inbox";$("email-back").setAttribute("aria-label",thread?"Back to conversation":"Back to inbox");show("email");
   $("subject").textContent=selectedEmail.Email.Subject||"No subject"; $("sender").textContent=selectedEmail.Email.Sender; $("received").textContent=date(selectedEmail.Email.ReceivedUtc); $("body").textContent=selectedEmail.Frame?selectedEmail.Frame.BodyText||"This message has no readable text.":"This email could not be read. View evidence for details."; $("test").hidden=!selectedEmail.Frame||selectedEmail.Email.ReviewState==="Spam"; $("test-result").textContent="";
   works(); schedule(); $("subject").focus({preventScroll:true,focusVisible:false});
-  if(selectedEmail.Frame) void formattedBody(key,bodyVersion);
+   if(selectedEmail.Frame){if(presentation){const body=presentation.Body;if(body.HtmlDocument!==null){bodyToken=body.ResizeToken;$("body-html").style.height="600px";$("body-html").srcdoc=body.HtmlDocument;$("body-html").hidden=false;$("body").hidden=true;}}else void formattedBody(key,bodyVersion);}
  }
  // Presentation is fetched once per open, not by the decision poll. A late response cannot replace another email.
  async function formattedBody(key,version) {
@@ -126,6 +133,7 @@
  }
   async function setDisposition(work,disposition) {
    await request(EmailWorks,"SetDisposition",{WorkKey:work.WorkKey,Disposition:disposition});
+   inboxGrid.invalidate();
     if(disposition) { if(conversationThread){location.hash="#thread/"+encodeURIComponent(conversationThread);return;} if($("state").value!=="NeedsAttention") { $("state").value="NeedsAttention"; inboxGrid.skip=0; } location.hash="#inbox"; }
    else { await reload(true); notify("Restored to review."); }
   }
@@ -141,7 +149,8 @@
    submissions.add(work.WorkKey); control.close(); works();
    notify("Submitting instructions…","Info");
    try {
-     const result=await request(EmailWorks,method,values);
+      const result=await request(EmailWorks,method,values);
+      inboxGrid.invalidate();
      if(result.Status==="PreviouslyHandled"&&values.Note)failedInstructions.set("SendAgain:"+work.WorkKey,{Note:values.Note});
     failedInstructions.delete(method+":"+work.WorkKey);
     submissions.delete(work.WorkKey);
@@ -223,7 +232,7 @@
   clearTimeout(inboxTimer);
   inboxTimer=setTimeout(async()=>{
    if($("view-inbox").hidden) return;
-   if(!document.hidden&&!document.querySelector("dialog[open]")&&!$("inbox").contains(document.activeElement)&&$("inbox").getAttribute("aria-busy")!=="true") {
+    if(!document.hidden&&!inboxSelection.running&&!inboxSelection.selected.size&&!document.querySelector("dialog[open]")&&!$("inbox").contains(document.activeElement)&&$("inbox").getAttribute("aria-busy")!=="true") {
     inboxGrid.Refresh(true);
     await run(null,accounts);
    }
@@ -238,18 +247,19 @@
   const label=workKey&&document.getElementById("instruction-"+workKey);
   if(label) { label.scrollIntoView({block:"start"}); label.focus({preventScroll:true,focusVisible:false}); }
  }
- async function route() {
-  EmailDispatchUi.clearNotice(); clearTimeout(pollTimer); clearTimeout(inboxTimer);
+  async function route() {
+   EmailDispatchUi.clearNotice(); clearTimeout(pollTimer); clearTimeout(inboxTimer);
+   if(!inboxSelection.running)inboxSelection.clear();
    emailHash=null;conversationThread=null;EmailConversations.cancel();++bodyRequest;
   for(const open of document.querySelectorAll("dialog[open]")) open.close();
   const [name,id,part]=location.hash.slice(1).split("/");
    if(["conversations","thread","message"].includes(name)) await EmailConversations.route(show,openEmail);
    else if(name==="email"&&id) await openEmail(decodeURIComponent(id));
-  else if(name==="rules"){show("rules");rulesGrid.Refresh(true);}
+   else if(name==="rules"){show("rules");rulesGrid.activate(30000);}
   else if(name==="rule"&&id) await openRule(decodeURIComponent(id));
   else if(name==="evidence") await openEvidence(id&&decodeURIComponent(id),part&&decodeURIComponent(part));
   else if(name==="accounts"){show("accounts");await accounts();}
-  else {show("inbox");inboxGrid.Refresh(true);scheduleInbox();await accounts();}
+   else {show("inbox");inboxGrid.activate();scheduleInbox();if(Date.now()-accountsAt>=10000)await accounts();}
  }
  function submit(id,control,action,background=false){$(id).addEventListener("submit",event=>{event.preventDefault();run(background?null:$(control),action);});}
  function click(id,action,background=false){$(id).addEventListener("click",()=>run(background?null:$(id),action));}
@@ -270,7 +280,7 @@
   // EmailRuleTree.ValidateBinding: only Processor and Disabled nodes name a processor, only Agent names an anchor, and
   // Agent and Notice nodes carry no WorkSession. Everything is validated on the server before the first tree write.
   selectedRule=await request(EmailObservations,"SaveRuleNode",{PrototypeName:selectedRule.PrototypeName,ExpectedRulesRevision:selectedRule.RulesRevision,Rule:$("rule-matches").value,Outcome:outcome,Processor:["Processor","Disabled"].includes(outcome)?selectedRule.Processor:"",WorkSession:["Agent","Notice"].includes(outcome)?"":ruleSession,Anchor:outcome==="Agent"?selectedRule.Anchor:""});
-  renderRule(); notify("Rule saved.");
+   rulesGrid.invalidate();renderRule(); notify("Rule saved.");
  });
  click("cancel-rule",()=>{location.hash="#rules";});
  click("rule-clear",control=>{$("clear-subject").textContent=selectedRule.EntityName;clearDialog.open(control);});

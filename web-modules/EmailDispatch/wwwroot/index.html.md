@@ -133,3 +133,6 @@ Added existing ed-actions command area under read-only message metadata for the 
 
 ## 2026-11-05 — list selection command slot
 Added conversation-commands in existing heading command row for reusable selected count and Archive selected; checkbox cells are injected by shared grid selection. Updated UI0.2.11/conversations0.3.3 cache keys, other styles/Review shell unchanged. Source17/17 desktop/phone passes; broad55=54pass/1 known absent Rules row timeout. No real Gmail mutation. Installed proof follows release.
+
+## 2026-11-05 — Review list command slot
+Added review-commands beside existing heading/check Gmail command row. Shared owner injects row/current-page checks, selected count and primary Archive selected; same visual/behavior as Conversations. Advanced sharedUI0.2.12, conversations0.3.4, review0.2.23 assets. No page styles or new navigation. Task walkthrough: select finished mail to archive; search/filter/check Gmail continue their existing role. Source desktop/phone and prior sibling archive regressions6/6 pass; installed proof follows.

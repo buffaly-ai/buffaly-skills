@@ -24063,7 +24063,7 @@
       "PackageType": "WebModule",
       "Title": "Email Dispatch",
       "Description": "Buffaly Web Module package for Email Dispatch.",
-      "Version": "0.1.50",
+      "Version": "0.1.51",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/EmailDispatch",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/EmailDispatch",
@@ -24086,19 +24086,19 @@
         },
         {
           "Path": "Buffaly.Agent.DispatchTree.Viewer.dll",
-          "Sha256": "0b8b08bf71e9b6b78024f18e3cd75f55fd42439bb737ba53f51b21831c5eee9c"
+          "Sha256": "e1f0a4e24d1c8173cdc90e6c367acc33d5e6ec9e3094ec358d9e819078beb2bc"
         },
         {
           "Path": "Buffaly.EmailDispatch.Data.dll",
-          "Sha256": "1bbea6dff3de72736038f3bda319fd714d5b97ec8e2811c66a077da5e66ee221"
+          "Sha256": "3d02de886064e202a63624ca8406177861fd1ab63aae072d7c115daff6e23a1c"
         },
         {
           "Path": "Buffaly.EmailDispatch.dll",
-          "Sha256": "d08ec0c5e3a1dc5e60eab294c1dd97a2fc99043c4f821a8ea229d8760def207b"
+          "Sha256": "defcb37c8b4e3f234b9ee9c60ccca26743b98afdfb038ef98c2599519b9b6959"
         },
         {
           "Path": "Buffaly.EmailDispatch.Policy.dll",
-          "Sha256": "d4ccd3b6fbf026d37f0a1ec2f387c2c2ed92ffcbbb3a51026b38fc305b825abf"
+          "Sha256": "ef554a51189c0cc5c73eef3ad298dc1211536e4ec0f8d6c032e80f37096feee6"
         },
         {
           "Path": "Buffaly.EmailDispatch.Web.deps.json",
@@ -24106,7 +24106,7 @@
         },
         {
           "Path": "Buffaly.EmailDispatch.Web.dll",
-          "Sha256": "6c959616726d9b8a6907cc91e8e62f23cfe50aa43cc20da405257cbc42163bc7"
+          "Sha256": "828d712263df26e2d389fcf1a49a961218f00962369a9df53f4c21f884b73289"
         },
         {
           "Path": "Buffaly.GoogleWorkspace.dll",
@@ -24115,6 +24115,10 @@
         {
           "Path": "Buffaly.NLMemory.dll",
           "Sha256": "f627f57fc9025716e737f7a0618c030b26fe87daf2615fd58640e2e4f22c914c"
+        },
+        {
+          "Path": "Database/EmailObservations_GetInboxWithWorks_Sp.sql",
+          "Sha256": "05b7c88698f325dc0e84ebc306e3a3519a72dfc15005146b99cb538268460e7d"
         },
         {
           "Path": "Database/EmailWorkQueries.sql",
@@ -24250,11 +24254,11 @@
         },
         {
           "Path": "wwwroot/index.html",
-          "Sha256": "58414d38cb845ef6149d03684738d65a192814c4064db9db11d171d58aff6a17"
+          "Sha256": "bfb40005332fbb369ce10f621805e4d3baee503feb3aad95c1497ed9241b8415"
         },
         {
           "Path": "wwwroot/index.html.md",
-          "Sha256": "33ba4c4b90e09fa22074e45b4f216c9e25e366966eb521ee632a54a480c3beff"
+          "Sha256": "8ecf43c04688c03fd18c6398febf78f6bd3320b35f7048df779cffcc642c87a8"
         },
         {
           "Path": "wwwroot/JsonWs/Buffaly.EmailDispatch.EmailDeliveries.ashx.js",
@@ -24290,27 +24294,27 @@
         },
         {
           "Path": "wwwroot/js/email-conversations.js",
-          "Sha256": "d678893e15947c162bb447193c24de3cd82cc3c8ba6dc7549b4b5e4cd7e82674"
+          "Sha256": "3781e295fa857d2bec0422527f31397f0e4573dba3ed4f10154d90d72279b290"
         },
         {
           "Path": "wwwroot/js/email-conversations.js.md",
-          "Sha256": "4aac047ecbe3d4b125898359d7ac7b92927288b6b89f32cc59f846c6a21b6e6b"
+          "Sha256": "e41190c4ef78176029b8e356828725cbddcee3cfbb6289202e7f9899c8eba0e6"
         },
         {
           "Path": "wwwroot/js/email-dispatch-ui.js",
-          "Sha256": "b0ee0f888e0261895c3b66e1eaf961c37fb13bbf4a552c2743756c2117fd9e39"
+          "Sha256": "1cc52646f46927c01ad8c9800c5d59735bc72afa28e8ac3ff8666159d0a97cdc"
         },
         {
           "Path": "wwwroot/js/email-dispatch-ui.js.md",
-          "Sha256": "227fc6337daa1141ec2c55568333c89b8717a7b54d76b77f23e8c001c94b8682"
+          "Sha256": "5887ba00591cf29d6e16b74d270187b119fcb23dcab3ad30cbc1ae46e7ea9b4c"
         },
         {
           "Path": "wwwroot/js/email-dispatch.js",
-          "Sha256": "17859549221d7ab5b4e125cf4f8a2488873c6c2c149658d31e1b71e02d4c2ecd"
+          "Sha256": "e4b855dbb8c50a9c2cb3a22880e1d210ccafca29f93919b6ff4369ec805e8800"
         },
         {
           "Path": "wwwroot/js/email-dispatch.js.md",
-          "Sha256": "467597b1e183a2f1f0403e03e5458dfea20c01d4fadd9c20efc3f7f2b7edd6b2"
+          "Sha256": "a51a1623f9ff548756f6d3f3ecfe15c11e0a60a001908d59b4afdf91c99e2782"
         },
         {
           "Path": "wwwroot/js/kcs/buffaly-standalone-foundation.js",
