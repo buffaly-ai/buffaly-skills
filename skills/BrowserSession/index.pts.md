@@ -24,3 +24,7 @@ Defines canonical `BrowserSkill`, the `BrowserSessionSkill` compatibility alias,
 ## 2026-09-06
 - Changed `ToCaptureBrowserScreenshot.Execute(...)` to return `Prototype` so the C# `IStructuredToolResult` remains boxed across ProtoScript instead of being coerced to a string.
 - Design Decision: BrowserSession should preserve screenshot image content parts while leaving the metadata text/path contract owned by BrowserTools.
+
+## 2026-11-05 — Demand-load browser actions
+- Removed CodingContext from BrowserSessionSkillAction only, preventing its callable descendants from entering normal coding startup after lazy materialization. BrowserSkill, semantic action names, methods, lazy lookup map and explicit browser loading remain unchanged. No non-browser startup root or member is removed.
+- Validation: actual root definition parsed and compiled through typed upsert in cold/warm fixtures; coding membership stays identical after browser-root materialization while explicit browser sentinel resolution/execution succeeds. Canonical managed-CDP lazy mapping retained. Scoped 47/47 regressions pass. Does not claim installed full browser-module compilation, deployment or measured quota savings.

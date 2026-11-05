@@ -1,10 +1,11 @@
 import Buffaly.Agent.Tools.Browser Buffaly.Agent.Tools.Browser.BrowserTools BrowserTools;
 import Buffaly.Agent.Tools.Browser Buffaly.Agent.Tools.Browser.BrowserSessionTools BrowserSessionTools;
 
-prototype BrowserSessionSkillAction : OpsAction, CodingContext
+prototype BrowserSessionSkillAction : OpsAction
 {
-	Description = @"Base action type for the canonical default Browser Skill deterministic browser tools.";
+	Description = @"Base action type for the canonical default Browser Skill deterministic browser tools. Discover and load browser actions when needed; not a default coding-context tool root.";
 }
+
 
 [SemanticEntity("browser skill")]
 [SemanticEntity("default browser skill")]
