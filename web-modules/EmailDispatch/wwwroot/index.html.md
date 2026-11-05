@@ -148,3 +148,7 @@ Advanced email-dispatch.js query key0.2.23 to0.2.24 for confirmed P2 ClearRule s
 
 ## 2026-11-05 — latest incoming dispatch labels
 Advance shared UI script0.2.13 and Conversations0.3.5 so installed browsers receive latest incoming dispatch status alongside reply chronology. Existing shell/layout/styles/actions unchanged. Source1440/390 browser and routine56/56 pass; live installation proof separate.
+
+
+## 2026-11-05 — writing-sized modals and consistent footer commands
+Removed ed-dialog-sm from the dispatch/repeat confirmation because its optional instruction editor makes it a form, not a decision-only confirmation. All three instruction fields now declare eight rows (shared owner enforces 12rem minimum). Added the existing Font Awesome cancel icon to all four dialogs' Cancel buttons; retained every ID, maxlength, required flag, command, message and draft hook. CSS cache key0.2.10 forces updated shared sizing on existing installations. Rule-stop remains the decision-only small variant, now usable480px. Four dialogs cover six tasks, not the initial audit's three/five count. Validation: comprehensive six-task source browser test30 combinations passes; focused15/15 and routine51/51. Existing legacy pending-action/missing-rule test failures reproduced against HEAD assets and documented, not suppressed. Installed acceptance follows in session artifacts/modal-usability.
