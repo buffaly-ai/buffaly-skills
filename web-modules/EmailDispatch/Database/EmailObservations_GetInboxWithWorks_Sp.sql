@@ -7,6 +7,10 @@ BEGIN
  -- Exclude spam and outgoing messages before search/status/paging; retain direct and conversation evidence.
  SELECT o.* INTO #Page FROM dbo.EmailObservations o
  WHERE (@AccountKey=N'' OR o.AccountKey=@AccountKey)
+ AND NOT EXISTS(SELECT 1 FROM dbo.EmailSyncAccounts a WHERE a.AccountKey=o.AccountKey
+   AND ((JSON_VALUE(a.Data,'$.VisibleFromUtc') IS NOT NULL AND o.InternalDateUnixMs < DATEDIFF_BIG(millisecond,CONVERT(datetime2,'1970-01-01'),CONVERT(datetime2,JSON_VALUE(a.Data,'$.VisibleFromUtc'),127)))
+   OR EXISTS(SELECT 1 FROM OPENJSON(a.Data,'$.ArchivedConversations') WITH(ThreadId nvarchar(255),ThroughUnixMs bigint) ar
+       WHERE ar.ThreadId=o.ThreadId AND ar.ThroughUnixMs>=o.InternalDateUnixMs AND @State<>N'Reviewed')))
  AND NOT EXISTS(SELECT 1 FROM OPENJSON(o.Data,'$.Frame.Labels') label WHERE label.[value] IN(N'SPAM',N'SENT'))
  AND (@Search=N'' OR o.MessageId=@Search OR o.ThreadId=@Search
       OR JSON_VALUE(o.Data,'$.Frame.Subject') LIKE N'%'+@Search+N'%'
