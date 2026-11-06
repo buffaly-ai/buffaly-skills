@@ -323,6 +323,37 @@
 		},
 		{
 			"Parameters":[{
+					"Name":"AccountKey",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"ThreadId",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"MessageId",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				}],
+			"Name":"PrepareConversationMessage",
+			"UrlName":"",
+			"KebabName":"prepare-conversation-message",
+			"DataObject":{
+			},
+			"IsReturnTypeArray":"false",
+			"IsStatic":"true",
+			"ReturnType":"Task`1"
+		},
+		{
+			"Parameters":[{
 					"Name":"PrototypeName",
 					"IsNullable":"true",
 					"Type":"String",

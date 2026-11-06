@@ -57,7 +57,7 @@
   } finally { syncBusy=false; syncControls(); }
  }
  async function load(key) { selectedEmail=await request(EmailObservations,"GetEmail",{ObservationKey:key}); }
-   async function openEmail(key,thread=null,conversationVersion=null,presentation=null) {
+    async function openEmail(key,thread=null,conversationVersion=null,presentation=null,action=null) {
    const expectedHash=location.hash;
     $("subject").textContent="Loading email…";$("works").replaceChildren();
    const bodyVersion=++bodyRequest; bodyToken=null; $("body-html").hidden=true; $("body-html").removeAttribute("srcdoc"); $("body").hidden=false; $("body-loading").hidden=true;
@@ -66,7 +66,8 @@
    selectedEmail=updated;emailHash=expectedHash;conversationThread=thread;
    $("email-back").href=thread?"#thread/"+encodeURIComponent(thread):"#inbox";$("email-back").textContent=thread?"Back to conversation":"← Inbox";$("email-back").setAttribute("aria-label",thread?"Back to conversation":"Back to inbox");show("email");
   $("subject").textContent=selectedEmail.Email.Subject||"No subject"; $("sender").textContent=selectedEmail.Email.Sender; $("received").textContent=date(selectedEmail.Email.ReceivedUtc); $("body").textContent=selectedEmail.Frame?selectedEmail.Frame.BodyText||"This message has no readable text.":"This email could not be read. View evidence for details."; $("test").hidden=!selectedEmail.Frame||selectedEmail.Email.ReviewState==="Spam"; $("test-result").textContent="";
-  works(); schedule(); $("subject").focus({preventScroll:true,focusVisible:false});
+   works(); schedule(); $("subject").focus({preventScroll:true,focusVisible:false});
+   if(action){const work=selectedEmail.Works.find(isOpen);if(!work)throw new Error("This email's decision changed. Review its current status before acting.");if(action==="pick")openPick("send",work);else if(action==="note")openNote(work);}
    if(selectedEmail.Frame){if(presentation){const body=presentation.Body;if(body.HtmlDocument!==null){bodyToken=body.ResizeToken;$("body-html").style.height="600px";$("body-html").srcdoc=body.HtmlDocument;$("body-html").hidden=false;$("body").hidden=true;}}else void formattedBody(key,bodyVersion);}
  }
  // Presentation is fetched once per open, not by the decision poll. A late response cannot replace another email.
@@ -125,8 +126,7 @@
     if(work.CanSendAgain) actions.append(button("Send again to "+work.Destination,control=>openConfirm(work,control,true),true,"fa-check"));
    const processed=!work.LocalDisposition&&["Accepted","NoAction","Notice","WakeRecorded","PreviouslyHandled"].includes(work.State);
    if(isOpen(work)) {
-    const canPick=work.State!=="Pending";
-    if(canPick) actions.append(button("Choose destination and send",control=>openPick("send",work,control),!isConfirmable(work)&&!work.CanSendAgain&&work.State!=="Error"));
+     actions.append(button("Choose destination and send",control=>openPick("send",work,control),!isConfirmable(work)&&!work.CanSendAgain&&work.State!=="Error"));
     actions.append(button("Ask the agent to reconsider",control=>openNote(work,control),work.State==="Error"));
    }
    if(work.LocalDisposition) actions.append(button("Restore to review",()=>setDisposition(work,null),true,"fa-undo"));

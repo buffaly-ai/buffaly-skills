@@ -161,3 +161,7 @@ Include existing packaged KCS LocalStorage2 owner before Review code and bump re
 
 ## 2026-11-06 — Conversations shared filter and single storage owner
 Added Show All conversations / All except ignored using Review's existing ed-filter markup/styles, no new styles/commands. Updated observations0.2.7/conversations0.3.6 cache keys. Removed explicit LocalStorage2 script introduced in previous preference batch: existing foundation loader already includes it, and broader browser regression proved duplicate class declarations. Preferences remain through same shared owner. Task: browse conversations without ignored noise, change/search/paging and selection archive remain in their existing shared places. Focused18/18 passes including existing desktop/phone navigation/detail, provider bounds/auth and Review preference; installed proof separately follows.
+
+
+## 2026-11-06 — invalidate cached dispatch-access assets
+Advanced EmailObservations generated client to0.2.8, Conversations to0.3.7 and shared Review behavior to0.2.26 for restored uncaptured/Pending dispatch commands. No markup/style/authorization change. Canonical client regenerated, not edited. Release build, focused19/19 and routine62/62 pass; installed verification follows separately.

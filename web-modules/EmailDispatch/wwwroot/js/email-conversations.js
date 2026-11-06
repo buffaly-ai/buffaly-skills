@@ -48,6 +48,14 @@ window.EmailConversations = (() => {
   if(current!==version)return;
    if(result.ObservationKey){await openReview(result.ObservationKey,id,current,result);return;}
   const metadata=result.Message;$("message-subject").textContent=metadata.Subject||"No subject";$("message-facts").append(EmailDispatchUi.details([["From",metadata.Sender],["To",metadata.To],["When",date(metadata.ReceivedUtc)],["Message",metadata.Direction==="Sent"?"Sent":metadata.Direction==="Draft"?"Draft":"Received"]]));
+  if(result.CanPrepare){
+   const prepare=async action=>{
+    const key=await request(EmailObservations,"PrepareConversationMessage",{AccountKey:"work-main",ThreadId:id,MessageId:messageId});
+    if(current!==version)return;
+    await openReview(key,id,current,result,action);
+   };
+   $("message-commands").append(button("Choose destination and send",()=>prepare("pick"),true,"fa-check"),button("Ask the agent to reconsider",()=>prepare("note"),false,"fa-comment"));
+  }
   appendArchive($("message-commands"));
   $("message-loading").textContent="";$("message-text").textContent=result.Text||"This message has no readable text.";
   if(result.Body.HtmlDocument!==null){bodyToken=result.Body.ResizeToken;$("message-html").style.height="600px";$("message-html").srcdoc=result.Body.HtmlDocument;$("message-html").hidden=false;$("message-text").hidden=true;}

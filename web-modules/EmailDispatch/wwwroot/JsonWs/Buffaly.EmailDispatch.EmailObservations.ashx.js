@@ -403,6 +403,39 @@ class EmailObservationsService {
         );
     }
 
+    PrepareConversationMessage(AccountKey, ThreadId, MessageId, Callback) {
+        return this.PrepareConversationMessageObject({ AccountKey:AccountKey,ThreadId:ThreadId,MessageId:MessageId }, Callback);
+    }
+
+    PrepareConversationMessageObject(oObject, Callback) {
+        this._validate(oObject, EmailObservationsValidators.PrepareConversationMessage, this.PrepareConversationMessage.onValidationError);
+
+        var pageUrl = this.Url + "/prepare-conversation-message";
+        return this._invoke(
+            pageUrl,
+            "PrepareConversationMessage",
+            { AccountKey: oObject.AccountKey,ThreadId: oObject.ThreadId,MessageId: oObject.MessageId },
+            this.PrepareConversationMessage,
+            Callback
+        );
+    }
+
+    async PrepareConversationMessageAsync(AccountKey,ThreadId,MessageId) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.PrepareConversationMessage,
+            [ AccountKey,ThreadId,MessageId ]
+        );
+    }
+
+    async PrepareConversationMessageObjectAsync(oObject) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.PrepareConversationMessageObject,
+            [ oObject ]
+        );
+    }
+
     SaveRuleNode(PrototypeName, ExpectedRulesRevision, Rule, Outcome, Processor, WorkSession, Anchor, Callback) {
         return this.SaveRuleNodeObject({ PrototypeName:PrototypeName,ExpectedRulesRevision:ExpectedRulesRevision,Rule:Rule,Outcome:Outcome,Processor:Processor,WorkSession:WorkSession,Anchor:Anchor }, Callback);
     }
@@ -556,6 +589,12 @@ var EmailObservationsValidators = {
             Search : {Validators: [Validators.Text], InvalidMessage: "Invalid Search"} ,
             SkipRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid SkipRows"} ,
             NumRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid NumRows"} 
+    },
+
+    PrepareConversationMessage : {
+            AccountKey : {Validators: [Validators.Text], InvalidMessage: "Invalid AccountKey"} ,
+            ThreadId : {Validators: [Validators.Text], InvalidMessage: "Invalid ThreadId"} ,
+            MessageId : {Validators: [Validators.Text], InvalidMessage: "Invalid MessageId"} 
     },
 
     SaveRuleNode : {
