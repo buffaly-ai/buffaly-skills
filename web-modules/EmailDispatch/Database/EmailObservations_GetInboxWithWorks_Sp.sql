@@ -11,7 +11,12 @@ BEGIN
  AND (@Search=N'' OR o.MessageId=@Search OR o.ThreadId=@Search
       OR JSON_VALUE(o.Data,'$.Frame.Subject') LIKE N'%'+@Search+N'%'
       OR JSON_VALUE(o.Data,'$.Frame.Sender') LIKE N'%'+@Search+N'%')
- AND (@State=N'' OR EXISTS(SELECT 1 FROM dbo.EmailWorks w WHERE w.ObservationKey=o.ObservationKey AND
+ AND (@State=N'' OR (@State=N'NotIgnored'
+   AND NOT EXISTS(SELECT 1 FROM dbo.EmailSyncAccounts a CROSS APPLY OPENJSON(a.Data,'$.ExcludedSenders') sender
+       WHERE a.AccountKey=o.AccountKey AND sender.[value]=JSON_VALUE(o.Data,'$.Frame.Sender'))
+   AND (NOT EXISTS(SELECT 1 FROM dbo.EmailWorks w WHERE w.ObservationKey=o.ObservationKey)
+       OR EXISTS(SELECT 1 FROM dbo.EmailWorks w WHERE w.ObservationKey=o.ObservationKey AND w.LocalDisposition IS NULL AND w.State<>N'NoAction')))
+ OR EXISTS(SELECT 1 FROM dbo.EmailWorks w WHERE w.ObservationKey=o.ObservationKey AND
    ((@State=N'NeedsAttention' AND w.LocalDisposition IS NULL AND w.State IN(N'Suggested',N'AutomaticReady',N'NeedsDestination',N'NeedsReview',N'Unclassified',N'Prepared',N'AgentEvaluationRequired',N'PreparationFailed',N'Disabled',N'Failed',N'Rejected',N'DeliveryUnknown',N'Conflict',N'Error'))
    OR (@State=N'Reviewed' AND (w.LocalDisposition IS NOT NULL OR w.State IN(N'Accepted',N'NoAction',N'Notice',N'WakeRecorded')))
    OR w.State=@State)))
