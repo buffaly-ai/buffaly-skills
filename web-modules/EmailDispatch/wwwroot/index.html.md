@@ -155,3 +155,6 @@ Removed ed-dialog-sm from the dispatch/repeat confirmation because its optional 
 
 ## 2026-11-06 — one broad filter between history and individual statuses
 Added All except ignored (NotIgnored) directly after All email in the existing shared Review selector; no new control/layout/style/JS/API. All email remains initial default. Existing server-paged grid handles search/filter/paging and polling unchanged. Main task: review current mail across all statuses without ignored noise; search/filter narrow that list, check Gmail refreshes, selection archive remains unchanged, email links open details. No new commands or explanatory copy; siblings retain existing shared controls. SQL fixture broad filter and previous cohort regressions4/4 pass, installed selector and screenshots verified separately after publication.
+
+## 2026-11-06 — Review filter preference assets
+Include existing packaged KCS LocalStorage2 owner before Review code and bump review script0.2.25 to activate remembered explicit Show preference. No new selector, styles, commands or layout. Preserve first-visit All email, all option labels and server-side behavior. Browser reload regression all options/first-request and focused archive/poll/query4/4 pass. Task walkthrough unchanged: choose Show, see matching emails; reload retains choice. Installed proof follows.
