@@ -14,3 +14,17 @@ The manual `ToRestoreRuntimeMemoriesFromSessionArtifacts` action mirrors runtime
 - The dedicated online memory profile includes BuffalyNLMemory explicitly. Normal OpsAgent also includes it eagerly so the session-scoped restore service runs during runtime initialization; the tool registrar still exposes its actions normally.
 - Removed the full-OpsAgent-only `OnlineActionCriticSkillAction` and `CoreAction` exposure parents. The skill now compiles against shared `ProtoScriptAction`/`PromptAction` contracts in both normal OpsAgent and the CoreLite online-memory profile; profile reachability comes from the explicit project include rather than unrelated root inheritance.
 - Imports the typed `OnlineActionCriticTools` helper directly because the moved start-fresh wrapper must compile in the CoreLite memory profile without relying on the separate Online Action Critic ProtoScript file to introduce that import.
+
+## 2026-11-06 - Proposed critic v4 change
+
+- Affected entry points: ToApplyConstructedCriticDefinition.Execute.
+- Change and reason: Expose an internal, non-model-advertised bridge to the typed stage-aware NLMemory owner; preserve existing generic memory tools.
+- Validation: design-only proposal; artifact-graph compile and focused runner receipts are linked in v4 validation-summary.json. No deployed/product acceptance execution is claimed; G01-G10 integration parameters remain implementation acceptance.
+
+## 2026-11-06 — Compile the internal source bridge with supported primitives
+- ToApplyConstructedCriticDefinition.Execute uses string deadlineUtcTicks and forwards it directly to the C# owner. This replaces the unsupported long declaration without changing the compiler type system, public model tool shape, or internal typed relay.
+- Validation: compiler probe confirmed long is unknown; real source and critic project-load acceptance is pending with the matched updated assemblies. The active installed skill was not edited.
+
+## 2026-11-06 — Applied implementation validation
+- Implemented the file-specific change described above in owning source under the approved v4 task; proposal-only status is superseded for this implementation, not installed delivery.
+- Real NLMemory suite88/88 passed vs baseline80/80. Includes actual memory/action persistence, reload, assigned/ownership denial, invalid/expired deadline, compile rejection then correction. Staging/worker integration remains an explicit delivery gate.

@@ -68,6 +68,15 @@ prototype ToInterpretRuntimePrototypeDefinitionWithProvenance : BuffalyNLMemoryS
 	}
 }
 
+prototype ToApplyConstructedCriticDefinition : BuffalyNLMemorySkillAction
+{
+	Description = @"Internal typed-owner result for one server-constructed candidate; never model-advertised.";
+	function Execute(string definitionText, string kind, string deadlineUtcTicks) : string
+	{
+		return BuffalyNlMemoryRuntimeTools.ApplyCriticDefinitionAsJson(_runtime, _opsAgent, definitionText, kind, deadlineUtcTicks);
+	}
+}
+
 prototype ToInterpretOnlineActionDefinition : BuffalyNLMemorySkillAction
 {
 	Description = @"Internal source-session action that upserts one complete Online Action Critic definition into artifacts/online-action-critic/SessionActions.pts and interprets it live.";
