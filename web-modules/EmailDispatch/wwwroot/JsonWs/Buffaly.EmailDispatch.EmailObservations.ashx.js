@@ -172,8 +172,8 @@ class EmailObservationsService {
         );
     }
 
-    GetConversations(AccountKey, Search, PageToken, NumRows, Callback) {
-        return this.GetConversationsObject({ AccountKey:AccountKey,Search:Search,PageToken:PageToken,NumRows:NumRows }, Callback);
+    GetConversations(AccountKey, Search, PageToken, NumRows, State, Callback) {
+        return this.GetConversationsObject({ AccountKey:AccountKey,Search:Search,PageToken:PageToken,NumRows:NumRows,State:State }, Callback);
     }
 
     GetConversationsObject(oObject, Callback) {
@@ -183,17 +183,17 @@ class EmailObservationsService {
         return this._invoke(
             pageUrl,
             "GetConversations",
-            { AccountKey: oObject.AccountKey,Search: oObject.Search,PageToken: oObject.PageToken,NumRows: oObject.NumRows },
+            { AccountKey: oObject.AccountKey,Search: oObject.Search,PageToken: oObject.PageToken,NumRows: oObject.NumRows,State: oObject.State },
             this.GetConversations,
             Callback
         );
     }
 
-    async GetConversationsAsync(AccountKey,Search,PageToken,NumRows) {
+    async GetConversationsAsync(AccountKey,Search,PageToken,NumRows,State) {
         return await ObjectUtil.Promisify(
             this,
             this.GetConversations,
-            [ AccountKey,Search,PageToken,NumRows ]
+            [ AccountKey,Search,PageToken,NumRows,State ]
         );
     }
 
@@ -522,7 +522,8 @@ var EmailObservationsValidators = {
             AccountKey : {Validators: [Validators.Text], InvalidMessage: "Invalid AccountKey"} ,
             Search : {Validators: [Validators.Text], InvalidMessage: "Invalid Search"} ,
             PageToken : {Validators: [Validators.Text], InvalidMessage: "Invalid PageToken"} ,
-            NumRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid NumRows"} 
+            NumRows : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid NumRows"} ,
+            State : {Validators: [Validators.Text], InvalidMessage: "Invalid State"} 
     },
 
     GetEmail : {

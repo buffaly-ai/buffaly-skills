@@ -4,9 +4,9 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Email Dispatch</title>
 <link rel="stylesheet" href="/css/bootstrap.min.css?v=0.2.0"><link rel="stylesheet" href="/css/icons.min.css?v=0.2.0"><link rel="stylesheet" href="/css/email-dispatch.css?v=0.2.10">
-<script src="/js/kcs/buffaly-standalone-foundation.js?v=0.2.0"></script><script src="/js/kcs/grid4.js?v=0.2.0"></script><script src="/js/kcs/LocalStorage2.js?v=0.2.0"></script>
-<script src="/JsonWs/Buffaly.EmailDispatch.EmailObservations.ashx.js?v=0.2.6"></script><script src="/JsonWs/Buffaly.EmailDispatch.EmailWorks.ashx.js?v=0.2.2"></script><script src="/JsonWs/Buffaly.EmailDispatch.EmailSyncAccounts.ashx.js?v=0.2.0"></script>
-  <script defer src="/js/email-dispatch-ui.js?v=0.2.13"></script><script defer src="/js/email-conversations.js?v=0.3.5"></script><script defer src="/js/email-dispatch.js?v=0.2.25"></script>
+<script src="/js/kcs/buffaly-standalone-foundation.js?v=0.2.0"></script><script src="/js/kcs/grid4.js?v=0.2.0"></script>
+<script src="/JsonWs/Buffaly.EmailDispatch.EmailObservations.ashx.js?v=0.2.7"></script><script src="/JsonWs/Buffaly.EmailDispatch.EmailWorks.ashx.js?v=0.2.2"></script><script src="/JsonWs/Buffaly.EmailDispatch.EmailSyncAccounts.ashx.js?v=0.2.0"></script>
+  <script defer src="/js/email-dispatch-ui.js?v=0.2.13"></script><script defer src="/js/email-conversations.js?v=0.3.6"></script><script defer src="/js/email-dispatch.js?v=0.2.25"></script>
 </head>
 <body>
 <a class="ed-skip" href="#main">Skip to content</a>
@@ -27,7 +27,7 @@
 <div id="body-loading" class="ed-result" role="status" hidden></div><iframe id="body-html" class="ed-email-frame" title="Formatted email" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" hidden></iframe><div id="body" class="ed-email-body"></div></article></section>
 <section id="view-conversations" class="ed-view" hidden aria-labelledby="conversations-title">
 <div class="ed-heading"><div><h1 id="conversations-title" tabindex="-1">Conversations</h1></div><div class="ed-actions"><div id="conversation-commands" class="ed-actions"></div></div></div>
-<form id="conversation-search-form" class="ed-toolbar"><div class="ed-search"><label class="visually-hidden" for="conversation-search">Search conversations</label><input id="conversation-search" class="form-control" type="search" placeholder="Search sender or subject"><button class="btn btn-primary" type="submit"><i class="fas fa-search" aria-hidden="true"></i>Search</button></div></form>
+<form id="conversation-search-form" class="ed-toolbar"><div class="ed-search"><label class="visually-hidden" for="conversation-search">Search conversations</label><input id="conversation-search" class="form-control" type="search" placeholder="Search sender or subject"><button class="btn btn-primary" type="submit"><i class="fas fa-search" aria-hidden="true"></i>Search</button></div><div class="ed-filter"><label for="conversation-state">Show</label><select id="conversation-state" class="form-select"><option value="" selected>All conversations</option><option value="NotIgnored">All except ignored</option></select></div></form>
 <div id="conversations" class="ed-grid-host" aria-busy="true"><p class="ed-empty">Loading conversations…</p></div><div id="conversation-pager" class="ed-pager" aria-label="Conversation pages"></div>
 </section>
 <section id="view-conversation" class="ed-view" hidden><div class="ed-message-tools"><a class="ed-back" href="#conversations">Back to conversations</a></div><div class="ed-heading"><h1 id="thread-subject" tabindex="-1"></h1><div id="thread-status"></div></div><div id="thread-context" hidden><div id="thread-messages" class="ed-grid-host"></div><div id="thread-pager" class="ed-pager" aria-label="Message pages"></div></div><div id="conversation-reader"></div></section>
