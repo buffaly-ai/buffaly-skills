@@ -1,0 +1,9 @@
+# Diagnostic completion and rendering history
+
+## 2026-11-06 — One evidence-backed findings contract
+
+Assert-DiagnosticCompletion.ps1 validates SchemaVersion 2 before the renderer emits any final report. It requires reviewed evidence references, no remaining agent-owned work, all six check areas, needed incident-window log retrieval or a verified blocker, hypotheses tied to blockers, actual alternatives, and original-authority reconciliation for coordinator limits. It rejects contradictory disposition/scope, unsupported alarm-only actions and build-only FixVerified claims. Evidence files cannot prove truth: the researcher remains responsible for reading them.
+
+Render-ErrorDiagnosticReport.ps1 now renders a concise recommendation/effect/fix-status result, derives Causes checked directly from the authoritative hypotheses, and shows actual alternative results in Tried. Blocked can retain an independently supported AlarmOnly action without implying the underlying failure is fixed. Verification uses past tense for FixVerified. Plain-text HTML escaping, safe artifact links and native message-level action chips are retained.
+
+Validation: executable positive/negative fixtures passed and package tests passed 23/23. Cases cover partial/inventory-only/skipped logs, missing evidence, unresolved causes, unreconciled coordinator limits, available alternatives, unsupported alarm-only actions, supported action plus blocked cause, visible Tried/status consistency, and actual required verification areas. Source and installed assets hash-match; installed renderer output matches source. Chrome acceptance using installed UI passed 4/4 cases, including exact chip click-to-composer payloads and unchanged HTML. Synthetic acceptance only; no fresh collector-to-researcher diagnosis, incident replay, queue mutation, restart or application repair.

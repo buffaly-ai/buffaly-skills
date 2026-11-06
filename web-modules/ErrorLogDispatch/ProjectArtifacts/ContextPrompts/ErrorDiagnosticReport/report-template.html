@@ -1,0 +1,43 @@
+<div style="max-width:1050px;margin:0 auto;padding:24px;font-family:Segoe UI,Arial,sans-serif;line-height:1.5;color:#203044;background:#ffffff;">
+	<header style="padding-bottom:18px;border-bottom:2px solid #223e59;margin-bottom:24px;">
+		<strong>{{Status}}</strong>
+		<h1>{{Title}}</h1>
+	</header>
+	<section>
+		<h2>What happened</h2>
+		<p>{{WhatHappened}}</p>
+	</section>
+	<section style="padding:16px 20px;background:#edf5fc;border-left:5px solid #2e6ea5;margin:20px 0;">
+		<h2>Recommendation</h2>
+		<p><strong>{{Recommendation}}</strong></p>
+		<p><strong>Effect:</strong> {{Effect}}</p>
+		{{Limitation}}
+		<p><strong>Fix status:</strong> {{WorkStatus}}</p>
+	</section>
+	<section>
+		<h2>Why</h2>
+		<ul>{{Why}}</ul>
+	</section>
+	<section>
+		<h2>Causes checked</h2>
+		<table style="width:100%;border-collapse:collapse;">
+			<thead><tr style="background:#eef2f6;"><th style="padding:12px;text-align:left;">Possible cause</th><th style="padding:12px;text-align:left;">How it was checked</th><th style="padding:12px;text-align:left;">Result</th></tr></thead>
+			<tbody>{{CauseRows}}</tbody>
+		</table>
+	</section>
+	{{BlockedSection}}
+	{{VerificationSection}}
+	<section style="padding:16px 20px;background:#fff0ef;border-left:7px solid #c83634;margin:24px 0;">
+		<h2>Exact error</h2>
+		<p>{{ExactError}}</p>
+	</section>
+	<section style="padding:16px 20px;background:#182f46;color:#ffffff;">
+		<h2>Where it failed</h2>
+		<p>{{ThrowLocation}}</p>
+		<pre style="white-space:pre-wrap;">{{CallStack}}</pre>
+	</section>
+	<footer style="border-top:1px solid #cbd5df;padding-top:16px;margin-top:24px;">
+		<p>[[file:{{ArtifactPath}}|Complete investigation and evidence]]</p>
+		<p>{{OccurredAt}}</p>
+	</footer>
+</div>

@@ -1,0 +1,63 @@
+# Error diagnostic report contract
+
+Read `ContextPrompts/ErrorDiagnosticResearch.md` first. It owns investigation and completion, including retrieval of needed underlying logs through the target's appropriate authorized APIs. This contract owns the short result, not the depth of research. Applies to local logs, remote alarms and direct assignments to working/prior sessions.
+
+## The reader's task
+
+Matt should understand the problem and recommended action without any earlier conversation. Before rendering, read the result as a cold reader: within 15 seconds can he answer **what failed, what should happen next, what will that accomplish, and has anything changed yet?** If not, rewrite it. The renderer validates structure and evidence references; you must validate the meaning and cited results.
+
+Use complete sentences and normal word spacing. Say 'the version installed on Verasol' instead of 'registered release'; 'record this failure without sending an alarm' instead of 'narrow debug-only correction'; 'fix the connection' instead of 'transport repair'. Do not use cohort, attestation, selected-image, disposition or execution-boundary jargon in visible prose. Describe prior work briefly before referring to it. Do not write for an imaginary colleague who knows your internal investigation. Do not copy old fixture claims into a new incident.
+
+Give one concrete recommendation with its reason and expected effect. Do not call reduced alerting a repair of the failing operation. If you need an external decision, name it plainly. Do not request approval already granted. If work is authorized, do it before finalizing. If a verified external constraint blocks diagnosis, explain that dependency rather than inventing a repair or access change. An unresolved cause requires visible Causes checked and a validated blocker. Researching is progress, not a final result.
+
+## Visible result
+
+The shared HTML template displays, in order:
+1. A short application/problem title and one plain status.
+2. What happened: two or three sentences describing the failed operation and evidenced impact.
+3. Recommendation: one action sentence, followed by Effect, a material Limitation when one changes the decision, and Fix status stating what was actually done/tested/released. A Blocked result may still recommend an independently supported AlarmOnly action: start with what it addresses (for example, To stop these error alarms), and state that the connection cause remains blocked. Otherwise the blocked recommendation names the specific external dependency, never a speculative repair.
+4. Why: two to four short evidence-backed bullets, not investigation chronology.
+5. Causes checked: at most five grouped plain-language rows, naming possible cause, actual check and result. The complete unabridged check history stays in the investigation. Never convert 'not read' to 'not present'.
+6. Blocked by: only for a verified external dependency, in plain words: missing fact, resolved owner, what was tried, why unavailable. No routine Next diagnostic box.
+7. How the fix will be verified: up to three concise rows for applicable original failure, correction/runtime acceptance and protected behavior. Mark unrun verification Proposed. Blocked/no-change results can omit inapplicable repair checks.
+8. The exact error and useful failure location/stack, retained from the user-selected technical report. Keep evidence limitations in the complete investigation unless they change the decision.
+9. A link to the complete investigation and occurrence time with its timezone or 'time zone not recorded'.
+
+Keep visible prose about 200-350 words, excluding the verbatim error/stack; this is an authoring target, not permission to omit a decision-changing fact. Do not duplicate the recommendation in every block. Move internal GUIDs, receipt hashes, deployment IDs, source history, access attempts and full verification details into the linked report. Do not add disclosures or custom buttons. Keep the shared report styling and native suggestion controls; removing confusing sections changes structure, not research capability.
+
+## One findings document
+
+Write `findings.json` with this exact schema (SchemaVersion 2). Old shapes fail; do not normalize or support both. All named text fields below are required nonempty strings unless stated optional. All dynamic values are plain text and HTML-escaped.
+
+- `Disposition`: FixIdentified, FixVerified, NoChangeNeeded or Blocked. Researching is rejected.
+- `RecommendationScope`: FailureRepair, AlarmOnly, NoChange or ExternalDependency.
+- `Title` (max 120 characters), `WhatHappened` (max 900), `Recommendation` (max 600), `Effect` (max 600), `WorkStatus` (max 500). `Limitation` is a required string, empty only when no decision-changing limitation exists; required for AlarmOnly and Blocked. Say 'Written and tested October 30; not released', not 'EXISTING LOCAL FIX; NOT VERIFIED DELIVERED'.
+- `Why`: two to four plain strings, each max 500 characters.
+- `ExactError`, `ThrowLocation`, `CallStack`: exact available evidence; explicitly state unknown location rather than labeling the logger as the throw site. Technical identifiers are allowed here, not required in every prose field.
+- `OccurredAt`: readable occurrence date/time and timezone, distinct from collection/arrival time.
+- `ArtifactPath`: existing file under an artifacts directory containing the complete investigation. Absolute or input-document-relative path, no semantic-link delimiters/newlines.
+- Causes checked is derived directly from Completion.Hypotheses, not a second authored list. Supported, RuledOut and Unresolved render as Confirmed, Ruled out and Not determined. Every unresolved hypothesis stays visible; group hypotheses into at most five clear rows and preserve detailed checks in the artifact.
+- `Verification`: zero to three objects with nonempty `Check`, `RequiredResult`, `Status`, each max 600 characters. At least one for FixIdentified/FixVerified. Full check details and thresholds remain in the artifact.
+- `Suggestions`: zero to three objects with nonempty single-line `Label` (max 60) and `Instruction` (max 1600). No backticks/newlines. Use compact plain labels and complete incident-specific instructions naming target/change/verification/exclusions. The first action must match the recommendation. No invented alternatives, generic 'investigate further', unauthorized replay, or handoff of agent-owned work. A blocked result may have zero chips when there is no meaningful decision for Matt. Clicking populates the composer; writing a chip grants no authority.
+
+## Completion record (not displayed in full)
+
+`Completion` is required:
+- `RemainingWork`: array; must be empty before a final report. Do not clear it until actual work is done.
+- `EvidenceReviewed`: true only after reading cited source results and auditing completeness, not merely writing the record.
+- `ReviewSummary`: nonempty evidence-backed explanation of why the investigation can stop, including any uncertainty that changes the recommendation.
+- `Checks`: each required area occurs exactly once: Incident, Logs, CodeAndCallers, ConfigurationAndRuntime, HistoryAndProtectedBehavior, AlternativesAndAuthority. Each has `Area`, `Status` (Completed, NotApplicable or Blocked), `Result`, `Evidence` and `BlockerIds` array. NotApplicable needs specific evidence/reason, not a silent default. Blocked requires valid blocker IDs.
+- `Logs`: `Required` boolean and `Status` (Retrieved, NotRequired or Blocked), `Reason`, `Evidence`, `BlockerIds`, `Retrievals` array. Each retrieval has `Target`, `Operation` (Read, Download or Analyze), `Coverage` (CompleteIncident or Partial), `Result`, `Evidence`. Needed logs require a Read/Download covering the incident or a verified blocker; partial coverage cannot pass as completed retrieval. Inventory is not a retrieval. Preserve all receipts and truncation limitations in evidence. A NotRequired decision explains why logs cannot affect this incident, with evidence.
+- `Hypotheses`: one to five objects with `Cause`, `Status` (Supported, RuledOut or Unresolved), `Check`, `Result`, `Evidence`, `BlockerIds`. Every unresolved cause requires a verified blocker. No claim every cause ruled out while a remaining possibility is absent from this record.
+- `Blockers`: array. Each has unique `Id`, `MissingFact`, `Owner`, `Operation`, `Constraint`, `AuthorityBasis`, `Origin` (AccessControl, Retention, UserInstruction, GoverningRule or CoordinatorInstruction), `Evidence`, and nonempty `Alternatives` array. Each alternative has `Operation`, `Outcome` (Unavailable, Prohibited or Insufficient), `Result`, `Evidence`. If a safe authorized alternative remains, continue research instead of listing it as unavailable. A CoordinatorInstruction additionally requires nonempty `AuthorityReconciliation` and `ReconciliationEvidence` proving the parent checked original scope; an agent's self-imposed limit is not missing user permission. Do not retry protected denials merely to refresh them; check whether the retained result still applies without bypassing the control.
+- `Verification`: nonempty evidence-linked objects with `Area` (OriginalFailure, ProtectedBehavior or Runtime), `Status` (Passed or Proposed), `Result`, `Evidence`. FixVerified requires Passed in all three areas. Builds and logging-only tests cannot prove connectivity recovery.
+
+Every `Evidence`/`ReconciliationEvidence` is a nonempty array of `{ "Path": "existing local evidence file", "Locator": "specific line/range, request id or section" }`. Input-relative paths resolve beside findings.json. Preserve private originals; visible artifacts contain necessary redacted evidence only. Existing files and specific locators are validated; their existence does not establish truth. The researcher must read them. Do not manufacture a file to stand in for a result never obtained.
+
+FixIdentified needs a supported hypothesis and concrete verification; FixVerified additionally needs actual failing-case, protected and runtime acceptance. NoChangeNeeded requires RecommendationScope NoChange. Required blocked checks, blocked log retrieval or unresolved hypotheses require Disposition Blocked and valid blockers. FixIdentified/FixVerified cannot hide unresolved research behind an AlarmOnly recommendation; finish or report the verified external constraint. A Blocked disposition requires blockers, Limitation and a visible Blocked by explanation derived from them. It permits ExternalDependency, or AlarmOnly when an independently supported logging action exists; it never implies the failed operation is repaired. Blocker MissingFact, Owner, Constraint and alternative Results are visible prose: use ordinary sentences and plain names, not internal request/site IDs. Blocked by includes a short Tried statement from those actual alternative results.
+
+## Render and deliver
+
+Run `ContextPrompts/ErrorDiagnosticReport/Render-ErrorDiagnosticReport.ps1 -InputPath <findings.json> -OutputDirectory <current-session-artifacts>/<incident>`. It validates the completion record before producing HTML. Correct rejected records by doing missing research, not deleting uncertainty. Read generated response.json and return its single final_answer envelope as the actual response, not visible JSON or a nested serialized envelope. Metadata is format=html and result_type=display message. HTML contains the short result; its terminal standard suggestions fence stays outside the document for native clickable chips. Preserve exact generated HTML and chip payloads. Do not hand-compose an alternative layout, flatten HTML, or replace the visible result with a link.
+
+This is deterministic document validation and formatting after agent research, not a host-wide final-response interceptor or proof of exhaustive reasoning. Prompt adoption, renderer validation, actual UI click acceptance and a fresh collector-to-researcher diagnosis remain separately evidenced. Already queued/running assignment snapshots are not retroactively rewritten. No new repair, delegation, deployment, restart, replay or access authority is granted by this contract.
