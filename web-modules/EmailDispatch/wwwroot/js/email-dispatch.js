@@ -40,7 +40,14 @@
   async function accounts() {
   const values=await request(EmailSyncAccounts,"GetAccounts",{}); $("accounts").replaceChildren();
    accountsAt=Date.now();syncAvailable=values.some(account=>account.Available); syncControls();
-  for(const account of values) { const section=document.createElement("section"); section.append(text("h2",account.Email),facts([["Connection",account.Available?"Connected":"Unavailable — reauthorization required"],["Synchronization",account.Phase==="Current"?"Up to date":account.Phase],["Captured emails",account.EnumeratedCount],["Mailbox","Work account only"]])); $("accounts").append(section); $("sync-status").textContent=account.Available?(account.Phase==="Current"?"Gmail up to date":"Gmail synchronizing"):"Gmail unavailable"; $("sync-status").className="ed-status ed-status-"+(account.Available?"success":"warning"); $("synchronize").disabled=!account.Available; }
+  for(const account of values) {
+    const healthy=account.Available&&!account.Error&&account.Phase==="Current";
+    const status=!account.Available?"Intake unavailable":account.Error?"Intake interrupted — stored mail remains available":healthy?"Stored mailbox synchronized":"Updating stored mailbox";
+    const section=document.createElement("section");
+    section.append(text("h2",account.Email),facts([["Connection",account.Available?"Connected":"Unavailable — reauthorization required"],["Synchronization",status],["Last completed sync",account.LastSuccessUtc?new Date(account.LastSuccessUtc).toLocaleString():"Not completed"],["Error",account.Error||"None"],["Captured emails",account.EnumeratedCount],["Mailbox","Dispatcher stored data — work account only"]]));
+    $("accounts").append(section); $("sync-status").textContent=status;
+    $("sync-status").className="ed-status ed-status-"+(healthy?"success":"warning"); $("synchronize").disabled=!account.Available;
+  }
   $("sync-evidence").textContent=JSON.stringify(values,null,2);
   syncControls();
  }

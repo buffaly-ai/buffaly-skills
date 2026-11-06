@@ -165,3 +165,6 @@ Added Show All conversations / All except ignored using Review's existing ed-fil
 
 ## 2026-11-06 — invalidate cached dispatch-access assets
 Advanced EmailObservations generated client to0.2.8, Conversations to0.3.7 and shared Review behavior to0.2.26 for restored uncaptured/Pending dispatch commands. No markup/style/authorization change. Canonical client regenerated, not edited. Release build, focused19/19 and routine62/62 pass; installed verification follows separately.
+
+## 2026-11-06 — Stored mailbox freshness asset
+Advance review script0.2.27 for truthful stored-mail/intake status and last-completed sync. Existing layout, commands, styles and generated clients unchanged. Both views use dispatcher reads; Check Gmail is the explicit intake boundary. Source routine68/68 and Release publish passed before this cache-key-only update; installed walkthrough recorded with delivery.
