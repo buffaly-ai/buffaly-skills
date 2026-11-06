@@ -100,6 +100,10 @@
 
 	async function loadDashboard() {
 		setLoading(true);
+		// Navigation carries only the range/session filters supported by the independent message report.
+		var reportParams = new URLSearchParams({ range: state.Range, timeZoneID: state.TimeZoneID });
+		if (state.SessionID !== "") reportParams.set("sessionID", state.SessionID);
+		document.querySelector("[data-tool-eviction-report]").href = "/usage/tool-eviction?" + reportParams.toString();
 		try {
 			var response = await fetch(buildUrl(), { headers: { "Accept": "application/json" } });
 			var payload = await response.json();
@@ -136,7 +140,6 @@
 		renderWarning(response.Warnings && response.Warnings.length > 0 ? response.Warnings.join(" ") : "");
 		renderFilters(response.Filters);
 		renderSummary(response.Summary);
-		renderProgressiveEvictionSavings(response.ProgressiveEvictionSavings);
 		renderAggregatePies(response.Summary, response.ProviderModelRows);
 		renderLazyGraphs();
 		renderChart(response.TimeBuckets);
@@ -193,29 +196,6 @@
 			var value = card[2] === "latency" ? formatMilliseconds(card[1]) : formatNumber(card[1]);
 			return "<div class=\"col-md-6 col-xl-3\"><div class=\"usage-card\"><div class=\"usage-label\">" + escapeHtml(card[0]) + "</div><div class=\"usage-value\">" + escapeHtml(value) + "</div></div></div>";
 		}).join("");
-	}
-
-	function renderProgressiveEvictionSavings(savings) {
-		var summary = document.querySelector("[data-summary-cards]");
-		if (!summary) {
-			return;
-		}
-		var existing = summary.querySelector("[data-progressive-eviction-savings]");
-		if (existing) {
-			existing.remove();
-		}
-		var row = savings || {};
-		var evictedTokens = Number(row.EvictedToolResultTokens || 0);
-		var totalTokens = Number(row.TotalToolResultTokens || 0);
-		var evictedRows = Number(row.EvictedToolResultRows || 0);
-		var percent = Number(row.ToolTokenEvictedPercent || 0);
-		var detail = totalTokens <= 0 ? "No tool results in range" : formatNumber(evictedTokens) + " / " + formatNumber(totalTokens) + " est. tokens";
-		var rowsDetail = evictedRows <= 0 ? "" : " · " + formatNumber(evictedRows) + " rows evicted";
-		var container = document.createElement("div");
-		container.className = "col-md-6 col-xl-3";
-		container.setAttribute("data-progressive-eviction-savings", "");
-		container.innerHTML = "<div class=\"usage-card usage-eviction-savings-card\"><div class=\"usage-label\">Tool context evicted</div><div class=\"usage-value\">" + escapeHtml(formatPercent(percent)) + "</div><div class=\"text-muted small\">" + escapeHtml(detail + rowsDetail) + "</div></div>";
-		summary.appendChild(container);
 	}
 
 	function renderAggregatePies(summary, providerRows) {
@@ -593,7 +573,7 @@
 	// Failed requests must not present the previous range/filter totals as current data.
 	function clearDashboardData() {
 		lastResponse = null;
-		["[data-summary-cards]", "[data-daily-rows]", "[data-provider-rows]", "[data-session-rows]", "[data-time-chart]", "[data-chart-legend]", "[data-aggregate-pies]", "[data-progressive-eviction-savings]"].forEach(function (selector) {
+		["[data-summary-cards]", "[data-daily-rows]", "[data-provider-rows]", "[data-session-rows]", "[data-time-chart]", "[data-chart-legend]", "[data-aggregate-pies]"].forEach(function (selector) {
 			var element = document.querySelector(selector);
 			if (element) {
 				element.innerHTML = "";

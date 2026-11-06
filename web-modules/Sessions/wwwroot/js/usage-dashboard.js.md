@@ -10,3 +10,7 @@
 - `renderDailyRows` emits shared CalendarDate/IntegerNumber markers and invokes `OnFormatGrid("usage-daily-grid")` after each replacement, including empty results. Formatting belongs to MasterPage.js; exact counts, local grouping and server filters are unchanged.
 - Replaced captions with factual range labels, including “Token usage in the last hour”. Existing theme text class retained; no new styles, fonts or optional graph behavior.
 - Validation: 5/5 Node tests execute actual shared OnFormatGrid with DOM adapters, verify striped/bordered classes, localized exact counts, rebind/empty behavior, all factual labels and an existing sibling Grid caller. Full C# suite 8/8 passed. No new browser screenshot or installed runtime acceptance; no deployment/restart/database operations.
+
+## 2026-11-06 — Remove eager eviction rendering
+- `loadDashboard` updates only a navigation link to the separate report with range/browser zone/session. Main response/render/clear paths no longer reference progressive-eviction data. Provider/model/transport are not copied because the original statistic does not support them; link omits `run` so opening it is cheap.
+- Validation: Node suite 8/8 in America/New_York exercises actual main script and shared formatter, range/session link propagation, no report fetch, absent eviction rendering, exact totals, errors and optional graphs. C# suite 11/11 and Razor compilation pass with existing warnings. No installed browser/live latency acceptance; no deployment/restart.
