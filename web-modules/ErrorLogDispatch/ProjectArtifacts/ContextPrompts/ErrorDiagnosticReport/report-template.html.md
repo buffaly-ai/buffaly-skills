@@ -16,3 +16,15 @@ The initial exact-HTML change wrongly treated clickable suggestions as supersede
 Replace Established/Unknown/Next diagnostic boxes with a decision-first explanation, effect, limitation, Fix status, evidence-derived causes, conditional blocker and verification. Preserve shared inline template styling, exact error/stack, investigation link and native chips. One hypothesis record drives visible status labels.
 
 Validation: package tests passed 23/23; executable renderer acceptance passed including negative records. Installed/source report hashes and installed rendering match. Real Chrome with installed shared UI passed 4/4 known/unknown and integrated/standalone cases; every displayed chip populated the exact composer instruction and report HTML stayed unchanged. These are synthetic cases, not fresh end-to-end diagnoses. No incident replay, queue mutation, process restart or application repair.
+
+## 2026-11-06 — Restore prominent technical evidence at Matt's direction
+Moved the unchanged red exact-error and dark failure-location/stack blocks immediately below the title, before explanation and recommendation. Retained full logged frames rather than an arrow synopsis; clarity guidance does not dilute evidence. Completion checks, styling and native actions remain unchanged. Validation: executable renderer suite passes section-order assertions and existing safety/completion cases; actual incident rerender uses retained source log, with browser and package validation recorded in this turn's acceptance.
+
+
+## 2026-11-06 — Contain long retained stack tokens
+Actual 915px viewer inspection found full generic method signatures overflowing the report. The stack block now owns horizontal scrolling for long tokens; no frame is removed, rewritten or clipped. Validation: actual response rerendered; parent checks constrained geometry at the installed viewport.
+
+
+## 2026-11-06 — Clear resolved outcome instead of a recommendation
+Matt requested a distinct “No further action needed” section when the error is already corrected. The existing authoritative disposition selects a green resolved section for FixVerified with FailureRepair, or supported NoChangeNeeded. It uses Result rather than Effect, preserves actual fix/verification status, and rejects contradictory action chips. Blocked, proposed/unreleased and even verified alarm-only corrections retain Recommendation; resolving alarms is not repairing the failure. Exact error and full stack stay at the top. No second findings schema or inferred parsing of prose.
+Validation: executable renderer tests pass resolved and no-change cases, reject resolved-with-actions and build-only verification, and preserve proposed, blocked and alarm-only distinctions, escaping and completion gates. Browser and package outcomes are recorded in this turn's acceptance.

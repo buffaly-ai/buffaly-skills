@@ -26,6 +26,13 @@ $limits = @{Title=120;WhatHappened=900;Recommendation=600;Effect=600;WorkStatus=
 foreach ($name in $limits.Keys) { $values[$name] = Encode (RequiredText $data $name $limits[$name]) }
 $labels = @{FixIdentified='Fix identified';FixVerified='Fix verified';NoChangeNeeded='No change needed';Blocked='Blocked'}
 $values.Status = $labels[$data.Disposition]
+# Only verified repair of the failure (not merely its alarms), or evidenced no-change,
+# replaces the action box. Existing completion validation still gates this result.
+$resolved = $data.Disposition -ceq 'NoChangeNeeded' -or ($data.Disposition -ceq 'FixVerified' -and $data.RecommendationScope -ceq 'FailureRepair')
+$values.ActionHeading = if ($resolved) { 'No further action needed' } else { 'Recommendation' }
+$values.ActionBackground = if ($resolved) { '#edf7ef' } else { '#edf5fc' }
+$values.ActionBorder = if ($resolved) { '#28743c' } else { '#2e6ea5' }
+$values.EffectLabel = if ($resolved) { 'Result' } else { 'Effect' }
 $limitation = $data.PSObject.Properties['Limitation']
 if ($null -eq $limitation -or $limitation.Value -isnot [string] -or $limitation.Value.Length -gt 600) { throw 'Limitation is a required string of at most 600 characters.' }
 if (($data.RecommendationScope -ceq 'AlarmOnly' -or $data.Disposition -ceq 'Blocked') -and [string]::IsNullOrWhiteSpace($limitation.Value)) { throw 'AlarmOnly and Blocked require a decision-changing Limitation.' }
@@ -59,6 +66,7 @@ $values.ArtifactPath = Encode $artifact
 $actions = $data.PSObject.Properties['Suggestions']
 if ($null -eq $actions -or $actions.Value -isnot [array] -or $actions.Value.Count -gt 3) { throw 'Suggestions must be an array of zero to three actions.' }
 if ($data.Disposition -ceq 'FixIdentified' -and $actions.Value.Count -eq 0) { throw 'FixIdentified requires the real recommended action as a native chip.' }
+if ($resolved -and $actions.Value.Count -gt 0) { throw 'No further action needed must not carry action chips; use a recommendation while required action remains.' }
 $suggestions = @()
 foreach ($action in $actions.Value) {
 	$label = RequiredText $action 'Label' 60
