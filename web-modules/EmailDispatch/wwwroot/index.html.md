@@ -168,3 +168,8 @@ Advanced EmailObservations generated client to0.2.8, Conversations to0.3.7 and s
 
 ## 2026-11-06 — Stored mailbox freshness asset
 Advance review script0.2.27 for truthful stored-mail/intake status and last-completed sync. Existing layout, commands, styles and generated clients unchanged. Both views use dispatcher reads; Check Gmail is the explicit intake boundary. Source routine68/68 and Release publish passed before this cache-key-only update; installed walkthrough recorded with delivery.
+
+
+## 2026-11-07 — explicit create-session dispatch and reliable learning
+Add shared accessible create-session dialog (label, optional note, explicit effect) and existing dialog/command owners; no custom CSS or duplicated workspace. Cache version advanced for updated generated client and Review owner.
+Validation: source routine plus focused regressions79/79; initial full flow/browser24/24. Actual typed coordinator/admission/tree-learning acceptance1/1: session Dispatch acceptance 1107-150720 66C99551, MessageKey email-FC3CD237E89BEE194269D98CCF807B60DF8D0C5A30A59CC1BF421EE639AE3166, learned node DispatchAcceptance862fd721; destination completed acknowledgement with no tools/business effects. Initial incorrectly configured and overly broad category runs are not passing claims. Package/install validation follows separately. No Gmail mutations or business-email resend.

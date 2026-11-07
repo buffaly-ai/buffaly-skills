@@ -146,3 +146,8 @@ openEmail accepts an optional action after its existing hash/body/version guard 
 
 ## 2026-11-06 — shared stored mailbox status
 accounts() now gives Error precedence over Phase, requires available/error-free Current before synchronized status, shows persisted last completed sync/error on Accounts, and names the dispatcher stored mailbox. Existing shared status/facts/run/check command owners/styles retained; no extra commands or client mail filter. UI-STD-01 task remains review stored mail and explicitly refresh intake; stale stored data stays readable and is not advertised as fresh. Validation: configured routine68/68/Release publish pass; actual CLI baseline/current timestamps checked. Installed browser/screenshots follow; no real sends in validation.
+
+
+## 2026-11-07 — explicit create-session dispatch and reliable learning
+Add explicit Create session and send / Continue session creation action for open work, shared background-command submission and failure draft retention; recover reserved readonly label. Project learning status in reading view. Existing generated client/one-primary/grouped commands and read/receipt guards preserved.
+Validation: source routine plus focused regressions79/79; initial full flow/browser24/24. Actual typed coordinator/admission/tree-learning acceptance1/1: session Dispatch acceptance 1107-150720 66C99551, MessageKey email-FC3CD237E89BEE194269D98CCF807B60DF8D0C5A30A59CC1BF421EE639AE3166, learned node DispatchAcceptance862fd721; destination completed acknowledgement with no tools/business effects. Initial incorrectly configured and overly broad category runs are not passing claims. Package/install validation follows separately. No Gmail mutations or business-email resend.

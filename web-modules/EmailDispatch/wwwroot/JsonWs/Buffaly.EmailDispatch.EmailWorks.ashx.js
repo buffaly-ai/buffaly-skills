@@ -3,6 +3,7 @@
 var EmailWorksValidatorsFields = {
 	
 		MessageKey : {Validators : [Validators.String], InvalidMessage: "Invalid . " + ValidatorDescriptions.Length(1, 255) },
+		SessionName : {Validators : [Validators.String], InvalidMessage: "Invalid SessionName. " + ValidatorDescriptions.Length(1, 255) },
 		SessionKey : {Validators : [Validators.String], InvalidMessage: "Invalid SessionKey. " + ValidatorDescriptions.Length(1, 255) },
 		Disposition : {Validators : [Validators.String], InvalidMessage: "Invalid Disposition. " + ValidatorDescriptions.Length(1, 255) },
 		Note : {Validators : [Validators.String], InvalidMessage: "Invalid Note. " + ValidatorDescriptions.Length(1, 255) },
@@ -92,6 +93,39 @@ class EmailWorksService {
         return await ObjectUtil.Promisify(
             this,
             this.ConfirmDispatchObject,
+            [ oObject ]
+        );
+    }
+
+    CreateSessionAndSend(WorkKey, ExpectedDecisionRevision, SessionName, Note, Callback) {
+        return this.CreateSessionAndSendObject({ WorkKey:WorkKey,ExpectedDecisionRevision:ExpectedDecisionRevision,SessionName:SessionName,Note:Note }, Callback);
+    }
+
+    CreateSessionAndSendObject(oObject, Callback) {
+        this._validate(oObject, EmailWorksValidators.CreateSessionAndSend, this.CreateSessionAndSend.onValidationError);
+
+        var pageUrl = this.Url + "/create-session-and-send";
+        return this._invoke(
+            pageUrl,
+            "CreateSessionAndSend",
+            { WorkKey: oObject.WorkKey,ExpectedDecisionRevision: oObject.ExpectedDecisionRevision,SessionName: oObject.SessionName,Note: oObject.Note },
+            this.CreateSessionAndSend,
+            Callback
+        );
+    }
+
+    async CreateSessionAndSendAsync(WorkKey,ExpectedDecisionRevision,SessionName,Note) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.CreateSessionAndSend,
+            [ WorkKey,ExpectedDecisionRevision,SessionName,Note ]
+        );
+    }
+
+    async CreateSessionAndSendObjectAsync(oObject) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.CreateSessionAndSendObject,
             [ oObject ]
         );
     }
@@ -329,6 +363,13 @@ var EmailWorksValidators = {
     ConfirmDispatch : {
             WorkKey : {Validators: [Validators.Text], InvalidMessage: "Invalid WorkKey"} ,
             ExpectedDecisionRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedDecisionRevision"} ,
+            Note : {Validators: [Validators.Text], InvalidMessage: "Invalid Note"} 
+    },
+
+    CreateSessionAndSend : {
+            WorkKey : {Validators: [Validators.Text], InvalidMessage: "Invalid WorkKey"} ,
+            ExpectedDecisionRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedDecisionRevision"} ,
+            SessionName : {Validators: [Validators.Text], InvalidMessage: "Invalid SessionName"} ,
             Note : {Validators: [Validators.Text], InvalidMessage: "Invalid Note"} 
     },
 
