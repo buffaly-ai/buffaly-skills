@@ -3,6 +3,82 @@
 	"KebabName":"sessions-admin",
 	"Methods":[{
 			"Parameters":[{
+					"Name":"SessionKey",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"ExpectedProcessID",
+					"IsNullable":"false",
+					"Type":"Int32",
+					"IsArray":"false",
+					"IsEnum":"false"
+				}],
+			"Name":"CancelSessionSnooze",
+			"UrlName":"",
+			"KebabName":"cancel-session-snooze",
+			"DataObject":{
+			},
+			"IsReturnTypeArray":"false",
+			"IsStatic":"true",
+			"ReturnType":"SessionSnoozeReceipt"
+		},
+		{
+			"Parameters":[{
+					"Name":"SessionKey",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"RequestID",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"ExpectedProcessID",
+					"IsNullable":"false",
+					"Type":"Int32",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"DelayMinutes",
+					"IsNullable":"false",
+					"Type":"Int32",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"LocalDateTime",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"TimeZoneID",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				}],
+			"Name":"ChangeSessionSnooze",
+			"UrlName":"",
+			"KebabName":"change-session-snooze",
+			"DataObject":{
+			},
+			"IsReturnTypeArray":"false",
+			"IsStatic":"true",
+			"ReturnType":"SessionSnoozeReceipt"
+		},
+		{
+			"Parameters":[{
 					"Name":"SessionID",
 					"IsNullable":"true",
 					"Type":"String",
@@ -10,7 +86,7 @@
 					"IsEnum":"false"
 				}],
 			"Name":"GetDetails",
-			"UrlName":null,
+			"UrlName":"",
 			"KebabName":"get-details",
 			"DataObject":{
 			},
@@ -48,7 +124,7 @@
 					"IsEnum":"false"
 				}],
 			"Name":"GetDropDown",
-			"UrlName":null,
+			"UrlName":"",
 			"KebabName":"get-drop-down",
 			"DataObject":{
 			},
@@ -59,7 +135,7 @@
 		{
 			"Parameters":[],
 			"Name":"GetDropDownWithNull",
-			"UrlName":null,
+			"UrlName":"",
 			"KebabName":"get-drop-down-with-null",
 			"DataObject":{
 			},
@@ -76,7 +152,7 @@
 					"IsEnum":"false"
 				}],
 			"Name":"GetEdit",
-			"UrlName":null,
+			"UrlName":"",
 			"KebabName":"get-edit",
 			"DataObject":{
 			},
@@ -93,7 +169,7 @@
 					"IsEnum":"false"
 				}],
 			"Name":"GetGridCount",
-			"UrlName":null,
+			"UrlName":"",
 			"KebabName":"get-grid-count",
 			"DataObject":{
 			},
@@ -138,7 +214,7 @@
 					"IsEnum":"false"
 				}],
 			"Name":"GetGridHtml",
-			"UrlName":null,
+			"UrlName":"",
 			"KebabName":"get-grid-html",
 			"DataObject":{
 			},
@@ -155,7 +231,7 @@
 					"IsEnum":"false"
 				}],
 			"Name":"GetGridHtmlInternal",
-			"UrlName":null,
+			"UrlName":"",
 			"KebabName":"get-grid-html-internal",
 			"DataObject":{
 			},
@@ -166,7 +242,7 @@
 		{
 			"Parameters":[],
 			"Name":"GetInsert",
-			"UrlName":null,
+			"UrlName":"",
 			"KebabName":"get-insert",
 			"DataObject":{
 			},
@@ -190,7 +266,7 @@
 					"IsEnum":"false"
 				}],
 			"Name":"GetSessionSnooze",
-			"UrlName":null,
+			"UrlName":"",
 			"KebabName":"get-session-snooze",
 			"DataObject":{
 			},
@@ -201,7 +277,7 @@
 		{
 			"Parameters":[],
 			"Name":"GetSessionSnoozeAvailable",
-			"UrlName":null,
+			"UrlName":"",
 			"KebabName":"get-session-snooze-available",
 			"DataObject":{
 			},
@@ -212,7 +288,7 @@
 		{
 			"Parameters":[],
 			"Name":"Initialize",
-			"UrlName":null,
+			"UrlName":"",
 			"KebabName":"initialize",
 			"DataObject":{
 			},
@@ -257,7 +333,7 @@
 					"IsEnum":"false"
 				}],
 			"Name":"ScheduleSessionSnooze",
-			"UrlName":null,
+			"UrlName":"",
 			"KebabName":"schedule-session-snooze",
 			"DataObject":{
 			},
