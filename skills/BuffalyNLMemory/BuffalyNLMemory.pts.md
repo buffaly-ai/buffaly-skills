@@ -28,3 +28,15 @@ The manual `ToRestoreRuntimeMemoriesFromSessionArtifacts` action mirrors runtime
 ## 2026-11-06 — Applied implementation validation
 - Implemented the file-specific change described above in owning source under the approved v4 task; proposal-only status is superseded for this implementation, not installed delivery.
 - Real NLMemory suite88/88 passed vs baseline80/80. Includes actual memory/action persistence, reload, assigned/ownership denial, invalid/expired deadline, compile rejection then correction. Staging/worker integration remains an explicit delivery gate.
+
+
+## 2026-11-08 — Proposed busy-source persistence (not implemented)
+
+Existing hidden ToApplyConstructedCriticDefinition forwards explicit persistence mode and adds advisory CheckTarget on the same prototype. No new model tool is introduced.
+
+Validation: source-grounded proposal only. Patch checks are recorded separately. No build, unit test, model turn or staging acceptance has run for this proposal. Record actual results on implementation without removing history.
+
+## 2026-11-08 — Executed implementation validation
+- Reviewed busy-source persistence proposal implemented. NLMemory runtime-tool suite passes 97/97; core finite/gate/once-relay/atomic and real ApplyLoaded fixtures pass 75/75 (core-safe-v2.trx).
+- Real source method holds interpreter entry using a host event barrier; delayed persist returns Deadline after release with identical artifact bytes and no runtime target. This is in-process proof, not yet canceled cross-worker relay proof.
+- Staging proof and matched registered package are still pending; no paid model calls or Matt-local changes.

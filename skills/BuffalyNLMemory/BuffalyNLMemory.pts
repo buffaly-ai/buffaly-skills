@@ -71,9 +71,13 @@ prototype ToInterpretRuntimePrototypeDefinitionWithProvenance : BuffalyNLMemoryS
 prototype ToApplyConstructedCriticDefinition : BuffalyNLMemorySkillAction
 {
 	Description = @"Internal typed-owner result for one server-constructed candidate; never model-advertised.";
-	function Execute(string definitionText, string kind, string deadlineUtcTicks) : string
+	function Execute(string definitionText, string kind, string deadlineUtcTicks, bool persistOnly) : string
 	{
-		return BuffalyNlMemoryRuntimeTools.ApplyCriticDefinitionAsJson(_runtime, _opsAgent, definitionText, kind, deadlineUtcTicks);
+		return BuffalyNlMemoryRuntimeTools.ApplyCriticDefinitionAsJson(_runtime, _opsAgent, definitionText, kind, deadlineUtcTicks, persistOnly);
+	}
+	function CheckTarget(string prototypeName) : string
+	{
+		return BuffalyNlMemoryRuntimeTools.CheckCriticMemoryTargetAsJson(_runtime, _opsAgent, prototypeName);
 	}
 }
 
