@@ -1,0 +1,23 @@
+reference Buffaly.Agent.Recall Buffaly.Agent.Recall;
+import Buffaly.Agent.Recall Buffaly.Agent.Recall.RecallPublicationFacade RecallPublicationFacade;
+
+prototype RecallSkillAction : OpsAction
+{
+}
+
+[SemanticEntity("passive recall publication skill")]
+prototype RecallSkill : SkillEntity
+{
+	ActionRoot = RecallSkillAction;
+	Description = @"Publish sourced reference findings to the caller's explicitly configured original session without waking it.";
+}
+
+[SemanticProgram.InfinitivePhrase("to publish a recall finding")]
+prototype ToPublishRecallFinding : RecallSkillAction
+{
+	Description = @"draftJson - one exact RecallFindingDraft. The module derives the original target from the caller's authorized attachment. This never sends, queues, steers or evaluates the original session.";
+	function Execute(string draftJson) : string
+	{
+		return RecallPublicationFacade.Publish(_opsAgent, draftJson);
+	}
+}

@@ -24532,6 +24532,50 @@
       "RequiresRestart": true,
       "RequiresPreStartInstall": true,
       "PreStartCleanupPaths": []
+    },
+    {
+      "PackageId": "Recall",
+      "PackageType": "WebModule",
+      "Title": "Passive contextual experience recall",
+      "Description": "Buffaly Web Module package for Passive contextual experience recall.",
+      "Version": "0.1.0",
+      "PackageKind": "BuffalyWebModule",
+      "SourcePath": "web-modules/Recall",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/Recall",
+      "Phrases": [
+        "Passive contextual experience recall",
+        "Recall"
+      ],
+      "Files": [
+        {
+          "Path": "Buffaly.Agent.Recall.dll",
+          "Sha256": "2347c743820e2955e163fd24cf7f7b10a6e0c7c43d72d5878a1fac6054e64959"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/Recall/index.pts",
+          "Sha256": "9ec942dbffcee338d7d2acc0e9664b288c881dd808643a6690a061b7b47a8afd"
+        },
+        {
+          "Path": "recall-policy.json",
+          "Sha256": "16233f8b818827e95b5cd00e7e252a4e3adf1eca3879235ef66363b10fac4283"
+        },
+        {
+          "Path": "web-module.json",
+          "Sha256": "c41ec1948a36be53f99994723393ec39cbb22371d284fd03f3bd9ad622ba218b"
+        }
+      ],
+      "ProjectArtifacts": [
+        {
+          "ProjectName": "Skills/Recall",
+          "SourcePath": "ProjectArtifacts/Skills/Recall/"
+        }
+      ],
+      "Dependencies": [],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "RequiresRestart": true,
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     }
   ]
 }
