@@ -94,9 +94,9 @@ prototype ToGetDispatchNode : DispatchTreeSkillAction, DispatchAgentCuratedActio
 [SemanticProgram.InfinitivePhrase("to find routing-tree anchors for a task")]
 prototype ToSearchDispatchMemories : DispatchTreeSkillAction, DispatchAgentCuratedActionRoot
 {
-	Description = @"query - one concise phrase containing distinctive identity, topic, operation, artifact, or constraint terms, not generic dispatch language. maxResults - candidate window from 10 through 20, defaulting to 12. subtreeRootPrototypeName - DispatchMemoryRoot or one exact descendant used to scope a local tie-breaker. Searches only current-session Dispatch Memory tags. Results are compact semantic anchors, never final routes; locate candidates in the graph, traverse immediate children, and verify context and saved examples before reuse.";
+	Description = @"query - one concise phrase containing distinctive identity, topic, operation, artifact, or constraint terms, not generic dispatch language. maxResults - candidate window from 10 through 20, defaulting to 12. subtreeRootPrototypeName - DispatchMemoryRoot or one exact descendant used to scope a local tie-breaker. Searches only current-session Dispatch Memory tags. Results are compact semantic anchors, never final routes; locate candidates in the graph, traverse immediate children, and verify context and saved examples before reuse. destinationAttachmentName - optional exact destination attachment name owned by the selected scenario: WorkSession for normal and email dispatch, ErrorSession for error-log handling. When supplied, each row's HasDestination reports whether that exact attachment exists; when omitted, HasDestination is null. The destination value is never returned.";
 
-	function Execute(string query, int maxResults = 12, string subtreeRootPrototypeName = "DispatchMemoryRoot") : List<DispatchNodeSummary>
+	function Execute(string query, int maxResults = 12, string subtreeRootPrototypeName = "DispatchMemoryRoot", string destinationAttachmentName = "") : List<DispatchNodeSummary>
 	{
 		string sessionKey = _opsAgent.GetSessionKeyOrEmpty();
 		if (StringUtil.IsEmpty(sessionKey))
@@ -114,7 +114,7 @@ prototype ToSearchDispatchMemories : DispatchTreeSkillAction, DispatchAgentCurat
 			subtreeRootPrototypeName,
 			0.25,
 			maxResults);
-		return RuntimeDispatchTreeFacade.ProjectSemanticCandidates(_runtime, candidates, maxResults);
+		return RuntimeDispatchTreeFacade.ProjectSemanticCandidates(_runtime, candidates, maxResults, destinationAttachmentName);
 	}
 }
 
@@ -122,13 +122,13 @@ prototype ToSearchDispatchMemories : DispatchTreeSkillAction, DispatchAgentCurat
 [SemanticProgram.InfinitivePhrase("to find dispatch nodes for a canonical entity")]
 prototype ToGetDispatchNodesForEntity : DispatchTreeSkillAction, DispatchAgentCuratedActionRoot
 {
-	Description = @"entity - one unambiguous canonical prototype returned by entity resolution. Return compact Dispatch nodes whose directly assigned Entity property exactly equals that typed prototype. Zero or multiple linked nodes are valid candidate-neighborhood results. This action does not accept a prototype-name string, perform semantic search, choose a route, create or bind entities, mutate memory, or send work.";
+	Description = @"entity - one unambiguous canonical prototype returned by entity resolution. Return compact Dispatch nodes whose directly assigned Entity property exactly equals that typed prototype. Zero or multiple linked nodes are valid candidate-neighborhood results. This action does not accept a prototype-name string, perform semantic search, choose a route, create or bind entities, mutate memory, or send work. destinationAttachmentName - optional exact destination attachment name owned by the selected scenario: WorkSession for normal and email dispatch, ErrorSession for error-log handling. When supplied, each row's HasDestination reports whether that exact attachment exists; when omitted, HasDestination is null. The destination value is never returned.";
 
-	function Execute(Prototype entity, int maxResults = 25) : List<DispatchNodeSummary>
+	function Execute(Prototype entity, int maxResults = 25, string destinationAttachmentName = "") : List<DispatchNodeSummary>
 	{
 		if (entity == null)
 			throw new InvalidOperationException("entity is required.");
-		return RuntimeDispatchTreeFacade.GetNodesForEntity(_runtime, entity, maxResults);
+		return RuntimeDispatchTreeFacade.GetNodesForEntity(_runtime, entity, maxResults, destinationAttachmentName);
 	}
 }
 
@@ -258,11 +258,11 @@ prototype ToRecordHistoricalDispatch : DispatchTreeSkillAction, DispatchAgentCur
 [SemanticProgram.InfinitivePhrase("to read one level of the dispatch tree")]
 prototype ToGetDispatchChildren : DispatchTreeSkillAction, DispatchAgentCuratedActionRoot
 {
-	Description = @"parentPrototypeName - exact DispatchMemoryRoot node, defaulting to the root. maxResults - bounded child count. Read only the immediate children of one verified node for a top-down traversal step. Returns compact assigned routing evidence, never grandchildren, historical examples, or destination values, and never chooses a branch.";
+	Description = @"parentPrototypeName - exact DispatchMemoryRoot node, defaulting to the root. maxResults - bounded child count. Read only the immediate children of one verified node for a top-down traversal step. Returns compact assigned routing evidence, never grandchildren, historical examples, or destination values, and never chooses a branch. destinationAttachmentName - optional exact destination attachment name owned by the selected scenario: WorkSession for normal and email dispatch, ErrorSession for error-log handling. When supplied, each row's HasDestination reports whether that exact attachment exists; when omitted, HasDestination is null. The destination value is never returned.";
 
-	function Execute(string parentPrototypeName = "DispatchMemoryRoot", int maxResults = 25) : List<DispatchNodeSummary>
+	function Execute(string parentPrototypeName = "DispatchMemoryRoot", int maxResults = 25, string destinationAttachmentName = "") : List<DispatchNodeSummary>
 	{
-		return RuntimeDispatchTreeFacade.GetChildren(_runtime, parentPrototypeName, maxResults);
+		return RuntimeDispatchTreeFacade.GetChildren(_runtime, parentPrototypeName, maxResults, destinationAttachmentName);
 	}
 }
 
@@ -281,11 +281,11 @@ prototype ToDiagnoseDispatchNodeResolution : DispatchTreeSkillAction
 [SemanticProgram.InfinitivePhrase("to inspect a dispatch node's immediate categories")]
 prototype ToGetDispatchParents : DispatchTreeSkillAction, DispatchAgentCuratedActionRoot
 {
-	Description = @"prototypeName - exact Dispatch node. Return only its directly assigned parents beneath DispatchMemoryRoot by using the runtime prototype's existing direct TypeOf relationships. Use only when immediate categorization needs clarification. This action does not enumerate complete paths, choose a route, mutate the graph, or dispatch work.";
+	Description = @"prototypeName - exact Dispatch node. Return only its directly assigned parents beneath DispatchMemoryRoot by using the runtime prototype's existing direct TypeOf relationships. Use only when immediate categorization needs clarification. This action does not enumerate complete paths, choose a route, mutate the graph, or dispatch work. destinationAttachmentName - optional exact destination attachment name owned by the selected scenario: WorkSession for normal and email dispatch, ErrorSession for error-log handling. When supplied, each row's HasDestination reports whether that exact attachment exists; when omitted, HasDestination is null. The destination value is never returned.";
 
-	function Execute(string prototypeName, int maxResults = 25) : List<DispatchNodeSummary>
+	function Execute(string prototypeName, int maxResults = 25, string destinationAttachmentName = "") : List<DispatchNodeSummary>
 	{
-		return RuntimeDispatchTreeFacade.GetParents(_runtime, prototypeName, maxResults);
+		return RuntimeDispatchTreeFacade.GetParents(_runtime, prototypeName, maxResults, destinationAttachmentName);
 	}
 }
 
@@ -294,11 +294,11 @@ prototype ToGetDispatchParents : DispatchTreeSkillAction, DispatchAgentCuratedAc
 [SemanticProgram.InfinitivePhrase("to place a semantic dispatch match in its tree branch")]
 prototype ToGetDispatchPath : DispatchTreeSkillAction, DispatchAgentCuratedActionRoot
 {
-	Description = @"prototypeName - exact semantic candidate beneath DispatchMemoryRoot. Return its compact root-to-node path with direct parent names and assigned context summaries. Use after semantic search only to establish the candidate's lineage. Verify a useful leaf directly; for a useful internal anchor, traverse downward through ToGetDispatchChildren. Do not automatically move upward to compare the anchor's parent or siblings. It never returns examples or destination values and never selects or dispatches a route.";
+	Description = @"prototypeName - exact semantic candidate beneath DispatchMemoryRoot. Return its compact root-to-node path with direct parent names and assigned context summaries. Use after semantic search only to establish the candidate's lineage. Verify a useful leaf directly; for a useful internal anchor, traverse downward through ToGetDispatchChildren. Do not automatically move upward to compare the anchor's parent or siblings. It never returns examples or destination values and never selects or dispatches a route. destinationAttachmentName - optional exact destination attachment name owned by the selected scenario: WorkSession for normal and email dispatch, ErrorSession for error-log handling. When supplied, each row's HasDestination reports whether that exact attachment exists; when omitted, HasDestination is null. The destination value is never returned.";
 
-	function Execute(string prototypeName) : List<DispatchNodeSummary>
+	function Execute(string prototypeName, string destinationAttachmentName = "") : List<DispatchNodeSummary>
 	{
-		return RuntimeDispatchTreeFacade.GetPath(_runtime, prototypeName);
+		return RuntimeDispatchTreeFacade.GetPath(_runtime, prototypeName, destinationAttachmentName);
 	}
 }
 
