@@ -24538,7 +24538,7 @@
       "PackageType": "WebModule",
       "Title": "Passive contextual experience recall",
       "Description": "Buffaly Web Module package for Passive contextual experience recall.",
-      "Version": "0.1.3",
+      "Version": "0.1.4",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/Recall",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/Recall",
@@ -24549,7 +24549,27 @@
       "Files": [
         {
           "Path": "Buffaly.Agent.Recall.dll",
-          "Sha256": "b6bedc2f6efb98155acf8990751d8d8e48b2be1c8524984008e937309ee0715f"
+          "Sha256": "649fb7f6e37680717480348985b247780d99c111200459a686b0ff614e228cf2"
+        },
+        {
+          "Path": "ProjectArtifacts/Agents/recall-companion.agent.json",
+          "Sha256": "d58794350085bf10e58ea557b27902bca7f95a67193de22b879577a5fea8a297"
+        },
+        {
+          "Path": "ProjectArtifacts/Agents/recall-staging-source.agent.json",
+          "Sha256": "2339b9b64f17685de995d97155fad2b89e10e6dd67770164b804a33f6bec2efc"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/Recall/Companion.prompt.md",
+          "Sha256": "dbd39b8c23b1f1d0ec390761cd93d20552c3ebc1f5cf77b4c10c3fa525c0e629"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/Recall/Companion.pts",
+          "Sha256": "b4b2c66a67057b07a32548d5968119f668f1f024d65e9ec3095511cec41f780d"
+        },
+        {
+          "Path": "ProjectArtifacts/Skills/Recall/CompanionProject.pts",
+          "Sha256": "ffd4a4e1cb6f576e5302735ec8236c0757883203e1c2a679b9bfb742ab798f6e"
         },
         {
           "Path": "ProjectArtifacts/Skills/Recall/index.pts",
@@ -24561,13 +24581,17 @@
         },
         {
           "Path": "web-module.json",
-          "Sha256": "c41ec1948a36be53f99994723393ec39cbb22371d284fd03f3bd9ad622ba218b"
+          "Sha256": "650bb969ee570eaf3db604780a92a5d6d1336db20fc8d9903d4a445e4be1ca0f"
         }
       ],
       "ProjectArtifacts": [
         {
           "ProjectName": "Skills/Recall",
           "SourcePath": "ProjectArtifacts/Skills/Recall/"
+        },
+        {
+          "ProjectName": "Agents",
+          "SourcePath": "ProjectArtifacts/Agents/"
         }
       ],
       "Dependencies": [],

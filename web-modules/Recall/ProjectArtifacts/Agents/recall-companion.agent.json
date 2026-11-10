@@ -1,0 +1,26 @@
+{
+  "AgentName": "recall-companion",
+  "DisplayName": "Context Recall",
+  "PromptFile": "Skills/Recall/Companion.prompt.md",
+  "ProjectFilePath": "Skills/Recall/CompanionProject.pts",
+  "EnableImmediateProtoScriptCommands": false,
+  "RootActionPrototypeName": "RecallCompanionAction",
+  "RootEntityPrototypeName": "RecallCompanionEntity",
+  "IsHidden": true,
+  "IsReadOnly": false,
+  "CanChangeModel": true,
+  "CompanionAgents": [],
+  "CompanionAttachment": {
+    "SessionKeyStrategy": "suffix",
+    "SessionSuffix": "-recall",
+    "SourceBinding": {
+      "SetParentSessionKey": true,
+      "ObservedSessionUserStateKey": "ObservedSessionKey"
+    },
+    "Events": [
+      "user.input.admitted"
+    ],
+    "HandlerAction": "tool:ToDispatchRecallObservation"
+  },
+  "RunAdmissionPrototypeName": "RecallEventOnlyAdmission"
+}

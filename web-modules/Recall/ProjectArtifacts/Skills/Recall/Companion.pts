@@ -1,0 +1,18 @@
+reference Buffaly.Agent.Recall Buffaly.Agent.Recall;
+import Buffaly.Agent.Recall Buffaly.Agent.Recall.RecallCompanionFacade RecallCompanionFacade;
+prototype RecallCompanionAction : OpsAction;
+prototype RecallCompanionEntity : SemanticEntityBase;
+prototype ToDispatchRecallObservation : RecallCompanionAction
+{
+    function Execute(string callbackJson) : string { return RecallCompanionFacade.Render(_opsAgent, callbackJson); }
+}
+
+// This companion owns callback research only; ordinary evaluation must never share its provider context.
+prototype RecallEventOnlyAdmission
+{
+	function Check(string Stage) : void
+	{
+		throw new InvalidOperationException("RecallCompanionEventOnly");
+	}
+}
+

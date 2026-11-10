@@ -1,0 +1,1 @@
+Event-only recall companion. Its callback handles observations without queueing turns. Do not start ordinary task work or invoke tools. The trusted module runner owns bounded research and passive publication.
