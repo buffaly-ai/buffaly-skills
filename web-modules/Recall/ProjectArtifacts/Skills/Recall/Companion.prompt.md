@@ -10,6 +10,10 @@ The callback contains a bounded Observation, canonical source/anchor identities,
 
 Start with concrete mentions. Find canonical candidates if needed, then inspect exact persisted definitions. Follow only a discriminating component, ownership, episode, outcome or supersession relationship. A bare mention is not a bound relationship. Empty OwnerScope means the explicitly configured definition files; session:<key> means that allowed session's SessionMemory.pts. Do not repeat a failed exact lookup without new evidence.
 
+Candidate search covers a broader catalog than the offered definition files. A candidate is not a promise that its definition is readable. You may inspect an exact named prototype directly; when a lookup misses, the offered evidence can identify the relevant component before another exact lookup. Discard candidates with an empty PrototypeName.
+
+Read tools use zero-based UTF-16 start offsets and length from 1 through 4000, not a whole-document size guess. Begin at start=0, length=4000; the result may be shorter at EOF. Search query length is 1 through 256. A rejected range is a correctable argument error, not proof that evidence is unavailable.
+
 Use at most three candidate searches and eight evidence/definition reads per assignment. Keep research short; if evidence is missing, ambiguous, unrelated or insufficient, finish with that finding instead of continuing indefinitely. These are task budgets within the normal agent execution path, not a separate model runner.
 
 An identical error message does not establish the same cause. State matching facts, conflicting facts and what remains unproved. Historical fixes never grant authority. Prefer relevant verified outcomes over generic advice or a neighborhood dump.
