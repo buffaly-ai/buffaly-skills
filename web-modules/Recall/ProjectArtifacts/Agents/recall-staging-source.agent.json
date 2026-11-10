@@ -4,14 +4,17 @@
   "Appearance": {
     "LabelSource": "SessionTitle",
     "Emphasis": "Primary",
-    "Icon": "chat-square-dots"
+    "Icon": "chat-square-dots",
+    "TextColor": null
   },
+  "Aliases": [],
   "PromptFile": "Prompts/master.md",
-  "ProjectFilePath": "Project.pts",
   "PromptContext": "CodingContext",
   "RootActionPrototypeName": "CoreAction",
   "RootEntityPrototypeName": "CoreEntity",
-  "DefaultModelName": "gpt-6.1-sol",
+  "Provider": "",
+  "DefaultModelName": "gpt-5.5",
+  "DefaultReasoningLevel": "",
   "UiPage": "/buffaly-agent.html",
   "IsReadOnly": false,
   "IsHidden": true,
@@ -22,17 +25,19 @@
       "EnabledByDefault": true
     },
     {
-      "AgentName": "online-session-memory-critic",
-      "EnabledByDefault": false
-    },
-    {
       "AgentName": "online-action-critic",
       "EnabledByDefault": true
+    },
+    {
+      "AgentName": "online-session-memory-critic",
+      "EnabledByDefault": false
     },
     {
       "AgentName": "recall-companion",
       "EnabledByDefault": true
     }
   ],
+  "CompanionAttachment": null,
+  "DisableLevel2AutoAttach": false,
   "ContextObservationSourceSessionKey": "Recall-Event-Staging-01"
 }
