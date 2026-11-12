@@ -229,7 +229,7 @@ var ObjectUtil = {
 
 	/**
 	 * Wraps a callback-based service call in a Promise so async/await flows stay consistent.
-	 * The helper appends the success callback and temporarily wires JsonWs errors into rejection.
+	 * Error callbacks belong to the request. Legacy method configuration is wired only during dispatch.
 	 */
 	Promisify: function (context, method, argsArray) {
 		if (!ObjectUtil.IsFunction(method))
@@ -243,7 +243,7 @@ var ObjectUtil = {
 			var timeoutHandle = null;
 			var settled = false;
 
-			function clearTemporaryErrorHandler() {
+			function restoreDispatchErrorHandler() {
 				if (hasOwnErrorHandler)
 					method.onErrorReceived = originalErrorHandler;
 				else
@@ -256,20 +256,25 @@ var ObjectUtil = {
 				settled = true;
 				if (timeoutHandle)
 					clearTimeout(timeoutHandle);
-				clearTemporaryErrorHandler();
 				action(value);
 			}
 
 			try {
-				args.push(function (result) {
+				const callback = function (result) {
 					complete(resolve, result);
-				});
+				};
+				args.push(callback);
 
 				method.onErrorReceived = function (error) {
-					if (ObjectUtil.IsFunction(originalErrorHandler))
-						originalErrorHandler(error);
-					complete(reject, error);
+					if (settled)
+						return;
+					try {
+						if (ObjectUtil.IsFunction(originalErrorHandler)) originalErrorHandler(error);
+					} finally { complete(reject, error); }
 				};
+				// Generated Object methods dispatch through the positional method's config.
+				// Carry rejection on this request's callback, which _invoke checks first.
+				callback.onErrorReceived = method.onErrorReceived;
 
 				timeoutHandle = setTimeout(function () {
 					const timeoutError = new Error('JsonWs request timed out.');
@@ -283,6 +288,10 @@ var ObjectUtil = {
 				method.apply(context, args);
 			} catch (err) {
 				complete(reject, err);
+			} finally {
+				// Generated dispatch captures its error callback synchronously. Never leave
+				// a pending request's handler on a shared prototype method for the next call.
+				restoreDispatchErrorHandler();
 			}
 		});
 	},

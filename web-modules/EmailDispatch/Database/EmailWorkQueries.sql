@@ -15,9 +15,9 @@ BEGIN
  WHERE o.AccountKey=@AccountKey AND o.Presence=N'Present' AND o.IsHistoryOnly=0
  -- Classification owns Pending only; AutomaticReady belongs to the separate delivery workflow.
  AND w.State=N'Pending' AND w.LocalDisposition IS NULL
- -- Newest first. A pass reaches only rows this page returns, so a backlog of older rows waiting for the agent (such as
- -- the legacy mail EmailLegacyRequeue sends back) must never hide new mail.
- ORDER BY w.EmailWorkID DESC;
+ -- Received newest first: history backfill can insert older messages after recent mail.
+ -- The work identity breaks equal received-date ties without changing the eligible cohort.
+ ORDER BY o.InternalDateUnixMs DESC, w.EmailWorkID DESC;
 END
 GO
 CREATE OR ALTER PROCEDURE dbo.GetDeliveredEmailWorksSp @AccountKey nvarchar(255), @AfterEmailWorkID int, @NumRows int

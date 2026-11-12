@@ -14,9 +14,9 @@
  const isConfirmable=work=>isOpen(work)&&["Suggested","AutomaticReady"].includes(work.State)&&!!work.Destination;
  const deciders={Rule:"A rule",Agent:"The dispatch agent",Operator:"You"};
  const learning={Pending:"Waiting to learn from this decision",Learned:"Learned from this decision",Uncertain:"Not learned · the agent was unsure",Failed:"Learning failed"};
- const behaviors={Route:rule=>"Send to "+(rule.WorkSession||"its session"),Processor:()=>"Run its processor",Agent:()=>"Ask the dispatch agent",Notice:()=>"Record as a notice",Disabled:()=>"Off · the dispatch agent decides"};
+  const behaviors={Route:rule=>"Send to "+(rule.WorkSession||"its session"),Processor:()=>"Run its processor",Agent:()=>"Offer agent analysis",Notice:()=>"Record as a notice",Disabled:()=>"Off"};
  const behavior=rule=>(behaviors[rule.Outcome]??behaviors.Agent)(rule);
- const testLabels={RouteSelected:"A rule sends it to a session",ProcessorSelected:"A processor rule matched",AgentEvaluationRequired:"The dispatch agent decides",Notice:"Notice only",Disabled:"The matching rule is off, so the dispatch agent decides",Unclassified:"No rule matched, so the dispatch agent decides",NeedsReview:"Needs review",Conflict:"Two rules matched",Error:"The rule check failed"};
+  const testLabels={RouteSelected:"A rule suggests a session",ProcessorSelected:"A processor rule matched",AgentEvaluationRequired:"Agent analysis available",Notice:"Notice only",Disabled:"The matching rule is off",Unclassified:"No rule matched",NeedsReview:"Needs review",Conflict:"Two rules matched",Error:"The rule check failed"};
   const confirmDialog=dialog("confirm-dialog"), noteDialog=dialog("note-dialog"), pickDialog=dialog("pick-dialog"), createDialog=dialog("create-dialog"), clearDialog=dialog("clear-dialog");
   function show(name) { document.querySelectorAll(".ed-view").forEach(view=>view.hidden=view.id!=="view-"+name); const view=document.getElementById("view-"+name);if(view.closest("#conversation-reader"))$("view-conversation").hidden=false; const nav=["conversation","conversations","message"].includes(name)||(name==="email"&&conversationThread)?"conversations":["email","inbox","evidence"].includes(name)?"inbox":name==="rule"?"rules":name; document.querySelectorAll(".ed-nav a").forEach(a=>a.toggleAttribute("aria-current",a.hash==="#"+nav)); document.querySelectorAll('.ed-nav a[aria-current]').forEach(a=>a.setAttribute("aria-current","page")); window.scrollTo(0,0); const heading=$("view-"+name).querySelector("h1"); heading?.focus({preventScroll:true,focusVisible:false}); }
   const inboxGrid=new PagedGrid("inbox","inbox-pager","search", args=>request(EmailObservations,"GetInbox",{AccountKey:"work-main",State:$("state").value,...args}), items=>`<table class="ed-grid Grid"><thead><tr><th class="ed-sender-cell">From</th><th>Email</th><th class="ed-time-cell">Received</th><th class="ed-state-cell">Status</th></tr></thead><tbody>${items.map(item=>{const [name,kind]=EmailDispatchUi.state(item.ReviewState);return `<tr data-row-href="#email/${encodeURIComponent(item.ObservationKey)}"><td class="ed-sender-cell"><span class="ed-cell-secondary" title="${escape(item.Sender)}">${escape(item.Sender)}</span></td><td><a href="#email/${encodeURIComponent(item.ObservationKey)}" title="${escape(item.Subject)}">${escape(item.Subject||"No subject")}</a><span class="ed-cell-secondary ed-mobile-meta">${escape(item.Sender)} · ${escape(date(item.ReceivedUtc))}</span></td><td class="ed-time-cell">${escape(date(item.ReceivedUtc))}</td><td class="ed-state-cell"><span class="ed-status ed-status-${kind}">${escape(name)}</span></td></tr>`;}).join("")}</tbody></table>`,"No emails match. Change the search or filter.");
@@ -132,8 +132,10 @@
     if(isConfirmable(work)) actions.append(button("Send to "+work.Destination,control=>openConfirm(work,control),true,"fa-check"));
     if(work.CanSendAgain) actions.append(button("Send again to "+work.Destination,control=>openConfirm(work,control,true),true,"fa-check"));
    const processed=!work.LocalDisposition&&["Accepted","NoAction","Notice","WakeRecorded","PreviouslyHandled"].includes(work.State);
-   if(isOpen(work)) {
-      actions.append(button("Choose destination and send",control=>openPick("send",work,control),!isConfirmable(work)&&!work.CanSendAgain&&work.State!=="Error"));
+    if(isOpen(work)) {
+       const unanalyzed=["Unclassified","AgentEvaluationRequired","Disabled"].includes(work.State);
+       if(unanalyzed) actions.append(button("Analyze email",()=>{actingWork=work;return submitInstructions(null,"AddDispatchNote",{WorkKey:work.WorkKey,ExpectedDecisionRevision:work.DecisionRevision,Note:"Analyze this email and suggest a destination or no action."},current=>openNote(current));},true,"fa-search"));
+       actions.append(button("Choose destination and send",control=>openPick("send",work,control),!unanalyzed&&!isConfirmable(work)&&!work.CanSendAgain&&work.State!=="Error"));
       actions.append(button(work.Creation?"Continue session creation":"Create session and send",control=>openCreate(work,control)));
      actions.append(button("Ask the agent to reconsider",control=>openNote(work,control),work.State==="Error"));
    }
@@ -159,7 +161,7 @@
    const work=actingWork, key=selectedEmail.Email.ObservationKey, selection=method==="PickSession"?picked:null;
    if(submissions.has(work.WorkKey)) return;
    // Capture the exact command before closing: another email/dialog may become active while it runs.
-   submissions.add(work.WorkKey); control.close(); works();
+    submissions.add(work.WorkKey); control?.close(); works();
    notify("Submitting instructions…","Info");
    try {
       const result=await request(EmailWorks,method,values);

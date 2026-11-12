@@ -45,6 +45,70 @@ var JsonMethod = {
 	_globalOnSessionExpired: null,
 	_authorizationFailure: null,
 	_sessionAuthenticated: false,
+	_requestScope: null,
+
+	// Scope synchronous generated-client dispatch, not its DTO or generated implementation.
+	// Only the owning caller opts reads into cancellation; writes retain their existing transport.
+	createRequestScope: function (timeoutMs) {
+		if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) throw new Error("A positive request deadline is required.");
+		const owner = this;
+		const pending = new Set();
+		let disposed = false;
+		const scope = {
+			run: function (dispatch) {
+				if (disposed) return Promise.reject(new Error("Request scope is disposed."));
+				const previous = owner._requestScope;
+				owner._requestScope = scope;
+				try { return dispatch(); } finally { owner._requestScope = previous; }
+			},
+			isDisposed: function () { return disposed; },
+			fetch: function (page, options) {
+				return new Promise(function (resolve, reject) {
+					const controller = new AbortController();
+					const startedAt = Date.now();
+					let settled = false;
+					let timer;
+					const complete = function (action, value) {
+						if (settled) return;
+						settled = true;
+						clearTimeout(timer);
+						pending.delete(request);
+						action(value);
+					};
+					const request = {
+						startedAt: startedAt,
+						cancel: function () {
+							if (settled) return;
+							controller.abort();
+							complete(reject, owner.MarkOperationalError({ Error: "Read request timed out or was disposed." }, "client-timeout", { TimeoutMs: timeoutMs, Page: page }));
+						}
+					};
+					pending.add(request);
+					timer = setTimeout(request.cancel, timeoutMs);
+					// Include response-body consumption in the deadline, not just response headers.
+					Promise.resolve().then(function () {
+						if (disposed || settled) return;
+						return fetch(page, Object.assign({}, options, { signal: controller.signal }))
+							.then(response => response.text().then(responseText => ({ responseText: responseText, status: response.status, ok: response.ok })))
+							.then(info => complete(resolve, info), error => complete(reject, error));
+					}).catch(error => complete(reject, error));
+					if (disposed) request.cancel();
+				});
+			},
+			expireOverdue: function () {
+				let count = 0;
+				for (const request of Array.from(pending)) {
+					if (Date.now() - request.startedAt >= timeoutMs) { request.cancel(); count++; }
+				}
+				return count;
+			},
+			dispose: function () {
+				disposed = true;
+				for (const request of Array.from(pending)) request.cancel();
+			}
+		};
+		return scope;
+	},
 
 	HandleAuthorizationStatus: function (status, initializer) {
 		const path = window.location && window.location.pathname;
@@ -138,6 +202,7 @@ var JsonMethod = {
 	},
 
 	callWithInitializer: function (oInitializer) {
+		if (this._requestScope) oInitializer.RequestScope = this._requestScope;
 		// Determine if call is async or sync based on presence of a callback
 		var isAsync = (typeof oInitializer.onDataReceived === 'function');
 		var requestID = this._getNextRequestId();
@@ -227,6 +292,7 @@ var JsonMethod = {
 	},
 
 	_sendRequest: function (oInitializer, isAsync, requestID) {
+		if (oInitializer.RequestScope && oInitializer.RequestScope.isDisposed()) return;
 		if (this._authorizationFailure) {
 			this._handleGeneralError(oInitializer, this.MarkOperationalError({ Error: "Sign-in required or access denied." }, 'server-http-error', { Status: this._authorizationFailure }));
 			return;
@@ -254,15 +320,17 @@ var JsonMethod = {
 
 		if (isAsync) {
 			// Asynchronous request using fetch
-			fetch(oInitializer.Page, {
+			const options = {
 				method: 'POST',
 				headers: headers,
 				body: bodyData
-			})
-				.then(response => {
-					return response.text().then(responseText => ({ responseText: responseText, status: response.status, ok: response.ok }));
-				})
+			};
+			const response = oInitializer.RequestScope
+				? oInitializer.RequestScope.fetch(oInitializer.Page, options)
+				: fetch(oInitializer.Page, options).then(response => response.text().then(responseText => ({ responseText: responseText, status: response.status, ok: response.ok })));
+			response
 				.then(responseInfo => {
+					if (oInitializer.RequestScope && oInitializer.RequestScope.isDisposed()) return;
 					this._handleAsyncResponse(oInitializer, responseInfo.responseText, requestID, responseInfo.status, responseInfo.ok);
 				})
 				.catch(err => {
