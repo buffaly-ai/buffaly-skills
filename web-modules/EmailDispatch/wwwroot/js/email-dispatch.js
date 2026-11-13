@@ -99,7 +99,7 @@
  // is re-read every 10 seconds (one bounded GetEmail read), never while a dialog is open, so no Refresh command is needed.
  function schedule() {
   clearTimeout(pollTimer);
-   if(!selectedEmail.Works.some(work=>isOpen(work)||work.LearningState==="Pending")) return;
+    if(!selectedEmail.Works.some(work=>isOpen(work)||work.State==="GuidedDispatchReady"||work.LearningState==="Pending")) return;
   const key=selectedEmail.Email.ObservationKey;
    pollTimer=setTimeout(()=>run(null,async()=>{ if(!isCurrentEmail(key)) return; if(document.querySelector("dialog[open]")) { schedule(); return; } await reload(false); }),10000);
  }
@@ -125,7 +125,7 @@
    section.className="ed-decision"; section.tabIndex=-1; section.setAttribute("aria-label",EmailDispatchUi.state(state,work.Destination)[0]);
     const head=document.createElement("div"); head.className="ed-decision-head"; head.append(submissions.has(work.WorkKey)?text("span","Submitting instructions…","ed-status ed-status-info"):status(state,work.Destination));
     section.append(head);
-    const reason=work.Source==="Agent"?work.Decision?.Rationale:work.Reason;
+    const reason=work.Source==="Agent"&&!["Pending","GuidedDispatchReady"].includes(work.State)?work.Decision?.Rationale:work.Reason;
     section.append(EmailDispatchUi.details([["Identified session",work.Destination||"No session selected"],["Decision reason",reason||"No decision reason recorded"]]));
     if(submissions.has(work.WorkKey)) return section;
   const actions=document.createElement("div"); actions.className="ed-actions";
@@ -152,7 +152,7 @@
    else { await reload(true); notify("Restored to review."); }
   }
   function openConfirm(work,control,repeat=false) { actingWork=work; confirmMethod=repeat?"SendAgain":"ConfirmDispatch"; $("confirm-title").textContent=repeat?"Send again":"Confirm dispatch"; $("confirm-send").lastChild.textContent=repeat?"Send again":"Send"; $("confirm-subject").textContent=selectedEmail.Email.Subject||"No subject"; $("confirm-sentence").textContent=(repeat?"Sends another copy of this email to ":"Sends this email to ")+work.Destination+"."; $("confirm-note").value=failedInstructions.get(confirmMethod+":"+work.WorkKey)?.Note??""; confirmDialog.open(control); }
-  function openNote(work,control) { actingWork=work; $("note-text").value=failedInstructions.get("AddDispatchNote:"+work.WorkKey)?.Note??""; $("note-subject").textContent=selectedEmail.Email.Subject||"No subject"; noteDialog.open(control); }
+   function openNote(work,control) { actingWork=work; $("note-text").value=failedInstructions.get("DispatchWithGuidance:"+work.WorkKey)?.Note??failedInstructions.get("AddDispatchNote:"+work.WorkKey)?.Note??""; $("note-subject").textContent=selectedEmail.Email.Subject||"No subject"; noteDialog.open(control); }
   function openPick(mode,work,control) { const failed=mode==="send"?failedInstructions.get("PickSession:"+work.WorkKey):null; pickMode=mode; actingWork=work; picked=failed?.Selection??null; $("pick-title").textContent=mode==="send"?"Choose destination and send":"Choose the rule's session"; $("pick-subject").textContent=mode==="send"?(selectedEmail.Email.Subject||"No subject"):selectedRule.EntityName; $("pick-note-field").hidden=mode!=="send"; $("pick-note").value=failed?.Note??""; $("pick-search").value=""; $("pick-confirm").lastChild.textContent=mode==="send"?"Send to selected session":"Use this session"; pickSelection(); pickDialog.open(control); pickGrid.reset(); }
   function pickSelection() { $("pick-count").textContent=picked?"Selected: "+picked.Name:"No session selected"; $("pick-confirm").disabled=!picked; }
   function openCreate(work,control) { actingWork=work;const failed=failedInstructions.get("CreateSessionAndSend:"+work.WorkKey);$("create-subject").textContent=selectedEmail.Email.Subject||"No subject";$("create-name").value=work.Creation?.Name??failed?.SessionName??"";$("create-name").readOnly=!!work.Creation;$("create-note").value=failed?.Note??"";createDialog.open(control); }
@@ -174,7 +174,8 @@
       const updated=await request(EmailObservations,"GetEmail",{ObservationKey:key});
       if(isCurrentEmail(key)&&!document.querySelector("dialog[open]")) { selectedEmail=updated; works(); schedule(); }
     });
-    if(method==="AddDispatchNote") notify("Instructions saved. Waiting for the dispatch agent.");
+     if(method==="DispatchWithGuidance") notify("Dispatch requested. Waiting for a verified destination.");
+     else if(method==="AddDispatchNote") notify("Analysis requested. Nothing will be sent.");
     else notify(result.Status==="PreviouslyHandled"?"Prior email evidence found. Review the updated decision before sending again.":EmailDispatchUi.state(result.Status)[0]+".",result.Accepted===true?"Success":"Warning");
    } catch(error) {
     submissions.delete(work.WorkKey);
@@ -280,7 +281,7 @@
  function click(id,action,background=false){$(id).addEventListener("click",()=>run(background?null:$(id),action));}
   submit("search-form","search-form",()=>inboxGrid.reset());$("state").addEventListener("change",()=>run(null,async()=>{reviewPreferences.set(reviewFilterKey,$("state").value);await inboxGrid.reset();}));submit("rule-search-form","rule-search-form",()=>rulesGrid.reset());
   submit("confirm-form","confirm-send",()=>{const note=$("confirm-note").value, method=confirmMethod;return submitInstructions(confirmDialog,method,{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,Note:note},work=>{openConfirm(work,null,method==="SendAgain");$("confirm-note").value=note;});},true);
-   submit("note-form","note-save",()=>{const note=$("note-text").value;return submitInstructions(noteDialog,"AddDispatchNote",{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,Note:note},work=>{openNote(work);$("note-text").value=note;});},true);
+    $("note-form").addEventListener("submit",event=>{event.preventDefault();const note=$("note-text").value,method=event.submitter?.id==="note-dispatch"?"DispatchWithGuidance":"AddDispatchNote";run(null,()=>submitInstructions(noteDialog,method,{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,Note:note},work=>{openNote(work);$("note-text").value=note;}));});
    submit("create-form","create-send",()=>{const name=$("create-name").value,note=$("create-note").value;return submitInstructions(createDialog,"CreateSessionAndSend",{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,SessionName:name,Note:note},work=>{openCreate(work);$("create-note").value=note;});},true);
  $("pick-grid").addEventListener("change",event=>{const input=event.target.closest("input[name=pick-session]");if(!input)return;picked={SessionKey:input.value,Name:input.dataset.name};pickSelection();});
  submit("pick-search-form","pick-search-form",()=>{picked=null;pickSelection();pickGrid.reset();});

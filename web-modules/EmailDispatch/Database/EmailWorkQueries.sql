@@ -13,8 +13,8 @@ BEGIN
  SELECT TOP (@NumRows) w.* FROM dbo.EmailWorks w
  INNER JOIN dbo.EmailObservations o ON o.ObservationKey=w.ObservationKey
  WHERE o.AccountKey=@AccountKey AND o.Presence=N'Present' AND o.IsHistoryOnly=0
- -- Classification owns Pending only; AutomaticReady belongs to the separate delivery workflow.
- AND w.State=N'Pending' AND w.LocalDisposition IS NULL
+ -- Only explicitly approved guided decisions join Pending for restart recovery. Ordinary suggestions never send.
+ AND w.State IN (N'Pending',N'GuidedDispatchReady') AND w.LocalDisposition IS NULL
  -- Received newest first: history backfill can insert older messages after recent mail.
  -- The work identity breaks equal received-date ties without changing the eligible cohort.
  ORDER BY o.InternalDateUnixMs DESC, w.EmailWorkID DESC;

@@ -83,6 +83,7 @@ window.EmailDispatchUi = (() => {
    window.addEventListener("message",event=>{const data=event.data;if(event.source!==frame.contentWindow||event.origin!=="null"||!token()||data?.kind!=="email-body-size"||data.token!==token()||!Number.isFinite(data.height)||data.height<1)return;const height=Math.max(120,Math.min(2400,Math.ceil(data.height)+2))+"px";if(frame.style.height!==height)frame.style.height=height;});
   }
   const stateNames = {
+   GuidedDispatchReady:["Dispatch requested — sending","info"],
    Dispatched:["Dispatched","success"], NotDispatched:["Not dispatched","warning"], DispatchReady:["Ready to dispatch","warning"], DispatchUncertain:["Dispatch uncertain · check delivery","danger"], DispatchRejected:["Dispatch rejected","danger"], DispatchNeedsReview:["Needs dispatch review","warning"], DispatchPriorEvidence:["Prior email found · held","neutral"], DispatchReviewed:["Reviewed · not dispatched","neutral"], DispatchNoAction:["No dispatch needed","neutral"],
    Replied:["You replied","success"], AwaitingReply:["No reply yet","neutral"], Draft:["Draft reply","warning"],
    ProjectionFailed:["Email could not be read","danger"], Spam:["Spam · not dispatched","neutral"], Trash:["In Trash","neutral"],

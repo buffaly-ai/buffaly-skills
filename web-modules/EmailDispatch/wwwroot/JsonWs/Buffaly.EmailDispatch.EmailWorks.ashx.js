@@ -130,6 +130,39 @@ class EmailWorksService {
         );
     }
 
+    DispatchWithGuidance(WorkKey, ExpectedDecisionRevision, Note, Callback) {
+        return this.DispatchWithGuidanceObject({ WorkKey:WorkKey,ExpectedDecisionRevision:ExpectedDecisionRevision,Note:Note }, Callback);
+    }
+
+    DispatchWithGuidanceObject(oObject, Callback) {
+        this._validate(oObject, EmailWorksValidators.DispatchWithGuidance, this.DispatchWithGuidance.onValidationError);
+
+        var pageUrl = this.Url + "/dispatch-with-guidance";
+        return this._invoke(
+            pageUrl,
+            "DispatchWithGuidance",
+            { WorkKey: oObject.WorkKey,ExpectedDecisionRevision: oObject.ExpectedDecisionRevision,Note: oObject.Note },
+            this.DispatchWithGuidance,
+            Callback
+        );
+    }
+
+    async DispatchWithGuidanceAsync(WorkKey,ExpectedDecisionRevision,Note) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.DispatchWithGuidance,
+            [ WorkKey,ExpectedDecisionRevision,Note ]
+        );
+    }
+
+    async DispatchWithGuidanceObjectAsync(oObject) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.DispatchWithGuidanceObject,
+            [ oObject ]
+        );
+    }
+
     GetDelivery(MessageKey, Callback) {
         return this.GetDeliveryObject({ MessageKey:MessageKey }, Callback);
     }
@@ -370,6 +403,12 @@ var EmailWorksValidators = {
             WorkKey : {Validators: [Validators.Text], InvalidMessage: "Invalid WorkKey"} ,
             ExpectedDecisionRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedDecisionRevision"} ,
             SessionName : {Validators: [Validators.Text], InvalidMessage: "Invalid SessionName"} ,
+            Note : {Validators: [Validators.Text], InvalidMessage: "Invalid Note"} 
+    },
+
+    DispatchWithGuidance : {
+            WorkKey : {Validators: [Validators.Text], InvalidMessage: "Invalid WorkKey"} ,
+            ExpectedDecisionRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedDecisionRevision"} ,
             Note : {Validators: [Validators.Text], InvalidMessage: "Invalid Note"} 
     },
 

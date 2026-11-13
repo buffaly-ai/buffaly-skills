@@ -56,3 +56,11 @@ PagedGrid retains only displayed page with view/search/filter/page identity and 
 
 ## 2026-11-05 — dispatch evidence vocabulary
 Shared state/status owner adds explicit Dispatched/Not dispatched/Ready to dispatch/Dispatch uncertain/Dispatch rejected/Needs dispatch review/prior evidence/local review/no action tokens. Destination-aware wording comes only from server evidence, not reply inference. Existing Review vocabulary untouched; source list/header browser tests1440/390 and routine56/56 pass. No styles, transport or command changes.
+
+
+## 2026-11-12 — explicit analysis statuses
+Shared Pending label now Review pending; Unclassified/AgentEvaluationRequired/Disabled show Analysis available rather than implying an automatic model job. Existing state codes/classes remain; rule Disabled behavior label is Off and Agent is Offer agent analysis in editor. UI cache keys bumped to0.2.14/0.2.29 through index.html. Source focused and installed generated-client/action tests pass, 390/1440 screenshots/overflow; no new CSS/layout/API.
+
+
+## 2026-11-13 — honest guided-dispatch progress
+Added GuidedDispatchReady shared label Dispatch requested — sending. This is pending admission, not Sent or Accepted. Source browser21/21 and routine64/64 pass; existing decision-owner reason and uncertainty presentation retained. Installed validation follows separately.

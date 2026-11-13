@@ -173,3 +173,11 @@ Advance review script0.2.27 for truthful stored-mail/intake status and last-comp
 ## 2026-11-07 — explicit create-session dispatch and reliable learning
 Add shared accessible create-session dialog (label, optional note, explicit effect) and existing dialog/command owners; no custom CSS or duplicated workspace. Cache version advanced for updated generated client and Review owner.
 Validation: source routine plus focused regressions79/79; initial full flow/browser24/24. Actual typed coordinator/admission/tree-learning acceptance1/1: session Dispatch acceptance 1107-150720 66C99551, MessageKey email-FC3CD237E89BEE194269D98CCF807B60DF8D0C5A30A59CC1BF421EE639AE3166, learned node DispatchAcceptance862fd721; destination completed acknowledgement with no tools/business effects. Initial incorrectly configured and overly broad category runs are not passing claims. Package/install validation follows separately. No Gmail mutations or business-email resend.
+
+
+## 2026-11-12 — explicit analysis asset versions
+Bumped shared status/Review script cache keys to0.2.14/0.2.29 for optional unmatched analysis and honest saved statuses. No layout, CSS, generated client or core changes. Installed0.1.66 browser4/4 and live script URL verification pass; desktop1440/phone390 screenshots retained.
+
+
+## 2026-11-13 — explicit guidance execution choice
+Shared guidance dialog now presents Analyze only and Dispatch with guidance, without a second confirmation visit. Existing dialog/footer components retained; source client cache keys advanced for generated command and UI. Source browser21/21 passes including desktop/phone screenshots, exact command payload, delayed dialogs and existing Confirm/Pick/Create. Installed validation follows separately.
