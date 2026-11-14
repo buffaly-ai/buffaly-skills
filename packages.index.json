@@ -24600,6 +24600,73 @@
       "RequiresRestart": true,
       "RequiresPreStartInstall": true,
       "PreStartCleanupPaths": []
+    },
+    {
+      "PackageId": "Buffaly.Provider.Antigravity",
+      "PackageType": "ProviderModule",
+      "Title": "Antigravity ACP Provider",
+      "Description": "Buffaly Provider Module package for Antigravity ACP Provider.",
+      "Version": "0.1.0",
+      "PackageKind": "BuffalyProviderModule",
+      "SourcePath": "provider-modules/Buffaly.Provider.Antigravity",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/provider-modules/Buffaly.Provider.Antigravity",
+      "Phrases": [
+        "Antigravity ACP Provider",
+        "Buffaly.Provider.Antigravity"
+      ],
+      "Files": [
+        {
+          "Path": "buffaly-completion.md",
+          "Sha256": "3ca1d948df8f0918be72b57558dda65a5f58be3239d3f04c08571f01356249e6"
+        },
+        {
+          "Path": "Buffaly.Provider.Antigravity/Buffaly.NativeAgents.Antigravity.dll",
+          "Sha256": "19eee6d639f6962be6a18ec7f38cb911a56ac9126cd7561a298559a050d51fc2"
+        },
+        {
+          "Path": "Buffaly.Provider.Antigravity/Buffaly.Provider.Antigravity.dll",
+          "Sha256": "d2cd44a2b69136e6d482f9bdb1865f92068f86cf99206d37c69167e8141378fd"
+        },
+        {
+          "Path": "Buffaly.Provider.Antigravity/Buffaly.Tools.Antigravity.dll",
+          "Sha256": "687520d4b44faeb01ab3914824f19ec9e3c255417d7248ef63ab32eec411eb75"
+        },
+        {
+          "Path": "Buffaly.Provider.Antigravity/Humanizer.dll",
+          "Sha256": "d6853075547d7e303efd60354d911a2ff18edba582cda2fa59d91a2e5dcf9e98"
+        },
+        {
+          "Path": "Buffaly.Provider.Antigravity/Json.More.dll",
+          "Sha256": "d4ba3acb556d39d6583a68807e60cb73c0c79f351092d749ffa9a5447c03b7d2"
+        },
+        {
+          "Path": "Buffaly.Provider.Antigravity/JsonPointer.Net.dll",
+          "Sha256": "94f6e275163ccba97444bd1b080589456d0c45b73a318e9b93ab45ad98549b10"
+        },
+        {
+          "Path": "Buffaly.Provider.Antigravity/JsonSchema.Net.dll",
+          "Sha256": "11d7b864b5c7b2c01fd4ff11953a90712625b19065a541aa64858e3005f90a62"
+        },
+        {
+          "Path": "package-evidence.json",
+          "Sha256": "79d3b3ce6ac58cbd68765300e4dc9edba8af644c6b4e70638e7583296c5cbdfe"
+        },
+        {
+          "Path": "provider-config.template.json",
+          "Sha256": "50314ecadd49339b2a96e781b83f12f728d7463ed197b1ae98594468f1b5c9fc"
+        },
+        {
+          "Path": "ProviderModules.json",
+          "Sha256": "ae57ef005deefc2ab258d14d0390b1fab42f015c0df8c0bbc9104894a7b771d5"
+        }
+      ],
+      "ProjectArtifacts": [],
+      "Dependencies": [],
+      "RelatedWikiSlugs": [],
+      "Prerequisites": [],
+      "RequiresRestart": true,
+      "RequiresPreStartInstall": true,
+      "PreStartCleanupPaths": []
     }
   ]
 }
