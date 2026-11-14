@@ -50,7 +50,7 @@ Read the target session artifacts when relevant:
 - root-level task artifacts
 - generated files or reports mentioned in the turn
 
-Use file tools such as `ToReadTextFileRaw`, `ToGetFileBlock`, and `ToSearchTextInDirectoryWithRipgrep`.
+Use `ToSearchTextInDirectoryWithRipgrep` or `ToSearchTextInFile` for narrow questions, `ToGetFileBlock`/`ToGetFileBlockPage` for relevant ranges, and `ToReadFileDocument` with its exact continuation cursor only when the whole authoritative artifact is required.
 
 Do not judge a source session's plan or scratch by reading the critic session's own artifacts.
 

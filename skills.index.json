@@ -306,7 +306,7 @@
       "SkillName": "BuffalySelfManagement",
       "Title": "Buffaly Self Management",
       "Description": "Buffaly skill package for Buffaly Self Management.",
-      "Version": "0.1.3",
+      "Version": "0.1.4",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Buffaly Self Management",
@@ -356,7 +356,7 @@
         },
         {
           "Path": "Prompts/CritiqueAgentSessionInteraction.prompt.md",
-          "Sha256": "dfd0aeff1dd47242829c6d146d4fb3138ad5227935289ebcc1abead20f46868d"
+          "Sha256": "2cfc0b9e3e8d7ba20b9e1cc22ab6eef6dd5e69ae9562b66fcf4abcd7b32d08ab"
         },
         {
           "Path": "Prompts/DesignBuffalyResultTypeRenderer.prompt.md",
@@ -397,7 +397,8 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": []
+      "Prerequisites": [],
+      "PreservedFiles": []
     },
     {
       "SkillName": "CareCascade",
