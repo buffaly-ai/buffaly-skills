@@ -1,12 +1,40 @@
 {
   "PackageId": "Buffaly.Provider.Antigravity",
   "ModuleEnabled": true,
-  "ProviderCommit": "f1bc642b10991439da6cf31a6fbcc47d6489e110",
+  "ProviderCommit": "faa8f8c5676904ce4c8957c95a8aefe27330d398",
   "NativeCommit": "27193e96583b29998fad7dbdf5368311c66c358b",
   "Files": [
     {
       "Path": "buffaly-completion.md",
       "Sha256": "9131F1F67DB322A0D0E8E7952144013EA20EDFEA01806F31423D7CAB7145A955"
+    },
+    {
+      "Path": "Buffaly.NativeAgents.Antigravity.dll",
+      "Sha256": "19EEE6D639F6962BE6A18EC7F38CB911A56AC9126CD7561A298559A050D51FC2"
+    },
+    {
+      "Path": "Buffaly.Provider.Antigravity.dll",
+      "Sha256": "5CBD9774271A5742A5CD2D1A59A3AB81E2A197AB18E924E9412238478D2C3BD0"
+    },
+    {
+      "Path": "Buffaly.Tools.Antigravity.dll",
+      "Sha256": "687520D4B44FAEB01AB3914824F19EC9E3C255417D7248EF63AB32EEC411EB75"
+    },
+    {
+      "Path": "Humanizer.dll",
+      "Sha256": "D6853075547D7E303EFD60354D911A2FF18EDBA582CDA2FA59D91A2E5DCF9E98"
+    },
+    {
+      "Path": "Json.More.dll",
+      "Sha256": "D4BA3ACB556D39D6583A68807E60CB73C0C79F351092D749FFA9A5447C03B7D2"
+    },
+    {
+      "Path": "JsonPointer.Net.dll",
+      "Sha256": "94F6E275163CCBA97444BD1B080589456D0C45B73A318E9B93AB45AD98549B10"
+    },
+    {
+      "Path": "JsonSchema.Net.dll",
+      "Sha256": "11D7B864B5C7B2C01FD4FF11953A90712625B19065A541AA64858E3005F90A62"
     },
     {
       "Path": "provider-config.template.json",
@@ -15,34 +43,6 @@
     {
       "Path": "ProviderModules.json",
       "Sha256": "AC868772461FF01561EF8E644DC80861EFD1B680A4CCDCF89E4F3696465ADA1A"
-    },
-    {
-      "Path": "Buffaly.Provider.Antigravity\\Buffaly.NativeAgents.Antigravity.dll",
-      "Sha256": "19EEE6D639F6962BE6A18EC7F38CB911A56AC9126CD7561A298559A050D51FC2"
-    },
-    {
-      "Path": "Buffaly.Provider.Antigravity\\Buffaly.Provider.Antigravity.dll",
-      "Sha256": "D2CD44A2B69136E6D482F9BDB1865F92068F86CF99206D37C69167E8141378FD"
-    },
-    {
-      "Path": "Buffaly.Provider.Antigravity\\Buffaly.Tools.Antigravity.dll",
-      "Sha256": "687520D4B44FAEB01AB3914824F19EC9E3C255417D7248EF63AB32EEC411EB75"
-    },
-    {
-      "Path": "Buffaly.Provider.Antigravity\\Humanizer.dll",
-      "Sha256": "D6853075547D7E303EFD60354D911A2FF18EDBA582CDA2FA59D91A2E5DCF9E98"
-    },
-    {
-      "Path": "Buffaly.Provider.Antigravity\\Json.More.dll",
-      "Sha256": "D4BA3ACB556D39D6583A68807E60CB73C0C79F351092D749FFA9A5447C03B7D2"
-    },
-    {
-      "Path": "Buffaly.Provider.Antigravity\\JsonPointer.Net.dll",
-      "Sha256": "94F6E275163CCBA97444BD1B080589456D0C45B73A318E9B93AB45AD98549B10"
-    },
-    {
-      "Path": "Buffaly.Provider.Antigravity\\JsonSchema.Net.dll",
-      "Sha256": "11D7B864B5C7B2C01FD4FF11953A90712625B19065A541AA64858E3005F90A62"
     }
   ]
 }
