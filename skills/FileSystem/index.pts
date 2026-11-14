@@ -116,7 +116,7 @@ prototype ToListFilesInDirectory : FileSystemSkillAction
 [SemanticProgram.InfinitivePhrase("to read a file from a directory")]
 prototype ToReadTextFile : FileSystemSkillAction, CodingContext
 {
-	Description = @"directoryPath - optional base directory for relative paths. filePath - relative or absolute file path. StringRef-first for large payload chaining; use ToReadTextFileRaw when immediate materialized text is required.";
+	Description = @"directoryPath - optional base directory for relative paths. filePath - relative or absolute file path. StringRef-first for payload chaining. For source inspection prefer ToSearchTextInFile, ToGetFileBlock, or ToReadFileDocument according to the required evidence scope.";
 
 	function Execute(string directoryPath, string filePath) : StringRef
 	{
@@ -145,9 +145,9 @@ prototype ToReadTextFile : FileSystemSkillAction, CodingContext
 
 [SemanticProgram.InfinitivePhrase("to read raw text file data")]
 [SemanticProgram.InfinitivePhrase("to read a file from a directory as raw text")]
-prototype ToReadTextFileRaw : FileSystemSkillAction, CodingContext
+prototype ToReadTextFileRaw : FileSystemSkillAction
 {
-	Description = @"directoryPath - optional base directory for relative paths. filePath - relative or absolute file path. Use when immediate raw text is required for display or inspection; materializes and returns raw text string immediately. Files larger than 10 KB are rejected — use ToSearchTextInFile to find specific text or ToGetFileBlock to read a line range instead.";
+	Description = @"directoryPath - optional base directory for relative paths. filePath - relative or absolute file path. Compatibility reader for a genuinely required complete small string, not routine source inspection. The 10,240-byte guard is unchanged. Prefer ToSearchTextInFile for a literal, ToGetFileBlock/ToGetFileBlockPage for a range, and ToReadFileDocument only when complete authoritative text is required. Never auto-dump a larger page after rejection.";
 
 	function Execute(string directoryPath, string filePath) : string
 	{
@@ -224,7 +224,7 @@ prototype ToGetFileBlock : FileSystemSkillAction, CodingContext
 
 [SemanticProgram.InfinitivePhrase("to search for text in a file")]
 [SemanticProgram.InfinitivePhrase("to find text within a file")]
-prototype ToSearchTextInFile : FileSystemSkillAction
+prototype ToSearchTextInFile : FileSystemSkillAction, CodingContext
 {
 	Description = @"directoryPath - optional base directory for relative file paths. filePath - relative or absolute path. text - literal text to match.";
 
@@ -383,6 +383,7 @@ prototype ToGetFileBlockPage : FileSystemSkillAction, CodingContext
 	Description = @"directoryPath - optional base directory. filePath - file path. startLine - 1-based line. lineCount - requested lines. characterOffset - exact decoded UTF-16 offset from the preceding page cursor; zero starts at the line beginning. Returns bounded text, actual range, EOF and next cursor.";
 }
 [SemanticProgram.InfinitivePhrase("to read a bounded document")]
+[SemanticProgram.InfinitivePhrase("to read a complete text document")]
 prototype ToReadFileDocument : FileSystemSkillAction, CodingContext
 {
 	function Execute(string directoryPath, string filePath, int startLine, int characterOffset) : Prototype

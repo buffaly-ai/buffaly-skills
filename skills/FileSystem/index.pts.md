@@ -29,3 +29,12 @@
 ## 2026-11-05 — Coding-context bounded document reader
 - Added ToReadFileDocument as a thin Prototype-returning FileSystemSkillAction/CodingContext facade. Start at 1/0; continue with its exact returned line/UTF-16 offset until EOF. Describes the 32768 rendered-character maximum and when narrow search/pages are preferable. Existing actions and inheritance are unchanged.
 - Validation: actual definition parsed/upserted into a disposable project with the typed authoring service, compiled, executed and registered through real ToolRegistrar/TooledAgent dispatch. Full 25000-character source reaches structured ContentParts intact; scoped 47/47 regressions pass. Not deployed to staging or Matt-local.
+
+## 2026-11-13 — Online critic efficiency design proposal v4
+- Affected source: content/projects/OpsAgent/Skills/FileSystem/index.pts
+- Proposed change and reason: Remove raw reader from routine CodingContext while preserving compatibility and size policy; expose known-file search and improve whole-document discovery.
+- Validation status: parent/Opus source review and unified-patch applicability only; compilation, unit/integration tests, runtime evaluation and deployment have NOT been performed. Preserve prior history and add actual batch validation evidence when implementation is authorized.
+
+## 2026-11-14 — Route routine inspection by purpose, preserve compatibility
+- Removed Raw's routine CodingContext membership and corrected its description: exact compatibility action/aliases/API mapping and 10,240-byte pre-read guard remain. Added known-file search membership, clarified range/document selection and retained StringRef payload chaining. No new size probe, cap increase or unconditional full-file dump. CodingContext and critique prompts now route literals/ranges to search/block readers and required complete documents through exact cursor-to-EOF reading.
+- Validation: actual normal-profile compile confirms Raw is not a CodingContext descendant and search/StringRef readers remain members. Actual wrappers accept exactly 10,240 UTF-8 bytes, reject 10,241 without payload, chain the retained StringRef reader through materialization, and keep a one-line read bounded. Four existing complete-document/Unicode/cursor/boxed-dispatch cases pass. Evidence: focused-ready.trx (22/22). This proves contracts and selection membership, not model-wide token savings. Installed guidance/staging proof remains pending.
