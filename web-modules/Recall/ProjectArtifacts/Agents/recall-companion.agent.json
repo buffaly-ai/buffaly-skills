@@ -1,6 +1,9 @@
 {
   "AgentName": "recall-companion",
   "DisplayName": "Context Recall",
+  "Provider": "openai",
+  "DefaultModelName": "gpt-6-luna",
+  "DefaultReasoningLevel": "high",
   "Appearance": {
     "LabelSource": "AgentDisplayName",
     "Emphasis": "Supporting",
