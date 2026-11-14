@@ -1,6 +1,12 @@
 {
   "AgentName": "recall-companion",
   "DisplayName": "Context Recall",
+  "Appearance": {
+    "LabelSource": "AgentDisplayName",
+    "Emphasis": "Supporting",
+    "Icon": "compass",
+    "TextColor": { "Light": "#0F766E", "Dark": "#5EEAD4" }
+  },
   "PromptFile": "Skills/Recall/Companion.prompt.md",
   "ProjectFilePath": "Skills/Recall/CompanionProject.pts",
   "EnableImmediateProtoScriptCommands": false,
