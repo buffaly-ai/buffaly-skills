@@ -263,19 +263,20 @@ prototype ToSearchTextInFile : FileSystemSkillAction, CodingContext
 [SemanticProgram.InfinitivePhrase("to search text with ripgrep in a directory")]
 [SemanticProgram.InfinitivePhrase("to search files in a directory with rg")]
 [SemanticProgram.InfinitivePhrase("to find text using ripgrep in a folder")]
-prototype ToSearchTextInDirectoryWithRipgrep : FileSystemSkillAction, CodingContext
+prototype ToSearchTextInDirectoryWithRipgrep : FileSystemSkillAction
 {
-	Description = @"directoryPath - root folder to search.
-text - literal text to match.
-Uses rg (ripgrep) for fast recursive literal search and returns formatted file/line results. Requires ripgrep to be installed and available on PATH. Returns 'Error: ...' for missing inputs, missing directory, or missing rg.
-If RG is missing, offer to install it for the user.";
-
 	function Execute(string directoryPath, string text) : string
 	{
 		string normalizedDirectoryPath = ToNormalizeDirectoryPath(directoryPath);
 		return RipGrepTools.SearchText(normalizedDirectoryPath, text, false);
 	}
+	Description = @"Legacy directory search sample: directoryPath - root folder; text - literal text. Returns the existing grouped output with at most three matching lines per file and formatter caps; it is not complete search evidence. Use ToSearchTextInDirectoryPage for filename scope and recoverable complete pages. Requires rg on PATH; missing rg is an error, offer installation.";
 }
+
+
+
+
+
 
 [SemanticProgram.InfinitivePhrase("to replace a text file")]
 [SemanticProgram.InfinitivePhrase("to replace an entire file with text")]
@@ -392,3 +393,15 @@ prototype ToReadFileDocument : FileSystemSkillAction, CodingContext
 	}
 	Description = @"Read a complete authoritative text document in one bounded result (maximum 32768 rendered characters). directoryPath is optional for absolute filePath. Start with startLine=1, characterOffset=0; continue with the exact returned cursor until EOF. Preserves source whitespace, newlines and Unicode; no silent truncation. Use narrow search/pages when full document evidence is unnecessary.";
 }
+[SemanticProgram.InfinitivePhrase("to search directory text with recoverable pages")]
+prototype ToSearchTextInDirectoryPage : FileSystemSkillAction, CodingContext
+{
+	function Execute(string directoryPath, string text, string fileGlob, int characterOffset, string expectedHash) : Prototype
+	{
+		string normalizedDirectoryPath = ToNormalizeDirectoryPath(directoryPath);
+		return RipGrepTools.SearchDirectoryPage(normalizedDirectoryPath, text, fileGlob, characterOffset, expectedHash);
+	}
+	Description = @"Preferred directory literal search. directoryPath - root folder. text - one literal line, case-insensitive. fileGlob - one positive filename glob such as *.js or *.{cs,pts}; empty includes all eligible types, normal ignores/exclusions remain. All five parameters are required. Initially supply fileGlob empty when unknown, characterOffset=0 and expectedHash empty. For another page repeat identical root/text/glob with returned NextCharacterOffset and SearchHash. Returns at most 8000 body characters plus header; raw file:line:text may split a line, concatenate bodies not headers. ResultsComplete means all eligible matching output delivered, not all files searched: hidden, binary, ignored, excluded directories and files over 1M are excluded. Changed output requires restart; timeout/scan limit requires narrower scope. Missing rg is an error; offer installation.";
+}
+
+
