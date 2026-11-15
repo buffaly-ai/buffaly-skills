@@ -3,5 +3,47 @@
 ## 2026-10-07 — share lead automation through representative composition
 Removed direct LeadAutomation.Admin.pts include because Administrator.pts already includes SalesRepresentative.pts, which now owns this read-only lead automation inclusion. Avoid duplicate inclusion while retaining administrator tools. Actual administrator and representative runtime compilation/registration resolve latest action. Actual representative two-turn model regression selects fresh latest after insertion; no deployed shared runtime changes.
 
-## 2026-11-15 — Package reviewed native user-signing tools
-Added UserDocumentSigning.Admin.pts after AgreementTemplates, preserving all existing composition. Copied reviewed tool bytes/history from FeedingFrenzy commit cebb735ecfa3b62cf76b1c410cc2cc6e28de4ba9. Typed external lazy generator compiled actual package Administrator graph with zero diagnostics and regenerated sidecar; no business tools executed or installation performed.
+## 2026-10-14 — Proposed native outbound control v2; not implemented# Administrator.pts.md history
+
+## 2026-10-07 â€” share lead automation through representative composition
+Removed direct LeadAutomation.Admin.pts include because Administrator.pts already includes SalesRepresentative.pts, which now owns this read-only lead automation inclusion. Avoid duplicate inclusion while retaining administrator tools. Actual administrator and representative runtime compilation/registration resolve latest action. Actual representative two-turn model regression selects fresh latest after insertion; no deployed shared runtime changes.
+
+
+## 2026-10-14 â€” Proposed native outbound control v2; not implemented
+
+U1â€“U4/C1â€“C4. Reuses FF native media/provider handlers; exposes four authenticated Agents operations and Buffaly actions. Immutable per-call script/model/voice, trusted steering, provider receipts distinct from heard audio, bounded duration and barge-in cancel/clear/marks/truncate. Controlled calls do not use navigation, transfer, caller CRM lookup, local WAV or automatic CRM/postprocessing. Calls Data uses loaded complete-document saves through existing writers; no schema/SQL hints/cache/transaction change. Ordinary paths retained apart from serialized sends and proper fragmented input handling. This is a proposed artifact patch, not owning source or live acceptance. Scoped compilation/patch checks are reported separately; real DB save/reload, authorization, realtime/telephone and recording callback acceptance remain unrun. Before implementation read approved baseline, revalidate drift and reconcile actual commits and checks.
+
+Validation scope: artifact-only real-reference compilation and non-applying patch checks. Record=true uses existing Twilio dual recording/callback; controlled callback bypasses migration and automatic analysis. Record=false creates neither Twilio recording nor local WAV. Monitor returns generated transcript, not exact heard-audio text.
+
+
+## 2026-10-14 — Implemented v2.1 native outbound voice and local validation
+
+Implemented the approved native-engine control contract in Buffaly/Projects/FeedingFrenzyAgent/Skills/FeedingFrenzyJsonWs/Administrator.pts. The source remains in FeedingFrenzy, not Buffaly core. Start/monitor/steer/end use the existing Agents owner and native provider/media handlers; script-only calls preserve the full task brief, explicit zero tools, labelled monitor turns, bounded effects and uncertain-result semantics. Internal AsyncLocal fixture scope is available only to the friend test assembly, never selected by an HTTP flag or configuration; real requests retain existing principal and repository/carrier owners. Fixture saves clone the complete serialized CallsRow so save/reload does not rely on shared references. Validation caught and corrected failed-stream readiness/audio, and controlled sends now throw on a closed provider socket without changing ordinary send behavior. Trusted task amendments retain unchanged limits.
+
+Validation: real business Release build 0 errors/10 existing warnings; isolated full Admin Release build 0 errors/48 warnings; 41 deterministic native conversation checks passed including pizza confirmation, interrupt/noninterrupt steer, acknowledgement timeout, late audio, capability binding, principal restrictions, terminal repeat, ordinary-call exclusion, whole-document fixture save/reload and ordinary incoming track attribution. Scoped actual ProtoScript parse/compile: 8 files, 0 errors. Full Administrator parse succeeds but compile has 9 unrelated AgreementTemplates File/Path errors. Generated Agents JSON/JS came from the compiled type and canonical generator, not hand-authored routes. These tests use synthetic carrier/provider messages and fixture storage: no real phone/model/audio-understanding, SQL save/reload, HTTP principal integration or recording callback verification. No deployment, schema/SQL hints, protected restart or real order occurred.
+
+Final selected-index validation: exported the staged files without a Git worktree and preserved HEAD simulator prompt, no-tools, audio selector, stream binding and transfer guarantees; concurrent simulator revisions are explicitly not part of this change. Exact selected-index Business build: 0 errors/18 warnings. Exact index Admin build using built isolated dependencies: 0 errors/39 warnings; initial full dependency pass timed out after compiling dependencies, not a successful full-build claim. Exact index executable: 41 checks passed. Final generated JSON voice contracts match this index DLL. Prior worktree build results above are supplementary, not substituted for index evidence.
+
+## 2026-10-25 - Approved v3 implementation and validation
+
+Remove direct LeadNotes.Admin include because shared SalesRepresentative now includes its only operation, GetAppointments. No administrative CRUD added to representative surface; both source roles compile.
+
+Validation actually performed: full FF Admin Release build passes; 32 focused MSTest cases zero skips (includes real local reader); nine temporary engine paging cases; 14 full-row/error semantic cases; source role compilation and real local modern/legacy HTTP evidence/call-page reads pass. Common40 renderer/transport/dictation tests pass. SDK9.0.300; runtime references recorded in docs/ff-experience-v3.md. Broad test run accidentally selected by empty MSBuild filter failed/hung in unrelated integration/email cases; not a passing suite. Installed candidate, configured Google and production/native/model acceptance remain pending, not claimed. No production mutation in this batch.
+
+## 2026-10-25 — Final role inventory reconciliation
+
+Full59-case module suite exposed an unintended additional representative action: moving LeadNotes.Admin.pts also exposed LeadNotes_GetFollowUpByLeadID. Restore that include to Administrator; CallPages already owns the shared appointment action. The representative inventory is exactly36 (prior34 plus call paging and appointment), Administrator retains the existing follow-up action. No endpoint/auth behavior is widened and no test is excluded. Validation: full59module tests pass0fail0skip; both source role graphs and installed final-module validation are recorded separately in release evidence.
+
+## 2026-11-02 - Include the automation writer actions
+Trial patch for the external-driver design (2026-11-02). Authored in the scratch clone only; not applied to C:\dev\FeedingFrenzy.
+- Added `include "Automations.Admin.pts";` so administrators get the due-list, attach and writing-workflow actions. Sales representatives do not, because the server requires `HasSuperAdminAccess`.
+- Validation: parsed with ProtoScript.Parsers. The role-composition module suite was not run.
+
+## 2026-11-02 - Applied to main
+Applied the reviewed trial patch to C:\dev\FeedingFrenzy main, approved by Matt on 2026-11-02 for external-driver design v1. No code change from the trial entry above. Because IFAccountingAdministrator.pts includes Administrator.pts, the embedded administrator profile of the if-local installation gains the automation writer actions once the project is installed. At commit time this ProtoScript had parse-only evidence from the trial; live load is recorded in the design ledger.
+
+## 2026-11-15 — Register user-owned document-signing tools
+
+Added `include "UserDocumentSigning.Admin.pts";` adjacent to AgreementTemplates.Admin.pts in this owning administrator composition. This exposes the user-owned draft Markdown/local-file creation, read-only list/get and separate guarded prepare/send actions through the existing administrator role. Representative composition is unchanged. No tool execution, active-project installation, metadata change or deployment was performed.
+
+Validation: compiled an artifact-only candidate administrator composition before persisting the include, then compiled the persisted owning source composition. Both authoritative native ProtoScriptValidationService.CompileProject runs passed: 35 files, zero errors/runtime errors and no diagnostics. Existing compiled FeedingFrenzy.Agent.Tools dependency was loaded from C:/dev/FeedingFrenzy/artifacts/feeding-frenzy-agent-build-30c58d0347a34bb2824aed7fdfd24c0e/bin/FeedingFrenzy.Agent.Tools/release/FeedingFrenzy.Agent.Tools.dll; this validates source binding against that existing DLL, not a newly rebuilt tool package or runtime activation. Earlier candidate attempt without this DLL produced 17 dependency-resolution diagnostics; resolving it yielded the passing results, not exclusion of affected files. `git diff --check` passed for the include change. Parent retains integrated commit ownership; no shared staging/commit performed.

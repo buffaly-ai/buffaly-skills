@@ -1,0 +1,56 @@
+[SemanticProgram.InfinitivePhrase("to start a script-only outgoing voice conversation")]
+prototype ToStartVoiceConversation : FeedingFrenzyJsonWsAdminGuardedWriteAction
+{
+	Description = @"Places one billable call only with explicit operator authority. Script is a conversation brief: goal, known facts, authorized choices, spending/payment limits and required remote-party confirmation; not verbatim playback. OpeningInstructions are subordinate to that brief. Freeze the brief. No model tools or CRM effects; an expressly authorized verbal order is allowed. Save CallID and deliberately monitor through confirmation and carrier termination within the requested duration. Never automatically redial an uncertain result.";
+	function Execute(int AgentID, string ToPhone, string FromPhone, string Script, string OpeningInstructions, int MaxDurationSeconds, bool Record) : string
+	{
+		JsonObject args = new JsonObject();
+		args["AgentID"] = AgentID;
+		args["ToPhone"] = ToPhone;
+		args["FromPhone"] = FromPhone;
+		args["Script"] = Script;
+		args["OpeningInstructions"] = OpeningInstructions;
+		args["MaxDurationSeconds"] = MaxDurationSeconds;
+		args["Record"] = Record;
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("agents/start-voice-conversation", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to monitor an outgoing voice conversation")]
+prototype ToMonitorVoiceConversation : FeedingFrenzyJsonWsAdminAction
+{
+	Description = @"Read live carrier status, native readiness, transcript tail and speaker-labelled TranscriptTurns. RemoteParty is the person called; VoiceAgent text is generated, not heard proof. Do not treat carrier Completed, the agent's recap or a steer receipt as task success. Compare RemoteParty confirmation to the latest authorized brief and report Confirmed, Declined or Unconfirmed in prose with details and evidence. Truncated/missing evidence cannot establish confirmation. If the task needs a new consequential choice, ask the operator; steer only within existing authority or an explicit amendment. Poll deliberately while the current turn remains active, at a bounded cadence, until terminal or the requested deadline; no detached background watcher after final response. Never redial to check uncertain completion.";
+	function Execute(int CallID) : string
+	{
+		JsonObject args = new JsonObject();
+		args["CallID"] = CallID;
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("agents/monitor-voice-conversation", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to steer an outgoing voice conversation")]
+prototype ToSteerVoiceConversation : FeedingFrenzyJsonWsAdminGuardedWriteAction
+{
+	Description = @"Trusted operator guidance may amend authorized task details; preserve all unchanged original limits and the no-tools boundary. Interrupt stops speech and requests continuation when safe; false applies at next normal turn. ProviderAccepted is not spoken/heard proof. Never automatically retry uncertain steering.";
+	function Execute(int CallID, string Instruction, bool Interrupt) : string
+	{
+		JsonObject args = new JsonObject();
+		args["CallID"] = CallID;
+		args["Instruction"] = Instruction;
+		args["Interrupt"] = Interrupt;
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("agents/steer-voice-conversation", args);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to end an outgoing voice conversation")]
+prototype ToEndVoiceConversation : FeedingFrenzyJsonWsAdminGuardedWriteAction
+{
+	Description = @"Stop output and request carrier termination. Repeated terminal end is safe. Monitor until IsTerminal, not just until a hangup request receipt.";
+	function Execute(int CallID) : string
+	{
+		JsonObject args = new JsonObject();
+		args["CallID"] = CallID;
+		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("agents/end-voice-conversation", args);
+	}
+}
+

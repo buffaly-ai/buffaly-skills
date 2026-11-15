@@ -25,6 +25,7 @@ prototype FeedingFrenzyJsonWsService : Service
 	String BusinessApiPrefix = "api/feedingfrenzy.admin.business";
 	String CallCenterApiPrefix = "api/feedingfrenzy.callcenter";
 	String UiApiPrefix = "api/feedingfrenzy.admin.ui";
+	String AutomationsApiPrefix = "api/feedingfrenzy.automations";
 	String TokenKey = new String();
 	Bool TokenIsAuthorizationToken = false;
 	String AutomationUserEmail = new String();
@@ -79,6 +80,17 @@ prototype FeedingFrenzyJsonWsService : Service
 		return this.TokenIsAuthorizationToken
 			? JsonWsHelper.CallJsonRoute(this.BaseUrl, this.UiApiPrefix, routePath, this.TokenKey, normalizedArgs)
 			: JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.UiApiPrefix, routePath, this.TokenKey, normalizedArgs);
+	}
+
+	// FeedingFrenzy.Automations JsonWs classes (for example AutomationReview) are served under their own assembly prefix.
+	function CallAutomationsRoute(string routePath, JsonObject args) : string
+	{
+		if (StringUtil.IsEmpty(this.BaseUrl) || StringUtil.IsEmpty(this.TokenKey))
+			return "Error: Current Feeding Frenzy session binding is not configured.";
+		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
+		return this.TokenIsAuthorizationToken
+			? JsonWsHelper.CallJsonRoute(this.BaseUrl, this.AutomationsApiPrefix, routePath, this.TokenKey, normalizedArgs)
+			: JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.AutomationsApiPrefix, routePath, this.TokenKey, normalizedArgs);
 	}
 }
 
