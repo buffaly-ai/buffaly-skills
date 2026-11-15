@@ -7,12 +7,15 @@ Feeding Frenzy JsonWs is an OpsAgent ProtoScript skill that exposes selected Fee
 - ProtoScript service binding prototypes for Feeding Frenzy JSON WS endpoints.
 - Remote and local service bindings that resolve authentication through Buffaly UserSecrets keys.
 - Lead, lead automation, lead status, source, tag, and sales representative action wrappers.
+- User-owned signing draft, inspection, preparation and explicit email-send actions through the packaged typed signing client.
 
 ## Security and setup
 
 This package does not include API keys or credentials. Remote calls use the logical UserSecrets key `FeedingFrenzy.ApiKey`; local calls use `FeedingFrenzy.Local.ApiKey`. The target Buffaly instance must already have the appropriate key configured before actions can call protected routes.
 
-Installing this skill only copies ProtoScript files into the local Skills folder. It does not execute remote service calls automatically.
+The complete Administrator graph requires the existing FeedingFrenzyAgent web module and its FeedingFrenzy.Agent.Tools assembly on the target installation. The standalone package includes only FeedingFrenzy.UserSigning.Client.dll; it deliberately does not bundle the web-module assembly or host SDK DLLs. Verify that dependency before loading Administrator actions, including user signing. This package does not establish a self-contained Administrator installation.
+
+Installing this skill copies its ProtoScript files and the unique signing-client DLL into the local Skills folder. It does not execute remote service calls automatically. Creating a signing draft never prepares or sends it; preparation and sending are separate explicit actions. Local-file creation uploads the exact Markdown bytes and then creates the draft, without automatic retry or ambiguous-upload cleanup.
 
 ## Intended use
 
