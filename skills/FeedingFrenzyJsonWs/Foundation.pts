@@ -1,3 +1,7 @@
+reference FeedingFrenzy.Agent.Tools FeedingFrenzy.Agent.Tools;
+import FeedingFrenzy.Agent.Tools FeedingFrenzy.Agent.Tools.FeedingFrenzyJsonWsClient FeedingFrenzyJsonWsClient;
+import FeedingFrenzy.Agent.Tools FeedingFrenzy.Agent.Tools.FeedingFrenzyJsonWsBinding FeedingFrenzyJsonWsBinding;
+
 prototype FeedingFrenzyJsonWsSkillAction : OpsAction
 {
 	Description = @"Base action type for read-oriented Feeding Frenzy JSON WS service tools.";
@@ -30,67 +34,40 @@ prototype FeedingFrenzyJsonWsService : Service
 	Bool TokenIsAuthorizationToken = false;
 	String AutomationUserEmail = new String();
 
+	function ClientBinding() : FeedingFrenzyJsonWsBinding
+	{
+		return FeedingFrenzyJsonWsClient.Bind(this.BaseUrl, this.TokenKey, this.TokenIsAuthorizationToken, this.BusinessApiPrefix, this.CallCenterApiPrefix, this.UiApiPrefix, this.AutomationsApiPrefix);
+	}
+
 	function Initialize() : string
 	{
-		if (StringUtil.IsEmpty(this.BaseUrl))
-			return "Error: FeedingFrenzyJsonWsService.BaseUrl must be configured.";
-		if (StringUtil.IsEmpty(this.TokenKey))
-			return "Error: FeedingFrenzyJsonWsService authorization must be configured.";
-		return "Feeding Frenzy service binding initialized.";
+		return FeedingFrenzyJsonWsClient.Initialize(this.ClientBinding());
 	}
 
 	function ConfigureAuthorization(string BaseUrl, string AuthorizationToken) : string
 	{
-		if (StringUtil.IsEmpty(BaseUrl))
-			return "Error: BaseUrl is required.";
-		if (StringUtil.IsEmpty(AuthorizationToken))
-			return "Error: AuthorizationToken is required.";
-
-		this.BaseUrl = BaseUrl;
-		this.TokenKey = AuthorizationToken;
-		this.TokenIsAuthorizationToken = true;
-		return "Feeding Frenzy authorization configured for this session.";
+		return FeedingFrenzyJsonWsClient.ConfigureAuthorization(this, BaseUrl, AuthorizationToken);
 	}
 
 	function CallBusinessRoute(string routePath, JsonObject args) : string
 	{
-		if (StringUtil.IsEmpty(this.BaseUrl) || StringUtil.IsEmpty(this.TokenKey))
-			return "Error: Current Feeding Frenzy session binding is not configured.";
-		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
-		return this.TokenIsAuthorizationToken
-			? JsonWsHelper.CallJsonRoute(this.BaseUrl, this.BusinessApiPrefix, routePath, this.TokenKey, normalizedArgs)
-			: JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.BusinessApiPrefix, routePath, this.TokenKey, normalizedArgs);
+		return FeedingFrenzyJsonWsClient.CallRoute(this.ClientBinding(), "BusinessApiPrefix", routePath, args);
 	}
 
 	function CallCallCenterRoute(string routePath, JsonObject args) : string
 	{
-		if (StringUtil.IsEmpty(this.BaseUrl) || StringUtil.IsEmpty(this.TokenKey))
-			return "Error: Current Feeding Frenzy session binding is not configured.";
-		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
-		return this.TokenIsAuthorizationToken
-			? JsonWsHelper.CallJsonRoute(this.BaseUrl, this.CallCenterApiPrefix, routePath, this.TokenKey, normalizedArgs)
-			: JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.CallCenterApiPrefix, routePath, this.TokenKey, normalizedArgs);
+		return FeedingFrenzyJsonWsClient.CallRoute(this.ClientBinding(), "CallCenterApiPrefix", routePath, args);
 	}
 
 	function CallUiRoute(string routePath, JsonObject args) : string
 	{
-		if (StringUtil.IsEmpty(this.BaseUrl) || StringUtil.IsEmpty(this.TokenKey))
-			return "Error: Current Feeding Frenzy session binding is not configured.";
-		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
-		return this.TokenIsAuthorizationToken
-			? JsonWsHelper.CallJsonRoute(this.BaseUrl, this.UiApiPrefix, routePath, this.TokenKey, normalizedArgs)
-			: JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.UiApiPrefix, routePath, this.TokenKey, normalizedArgs);
+		return FeedingFrenzyJsonWsClient.CallRoute(this.ClientBinding(), "UiApiPrefix", routePath, args);
 	}
 
 	// FeedingFrenzy.Automations JsonWs classes (for example AutomationReview) are served under their own assembly prefix.
 	function CallAutomationsRoute(string routePath, JsonObject args) : string
 	{
-		if (StringUtil.IsEmpty(this.BaseUrl) || StringUtil.IsEmpty(this.TokenKey))
-			return "Error: Current Feeding Frenzy session binding is not configured.";
-		JsonObject normalizedArgs = args == null ? new JsonObject() : args;
-		return this.TokenIsAuthorizationToken
-			? JsonWsHelper.CallJsonRoute(this.BaseUrl, this.AutomationsApiPrefix, routePath, this.TokenKey, normalizedArgs)
-			: JsonWsHelper.CallJsonRouteSecure(this.BaseUrl, this.AutomationsApiPrefix, routePath, this.TokenKey, normalizedArgs);
+		return FeedingFrenzyJsonWsClient.CallRoute(this.ClientBinding(), "AutomationsApiPrefix", routePath, args);
 	}
 }
 
