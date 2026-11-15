@@ -1,0 +1,87 @@
+[SemanticProgram.InfinitivePhrase("to create a feeding frenzy user signing draft from markdown")]
+prototype ToCreateFeedingFrenzyUserSigningDraftFromMarkdown : FeedingFrenzyJsonWsAdminGuardedWriteAction
+{
+    Description = @"Creates a user-owned signing Draft only; never creates a lead, prepares a token, or sends email. ReminderIntervalDays: 0 disables reminders (JSON null), positive values set the interval, negative values are rejected. ProviderSignerUserID is the company countersigner, not UserID. Local-file upload preserves exact bytes through the existing JSON byte-array upload route followed by uploaded-reference draft creation; no automatic cleanup on ambiguous failure.";
+    function Execute(int UserID, string DocumentName, string MarkdownContent, string CustomerLegalName, string RecipientName, string RecipientEmail, string ExpirationDate, int ReminderIntervalDays, int ProviderSignerUserID, string SourceFileName, string AgreementTemplateKey) : string
+    {
+        if (ReminderIntervalDays < 0) return "Error: ReminderIntervalDays must be zero (disabled) or a positive integer.";
+        if (StringUtil.IsEmpty(FeedingFrenzyJsonWsService#Current.AutomationUserEmail)) return "Error: AutomationUserEmail is required.";
+        JsonObject args = new JsonObject(); args["AutomationUserEmail"]=FeedingFrenzyJsonWsService#Current.AutomationUserEmail; args["UserID"]=UserID; args["DocumentName"]=DocumentName; args["CustomerLegalName"]=CustomerLegalName; args["RecipientName"]=RecipientName; args["RecipientEmail"]=RecipientEmail; args["ExpirationDate"]=ExpirationDate; if (ReminderIntervalDays == 0) args["ReminderIntervalDays"] = null; else args["ReminderIntervalDays"] = ReminderIntervalDays; args["ProviderSignerUserID"]=ProviderSignerUserID; args["SourceFileName"]=SourceFileName; args["AgreementTemplateKey"]=AgreementTemplateKey;
+        args["MarkdownContent"]=MarkdownContent;
+        return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("user-document-signing-requests/create-buffaly-signing-draft-as-automation", args);
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to create a feeding frenzy user signing draft from uploaded markdown file")]
+prototype ToCreateFeedingFrenzyUserSigningDraftFromUploadedMarkdownFile : FeedingFrenzyJsonWsAdminGuardedWriteAction
+{
+    Description = @"Creates a user-owned signing Draft only; never creates a lead, prepares a token, or sends email. ReminderIntervalDays: 0 disables reminders (JSON null), positive values set the interval, negative values are rejected. ProviderSignerUserID is the company countersigner, not UserID. Local-file upload preserves exact bytes through the existing JSON byte-array upload route followed by uploaded-reference draft creation; no automatic cleanup on ambiguous failure.";
+    function Execute(int UserID, string DocumentName, string LocalMarkdownFilePath, string CustomerLegalName, string RecipientName, string RecipientEmail, string ExpirationDate, int ReminderIntervalDays, int ProviderSignerUserID, string SourceFileName, string AgreementTemplateKey) : string
+    {
+        if (ReminderIntervalDays < 0) return "Error: ReminderIntervalDays must be zero (disabled) or a positive integer.";
+        if (StringUtil.IsEmpty(FeedingFrenzyJsonWsService#Current.AutomationUserEmail)) return "Error: AutomationUserEmail is required.";
+        if (!File.Exists(LocalMarkdownFilePath) || !StringUtil.EqualNoCase(Path.GetExtension(LocalMarkdownFilePath), ".md")) return "Error: An existing local .md file is required.";
+        string fileName = StringUtil.IsEmpty(SourceFileName) ? Path.GetFileName(LocalMarkdownFilePath) : Path.GetFileName(SourceFileName);
+        JsonObject upload = new JsonObject(); upload["AutomationUserEmail"]=FeedingFrenzyJsonWsService#Current.AutomationUserEmail; upload["UserID"]=UserID; upload["FileName"]=fileName; upload["Data"]=File.ReadAllBytes(LocalMarkdownFilePath);
+        string uploaded = FeedingFrenzyJsonWsService#Current.CallBusinessRoute("user-document-signing-requests/upload-agreement-draft-source-markdown-as-automation", upload);
+        if (StringUtil.IsEmpty(uploaded)) return "Error: No uploaded file reference returned.";
+        JsonObject args = new JsonObject(); args["AutomationUserEmail"]=FeedingFrenzyJsonWsService#Current.AutomationUserEmail; args["UserID"]=UserID; args["DocumentName"]=DocumentName; args["CustomerLegalName"]=CustomerLegalName; args["RecipientName"]=RecipientName; args["RecipientEmail"]=RecipientEmail; args["ExpirationDate"]=ExpirationDate; if (ReminderIntervalDays == 0) args["ReminderIntervalDays"] = null; else args["ReminderIntervalDays"] = ReminderIntervalDays; args["ProviderSignerUserID"]=ProviderSignerUserID; args["SourceFileName"]=fileName; args["AgreementTemplateKey"]=AgreementTemplateKey;
+        args["UploadedMarkdownFileUrl"]=uploaded;
+        return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("user-document-signing-requests/create-buffaly-signing-draft-from-uploaded-markdown-as-automation", args);
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to create a feeding frenzy user signing draft from local markdown file")]
+prototype ToCreateFeedingFrenzyUserSigningDraftFromLocalMarkdownFile : FeedingFrenzyJsonWsAdminGuardedWriteAction
+{
+    Description = @"Creates a user-owned signing Draft only; never creates a lead, prepares a token, or sends email. ReminderIntervalDays: 0 disables reminders (JSON null), positive values set the interval, negative values are rejected. ProviderSignerUserID is the company countersigner, not UserID. Local-file upload preserves exact bytes through the existing JSON byte-array upload route followed by uploaded-reference draft creation; no automatic cleanup on ambiguous failure.";
+    function Execute(int UserID, string DocumentName, string LocalMarkdownFilePath, string CustomerLegalName, string RecipientName, string RecipientEmail, string ExpirationDate, int ReminderIntervalDays, int ProviderSignerUserID, string SourceFileName, string AgreementTemplateKey) : string
+    {
+        if (ReminderIntervalDays < 0) return "Error: ReminderIntervalDays must be zero (disabled) or a positive integer.";
+        if (StringUtil.IsEmpty(FeedingFrenzyJsonWsService#Current.AutomationUserEmail)) return "Error: AutomationUserEmail is required.";
+        return ToCreateFeedingFrenzyUserSigningDraftFromUploadedMarkdownFile.Execute(UserID, DocumentName, LocalMarkdownFilePath, CustomerLegalName, RecipientName, RecipientEmail, ExpirationDate, ReminderIntervalDays, ProviderSignerUserID, SourceFileName, AgreementTemplateKey);
+    }
+}
+
+[SemanticProgram.InfinitivePhrase("to list feeding frenzy user signing requests")]
+prototype ToListFeedingFrenzyUserSigningRequests : FeedingFrenzyJsonWsSkillAction
+{
+ Description = @"Read-only user signing inventory through the authorized automation actor; does not prepare tokens or send email.";
+ function Execute(int UserID) : string
+ {
+  JsonObject args = new JsonObject(); args["AutomationUserEmail"]=FeedingFrenzyJsonWsService#Current.AutomationUserEmail; args["UserID"]=UserID;
+  return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("user-document-signing-requests/list-signing-requests-as-automation", args);
+ }
+}
+
+[SemanticProgram.InfinitivePhrase("to get a feeding frenzy user signing request")]
+prototype ToGetFeedingFrenzyUserSigningRequest : FeedingFrenzyJsonWsSkillAction
+{
+ Description = @"Read-only signing request inspection; Markdown is included only when IncludeMarkdown is true.";
+ function Execute(int UserDocumentSigningRequestID, bool IncludeMarkdown) : string
+ {
+  JsonObject args = new JsonObject(); args["AutomationUserEmail"]=FeedingFrenzyJsonWsService#Current.AutomationUserEmail; args["UserDocumentSigningRequestID"]=UserDocumentSigningRequestID; args["IncludeMarkdown"]=IncludeMarkdown;
+  return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("user-document-signing-requests/get-signing-request-as-automation", args);
+ }
+}
+
+[SemanticProgram.InfinitivePhrase("to prepare a feeding frenzy user signing request to send")]
+prototype ToPrepareFeedingFrenzyUserSigningRequestToSend : FeedingFrenzyJsonWsAdminGuardedWriteAction
+{
+ function Execute(int UserDocumentSigningRequestID, string Subject, string Message) : string
+ {
+  JsonObject args = new JsonObject(); args["AutomationUserEmail"]=FeedingFrenzyJsonWsService#Current.AutomationUserEmail; args["UserDocumentSigningRequestID"]=UserDocumentSigningRequestID; args["Subject"]=Subject; args["Message"]=Message;
+  return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("user-document-signing-requests/prepare-to-send-as-automation", args);
+ }
+}
+
+[SemanticProgram.InfinitivePhrase("to send a prepared feeding frenzy user signing email")]
+prototype ToSendPreparedFeedingFrenzyUserSigningEmail : FeedingFrenzyJsonWsAdminGuardedWriteAction
+{
+ function Execute(int UserDocumentSigningRequestID, string SigningUrl) : string
+ {
+  JsonObject args = new JsonObject(); args["AutomationUserEmail"]=FeedingFrenzyJsonWsService#Current.AutomationUserEmail; args["UserDocumentSigningRequestID"]=UserDocumentSigningRequestID; args["SigningUrl"]=SigningUrl;
+  return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("user-document-signing-requests/send-prepared-signing-email-as-automation", args);
+ }
+}
+

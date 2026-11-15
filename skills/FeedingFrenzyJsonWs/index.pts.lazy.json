@@ -1,127 +1,381 @@
 {
   "Version": 1,
-  "ModulePath": "Skills/FeedingFrenzyJsonWs/index.pts",
+  "ModulePath": "skills/FeedingFrenzyJsonWs/index.pts",
   "Prototypes": {
-    "Calls_GetCall": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Calls_GetCallAsMarkdown": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Calls_GetCallByCallKey": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Calls_GetCallsByDateRange": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Calls_GetCallsByDateRangeAsMarkdown": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "FeedingFrenzyJsonWsGuardedWriteAction": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "FeedingFrenzyJsonWsService": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "FeedingFrenzyJsonWsService#Affinity": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "FeedingFrenzyJsonWsService#Current": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "FeedingFrenzyJsonWsService#Local": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "FeedingFrenzyJsonWsService#Medek": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "FeedingFrenzyJsonWsSkill": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "FeedingFrenzyJsonWsSkillAction": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadAddresses_GetLeadAddress": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadAddresses_GetLeadAddressesByLeadID": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadAutomation_GetLeadAndNotesAsMarkdown": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadAutomation_GetLeadsBySearch": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadAutomation_GetLeadsByTagName": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadContacts_GetLeadContact": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadContacts_GetLeadContactsByLeadID": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadNoteTypes_GetLeadNoteType": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadNoteTypes_GetLeadNoteTypeByLeadNoteTypeName": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadNoteTypes_GetLeadNoteTypes": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadNotes_GetAppointments": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadNotes_GetFollowUpByLeadID": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadNotes_GetLeadNote": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadNotes_GetLeadNotesByLeadID": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadStatuses_GetLeadStatus": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadStatuses_GetLeadStatusByStatusName": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadStatuses_GetLeadStatuses": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadSubStatuses_GetLeadSubStatus": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadSubStatuses_GetLeadSubStatusBySubStatusName": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadSubStatuses_GetLeadSubStatuses": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadSubStatuses_GetLeadSubStatusesByLeadStatusID": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadTags_InsertOrUpdateLeadTag": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadsAdmin_GetDetails": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadsAdmin_GetGrid": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadsAdmin_GetGridBySalesRepresentativeID": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadsAdmin_GetGridBySalesRepresentativeIDHtml": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadsAdmin_GetGridByStatusID": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadsAdmin_GetGridByStatusIDHtml": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadsAdmin_GetGridByStatusIDSalesRepresentativeIDHtml": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadsAdmin_GetGridByTagID": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadsAdmin_GetGridByTagIDHtml": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadsAdmin_GetGridByTagIDSalesRepresentativeIDHtml": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadsAdmin_GetGridByTagIDStatusIDSalesRepresentativeIDHtml": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadsAdmin_GetGridCount": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadsAdmin_GetMessagesByPhone": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "LeadsAdmin_GetUnassignedGridCount": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Leads_GetLead": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Leads_GetLeadsByCampaignID": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Leads_GetLeadsByEmail": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Leads_GetLeadsByImportKey": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Leads_GetLeadsByLeadStatusID": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Leads_GetLeadsByLeadSubStatusID": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Leads_GetLeadsByPhone": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Leads_GetLeadsBySalesRepresentativeID": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Leads_GetLeadsBySourceID": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Leads_GetPotentialDuplicates": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Leads_Leads_GetUnassigned_Sp_CountSp": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Leads_Leads_GetUnassigned_Sp_PagingSp": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "SalesRepresentativesAdmin_GetDetails": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "SalesRepresentativesAdmin_GetDropDown": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "SalesRepresentativesAdmin_GetEdit": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "SalesRepresentativesAdmin_GetGrid": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "SalesRepresentativesAdmin_GetGridBySalesRepresentativeTypeID": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "SalesRepresentativesAdmin_GetGridBySalesRepresentativeTypeIDCount": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "SalesRepresentativesAdmin_GetGridBySalesRepresentativeTypeIDHtml": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "SalesRepresentativesAdmin_GetGridCount": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "SalesRepresentativesAdmin_GetGridHtml": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "SalesRepresentativesAdmin_GetInsert": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "SalesRepresentativesAdmin_Initialize": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "SalesRepresentatives_CopySalesRepresentative": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "SalesRepresentatives_GetSalesRepresentative": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "SalesRepresentatives_GetSalesRepresentativeByUserID": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "SalesRepresentatives_GetSalesRepresentatives": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "SalesRepresentatives_GetSalesRepresentativesBySalesRepresentativeTypeID": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "SalesRepresentatives_InsertSalesRepresentative": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "SalesRepresentatives_MarkSalesRepresentativeAsEnabled": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "SalesRepresentatives_MarkSalesRepresentativeAsNotEnabled": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "SalesRepresentatives_RemoveSalesRepresentative": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "SalesRepresentatives_UpdateSalesRepresentative": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "SalesRepresentatives_UpdateSalesRepresentativeData": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Sources_GetSource": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Sources_GetSourceBySourceName": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Sources_GetSources": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Tags_GetTag": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Tags_GetTagByTagName": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Tags_GetTags": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Tags_GetTagsBySalesRepresentativeID": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "TaskStatuses_GetTaskStatus": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "TaskStatuses_GetTaskStatusByTaskStatusName": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "TaskStatuses_GetTaskStatuses": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Tasks_GetTask": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Tasks_GetTasks": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Tasks_GetTasksByLeadID": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Tasks_GetTasksByTaskStatusID": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Tasks_InsertTask": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Tasks_RemoveTask": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Tasks_UpdateTask": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Tasks_UpdateTaskData": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "ToCancelObservationCall": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "ToCreateFeedingFrenzySigningDraftFromMarkdown": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "ToGetActiveTranscribedCalls": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "ToGetCallTranscript": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "ToGetFeedingFrenzyAgreementTemplate": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "ToGetFeedingFrenzyFilePreSignedUrl": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "ToGetFeedingFrenzyLeadById": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "ToGetFeedingFrenzyLeadsByImportKey": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "ToGetFeedingFrenzySigningRequest": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "ToListFeedingFrenzyAgreementTemplates": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "ToListFeedingFrenzySigningRequestsForLead": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "ToSearchFeedingFrenzyLeadsByEmail": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "ToStartObservationCall": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "ToUpdateBuffalyObserverState": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "ToUpdateFeedingFrenzySigningDraftFromMarkdown": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "UserAutomation_ChatWithUserInfo": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "UserAutomation_GetUserSummary": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Users_GetUser": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "FeedingFrenzyJsonWs_Users_GetUserByEmail": "Skills/FeedingFrenzyJsonWs/index.pts",
-    "Users_GetUsersSp_PagingSp": "Skills/FeedingFrenzyJsonWs/index.pts"
+    "Calls_GetCall": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Calls_GetCallAsMarkdown": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Calls_GetCallByCallKey": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Calls_GetCallsByDateRange": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Calls_GetCallsByDateRangeAsMarkdown": "skills/FeedingFrenzyJsonWs/index.pts",
+    "FeedingFrenzyJsonWsAdminAction": "skills/FeedingFrenzyJsonWs/index.pts",
+    "FeedingFrenzyJsonWsAdminGuardedWriteAction": "skills/FeedingFrenzyJsonWs/index.pts",
+    "FeedingFrenzyJsonWsGuardedWriteAction": "skills/FeedingFrenzyJsonWs/index.pts",
+    "FeedingFrenzyJsonWsService": "skills/FeedingFrenzyJsonWs/index.pts",
+    "FeedingFrenzyJsonWsService#Affinity": "skills/FeedingFrenzyJsonWs/index.pts",
+    "FeedingFrenzyJsonWsService#Current": "skills/FeedingFrenzyJsonWs/index.pts",
+    "FeedingFrenzyJsonWsService#Local": "skills/FeedingFrenzyJsonWs/index.pts",
+    "FeedingFrenzyJsonWsService#Medek": "skills/FeedingFrenzyJsonWs/index.pts",
+    "FeedingFrenzyJsonWsSkill": "skills/FeedingFrenzyJsonWs/index.pts",
+    "FeedingFrenzyJsonWsSkillAction": "skills/FeedingFrenzyJsonWs/index.pts",
+    "FeedingFrenzyJsonWs_Users_GetUserByEmail": "skills/FeedingFrenzyJsonWs/index.pts",
+    "FeedingFrenzyWiki_GetHelpArticle": "skills/FeedingFrenzyJsonWs/index.pts",
+    "FeedingFrenzyWiki_SearchHelp": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadAddresses_GetLeadAddress": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadAddresses_GetLeadAddressesByLeadID": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadAutomation_GetLatestLeads": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadAutomation_GetLeadAndNotesAsMarkdown": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadAutomation_GetLeadsBySearch": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadAutomation_GetLeadsByTagName": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadContacts_GetLeadContact": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadContacts_GetLeadContactsByLeadID": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadNoteTypes_GetLeadNoteType": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadNoteTypes_GetLeadNoteTypeByLeadNoteTypeName": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadNoteTypes_GetLeadNoteTypes": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadNotes_GetAppointments": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadNotes_GetFollowUpByLeadID": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadNotes_GetLeadNote": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadNotes_GetLeadNotesByLeadID": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadStatuses_GetLeadStatus": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadStatuses_GetLeadStatusByStatusName": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadStatuses_GetLeadStatuses": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadSubStatuses_GetLeadSubStatus": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadSubStatuses_GetLeadSubStatusBySubStatusName": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadSubStatuses_GetLeadSubStatuses": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadSubStatuses_GetLeadSubStatusesByLeadStatusID": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadTags_InsertOrUpdateLeadTag": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadsAdmin_GetDetails": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadsAdmin_GetGrid": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadsAdmin_GetGridBySalesRepresentativeID": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadsAdmin_GetGridBySalesRepresentativeIDHtml": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadsAdmin_GetGridByStatusID": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadsAdmin_GetGridByStatusIDHtml": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadsAdmin_GetGridByStatusIDSalesRepresentativeIDHtml": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadsAdmin_GetGridByTagID": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadsAdmin_GetGridByTagIDHtml": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadsAdmin_GetGridByTagIDSalesRepresentativeIDHtml": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadsAdmin_GetGridByTagIDStatusIDSalesRepresentativeIDHtml": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadsAdmin_GetGridCount": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadsAdmin_GetMessagesByPhone": "skills/FeedingFrenzyJsonWs/index.pts",
+    "LeadsAdmin_GetUnassignedGridCount": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Leads_GetLead": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Leads_GetLeadsByCampaignID": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Leads_GetLeadsByEmail": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Leads_GetLeadsByImportKey": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Leads_GetLeadsByLeadStatusID": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Leads_GetLeadsByLeadSubStatusID": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Leads_GetLeadsByPhone": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Leads_GetLeadsBySalesRepresentativeID": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Leads_GetLeadsBySourceID": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Leads_GetPotentialDuplicates": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Leads_Leads_GetUnassigned_Sp_CountSp": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Leads_Leads_GetUnassigned_Sp_PagingSp": "skills/FeedingFrenzyJsonWs/index.pts",
+    "SalesRepresentativesAdmin_GetDetails": "skills/FeedingFrenzyJsonWs/index.pts",
+    "SalesRepresentativesAdmin_GetDropDown": "skills/FeedingFrenzyJsonWs/index.pts",
+    "SalesRepresentativesAdmin_GetEdit": "skills/FeedingFrenzyJsonWs/index.pts",
+    "SalesRepresentativesAdmin_GetGrid": "skills/FeedingFrenzyJsonWs/index.pts",
+    "SalesRepresentativesAdmin_GetGridBySalesRepresentativeTypeID": "skills/FeedingFrenzyJsonWs/index.pts",
+    "SalesRepresentativesAdmin_GetGridBySalesRepresentativeTypeIDCount": "skills/FeedingFrenzyJsonWs/index.pts",
+    "SalesRepresentativesAdmin_GetGridBySalesRepresentativeTypeIDHtml": "skills/FeedingFrenzyJsonWs/index.pts",
+    "SalesRepresentativesAdmin_GetGridCount": "skills/FeedingFrenzyJsonWs/index.pts",
+    "SalesRepresentativesAdmin_GetGridHtml": "skills/FeedingFrenzyJsonWs/index.pts",
+    "SalesRepresentativesAdmin_GetInsert": "skills/FeedingFrenzyJsonWs/index.pts",
+    "SalesRepresentativesAdmin_Initialize": "skills/FeedingFrenzyJsonWs/index.pts",
+    "SalesRepresentatives_CopySalesRepresentative": "skills/FeedingFrenzyJsonWs/index.pts",
+    "SalesRepresentatives_GetSalesRepresentative": "skills/FeedingFrenzyJsonWs/index.pts",
+    "SalesRepresentatives_GetSalesRepresentativeByUserID": "skills/FeedingFrenzyJsonWs/index.pts",
+    "SalesRepresentatives_GetSalesRepresentatives": "skills/FeedingFrenzyJsonWs/index.pts",
+    "SalesRepresentatives_GetSalesRepresentativesBySalesRepresentativeTypeID": "skills/FeedingFrenzyJsonWs/index.pts",
+    "SalesRepresentatives_InsertSalesRepresentative": "skills/FeedingFrenzyJsonWs/index.pts",
+    "SalesRepresentatives_MarkSalesRepresentativeAsEnabled": "skills/FeedingFrenzyJsonWs/index.pts",
+    "SalesRepresentatives_MarkSalesRepresentativeAsNotEnabled": "skills/FeedingFrenzyJsonWs/index.pts",
+    "SalesRepresentatives_RemoveSalesRepresentative": "skills/FeedingFrenzyJsonWs/index.pts",
+    "SalesRepresentatives_UpdateSalesRepresentative": "skills/FeedingFrenzyJsonWs/index.pts",
+    "SalesRepresentatives_UpdateSalesRepresentativeData": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Sources_GetSource": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Sources_GetSourceBySourceName": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Sources_GetSources": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Tags_GetTag": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Tags_GetTagByTagName": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Tags_GetTags": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Tags_GetTagsBySalesRepresentativeID": "skills/FeedingFrenzyJsonWs/index.pts",
+    "TaskStatuses_GetTaskStatus": "skills/FeedingFrenzyJsonWs/index.pts",
+    "TaskStatuses_GetTaskStatusByTaskStatusName": "skills/FeedingFrenzyJsonWs/index.pts",
+    "TaskStatuses_GetTaskStatuses": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Tasks_GetTask": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Tasks_GetTasks": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Tasks_GetTasksByLeadID": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Tasks_GetTasksByTaskStatusID": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Tasks_InsertTask": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Tasks_RemoveTask": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Tasks_UpdateTask": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Tasks_UpdateTaskData": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToAddFeedingFrenzyLead": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToAddFeedingFrenzyLeadContact": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToAddFeedingFrenzyLeadNote": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToCancelFeedingFrenzySigningRequest": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToCancelObservationCall": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToCreateFeedingFrenzySigningDraftFromMarkdown": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToCreateFeedingFrenzySigningDraftFromUploadedMarkdownFile": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToCreateFeedingFrenzyUserSigningDraftFromLocalMarkdownFile": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToCreateFeedingFrenzyUserSigningDraftFromMarkdown": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToCreateFeedingFrenzyUserSigningDraftFromUploadedMarkdownFile": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToGetActiveTranscribedCalls": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToGetCallTranscript": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToGetFeedingFrenzyAgreementTemplate": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToGetFeedingFrenzySigningRequest": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToGetFeedingFrenzyUserSigningRequest": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToInsertFeedingFrenzyAgreementTemplate": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToInsertFeedingFrenzyLead": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToListFeedingFrenzyAgreementTemplates": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToListFeedingFrenzySigningRequestsForLead": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToListFeedingFrenzyUserSigningRequests": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToPrepareFeedingFrenzySigningRequestToSend": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToPrepareFeedingFrenzyUserSigningRequestToSend": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToSendPreparedFeedingFrenzySigningEmail": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToSendPreparedFeedingFrenzyUserSigningEmail": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToStartObservationCall": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToUpdateBuffalyObserverState": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToUpdateFeedingFrenzyLead": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToUpdateFeedingFrenzyLeadContact": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToUpdateFeedingFrenzyLeadNote": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToUpdateFeedingFrenzySigningDraftFromMarkdown": "skills/FeedingFrenzyJsonWs/index.pts",
+    "ToUpdateFeedingFrenzySigningRecipient": "skills/FeedingFrenzyJsonWs/index.pts",
+    "UserAutomation_ChatWithUserInfo": "skills/FeedingFrenzyJsonWs/index.pts",
+    "UserAutomation_GetUserSummary": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Users_GetUser": "skills/FeedingFrenzyJsonWs/index.pts",
+    "Users_GetUsersSp_PagingSp": "skills/FeedingFrenzyJsonWs/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToListFeedingFrenzyAgreementTemplates": [
+      "to list feeding frenzy agreement templates"
+    ],
+    "ToGetFeedingFrenzyAgreementTemplate": [
+      "to get a feeding frenzy agreement template"
+    ],
+    "ToInsertFeedingFrenzyAgreementTemplate": [
+      "to insert a feeding frenzy agreement template",
+      "to register a feeding frenzy agreement template"
+    ],
+    "ToCreateFeedingFrenzySigningDraftFromMarkdown": [
+      "to create a feeding frenzy signing draft from markdown"
+    ],
+    "ToCreateFeedingFrenzySigningDraftFromUploadedMarkdownFile": [
+      "to create a feeding frenzy signing draft from uploaded markdown file"
+    ],
+    "ToListFeedingFrenzySigningRequestsForLead": [
+      "to inventory document signing drafts for a lead",
+      "to list feeding frenzy signing requests for a lead",
+      "to list signing drafts for a lead"
+    ],
+    "ToGetFeedingFrenzySigningRequest": [
+      "to get a feeding frenzy signing request",
+      "to inspect a document signing request"
+    ],
+    "ToUpdateFeedingFrenzySigningDraftFromMarkdown": [
+      "to revise an unsent document signing draft",
+      "to update a feeding frenzy signing draft from markdown"
+    ],
+    "ToPrepareFeedingFrenzySigningRequestToSend": [
+      "to create a signable feeding frenzy signing link",
+      "to prepare a feeding frenzy signing request to send"
+    ],
+    "ToSendPreparedFeedingFrenzySigningEmail": [
+      "to send a feeding frenzy signing request",
+      "to send a prepared feeding frenzy signing email"
+    ],
+    "ToCancelFeedingFrenzySigningRequest": [
+      "to cancel a feeding frenzy signing request",
+      "to retire a prepared feeding frenzy signing request"
+    ],
+    "ToUpdateFeedingFrenzySigningRecipient": [
+      "to change a signing request recipient email",
+      "to update a feeding frenzy signing recipient"
+    ],
+    "ToStartObservationCall": [
+      "to begin observing an outbound call",
+      "to originate a monitored feeding frenzy call",
+      "to start an observation call"
+    ],
+    "ToCancelObservationCall": [
+      "to cancel an observation call",
+      "to hang up a feeding frenzy call",
+      "to stop a monitored outbound call"
+    ],
+    "Calls_GetCallsByDateRange": [
+      "to get feeding frenzy calls by date range"
+    ],
+    "Calls_GetCallsByDateRangeAsMarkdown": [
+      "to get feeding frenzy calls by date range as markdown"
+    ],
+    "ToGetActiveTranscribedCalls": [
+      "to discover active observation calls",
+      "to get active transcribed calls"
+    ],
+    "ToUpdateBuffalyObserverState": [
+      "to update buffaly observer state",
+      "to write buffaly call observation state"
+    ],
+    "Calls_GetCall": [
+      "to get feeding frenzy call by id"
+    ],
+    "Calls_GetCallAsMarkdown": [
+      "to get feeding frenzy call as markdown"
+    ],
+    "ToGetCallTranscript": [
+      "to get an observation call transcript",
+      "to inspect live observation call status",
+      "to poll a feeding frenzy call transcript"
+    ],
+    "Calls_GetCallByCallKey": [
+      "to get feeding frenzy call by call key"
+    ],
+    "LeadAddresses_GetLeadAddress": [
+      "to get feeding frenzy lead address by id"
+    ],
+    "LeadAddresses_GetLeadAddressesByLeadID": [
+      "to get feeding frenzy lead addresses by lead id"
+    ],
+    "LeadAutomation_GetLeadsBySearch": [
+      "to find feeding frenzy lead",
+      "to search feeding frenzy leads",
+      "to search feeding frenzy leads by name"
+    ],
+    "LeadAutomation_GetLatestLeads": [
+      "to find the newest feeding frenzy lead",
+      "to get the latest feeding frenzy leads"
+    ],
+    "LeadAutomation_GetLeadAndNotesAsMarkdown": [
+      "to get feeding frenzy lead and notes as markdown",
+      "to get feeding frenzy lead context"
+    ],
+    "LeadContacts_GetLeadContact": [
+      "to get feeding frenzy lead contact by id"
+    ],
+    "LeadContacts_GetLeadContactsByLeadID": [
+      "to get feeding frenzy lead contacts by lead id"
+    ],
+    "ToAddFeedingFrenzyLeadContact": [
+      "to add a feeding frenzy lead contact"
+    ],
+    "ToUpdateFeedingFrenzyLeadContact": [
+      "to update a feeding frenzy lead contact"
+    ],
+    "LeadNotes_GetFollowUpByLeadID": [
+      "to get feeding frenzy follow up by lead id"
+    ],
+    "LeadNotes_GetAppointments": [
+      "to get feeding frenzy appointments"
+    ],
+    "LeadNotes_GetLeadNote": [
+      "to get feeding frenzy lead note by id"
+    ],
+    "LeadNotes_GetLeadNotesByLeadID": [
+      "to get feeding frenzy lead notes by lead id"
+    ],
+    "ToAddFeedingFrenzyLeadNote": [
+      "to add a feeding frenzy lead note"
+    ],
+    "ToUpdateFeedingFrenzyLeadNote": [
+      "to update a feeding frenzy lead note"
+    ],
+    "LeadNoteTypes_GetLeadNoteType": [
+      "to get feeding frenzy lead note type by id"
+    ],
+    "LeadNoteTypes_GetLeadNoteTypeByLeadNoteTypeName": [
+      "to get feeding frenzy lead note type by name"
+    ],
+    "LeadNoteTypes_GetLeadNoteTypes": [
+      "to list feeding frenzy lead note types"
+    ],
+    "ToInsertFeedingFrenzyLead": [
+      "to create a feeding frenzy lead",
+      "to insert a feeding frenzy lead"
+    ],
+    "ToAddFeedingFrenzyLead": [
+      "to add a feeding frenzy lead"
+    ],
+    "ToUpdateFeedingFrenzyLead": [
+      "to update a feeding frenzy lead"
+    ],
+    "LeadTags_InsertOrUpdateLeadTag": [
+      "to add a tag to a Feeding Frenzy lead"
+    ],
+    "Tasks_GetTask": [
+      "to get a feeding frenzy task"
+    ],
+    "Tasks_GetTasks": [
+      "to list feeding frenzy tasks"
+    ],
+    "Tasks_GetTasksByTaskStatusID": [
+      "to list feeding frenzy tasks by status"
+    ],
+    "Tasks_GetTasksByLeadID": [
+      "to list feeding frenzy tasks by lead"
+    ],
+    "TaskStatuses_GetTaskStatus": [
+      "to get a feeding frenzy task status"
+    ],
+    "TaskStatuses_GetTaskStatuses": [
+      "to list feeding frenzy task statuses"
+    ],
+    "TaskStatuses_GetTaskStatusByTaskStatusName": [
+      "to get a feeding frenzy task status by name"
+    ],
+    "Tasks_InsertTask": [
+      "to create a feeding frenzy task"
+    ],
+    "Tasks_UpdateTask": [
+      "to update a feeding frenzy task"
+    ],
+    "Tasks_UpdateTaskData": [
+      "to update feeding frenzy task data"
+    ],
+    "Tasks_RemoveTask": [
+      "to remove a feeding frenzy task"
+    ],
+    "UserAutomation_GetUserSummary": [
+      "to get feeding frenzy user summary"
+    ],
+    "UserAutomation_ChatWithUserInfo": [
+      "to chat with feeding frenzy user info"
+    ],
+    "ToCreateFeedingFrenzyUserSigningDraftFromMarkdown": [
+      "to create a feeding frenzy user signing draft from markdown"
+    ],
+    "ToCreateFeedingFrenzyUserSigningDraftFromUploadedMarkdownFile": [
+      "to create a feeding frenzy user signing draft from uploaded markdown file"
+    ],
+    "ToCreateFeedingFrenzyUserSigningDraftFromLocalMarkdownFile": [
+      "to create a feeding frenzy user signing draft from local markdown file"
+    ],
+    "ToListFeedingFrenzyUserSigningRequests": [
+      "to list feeding frenzy user signing requests"
+    ],
+    "ToGetFeedingFrenzyUserSigningRequest": [
+      "to get a feeding frenzy user signing request"
+    ],
+    "ToPrepareFeedingFrenzyUserSigningRequestToSend": [
+      "to prepare a feeding frenzy user signing request to send"
+    ],
+    "ToSendPreparedFeedingFrenzyUserSigningEmail": [
+      "to send a prepared feeding frenzy user signing email"
+    ],
+    "Users_GetUser": [
+      "to get feeding frenzy user by id"
+    ],
+    "FeedingFrenzyJsonWs_Users_GetUserByEmail": [
+      "to get feeding frenzy user by email"
+    ],
+    "Users_GetUsersSp_PagingSp": [
+      "to search feeding frenzy users"
+    ],
+    "FeedingFrenzyWiki_SearchHelp": [
+      "to find how to use feeding frenzy",
+      "to search feeding frenzy help"
+    ],
+    "FeedingFrenzyWiki_GetHelpArticle": [
+      "to get feeding frenzy instructions",
+      "to read a feeding frenzy help article"
+    ]
   }
 }
