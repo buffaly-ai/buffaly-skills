@@ -1,3 +1,6 @@
+reference FeedingFrenzy.Agent.Tools FeedingFrenzy.Agent.Tools;
+import FeedingFrenzy.Agent.Tools FeedingFrenzy.Agent.Tools.FeedingFrenzyLeadEvidenceTools FeedingFrenzyLeadEvidenceTools;
+
 [SemanticProgram.InfinitivePhrase("to search feeding frenzy leads")]
 [SemanticProgram.InfinitivePhrase("to search feeding frenzy leads by name")]
 [SemanticProgram.InfinitivePhrase("to find feeding frenzy lead")]
@@ -44,16 +47,91 @@ prototype LeadAutomation_GetLeadsByTagName : FeedingFrenzyJsonWsSkillAction
 	}
 }
 
-[SemanticProgram.InfinitivePhrase("to get feeding frenzy lead and notes as markdown")]
-[SemanticProgram.InfinitivePhrase("to get feeding frenzy lead context")]
 prototype LeadAutomation_GetLeadAndNotesAsMarkdown : FeedingFrenzyJsonWsSkillAction
 {
-	Description = @"JsonWs wrapper over FeedingFrenzy.Admin.Business.LeadAutomation.GetLeadAndNotesAsMarkdown(LeadID). Returns raw response JSON string.";
-
 	function Execute(int LeadID) : string
 	{
 		JsonObject args = new JsonObject();
 		args["LeadID"] = LeadID;
-		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-lead-and-notes-as-markdown", args);
+		string response = FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-lead-and-notes-as-markdown", args);
+		return FeedingFrenzyLeadEvidenceTools.DecodeMarkdownResponse(response);
 	}
+	Description = "Legacy full export; use bounded research brief/index/chunks for lead advice. Returns decoded Markdown, but long histories can exceed the host cap.";
+}
+
+[SemanticProgram.InfinitivePhrase("to find calls for a feeding frenzy lead")]
+prototype LeadAutomation_GetLeadCallIndexPage : FeedingFrenzyJsonWsSkillAction
+{
+	Description = "Find actual calls for an authorized lead using both note CallID and call ExternalKey linkage. Use SkipRows=0 NumRows=1 for latest, up to20 for a requested list; newest call first. Returns Markdown. Never infer no transcript from a missing note CallID. Follow NextSkipRows for all calls.";
+	function Execute(int LeadID, int SkipRows, int NumRows) : string
+	{
+		JsonObject args = new JsonObject();
+		args["LeadID"] = LeadID;
+		args["SkipRows"] = SkipRows;
+		args["NumRows"] = NumRows;
+		return FeedingFrenzyLeadEvidenceTools.FormatCallIndexResponse(FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-lead-call-index-page", args));
+	}
+}
+
+prototype LeadAutomation_GetLeadCallTranscriptChunk : FeedingFrenzyJsonWsSkillAction
+{
+	Description = "Read an actual authorized lead call transcript. Use CallID from GetLeadCallIndexPage, Offset=0 then every NextOffset until IsComplete. Return transcript, not CRM note paraphrase. Read-only; does not run analysis or modify the call.";
+	function Execute(int LeadID, int CallID, int Offset) : string
+	{
+		JsonObject args = new JsonObject();
+		args["LeadID"] = LeadID;
+		args["CallID"] = CallID;
+		args["Offset"] = Offset;
+		return FeedingFrenzyLeadEvidenceTools.FormatEvidenceResponse(FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-lead-call-transcript-chunk", args));
+	}
+}
+
+prototype LeadAutomation_GetSalesBibleChunk : FeedingFrenzyJsonWsSkillAction
+{
+	Description = "Read the current tenant's private Sales Bible/manual from its configured representative resource. REQUIRED before sales/call analysis or coaching. Start Offset=0 follow every NextOffset to IsComplete; retain source URL, version and SHA256. Report missing/access failure rather than invent guidance.";
+	function Execute(int Offset) : string
+	{
+		JsonObject args = new JsonObject();
+		args["Offset"] = Offset;
+		return FeedingFrenzyLeadEvidenceTools.FormatEvidenceResponse(FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-sales-bible-chunk", args));
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get a feeding frenzy lead research brief")]
+prototype LeadAutomation_GetLeadResearchBrief : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(int LeadID, int Offset) : string
+	{
+		JsonObject args = new JsonObject();
+		args["LeadID"] = LeadID;
+		args["Offset"] = Offset;
+		return FeedingFrenzyLeadEvidenceTools.FormatEvidenceResponse(FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-lead-research-brief", args));
+	}
+	Description = "Start lead advice/drafts here. Authorized lead/contact brief only, not notes. Start Offset=0 and follow NextOffset until IsComplete. Then inspect note index and relevant complete note chunks. Returns Markdown with coverage and exact continuation.";
+}
+[SemanticProgram.InfinitivePhrase("to get a feeding frenzy lead note index page")]
+prototype LeadAutomation_GetLeadNoteIndexPage : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(int LeadID, int SkipRows, int NumRows) : string
+	{
+		JsonObject args = new JsonObject();
+		args["LeadID"] = LeadID;
+		args["SkipRows"] = SkipRows;
+		args["NumRows"] = NumRows;
+		return FeedingFrenzyLeadEvidenceTools.FormatNoteIndexResponse(FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-lead-note-index-page", args));
+	}
+	Description = "Read note IDs/dates/types, not bodies. Start SkipRows=0, NumRows=20 (1..20); follow NextSkipRows. Unique LeadNoteID DESC is traversal order, not event recency. For all-note requests visit every page and body. No snapshot promise; returns bounded JSON.";
+}
+[SemanticProgram.InfinitivePhrase("to read a feeding frenzy lead note markdown chunk")]
+prototype LeadAutomation_GetLeadNoteMarkdownChunk : FeedingFrenzyJsonWsSkillAction
+{
+	function Execute(int LeadID, int LeadNoteID, int Offset) : string
+	{
+		JsonObject args = new JsonObject();
+		args["LeadID"] = LeadID;
+		args["LeadNoteID"] = LeadNoteID;
+		args["Offset"] = Offset;
+		return FeedingFrenzyLeadEvidenceTools.FormatEvidenceResponse(FeedingFrenzyJsonWsService#Current.CallBusinessRoute("lead-automation/get-lead-note-markdown-chunk", args));
+	}
+	Description = "Read one authorized note body as Markdown. Start Offset=0; follow NextOffset exactly until IsComplete. The completion flag covers THIS note only. Other notes remain unread. Returns bounded JSON with Markdown, date/type, offsets and coverage.";
 }

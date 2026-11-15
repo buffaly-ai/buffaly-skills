@@ -63,3 +63,9 @@
 ## Bind embedded tools to Current service (2026-08-25)
 - Added fail-closed `FeedingFrenzyJsonWsService#Current` and explicit `#Medek`, `#Affinity`, and `#Local` diagnostic bindings.
 - Embedded profile actions now call `#Current` directly instead of accepting a caller-selected `FeedingFrenzyJsonWsService` parameter.
+
+## 2026-11-15 — Regenerate discovery for reviewed user-signing actions
+
+Regenerated generator-owned `index.pts.lazy.json` from the staged skill built from main merge `03c5a232ea851f05c9305aebaea67c07d392392d`, including all seven reviewed user-signing actions. No hand-authored prototype map or runtime business execution was used. The existing full Administrator graph requires FeedingFrenzy.Agent.Tools for unrelated lead actions; its previously validated module DLL was supplied in the validation project's `lib`, outside the distributable skill. The skill payload still ships only FeedingFrenzy.UserSigning.Client.dll.
+
+Validation: the typed `SkillPublishingService.GenerateLazySkillIndex` owner succeeded with no diagnostics and wrote the sidecar, using a lightweight project plus the existing Tools dependency. Earlier attempts without that dependency failed and wrote nothing. Source and regenerated sidecar are compared in this batch; package/version validation and installation are separate gates. Main's fresh Release client stage succeeded with DLL SHA256 `9CE7A5C7806682DBFF2475D579C1012CEB7414EF3718BEA9A5A5DC4D339F3505`; it is not asserted equal to the earlier worktree binary.
