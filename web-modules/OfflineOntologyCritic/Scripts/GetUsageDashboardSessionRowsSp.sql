@@ -18,12 +18,13 @@ AS
 
 	SET NOCOUNT ON
 
-	SELECT TOP 100
+	-- Rank ten sessions across the selected providers/models, not ten session/model combinations.
+	SELECT TOP 10
 		s.SessionID,
 		s.SessionKey,
 		SessionName = ISNULL(NULLIF(s.SessionName, ''), s.SessionKey),
-		Provider = ISNULL(ue.Provider, ''),
-		ModelName = ISNULL(ue.ModelName, ''),
+		Provider = CASE WHEN COUNT(DISTINCT ISNULL(ue.Provider, '')) = 1 THEN MIN(ISNULL(ue.Provider, '')) ELSE '(multiple)' END,
+		ModelName = CASE WHEN COUNT(DISTINCT ISNULL(ue.ModelName, '')) = 1 THEN MIN(ISNULL(ue.ModelName, '')) ELSE '(multiple)' END,
 		Requests = CONVERT(bigint, COUNT_BIG(*)),
 		TotalTokens = CONVERT(bigint, ISNULL(SUM(CONVERT(bigint, ue.TotalTokens)), 0)),
 		LastUsedUtc = MAX(ue.DateCreated)
@@ -35,7 +36,7 @@ AS
 		AND (ISNULL(@ModelName, '') = '' OR ue.ModelName = @ModelName)
 		AND (ISNULL(@Transport, '') = '' OR ue.Transport = @Transport)
 		AND (@SessionID IS NULL OR ue.SessionID = @SessionID)
-	GROUP BY s.SessionID, s.SessionKey, ISNULL(NULLIF(s.SessionName, ''), s.SessionKey), ISNULL(ue.Provider, ''), ISNULL(ue.ModelName, '')
-	ORDER BY TotalTokens DESC, Requests DESC, LastUsedUtc DESC
+	GROUP BY s.SessionID, s.SessionKey, ISNULL(NULLIF(s.SessionName, ''), s.SessionKey)
+	ORDER BY TotalTokens DESC, Requests DESC, LastUsedUtc DESC, s.SessionID ASC
 
 GO
