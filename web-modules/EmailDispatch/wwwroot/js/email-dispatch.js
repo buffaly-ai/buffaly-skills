@@ -35,8 +35,20 @@
    const email=await request(EmailObservations,"GetEmail",{ObservationKey:item.ObservationKey});
    for(const work of email.Works)if(!work.LocalDisposition&&work.State!=="Superseded")await request(EmailWorks,"SetDisposition",{WorkKey:work.WorkKey,Disposition:"Archived"});
   },()=>EmailConversations.invalidate());
-  document.addEventListener("email-archive",()=>inboxGrid.invalidate());
-  let accountsAt=0;
+   document.addEventListener("email-archive",()=>inboxGrid.invalidate());
+   const archiveOlderDialog=dialog("archive-older-dialog");let archiveBefore=0;
+   document.getElementById("review-commands").append(button("Archive older emails",control=>{
+    const before=new Date();before.setHours(0,0,0,0);archiveBefore=before.getTime();
+    $("archive-older-sentence").textContent="Archive all emails received before today ("+before.toLocaleDateString()+") in the dispatcher only? Gmail and delivery history will not change.";
+    archiveOlderDialog.open(control);
+   },false,"fa-archive"));
+   $("archive-older-form").addEventListener("submit",event=>{event.preventDefault();run($("archive-older-confirm"),async()=>{
+    await request(EmailObservations,"ArchiveOlderEmails",{AccountKey:"work-main",BeforeUnixMs:archiveBefore});
+    archiveOlderDialog.close();
+    inboxSelection.clear();inboxGrid.invalidate();EmailConversations.invalidate();inboxGrid.Refresh(true);
+    notify("Older emails archived in the dispatcher. New emails remain visible.","Success");
+   });});
+   let accountsAt=0;
   async function accounts() {
   const values=await request(EmailSyncAccounts,"GetAccounts",{}); $("accounts").replaceChildren();
    accountsAt=Date.now();syncAvailable=values.some(account=>account.Available); syncControls();

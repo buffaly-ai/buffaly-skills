@@ -27,6 +27,30 @@
 		},
 		{
 			"Parameters":[{
+					"Name":"AccountKey",
+					"IsNullable":"true",
+					"Type":"String",
+					"IsArray":"false",
+					"IsEnum":"false"
+				},
+				{
+					"Name":"BeforeUnixMs",
+					"IsNullable":"false",
+					"Type":"Int64",
+					"IsArray":"false",
+					"IsEnum":"false"
+				}],
+			"Name":"ArchiveOlderEmails",
+			"UrlName":"",
+			"KebabName":"archive-older-emails",
+			"DataObject":{
+			},
+			"IsReturnTypeArray":"false",
+			"IsStatic":"true",
+			"ReturnType":"Task"
+		},
+		{
+			"Parameters":[{
 					"Name":"PrototypeName",
 					"IsNullable":"true",
 					"Type":"String",

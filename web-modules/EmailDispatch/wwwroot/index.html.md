@@ -181,3 +181,7 @@ Bumped shared status/Review script cache keys to0.2.14/0.2.29 for optional unmat
 
 ## 2026-11-13 — explicit guidance execution choice
 Shared guidance dialog now presents Analyze only and Dispatch with guidance, without a second confirmation visit. Existing dialog/footer components retained; source client cache keys advanced for generated command and UI. Source browser21/21 passes including desktop/phone screenshots, exact command payload, delayed dialogs and existing Confirm/Pick/Create. Installed validation follows separately.
+
+
+## 2026-11-15 — one-time older-mail archive dialog
+Added shared small confirmation dialog for Archive older emails, retaining existing form/footer/button owners and no new CSS. The button captures one browser-local midnight cutoff and applies only dispatcher visibility; it does not create a daily rule or modify Gmail. Generated EmailObservations client cache advances to0.2.9 and Review script to0.2.31. Source desktop1440/phone390 cancellation, exact cutoff payload and existing local archive browser tests pass in focused8/8 and broader isolated34/34; routine64/64 passes. Installation and real cleanup are separate acceptance steps.

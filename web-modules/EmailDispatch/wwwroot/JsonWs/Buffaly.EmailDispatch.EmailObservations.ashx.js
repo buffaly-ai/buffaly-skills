@@ -2,6 +2,7 @@
     	    	
 var EmailObservationsValidatorsFields = {
 	
+		BeforeUnixMs : {Validators : [Validators.Integer], InvalidMessage: "Invalid BeforeUnixMs. " + ValidatorDescriptions.Integer() },
 		ThreadId : {Validators : [Validators.String], InvalidMessage: "Invalid . " + ValidatorDescriptions.Length(1, 255) },
 		WorkSession : {Validators : [Validators.String], InvalidMessage: "Invalid WorkSession. " + ValidatorDescriptions.Length(1, 255) },
 		Anchor : {Validators : [Validators.String], InvalidMessage: "Invalid Anchor. " + ValidatorDescriptions.Length(1, 255) },
@@ -69,6 +70,39 @@ class EmailObservationsService {
         return await ObjectUtil.Promisify(
             this,
             this.ArchiveConversationObject,
+            [ oObject ]
+        );
+    }
+
+    ArchiveOlderEmails(AccountKey, BeforeUnixMs, Callback) {
+        return this.ArchiveOlderEmailsObject({ AccountKey:AccountKey,BeforeUnixMs:BeforeUnixMs }, Callback);
+    }
+
+    ArchiveOlderEmailsObject(oObject, Callback) {
+        this._validate(oObject, EmailObservationsValidators.ArchiveOlderEmails, this.ArchiveOlderEmails.onValidationError);
+
+        var pageUrl = this.Url + "/archive-older-emails";
+        return this._invoke(
+            pageUrl,
+            "ArchiveOlderEmails",
+            { AccountKey: oObject.AccountKey,BeforeUnixMs: oObject.BeforeUnixMs },
+            this.ArchiveOlderEmails,
+            Callback
+        );
+    }
+
+    async ArchiveOlderEmailsAsync(AccountKey,BeforeUnixMs) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.ArchiveOlderEmails,
+            [ AccountKey,BeforeUnixMs ]
+        );
+    }
+
+    async ArchiveOlderEmailsObjectAsync(oObject) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.ArchiveOlderEmailsObject,
             [ oObject ]
         );
     }
@@ -531,6 +565,11 @@ var EmailObservationsValidators = {
     ArchiveConversation : {
             AccountKey : {Validators: [Validators.Text], InvalidMessage: "Invalid AccountKey"} ,
             ThreadId : {Validators: [Validators.Text], InvalidMessage: "Invalid ThreadId"} 
+    },
+
+    ArchiveOlderEmails : {
+            AccountKey : {Validators: [Validators.Text], InvalidMessage: "Invalid AccountKey"} ,
+            BeforeUnixMs : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid BeforeUnixMs"} 
     },
 
     ClearRule : {

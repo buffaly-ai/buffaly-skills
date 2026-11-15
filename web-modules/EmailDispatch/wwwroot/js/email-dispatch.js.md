@@ -159,3 +159,7 @@ Reuses existing shared primary button and AddDispatchNote generated command for 
 
 ## 2026-11-13 — dispatch versus analysis is an explicit operator choice
 Guidance form submitter selects DispatchWithGuidance only for its explicit button; Analyze only/implicit Enter retain AddDispatchNote and cannot send. Shared in-flight, immediate close, late failure/draft recovery and per-work navigation handling retained. Current Pending/GuidedDispatchReady reason takes precedence over stale agent rationale; ready work is polled with honest waiting status. Source browser21/21 passes, covering exact real generated command persistence plus existing intercepted Confirm/Pick/Create and delayed dialogs; no real business sends. Installed validation follows.
+
+
+## 2026-11-15 — fixed-cutoff bulk archive command
+Added Archive older emails in the existing Review command area. Uses shared dialog/button/run owners and generated ArchiveOlderEmails; captures browser-local midnight once on opening, Cancel writes nothing, success invalidates both stored lists and clears selection. No recurring timer/date rule, Gmail mutation or new styling. Existing selected archive and explicit dispatch controls remain. UI task walkthrough: clear old review mail with one command, see exact cutoff/scope before confirmation, then continue reviewing newer mail. Source browser covers1440/390 Cancel and exact command boundary; real stored nonhex fixture archive preserves receipt. Focused8/8, routine64/64 and full flow/archive/intake34/34 pass; installed cleanup/screenshots recorded separately.
