@@ -7,8 +7,7 @@ prototype Customers_GetCustomerReadScope : FeedingFrenzyJsonWsSkillAction
 	Description = @"Read authenticated user scope before searching customers. CanReadAllCustomers permits a zero representative filter; otherwise use returned SalesRepresentativeID. This is not a permission grant or authentication change.";
 	function Execute() : string
 	{
-		JsonObject args = new JsonObject();
-		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("customers/get-customer-read-scope", args);
+		return FeedingFrenzyCommerceReadTools.Customers_GetCustomerReadScope(FeedingFrenzyJsonWsService#Current.ClientBinding());
 	}
 }
 
@@ -18,25 +17,7 @@ prototype Customers_GetCustomers : FeedingFrenzyJsonWsSkillAction
 	Description = @"Thin mirror of Customers.GetCustomers. CustomerID is the returned LeadID and must have an Account link. Optional filter IDs: zero means no filter, not a row ID. First read current query scope; representative-restricted users must use its representative. Search uses the existing customer proc. Sort: LeadID, AccountID, Company, FirstName, LastName, Email, Phone, DateCreated or LastUpdated. SkipRows is zero-based; NumRows 1..200.";
 	function Execute(int AccountID, int TagID, int LeadStatusID, int LeadSubStatusID, int SalesRepresentativeID, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
 	{
-		if (AccountID < 0) return "Error: AccountID must be zero (no filter) or positive.";
-		if (TagID < 0) return "Error: TagID must be zero (no filter) or positive.";
-		if (LeadStatusID < 0) return "Error: LeadStatusID must be zero (no filter) or positive.";
-		if (LeadSubStatusID < 0) return "Error: LeadSubStatusID must be zero (no filter) or positive.";
-		if (SalesRepresentativeID < 0) return "Error: SalesRepresentativeID must be zero (no filter) or positive.";
-		if (Search == null || Search.Length > 255) return "Error: Search is required and limited to 255 characters.";
-		if (SkipRows < 0 || NumRows < 1 || NumRows > 200) return "Error: Invalid page bounds; NumRows must be 1 through 200.";
-		JsonObject args = new JsonObject();
-		if (AccountID == 0) args["AccountID"] = null; else args["AccountID"] = AccountID;
-		if (TagID == 0) args["TagID"] = null; else args["TagID"] = TagID;
-		if (LeadStatusID == 0) args["LeadStatusID"] = null; else args["LeadStatusID"] = LeadStatusID;
-		if (LeadSubStatusID == 0) args["LeadSubStatusID"] = null; else args["LeadSubStatusID"] = LeadSubStatusID;
-		if (SalesRepresentativeID == 0) args["SalesRepresentativeID"] = null; else args["SalesRepresentativeID"] = SalesRepresentativeID;
-		args["Search"] = Search;
-		args["SortColumn"] = SortColumn;
-		args["SortAscending"] = SortAscending;
-		args["SkipRows"] = SkipRows;
-		args["NumRows"] = NumRows;
-		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("customers/get-customers", args);
+		return FeedingFrenzyCommerceReadTools.Customers_GetCustomers(FeedingFrenzyJsonWsService#Current.ClientBinding(), AccountID, TagID, LeadStatusID, LeadSubStatusID, SalesRepresentativeID, Search, SortColumn, SortAscending, SkipRows, NumRows);
 	}
 }
 
@@ -46,20 +27,7 @@ prototype Customers_CountCustomers : FeedingFrenzyJsonWsSkillAction
 	Description = @"Matching SQL count for GetCustomers; use exactly the same five filters and Search. No count from fetched-page length. Zero optional IDs mean no filter; existing representative permissions still apply.";
 	function Execute(int AccountID, int TagID, int LeadStatusID, int LeadSubStatusID, int SalesRepresentativeID, string Search) : string
 	{
-		if (AccountID < 0) return "Error: AccountID must be zero (no filter) or positive.";
-		if (TagID < 0) return "Error: TagID must be zero (no filter) or positive.";
-		if (LeadStatusID < 0) return "Error: LeadStatusID must be zero (no filter) or positive.";
-		if (LeadSubStatusID < 0) return "Error: LeadSubStatusID must be zero (no filter) or positive.";
-		if (SalesRepresentativeID < 0) return "Error: SalesRepresentativeID must be zero (no filter) or positive.";
-		if (Search == null || Search.Length > 255) return "Error: Search is required and limited to 255 characters.";
-		JsonObject args = new JsonObject();
-		if (AccountID == 0) args["AccountID"] = null; else args["AccountID"] = AccountID;
-		if (TagID == 0) args["TagID"] = null; else args["TagID"] = TagID;
-		if (LeadStatusID == 0) args["LeadStatusID"] = null; else args["LeadStatusID"] = LeadStatusID;
-		if (LeadSubStatusID == 0) args["LeadSubStatusID"] = null; else args["LeadSubStatusID"] = LeadSubStatusID;
-		if (SalesRepresentativeID == 0) args["SalesRepresentativeID"] = null; else args["SalesRepresentativeID"] = SalesRepresentativeID;
-		args["Search"] = Search;
-		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("customers/count-customers", args);
+		return FeedingFrenzyCommerceReadTools.Customers_CountCustomers(FeedingFrenzyJsonWsService#Current.ClientBinding(), AccountID, TagID, LeadStatusID, LeadSubStatusID, SalesRepresentativeID, Search);
 	}
 }
 
@@ -69,10 +37,7 @@ prototype Customers_GetCustomer : FeedingFrenzyJsonWsSkillAction
 	Description = @"Read exact CustomerID returned by search. Existing CustomerDetails contains CustomerID, CrmRecord and Account. Preserve separate CustomerID/AccountID and stored values; no Lead or Account writes.";
 	function Execute(int CustomerID) : string
 	{
-		if (CustomerID <= 0) return "Error: CustomerID must be positive.";
-		JsonObject args = new JsonObject();
-		args["CustomerID"] = CustomerID;
-		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("customers/get-customer", args);
+		return FeedingFrenzyCommerceReadTools.Customers_GetCustomer(FeedingFrenzyJsonWsService#Current.ClientBinding(), CustomerID);
 	}
 }
 
@@ -82,15 +47,7 @@ prototype Customers_GetCustomerAddressesPage : FeedingFrenzyJsonWsSkillAction
 	Description = @"Read destinations owned by this Customer, not Account addresses. Search, zero-based offset and 1..50 rows; server fixes unique LeadAddressID ascending. Use matching count and exact returned address ID.";
 	function Execute(int CustomerID, string Search, int SkipRows, int NumRows) : string
 	{
-		if (CustomerID <= 0) return "Error: CustomerID must be positive.";
-		if (Search == null || Search.Length > 255) return "Error: Search is required and limited to 255 characters.";
-		if (SkipRows < 0 || NumRows < 1 || NumRows > 50) return "Error: Invalid page bounds; NumRows must be 1 through 50.";
-		JsonObject args = new JsonObject();
-		args["CustomerID"] = CustomerID;
-		args["Search"] = Search;
-		args["SkipRows"] = SkipRows;
-		args["NumRows"] = NumRows;
-		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("customers/get-customer-addresses-page", args);
+		return FeedingFrenzyCommerceReadTools.Customers_GetCustomerAddressesPage(FeedingFrenzyJsonWsService#Current.ClientBinding(), CustomerID, Search, SkipRows, NumRows);
 	}
 }
 
@@ -100,12 +57,7 @@ prototype Customers_CountCustomerAddresses : FeedingFrenzyJsonWsSkillAction
 	Description = @"Same CustomerID and Search cohort as GetCustomerAddressesPage.";
 	function Execute(int CustomerID, string Search) : string
 	{
-		if (CustomerID <= 0) return "Error: CustomerID must be positive.";
-		if (Search == null || Search.Length > 255) return "Error: Search is required and limited to 255 characters.";
-		JsonObject args = new JsonObject();
-		args["CustomerID"] = CustomerID;
-		args["Search"] = Search;
-		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("customers/count-customer-addresses", args);
+		return FeedingFrenzyCommerceReadTools.Customers_CountCustomerAddresses(FeedingFrenzyJsonWsService#Current.ClientBinding(), CustomerID, Search);
 	}
 }
 
@@ -115,12 +67,7 @@ prototype Customers_GetCustomerAddress : FeedingFrenzyJsonWsSkillAction
 	Description = @"Exact address read with existing Customer ownership check. A destination belongs to CustomerID, not merely a matching Account.";
 	function Execute(int CustomerID, int LeadAddressID) : string
 	{
-		if (CustomerID <= 0) return "Error: CustomerID must be positive.";
-		if (LeadAddressID <= 0) return "Error: LeadAddressID must be positive.";
-		JsonObject args = new JsonObject();
-		args["CustomerID"] = CustomerID;
-		args["LeadAddressID"] = LeadAddressID;
-		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("customers/get-customer-address", args);
+		return FeedingFrenzyCommerceReadTools.Customers_GetCustomerAddress(FeedingFrenzyJsonWsService#Current.ClientBinding(), CustomerID, LeadAddressID);
 	}
 }
 
@@ -130,17 +77,7 @@ prototype Customers_GetCustomerInvoices : FeedingFrenzyJsonWsSkillAction
 	Description = @"Existing canonical invoice projection, not Sales Orders renamed invoices. Requires existing customer commerce permission. Sort: BasketID, InvoiceNumber, AccountName, OrderType, InvoiceDate, InvoiceStatus, Total, AmountPaid, Balance or LineItemCount. Page 1..200; pair with CountCustomerInvoices.";
 	function Execute(int CustomerID, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
 	{
-		if (CustomerID <= 0) return "Error: CustomerID must be positive.";
-		if (Search == null || Search.Length > 255) return "Error: Search is required and limited to 255 characters.";
-		if (SkipRows < 0 || NumRows < 1 || NumRows > 200) return "Error: Invalid page bounds; NumRows must be 1 through 200.";
-		JsonObject args = new JsonObject();
-		args["CustomerID"] = CustomerID;
-		args["Search"] = Search;
-		args["SortColumn"] = SortColumn;
-		args["SortAscending"] = SortAscending;
-		args["SkipRows"] = SkipRows;
-		args["NumRows"] = NumRows;
-		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("customers/get-customer-invoices", args);
+		return FeedingFrenzyCommerceReadTools.Customers_GetCustomerInvoices(FeedingFrenzyJsonWsService#Current.ClientBinding(), CustomerID, Search, SortColumn, SortAscending, SkipRows, NumRows);
 	}
 }
 
@@ -150,12 +87,7 @@ prototype Customers_CountCustomerInvoices : FeedingFrenzyJsonWsSkillAction
 	Description = @"Existing invoice-count proc, using exactly the same CustomerID and Search as the page.";
 	function Execute(int CustomerID, string Search) : string
 	{
-		if (CustomerID <= 0) return "Error: CustomerID must be positive.";
-		if (Search == null || Search.Length > 255) return "Error: Search is required and limited to 255 characters.";
-		JsonObject args = new JsonObject();
-		args["CustomerID"] = CustomerID;
-		args["Search"] = Search;
-		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("customers/count-customer-invoices", args);
+		return FeedingFrenzyCommerceReadTools.Customers_CountCustomerInvoices(FeedingFrenzyJsonWsService#Current.ClientBinding(), CustomerID, Search);
 	}
 }
 
@@ -165,17 +97,7 @@ prototype Customers_GetCustomerDocumentsPage : FeedingFrenzyJsonWsSkillAction
 	Description = @"Bounded Account-linked Baskets for this Customer. All document types; not a Sales-Order-only count. Search the existing proc; only stable BasketID sort, either direction. Read an identified Sales Order through its own facade. No filtering after paging to invent a total.";
 	function Execute(int CustomerID, string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
 	{
-		if (CustomerID <= 0) return "Error: CustomerID must be positive.";
-		if (Search == null || Search.Length > 255) return "Error: Search is required and limited to 255 characters.";
-		if (SkipRows < 0 || NumRows < 1 || NumRows > 200) return "Error: Invalid page bounds; NumRows must be 1 through 200.";
-		JsonObject args = new JsonObject();
-		args["CustomerID"] = CustomerID;
-		args["Search"] = Search;
-		args["SortColumn"] = SortColumn;
-		args["SortAscending"] = SortAscending;
-		args["SkipRows"] = SkipRows;
-		args["NumRows"] = NumRows;
-		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("customers/get-customer-documents-page", args);
+		return FeedingFrenzyCommerceReadTools.Customers_GetCustomerDocumentsPage(FeedingFrenzyJsonWsService#Current.ClientBinding(), CustomerID, Search, SortColumn, SortAscending, SkipRows, NumRows);
 	}
 }
 
@@ -185,12 +107,7 @@ prototype Customers_CountCustomerDocuments : FeedingFrenzyJsonWsSkillAction
 	Description = @"Matching existing Account-linked Basket count for the Customer; includes all document types. Same CustomerID and Search as page, no lazy navigation scan.";
 	function Execute(int CustomerID, string Search) : string
 	{
-		if (CustomerID <= 0) return "Error: CustomerID must be positive.";
-		if (Search == null || Search.Length > 255) return "Error: Search is required and limited to 255 characters.";
-		JsonObject args = new JsonObject();
-		args["CustomerID"] = CustomerID;
-		args["Search"] = Search;
-		return FeedingFrenzyJsonWsService#Current.CallBusinessRoute("customers/count-customer-documents", args);
+		return FeedingFrenzyCommerceReadTools.Customers_CountCustomerDocuments(FeedingFrenzyJsonWsService#Current.ClientBinding(), CustomerID, Search);
 	}
 }
 
@@ -200,15 +117,7 @@ prototype SalesOrdersAdmin_GetSalesOrdersPage : FeedingFrenzyJsonWsSkillAction
 	Description = @"Typed mirror of the existing SO grid proc. Search covers BasketID, BasketName, BasketNumber and stored Data, not joined customer names or guaranteed line SKU. SortColumn must be BasketID, either direction; page size 1..200. No active-only or outstanding-only filter is implied. Use matching count.";
 	function Execute(string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
 	{
-		if (Search == null || Search.Length > 255) return "Error: Search is required and limited to 255 characters.";
-		if (SkipRows < 0 || NumRows < 1 || NumRows > 200) return "Error: Invalid page bounds; NumRows must be 1 through 200.";
-		JsonObject args = new JsonObject();
-		args["Search"] = Search;
-		args["SortColumn"] = SortColumn;
-		args["SortAscending"] = SortAscending;
-		args["SkipRows"] = SkipRows;
-		args["NumRows"] = NumRows;
-		return FeedingFrenzyJsonWsService#Current.CallUiRoute("sales-orders-admin/get-sales-orders-page", args);
+		return FeedingFrenzyCommerceReadTools.SalesOrdersAdmin_GetSalesOrdersPage(FeedingFrenzyJsonWsService#Current.ClientBinding(), Search, SortColumn, SortAscending, SkipRows, NumRows);
 	}
 }
 
@@ -218,10 +127,7 @@ prototype SalesOrdersAdmin_CountSalesOrders : FeedingFrenzyJsonWsSkillAction
 	Description = @"Same Sales Order type and Search as the page; existing named count procedure, not page length. No lifecycle narrowing is implied.";
 	function Execute(string Search) : string
 	{
-		if (Search == null || Search.Length > 255) return "Error: Search is required and limited to 255 characters.";
-		JsonObject args = new JsonObject();
-		args["Search"] = Search;
-		return FeedingFrenzyJsonWsService#Current.CallUiRoute("sales-orders-admin/count-sales-orders", args);
+		return FeedingFrenzyCommerceReadTools.SalesOrdersAdmin_CountSalesOrders(FeedingFrenzyJsonWsService#Current.ClientBinding(), Search);
 	}
 }
 
@@ -231,10 +137,7 @@ prototype SalesOrdersAdmin_GetSalesOrder : FeedingFrenzyJsonWsSkillAction
 	Description = @"Existing full display projection for exact internal BasketID, not SO or customer PO number. Preserve retired/historical flags, independent issued/computed amounts and units. Read-only.";
 	function Execute(int BasketID) : string
 	{
-		if (BasketID <= 0) return "Error: BasketID must be positive.";
-		JsonObject args = new JsonObject();
-		args["BasketID"] = BasketID;
-		return FeedingFrenzyJsonWsService#Current.CallUiRoute("sales-orders-admin/get-sales-order", args);
+		return FeedingFrenzyCommerceReadTools.SalesOrdersAdmin_GetSalesOrder(FeedingFrenzyJsonWsService#Current.ClientBinding(), BasketID);
 	}
 }
 
@@ -244,10 +147,7 @@ prototype SalesOrdersAdmin_GetSalesOrderPackingList : FeedingFrenzyJsonWsSkillAc
 	Description = @"Existing packing-list data, not print generation, assignment or shipment. Assigned pieces do not establish shipped status.";
 	function Execute(int BasketID) : string
 	{
-		if (BasketID <= 0) return "Error: BasketID must be positive.";
-		JsonObject args = new JsonObject();
-		args["BasketID"] = BasketID;
-		return FeedingFrenzyJsonWsService#Current.CallUiRoute("sales-orders-admin/get-sales-order-packing-list", args);
+		return FeedingFrenzyCommerceReadTools.SalesOrdersAdmin_GetSalesOrderPackingList(FeedingFrenzyJsonWsService#Current.ClientBinding(), BasketID);
 	}
 }
 
@@ -257,18 +157,7 @@ prototype PurchaseOrdersAdmin_GetPurchaseOrdersPage : FeedingFrenzyJsonWsSkillAc
 	Description = @"Typed page from exact native global/vendor PO proc pair. VendorID zero means no vendor filter. Status: empty=nonhistorical including voided/deleted, Draft, OrderPlaced, Voided, Deleted, Historical or All, using the TTG historical-grid definitions. Sort: BasketID, BasketNumber, VendorName, Total, LineItemCount or LastUpdated; Total sorts KnownCostTotal, not Basket.Total; unique BasketID tie-break. Search includes PO fields, vendor name and Data. Return Basket plus VendorName, KnownCostTotal, MissingCostCount; do not treat partial known costs as complete.";
 	function Execute(int VendorID, string Search, string Status, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
 	{
-		if (VendorID < 0) return "Error: VendorID must be zero (no filter) or positive.";
-		if (Search == null || Search.Length > 255) return "Error: Search is required and limited to 255 characters.";
-		if (SkipRows < 0 || NumRows < 1 || NumRows > 200) return "Error: Invalid page bounds; NumRows must be 1 through 200.";
-		JsonObject args = new JsonObject();
-		if (VendorID == 0) args["VendorID"] = null; else args["VendorID"] = VendorID;
-		args["Search"] = Search;
-		args["Status"] = Status;
-		args["SortColumn"] = SortColumn;
-		args["SortAscending"] = SortAscending;
-		args["SkipRows"] = SkipRows;
-		args["NumRows"] = NumRows;
-		return FeedingFrenzyJsonWsService#Current.CallUiRoute("purchase-orders-admin/get-purchase-orders-page", args);
+		return FeedingFrenzyCommerceReadTools.PurchaseOrdersAdmin_GetPurchaseOrdersPage(FeedingFrenzyJsonWsService#Current.ClientBinding(), VendorID, Search, Status, SortColumn, SortAscending, SkipRows, NumRows);
 	}
 }
 
@@ -278,13 +167,7 @@ prototype PurchaseOrdersAdmin_CountPurchaseOrders : FeedingFrenzyJsonWsSkillActi
 	Description = @"Exact same VendorID, Search and Status as page, resolved before SQL paging. Status Historical/All requires the existing TTG procedure version, not a fallback broad query.";
 	function Execute(int VendorID, string Search, string Status) : string
 	{
-		if (VendorID < 0) return "Error: VendorID must be zero (no filter) or positive.";
-		if (Search == null || Search.Length > 255) return "Error: Search is required and limited to 255 characters.";
-		JsonObject args = new JsonObject();
-		if (VendorID == 0) args["VendorID"] = null; else args["VendorID"] = VendorID;
-		args["Search"] = Search;
-		args["Status"] = Status;
-		return FeedingFrenzyJsonWsService#Current.CallUiRoute("purchase-orders-admin/count-purchase-orders", args);
+		return FeedingFrenzyCommerceReadTools.PurchaseOrdersAdmin_CountPurchaseOrders(FeedingFrenzyJsonWsService#Current.ClientBinding(), VendorID, Search, Status);
 	}
 }
 
@@ -294,10 +177,7 @@ prototype PurchaseOrdersAdmin_GetPurchaseOrder : FeedingFrenzyJsonWsSkillAction
 	Description = @"Existing exact PO display projection: header, captured line facts, source SO links, quantities, units, receipt/transit and historical/header-only import warnings. No place, receive or cost writes.";
 	function Execute(int BasketID) : string
 	{
-		if (BasketID <= 0) return "Error: BasketID must be positive.";
-		JsonObject args = new JsonObject();
-		args["BasketID"] = BasketID;
-		return FeedingFrenzyJsonWsService#Current.CallUiRoute("purchase-orders-admin/get-purchase-order", args);
+		return FeedingFrenzyCommerceReadTools.PurchaseOrdersAdmin_GetPurchaseOrder(FeedingFrenzyJsonWsService#Current.ClientBinding(), BasketID);
 	}
 }
 
@@ -318,12 +198,7 @@ prototype ProductsAdmin_GetProduct : FeedingFrenzyJsonWsSkillAction
 	Description = @"Exact ProductID current catalog projection, same Rows/TotalRows. PriceTypeID zero means all schedules. Empty Rows/zero TotalRows means not found; never fall back to legacy Product.Price/EA. SKU and physical barcode are different identities.";
 	function Execute(int ProductID, int PriceTypeID) : string
 	{
-		if (ProductID <= 0) return "Error: ProductID must be positive.";
-		if (PriceTypeID < 0) return "Error: PriceTypeID must be zero (no filter) or positive.";
-		JsonObject args = new JsonObject();
-		args["ProductID"] = ProductID;
-		if (PriceTypeID == 0) args["PriceTypeID"] = null; else args["PriceTypeID"] = PriceTypeID;
-		return FeedingFrenzyJsonWsService#Current.CallUiRoute("products-admin/get-product", args);
+		return FeedingFrenzyCommerceReadTools.ProductsAdmin_GetProduct(FeedingFrenzyJsonWsService#Current.ClientBinding(), ProductID, PriceTypeID);
 	}
 }
 
@@ -333,15 +208,7 @@ prototype VendorsAdmin_GetVendorsPage : FeedingFrenzyJsonWsSkillAction
 	Description = @"Thin authenticated mirror of generated Vendors page procedure. SortColumn VendorID only (stable), direction selectable, page 1..200. Search follows installed vendor proc fields; do not promise fields beyond the deployed descriptor/procedure receipt. Disabled/deleted flags are evidence, not filtered away in memory.";
 	function Execute(string Search, string SortColumn, bool SortAscending, int SkipRows, int NumRows) : string
 	{
-		if (Search == null || Search.Length > 255) return "Error: Search is required and limited to 255 characters.";
-		if (SkipRows < 0 || NumRows < 1 || NumRows > 200) return "Error: Invalid page bounds; NumRows must be 1 through 200.";
-		JsonObject args = new JsonObject();
-		args["Search"] = Search;
-		args["SortColumn"] = SortColumn;
-		args["SortAscending"] = SortAscending;
-		args["SkipRows"] = SkipRows;
-		args["NumRows"] = NumRows;
-		return FeedingFrenzyJsonWsService#Current.CallUiRoute("vendors-admin/get-vendors-page", args);
+		return FeedingFrenzyCommerceReadTools.VendorsAdmin_GetVendorsPage(FeedingFrenzyJsonWsService#Current.ClientBinding(), Search, SortColumn, SortAscending, SkipRows, NumRows);
 	}
 }
 
@@ -351,10 +218,7 @@ prototype VendorsAdmin_CountVendors : FeedingFrenzyJsonWsSkillAction
 	Description = @"Same Search as vendor page, existing generated nullable integer count must be present; missing/null is an error, not zero.";
 	function Execute(string Search) : string
 	{
-		if (Search == null || Search.Length > 255) return "Error: Search is required and limited to 255 characters.";
-		JsonObject args = new JsonObject();
-		args["Search"] = Search;
-		return FeedingFrenzyJsonWsService#Current.CallUiRoute("vendors-admin/count-vendors", args);
+		return FeedingFrenzyCommerceReadTools.VendorsAdmin_CountVendors(FeedingFrenzyJsonWsService#Current.ClientBinding(), Search);
 	}
 }
 
@@ -364,9 +228,6 @@ prototype VendorsAdmin_GetVendor : FeedingFrenzyJsonWsSkillAction
 	Description = @"Exact VendorID row from existing owning repository; vendor name and external supplier code are not internal IDs. Includes stored supplier/contact/payment-term facts, no edits.";
 	function Execute(int VendorID) : string
 	{
-		if (VendorID <= 0) return "Error: VendorID must be positive.";
-		JsonObject args = new JsonObject();
-		args["VendorID"] = VendorID;
-		return FeedingFrenzyJsonWsService#Current.CallUiRoute("vendors-admin/get-vendor", args);
+		return FeedingFrenzyCommerceReadTools.VendorsAdmin_GetVendor(FeedingFrenzyJsonWsService#Current.ClientBinding(), VendorID);
 	}
 }
