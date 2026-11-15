@@ -7036,10 +7036,10 @@
       "PackageType": "WebModule",
       "Title": "Desktop Viewer",
       "Description": "Buffaly Web Module package for Desktop Viewer.",
-      "Version": "0.1.333",
+      "Version": "0.1.334",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/DesktopViewer",
-      "SourceUrl": "",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/DesktopViewer",
       "Phrases": [
         "Desktop Viewer",
         "DesktopViewer"
@@ -7059,7 +7059,7 @@
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "5b232e6a52ba4419e45b522705b0594ec96d1b812873f10735b0744d71820c4c"
+          "Sha256": "02663dc0ba334cc2f36697b48b750232774a184a4d6d9ab46fa260776df81b7c"
         },
         {
           "Path": "Buffaly.ClientSites.Common.dll",
@@ -7075,15 +7075,15 @@
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "47eed69301139920155d9048caa6fc4cdf324a49f7abd438422502d80d857f9e"
+          "Sha256": "b130c2d63cd4d5bcc404239d015ac855fec0580fc486e891285791415263bad9"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "900f009c05a15ef0233eb06997e5a39c83706e4d270352bf30a6332a7303b2f1"
+          "Sha256": "2b19ae31ca7ecce1bb254b422fdb5c2287556d0ea4ffd33a3d06e780a4d7bc68"
         },
         {
           "Path": "Buffaly.DesktopAutomation.dll",
-          "Sha256": "ca17a2db0583763eb1e05686c28e64a59d26cc4e75646593a5aee172718a443a"
+          "Sha256": "b68277a944098fa990c281f7568360a7e1de66efdab7c97353b6fadbe8ec4dd5"
         },
         {
           "Path": "Buffaly.DesktopViewer.Web.deps.json",
@@ -7091,7 +7091,7 @@
         },
         {
           "Path": "Buffaly.DesktopViewer.Web.dll",
-          "Sha256": "eafec1e3ba44fe029ed0125b418e751078e23262a795ccb50793601ac3bcb8b0"
+          "Sha256": "4ac99fb31c8b2bd0eed46d9438c3471e4732764ed095e127842a036085641b9a"
         },
         {
           "Path": "Buffaly.LandingPageRouting.dll",
@@ -7099,7 +7099,7 @@
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "060c9c359eba4a6867e23a912d2b6946311a35b52836107e706aa9c8189c0397"
+          "Sha256": "fe08f859a2ae7656da66f25c663da2aadb6adcbde6d9bfc0f4d5ae2d4f272ac3"
         },
         {
           "Path": "computer-use/linux/computer_use_bridge.py",
@@ -7296,6 +7296,10 @@
         {
           "Path": "Scripts/20261106_OneTimeSessionWake.sql",
           "Sha256": "886b170786624fa19d3bfa8fef3823730f3ab8d451e8657f2391d66745b7a134"
+        },
+        {
+          "Path": "Scripts/AgentNavigationAccess.sql",
+          "Sha256": "79a8732dea1365d20885cb249ba02304a5454c2b86037319a3ffb6d3a6516dff"
         },
         {
           "Path": "Scripts/Cleanup_TestSessions_ArchiveSp.sql",
@@ -7806,6 +7810,10 @@
           "Sha256": "3954caf0d162aa948a68d19b335dc26d1830b68ea6313e4e8d01c626f18aec93"
         },
         {
+          "Path": "Scripts/Sessions_GetPendingAttentionNavigation_Sp.sql",
+          "Sha256": "4423e96ee925959c186ff6e41b6b99600890aa4d26d2e7986efc2e4dc7a94a40"
+        },
+        {
           "Path": "Scripts/Sessions_GetPendingAttentionSp.sql",
           "Sha256": "84d0a95929b5620c2bfbc7951b1c906a5a8ef76cc9c197b649c5a2161bc34f9f"
         },
@@ -7818,12 +7826,28 @@
           "Sha256": "d71156294e02ce9a47a89654690a62b94535f96be960a3c9678a1b39028435dd"
         },
         {
+          "Path": "Scripts/Sessions_GetSidebarRecentNavigationPage_Sp.sql",
+          "Sha256": "01de16d688aae0cfb77d24095a4eecd153529f6dd5f64469dc1c70c1c1d31e94"
+        },
+        {
           "Path": "Scripts/Sessions_GetSidebarRecentPageSp.sql",
           "Sha256": "a5d0cb91acc99a3b265e40814fbab99960a8af8e07a44007040bed2846d9aaa9"
         },
         {
+          "Path": "Scripts/Sessions_GetSidebarRecentVisiblePage_Sp.sql",
+          "Sha256": "1e0915f8a0161eabc5e0db1e5397d2136444b25742ad2b40c3f457ea713896b7"
+        },
+        {
+          "Path": "Scripts/Sessions_GetSidebarRootNavigationPage_Sp.sql",
+          "Sha256": "1b23583c4165bde9447eb8111efd32a34d48337a9ebd0ed5509c338caade0d89"
+        },
+        {
           "Path": "Scripts/Sessions_GetSidebarRootPageSp.sql",
           "Sha256": "e79392f22a58ee5b2da758e6533590f239039ee61341696fff5c70a78d80d306"
+        },
+        {
+          "Path": "Scripts/Sessions_GetSidebarRootVisiblePage_Sp.sql",
+          "Sha256": "163f4d894df284bf7dc8e452a30b6981697629b7546d0a7209dc2748f3fef342"
         },
         {
           "Path": "Scripts/Sessions_GetSidebarSelectedBranchSp.sql",
