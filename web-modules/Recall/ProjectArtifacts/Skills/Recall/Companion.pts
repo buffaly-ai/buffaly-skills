@@ -1,45 +1,48 @@
 reference Buffaly.Agent.Recall Buffaly.Agent.Recall;
 import Buffaly.Agent.Recall Buffaly.Agent.Recall.RecallCompanionFacade RecallCompanionFacade;
 import Buffaly.Agent.Recall Buffaly.Agent.Recall.RecallResearch RecallResearch;
-import Buffaly.Agent.Recall Buffaly.Agent.Recall.RecallPublicationFacade RecallPublicationFacade;
 prototype RecallCompanionAction : OpsAction;
 prototype RecallCompanionEntity : SemanticEntityBase;
 prototype ToDispatchRecallObservation : RecallCompanionAction
 {
-	function Execute(string callbackJson) : string { return RecallCompanionFacade.Render(_opsAgent, callbackJson); }
+    function Execute(string callbackJson) : string { return RecallCompanionFacade.Render(_opsAgent, callbackJson); }
+}
+[InfinitivePhrase("to read the admitted recall input")]
+prototype ToReadRecallInput : RecallCompanionAction
+{
+    function Execute(string anchorMessageKey, int characterOffset = 0, string expectedHash = "") : string
+    { return RecallResearch.Input(_opsAgent, anchorMessageKey, characterOffset, expectedHash); }
 }
 [InfinitivePhrase("to find recall entities")]
 prototype ToFindRecallEntities : RecallCompanionAction
 {
-	function Execute(string query) : string { return RecallResearch.Search(_opsAgent, query, false); }
+    function Execute(string query) : string { return RecallResearch.Search(_opsAgent, query, false); }
 }
 [InfinitivePhrase("to find recall actions")]
 prototype ToFindRecallActions : RecallCompanionAction
 {
-	function Execute(string query) : string { return RecallResearch.Search(_opsAgent, query, true); }
+    function Execute(string query) : string { return RecallResearch.Search(_opsAgent, query, true); }
 }
 [InfinitivePhrase("to inspect a recall definition")]
 prototype ToInspectRecallDefinition : RecallCompanionAction
 {
-	function Execute(string ownerScope, string prototypeName) : string { return RecallResearch.Definition(_opsAgent, ownerScope, prototypeName); }
+    function Execute(string ownerScope, string prototypeName, int characterOffset = 0, string expectedHash = "") : string
+    { return RecallResearch.Definition(_opsAgent, ownerScope, prototypeName, characterOffset, expectedHash); }
 }
-[InfinitivePhrase("to read recall evidence")]
-prototype ToReadRecallEvidence : RecallCompanionAction
+[InfinitivePhrase("to find applicable context prompts")]
+prototype ToFindRecallContexts : RecallCompanionAction
 {
-	function Execute(string evidenceId, int start, int length) : string { return RecallResearch.Evidence(_opsAgent, evidenceId, start, length); }
+    function Execute(string situation) : string { return RecallResearch.SearchContexts(_opsAgent, situation); }
 }
-[InfinitivePhrase("to search recall evidence")]
-prototype ToSearchRecallEvidence : RecallCompanionAction
+[InfinitivePhrase("to read a recall context prompt")]
+prototype ToReadRecallContext : RecallCompanionAction
 {
-	function Execute(string evidenceId, string query) : string { return RecallResearch.SearchEvidence(_opsAgent, evidenceId, query); }
+    function Execute(string prototypeName, string phrase, int characterOffset = 0, string expectedHash = "") : string
+    { return RecallResearch.ReadContext(_opsAgent, prototypeName, phrase, characterOffset, expectedHash); }
 }
-[InfinitivePhrase("to read a recall source message")]
-prototype ToReadRecallMessage : RecallCompanionAction
+[InfinitivePhrase("to send context to the parent")]
+prototype ToSendRecallContext : RecallCompanionAction
 {
-	function Execute(string sessionKey, string messageKey, int start, int length) : string { return RecallResearch.Message(_opsAgent, sessionKey, messageKey, start, length); }
-}
-[InfinitivePhrase("to publish a recall finding")]
-prototype ToPublishRecallFinding : RecallCompanionAction
-{
-	function Execute(string draftJson) : string { return RecallPublicationFacade.Publish(_opsAgent, draftJson); }
+    function Execute(string anchorMessageKey, string contextMessage) : string
+    { return RecallResearch.SendContext(_opsAgent, anchorMessageKey, contextMessage); }
 }
