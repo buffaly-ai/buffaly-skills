@@ -51,7 +51,7 @@ prototype ToReconcileContextMemories : ContextMemoryAction
 [SemanticProgram.InfinitivePhrase("to clear a stale context binding")]
 prototype ToClearStaleContextBinding : ContextMemoryAction
 {
-    Description = "Explicit repair for a diagnosed out-of-band edit. Supply the exact indexed prototype and phrase from the diagnostic and the owning memory filename. Refuses to clear a pair still declared by the file; restores any current declaration of that phrase. Never use this to take another context's phrase.";
+    Description = "Explicit index-only repair for a diagnosed out-of-band edit. fileName is the project-relative .pts source path, including Nodes/Personal/ContextMemories for authored memories or the owning legacy/lazy source path. Supply the exact indexed prototype and phrase. Requires persisted source-unit ownership, refuses a still-declared pair and restores any current declaration of that phrase without editing source or activating a module. Never use this to take another context's phrase.";
     function Execute(string fileName, string prototypeName, string phrase) : string
     { return ContextPromptIndex.ClearStalePair(_opsAgent, _runtime, fileName, prototypeName, phrase); }
 }
