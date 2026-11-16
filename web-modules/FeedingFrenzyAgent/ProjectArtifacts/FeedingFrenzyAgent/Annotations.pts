@@ -10,3 +10,9 @@ function SemanticEntity(Prototype prototype, string semanticEntity) : void
 {
 	SemanticDatabase.InsertSemanticEntity(_runtime, prototype.PrototypeName, semanticEntity);
 }
+
+// Syntax-only phrase declaration for ContextPrompt definitions. Compilation performs no semantic write;
+// the context registration owner reads the literal from source and performs and verifies the upsert.
+function SemanticContext(Prototype prototype, string phrase) : void
+{
+}
