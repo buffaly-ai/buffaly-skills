@@ -23,7 +23,7 @@ AS
 	INSERT #HiddenNavigationSessions
 	SELECT SessionID FROM dbo.Sessions WITH (NOLOCK) WHERE IsArchived=0 AND SidebarShowInSessionList=0 OPTION(MAXDOP 1);
 	-- Expand only visible descendants. Hidden children are already in the seed.
-	DECLARE @NavigationDepth int = 0;
+	-- Each pass adds unseen identities only; finite membership also terminates cycles.
 	WHILE 1=1
 	BEGIN
 		INSERT #HiddenNavigationSessions
@@ -32,8 +32,6 @@ AS
 		WHERE child.IsArchived=0 AND child.SidebarShowInSessionList=1
 		AND NOT EXISTS(SELECT 1 FROM #HiddenNavigationSessions seen WHERE seen.SessionID=child.SessionID) OPTION(MAXDOP 1);
 		IF @@ROWCOUNT=0 BREAK;
-		SET @NavigationDepth+=1;
-		IF @NavigationDepth>=100 THROW 50003,'Navigation hierarchy exceeds 100 levels.',1;
 	END;
 
 
