@@ -18,10 +18,10 @@ prototype ExtensionBrowserInstallationService : Service
 prototype ExtensionBrowserBoundSkillAction : OpsAction { Description = @"Regular-Chrome actions routed by the current session default ExtensionBrowser instance and browser context."; }
 [SemanticEntity("bound extension browser skill")]
 prototype ExtensionBrowserBoundSkill : SkillEntity { EntityName = "bound extension browser skill"; Description = @"Use the current session default ExtensionBrowser instance and browser context."; ActionRoot = ExtensionBrowserBoundSkillAction; }
+[SemanticContext("when a Chrome conversation has a default ExtensionBrowser instance and current browser context")]
 prototype ExtensionBrowserBoundSession : ContextPrompt
 {
 	EntityName = "extension browser bound session prompt context";
-	ContextPhrase = "when a Chrome conversation has a default ExtensionBrowser instance and current browser context";
 	PromptPath = @"ContextPrompts/ExtensionBrowserBoundSession.prompt.md";
 	ActionRoot = ExtensionBrowserBoundSkillAction;
 	DefinitionPromptPath = @"ContextPrompts/ContextPromptDefinition.prompt.md";
