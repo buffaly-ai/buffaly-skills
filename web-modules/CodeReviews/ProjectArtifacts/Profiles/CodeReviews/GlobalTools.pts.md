@@ -72,3 +72,7 @@ Keep this file aligned with the operational global-review actions in `Skills/Cod
 ## 2026-11-16 - Describe image markers and the not-reviewed notice
 - Added one sentence to the patch-page tool description matching BuildReviewInstruction: embedded raster images appear as markers, and a not-reviewed notice is read completely and the file is not described as reviewed, clean or defective. No signature, root or authorization change.
 - Validation: owning suite 181/186 passed. The 5 failures (3 CodeReviewForwardReliabilityTests, 2 CodeReviewLinkedDesignGuidanceTests, "sessions database executor must be configured") fail identically on the unchanged base fb59167. JS semantic-refs tests 30/30 passed. Staging acceptance is pending at this entry; Verasol reviews were not re-run.
+
+## 2026-11-16 - Not-reviewed notice is for undecodable text only
+- Patch-page tool description matches index.pts and BuildReviewInstruction: large readable patches are never withheld; the notice heading is now '# Not reviewed: change evidence is not valid UTF-8 text v1'. No signature, root or authorization change.
+- Validation: owning suite 183/188 passed, including the new regressions. The 5 failures (3 CodeReviewForwardReliabilityTests, 2 CodeReviewLinkedDesignGuidanceTests, "sessions database executor must be configured") are the same pre-existing failures as on base fb59167. Verasol reviews were not re-run.

@@ -96,3 +96,7 @@ Commit-free turns return the typed callback result with `ShouldQueue=false`. Exi
 ## 2026-11-16 - Describe image markers and the not-reviewed notice
 - Added the same sentence as GlobalTools.pts to the patch-page tool description. No signature, root or authorization change; no lazy sidecar contained the previous text.
 - Validation: owning suite 181/186 passed. The 5 failures (3 CodeReviewForwardReliabilityTests, 2 CodeReviewLinkedDesignGuidanceTests, "sessions database executor must be configured") fail identically on the unchanged base fb59167. JS semantic-refs tests 30/30 passed. Staging acceptance is pending at this entry; Verasol reviews were not re-run.
+
+## 2026-11-16 - Not-reviewed notice is for undecodable text only
+- Patch-page tool description: large readable patches are never withheld; the not-reviewed notice heading is now '# Not reviewed: change evidence is not valid UTF-8 text v1'. No signature, root or authorization change; no lazy sidecar contains this text.
+- Validation: owning suite 183/188 passed, including the new regressions. The 5 failures (3 CodeReviewForwardReliabilityTests, 2 CodeReviewLinkedDesignGuidanceTests, "sessions database executor must be configured") are the same pre-existing failures as on base fb59167. Verasol reviews were not re-run.
