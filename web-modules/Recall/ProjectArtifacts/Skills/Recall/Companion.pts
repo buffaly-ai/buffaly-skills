@@ -43,6 +43,6 @@ prototype ToReadRecallContext : RecallCompanionAction
 [InfinitivePhrase("to send context to the parent")]
 prototype ToSendRecallContext : RecallCompanionAction
 {
-    function Execute(string anchorMessageKey, string contextMessage) : string
-    { return RecallResearch.SendContext(_opsAgent, anchorMessageKey, contextMessage); }
+    function Execute(string anchorMessageKey, string contextDeltaJson) : string
+    { return RecallResearch.SendContext(_opsAgent, anchorMessageKey, contextDeltaJson); }
 }
