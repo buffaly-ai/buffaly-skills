@@ -106,11 +106,11 @@ prototype ToReadOfficialBuffalyDocForHelp : HelpAgentActionRoot
 [SemanticProgram.InfinitivePhrase("to search the web with an LLM for Help Agent")]
 prototype ToSearchWebWithLlmForHelp : HelpAgentActionRoot
 {
-	Description = @"question - narrow external public question to research. Uses the fixed Help Agent web-search model; callers cannot choose or override the model.";
+	Description = @"question - narrow external public question to research using native live web search. Uses the current Buffaly runtime model selection and account-backed transport. Fails if native search is unavailable; never falls back to an API key, another model/provider, or an ordinary answer without search. Callers cannot choose or override the model.";
 
 	function Execute(string question) : string
 	{
-		return LLMs.ExecuteWebSearch(question);
+		return _opsAgent.AskModelViaRuntime(question, "", "", "", "", "[]", true);
 	}
 }
 

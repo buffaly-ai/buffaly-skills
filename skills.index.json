@@ -1588,7 +1588,7 @@
       "SkillName": "HelpAgent",
       "Title": "Help Agent",
       "Description": "Buffaly skill package for Help Agent.",
-      "Version": "0.1.8",
+      "Version": "0.1.9",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Help Agent",
@@ -1602,7 +1602,7 @@
         },
         {
           "Path": "index.pts",
-          "Sha256": "6a0e9fe34a0c758238973471675b5ba03d41155ec03043ffcaef10d470773d42"
+          "Sha256": "df107ab5294738d57741f367ff65f521766627f999724efba44b203797ad2f7f"
         },
         {
           "Path": "index.pts.lazy.json",
@@ -1610,7 +1610,7 @@
         },
         {
           "Path": "index.pts.md",
-          "Sha256": "59f5d4d3b1d6349f4986ef8a7d898f974888ba95fb1c16eacd4de370bdf1b6e5"
+          "Sha256": "40a52747f1cf5d0a7f234f2efd4f9e5d95e5bb398169766ece907c0887e3d4e5"
         },
         {
           "Path": "Prompts/ToCreateBasicCsvDownloadExportWalkthrough.prompt.md",
@@ -1655,7 +1655,8 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": []
+      "Prerequisites": [],
+      "PreservedFiles": []
     },
     {
       "SkillName": "LLM",
