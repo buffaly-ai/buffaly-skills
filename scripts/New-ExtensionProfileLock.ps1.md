@@ -1,5 +1,8 @@
 # Lock generator history
 
+## 2026-11-16 — Antigravity provider in standard baselines
+Added Buffaly.Provider.Antigravity to the exact ProviderModule membership for both core-installer and recommended-installer. Matt directed that the provider ship with the standard installation, including Matt's. Its platform falls under the existing all-three-platforms rule. No other membership, exclusion or platform logic changed. Six core and recommended platform locks were regenerated, and both profiles' ValidateOnly checks pass. Test-RetiredComputerUse.ps1 and Test-ExtensionRepository.ps1 (120/120) pass.
+
 ## 2026-11-03 — Windows DispatchTree contract dependency
 Added DispatchTreeViewer to recommended-installer exact WebModule membership and its Windows-only platform contract; removed the historical exclusion. DispatchTree 0.1.38 imports CLR contracts supplied by Viewer 0.1.175, so a script-only installer baseline is incomplete. Core profile and Linux/Mac membership are unchanged. Regeneration of Windows/Linux/Mac recommended locks passed; Windows selects the exact pair and all three reconcile the already-published CodeReviews 0.1.483. Package build acceptance and installed runtime behavior are separate, not inferred from lock generation.
 

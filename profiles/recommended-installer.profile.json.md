@@ -1,5 +1,10 @@
 # Recommended installer profile
 
+## 2026-11-16 Antigravity provider joins the standard baseline
+- Matt directed that the new Antigravity provider be part of the standard installation, including Matt's. Added ProviderModule/Buffaly.Provider.Antigravity (catalog 0.1.12, built from buffaly-providers 93f1311) on windows/linux/mac. This follows the rule above that members without stricter index platform evidence target all three platforms. The provider fails explicitly when the external `agy` CLI is unavailable. Updated the owning generator's exact ProviderModule membership.
+- Regenerated the windows, linux and mac locks at 4e4f275. Windows changes only by adding Antigravity. Linux and Mac also reconcile Anthropic 0.1.205 to 0.1.206 and CodeReviews 0.1.512 to 0.1.513, both already published. The unsuffixed legacy `recommended-installer.profile.lock.json` is unreferenced by any script or test. It was left untouched, matching the 2026-11-03 three-lock practice.
+- Validation: both profile -ValidateOnly checks passed, Test-RetiredComputerUse.ps1 passed, and Test-ExtensionRepository.ps1 passed 120/120. The installer build, staging install and runtime acceptance are separate steps and are not claimed here.
+
 ## 2026-11-03 Windows DispatchTree CLR dependency closure
 - Preparing the requested DispatchTree 0.1.38 / DispatchTreeViewer 0.1.175 build revealed that the recommended profile included the new script but explicitly excluded its CLR contract provider. Added WebModule/DispatchTreeViewer on Windows and changed the owning generator's exact-membership, exclusion and platform checks accordingly. This supersedes the historical Viewer exclusion below; no Linux/Mac Viewer membership is added.
 - Regenerated all three recommended locks through New-ExtensionProfileLock.ps1. All three generations passed; Windows resolves the exact requested pair. Existing CodeReviews locks reconcile 0.1.481 to already-published 0.1.483 on all platforms; no other package versions or identities changed. This clears the observed stale CodeReviews selection rather than bypassing preflight.
