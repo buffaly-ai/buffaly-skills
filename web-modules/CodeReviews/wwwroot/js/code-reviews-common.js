@@ -8,6 +8,15 @@ window.CodeReviews = (function () {
 	function decode(value) { return decodeURIComponent(text(value).replace(/\+/g, "%20")); }
 	function normalizePath(value) { return text(value).replace(/\\+/g, "\\").replace(/([^:])\/\/+/g, "$1/"); }
 	function fileName(path) { var normalized = text(path).replace(/\\/g, "/"); var parts = normalized.split("/"); return parts[parts.length - 1] || normalized; }
+	// Keep exact paths and diagnostics in the record; the result panel shows file names and readable reasons.
+	function formatNotReviewedFiles(files) {
+		if (files.length === 0) return "";
+		return "\n\nNot reviewed\n" + files.map(function (file) {
+			var reason = text(file.Reason) === "Git patch output for this file is not valid UTF-8 text, so its exact changes cannot be presented."
+				? "Text encoding could not be read." : "The file could not be reviewed.";
+			return "- " + fileName(file.Path) + ": " + reason;
+		}).join("\n");
+	}
 	function normalizeDateValue(value) {
 		if (!value) return "";
 		if (typeof value === "string") return value;
@@ -100,5 +109,5 @@ window.CodeReviews = (function () {
 			.catch(function () { renderBuildFooter(null); });
 	}
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", loadBuildFooter); else loadBuildFooter();
-	return { byId: byId, text: text, escapeHtml: escapeHtml, log: log, query: query, encode: encode, decode: decode, normalizePath: normalizePath, fileName: fileName, formatWhen: formatWhen, call: call, errorMessage: errorMessage, diffLineClass: diffLineClass, codeMirrorModeForPath: codeMirrorModeForPath, enhanceCodeBlocks: enhanceCodeBlocks, highlightDiffEditorLines: highlightDiffEditorLines };
+	return { byId: byId, text: text, escapeHtml: escapeHtml, log: log, query: query, encode: encode, decode: decode, normalizePath: normalizePath, fileName: fileName, formatNotReviewedFiles: formatNotReviewedFiles, formatWhen: formatWhen, call: call, errorMessage: errorMessage, diffLineClass: diffLineClass, codeMirrorModeForPath: codeMirrorModeForPath, enhanceCodeBlocks: enhanceCodeBlocks, highlightDiffEditorLines: highlightDiffEditorLines };
 })();

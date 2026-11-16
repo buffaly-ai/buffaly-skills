@@ -114,7 +114,7 @@
 		}
 		// Files the reviewer could not read are listed with the result; the review covers only the other files.
 		var notReviewed = Array.isArray(record.NotReviewedFiles) ? record.NotReviewedFiles : [];
-		var notReviewedText = notReviewed.length === 0 ? "" : "\n\nNot reviewed\n" + notReviewed.map(function (file) { return "- " + C.text(file.Path) + ": " + C.text(file.Reason); }).join("\n");
+		var notReviewedText = C.formatNotReviewedFiles(notReviewed);
 		if (bodyNode) bodyNode.textContent = (rawText || (notReviewed.length > 0 && status === "Reviewed" ? "No actionable findings in the reviewed files." : "No agent review text submitted.")) + notReviewedText;
 	}
 	function loadAgentReview() {
