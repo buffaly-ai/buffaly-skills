@@ -68,3 +68,7 @@ Keep this file aligned with the operational global-review actions in `Skills/Cod
 ## 2026-11-05 — Mirror shared code-only review scope
 - Typed-upserted manifest/patch descriptions to mark mandatory code entries with RequiresCodeReview, retaining exact parent/original rename metadata. Optional recorded-data aggregation no longer substitutes for compulsory raw data because raw non-code coverage itself is removed. No installed profile edits or executable signature/root changes; shared dispatch and workflow agree.
 - Validation: full 181-test suite passed, zero skipped, including eager/lazy compile, exact reported mixed-file commit and tampered/missing code, manifest and source-turn negatives. Strict lazy generator succeeded with 35 prototypes and no diagnostics. Release publish passed; live activation is separate.
+
+## 2026-11-16 - Describe image markers and the not-reviewed notice
+- Added one sentence to the patch-page tool description matching BuildReviewInstruction: embedded raster images appear as markers, and a not-reviewed notice is read completely and the file is not described as reviewed, clean or defective. No signature, root or authorization change.
+- Validation: owning suite 181/186 passed. The 5 failures (3 CodeReviewForwardReliabilityTests, 2 CodeReviewLinkedDesignGuidanceTests, "sessions database executor must be configured") fail identically on the unchanged base fb59167. JS semantic-refs tests 30/30 passed. Staging acceptance is pending at this entry; Verasol reviews were not re-run.

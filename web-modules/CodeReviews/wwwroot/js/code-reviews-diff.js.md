@@ -52,3 +52,7 @@
 ## Simplified Manual Findings Submit (2026-07-04)
 - Manual findings submission now calls SubmitCodeReviewFindings with only repository path, commit SHA, and review text.
 - Design Decision: browser/manual compatibility should match the typed agent contract and should not send source/child session keys.
+
+## 2026-11-16 - Show not-reviewed files in the agent review panel
+- renderAgentReviewPanel appends a Not reviewed list (path: reason) from record.NotReviewedFiles. A Reviewed record with no findings text but not-reviewed files shows "No actionable findings in the reviewed files." rather than implying the whole commit was clean.
+- Validation: node --check passed; no browser rendering test was run. Validation: owning suite 181/186 passed. The 5 failures (3 CodeReviewForwardReliabilityTests, 2 CodeReviewLinkedDesignGuidanceTests, "sessions database executor must be configured") fail identically on the unchanged base fb59167. JS semantic-refs tests 30/30 passed. Staging acceptance is pending at this entry; Verasol reviews were not re-run.

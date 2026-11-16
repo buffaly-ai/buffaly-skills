@@ -112,7 +112,10 @@
 			if (record.Provider || record.provider || record.ModelName || record.modelName) meta.push(C.text(record.Provider || record.provider) + " / " + C.text(record.ModelName || record.modelName));
 			metaNode.innerHTML = meta.map(function (item) { return '<span>' + C.escapeHtml(item) + '</span>'; }).join("");
 		}
-		if (bodyNode) bodyNode.textContent = rawText || "No agent review text submitted.";
+		// Files the reviewer could not read are listed with the result; the review covers only the other files.
+		var notReviewed = Array.isArray(record.NotReviewedFiles) ? record.NotReviewedFiles : [];
+		var notReviewedText = notReviewed.length === 0 ? "" : "\n\nNot reviewed\n" + notReviewed.map(function (file) { return "- " + C.text(file.Path) + ": " + C.text(file.Reason); }).join("\n");
+		if (bodyNode) bodyNode.textContent = (rawText || (notReviewed.length > 0 && status === "Reviewed" ? "No actionable findings in the reviewed files." : "No agent review text submitted.")) + notReviewedText;
 	}
 	function loadAgentReview() {
 		if (mode !== "commit" || !path || !currentCommitSha()) { renderAgentReviewPanel(); return Promise.resolve(null); }
