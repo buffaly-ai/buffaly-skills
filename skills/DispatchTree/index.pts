@@ -253,6 +253,17 @@ prototype ToRecordHistoricalDispatch : DispatchTreeSkillAction, DispatchAgentCur
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to correct a historical dispatch on a routing node")]
+prototype ToCorrectHistoricalDispatch : DispatchTreeSkillAction, DispatchAgentCuratedActionRoot
+{
+	Description = @"prototypeName - exact Dispatch node that holds the false record. incorrectHistoricalDispatch - the exact existing HistoricalDispatches line, copied verbatim from ToGetDispatchNode. correctedHistoricalDispatch - one compact grounded replacement line naming the corrected destination and the correction source, for example 'corrected from <rejected destination> by user on <date>'. Replaces that exact line in place and keeps order; fails when the line is absent; removes the old line when the corrected line already exists. Use only after the user rejected a dispatch destination and the corrected attachment was read back. It does not choose a route, authorize delivery, change attachments, create an entity, or modify graph structure.";
+
+	function Execute(string prototypeName, string incorrectHistoricalDispatch, string correctedHistoricalDispatch) : string
+	{
+		return RuntimeDispatchTreeFacade.CorrectHistoricalDispatch(_runtime, _opsAgent, prototypeName, incorrectHistoricalDispatch, correctedHistoricalDispatch);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to list immediate dispatch child nodes")]
 [SemanticProgram.InfinitivePhrase("to compare the next dispatch branches")]
 [SemanticProgram.InfinitivePhrase("to read one level of the dispatch tree")]
