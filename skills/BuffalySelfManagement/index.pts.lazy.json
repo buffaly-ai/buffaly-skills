@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/BuffalySelfManagement/index.pts",
   "Prototypes": {
     "BuffalySamplePreviewGrid": "Skills/BuffalySelfManagement/index.pts",
@@ -22,5 +22,124 @@
     "ToRunModelQuorumWorkflowSkill": "Skills/BuffalySelfManagement/index.pts",
     "ToTroubleshootBuffalyAgentRuntimeSkill": "Skills/BuffalySelfManagement/index.pts",
     "ToTroubleshootProtoScriptDllCompilationSkill": "Skills/BuffalySelfManagement/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToTroubleshootBuffalyAgentRuntimeSkill": [
+      "to diagnose a runtime issue",
+      "to run buffaly agent troubleshooting workflow",
+      "to troubleshoot the buffaly agent"
+    ],
+    "ToCaptureTroubleshootingRetrospectiveSkill": [
+      "to capture a troubleshooting retrospective",
+      "to summarize what worked vs failed in troubleshooting"
+    ],
+    "ToCritiqueAgentSessionInteractionSkill": [
+      "to analyze a poor agent interaction",
+      "to critique a failed agent session",
+      "to inspect a failed turn and recommend improvements",
+      "to review session tool calls and outcomes"
+    ],
+    "ToTroubleshootProtoScriptDllCompilationSkill": [
+      "to diagnose a missing assembly in a protoscript skill",
+      "to diagnose protoscript dll import errors",
+      "to fix protoscript method binding errors",
+      "to isolate dll loading issues with a local harness",
+      "to troubleshoot dll binding resolution in a skill",
+      "to troubleshoot protoscript dll compilation",
+      "to troubleshoot protoscript dll compilation issues"
+    ],
+    "ToImproveCodeQualityAndReduceRedundancySkill": [
+      "to enforce one canonical contract and remove normalization layers",
+      "to improve code quality and reduce redundancy",
+      "to refactor for cleaner less redundant code",
+      "to simplify and deduplicate csharp ui and protoscript paths"
+    ],
+    "ToImproveOntologyQualityAndOrganizationSkill": [
+      "to clean up ontology inheritance and file placement",
+      "to improve ontology quality and organization",
+      "to improve protoscript ontology structure",
+      "to normalize ontology parents and organize instances"
+    ],
+    "ToAddDllBackedCapabilitiesSkill": [
+      "to add a dll backed skill bundle",
+      "to add dll backed capabilities to the agent",
+      "to import a dll into opsagent skills"
+    ],
+    "ToCreateDllBackedCapabilityFromScratchSkill": [
+      "to create a csharp dll backed skill from scratch",
+      "to create a dll backed capability from scratch"
+    ],
+    "ToInstallExistingDllIntoProtoScriptSkill": [
+      "to install an existing dll into protoscript",
+      "to integrate an existing dll backed capability into opsagent"
+    ],
+    "ToExposeCSharpClassToProtoScriptSkill": [
+      "to create thin protoscript wrappers for a c sharp class",
+      "to expose a c sharp class to protoscript",
+      "to expose a c# class to protoscript",
+      "to expose csharp class methods as protoscript actions"
+    ],
+    "ToRunModelQuorumWorkflowSkill": [
+      "to compare multiple models on the same task",
+      "to create a quorum of models and score their outputs",
+      "to orchestrate child sessions for model evaluation",
+      "to run a model quorum workflow"
+    ],
+    "ToCreateSubjectMatterExpertResearchBriefSkill": [
+      "to build a subject matter expert document",
+      "to create a subject matter expert research brief",
+      "to create an sme background document",
+      "to mine prior session history for a topic brief"
+    ],
+    "ToCreateAutomatonSkill": [
+      "to create a recurring stateful agent loop",
+      "to create an automaton",
+      "to design an automaton",
+      "to explain an automaton"
+    ],
+    "ToDesignBuffalyResultTypeRendererSkill": [
+      "to add a custom result renderer to the buffaly timeline",
+      "to design a buffaly result type renderer",
+      "to explain how result type and result payload work",
+      "to return a structured ui result from an assistant response"
+    ],
+    "ToCallProtoScriptMethodsFromBuffalyApiSkill": [
+      "to call protoscript from javascript through run protoscript method",
+      "to call protoscript methods from the buffaly api",
+      "to explain run protoscript method async",
+      "to invoke a live worker protoscript method from jsonws"
+    ],
+    "ToDesignProtoScriptPreviewGridSkill": [
+      "to build a buffaly preview grid result type",
+      "to design a protoscript preview grid",
+      "to render a grid from a protoscript method",
+      "to return a grid result from a buffaly assistant response"
+    ],
+    "ToReturnProtoScriptPreviewGridResult": [
+      "to create a protoscript preview grid response",
+      "to render sample protoscript preview grid",
+      "to return a protoscript preview grid result",
+      "to show a protoscript method result as a grid"
+    ]
+  },
+  "ActionSignatures": {
+    "BuffalySelfManagementSkillAction": "BuffalySelfManagementSkillAction.Execute() : String",
+    "ToAddDllBackedCapabilitiesSkill": "ToAddDllBackedCapabilitiesSkill.Execute() : String",
+    "ToCallProtoScriptMethodsFromBuffalyApiSkill": "ToCallProtoScriptMethodsFromBuffalyApiSkill.Execute() : String",
+    "ToCaptureTroubleshootingRetrospectiveSkill": "ToCaptureTroubleshootingRetrospectiveSkill.Execute() : String",
+    "ToCreateAutomatonSkill": "ToCreateAutomatonSkill.Execute() : String",
+    "ToCreateDllBackedCapabilityFromScratchSkill": "ToCreateDllBackedCapabilityFromScratchSkill.Execute() : String",
+    "ToCreateSubjectMatterExpertResearchBriefSkill": "ToCreateSubjectMatterExpertResearchBriefSkill.Execute() : String",
+    "ToCritiqueAgentSessionInteractionSkill": "ToCritiqueAgentSessionInteractionSkill.Execute() : String",
+    "ToDesignBuffalyResultTypeRendererSkill": "ToDesignBuffalyResultTypeRendererSkill.Execute() : String",
+    "ToDesignProtoScriptPreviewGridSkill": "ToDesignProtoScriptPreviewGridSkill.Execute() : String",
+    "ToExposeCSharpClassToProtoScriptSkill": "ToExposeCSharpClassToProtoScriptSkill.Execute() : String",
+    "ToImproveCodeQualityAndReduceRedundancySkill": "ToImproveCodeQualityAndReduceRedundancySkill.Execute() : String",
+    "ToImproveOntologyQualityAndOrganizationSkill": "ToImproveOntologyQualityAndOrganizationSkill.Execute() : String",
+    "ToInstallExistingDllIntoProtoScriptSkill": "ToInstallExistingDllIntoProtoScriptSkill.Execute() : String",
+    "ToReturnProtoScriptPreviewGridResult": "ToReturnProtoScriptPreviewGridResult.Execute(sessionKey: String, prototypeName: String, args: JsonObject, methodName: String, title: String) : JsonObject",
+    "ToRunModelQuorumWorkflowSkill": "ToRunModelQuorumWorkflowSkill.Execute() : String",
+    "ToTroubleshootBuffalyAgentRuntimeSkill": "ToTroubleshootBuffalyAgentRuntimeSkill.Execute() : String",
+    "ToTroubleshootProtoScriptDllCompilationSkill": "ToTroubleshootProtoScriptDllCompilationSkill.Execute() : String"
   }
 }
