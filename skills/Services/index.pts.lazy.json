@@ -1,10 +1,26 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/Services/index.pts",
   "Prototypes": {
     "ServicesSkill": "Skills/Services/index.pts",
     "ServicesSkillAction": "Skills/Services/index.pts",
     "ToGetServiceHierarchy": "Skills/Services/index.pts",
     "ToListServices": "Skills/Services/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToListServices": [
+      "to enumerate protoscript services",
+      "to list available services",
+      "to list services"
+    ],
+    "ToGetServiceHierarchy": [
+      "to get the service hierarchy",
+      "to inspect the recursive service tree",
+      "to show the service inheritance tree"
+    ]
+  },
+  "ActionSignatures": {
+    "ToGetServiceHierarchy": "ToGetServiceHierarchy.Execute() : Prototype",
+    "ToListServices": "ToListServices.Execute() : Collection"
   }
 }
