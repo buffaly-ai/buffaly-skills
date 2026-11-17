@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/ValidatedPrompt/index.pts",
   "Prototypes": {
     "ToDebugEchoValidatedPromptStringBinding": "Skills/ValidatedPrompt/index.pts",
@@ -11,5 +11,42 @@
     "ToSummarizeTextInOneSentenceSkill": "Skills/ValidatedPrompt/index.pts",
     "ValidatedPromptSkill": "Skills/ValidatedPrompt/index.pts",
     "ValidatedPromptSkillAction": "Skills/ValidatedPrompt/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToRunValidatedPromptSkill": [
+      "to execute a validated prompt action",
+      "to run a validated prompt skill"
+    ],
+    "ToRunValidatedPromptSkillFromSessionFile": [
+      "to execute a validated prompt action using a staged input file",
+      "to run a validated prompt skill from a session file"
+    ],
+    "ToInspectValidatedPromptActionDefinition": [
+      "to inspect a validated prompt action definition"
+    ],
+    "ToSummarizeTextInOneSentenceSkill": [
+      "to summarize text in exactly one faithful sentence",
+      "to summarize text in one sentence with validation"
+    ],
+    "ToGenerateWorkflowReportNarrativeSkill": [
+      "to generate a workflow report narrative",
+      "to summarize a workflow run report"
+    ],
+    "ToGenerateWorkflowReportNarrativeValidatedSkill": [
+      "to generate a validated workflow report narrative",
+      "to validate a workflow report narrative summary"
+    ],
+    "ToDebugEchoValidatedPromptStringBinding": [
+      "to debug validated prompt string binding"
+    ]
+  },
+  "ActionSignatures": {
+    "ToDebugEchoValidatedPromptStringBinding": "ToDebugEchoValidatedPromptStringBinding.Execute(text: String) : String",
+    "ToGenerateWorkflowReportNarrativeSkill": "ToGenerateWorkflowReportNarrativeSkill.Execute() : String",
+    "ToGenerateWorkflowReportNarrativeValidatedSkill": "ToGenerateWorkflowReportNarrativeValidatedSkill.Execute(userInput: String, maxAttempts: Int32) : String",
+    "ToInspectValidatedPromptActionDefinition": "ToInspectValidatedPromptActionDefinition.Execute(validatedPromptActionName: String) : String",
+    "ToRunValidatedPromptSkill": "ToRunValidatedPromptSkill.Execute(validatedPromptActionName: String, userInput: String, maxAttempts: Int32) : String",
+    "ToRunValidatedPromptSkillFromSessionFile": "ToRunValidatedPromptSkillFromSessionFile.Execute(validatedPromptActionName: String, userInputRelativePath: String, maxAttempts: Int32) : String",
+    "ToSummarizeTextInOneSentenceSkill": "ToSummarizeTextInOneSentenceSkill.Execute(userInput: String, maxAttempts: Int32) : String"
   }
 }
