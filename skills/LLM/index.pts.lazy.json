@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/LLM/index.pts",
   "Prototypes": {
     "GeminiActionBase": "Skills/LLM/index.pts",
@@ -42,5 +42,96 @@
     "ToListTextToSpeechVoices": "Skills/LLM/index.pts",
     "ToPrepareComprehensiveCodingInvestigationBrief": "Skills/LLM/index.pts",
     "ToSetBuffalySessionModelSelection": "Skills/LLM/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToDownloadChatGptSharedConversationMessages": [
+      "to download chatgpt shared conversation messages",
+      "to extract messages from a chatgpt shared url",
+      "to parse a chatgpt share link into json messages"
+    ],
+    "ToPrepareComprehensiveCodingInvestigationBrief": [
+      "to assemble a difficult coding handoff prompt",
+      "to build a large coding problem prompt package",
+      "to prepare a comprehensive coding investigation brief"
+    ],
+    "ToAskModelViaBuffalyRuntime": [
+      "to ask a model through the buffaly runtime",
+      "to ask a model with text image or video input",
+      "to ask an llm with runtime provider routing"
+    ],
+    "ToAskGrokQuestionWithModel": [
+      "to ask xai grok a question with specific model"
+    ],
+    "ToAskGrokQuestion": [
+      "to ask xai grok a question"
+    ],
+    "ToAskGrokQuestionHeavy": [
+      "deprecated unavailable grok heavy text ask"
+    ],
+    "ToAskGeminiQuestionWithModel": [
+      "to ask gemini a question with specific model"
+    ],
+    "ToAskGeminiQuestion": [
+      "to ask gemini a question"
+    ],
+    "ToAskGeminiQuestionHeavy": [
+      "deprecated unavailable gemini heavy text ask"
+    ],
+    "ToListTextToSpeechVoices": [
+      "to list provider text to speech models and voices",
+      "to list text to speech voices"
+    ],
+    "ToGenerateTextToSpeechAudio": [
+      "to create a text to speech audio artifact",
+      "to generate text to speech audio"
+    ],
+    "ToGenerateTextToSpeechVoiceSamples": [
+      "to create text to speech samples for voices",
+      "to generate text to speech voice samples"
+    ],
+    "ToGetBuffalyRuntimeProviderSelection": [
+      "to get current buffaly provider model and reasoning",
+      "to get current buffaly runtime provider selection"
+    ],
+    "ToGetBuffalyRuntimeModelAndReasoning": [
+      "to get current buffaly model and reasoning",
+      "to get current buffaly reasoning level"
+    ],
+    "ToSetBuffalySessionModelSelection": [
+      "to change a buffaly session provider model",
+      "to set buffaly session model selection",
+      "to set buffaly session provider model and reasoning"
+    ],
+    "ToGetBuffalyProviderModelCatalog": [
+      "to get buffaly provider model catalog",
+      "to list available buffaly providers models and reasoning levels",
+      "to list available models for a provider",
+      "to show available runtime provider model options"
+    ],
+    "ToGetCurrentBuffalyRuntimeContext": [
+      "to get current buffaly runtime context",
+      "to get current session key and runtime settings",
+      "to get my parent session key",
+      "to get the current session parent key"
+    ]
+  },
+  "ActionSignatures": {
+    "ToAskGeminiQuestion": "ToAskGeminiQuestion.Execute(question: String) : String",
+    "ToAskGeminiQuestionHeavy": "ToAskGeminiQuestionHeavy.Execute(question: String) : String",
+    "ToAskGeminiQuestionWithModel": "ToAskGeminiQuestionWithModel.Execute(question: String, model: String) : String",
+    "ToAskGrokQuestion": "ToAskGrokQuestion.Execute(question: String) : String",
+    "ToAskGrokQuestionHeavy": "ToAskGrokQuestionHeavy.Execute(question: String) : String",
+    "ToAskGrokQuestionWithModel": "ToAskGrokQuestionWithModel.Execute(question: String, model: String) : String",
+    "ToAskModelViaBuffalyRuntime": "ToAskModelViaBuffalyRuntime.Execute(prompt: String, systemPrompt: String, provider: String, model: String, reasoningLevel: String, inputPartsJson: String) : String",
+    "ToDownloadChatGptSharedConversationMessages": "ToDownloadChatGptSharedConversationMessages.Execute(shareUrl: String, outputDirectory: String, outputFileName: String) : String",
+    "ToGenerateTextToSpeechAudio": "ToGenerateTextToSpeechAudio.Execute(text: String, outputFileName: String, provider: String, model: String, voice: String, instructions: String) : String",
+    "ToGenerateTextToSpeechVoiceSamples": "ToGenerateTextToSpeechVoiceSamples.Execute(text: String, provider: String, model: String, voicesCsv: String) : String",
+    "ToGetBuffalyProviderModelCatalog": "ToGetBuffalyProviderModelCatalog.Execute(sessionKey: String) : String",
+    "ToGetBuffalyRuntimeModelAndReasoning": "ToGetBuffalyRuntimeModelAndReasoning.Execute() : String",
+    "ToGetBuffalyRuntimeProviderSelection": "ToGetBuffalyRuntimeProviderSelection.Execute() : String",
+    "ToGetCurrentBuffalyRuntimeContext": "ToGetCurrentBuffalyRuntimeContext.Execute() : String",
+    "ToListTextToSpeechVoices": "ToListTextToSpeechVoices.Execute(provider: String, model: String) : String",
+    "ToPrepareComprehensiveCodingInvestigationBrief": "ToPrepareComprehensiveCodingInvestigationBrief.Execute() : String",
+    "ToSetBuffalySessionModelSelection": "ToSetBuffalySessionModelSelection.Execute(sessionKey: String, provider: String, modelName: String, reasoningLevel: String) : String"
   }
 }
