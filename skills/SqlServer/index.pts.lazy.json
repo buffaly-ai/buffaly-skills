@@ -1,16 +1,59 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/SqlServer/index.pts",
   "Prototypes": {
     "SqlServerSkill": "Skills/SqlServer/index.pts",
     "SqlServerSkillAction": "Skills/SqlServer/index.pts",
     "ToAccessLocalSqlServerSkill": "Skills/SqlServer/index.pts",
     "ToEnsureLocalSqlServerDatabaseExists": "Skills/SqlServer/index.pts",
+    "ToExecuteSqlQuery": "Skills/SqlServer/index.pts",
     "ToListSqlDatabases": "Skills/SqlServer/index.pts",
     "ToRunReadOnlySqlQuery": "Skills/SqlServer/index.pts",
     "ToRunReadOnlySqlQueryToHandleKey": "Skills/SqlServer/index.pts",
     "ToRunReadOnlySqlQueryToRowsJson": "Skills/SqlServer/index.pts",
     "ToRunStoredProcedureAsDataTable": "Skills/SqlServer/index.pts",
     "ToSetupSqlServer2025ExpressSkill": "Skills/SqlServer/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToExecuteSqlQuery": [
+      "to execute a sql query",
+      "to run a sql query and return rows json"
+    ],
+    "ToRunReadOnlySqlQuery": [
+      "to run a read only sql query using a secret key"
+    ],
+    "ToRunReadOnlySqlQueryToRowsJson": [
+      "to run a read only sql query and return in-memory rows json"
+    ],
+    "ToRunReadOnlySqlQueryToHandleKey": [
+      "to run a read only sql query and return a tabular handle key"
+    ],
+    "ToRunStoredProcedureAsDataTable": [
+      "to execute a stored procedure and return a datatable",
+      "to run a sql stored procedure as a native datatable"
+    ],
+    "ToEnsureLocalSqlServerDatabaseExists": [
+      "to create local sql server database if missing",
+      "to ensure a local sql server database exists"
+    ],
+    "ToAccessLocalSqlServerSkill": [
+      "to access local sql server",
+      "to connect to local sql server and list databases"
+    ],
+    "ToSetupSqlServer2025ExpressSkill": [
+      "to install sql server 2025 express with validation and troubleshooting",
+      "to set up sql server 2025 express on a windows server"
+    ]
+  },
+  "ActionSignatures": {
+    "ToAccessLocalSqlServerSkill": "ToAccessLocalSqlServerSkill.Execute() : String",
+    "ToEnsureLocalSqlServerDatabaseExists": "ToEnsureLocalSqlServerDatabaseExists.Execute(server: String, databaseName: String) : String",
+    "ToExecuteSqlQuery": "ToExecuteSqlQuery.Execute(connectionString: String, query: String, maxRows: Int32) : String",
+    "ToListSqlDatabases": "ToListSqlDatabases.Execute() : String",
+    "ToRunReadOnlySqlQuery": "ToRunReadOnlySqlQuery.Execute(server: String, database: String, username: String, secretKey: String, query: String, maxRows: Int32) : String",
+    "ToRunReadOnlySqlQueryToHandleKey": "ToRunReadOnlySqlQueryToHandleKey.Execute(server: String, database: String, username: String, secretKey: String, query: String, maxRows: Int32) : String",
+    "ToRunReadOnlySqlQueryToRowsJson": "ToRunReadOnlySqlQueryToRowsJson.Execute(server: String, database: String, username: String, secretKey: String, query: String, maxRows: Int32) : String",
+    "ToRunStoredProcedureAsDataTable": "ToRunStoredProcedureAsDataTable.Execute(server: String, database: String, username: String, secretKey: String, procedureName: String, parametersJson: String) : DataTable",
+    "ToSetupSqlServer2025ExpressSkill": "ToSetupSqlServer2025ExpressSkill.Execute() : String"
   }
 }
