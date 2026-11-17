@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/VoiceAgentDispatch/index.pts",
   "Prototypes": {
     "ToGetBoundSessionMessageMarkdown": "Skills/VoiceAgentDispatch/index.pts",
@@ -11,5 +11,33 @@
     "VoiceAgentAction": "Skills/VoiceAgentDispatch/index.pts",
     "VoiceAgentDispatchSkillAction": "Skills/VoiceAgentDispatch/index.pts",
     "VoiceAgentEntityRoot": "Skills/VoiceAgentDispatch/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToSendMessageToVoiceAgent": [
+      "to send a message back to the voice agent"
+    ],
+    "ToSendMessageToVoiceAgentDispatcher": [
+      "to send instructions to the voice agent dispatcher"
+    ],
+    "ToGetLatestVoiceAgentDispatcherTurn": [
+      "to get the latest voice agent dispatcher turn"
+    ],
+    "ToGetBoundSessionRecentTurns": [
+      "to get recent turns from the session bound to the voice agent"
+    ],
+    "ToGetBoundSessionTurnDetail": [
+      "to get a turn from the session bound to the voice agent"
+    ],
+    "ToGetBoundSessionMessageMarkdown": [
+      "to get a message from the session bound to the voice agent"
+    ]
+  },
+  "ActionSignatures": {
+    "ToGetBoundSessionMessageMarkdown": "ToGetBoundSessionMessageMarkdown.Execute(messageKey: String) : String",
+    "ToGetBoundSessionRecentTurns": "ToGetBoundSessionRecentTurns.Execute(maxTurns: Int32) : GetSessionTurnBootstrapResponse",
+    "ToGetBoundSessionTurnDetail": "ToGetBoundSessionTurnDetail.Execute(turnId: String, maxRows: Int32) : GetTurnDetailResponse",
+    "ToGetLatestVoiceAgentDispatcherTurn": "ToGetLatestVoiceAgentDispatcherTurn.Execute() : TurnSummaryContract",
+    "ToSendMessageToVoiceAgent": "ToSendMessageToVoiceAgent.Execute(instruction: String) : String",
+    "ToSendMessageToVoiceAgentDispatcher": "ToSendMessageToVoiceAgentDispatcher.Execute(instruction: String) : String"
   }
 }
