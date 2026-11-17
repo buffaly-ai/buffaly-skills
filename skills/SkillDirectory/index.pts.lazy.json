@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/SkillDirectory/index.pts",
   "Prototypes": {
     "SkillDirectorySkill": "Skills/SkillDirectory/index.pts",
@@ -66,5 +66,18 @@
       "to update a Buffaly extension profile",
       "to update all Buffaly personal extensions"
     ]
+  },
+  "ActionSignatures": {
+    "ToGenerateLazySkillIndex": "ToGenerateLazySkillIndex.Execute(skillName: String, writeSidecar: Boolean) : String",
+    "ToGetBuffalySkillDirectoryEntry": "ToGetBuffalySkillDirectoryEntry.Execute(skillName: String) : String",
+    "ToInstallBuffalySkillFromDirectory": "ToInstallBuffalySkillFromDirectory.Execute(skillName: String, replaceExisting: Boolean, enableAfterInstall: Boolean) : String",
+    "ToPreviewBuffalyExtensionProfileUpdate": "ToPreviewBuffalyExtensionProfileUpdate.Execute(profileId: String, repositorySource: String) : String",
+    "ToPreviewBuffalySkillDirectoryInstall": "ToPreviewBuffalySkillDirectoryInstall.Execute(skillName: String, replaceExisting: Boolean) : String",
+    "ToPreviewInstalledBuffalyExtensionUpdates": "ToPreviewInstalledBuffalyExtensionUpdates.Execute(sourceId: String, repositorySource: String, packageType: String) : String",
+    "ToPreviewPublishSkillToBuffalySkillRepository": "ToPreviewPublishSkillToBuffalySkillRepository.Execute(skillName: String, replaceExisting: Boolean) : String",
+    "ToPublishSkillToBuffalySkillRepository": "ToPublishSkillToBuffalySkillRepository.Execute(skillName: String, replaceExisting: Boolean, commitChanges: Boolean, pushChanges: Boolean) : String",
+    "ToSearchBuffalySkillDirectory": "ToSearchBuffalySkillDirectory.Execute(searchText: String) : String",
+    "ToUpdateBuffalyExtensionProfile": "ToUpdateBuffalyExtensionProfile.Execute(profileId: String, repositorySource: String, dryRun: Boolean, allowPreStartInstall: Boolean) : String",
+    "ToUpdateInstalledBuffalyExtensions": "ToUpdateInstalledBuffalyExtensions.Execute(sourceId: String, repositorySource: String, packageType: String, dryRun: Boolean, allowPreStartInstall: Boolean) : String"
   }
 }
