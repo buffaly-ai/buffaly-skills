@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/SessionSync/index.pts",
   "Prototypes": {
     "SemanticConversationSearchActionRoot": "Skills/SessionSync/index.pts",
@@ -34,5 +34,13 @@
     "ToSemanticConversationSearchFindExactConversationsForQueryWithinUtcRange": [
       "to search conversations for exact text within a UTC time range"
     ]
+  },
+  "ActionSignatures": {
+    "ToSemanticConversationSearchFindExactConversationsForQuery": "ToSemanticConversationSearchFindExactConversationsForQuery.Execute(query: String, topConversations: Int32, topFragmentsPerConversation: Int32) : String",
+    "ToSemanticConversationSearchFindExactConversationsForQueryWithinUtcRange": "ToSemanticConversationSearchFindExactConversationsForQueryWithinUtcRange.Execute(query: String, topConversations: Int32, topFragmentsPerConversation: Int32, startUtc: String, endUtc: String) : String",
+    "ToSemanticConversationSearchFindHybridConversationsForQuery": "ToSemanticConversationSearchFindHybridConversationsForQuery.Execute(query: String, topConversations: Int32, topFragmentsPerConversation: Int32) : String",
+    "ToSemanticConversationSearchFindHybridConversationsForQueryWithinUtcRange": "ToSemanticConversationSearchFindHybridConversationsForQueryWithinUtcRange.Execute(query: String, topConversations: Int32, topFragmentsPerConversation: Int32, startUtc: String, endUtc: String) : String",
+    "ToSemanticConversationSearchFindTopConversationsForQuery": "ToSemanticConversationSearchFindTopConversationsForQuery.Execute(query: String, topConversations: Int32, topFragmentsPerConversation: Int32) : String",
+    "ToSemanticConversationSearchResolveSessionFromSemanticFragment": "ToSemanticConversationSearchResolveSessionFromSemanticFragment.Execute(fragmentID: Int32) : String"
   }
 }
