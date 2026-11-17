@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/HelpAgent/index.pts",
   "Prototypes": {
     "HelpAgentPromptAction": "Skills/HelpAgent/index.pts",
@@ -23,5 +23,129 @@
     "ToSearchWebWithLlmForHelp": "Skills/HelpAgent/index.pts",
     "ToSetUpInitialOntologyForHelpAgent": "Skills/HelpAgent/index.pts",
     "ToTeachBuffalySomethingUsefulForHelpAgent": "Skills/HelpAgent/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToSearchLocalBuffalyWikiForHelp": [
+      "to find installed Buffaly wiki help articles",
+      "to search local Buffaly wiki for help"
+    ],
+    "ToListLocalBuffalyWikiArticlesForHelp": [
+      "to list local Buffaly wiki help articles"
+    ],
+    "ToReadLocalBuffalyWikiArticleForHelp": [
+      "to get installed Buffaly wiki article content",
+      "to read local Buffaly wiki article for help"
+    ],
+    "ToSearchOfficialBuffalyDocsForHelp": [
+      "to find current Buffaly documentation",
+      "to search official Buffaly docs for help"
+    ],
+    "ToReadOfficialBuffalyDocForHelp": [
+      "to fetch current Buffaly documentation",
+      "to read official Buffaly doc for help"
+    ],
+    "ToSearchWebWithLlmForHelp": [
+      "to search the web with an LLM for Help Agent"
+    ],
+    "ToSaveWriteProfessionalEmailsPromptSkillFromWalkthrough": [
+      "to create the WriteProfessionalEmails prompt skill",
+      "to save the Write Professional Emails prompt skill from the Help Agent walkthrough"
+    ],
+    "ToCreatePromptSkillInBuffalyWalkthrough": [
+      "to create a Prompt Skill walkthrough",
+      "to create a prompt skill in Buffaly",
+      "to learn Prompt Skills in Buffaly",
+      "to write professional emails with a prompt skill",
+      "walk me through creating a prompt skill that writes professional emails"
+    ],
+    "ToCreateMorningSystemHealthDashboardWalkthrough": [
+      "to create a morning system health dashboard prompt skill",
+      "to learn prompt skill orchestration with a system health dashboard",
+      "to make a system health dashboard prompt skill",
+      "to walk through creating a morning system health dashboard",
+      "walk me through creating a morning system health dashboard prompt skill"
+    ],
+    "ToCreateMorningSystemReportWalkthrough": [
+      "to create a morning system report prompt skill",
+      "to learn prompt skill tool coordination with a system report",
+      "to make a morning system report prompt skill",
+      "to walk through creating a morning system report"
+    ],
+    "ToRunBasicCsvDownloadExportWalkthroughSkill": [
+      "to learn basic csv download and export in Buffaly",
+      "to learn the in memory csv walkthrough",
+      "to preview csv data in memory with Buffaly",
+      "to run the basic csv download export walkthrough",
+      "walk me through creating a basic CSV download and export ProtoScript action"
+    ],
+    "ToCreateInMemoryDataFilteringWalkthrough": [
+      "to create an in-memory data filtering ProtoScript action",
+      "to learn ProtoScript in-memory DataTable filtering",
+      "to process data without sending it to the LLM",
+      "to walk through in-memory data filtering with ProtoScript",
+      "walk me through creating an in-memory data filtering ProtoScript action"
+    ],
+    "ToCreateInMemoryDatabasePipelineWalkthrough": [
+      "to build a simple data application with ProtoScript",
+      "to create an in-memory database pipeline ProtoScript action",
+      "to import CSV data into a local database with ProtoScript",
+      "to walk through an in-memory to database pipeline"
+    ],
+    "ToCreateNativeCSharpDataTableAnalyzerWalkthrough": [
+      "to create a native C# tool for DataTable analysis",
+      "to create and extend Buffaly with native C# code",
+      "to learn native C# tool extension in Buffaly",
+      "to walk through creating a native C# DataTable analyzer",
+      "walk me through creating a native C# DataTable analyzer tool for Buffaly"
+    ],
+    "ToImportCodexCoworkConversationWalkthrough": [
+      "to import Codex and Cowork conversations into Buffaly",
+      "to learn conversation importer workflows",
+      "to turn AI chat history into Buffaly memory",
+      "to walk through importing external AI conversation files",
+      "walk me through importing conversations from Codex and Cowork into Buffaly"
+    ],
+    "ToSetUpInitialOntologyForHelpAgent": [
+      "to set up my initial ontology",
+      "to start Buffaly guided setup",
+      "to teach Buffaly about my work"
+    ],
+    "ToTeachBuffalySomethingUsefulForHelpAgent": [
+      "to remember something useful in Buffaly",
+      "to teach Buffaly something useful",
+      "to walk me through teaching Buffaly something useful"
+    ],
+    "ToCreateFirstBuffalyTaskForHelpAgent": [
+      "to create my first Buffaly task",
+      "to start my first task in Buffaly",
+      "to walk me through creating my first useful Buffaly task"
+    ],
+    "ToConnectFirstToolForHelpAgent": [
+      "to connect my first tool to Buffaly",
+      "to start my first Buffaly integration",
+      "to walk me through connecting my first tool"
+    ]
+  },
+  "ActionSignatures": {
+    "HelpAgentPromptAction": "HelpAgentPromptAction.Execute() : String",
+    "ToConnectFirstToolForHelpAgent": "ToConnectFirstToolForHelpAgent.Execute() : String",
+    "ToCreateFirstBuffalyTaskForHelpAgent": "ToCreateFirstBuffalyTaskForHelpAgent.Execute() : String",
+    "ToCreateInMemoryDataFilteringWalkthrough": "ToCreateInMemoryDataFilteringWalkthrough.Execute() : String",
+    "ToCreateInMemoryDatabasePipelineWalkthrough": "ToCreateInMemoryDatabasePipelineWalkthrough.Execute() : String",
+    "ToCreateMorningSystemHealthDashboardWalkthrough": "ToCreateMorningSystemHealthDashboardWalkthrough.Execute() : String",
+    "ToCreateMorningSystemReportWalkthrough": "ToCreateMorningSystemReportWalkthrough.Execute() : String",
+    "ToCreateNativeCSharpDataTableAnalyzerWalkthrough": "ToCreateNativeCSharpDataTableAnalyzerWalkthrough.Execute() : String",
+    "ToCreatePromptSkillInBuffalyWalkthrough": "ToCreatePromptSkillInBuffalyWalkthrough.Execute() : String",
+    "ToImportCodexCoworkConversationWalkthrough": "ToImportCodexCoworkConversationWalkthrough.Execute() : String",
+    "ToListLocalBuffalyWikiArticlesForHelp": "ToListLocalBuffalyWikiArticlesForHelp.Execute() : ListWikiArticlesResponseContract",
+    "ToReadLocalBuffalyWikiArticleForHelp": "ToReadLocalBuffalyWikiArticleForHelp.Execute(articleSlugOrPath: String) : GetWikiArticleResponseContract",
+    "ToReadOfficialBuffalyDocForHelp": "ToReadOfficialBuffalyDocForHelp.Execute(slugOrUrl: String) : GetBuffalyDocResponseContract",
+    "ToRunBasicCsvDownloadExportWalkthroughSkill": "ToRunBasicCsvDownloadExportWalkthroughSkill.Execute() : String",
+    "ToSaveWriteProfessionalEmailsPromptSkillFromWalkthrough": "ToSaveWriteProfessionalEmailsPromptSkillFromWalkthrough.Execute() : String",
+    "ToSearchLocalBuffalyWikiForHelp": "ToSearchLocalBuffalyWikiForHelp.Execute(searchText: String, maxResults: Int32) : SearchWikiResponseContract",
+    "ToSearchOfficialBuffalyDocsForHelp": "ToSearchOfficialBuffalyDocsForHelp.Execute(searchText: String, maxResults: Int32) : SearchBuffalyDocsResponseContract",
+    "ToSearchWebWithLlmForHelp": "ToSearchWebWithLlmForHelp.Execute(question: String) : String",
+    "ToSetUpInitialOntologyForHelpAgent": "ToSetUpInitialOntologyForHelpAgent.Execute() : String",
+    "ToTeachBuffalySomethingUsefulForHelpAgent": "ToTeachBuffalySomethingUsefulForHelpAgent.Execute() : String"
   }
 }

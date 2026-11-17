@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/HelpAgent/TabularData/index.pts",
   "Prototypes": {
     "BasicCsvWalkthroughGrid": "Skills/HelpAgent/TabularData/index.pts",
@@ -60,5 +60,18 @@
       "export current view",
       "to export the basic csv walkthrough current view"
     ]
+  },
+  "ActionSignatures": {
+    "ToExportBasicCsvWalkthroughCurrentView": "ToExportBasicCsvWalkthroughCurrentView.Execute() : String",
+    "ToFilterBasicCsvWalkthroughCardiologyBalanceDue": "ToFilterBasicCsvWalkthroughCardiologyBalanceDue.Execute() : Prototype",
+    "ToFilterBasicCsvWalkthroughHighPriorityAppointments": "ToFilterBasicCsvWalkthroughHighPriorityAppointments.Execute() : Prototype",
+    "ToFilterBasicCsvWalkthroughMedicareOver250": "ToFilterBasicCsvWalkthroughMedicareOver250.Execute() : Prototype",
+    "ToFilterBasicCsvWalkthroughNext30DaysNotCancelled": "ToFilterBasicCsvWalkthroughNext30DaysNotCancelled.Execute() : Prototype",
+    "ToFilterBasicCsvWalkthroughReadyAppointments": "ToFilterBasicCsvWalkthroughReadyAppointments.Execute() : Prototype",
+    "ToGetBasicCsvWalkthroughSampleFilePath": "ToGetBasicCsvWalkthroughSampleFilePath.Execute() : String",
+    "ToGetBasicCsvWalkthroughSampleUrl": "ToGetBasicCsvWalkthroughSampleUrl.Execute() : String",
+    "ToLoadBasicCsvWalkthroughSampleData": "ToLoadBasicCsvWalkthroughSampleData.Execute() : Prototype",
+    "ToSummarizeBasicCsvWalkthroughAppointmentsByClinic": "ToSummarizeBasicCsvWalkthroughAppointmentsByClinic.Execute() : Prototype",
+    "ToSummarizeBasicCsvWalkthroughReadyAppointmentsByClinic": "ToSummarizeBasicCsvWalkthroughReadyAppointmentsByClinic.Execute() : Prototype"
   }
 }
