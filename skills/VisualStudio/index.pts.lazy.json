@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/VisualStudio/index.pts",
   "Prototypes": {
     "CSharpClassExposureGenerator_GenerateOrUpdateClassExposureFromCSharp": "Skills/VisualStudio/index.pts",
@@ -12,5 +12,50 @@
     "VisualStudioOntologyGenerator_SerializeSolutionPrototype": "Skills/VisualStudio/index.pts",
     "VisualStudioSkill": "Skills/VisualStudio/index.pts",
     "VisualStudioSkillAction": "Skills/VisualStudio/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToBuildDotNetProject": [
+      "to build a .net project",
+      "to build a dotnet project"
+    ],
+    "ToRunDotNetTests": [
+      "to run dotnet tests",
+      "to test a .net project"
+    ],
+    "ToPublishDotNetProject": [
+      "to publish a .net project",
+      "to publish a dotnet project"
+    ],
+    "ToUpdateDllsForSolution": [
+      "to run update_dlls.bat for a solution",
+      "to update dlls for the solution",
+      "to update the dlls for a solution"
+    ],
+    "ToGetSolutionDirectory": [
+      "to get a solution directory",
+      "to get the solution directory"
+    ],
+    "VisualStudioOntologyGenerator_SerializeSolutionPrototype": [
+      "to serialize a solution file into a visual studio solution prototype",
+      "to serialize a visual studio solution to ontology",
+      "to serialize any solution to the ontology"
+    ],
+    "CSharpClassExposureGenerator_GenerateOrUpdateClassExposureFromCSharp": [
+      "to generate or update class exposure from c sharp",
+      "to generate protoscript class exposure from c sharp source"
+    ],
+    "SmartPatch_ApplyToProjectFile": [
+      "to apply a codex style update patch without codex"
+    ]
+  },
+  "ActionSignatures": {
+    "CSharpClassExposureGenerator_GenerateOrUpdateClassExposureFromCSharp": "CSharpClassExposureGenerator_GenerateOrUpdateClassExposureFromCSharp.Execute(cSharpSourceText: String, outputFilePath: String, skillActionPrototypeName: String, sharedInitializerActionName: String) : GenerateOrUpdateClassExposureFromCSharpResult",
+    "SmartPatch_ApplyToProjectFile": "SmartPatch_ApplyToProjectFile.Execute(relativePath: String, patchText: String) : String",
+    "ToBuildDotNetProject": "ToBuildDotNetProject.Execute(projectPath: String, configuration: String, timeoutSeconds: Int32) : String",
+    "ToGetSolutionDirectory": "ToGetSolutionDirectory.Execute(solution: string) : String",
+    "ToPublishDotNetProject": "ToPublishDotNetProject.Execute(projectPath: String, configuration: String, outputPath: String, timeoutSeconds: Int32) : String",
+    "ToRunDotNetTests": "ToRunDotNetTests.Execute(projectPath: String, filter: String, timeoutSeconds: Int32) : String",
+    "ToUpdateDllsForSolution": "ToUpdateDllsForSolution.Execute(solution: string) : String",
+    "VisualStudioOntologyGenerator_SerializeSolutionPrototype": "VisualStudioOntologyGenerator_SerializeSolutionPrototype.Execute(solutionFilePath: String, destinationFilePath: String, prototypeTokenHint: String) : String"
   }
 }
