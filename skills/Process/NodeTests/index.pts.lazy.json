@@ -1,6 +1,15 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/Process/NodeTests/index.pts",
-  "Prototypes": { "ToRunNodeTestFile": "Skills/Process/NodeTests/index.pts" },
-  "ActionInfinitivePhrases": { "ToRunNodeTestFile": ["to run JavaScript node test files"] }
+  "Prototypes": {
+    "ToRunNodeTestFile": "Skills/Process/NodeTests/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToRunNodeTestFile": [
+      "to run JavaScript node test files"
+    ]
+  },
+  "ActionSignatures": {
+    "ToRunNodeTestFile": "ToRunNodeTestFile.Execute(testFilePath: String, workingDirectory: String, timeoutSeconds: Int32) : String"
+  }
 }
