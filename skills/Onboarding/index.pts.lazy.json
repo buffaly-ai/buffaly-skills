@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/Onboarding/index.pts",
   "Prototypes": {
     "OnboardingPromptAction": "Skills/Onboarding/index.pts",
@@ -17,5 +17,97 @@
     "ToSetUpInitialOntologySkill": "Skills/Onboarding/index.pts",
     "ToShowInstallCapabilitiesSkill": "Skills/Onboarding/index.pts",
     "ToTeachBuffalySomethingUsefulSkill": "Skills/Onboarding/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToSetUpInitialOntologySkill": [
+      "to create my first Buffaly ontology",
+      "to help Buffaly understand my work",
+      "to set up my initial ontology",
+      "to start Buffaly guided setup",
+      "to teach Buffaly about my work"
+    ],
+    "ToShowInstallCapabilitiesSkill": [
+      "show me what Buffaly can do",
+      "show me what you can do",
+      "tell me what you can do",
+      "to explore this Buffaly install\u0027s capabilities",
+      "to show me what this Buffaly installation can do",
+      "to show this install\u0027s capabilities",
+      "to understand the Buffaly navigation capabilities screen",
+      "walk me through the Buffaly navigation capabilities screen",
+      "walk me through this install\u0027s capabilities",
+      "what can you do"
+    ],
+    "ToConnectGitHubToBuffalySkill": [
+      "to connect GitHub to Buffaly",
+      "to remember my GitHub repositories",
+      "to set up GitHub in Buffaly"
+    ],
+    "ToConnectGoogleWorkspaceToBuffalySkill": [
+      "to connect Google Workspace to Buffaly",
+      "to set up Google Workspace in Buffaly",
+      "to use Google Docs and Sheets with Buffaly"
+    ],
+    "ToExposeBuffalyThroughTailscaleSkill": [
+      "to connect Buffaly to Tailscale",
+      "to expose Buffaly through Tailscale",
+      "to make Buffaly reachable through Tailscale"
+    ],
+    "ToSetUpCodexInsideBuffalySkill": [
+      "to connect coding help to Buffaly",
+      "to set up Codex inside Buffaly",
+      "to use Codex inside Buffaly"
+    ],
+    "ToConnectFirstToolSkill": [
+      "to connect my first tool to Buffaly",
+      "to start my first Buffaly integration",
+      "to walk me through connecting my first tool"
+    ],
+    "ToCreateFirstBuffalyTaskSkill": [
+      "to create my first Buffaly task",
+      "to start my first task in Buffaly",
+      "to walk me through creating my first useful Buffaly task"
+    ],
+    "ToTeachBuffalySomethingUsefulSkill": [
+      "to remember something useful in Buffaly",
+      "to teach Buffaly something useful",
+      "to walk me through teaching Buffaly something useful"
+    ],
+    "ToCreatePromptSkillWalkthroughSkill": [
+      "to create a prompt skill in Buffaly",
+      "to create my first prompt skill",
+      "to learn prompt skills in Buffaly"
+    ],
+    "ToCreateProtoScriptSkillWalkthroughSkill": [
+      "to create a ProtoScript skill in Buffaly",
+      "to create my first ProtoScript action",
+      "to learn ProtoScript skills in Buffaly"
+    ],
+    "ToCreateCSharpSkillWalkthroughSkill": [
+      "to create a C# skill in Buffaly",
+      "to create native C# code for Buffaly",
+      "to learn C# skills in Buffaly"
+    ],
+    "ToExplainBuffalySelfModificationSkill": [
+      "to learn how Buffaly can modify itself",
+      "to see how Buffaly adds tools to itself",
+      "to understand Buffaly self modification"
+    ]
+  },
+  "ActionSignatures": {
+    "OnboardingPromptAction": "OnboardingPromptAction.Execute() : String",
+    "ToConnectFirstToolSkill": "ToConnectFirstToolSkill.Execute() : String",
+    "ToConnectGitHubToBuffalySkill": "ToConnectGitHubToBuffalySkill.Execute() : String",
+    "ToConnectGoogleWorkspaceToBuffalySkill": "ToConnectGoogleWorkspaceToBuffalySkill.Execute() : String",
+    "ToCreateCSharpSkillWalkthroughSkill": "ToCreateCSharpSkillWalkthroughSkill.Execute() : String",
+    "ToCreateFirstBuffalyTaskSkill": "ToCreateFirstBuffalyTaskSkill.Execute() : String",
+    "ToCreatePromptSkillWalkthroughSkill": "ToCreatePromptSkillWalkthroughSkill.Execute() : String",
+    "ToCreateProtoScriptSkillWalkthroughSkill": "ToCreateProtoScriptSkillWalkthroughSkill.Execute() : String",
+    "ToExplainBuffalySelfModificationSkill": "ToExplainBuffalySelfModificationSkill.Execute() : String",
+    "ToExposeBuffalyThroughTailscaleSkill": "ToExposeBuffalyThroughTailscaleSkill.Execute() : String",
+    "ToSetUpCodexInsideBuffalySkill": "ToSetUpCodexInsideBuffalySkill.Execute() : String",
+    "ToSetUpInitialOntologySkill": "ToSetUpInitialOntologySkill.Execute() : String",
+    "ToShowInstallCapabilitiesSkill": "ToShowInstallCapabilitiesSkill.Execute() : String",
+    "ToTeachBuffalySomethingUsefulSkill": "ToTeachBuffalySomethingUsefulSkill.Execute() : String"
   }
 }
