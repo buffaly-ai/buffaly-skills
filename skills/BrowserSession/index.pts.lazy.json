@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/BrowserSession/index.pts",
   "Prototypes": {
     "BrowserSessionSkill": "Skills/BrowserSession/index.pts",
@@ -15,17 +15,148 @@
     "ToGetBrowserConsoleEvents": "Skills/BrowserSession/index.pts",
     "ToGetBrowserSelectorAttribute": "Skills/BrowserSession/index.pts",
     "ToGetBrowserSelectorText": "Skills/BrowserSession/index.pts",
+    "ToInsertFocusedBrowserText": "Skills/BrowserSession/index.pts",
     "ToListBrowserSessions": "Skills/BrowserSession/index.pts",
     "ToOpenBrowserSession": "Skills/BrowserSession/index.pts",
-    "ToOpenManagedCdpBrowserSession": "Skills/BrowserSession/index.pts",
     "ToOpenBrowserUrl": "Skills/BrowserSession/index.pts",
+    "ToOpenManagedCdpBrowserSession": "Skills/BrowserSession/index.pts",
     "ToOpenPlaywrightBrowserSession": "Skills/BrowserSession/index.pts",
+    "ToPasteFocusedBrowserText": "Skills/BrowserSession/index.pts",
     "ToPressBrowserSelector": "Skills/BrowserSession/index.pts",
+    "ToPressFocusedBrowserKey": "Skills/BrowserSession/index.pts",
     "ToRunBrowserScript": "Skills/BrowserSession/index.pts",
     "ToRunPlaywrightScript": "Skills/BrowserSession/index.pts",
     "ToTypeBrowserSelector": "Skills/BrowserSession/index.pts",
     "ToWaitForBrowserSelectorState": "Skills/BrowserSession/index.pts",
     "UseBrowserSkill": "Skills/BrowserSession/index.pts",
     "UsePlaywrightBrowserSkill": "Skills/BrowserSession/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToOpenBrowserSession": [
+      "to open a browser session",
+      "to start a browser session"
+    ],
+    "ToOpenManagedCdpBrowserSession": [
+      "to open a managed browser session",
+      "to open a persistent CDP browser",
+      "to open a url in the default browser",
+      "to open the browser with the existing login",
+      "to recover the persistent browser",
+      "to research the web in the persistent browser",
+      "to search Bing in the persistent browser",
+      "to search Google in the persistent browser",
+      "to use the managed browser"
+    ],
+    "ToOpenPlaywrightBrowserSession": [
+      "to open a disposable browser for explicit UI testing",
+      "to open a playwright browser session",
+      "to open an isolated playwright browser"
+    ],
+    "ToListBrowserSessions": [
+      "to list active browser subagents",
+      "to list browser sessions"
+    ],
+    "ToCloseBrowserSession": [
+      "to close a browser session",
+      "to close a browser subagent"
+    ],
+    "ToOpenBrowserUrl": [
+      "to navigate a browser page",
+      "to navigate a browser session",
+      "to open a browser url"
+    ],
+    "ToInsertFocusedBrowserText": [
+      "to insert text into a focused browser editor"
+    ],
+    "ToPasteFocusedBrowserText": [
+      "to paste text into a focused browser editor"
+    ],
+    "ToPressFocusedBrowserKey": [
+      "to press a key in a focused browser editor"
+    ],
+    "ToClickBrowserSelector": [
+      "to click a browser selector"
+    ],
+    "ToTypeBrowserSelector": [
+      "to fill a browser selector",
+      "to type into a browser selector"
+    ],
+    "ToPressBrowserSelector": [
+      "to press a browser selector key"
+    ],
+    "ToWaitForBrowserSelectorState": [
+      "to wait for a browser selector state"
+    ],
+    "ToGetBrowserSelectorText": [
+      "to get browser selector text"
+    ],
+    "ToGetBrowserSelectorAttribute": [
+      "to get browser selector attribute"
+    ],
+    "ToRunBrowserScript": [
+      "to evaluate JavaScript in a browser session",
+      "to inspect a browser page",
+      "to run JavaScript in the browser",
+      "to run browser script"
+    ],
+    "ToCaptureBrowserScreenshot": [
+      "to capture browser screenshot",
+      "to take a browser page screenshot",
+      "to take browser screenshot"
+    ],
+    "ToGetBrowserConsoleEvents": [
+      "to get browser console events",
+      "to read browser console diagnostics"
+    ],
+    "ToRunPlaywrightScript": [
+      "to execute playwright automation",
+      "to interact with a browser using playwright",
+      "to run playwright script"
+    ],
+    "ToFillBrowserSelectorWithSecret": [
+      "to fill a browser selector with a secret",
+      "to type a secret into a browser password field"
+    ],
+    "ToFillBrowserPasswordWithSecret": [
+      "to fill a browser password field with a secret",
+      "to type a secret into a browser password input"
+    ],
+    "UseBrowserSkill": [
+      "to automate a web page",
+      "to control the browser",
+      "to interact with a browser session",
+      "to run JavaScript in a browser",
+      "to use the browser"
+    ],
+    "UsePlaywrightBrowserSkill": [
+      "to use Playwright",
+      "to use Playwright browser automation",
+      "to use an isolated Playwright browser"
+    ]
+  },
+  "ActionSignatures": {
+    "ToCaptureBrowserScreenshot": "ToCaptureBrowserScreenshot.Execute(subAgentId: String, relativePath: String) : Prototype",
+    "ToClickBrowserSelector": "ToClickBrowserSelector.Execute(subAgentId: String, selector: String, timeoutMs: Int32) : String",
+    "ToCloseBrowserSession": "ToCloseBrowserSession.Execute(subAgentId: String) : String",
+    "ToFillBrowserPasswordWithSecret": "ToFillBrowserPasswordWithSecret.Execute(subAgentId: String, secretValue: StringReference, selector: String, timeoutMs: Int32) : String",
+    "ToFillBrowserSelectorWithSecret": "ToFillBrowserSelectorWithSecret.Execute(subAgentId: String, selector: String, secretValue: StringReference, timeoutMs: Int32) : String",
+    "ToGetBrowserConsoleEvents": "ToGetBrowserConsoleEvents.Execute(subAgentId: String, maxCount: Int32, clearAfterRead: Boolean) : String",
+    "ToGetBrowserSelectorAttribute": "ToGetBrowserSelectorAttribute.Execute(subAgentId: String, selector: String, attributeName: String, timeoutMs: Int32) : String",
+    "ToGetBrowserSelectorText": "ToGetBrowserSelectorText.Execute(subAgentId: String, selector: String, timeoutMs: Int32) : String",
+    "ToInsertFocusedBrowserText": "ToInsertFocusedBrowserText.Execute(subAgentId: String, expectedFocusedSelector: String, text: String) : String",
+    "ToListBrowserSessions": "ToListBrowserSessions.Execute() : String",
+    "ToOpenBrowserSession": "ToOpenBrowserSession.Execute(profileName: String) : String",
+    "ToOpenBrowserUrl": "ToOpenBrowserUrl.Execute(subAgentId: String, url: String) : String",
+    "ToOpenManagedCdpBrowserSession": "ToOpenManagedCdpBrowserSession.Execute(browserKey: String, url: String) : String",
+    "ToOpenPlaywrightBrowserSession": "ToOpenPlaywrightBrowserSession.Execute(profileName: String) : String",
+    "ToPasteFocusedBrowserText": "ToPasteFocusedBrowserText.Execute(subAgentId: String, expectedFocusedSelector: String, text: String) : String",
+    "ToPressBrowserSelector": "ToPressBrowserSelector.Execute(subAgentId: String, selector: String, key: String, timeoutMs: Int32) : String",
+    "ToPressFocusedBrowserKey": "ToPressFocusedBrowserKey.Execute(subAgentId: String, expectedFocusedSelector: String, key: String) : String",
+    "ToRunBrowserScript": "ToRunBrowserScript.Execute(subAgentId: String, script: String, argsJson: String, timeoutMs: Int32, mutationPolicy: String) : String",
+    "ToRunPlaywrightScript": "ToRunPlaywrightScript.Execute(subAgentId: String, script: String, argsJson: String, timeoutMs: Int32) : String",
+    "ToTypeBrowserSelector": "ToTypeBrowserSelector.Execute(subAgentId: String, selector: String, text: String, clearFirst: Boolean, timeoutMs: Int32) : String",
+    "ToWaitForBrowserSelectorState": "ToWaitForBrowserSelectorState.Execute(subAgentId: String, selector: String, state: String, timeoutMs: Int32) : String",
+    "UseBrowserSkill": "UseBrowserSkill.Execute() : String",
+    "UsePlaywrightBrowserSkill": "UsePlaywrightBrowserSkill.Execute() : String"
   }
 }
