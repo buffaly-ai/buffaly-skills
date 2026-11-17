@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/Heartbeat/index.pts",
   "Prototypes": {
     "HeartbeatSkill": "Skills/Heartbeat/index.pts",
@@ -9,5 +9,32 @@
     "ToStartHeartbeatSubscription": "Skills/Heartbeat/index.pts",
     "ToStartHeartbeatSubscriptionWithOptions": "Skills/Heartbeat/index.pts",
     "ToStopHeartbeatSubscription": "Skills/Heartbeat/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToStartHeartbeatSubscription": [
+      "to send heartbeat events to a session",
+      "to start a heartbeat subscription"
+    ],
+    "ToStartHeartbeatSubscriptionWithOptions": [
+      "to configure heartbeat interval and count",
+      "to start a heartbeat subscription with options"
+    ],
+    "ToStopHeartbeatSubscription": [
+      "to stop a heartbeat subscription"
+    ],
+    "ToGetHeartbeatSubscriptions": [
+      "to get heartbeat service subscriptions",
+      "to list heartbeat subscriptions"
+    ],
+    "ToGetHeartbeatStatus": [
+      "to get heartbeat status"
+    ]
+  },
+  "ActionSignatures": {
+    "ToGetHeartbeatStatus": "ToGetHeartbeatStatus.Execute(sourceSessionKey: String) : String",
+    "ToGetHeartbeatSubscriptions": "ToGetHeartbeatSubscriptions.Execute() : String",
+    "ToStartHeartbeatSubscription": "ToStartHeartbeatSubscription.Execute(sessionKey: String, message: String) : String",
+    "ToStartHeartbeatSubscriptionWithOptions": "ToStartHeartbeatSubscriptionWithOptions.Execute(sessionKey: String, message: String, intervalSeconds: Int32, maxCount: Int32) : String",
+    "ToStopHeartbeatSubscription": "ToStopHeartbeatSubscription.Execute(jobId: String) : String"
   }
 }

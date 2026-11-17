@@ -1561,10 +1561,11 @@
     {
       "SkillName": "Heartbeat",
       "Title": "Heartbeat",
-      "Description": "Buffaly OpsAgent skill package for Heartbeat.",
-      "Version": "0.1.1",
+      "Description": "Buffaly skill package for Heartbeat.",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "Heartbeat",
         "Heartbeat"
       ],
       "Path": "skills/Heartbeat",
@@ -1574,21 +1575,18 @@
           "Sha256": "77c12542787506640fd6cbc0f3020f83780fdd4432e580e1252e935be8e6b051"
         },
         {
-          "Path": "index.pts.md",
-          "Sha256": "d50b1bd9c58e650c124cc7f90fc9f4c9c96e7d60fa7eb7246a8ef57c5878fec4"
+          "Path": "index.pts.lazy.json",
+          "Sha256": "5bc2582b02158ef1f6125d43d67dde21be358d5d8f6930c1acc1b641cd3408b1"
         },
         {
-          "Path": "index.pts.lazy.json",
-          "Sha256": "5e71f2769e457d4b8800524ac11d4c72c4e84a2581c4b0ccb45fe2ad7f876048"
+          "Path": "index.pts.md",
+          "Sha256": "d50b1bd9c58e650c124cc7f90fc9f4c9c96e7d60fa7eb7246a8ef57c5878fec4"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "PreservedFiles": []
     },
     {
       "SkillName": "HelpAgent",
