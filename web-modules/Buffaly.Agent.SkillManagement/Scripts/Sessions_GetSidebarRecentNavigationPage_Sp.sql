@@ -5,7 +5,9 @@ GO
 CREATE OR ALTER PROCEDURE [dbo].[Sessions_GetSidebarRecentNavigationPage_Sp]
 	@Search [nvarchar](255),
 	@SkipRows [int],
-	@NumRows [int]
+	@NumRows [int],
+	-- Omission is the authorized Root inventory, selected only by the typed backend.
+	@EnvironmentUserKey nvarchar(64) = NULL
 AS
 	SET NOCOUNT ON;
 
@@ -18,7 +20,7 @@ AS
 
 	CREATE TABLE #HiddenNavigationSessions (SessionID int NOT NULL PRIMARY KEY);
 	INSERT #HiddenNavigationSessions
-	SELECT SessionID FROM dbo.Sessions WHERE IsArchived=0 AND SidebarShowInSessionList=0 OPTION(MAXDOP 1);
+	SELECT SessionID FROM dbo.Sessions WHERE (@EnvironmentUserKey IS NULL OR EnvironmentUserKey=@EnvironmentUserKey) AND IsArchived=0 AND SidebarShowInSessionList=0 OPTION(MAXDOP 1);
 	-- Expand only visible descendants. Hidden children are already in the seed.
 	-- Each pass adds unseen identities only; finite membership also terminates cycles.
 	WHILE 1=1
@@ -26,7 +28,7 @@ AS
 		INSERT #HiddenNavigationSessions
 		SELECT child.SessionID FROM dbo.Sessions child
 		JOIN #HiddenNavigationSessions parent ON child.ParentSessionID=parent.SessionID
-		WHERE child.IsArchived=0 AND child.SidebarShowInSessionList=1
+		WHERE (@EnvironmentUserKey IS NULL OR child.EnvironmentUserKey=@EnvironmentUserKey) AND child.IsArchived=0 AND child.SidebarShowInSessionList=1
 		AND NOT EXISTS(SELECT 1 FROM #HiddenNavigationSessions seen WHERE seen.SessionID=child.SessionID) OPTION(MAXDOP 1);
 		IF @@ROWCOUNT=0 BREAK;
 	END;
@@ -57,8 +59,8 @@ AS
 				) AS RowOrdinal
 		FROM	dbo.Sessions sessionRow
 		LEFT JOIN dbo.Sessions parent
-		ON		parent.SessionID = sessionRow.ParentSessionID
-		WHERE	ISNULL(sessionRow.IsArchived, 0) = 0
+		ON		parent.SessionID = sessionRow.ParentSessionID AND (@EnvironmentUserKey IS NULL OR parent.EnvironmentUserKey=@EnvironmentUserKey)
+		WHERE	ISNULL(sessionRow.IsArchived, 0) = 0 AND (@EnvironmentUserKey IS NULL OR sessionRow.EnvironmentUserKey=@EnvironmentUserKey)
 				AND sessionRow.SessionKey NOT IN (N'Browser Profiles', N'browser-profiles')
 				-- Eligibility precedes ranking and lookahead; a display name is not agent identity.
 				AND NOT EXISTS (SELECT 1 FROM #HiddenNavigationSessions hidden WHERE hidden.SessionID = sessionRow.SessionID)
@@ -100,7 +102,7 @@ AS
  context.LastUpdated, CONVERT(int,NULL),CONVERT(int,NULL),CONVERT(int,NULL),CONVERT(bit,0)
  FROM (SELECT TOP (220) child.*, parent.SessionKey AS ParentSessionKey
  FROM dbo.Sessions child JOIN #NavigationPageRows parent ON child.ParentSessionID=parent.SessionID
- WHERE parent.RowOrdinal <= @SkipRows + @NumRows AND child.IsArchived=0
+ WHERE parent.RowOrdinal <= @SkipRows + @NumRows AND child.IsArchived=0 AND (@EnvironmentUserKey IS NULL OR child.EnvironmentUserKey=@EnvironmentUserKey)
  AND child.SidebarShowInSessionList=0
  AND NULLIF(JSON_VALUE(child.Data,'$.SidebarProfile.ObservedSessionUserStateKey'),N'') IS NOT NULL
  ORDER BY child.LastUpdated DESC,child.SessionID DESC) context
