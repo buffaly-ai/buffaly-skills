@@ -5,7 +5,9 @@ GO
 CREATE OR ALTER PROCEDURE [dbo].[Sessions_GetSidebarRootNavigationPage_Sp]
 	@Search [nvarchar](255),
 	@SkipRoots [int],
-	@NumRoots [int]
+	@NumRoots [int],
+	-- Omission is the authorized Root inventory, selected only by the typed backend.
+	@EnvironmentUserKey nvarchar(64) = NULL
 AS
 	SET NOCOUNT ON;
 
@@ -21,7 +23,7 @@ AS
 	BEGIN
 	CREATE TABLE #HiddenNavigationSessions (SessionID int NOT NULL PRIMARY KEY);
 	INSERT #HiddenNavigationSessions
-	SELECT SessionID FROM dbo.Sessions WITH (NOLOCK) WHERE IsArchived=0 AND SidebarShowInSessionList=0 OPTION(MAXDOP 1);
+	SELECT SessionID FROM dbo.Sessions WITH (NOLOCK) WHERE (@EnvironmentUserKey IS NULL OR EnvironmentUserKey=@EnvironmentUserKey) AND IsArchived=0 AND SidebarShowInSessionList=0 OPTION(MAXDOP 1);
 	-- Expand only visible descendants. Hidden children are already in the seed.
 	-- Each pass adds unseen identities only; finite membership also terminates cycles.
 	WHILE 1=1
@@ -29,7 +31,7 @@ AS
 		INSERT #HiddenNavigationSessions
 		SELECT child.SessionID FROM dbo.Sessions child WITH (NOLOCK)
 		JOIN #HiddenNavigationSessions parent ON child.ParentSessionID=parent.SessionID
-		WHERE child.IsArchived=0 AND child.SidebarShowInSessionList=1
+		WHERE (@EnvironmentUserKey IS NULL OR child.EnvironmentUserKey=@EnvironmentUserKey) AND child.IsArchived=0 AND child.SidebarShowInSessionList=1
 		AND NOT EXISTS(SELECT 1 FROM #HiddenNavigationSessions seen WHERE seen.SessionID=child.SessionID) OPTION(MAXDOP 1);
 		IF @@ROWCOUNT=0 BREAK;
 	END;
@@ -53,7 +55,7 @@ AS
 					sessionRow.LastUpdated,
 					JSON_VALUE(sessionRow.Data, '$.SidebarProfile.ShowInSessionList') AS ShowInSessionList
 			FROM	dbo.Sessions sessionRow WITH (NOLOCK)
-			WHERE	sessionRow.IsArchived = 0
+			WHERE	(@EnvironmentUserKey IS NULL OR sessionRow.EnvironmentUserKey=@EnvironmentUserKey) AND sessionRow.IsArchived = 0
 		),
 		MatchingSessions AS
 		(
@@ -278,9 +280,9 @@ AS
 		FROM	dbo.Sessions root WITH (NOLOCK)
 		LEFT JOIN dbo.Sessions child WITH (NOLOCK)
 		ON		child.ParentSessionID = root.SessionID
-				AND child.IsArchived = 0
+				AND (@EnvironmentUserKey IS NULL OR child.EnvironmentUserKey=@EnvironmentUserKey) AND child.IsArchived = 0
 		WHERE	root.ParentSessionID IS NULL
-				AND root.IsArchived = 0
+				AND (@EnvironmentUserKey IS NULL OR root.EnvironmentUserKey=@EnvironmentUserKey) AND root.IsArchived = 0
 				AND root.SidebarShowInSessionList = 1
 		GROUP BY root.SessionID,
 				 root.LastUpdated
@@ -384,7 +386,7 @@ AS
 		ON		parent.SessionID = pagedRoot.RootSessionID
 		JOIN	dbo.Sessions child WITH (NOLOCK)
 		ON		child.ParentSessionID = pagedRoot.RootSessionID
-				AND child.IsArchived = 0
+				AND (@EnvironmentUserKey IS NULL OR child.EnvironmentUserKey=@EnvironmentUserKey) AND child.IsArchived = 0
 	)
 	SELECT	SessionID,
 			SessionKey,
