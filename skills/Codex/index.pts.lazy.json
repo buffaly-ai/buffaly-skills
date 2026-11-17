@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/Codex/index.pts",
   "Prototypes": {
     "CodexPromptAction": "Skills/Codex/index.pts",
@@ -16,5 +16,61 @@
     "ToCoordinateCodexIncrementalEditAndValidateSkill": "Skills/Codex/index.pts",
     "ToFindCodexThreadIdByNameSkill": "Skills/Codex/index.pts",
     "ToGetCodexUsageResetCredits": "Skills/Codex/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToGetCodexUsageResetCredits": [
+      "to check codex reset credits",
+      "to get codex usage reset credits"
+    ],
+    "ToCodexEditTool": [
+      "to execute a codex edit turn",
+      "to run codex edit"
+    ],
+    "ToCodexSendTool": [
+      "to execute codex send",
+      "to run legacy codex send"
+    ],
+    "ToCodexSubAgentOpenTool": [
+      "to attach to a codex thread",
+      "to open a codex subagent"
+    ],
+    "ToCodexSubAgentSendTool": [
+      "to send a codex subagent instruction"
+    ],
+    "ToCodexSubAgentSteerTool": [
+      "to steer a codex subagent"
+    ],
+    "ToCodexSubAgentCancelTool": [
+      "to cancel a codex subagent turn"
+    ],
+    "ToCodexSubAgentListTool": [
+      "to list codex subagents"
+    ],
+    "ToCodexSubAgentCloseTool": [
+      "to close a codex subagent"
+    ],
+    "ToCoordinateCodexIncrementalEditAndValidateSkill": [
+      "to coordinate codex incremental edit and validate",
+      "to coordinate codex with external validation",
+      "to run a codex edit validate loop"
+    ],
+    "ToFindCodexThreadIdByNameSkill": [
+      "to find codex thread id by thread name",
+      "to lookup codex thread id from thread name"
+    ]
+  },
+  "ActionSignatures": {
+    "CodexPromptAction": "CodexPromptAction.Execute() : String",
+    "ToCodexEditTool": "ToCodexEditTool.Execute(cwd: String, instruction: String, trustedPromptPath: String) : String",
+    "ToCodexSendTool": "ToCodexSendTool.Execute(instruction: String) : String",
+    "ToCodexSubAgentCancelTool": "ToCodexSubAgentCancelTool.Execute(subAgentId: String) : String",
+    "ToCodexSubAgentCloseTool": "ToCodexSubAgentCloseTool.Execute(subAgentId: String) : String",
+    "ToCodexSubAgentListTool": "ToCodexSubAgentListTool.Execute() : String",
+    "ToCodexSubAgentOpenTool": "ToCodexSubAgentOpenTool.Execute(cwd: String, threadId: String) : String",
+    "ToCodexSubAgentSendTool": "ToCodexSubAgentSendTool.Execute(subAgentId: String, instruction: String) : String",
+    "ToCodexSubAgentSteerTool": "ToCodexSubAgentSteerTool.Execute(subAgentId: String, instruction: String) : String",
+    "ToCoordinateCodexIncrementalEditAndValidateSkill": "ToCoordinateCodexIncrementalEditAndValidateSkill.Execute() : String",
+    "ToFindCodexThreadIdByNameSkill": "ToFindCodexThreadIdByNameSkill.Execute() : String",
+    "ToGetCodexUsageResetCredits": "ToGetCodexUsageResetCredits.Execute() : String"
   }
 }
