@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/SessionManagement/index.pts",
   "Prototypes": {
     "SessionManagementSkill": "Skills/SessionManagement/index.pts",
@@ -169,5 +169,37 @@
       "to find a session by key",
       "to search sessions by name"
     ]
+  },
+  "ActionSignatures": {
+    "ToAnalyzeAndImproveEntitiesWithinSessionSkill": "ToAnalyzeAndImproveEntitiesWithinSessionSkill.Execute() : String",
+    "ToArchiveBuffalySession": "ToArchiveBuffalySession.Execute(sessionKey: String) : DeleteSessionResultContract",
+    "ToBootstrapWebhookTimelineEvent": "ToBootstrapWebhookTimelineEvent.Execute() : String",
+    "ToClearAllQueuedSessionMessages": "ToClearAllQueuedSessionMessages.Execute(sessionKey: String) : QueuedInputsContract",
+    "ToCreateBuffalyChildSession": "ToCreateBuffalyChildSession.Execute(parentSessionKey: String, childSessionKey: String) : SessionStatusResult",
+    "ToCreateBuffalySession": "ToCreateBuffalySession.Execute(sessionKey: String) : SessionStatusResult",
+    "ToCreateBuffalySiblingSession": "ToCreateBuffalySiblingSession.Execute(sourceSessionKey: String, siblingSessionKey: String) : SessionStatusResult",
+    "ToGetBuffalySessionParentKey": "ToGetBuffalySessionParentKey.Execute(sessionKey: String) : String",
+    "ToGetChildSessions": "ToGetChildSessions.Execute(parentSessionKey: String) : List\u00601",
+    "ToGetMostRecentSessionTurn": "ToGetMostRecentSessionTurn.Execute(sessionKey: String) : TurnSummaryContract",
+    "ToGetQueuedSessionMessages": "ToGetQueuedSessionMessages.Execute(sessionKey: String) : QueuedInputsContract",
+    "ToGetRecentSessionTurns": "ToGetRecentSessionTurns.Execute(sessionKey: String, maxTurns: Int32) : GetSessionTurnBootstrapResponse",
+    "ToGetSessionAssistantMessageMarkdown": "ToGetSessionAssistantMessageMarkdown.Execute(sessionKey: String, messageKey: String) : StringReference",
+    "ToGetSessionStatus": "ToGetSessionStatus.Execute(sessionKey: String) : SessionStatusResult",
+    "ToGetSessionTurnDetail": "ToGetSessionTurnDetail.Execute(sessionKey: String, turnId: String, maxRows: Int32) : GetTurnDetailResponse",
+    "ToGetSessionTurnPage": "ToGetSessionTurnPage.Execute(sessionKey: String, skipTurns: Int32, maxTurns: Int32) : GetSessionTurnPageResponse",
+    "ToGetUserState": "ToGetUserState.Execute(sessionKey: String) : String",
+    "ToListActiveSessions": "ToListActiveSessions.Execute(maxCount: Int32) : List\u00601",
+    "ToListRecentSessions": "ToListRecentSessions.Execute(maxCount: Int32, skip: Int32) : List\u00601",
+    "ToPassUserStateToABuffalyAgent": "ToPassUserStateToABuffalyAgent.Execute() : String",
+    "ToQueueLatestSessionMessage": "ToQueueLatestSessionMessage.Execute(sessionKey: String, queueKey: String, instruction: String) : QueuedInputResult",
+    "ToQueueMessageToSession": "ToQueueMessageToSession.Execute(sessionKey: String, instruction: String) : QueuedInputResult",
+    "ToRemoveQueuedSessionMessage": "ToRemoveQueuedSessionMessage.Execute(sessionKey: String, queueItemId: String) : QueuedInputsContract",
+    "ToResolveTopCandidateAndRun": "ToResolveTopCandidateAndRun.Execute() : String",
+    "ToSearchSessionFinalAssistantMessages": "ToSearchSessionFinalAssistantMessages.Execute(search: String, maxRows: Int32, searchScope: String, maxMessageScanCount: Int32) : String",
+    "ToSearchSessionMessages": "ToSearchSessionMessages.Execute(search: String, maxRows: Int32, searchScope: String, maxMessageScanCount: Int32) : String",
+    "ToSearchSessionsByNameOrKey": "ToSearchSessionsByNameOrKey.Execute(search: String, maxCount: Int32, skip: Int32) : List\u00601",
+    "ToSendMessageToSession": "ToSendMessageToSession.Execute(sessionKey: String, instruction: String) : ActiveSessionSteerResult",
+    "ToSetBuffalySessionParent": "ToSetBuffalySessionParent.Execute(sessionKey: String, parentSessionKey: String) : SessionParentResult",
+    "ToUnarchiveBuffalySession": "ToUnarchiveBuffalySession.Execute(sessionKey: String) : SessionStatusResult"
   }
 }
