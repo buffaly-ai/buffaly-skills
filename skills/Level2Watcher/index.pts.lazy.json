@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/Level2Watcher/index.pts",
   "Prototypes": {
     "Level2WatcherSkill": "Skills/Level2Watcher/index.pts",
@@ -11,5 +11,49 @@
     "ToGetObservedSessionKey": "Skills/Level2Watcher/index.pts",
     "ToListLevel1SessionTaskArtifactNamesBySourceSessionKey": "Skills/Level2Watcher/index.pts",
     "ToQueueMessageToObservedSessionAndReturn": "Skills/Level2Watcher/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToDispatchSupervisoryEvent": [
+      "to dispatch one supervisory callback event",
+      "to handle one session event callback payload"
+    ],
+    "ToGetObservedSessionKey": [
+      "to find the session this level2 watcher is supervising",
+      "to get the observed session key for this level2 watcher",
+      "to get the subscribed source session key for this watcher"
+    ],
+    "ToQueueMessageToObservedSessionAndReturn": [
+      "to queue a message to the subscribed session for this watcher",
+      "to queue guidance to the currently supervised level1 session"
+    ],
+    "ToGetLevel1SessionPlanMarkdownBySourceSessionKey": [
+      "to fetch source session plan artifact for level2",
+      "to get level1 session plan markdown by source session key",
+      "to read level1 plan markdown for supervisory verification"
+    ],
+    "ToGetLevel1SessionScratchMarkdownBySourceSessionKey": [
+      "to fetch source session scratch artifact for level2",
+      "to get level1 session scratch markdown by source session key",
+      "to read level1 scratch markdown for supervisory verification"
+    ],
+    "ToListLevel1SessionTaskArtifactNamesBySourceSessionKey": [
+      "to list level1 task artifact file names by source session key",
+      "to list observed session task artifacts",
+      "to list source session task artifacts for level2"
+    ],
+    "ToGetLevel1SessionTaskMarkdownBySourceSessionKey": [
+      "to fetch source session task artifact for level2",
+      "to get level1 task markdown by source session key",
+      "to read source session task artifact markdown for level2"
+    ]
+  },
+  "ActionSignatures": {
+    "ToDispatchSupervisoryEvent": "ToDispatchSupervisoryEvent.Execute(callbackJson: String) : String",
+    "ToGetLevel1SessionPlanMarkdownBySourceSessionKey": "ToGetLevel1SessionPlanMarkdownBySourceSessionKey.Execute(sourceSessionKey: String) : String",
+    "ToGetLevel1SessionScratchMarkdownBySourceSessionKey": "ToGetLevel1SessionScratchMarkdownBySourceSessionKey.Execute(sourceSessionKey: String) : String",
+    "ToGetLevel1SessionTaskMarkdownBySourceSessionKey": "ToGetLevel1SessionTaskMarkdownBySourceSessionKey.Execute(sourceSessionKey: String, taskArtifactFileName: String) : String",
+    "ToGetObservedSessionKey": "ToGetObservedSessionKey.Execute() : String",
+    "ToListLevel1SessionTaskArtifactNamesBySourceSessionKey": "ToListLevel1SessionTaskArtifactNamesBySourceSessionKey.Execute(sourceSessionKey: String) : String",
+    "ToQueueMessageToObservedSessionAndReturn": "ToQueueMessageToObservedSessionAndReturn.Execute(instruction: String) : String"
   }
 }
