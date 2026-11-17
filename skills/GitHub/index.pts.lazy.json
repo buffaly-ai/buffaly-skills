@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/GitHub/index.pts",
   "Prototypes": {
     "GitHubSkill": "Skills/GitHub/index.pts",
@@ -106,5 +106,32 @@
     "ToInitializeAndPushSolutionRepository": [
       "to initialize and push solution repository"
     ]
+  },
+  "ActionSignatures": {
+    "ToAddGitHubCommitComment": "ToAddGitHubCommitComment.Execute(orgName: String, repoName: String, commitSha: String, commentBody: String, agentSessionName: String) : String",
+    "ToAddGitHubIssueComment": "ToAddGitHubIssueComment.Execute(orgName: String, repoName: String, issueNumber: Int32, commentBody: String, agentSessionName: String) : String",
+    "ToCheckGitHubOrgAccess": "ToCheckGitHubOrgAccess.Execute(orgName: String) : String",
+    "ToCloseGitHubIssue": "ToCloseGitHubIssue.Execute(orgName: String, repoName: String, issueNumber: Int32) : String",
+    "ToCommitAndPushScopedChanges": "ToCommitAndPushScopedChanges.Execute(startPath: String, pathspec: String, commitMessage: String, remote: String) : String",
+    "ToCreateGitHubIssue": "ToCreateGitHubIssue.Execute(orgName: String, repoName: String, title: String, body: String, labelsCsv: String, assigneesCsv: String, agentSessionName: String) : String",
+    "ToCreatePrivateGitHubRepoInOrg": "ToCreatePrivateGitHubRepoInOrg.Execute(orgName: String, repoName: String) : String",
+    "ToGetGitCurrentBranch": "ToGetGitCurrentBranch.Execute(startPath: String) : String",
+    "ToGetGitDiff": "ToGetGitDiff.Execute(startPath: String, target: String, maxLines: Int32) : String",
+    "ToGetGitHeadSha": "ToGetGitHeadSha.Execute(startPath: String) : String",
+    "ToGetGitHubAuthStatus": "ToGetGitHubAuthStatus.Execute() : String",
+    "ToGetGitHubCommitComments": "ToGetGitHubCommitComments.Execute(orgName: String, repoName: String, commitSha: String) : String",
+    "ToGetGitHubIssue": "ToGetGitHubIssue.Execute(orgName: String, repoName: String, issueNumber: Int32) : String",
+    "ToGetGitLog": "ToGetGitLog.Execute(startPath: String, maxEntries: Int32) : String",
+    "ToGetGitRepoRoot": "ToGetGitRepoRoot.Execute(startPath: String) : String",
+    "ToGetGitShow": "ToGetGitShow.Execute(startPath: String, commitSha: String, maxLines: Int32) : String",
+    "ToGetGitStatusPorcelain": "ToGetGitStatusPorcelain.Execute(startPath: String, pathspec: String) : String",
+    "ToGitAddPathspec": "ToGitAddPathspec.Execute(startPath: String, pathspec: String) : String",
+    "ToGitCommit": "ToGitCommit.Execute(startPath: String, message: String) : String",
+    "ToGitPushBranch": "ToGitPushBranch.Execute(startPath: String, remote: String, branch: String) : String",
+    "ToInitializeAndPushSolutionRepository": "ToInitializeAndPushSolutionRepository.Execute(solutionDirectory: String, solutionName: String, repositoryName: String, organizationName: String, cloneUrl: String, branchName: String) : String",
+    "ToListGitHubIssues": "ToListGitHubIssues.Execute(orgName: String, repoName: String, state: String, labelsCsv: String, assignee: String) : String",
+    "ToListGitHubReposForOrg": "ToListGitHubReposForOrg.Execute(orgName: String) : String",
+    "ToRunGitTagReleaseInSolution": "ToRunGitTagReleaseInSolution.Execute(solutionDirectory: String, tagName: String) : String",
+    "ToUpdateGitHubIssue": "ToUpdateGitHubIssue.Execute(orgName: String, repoName: String, issueNumber: Int32, title: String, body: String, addLabelsCsv: String, addAssigneesCsv: String) : String"
   }
 }
