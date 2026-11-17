@@ -738,7 +738,7 @@
       "SkillName": "ErrorLogDiagnosis",
       "Title": "Error Log Diagnosis",
       "Description": "Buffaly skill package for Error Log Diagnosis.",
-      "Version": "0.1.6",
+      "Version": "0.1.7",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Error Log Diagnosis",
@@ -749,6 +749,10 @@
         {
           "Path": "index.pts",
           "Sha256": "0ca1855886c16fa7cf5973a91094ec945c1e5493aaa0781a7f4e8b648814ec02"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "3f4459c450582820ffb4f49c32ec1c0a007fd803f79f96c5ee6ead0b6b0a1918"
         },
         {
           "Path": "index.pts.md",
@@ -765,15 +769,12 @@
         {
           "Path": "interactive-sites/error-log-diagnosis-settings/site.js",
           "Sha256": "b0ab2c4efc1c551753ce1fd7a991b5c0cf095c03d0548d6f3d33ef710eeca674"
-        },
-        {
-          "Path": "index.pts.lazy.json",
-          "Sha256": "dcb61634a35d7b43916a936acb2609baa57a90ecabe60c87031543ab53b1a916"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": []
+      "Prerequisites": [],
+      "PreservedFiles": []
     },
     {
       "SkillName": "ExtensionBrowser",

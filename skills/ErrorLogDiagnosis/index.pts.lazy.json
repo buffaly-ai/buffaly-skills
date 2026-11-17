@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/ErrorLogDiagnosis/index.pts",
   "Prototypes": {
     "ErrorLogDiagnosisSkill": "Skills/ErrorLogDiagnosis/index.pts",
@@ -7,5 +7,21 @@
     "ToSearchErrorMemories": "Skills/ErrorLogDiagnosis/index.pts",
     "ToSearchErrorMemoriesInCategory": "Skills/ErrorLogDiagnosis/index.pts",
     "ToValidateErrorMemoryDefinition": "Skills/ErrorLogDiagnosis/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToSearchErrorMemories": [
+      "to search local error memories"
+    ],
+    "ToSearchErrorMemoriesInCategory": [
+      "to search local error memories within a category"
+    ],
+    "ToValidateErrorMemoryDefinition": [
+      "to validate an error memory taxonomy definition"
+    ]
+  },
+  "ActionSignatures": {
+    "ToSearchErrorMemories": "ToSearchErrorMemories.Execute(query: String, maxResults: Int32) : Collection",
+    "ToSearchErrorMemoriesInCategory": "ToSearchErrorMemoriesInCategory.Execute(query: String, categoryPrototypeName: String, maxResults: Int32) : Collection",
+    "ToValidateErrorMemoryDefinition": "ToValidateErrorMemoryDefinition.Execute(prototypeDefinition: String, definitionKind: String) : String"
   }
 }
