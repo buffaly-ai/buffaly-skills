@@ -1,12 +1,21 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/FileSystem/Utilities/index.pts",
   "Prototypes": {
     "ToFindAncestorInstructionFiles": "Skills/FileSystem/Utilities/index.pts",
     "ToVerifyClaimedFileHashes": "Skills/FileSystem/Utilities/index.pts"
   },
   "ActionInfinitivePhrases": {
-    "ToFindAncestorInstructionFiles": ["to find ancestor instruction files for a path"],
-    "ToVerifyClaimedFileHashes": ["to verify file hashes", "to verify claimed file hashes against actual bytes"]
+    "ToFindAncestorInstructionFiles": [
+      "to find ancestor instruction files for a path"
+    ],
+    "ToVerifyClaimedFileHashes": [
+      "to verify claimed file hashes against actual bytes",
+      "to verify file hashes"
+    ]
+  },
+  "ActionSignatures": {
+    "ToFindAncestorInstructionFiles": "ToFindAncestorInstructionFiles.Execute(startPath: String, fileName: String) : String",
+    "ToVerifyClaimedFileHashes": "ToVerifyClaimedFileHashes.Execute(directoryPath: String, claimedHashPairs: String) : String"
   }
 }
