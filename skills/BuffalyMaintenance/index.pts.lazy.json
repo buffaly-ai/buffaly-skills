@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/BuffalyMaintenance/index.pts",
   "Prototypes": {
     "BuffalyMaintenanceSkill": "Skills/BuffalyMaintenance/index.pts",
@@ -20,5 +20,104 @@
     "ToUploadBuffalyErrorAndDebugLogs": "Skills/BuffalyMaintenance/index.pts",
     "ToUploadBuffalyErrorLogs": "Skills/BuffalyMaintenance/index.pts",
     "ToUploadCurrentSessionLogs": "Skills/BuffalyMaintenance/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToGetBuffalyVersion": [
+      "to check what version of buffaly is installed",
+      "to get buffaly version",
+      "to show installed buffaly version"
+    ],
+    "ToGetBuffalyLogPath": [
+      "to get buffaly log path",
+      "to resolve buffaly diagnostics log directory",
+      "to show where buffaly logs are written"
+    ],
+    "ToGetBuffalyMaintenanceStatus": [
+      "to check buffaly update and log status",
+      "to get buffaly maintenance status",
+      "to summarize buffaly local maintenance state"
+    ],
+    "ToCheckBuffalyUpdate": [
+      "to check buffaly update",
+      "to check if buffaly can be updated",
+      "to see whether buffaly has a newer release"
+    ],
+    "ToDownloadLatestBuffalyInstaller": [
+      "to cache the latest buffaly installer",
+      "to download latest buffaly installer",
+      "to download the newest buffaly update"
+    ],
+    "ToLaunchLatestBuffalyInstaller": [
+      "to launch latest buffaly installer",
+      "to start the latest buffaly update installer",
+      "to update buffaly using the latest installer"
+    ],
+    "ToUploadBuffalyErrorLogs": [
+      "to send buffaly error logs to herd",
+      "to upload buffaly error logs",
+      "to upload local buffaly errors"
+    ],
+    "ToUploadBuffalyErrorAndDebugLogs": [
+      "to send buffaly diagnostics logs to herd",
+      "to upload buffaly debug logs",
+      "to upload buffaly error and debug logs"
+    ],
+    "ToUploadCurrentSessionLogs": [
+      "to send current buffaly session logs to herd",
+      "to upload current session logs",
+      "to upload this session diagnostics"
+    ],
+    "ToApplyBuffalyUpdate": [
+      "to apply buffaly update",
+      "to download and apply the latest buffaly update",
+      "to update buffaly"
+    ],
+    "ToClearBuffalyLogs": [
+      "to clear old buffaly logs",
+      "to delete buffaly logs older than N minutes",
+      "to prune buffaly error and debug logs"
+    ],
+    "ToPreviewClearBuffalyLogs": [
+      "to dry-run clear old buffaly logs",
+      "to list buffaly logs that would be deleted",
+      "to preview buffaly log cleanup"
+    ],
+    "ToShowToolExecutionPolicy": [
+      "to inspect hard deny and approval required tool policy",
+      "to list blocked commands and approval commands",
+      "to show tool execution policy"
+    ],
+    "ToEnsureToolExecutionPolicyConfigured": [
+      "to configure tool execution policy defaults",
+      "to create the database backed tool execution policy"
+    ],
+    "ToAddToolApprovalRequiredString": [
+      "to add a string to the tool approval list",
+      "to add an approval required command match",
+      "to require approval for a command string"
+    ],
+    "ToRemoveToolApprovalRequiredString": [
+      "to remove a string from the tool approval list",
+      "to remove an approval required command match",
+      "to stop requiring approval for a command string"
+    ]
+  },
+  "ActionSignatures": {
+    "ToAddToolApprovalRequiredString": "ToAddToolApprovalRequiredString.Execute(value: String) : String",
+    "ToApplyBuffalyUpdate": "ToApplyBuffalyUpdate.Execute() : String",
+    "ToCheckBuffalyUpdate": "ToCheckBuffalyUpdate.Execute() : String",
+    "ToClearBuffalyLogs": "ToClearBuffalyLogs.Execute(olderThanMinutes: Int32) : String",
+    "ToDownloadLatestBuffalyInstaller": "ToDownloadLatestBuffalyInstaller.Execute() : String",
+    "ToEnsureToolExecutionPolicyConfigured": "ToEnsureToolExecutionPolicyConfigured.Execute() : String",
+    "ToGetBuffalyLogPath": "ToGetBuffalyLogPath.Execute() : String",
+    "ToGetBuffalyMaintenanceStatus": "ToGetBuffalyMaintenanceStatus.Execute() : String",
+    "ToGetBuffalyVersion": "ToGetBuffalyVersion.Execute() : String",
+    "ToLaunchLatestBuffalyInstaller": "ToLaunchLatestBuffalyInstaller.Execute() : String",
+    "ToPreviewClearBuffalyLogs": "ToPreviewClearBuffalyLogs.Execute(olderThanMinutes: Int32) : String",
+    "ToRemoveToolApprovalRequiredString": "ToRemoveToolApprovalRequiredString.Execute(value: String) : String",
+    "ToShowToolExecutionPolicy": "ToShowToolExecutionPolicy.Execute() : String",
+    "ToUploadBuffalyErrorAndDebugLogs": "ToUploadBuffalyErrorAndDebugLogs.Execute() : String",
+    "ToUploadBuffalyErrorLogs": "ToUploadBuffalyErrorLogs.Execute() : String",
+    "ToUploadCurrentSessionLogs": "ToUploadCurrentSessionLogs.Execute(includeDebug: Boolean) : String"
   }
 }
