@@ -2900,7 +2900,7 @@
       "SkillName": "UserSecrets",
       "Title": "User Secrets",
       "Description": "Buffaly skill package for User Secrets.",
-      "Version": "0.1.7",
+      "Version": "0.1.8",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "User Secrets",
@@ -2914,7 +2914,7 @@
         },
         {
           "Path": "index.pts.lazy.json",
-          "Sha256": "1fe514c81327090f868e006cf3639d28f221004618294c274ca605b1f3a5c35f"
+          "Sha256": "12ae888c26fdc2eea37f3d4ce4731fb8acf4977bad406d786dacc18376b3cfb1"
         },
         {
           "Path": "index.pts.md",
@@ -2935,7 +2935,8 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": []
+      "Prerequisites": [],
+      "PreservedFiles": []
     },
     {
       "SkillName": "ValidatedPrompt",

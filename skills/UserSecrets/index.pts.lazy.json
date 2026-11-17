@@ -1,9 +1,26 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/UserSecrets/index.pts",
   "Prototypes": {
     "ToRunUserSecretCollectorInteractiveSite": "Skills/UserSecrets/index.pts",
     "UserSecretsSkill": "Skills/UserSecrets/index.pts",
     "UserSecretsSkillAction": "Skills/UserSecrets/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToRunUserSecretCollectorInteractiveSite": [
+      "to ask the user for a password securely",
+      "to ask the user for a private key",
+      "to ask the user for an API key",
+      "to collect a secret value from the user",
+      "to collect a user secret in an interactive site",
+      "to launch the user secret collector interactive site",
+      "to open a blocking popup for user secret entry",
+      "to save a user secret from a browser form",
+      "to securely collect a token from the user",
+      "to update an existing user secret"
+    ]
+  },
+  "ActionSignatures": {
+    "ToRunUserSecretCollectorInteractiveSite": "ToRunUserSecretCollectorInteractiveSite.Execute(timeoutSeconds: Int32, secretKey: String) : String"
   }
 }
