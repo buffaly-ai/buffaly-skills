@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/TabularData/index.pts",
   "Prototypes": {
     "CsvDataSourceGrid": "Skills/TabularData/index.pts",
@@ -46,5 +46,16 @@
     "ToPreviewDataTable": [
       "to preview a native datatable"
     ]
+  },
+  "ActionSignatures": {
+    "ToDescribeDataTable": "ToDescribeDataTable.Execute(table: DataTable) : String",
+    "ToFilterDataTableRows": "ToFilterDataTableRows.Execute(table: DataTable, filtersJson: String) : Prototype",
+    "ToGetDataTableSchemaJson": "ToGetDataTableSchemaJson.Execute(table: DataTable) : String",
+    "ToLoadCsvFileAsDataTable": "ToLoadCsvFileAsDataTable.Execute(path: String) : Prototype",
+    "ToLoadCsvUrlAsDataTable": "ToLoadCsvUrlAsDataTable.Execute(url: String) : Prototype",
+    "ToPreviewDataTable": "ToPreviewDataTable.Execute(table: DataTable, maxRows: Int32) : String",
+    "ToPreviewDataTablePage": "ToPreviewDataTablePage.Execute(table: DataTable, offset: Int32, limit: Int32) : String",
+    "ToSelectDataTableColumns": "ToSelectDataTableColumns.Execute(table: DataTable, columnsJson: String) : Prototype",
+    "ToSortDataTableRows": "ToSortDataTableRows.Execute(table: DataTable, sortJson: String) : Prototype"
   }
 }
