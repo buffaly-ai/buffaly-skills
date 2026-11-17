@@ -2348,10 +2348,11 @@
     {
       "SkillName": "SessionHistory",
       "Title": "Session History",
-      "Description": "Buffaly OpsAgent skill package for SessionHistory.",
-      "Version": "0.1.1",
+      "Description": "Buffaly skill package for Session History.",
+      "Version": "0.1.2",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
+        "Session History",
         "SessionHistory"
       ],
       "Path": "skills/SessionHistory",
@@ -2361,21 +2362,18 @@
           "Sha256": "7dddf13f9e2027eaf5e6df442aeae5d1216606781051b17ff12c04d61d36c00f"
         },
         {
-          "Path": "index.pts.md",
-          "Sha256": "936bdd2ec7bdb7245184e38418562cbc1da938e97a6ee8ed8cedb49682c0e6fd"
+          "Path": "index.pts.lazy.json",
+          "Sha256": "6c71e27c09f53fc6880b8391e2e71e38da79394b9e809446a274b8b73851caad"
         },
         {
-          "Path": "index.pts.lazy.json",
-          "Sha256": "bccb0cf67ea135ba38971bbe06ab8a6cb31a413c941d428029349c5c5572fc01"
+          "Path": "index.pts.md",
+          "Sha256": "936bdd2ec7bdb7245184e38418562cbc1da938e97a6ee8ed8cedb49682c0e6fd"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
       "Prerequisites": [],
-      "IsInstalled": false,
-      "HasPackageReceipt": false,
-      "IsOutdated": false,
-      "InstalledVersion": ""
+      "PreservedFiles": []
     },
     {
       "SkillName": "SessionManagement",

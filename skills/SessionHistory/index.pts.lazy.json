@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/SessionHistory/index.pts",
   "Prototypes": {
     "SessionHistorySkill": "Skills/SessionHistory/index.pts",
@@ -8,5 +8,30 @@
     "ToSummarizeSessionHistoryForDateRange": "Skills/SessionHistory/index.pts",
     "ToSummarizeSessionSinceLastCompaction": "Skills/SessionHistory/index.pts",
     "ToSummarizeSinceLastCompaction": "Skills/SessionHistory/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToSummarizeSessionHistory": [
+      "to build a rolling summary from session history pages",
+      "to summarize session history",
+      "to summarize session timeline for a date range"
+    ],
+    "ToSummarizeSessionSinceLastCompaction": [
+      "to summarize current session timeline",
+      "to summarize session history since last compaction"
+    ],
+    "ToSummarizeSinceLastCompaction": [
+      "to summarize session since last compaction",
+      "to summarize timeline since last compaction"
+    ],
+    "ToSummarizeSessionHistoryForDateRange": [
+      "to summarize session history for a date range",
+      "to summarize session timeline between two utc timestamps"
+    ]
+  },
+  "ActionSignatures": {
+    "ToSummarizeSessionHistory": "ToSummarizeSessionHistory.Execute(sessionKey: String, startUtc: String, endUtc: String, carryContext: String) : String",
+    "ToSummarizeSessionHistoryForDateRange": "ToSummarizeSessionHistoryForDateRange.Execute(sessionKey: String, startUtc: String, endUtc: String, carryContext: String) : String",
+    "ToSummarizeSessionSinceLastCompaction": "ToSummarizeSessionSinceLastCompaction.Execute(sessionKey: String, carryContext: String) : String",
+    "ToSummarizeSinceLastCompaction": "ToSummarizeSinceLastCompaction.Execute(sessionKey: String, carryContext: String) : String"
   }
 }
