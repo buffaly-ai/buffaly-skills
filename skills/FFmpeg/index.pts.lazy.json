@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/FFmpeg/index.pts",
   "Prototypes": {
     "FFmpegSkill": "Skills/FFmpeg/index.pts",
@@ -18,5 +18,74 @@
     "ToRecordFFmpegBrowserDemoArtifact": "Skills/FFmpeg/index.pts",
     "ToRecordFFmpegDesktopVideoArtifact": "Skills/FFmpeg/index.pts",
     "ToTrimFFmpegVideoArtifact": "Skills/FFmpeg/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToReconstructVisualStoryFromRawVideo": [
+      "to create a contact-sheet driven video story edit",
+      "to distill messy screen recordings into a product demo",
+      "to reconstruct a visual story from raw video",
+      "to stitch raw videos into a better narrative"
+    ],
+    "ToGetFFmpegVersion": [
+      "to get ffmpeg version",
+      "to verify ffmpeg is installed"
+    ],
+    "ToProbeFFmpegMediaFile": [
+      "to probe a media file with ffprobe",
+      "to validate a video artifact"
+    ],
+    "ToInspectPdfPagesForContentAndClipping": [
+      "to detect PDF pages with missing content",
+      "to inspect PDF pages for content and clipping",
+      "to probe PDF page dimensions and image bounds"
+    ],
+    "ToRecordFFmpegDesktopVideoArtifact": [
+      "to record desktop video artifact with ffmpeg"
+    ],
+    "ToFinalizeFFmpegMkvRecordingArtifact": [
+      "to convert a safe ffmpeg live recording to a preview artifact",
+      "to finalize an ffmpeg mkv recording artifact as mp4"
+    ],
+    "ToRecordFFmpegBrowserDemoArtifact": [
+      "to record browser demo video artifact with ffmpeg"
+    ],
+    "ToNormalizeFFmpegVideoForWebArtifact": [
+      "to normalize video for web playback with ffmpeg"
+    ],
+    "ToExtractFFmpegVideoThumbnailArtifact": [
+      "to extract video thumbnail artifact with ffmpeg"
+    ],
+    "ToTrimFFmpegVideoArtifact": [
+      "to trim video artifact with ffmpeg"
+    ],
+    "ToCompressFFmpegVideoArtifact": [
+      "to compress video artifact with ffmpeg"
+    ],
+    "ToCreateFFmpegContactSheetArtifact": [
+      "to create video contact sheet artifact with ffmpeg"
+    ],
+    "ToAddFFmpegTextOverlayArtifact": [
+      "to add text overlay to video artifact with ffmpeg"
+    ],
+    "ToExtractFFmpegAudioArtifact": [
+      "to extract an audio artifact from video with ffmpeg",
+      "to separate the audio track from a video artifact"
+    ]
+  },
+  "ActionSignatures": {
+    "ToAddFFmpegTextOverlayArtifact": "ToAddFFmpegTextOverlayArtifact.Execute(sourceVideoPath: String, overlayText: String, outputFileName: String, tempDirectory: String, sessionDirectory: String, ffmpegPath: String, ffprobePath: String) : String",
+    "ToCompressFFmpegVideoArtifact": "ToCompressFFmpegVideoArtifact.Execute(sourceVideoPath: String, crf: Int32, maxWidth: Int32, outputFileName: String, tempDirectory: String, sessionDirectory: String, ffmpegPath: String, ffprobePath: String) : String",
+    "ToCreateFFmpegContactSheetArtifact": "ToCreateFFmpegContactSheetArtifact.Execute(sourceVideoPath: String, fps: Int32, columns: Int32, rows: Int32, outputFileName: String, tempDirectory: String, sessionDirectory: String, ffmpegPath: String) : String",
+    "ToExtractFFmpegAudioArtifact": "ToExtractFFmpegAudioArtifact.Execute(sourceMediaPath: String, outputFileName: String, tempDirectory: String, sessionDirectory: String, ffmpegPath: String, ffprobePath: String) : String",
+    "ToExtractFFmpegVideoThumbnailArtifact": "ToExtractFFmpegVideoThumbnailArtifact.Execute(sourceVideoPath: String, timestampSeconds: Int32, outputFileName: String, tempDirectory: String, sessionDirectory: String, ffmpegPath: String) : String",
+    "ToFinalizeFFmpegMkvRecordingArtifact": "ToFinalizeFFmpegMkvRecordingArtifact.Execute(sourceMkvPath: String, outputFileName: String, tempDirectory: String, sessionDirectory: String, ffmpegPath: String, ffprobePath: String) : String",
+    "ToGetFFmpegVersion": "ToGetFFmpegVersion.Execute(ffmpegPath: String) : String",
+    "ToInspectPdfPagesForContentAndClipping": "ToInspectPdfPagesForContentAndClipping.Execute(pdfFilePath: String, pythonPath: String) : String",
+    "ToNormalizeFFmpegVideoForWebArtifact": "ToNormalizeFFmpegVideoForWebArtifact.Execute(sourceVideoPath: String, outputFileName: String, tempDirectory: String, sessionDirectory: String, ffmpegPath: String, ffprobePath: String) : String",
+    "ToProbeFFmpegMediaFile": "ToProbeFFmpegMediaFile.Execute(filePath: String, ffprobePath: String) : String",
+    "ToReconstructVisualStoryFromRawVideo": "ToReconstructVisualStoryFromRawVideo.Execute() : String",
+    "ToRecordFFmpegBrowserDemoArtifact": "ToRecordFFmpegBrowserDemoArtifact.Execute(url: String, durationSeconds: Int32, outputFileName: String, tempDirectory: String, sessionDirectory: String, overlayText: String, ffmpegPath: String, ffprobePath: String) : String",
+    "ToRecordFFmpegDesktopVideoArtifact": "ToRecordFFmpegDesktopVideoArtifact.Execute(durationSeconds: Int32, outputFileName: String, tempDirectory: String, sessionDirectory: String, openUrl: String, overlayText: String, ffmpegPath: String, ffprobePath: String) : String",
+    "ToTrimFFmpegVideoArtifact": "ToTrimFFmpegVideoArtifact.Execute(sourceVideoPath: String, startSeconds: Int32, durationSeconds: Int32, outputFileName: String, tempDirectory: String, sessionDirectory: String, ffmpegPath: String, ffprobePath: String) : String"
   }
 }
