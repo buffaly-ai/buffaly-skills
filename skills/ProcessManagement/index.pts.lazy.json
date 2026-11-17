@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/ProcessManagement/index.pts",
   "Prototypes": {
     "ProcessManagementSkill": "Skills/ProcessManagement/index.pts",
@@ -16,7 +16,79 @@
     "ToListBuffalyProcesses": "Skills/ProcessManagement/index.pts",
     "ToListRecurringProcesses": "Skills/ProcessManagement/index.pts",
     "ToListScheduledTasks": "Skills/ProcessManagement/index.pts",
+    "ToRunIntervalProcessNow": "Skills/ProcessManagement/index.pts",
     "ToTriggerScheduledTaskNow": "Skills/ProcessManagement/index.pts",
     "ToValidateBuffalyProcessConfiguration": "Skills/ProcessManagement/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToListScheduledTasks": [
+      "to list Buffaly scheduled tasks",
+      "to list external scheduled tasks"
+    ],
+    "ToListRecurringProcesses": [
+      "to list Buffaly recurring processes",
+      "to list interval system processes"
+    ],
+    "ToListBuffalyProcesses": [
+      "to list Buffaly processes",
+      "to list all process rows"
+    ],
+    "ToGetBuffalyProcessDetails": [
+      "to inspect a scheduled process",
+      "to show Buffaly process details"
+    ],
+    "ToAddScheduledTask": [
+      "to add a Buffaly scheduled task",
+      "to create an external scheduled task"
+    ],
+    "ToAddRecurringProcess": [
+      "to add a Buffaly recurring process",
+      "to create an interval system process"
+    ],
+    "ToEnableBuffalyProcess": [
+      "to enable a Buffaly process",
+      "to enable a scheduled task"
+    ],
+    "ToDisableBuffalyProcess": [
+      "to disable a Buffaly process",
+      "to disable a scheduled task"
+    ],
+    "ToTriggerScheduledTaskNow": [
+      "to run an external scheduled task now",
+      "to trigger an external scheduled task now"
+    ],
+    "ToRunIntervalProcessNow": [
+      "to manually run an interval system process",
+      "to run an interval process now"
+    ],
+    "ToValidateBuffalyProcessConfiguration": [
+      "to validate a Buffaly process configuration",
+      "to validate a scheduled process"
+    ],
+    "ToAddDeterministicScheduledTask": [
+      "to add a deterministic scheduled task"
+    ],
+    "ToDiagnoseBuffalyProcessFailure": [
+      "to diagnose a scheduled process last-run failure",
+      "to diagnose why a scheduled process failed",
+      "to troubleshoot a Buffaly process failure"
+    ]
+  },
+  "ActionSignatures": {
+    "ToAddDeterministicScheduledTask": "ToAddDeterministicScheduledTask.Execute() : String",
+    "ToAddRecurringProcess": "ToAddRecurringProcess.Execute(processName: String, handlerAssembly: String, handlerType: String, runEveryMinutes: Int32, runDataJson: String) : String",
+    "ToAddScheduledTask": "ToAddScheduledTask.Execute(processName: String, handlerAssembly: String, handlerType: String, sessionKey: String, createChildSession: Boolean, promptContext: String, instruction: String) : String",
+    "ToDiagnoseBuffalyProcessFailure": "ToDiagnoseBuffalyProcessFailure.Execute() : String",
+    "ToDisableBuffalyProcess": "ToDisableBuffalyProcess.Execute(processID: Int32) : String",
+    "ToEnableBuffalyProcess": "ToEnableBuffalyProcess.Execute(processID: Int32) : String",
+    "ToExplainHowToAddRecurringProcess": "ToExplainHowToAddRecurringProcess.Execute() : String",
+    "ToExplainHowToAddScheduledTask": "ToExplainHowToAddScheduledTask.Execute() : String",
+    "ToGetBuffalyProcessDetails": "ToGetBuffalyProcessDetails.Execute(processID: Int32) : String",
+    "ToListBuffalyProcesses": "ToListBuffalyProcesses.Execute() : String",
+    "ToListRecurringProcesses": "ToListRecurringProcesses.Execute() : String",
+    "ToListScheduledTasks": "ToListScheduledTasks.Execute() : String",
+    "ToRunIntervalProcessNow": "ToRunIntervalProcessNow.Execute(processID: Int32) : String",
+    "ToTriggerScheduledTaskNow": "ToTriggerScheduledTaskNow.Execute(processName: String, triggerKey: String) : String",
+    "ToValidateBuffalyProcessConfiguration": "ToValidateBuffalyProcessConfiguration.Execute(processID: Int32) : String"
   }
 }

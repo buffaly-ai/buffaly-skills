@@ -2228,7 +2228,7 @@
       "SkillName": "ProcessManagement",
       "Title": "Process Management",
       "Description": "Buffaly skill package for Process Management.",
-      "Version": "0.1.4",
+      "Version": "0.1.5",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Process Management",
@@ -2242,7 +2242,7 @@
         },
         {
           "Path": "index.pts.lazy.json",
-          "Sha256": "0bef8d97340b592abf99582916a2fd934d8a97470dbe8785ee6beb7fa498912a"
+          "Sha256": "f1e13e874b10ef537e68082a745e1d3502cd76c1f8fe8a8214659072126ce31c"
         },
         {
           "Path": "index.pts.md",
@@ -2275,7 +2275,8 @@
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": []
+      "Prerequisites": [],
+      "PreservedFiles": []
     },
     {
       "SkillName": "Recaptcha",
