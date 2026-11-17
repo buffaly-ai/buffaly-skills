@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/BuffalyCapabilityInspection/index.pts",
   "Prototypes": {
     "BuffalyCapabilityInspectionSkill": "Skills/BuffalyCapabilityInspection/index.pts",
@@ -11,5 +11,51 @@
     "ToListInstalledCapabilitySkills": "Skills/BuffalyCapabilityInspection/index.pts",
     "ToListInstalledCapabilityTools": "Skills/BuffalyCapabilityInspection/index.pts",
     "ToListInstalledCapabilityWebModules": "Skills/BuffalyCapabilityInspection/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToGetInstalledCapabilitiesOverview": [
+      "to count installed skills tools prompt actions providers and web modules",
+      "to show this install\u0027s capability inventory",
+      "to summarize installed Buffaly capabilities"
+    ],
+    "ToListInstalledCapabilitySkills": [
+      "to inspect installed capability skills",
+      "to list installed Buffaly skills",
+      "to show enabled Buffaly skill families"
+    ],
+    "ToListInstalledCapabilityTools": [
+      "to inspect installed capability tools",
+      "to list installed Buffaly tools",
+      "to show executable Buffaly actions"
+    ],
+    "ToListInstalledCapabilityPromptActions": [
+      "to inspect installed prompt skills",
+      "to list installed Buffaly prompt actions",
+      "to show prompt guided Buffaly workflows"
+    ],
+    "ToInventorySkillIncludeModes": [
+      "to inspect skill include sidecars and receipts",
+      "to inventory skill include modes",
+      "to list eager and lazy skill routes"
+    ],
+    "ToListInstalledCapabilityProviders": [
+      "to inspect provider capability status",
+      "to list installed Buffaly providers",
+      "to show configured model providers"
+    ],
+    "ToListInstalledCapabilityWebModules": [
+      "to inspect installed module pages",
+      "to list installed Buffaly web modules",
+      "to show installed Buffaly modules"
+    ]
+  },
+  "ActionSignatures": {
+    "ToGetInstalledCapabilitiesOverview": "ToGetInstalledCapabilitiesOverview.Execute() : String",
+    "ToInventorySkillIncludeModes": "ToInventorySkillIncludeModes.Execute(opsAgentRootPath: String) : String",
+    "ToListInstalledCapabilityPromptActions": "ToListInstalledCapabilityPromptActions.Execute(maxResults: Int32) : String",
+    "ToListInstalledCapabilityProviders": "ToListInstalledCapabilityProviders.Execute() : String",
+    "ToListInstalledCapabilitySkills": "ToListInstalledCapabilitySkills.Execute(includeDisabled: Boolean) : String",
+    "ToListInstalledCapabilityTools": "ToListInstalledCapabilityTools.Execute(skillName: String, maxResults: Int32) : String",
+    "ToListInstalledCapabilityWebModules": "ToListInstalledCapabilityWebModules.Execute() : String"
   }
 }
