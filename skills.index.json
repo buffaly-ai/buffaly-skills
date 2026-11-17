@@ -612,7 +612,7 @@
       "SkillName": "Desktop",
       "Title": "Desktop",
       "Description": "Buffaly skill package for Desktop.",
-      "Version": "0.1.4",
+      "Version": "0.1.5",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Desktop",
@@ -627,6 +627,10 @@
         {
           "Path": "index.pts",
           "Sha256": "adf137d15cf81a09dcdf9b9a6e08ce7614705ea0cadfdd425a116d25daf444b9"
+        },
+        {
+          "Path": "index.pts.lazy.json",
+          "Sha256": "92a02090070840155db5950fefdb2e9b815cd0cfef39ed88feaa34333f34506b"
         },
         {
           "Path": "index.pts.md",
@@ -651,15 +655,12 @@
         {
           "Path": "Prompts/UseDesktopInteractionSkill.prompt.md",
           "Sha256": "3a8204086c8233e1869f1f4debea40cf60e69f8e8e1b98fe745938fa2785c20a"
-        },
-        {
-          "Path": "index.pts.lazy.json",
-          "Sha256": "3484e82d569722adf29bd286521d360bec365016a01a334e2365cb113551a83f"
         }
       ],
       "EntryPoint": "index.pts",
       "RelatedWikiSlugs": [],
-      "Prerequisites": []
+      "Prerequisites": [],
+      "PreservedFiles": []
     },
     {
       "SkillName": "DispatchTree",

@@ -1,5 +1,5 @@
 {
-  "Version": 1,
+  "Version": 2,
   "ModulePath": "Skills/Desktop/index.pts",
   "Prototypes": {
     "DesktopSkill": "Skills/Desktop/index.pts",
@@ -37,5 +37,155 @@
     "ToViewDesktopWindowInteractiveSite": "Skills/Desktop/index.pts",
     "ToWaitDesktopMilliseconds": "Skills/Desktop/index.pts",
     "UseDesktopInteractionSkill": "Skills/Desktop/index.pts"
+  },
+  "ActionInfinitivePhrases": {
+    "ToGetDesktopAutomationCapabilities": [
+      "to diagnose desktop automation backend",
+      "to get desktop automation capabilities"
+    ],
+    "ToMoveDesktopMouse": [
+      "to move mouse to screen coordinates",
+      "to move the desktop mouse"
+    ],
+    "ToClickDesktopMouse": [
+      "to click desktop coordinates",
+      "to click on the desktop"
+    ],
+    "ToDoubleClickDesktopMouse": [
+      "to double click on the desktop"
+    ],
+    "ToScrollDesktopMouse": [
+      "to scroll on the desktop"
+    ],
+    "ToPressDesktopKeys": [
+      "to press desktop keys",
+      "to send a key chord to the desktop"
+    ],
+    "ToTypeDesktopText": [
+      "to type text on the desktop"
+    ],
+    "ToWaitDesktopMilliseconds": [
+      "to wait on desktop automation"
+    ],
+    "ToCaptureDesktopScreenshotBase64": [
+      "to capture desktop screenshot as base64"
+    ],
+    "ToCaptureDesktopStreamFrameJson": [
+      "to capture desktop stream frame json"
+    ],
+    "ToOpenDesktopLoginControl": [
+      "to control desktop login in browser",
+      "to open desktop login control"
+    ],
+    "ToCaptureDiagnosticDesktopWindowFrameJson": [
+      "to capture one diagnostic desktop window frame json",
+      "to diagnose desktop window stream frame payload",
+      "to test foreground application window capture json"
+    ],
+    "ToGetDesktopWindowCaptureBounds": [
+      "to diagnose application window capture rectangle",
+      "to get desktop window capture bounds"
+    ],
+    "ToResolveDesktopWindow": [
+      "to bind desktop application window",
+      "to resolve desktop window"
+    ],
+    "ToFocusDesktopWindow": [
+      "to focus desktop window"
+    ],
+    "ToCaptureDesktopWindowScreenshotFile": [
+      "to capture desktop window screenshot file"
+    ],
+    "ToClickDesktopWindow": [
+      "to click desktop window"
+    ],
+    "ToDoubleClickDesktopWindow": [
+      "to double click desktop window"
+    ],
+    "ToScrollDesktopWindow": [
+      "to scroll desktop window"
+    ],
+    "ToClickDesktopWindowImage": [
+      "to click desktop window image coordinate",
+      "to click scaled desktop window screenshot point"
+    ],
+    "ToDoubleClickDesktopWindowImage": [
+      "to double click desktop window image coordinate",
+      "to double click scaled desktop window screenshot point"
+    ],
+    "ToScrollDesktopWindowImage": [
+      "to scroll desktop window image coordinate",
+      "to scroll scaled desktop window screenshot point"
+    ],
+    "ToTypeDesktopWindowText": [
+      "to type desktop window text"
+    ],
+    "ToPressDesktopWindowKeys": [
+      "to press desktop window keys"
+    ],
+    "ToOpenExperimentalBlockingDesktopWindowControl": [
+      "to open experimental blocking desktop window control",
+      "to stream a foreground application window in the browser until close",
+      "to test browser control of a desktop application window"
+    ],
+    "ToListVisibleDesktopWindows": [
+      "to list visible desktop windows",
+      "to list windows available to watch"
+    ],
+    "ToViewDesktopWindowInteractiveSite": [
+      "to view a desktop window interactively",
+      "to watch a selected application window"
+    ],
+    "ToOpenNotepadStreamControl": [
+      "to open notepad stream control",
+      "to stream notepad in the browser"
+    ],
+    "ToCaptureDesktopScreenshotFile": [
+      "to capture desktop screenshot to file"
+    ],
+    "ToGetDesktopScreenSize": [
+      "to get desktop screen size"
+    ],
+    "UseDesktopInteractionSkill": [
+      "to control a desktop application",
+      "to interact with a desktop window",
+      "to use desktop automation safely",
+      "to use desktop interaction"
+    ]
+  },
+  "ActionSignatures": {
+    "ToCaptureDesktopScreenshotBase64": "ToCaptureDesktopScreenshotBase64.Execute(maxWidth: Int32, maxHeight: Int32) : StringReference",
+    "ToCaptureDesktopScreenshotFile": "ToCaptureDesktopScreenshotFile.Execute(outputPath: String, maxWidth: Int32, maxHeight: Int32) : String",
+    "ToCaptureDesktopStreamFrameJson": "ToCaptureDesktopStreamFrameJson.Execute(maxWidth: Int32, maxHeight: Int32) : StringReference",
+    "ToCaptureDesktopWindowFrameJson": "ToCaptureDesktopWindowFrameJson.Execute(processName: String, windowTitleContains: String) : StringReference",
+    "ToCaptureDesktopWindowScreenshotFile": "ToCaptureDesktopWindowScreenshotFile.Execute(processName: String, windowTitleContains: String, windowHandle: String, outputPath: String, maxWidth: Int32, maxHeight: Int32) : CapturedImageArtifact",
+    "ToCaptureDiagnosticDesktopWindowFrameJson": "ToCaptureDiagnosticDesktopWindowFrameJson.Execute(processName: String, windowTitleContains: String) : StringReference",
+    "ToClickDesktopMouse": "ToClickDesktopMouse.Execute(x: Int32, y: Int32, button: String) : String",
+    "ToClickDesktopWindow": "ToClickDesktopWindow.Execute(processName: String, windowTitleContains: String, windowHandle: String, x: Int32, y: Int32, button: String) : DesktopWindowActionResult",
+    "ToClickDesktopWindowImage": "ToClickDesktopWindowImage.Execute(processName: String, windowTitleContains: String, windowHandle: String, x: Int32, y: Int32, nativeWindowWidth: Int32, nativeWindowHeight: Int32, imageWidth: Int32, imageHeight: Int32, button: String) : DesktopWindowActionResult",
+    "ToDoubleClickDesktopMouse": "ToDoubleClickDesktopMouse.Execute(x: Int32, y: Int32, button: String) : String",
+    "ToDoubleClickDesktopWindow": "ToDoubleClickDesktopWindow.Execute(processName: String, windowTitleContains: String, windowHandle: String, x: Int32, y: Int32, button: String) : DesktopWindowActionResult",
+    "ToDoubleClickDesktopWindowImage": "ToDoubleClickDesktopWindowImage.Execute(processName: String, windowTitleContains: String, windowHandle: String, x: Int32, y: Int32, nativeWindowWidth: Int32, nativeWindowHeight: Int32, imageWidth: Int32, imageHeight: Int32, button: String) : DesktopWindowActionResult",
+    "ToFocusDesktopWindow": "ToFocusDesktopWindow.Execute(processName: String, windowTitleContains: String, windowHandle: String) : DesktopWindowActionResult",
+    "ToGetDesktopAutomationCapabilities": "ToGetDesktopAutomationCapabilities.Execute() : String",
+    "ToGetDesktopScreenSize": "ToGetDesktopScreenSize.Execute() : String",
+    "ToGetDesktopWindowCaptureBounds": "ToGetDesktopWindowCaptureBounds.Execute(processName: String, windowTitleContains: String) : String",
+    "ToListVisibleDesktopWindows": "ToListVisibleDesktopWindows.Execute() : String",
+    "ToMoveDesktopMouse": "ToMoveDesktopMouse.Execute(x: Int32, y: Int32) : String",
+    "ToOpenDesktopLoginControl": "ToOpenDesktopLoginControl.Execute(maxWidth: Int32, maxHeight: Int32, frameIntervalMs: Int32, timeoutSeconds: Int32) : String",
+    "ToOpenDesktopWindowControl": "ToOpenDesktopWindowControl.Execute(processName: String, windowTitleContains: String, frameIntervalMs: Int32, timeoutSeconds: Int32) : String",
+    "ToOpenExperimentalBlockingDesktopWindowControl": "ToOpenExperimentalBlockingDesktopWindowControl.Execute(processName: String, windowTitleContains: String, frameIntervalMs: Int32, timeoutSeconds: Int32) : String",
+    "ToOpenNotepadStreamControl": "ToOpenNotepadStreamControl.Execute(frameIntervalMs: Int32, timeoutSeconds: Int32) : String",
+    "ToPressDesktopKeys": "ToPressDesktopKeys.Execute(chord: String) : String",
+    "ToPressDesktopWindowKeys": "ToPressDesktopWindowKeys.Execute(processName: String, windowTitleContains: String, windowHandle: String, chord: String) : DesktopWindowActionResult",
+    "ToResolveDesktopWindow": "ToResolveDesktopWindow.Execute(processName: String, windowTitleContains: String) : DesktopWindowTarget",
+    "ToScrollDesktopMouse": "ToScrollDesktopMouse.Execute(x: Int32, y: Int32, scrollX: Int32, scrollY: Int32) : String",
+    "ToScrollDesktopWindow": "ToScrollDesktopWindow.Execute(processName: String, windowTitleContains: String, windowHandle: String, x: Int32, y: Int32, scrollX: Int32, scrollY: Int32) : DesktopWindowActionResult",
+    "ToScrollDesktopWindowImage": "ToScrollDesktopWindowImage.Execute(processName: String, windowTitleContains: String, windowHandle: String, x: Int32, y: Int32, nativeWindowWidth: Int32, nativeWindowHeight: Int32, imageWidth: Int32, imageHeight: Int32, scrollX: Int32, scrollY: Int32) : DesktopWindowActionResult",
+    "ToTypeDesktopText": "ToTypeDesktopText.Execute(text: String) : String",
+    "ToTypeDesktopWindowText": "ToTypeDesktopWindowText.Execute(processName: String, windowTitleContains: String, windowHandle: String, text: String) : DesktopWindowActionResult",
+    "ToViewDesktopWindowInteractiveSite": "ToViewDesktopWindowInteractiveSite.Execute(processName: String, windowTitle: String, frameIntervalMs: Int32, timeoutSeconds: Int32) : String",
+    "ToWaitDesktopMilliseconds": "ToWaitDesktopMilliseconds.Execute(milliseconds: Int32) : String",
+    "UseDesktopInteractionSkill": "UseDesktopInteractionSkill.Execute() : String"
   }
 }
