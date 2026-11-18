@@ -5,3 +5,5 @@ skills/CdpBrowser/lib/cdp_helper.js text eol=lf
 skills/ExtensionBrowser/extension/source/** text eol=lf
 skills/ExtensionBrowser/extension/source/public/icon/*.png -text
 web-modules/ExtensionBrowser/wwwroot/downloads/*.template -text
+# FeedbackAdmission.cs is indexed with LF bytes; preserve those bytes in Build-owned Windows clones.
+web-modules/OfflineOntologyCritic/OfflineCritic.Runner/FeedbackAdmission.cs text eol=lf
