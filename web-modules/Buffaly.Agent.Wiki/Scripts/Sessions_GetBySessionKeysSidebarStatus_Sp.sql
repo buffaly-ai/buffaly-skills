@@ -3,7 +3,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE OR ALTER PROCEDURE dbo.Sessions_GetBySessionKeysSidebarStatus_Sp
-    @SessionKeysJson nvarchar(max)
+    @SessionKeysJson nvarchar(max),
+    -- Omission is the authorized Root inventory, selected only by the typed backend.
+    @EnvironmentUserKey nvarchar(64) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -13,7 +15,7 @@ BEGIN
         THROW 50001, 'Session keys must be nonempty strings of at most 255 UTF-16 code units.', 1;
     SELECT s.SessionKey, s.State, s.CurrentTurnStartedUtc
     FROM dbo.Sessions AS s
-    WHERE s.IsArchived = 0 AND EXISTS
+    WHERE (@EnvironmentUserKey IS NULL OR s.EnvironmentUserKey=@EnvironmentUserKey) AND s.IsArchived = 0 AND EXISTS
         (SELECT 1 FROM OPENJSON(@SessionKeysJson) AS k WHERE s.SessionKey = CONVERT(nvarchar(255), k.[value]));
 END
 GO
