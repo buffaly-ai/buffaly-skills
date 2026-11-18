@@ -158,7 +158,8 @@ BEGIN
  SELECT s.SessionID,JSON_QUERY(s.Data,'$.SidebarProfile') AS SidebarProfileJson,JSON_QUERY(s.Data,'$.UserState') AS UserStateJson,s.PendingWakeProcessID,p.DueAtUtc AS PendingWakeAtUtc,p.OneTimeState AS PendingWakeState FROM dbo.Sessions s LEFT JOIN dbo.Processes p ON p.ProcessID=s.PendingWakeProcessID WHERE EXISTS(SELECT 1 FROM OPENJSON(@SessionIDsJson) i WHERE s.SessionID=CONVERT(int,i.value));
 END
 GO
-CREATE OR ALTER PROCEDURE dbo.Sessions_GetSidebarActivityWithWake_Sp @SessionKeysJson nvarchar(max) AS
+-- Omission is the authorized Root inventory, selected only by the typed backend.
+CREATE OR ALTER PROCEDURE dbo.Sessions_GetSidebarActivityWithWake_Sp @SessionKeysJson nvarchar(max), @EnvironmentUserKey nvarchar(64) = NULL AS
 BEGIN
  SET NOCOUNT ON;
  IF ISJSON(@SessionKeysJson)<>1 THROW 50001,'Expected session keys.',1;
@@ -166,11 +167,11 @@ BEGIN
  ;WITH Requested AS
  (
  SELECT CONVERT(int,i.[key]) AS RequestOrdinal,s.SessionID,s.SessionKey,s.ParentSessionID,s.SessionName,s.AgentName,s.SessionKind,s.LastUpdated,s.PendingWakeProcessID
- FROM OPENJSON(@SessionKeysJson) i JOIN dbo.Sessions s WITH (NOLOCK) ON s.SessionKey=CONVERT(nvarchar(450),i.value) WHERE s.IsArchived=0
+ FROM OPENJSON(@SessionKeysJson) i JOIN dbo.Sessions s WITH (NOLOCK) ON s.SessionKey=CONVERT(nvarchar(450),i.value) WHERE s.IsArchived=0 AND (@EnvironmentUserKey IS NULL OR s.EnvironmentUserKey=@EnvironmentUserKey)
  ), RootActivity AS
  (
  SELECT r.SessionID,CASE WHEN MAX(c.LastUpdated)>r.LastUpdated THEN MAX(c.LastUpdated) ELSE r.LastUpdated END AS EffectiveLastUpdated
- FROM Requested r LEFT JOIN dbo.Sessions c WITH (NOLOCK) ON c.ParentSessionID=r.SessionID AND c.IsArchived=0 WHERE r.ParentSessionID IS NULL GROUP BY r.SessionID,r.LastUpdated
+ FROM Requested r LEFT JOIN dbo.Sessions c WITH (NOLOCK) ON c.ParentSessionID=r.SessionID AND c.IsArchived=0 AND (@EnvironmentUserKey IS NULL OR c.EnvironmentUserKey=@EnvironmentUserKey) WHERE r.ParentSessionID IS NULL GROUP BY r.SessionID,r.LastUpdated
  )
  SELECT r.SessionID,r.SessionKey,r.SessionName,r.AgentName,r.SessionKind,r.LastUpdated AS OwnLastUpdated,
  CASE WHEN r.ParentSessionID IS NULL THEN a.EffectiveLastUpdated ELSE r.LastUpdated END AS EffectiveLastUpdated,
