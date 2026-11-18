@@ -1,3 +1,6 @@
+-- Derived expression index; no second policy owner or application-maintained column.
+CREATE INDEX IF NOT EXISTS ix_sessions_navigation_visibility ON sessions
+ ((COALESCE(COALESCE(NULLIF(data,''),'{}')::jsonb #>> '{SidebarProfile,ShowInSessionList}','true')),is_archived,parent_session_id,session_id);
 -- Additive sidebar readers; historical sealed functions remain unchanged.
 CREATE OR REPLACE FUNCTION "Sessions_GetSidebarRootNavigationPage_Sp"(p_search text, p_skip_roots integer, p_num_roots integer)
 RETURNS TABLE (
@@ -42,11 +45,11 @@ BEGIN
 			WHERE session_row.is_archived = false
 				AND session_row.session_key NOT IN ('Browser Profiles', 'browser-profiles')
 		),
-		-- Match eligibility excludes Recall subtrees before LIMIT, retaining ordinary ancestors.
+		-- Configured hidden branches are excluded before LIMIT, retaining ordinary ancestors.
 		hidden_branches AS
 		(
 			SELECT session_row.session_id FROM searchable_sessions session_row
-			WHERE session_row.data::jsonb #>> '{SidebarProfile,ShowInSessionList}' = 'false'
+			WHERE COALESCE(COALESCE(NULLIF(session_row.data,''),'{}')::jsonb #>> '{SidebarProfile,ShowInSessionList}','true') = 'false'
 			UNION
 			SELECT child.session_id FROM searchable_sessions child
 			JOIN hidden_branches parent ON child.parent_session_id = parent.session_id
@@ -189,7 +192,7 @@ BEGIN
 		FROM navigable_sessions root
 		LEFT JOIN navigable_sessions child ON child.parent_session_id = root.session_id
 		WHERE root.parent_session_id IS NULL
-			AND COALESCE(root.data::jsonb #>> '{SidebarProfile,ShowInSessionList}', 'true') <> 'false'
+			AND COALESCE(COALESCE(NULLIF(root.data,''),'{}')::jsonb #>> '{SidebarProfile,ShowInSessionList}', 'true') <> 'false'
 		GROUP BY root.session_id, root.last_updated
 	),
 	ranked_roots AS
@@ -264,7 +267,16 @@ BEGIN
 	IF p_skip_rows < 0 THEN RAISE EXCEPTION 'SkipRows must be nonnegative.'; END IF;
 	IF p_num_rows < 1 OR p_num_rows > 5000 THEN RAISE EXCEPTION 'NumRows must be between 1 and 5000.'; END IF;
 	RETURN QUERY
-	WITH candidate_rows AS
+	WITH RECURSIVE hidden_branches AS
+	(
+		SELECT session_id FROM sessions
+		WHERE is_archived = false
+			AND COALESCE(COALESCE(NULLIF(data,''),'{}')::jsonb #>> '{SidebarProfile,ShowInSessionList}','true') = 'false'
+		UNION
+		SELECT child.session_id FROM sessions child
+		JOIN hidden_branches parent ON child.parent_session_id = parent.session_id
+		WHERE child.is_archived = false
+	), candidate_rows AS
 	(
 		SELECT session_row.*, parent.session_key AS parent_session_key,
 			ROW_NUMBER() OVER (ORDER BY session_row.last_updated DESC, session_row.session_id DESC)::integer AS row_ordinal
@@ -272,7 +284,7 @@ BEGIN
 		LEFT JOIN sessions parent ON parent.session_id = session_row.parent_session_id
 		WHERE session_row.is_archived = false
 			AND session_row.session_key NOT IN ('Browser Profiles', 'browser-profiles')
-			AND COALESCE(session_row.data::jsonb #>> '{SidebarProfile,ShowInSessionList}', 'true') <> 'false'
+			AND NOT EXISTS (SELECT 1 FROM hidden_branches hidden WHERE hidden.session_id = session_row.session_id)
 			AND (COALESCE(p_search, '') = '' OR COALESCE(session_row.session_key, '') ILIKE '%' || p_search || '%' OR COALESCE(session_row.session_name, '') ILIKE '%' || p_search || '%')
 	), page_rows AS (SELECT * FROM candidate_rows WHERE row_ordinal BETWEEN p_skip_rows + 1 AND p_skip_rows + p_num_rows + 1)
 	SELECT candidate.session_id, candidate.session_key, candidate.parent_session_id, candidate.parent_session_key,
@@ -290,9 +302,9 @@ BEGIN
  FROM (SELECT child.*,parent.session_key AS parent_session_key FROM sessions child
  JOIN page_rows parent ON child.parent_session_id=parent.session_id
  WHERE parent.row_ordinal <= p_skip_rows+p_num_rows AND child.is_archived=false
- AND child.data::jsonb #>> '{SidebarProfile,ShowInSessionList}'='false'
- AND NULLIF(child.data::jsonb #>> '{SidebarProfile,ObservedSessionUserStateKey}','') IS NOT NULL
- ORDER BY child.last_updated DESC,child.session_id DESC LIMIT 200) child
+ AND COALESCE(COALESCE(NULLIF(child.data,''),'{}')::jsonb #>> '{SidebarProfile,ShowInSessionList}','true') = 'false'
+ AND NULLIF(COALESCE(NULLIF(child.data,''),'{}')::jsonb #>> '{SidebarProfile,ObservedSessionUserStateKey}','') IS NOT NULL
+  ORDER BY child.last_updated DESC,child.session_id DESC LIMIT 220) child
  ORDER BY 18 DESC,1 DESC;
 END;
 $$;

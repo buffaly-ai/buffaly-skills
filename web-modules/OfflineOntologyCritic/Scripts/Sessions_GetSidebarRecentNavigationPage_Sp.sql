@@ -1,11 +1,13 @@
-SET ANSI_NULLS OFF
+SET ANSI_NULLS ON
 GO
-SET QUOTED_IDENTIFIER OFF
+SET QUOTED_IDENTIFIER ON
 GO
 CREATE OR ALTER PROCEDURE [dbo].[Sessions_GetSidebarRecentNavigationPage_Sp]
 	@Search [nvarchar](255),
 	@SkipRows [int],
-	@NumRows [int]
+	@NumRows [int],
+	-- Omission is the authorized Root inventory, selected only by the typed backend.
+	@EnvironmentUserKey nvarchar(64) = NULL
 AS
 	SET NOCOUNT ON;
 
@@ -15,6 +17,22 @@ AS
 		THROW 50002, 'NumRows must be between 1 and 5000.', 1;
 
 	DECLARE @SearchPattern nvarchar(257) = '%' + ISNULL(@Search, '') + '%';
+
+	CREATE TABLE #HiddenNavigationSessions (SessionID int NOT NULL PRIMARY KEY);
+	INSERT #HiddenNavigationSessions
+	SELECT SessionID FROM dbo.Sessions WHERE (@EnvironmentUserKey IS NULL OR EnvironmentUserKey=@EnvironmentUserKey) AND IsArchived=0 AND SidebarShowInSessionList=0 OPTION(MAXDOP 1);
+	-- Expand only visible descendants. Hidden children are already in the seed.
+	-- Each pass adds unseen identities only; finite membership also terminates cycles.
+	WHILE 1=1
+	BEGIN
+		INSERT #HiddenNavigationSessions
+		SELECT child.SessionID FROM dbo.Sessions child
+		JOIN #HiddenNavigationSessions parent ON child.ParentSessionID=parent.SessionID
+		WHERE (@EnvironmentUserKey IS NULL OR child.EnvironmentUserKey=@EnvironmentUserKey) AND child.IsArchived=0 AND child.SidebarShowInSessionList=1
+		AND NOT EXISTS(SELECT 1 FROM #HiddenNavigationSessions seen WHERE seen.SessionID=child.SessionID) OPTION(MAXDOP 1);
+		IF @@ROWCOUNT=0 BREAK;
+	END;
+
 
 	;WITH CandidateRows AS
 	(
@@ -41,18 +59,19 @@ AS
 				) AS RowOrdinal
 		FROM	dbo.Sessions sessionRow
 		LEFT JOIN dbo.Sessions parent
-		ON		parent.SessionID = sessionRow.ParentSessionID
-		WHERE	ISNULL(sessionRow.IsArchived, 0) = 0
+		ON		parent.SessionID = sessionRow.ParentSessionID AND (@EnvironmentUserKey IS NULL OR parent.EnvironmentUserKey=@EnvironmentUserKey)
+		WHERE	ISNULL(sessionRow.IsArchived, 0) = 0 AND (@EnvironmentUserKey IS NULL OR sessionRow.EnvironmentUserKey=@EnvironmentUserKey)
 				AND sessionRow.SessionKey NOT IN (N'Browser Profiles', N'browser-profiles')
 				-- Eligibility precedes ranking and lookahead; a display name is not agent identity.
-				AND ISNULL(JSON_VALUE(sessionRow.Data, '$.SidebarProfile.ShowInSessionList'), N'true') <> N'false'
+				AND NOT EXISTS (SELECT 1 FROM #HiddenNavigationSessions hidden WHERE hidden.SessionID = sessionRow.SessionID)
 				AND
 				(
 					ISNULL(@Search, '') = ''
 					OR sessionRow.SessionKey LIKE @SearchPattern
 					OR sessionRow.SessionName LIKE @SearchPattern
 				)
-	), PageRows AS (SELECT * FROM CandidateRows WHERE RowOrdinal BETWEEN @SkipRows + 1 AND @SkipRows + @NumRows + 1)
+	)
+	SELECT * INTO #NavigationPageRows FROM CandidateRows WHERE RowOrdinal BETWEEN @SkipRows + 1 AND @SkipRows + @NumRows + 1 OPTION(MAXDOP 1);
 	SELECT	SessionID,
 			SessionKey,
 			ParentSessionID,
@@ -74,18 +93,18 @@ AS
 			CONVERT(int, NULL) AS RootOrdinal,
 			CONVERT(int, NULL) AS HierarchyDepth,
 			CONVERT(bit, 1) AS ShowInSessionList
-	FROM PageRows
+	FROM #NavigationPageRows
  UNION ALL
  SELECT context.SessionID, context.SessionKey, context.ParentSessionID, context.ParentSessionKey,
  context.SessionName, context.AgentName, context.ProjectName, context.ProjectFilePath, context.Provider,
  context.ModelName, context.ReasoningLevel, context.PromptContext, context.CompactionProvider,
  context.State, context.SessionKind, context.Transport, context.DateCreated, context.LastUpdated,
  context.LastUpdated, CONVERT(int,NULL),CONVERT(int,NULL),CONVERT(int,NULL),CONVERT(bit,0)
- FROM (SELECT TOP (200) child.*, parent.SessionKey AS ParentSessionKey
- FROM dbo.Sessions child JOIN PageRows parent ON child.ParentSessionID=parent.SessionID
- WHERE parent.RowOrdinal <= @SkipRows + @NumRows AND child.IsArchived=0
- AND JSON_VALUE(child.Data,'$.SidebarProfile.ShowInSessionList')=N'false'
+ FROM (SELECT TOP (220) child.*, parent.SessionKey AS ParentSessionKey
+ FROM dbo.Sessions child JOIN #NavigationPageRows parent ON child.ParentSessionID=parent.SessionID
+ WHERE parent.RowOrdinal <= @SkipRows + @NumRows AND child.IsArchived=0 AND (@EnvironmentUserKey IS NULL OR child.EnvironmentUserKey=@EnvironmentUserKey)
+ AND child.SidebarShowInSessionList=0
  AND NULLIF(JSON_VALUE(child.Data,'$.SidebarProfile.ObservedSessionUserStateKey'),N'') IS NOT NULL
  ORDER BY child.LastUpdated DESC,child.SessionID DESC) context
- ORDER BY OwnLastUpdated DESC,SessionID DESC;
+ ORDER BY OwnLastUpdated DESC,SessionID DESC OPTION(MAXDOP 1);
 GO
