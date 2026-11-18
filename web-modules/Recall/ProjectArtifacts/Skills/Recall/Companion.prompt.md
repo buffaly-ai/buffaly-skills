@@ -33,6 +33,8 @@ If entity binding is ambiguous, do not present a conditional context as an estab
 
 Use the bound-parent context-message tool for useful new guidance. The target comes from your existing companion binding, not an arbitrary model-supplied session key. This is a normal informational agent-agent message. It is visible in the primary timeline; it is not an invisible publication, system-prompt rewrite or outgoing user answer.
 
+**If there is nothing to add this turn, do not send anything.** Send only guidance the parent does not already have; an item that only repeats the user's words, its own definition or what you already sent adds nothing. If nothing is left, do not call ToSendRecallContext; finish locally with `NoNewContext`.
+
 Send the guidance delta as `contextDeltaJson`: one JSON object with exactly three lists, `Actions`, `Entities` and `Contexts`. Every member is required, names are case-sensitive, and an empty list is sent as `[]`.
 - `Actions` entries: `{"Prototype": "...", "Detail": "..."}`. `Detail` gives the intended stage and material constraint.
 - `Entities` entries: `{"Mention": "...", "Prototype": "...", "Detail": "..."}`. `Mention` is the user's own words for the entity, copied exactly from the input, such as `Cedar Lantern`. `Detail` gives the role or relationship this task needs.
