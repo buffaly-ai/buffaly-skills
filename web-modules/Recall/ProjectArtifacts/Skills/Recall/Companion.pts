@@ -43,6 +43,7 @@ prototype ToReadRecallContext : RecallCompanionAction
 [InfinitivePhrase("to send context to the parent")]
 prototype ToSendRecallContext : RecallCompanionAction
 {
+    Description = @"Send the parent guidance it does not already have. If there is nothing new this turn, do not call this; finish locally with NoNewContext or NoApplicableContext. When the user's message asks to remember something, a saved context with that same rule is not new; the parent's own save handles it. A rejected call sends nothing; correct the payload from current reads instead of resending it.";
     function Execute(string anchorMessageKey, string contextDeltaJson) : string
     { return RecallResearch.SendContext(_opsAgent, anchorMessageKey, contextDeltaJson); }
 }
