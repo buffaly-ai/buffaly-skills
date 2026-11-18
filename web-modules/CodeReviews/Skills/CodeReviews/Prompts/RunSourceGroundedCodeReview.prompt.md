@@ -11,7 +11,13 @@ Use this workflow when reviewing one specified Buffaly code change set.
 - Review the requested target directly instead of searching for another commit.
 - Use later history only to determine whether a suspected issue was already corrected or made irrelevant.
 - For an interactive review requested directly by a user, return specific findings or a clear no-issue result.
-- For an attached CodeReviews child, notify the source session only when material actionable findings remain. Complete a clean review silently.
+- For an attached CodeReviews child, notify the source session of material findings or review limitations. Only a fully covered review without findings completes silently.
+
+## Best-effort review policy
+
+Review as much of the exact delivered code as available. A changing task/design, missing guidance, unavailable reader, unreadable file or incomplete page does not justify failing the whole review or discarding findings from other files. Attempt bounded, safe recovery when useful; then continue with independent evidence instead of retrying indefinitely. A useful partial review is preferable to no review.
+
+Submit evidence-backed findings through the normal grouped completion action. When there are no findings in the inspected code, use normal completion without findings; the coverage assessment records unavailable or unverified code/supporting evidence and reports it to the source. Clearly distinguish reviewed code from coverage gaps. Never describe partial coverage as clean, claim unverified conformance, invent a coverage percentage, mix document versions or substitute another commit/turn. Exact delivered target binding remains mandatory. This policy supersedes older all-or-nothing evidence instructions.
 
 ## Approved Tools
 
@@ -57,7 +63,7 @@ Read and follow every guidance file corresponding to the changed file types. The
    The bounded patch reader may return `Complete exact text changes v1` for long-line text, including minified generated bundles. Read every returned page and changed range; exact offsets and committed-text hashes bind both sides, and only ordinally equal spans are omitted. This is complete change evidence, not a generated-file exemption. Do not reopen megabytes of raw minified text or require package/generator validation merely because the output is generated; review the authored changes and relevant callers normally. No filename, size or generation claim waives changed code.
    Validated base64 `data:image` PNG, JPEG, GIF and WebP payloads in patches and committed files are replaced by an `[embedded image/<type> omitted: ...]` marker with size and SHA256. Review the surrounding markup normally; do not fetch the image bytes. Large readable patches are never withheld; read every page to EOF. If a patch begins with `# Not reviewed: change evidence is not valid UTF-8 text v1`, read it to EOF, do not review or re-read that file through another reader, and complete the rest of the review normally. The completion record lists that file as not reviewed; never describe it as reviewed, clean or defective.
    For Buffaly session sidebar work or an explicit reference to SidebarGoverningRules.md, use the canonical trusted guidance token `Sidebar`, not a guessed application-commit or session-artifact path. It reads the complete installed Nodes/Personal/Coding/SidebarGoverningRules.md. Current rules govern; historical frozen-approval entries do not create a new approval gate. Unrelated applications' navigation is outside that document's scope. Persisted identical pages in THIS reviewer turn remain valid after compaction; do not reread completed entries without an actual identity/hash change.
-   Start every required evidence group at offset/index zero in THIS reviewer turn. A previous review attempt, even for the same source/commit, supplies no coverage to this turn. Never inherit another turn's progress ledger or continue from its offset. If completion reports a missing continuation, fetch the exact missing offset and all remaining pages using the working bounded reader, then retry completion. A recoverable coverage gap is not a reason to mark failure; do not mark incomplete while required readers remain available.
+   Start evidence at offset/index zero in THIS reviewer turn. Previous turns supply no coverage. Finish available pages; if a missing continuation or changing document prevents a coherent complete read, make a bounded recovery attempt and then record the limitation rather than failing the review. A complete latest-version reread can recover mutable task/design evidence. Never combine versions.
 3. If one commit is named, review that commit rather than searching history for another target.
 4. If the target is ambiguous, use safe git and file discovery before asking a question.
 5. Do not submit findings for a different commit from a reused child session.
@@ -68,7 +74,7 @@ Read the complete exact manifest for every target commit, then read complete pat
 
 ## Binary and asset scope
 
-Binary and asset scope: retain every changed file in the manifest, without requiring its patch or routine decoding/disassembly. These are optional, targeted evidence only when relevant to requested behavior, a binary-only implementation or an evidenced source/package mismatch. An unavailable optional asset, receipt or unfinished search does not fail code-review completion or sibling commits. Neither a partial exploratory non-code patch nor an unused recorded-data reader creates a new coverage obligation. Never claim unread assets or packages validated; report independently evidenced relevant defects as findings. Complete code patches, required context and applicable guidance remain mandatory.
+Binary and asset scope: retain every changed file in the manifest, without requiring its patch or routine decoding/disassembly. These are optional, targeted evidence only when relevant to requested behavior, a binary-only implementation or an evidenced source/package mismatch. An unavailable optional asset, receipt or unfinished search does not fail code-review completion or sibling commits. Neither a partial exploratory non-code patch nor an unused recorded-data reader creates a new coverage obligation. Never claim unread assets or packages validated; report independently evidenced relevant defects as findings. Aim to complete code/context/guidance reads; unavailable evidence is a disclosed limitation, not a whole-review failure.
 
 Package validation is separate from code review. Preserve exact manifest accounting for binary additions, modifications, renames and deletions; do not turn optional inspection capabilities into completion prerequisites.
 
@@ -216,8 +222,8 @@ When the instruction supplies an attached turn-level `SourceTurnContextJson`, tr
 - Evaluate the combined result against the exact completed source turn, active task, governing design, and Plan.
 - Use exactly one grouped completion action. Pass the supplied `SourceTurnContextJson` unchanged; it is the authoritative cross-worker binding for the delivered turn. Do not pass separate repository paths, commit SHAs, or source session keys.
 - With material findings, call `ToSubmitCodeReviewTurnFindings` once with the unchanged `SourceTurnContextJson` and consolidated findings-only markdown.
-- With no material findings, call `ToCompleteCodeReviewTurnWithoutFindings` once with the unchanged `SourceTurnContextJson`. Clean silence means no source-session notification, not an empty reviewer final answer.
-- If review cannot be completed, call `ToMarkCodeReviewTurnFailed` once with the unchanged `SourceTurnContextJson` and a concise failure reason.
+- With no material findings in the available code, call `ToCompleteCodeReviewTurnWithoutFindings` once with the unchanged `SourceTurnContextJson`. Fully covered clean reviews stay silent; reviews with coverage limitations notify the source and do not claim unreviewed code clean.
+- Do not call `ToMarkCodeReviewTurnFailed` for changing, unavailable or incomplete evidence. Finish the useful review with findings or explicit limitations. Older callers of that action are completed with limitations rather than discarding available results.
 - Each successful grouped completion action ends the reviewer runtime through its canonical terminal response. Do not generate another final answer or repeat a successful completion action. If the action fails, resolve the reported failure; do not claim completion or emit an empty final answer.
 - Do not call the single-commit completion actions for a turn manifest.
 
@@ -225,7 +231,7 @@ When the instruction supplies exact `RepositoryPath` and `CommitSha` completion 
 
 - If one or more material actionable findings remain after validation, call `ToSubmitCodeReviewFindings` exactly once with findings-only markdown.
 - If no material actionable findings remain, call `ToCompleteCodeReviewWithoutFindings` exactly once. Do not send a no-issue message or generic review summary to the source session.
-- If the review cannot be completed, call `ToMarkCodeReviewFailed` with a concise reason.
+- If evidence remains unavailable, include the exact coverage limitation in the review instead of marking the review failed. Do not turn a tool error into a code-defect finding.
 - Do not include source or child session keys in completion action parameters.
 - After the completion action succeeds, return only a short confirmation in the child session.
 
