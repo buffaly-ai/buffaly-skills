@@ -266,7 +266,7 @@ prototype ToGetCodeReviewStatus : CodeReviewsAgentToolsAction
 [SemanticProgram.InfinitivePhrase("to record code review failure")]
 prototype ToMarkCodeReviewFailed : CodeReviewsAgentToolsAction
 {
-	Description = @"RepositoryPath - local repository path. CommitSha - full or short hexadecimal commit SHA. FailureReason - concise reason the review could not be completed. Marks the CodeReviews commit review record failed.";
+	Description = @"RepositoryPath - local repository path. CommitSha - full or short hexadecimal commit SHA. FailureReason - concise reason no code at all could be reviewed. Marks the CodeReviews commit review record Failed. Last resort only: do not use for changing, unavailable or incomplete evidence; submit findings or complete without findings so the coverage gaps are recorded as limitations and the review of the available code is kept.";
 
 	function Execute(string RepositoryPath, string CommitSha, string FailureReason) : string
 	{
