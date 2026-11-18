@@ -1,4 +1,4 @@
-// Read-only, viewport-triggered filename enrichment. No review calls, patches or file reads.
+// Read-only, viewport-triggered filename enrichment in a collapsed-by-default disclosure.
 (function () {
   "use strict";
   const selector = "a.code-reviews-semantic-ref-git-commit";
@@ -70,38 +70,44 @@
     if (!timeline) return;
     if (typeof IntersectionObserver !== "function") { console.warn("Commit files require IntersectionObserver."); return; }
     const states = new WeakMap();
+    let disclosureId = 0;
     async function show(state, offset, retry) {
       const serial = ++state.serial;
-      state.holder.textContent = "Loading files…";
+      state.content.textContent = "Loading files…";
       if (retry) completed.delete(JSON.stringify([state.identity.endpoint, state.identity.repository, state.identity.sha, offset]));
       const result = await read(state.identity, offset);
       if (!state.holder.isConnected || serial !== state.serial) return;
-      state.holder.replaceChildren();
-      const heading = document.createElement("strong"); heading.textContent = "Files";
-      const commands = document.createElement("span"); commands.className = "d-block d-flex gap-2 align-items-center";
-      commands.append(heading); state.holder.append(commands);
+      state.content.replaceChildren();
+      state.count.textContent = result.Error ? "Unavailable" : String(result.TotalFiles);
+      const commands = document.createElement("span"); commands.className = "d-flex gap-2 align-items-center mb-2";
+      state.content.append(commands);
       if (result.Error) {
         commands.append(command("Retry", "fa-redo", () => show(state, offset, true)));
-        const message = document.createElement("span"); message.className = "d-block"; message.textContent = result.Error; state.holder.append(message); return;
+        const message = document.createElement("span"); message.className = "d-block"; message.textContent = result.Error; state.content.append(message); return;
       }
-      if (result.TotalFiles === 0) { state.holder.append(document.createTextNode(" No files changed.")); return; }
-      commands.append(document.createTextNode(" " + (offset + 1) + "–" + (offset + result.Files.length) + " of " + result.TotalFiles));
+      if (result.TotalFiles === 0) { state.content.textContent = "No files changed."; return; }
+      const range = document.createElement("span"); range.className = "text-muted";
+      range.textContent = (offset + 1) + "–" + (offset + result.Files.length) + " of " + result.TotalFiles;
+      commands.append(range);
       if (offset > 0) commands.append(command("Previous", "fa-arrow-left", () => show(state, offset - 8, false)));
       if (offset + result.Files.length < result.TotalFiles) commands.append(command("Next", "fa-arrow-right", () => show(state, offset + 8, false)));
       const basenames = result.Files.map(file => file.Path.split("/").pop());
       for (const file of result.Files) {
-        const row = document.createElement("span"); row.className = "d-block";
+        const row = document.createElement("span"); row.className = "d-flex align-items-center gap-2 py-1";
+        const icon = document.createElement("i"); icon.className = "fas " + (file.IsCode ? "fa-file-code" : "fa-file-alt") + " text-muted";
+        icon.setAttribute("aria-hidden", "true");
+        const nameHost = document.createElement("span"); row.append(icon, nameHost);
         const name = file.Path.split("/").pop();
         const label = basenames.filter(value => value === name).length > 1 ? file.Path.split("/").slice(-2).join("/") : name;
         if (file.IsCode && file.StatusCode[0] !== "D" && window.BuffalyFilePresentationProviders) {
           try {
             const launch = window.BuffalyFilePresentationProviders.resolve({ Path: result.RepositoryPath.replace(/[\\/]$/, "") + "/" + file.Path });
-            const link = document.createElement("a"); link.href = launch.Url; link.textContent = label; link.title = "Open current source: " + file.Path; link.target = "_blank"; link.rel = "noopener noreferrer"; row.append(link);
-          } catch (error) { console.warn("Commit-file viewer unavailable", error); row.textContent = label; }
-        } else { row.textContent = label; }
-        if (file.StatusCode[0] === "D") row.append(document.createTextNode(" — deleted"));
-        if (file.OriginalPath) row.append(document.createTextNode(" — from " + file.OriginalPath.split("/").pop()));
-        state.holder.append(row);
+            const link = document.createElement("a"); link.href = launch.Url; link.textContent = label; link.title = "Open current source: " + file.Path; link.target = "_blank"; link.rel = "noopener noreferrer"; nameHost.append(link);
+          } catch (error) { console.warn("Commit-file viewer unavailable", error); nameHost.textContent = label; }
+        } else { nameHost.textContent = label; }
+        if (file.StatusCode[0] === "D") nameHost.append(document.createTextNode(" — deleted"));
+        if (file.OriginalPath) nameHost.append(document.createTextNode(" — from " + file.OriginalPath.split("/").pop()));
+        state.content.append(row);
       }
     }
     const visibility = new IntersectionObserver(entries => {
@@ -117,9 +123,20 @@
       let seen = owners.get(owner); if (!seen) { seen = new Map(); owners.set(owner, seen); }
       const key = JSON.stringify([identity.endpoint, identity.repository, identity.sha]);
       if (seen.get(key)?.isConnected) return;
-      const holder = document.createElement("span"); holder.className = "d-block"; holder.setAttribute("aria-live", "polite");
+      const holder = document.createElement("span"); holder.className = "d-block mt-2";
+      const content = document.createElement("span"); content.className = "d-block mt-2 ps-3 border-start";
+      content.id = "code-reviews-commit-files-" + (++disclosureId); content.hidden = true; content.setAttribute("aria-live", "polite");
+      const count = document.createElement("span"); count.className = "badge rounded-pill bg-light text-secondary border"; count.textContent = "…";
+      const toggle = command("Changed files", "fa-chevron-right", () => {
+        content.hidden = !content.hidden;
+        toggle.setAttribute("aria-expanded", String(!content.hidden));
+        toggle.querySelector("i").className = "fas " + (content.hidden ? "fa-chevron-right" : "fa-chevron-down");
+      });
+      toggle.classList.add("d-inline-flex", "align-items-center", "gap-2");
+      toggle.setAttribute("aria-expanded", "false"); toggle.setAttribute("aria-controls", content.id); toggle.append(count);
+      holder.append(toggle, content);
       (anchor.closest("p,li,td,th") || anchor.parentElement).append(holder);
-      const state = { holder, identity, serial: 0 }; states.set(anchor, state); seen.set(key, holder); visibility.observe(anchor);
+      const state = { holder, content, count, identity, serial: 0 }; states.set(anchor, state); seen.set(key, holder); visibility.observe(anchor);
     }
     function scan(node) {
       if (!(node instanceof Element)) return;
