@@ -2,10 +2,12 @@ SET ANSI_NULLS ON;
 SET QUOTED_IDENTIFIER ON;
 GO
 CREATE OR ALTER PROCEDURE dbo.Sessions_GetPendingAttentionNavigation_Sp
+-- Omission is the authorized Root inventory, selected only by the typed backend.
+@EnvironmentUserKey nvarchar(64) = NULL
 AS
 BEGIN
  SET NOCOUNT ON;
- IF EXISTS(SELECT 1 FROM dbo.Sessions WHERE NeedsAttention=1 AND IsArchived=0 AND NULLIF(LastNonRunningUtc,N'') IS NULL)
+ IF EXISTS(SELECT 1 FROM dbo.Sessions WHERE (@EnvironmentUserKey IS NULL OR EnvironmentUserKey=@EnvironmentUserKey) AND NeedsAttention=1 AND IsArchived=0 AND NULLIF(LastNonRunningUtc,N'') IS NULL)
   THROW 51000,'Pending attention requires a stop stamp.',1;
  SELECT s.SessionID,s.SessionKey,s.SessionName,s.AgentName,s.SessionKind,
   JSON_QUERY(s.Data,'$.Specialization') AS Specialization,s.NeedsAttention,s.LastNonRunningUtc AS StopStamp,
@@ -15,7 +17,7 @@ BEGIN
  FROM dbo.Sessions s
  OUTER APPLY(SELECT TOP(1) TurnKey,TerminalMessageID FROM dbo.Turns WHERE SessionID=s.SessionID ORDER BY DisplayOrderAtUtc DESC,FirstMessageID DESC)t
  LEFT JOIN dbo.Messages m ON m.MessageID=t.TerminalMessageID AND m.TerminalOutcomeState IS NOT NULL
- WHERE s.NeedsAttention=1 AND s.IsArchived=0
+ WHERE (@EnvironmentUserKey IS NULL OR s.EnvironmentUserKey=@EnvironmentUserKey) AND s.NeedsAttention=1 AND s.IsArchived=0
  ORDER BY CONVERT(datetimeoffset(7),s.LastNonRunningUtc),s.SessionID;
 END
 GO
