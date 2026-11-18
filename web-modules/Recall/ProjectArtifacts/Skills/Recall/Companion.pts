@@ -7,12 +7,6 @@ prototype ToDispatchRecallObservation : RecallCompanionAction
 {
     function Execute(string callbackJson) : string { return RecallCompanionFacade.Render(_opsAgent, callbackJson); }
 }
-[InfinitivePhrase("to read the admitted recall input")]
-prototype ToReadRecallInput : RecallCompanionAction
-{
-    function Execute(string anchorMessageKey, int characterOffset = 0, string expectedHash = "") : string
-    { return RecallResearch.Input(_opsAgent, anchorMessageKey, characterOffset, expectedHash); }
-}
 [InfinitivePhrase("to find recall entities")]
 prototype ToFindRecallEntities : RecallCompanionAction
 {
