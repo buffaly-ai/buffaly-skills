@@ -92,14 +92,27 @@
 		status.textContent = file.length.toLocaleString() + " bytes | " + language.name + " | Read only";
 	}
 
-	function togglePreview() {
-		if (!editor || preview.hidden) return;
+	// Issue the document-scoped capability from the authenticated parent; the frame stays credentialless.
+	async function togglePreview() {
+		if (!editor || preview.hidden || preview.disabled) return;
+		if (!previewing) {
+			preview.disabled = true;
+			try {
+				const response = await fetch("/api/buffaly.source-viewer/html-preview?path=" + encodeURIComponent(requestedPath), { credentials: "same-origin", cache: "no-store" });
+				if (!response.ok) throw new Error("Preview could not be opened. Return to the agent, choose a user, and try again.");
+				const launch = await response.json();
+				if (typeof launch.previewUrl !== "string" || !launch.previewUrl.startsWith("/web-modules/SourceViewer/preview/")) throw new Error("Preview could not be opened. Reload and try again.");
+				previewFrame.src = launch.previewUrl;
+			} catch (error) { fail(error.message); return; }
+			finally { preview.disabled = false; }
+		}
 		previewing = !previewing;
 		editorHost.hidden = previewing;
 		previewHost.hidden = !previewing;
 		preview.textContent = previewing ? "Source" : "Preview";
 		preview.setAttribute("aria-pressed", previewing ? "true" : "false");
-		if (previewing && !previewFrame.src) previewFrame.src = "/api/buffaly.source-viewer/html-preview?path=" + encodeURIComponent(requestedPath);
+		if (!previewing) previewFrame.src = "about:blank";
+		status.classList.remove("error");
 		status.textContent = previewing ? "Rendered HTML preview | Isolated" : sourceText.length.toLocaleString() + " characters | HTML | Read only";
 	}
 
