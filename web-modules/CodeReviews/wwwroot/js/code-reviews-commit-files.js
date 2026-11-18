@@ -1,4 +1,4 @@
-// Read-only, viewport-triggered filename enrichment in a collapsed-by-default disclosure.
+// Read-only filename enrichment, requested only when a collapsed-by-default disclosure is first opened.
 (function () {
   "use strict";
   const selector = "a.code-reviews-semantic-ref-git-commit";
@@ -68,7 +68,6 @@
   function start() {
     const timeline = document.getElementById("opsV2Messages");
     if (!timeline) return;
-    if (typeof IntersectionObserver !== "function") { console.warn("Commit files require IntersectionObserver."); return; }
     const states = new WeakMap();
     let disclosureId = 0;
     async function show(state, offset, retry) {
@@ -79,6 +78,7 @@
       if (!state.holder.isConnected || serial !== state.serial) return;
       state.content.replaceChildren();
       state.count.textContent = result.Error ? "Unavailable" : String(result.TotalFiles);
+      state.count.hidden = false;
       const commands = document.createElement("span"); commands.className = "d-flex gap-2 align-items-center mb-2";
       state.content.append(commands);
       if (result.Error) {
@@ -111,12 +111,6 @@
         state.content.append(row);
       }
     }
-    const visibility = new IntersectionObserver(entries => {
-      for (const entry of entries) if (entry.isIntersecting) {
-        visibility.unobserve(entry.target);
-        const state = states.get(entry.target); if (state && entry.target.isConnected) show(state, 0, false);
-      }
-    }, { rootMargin: "200px" });
     function enhance(anchor) {
       if (states.get(anchor)?.holder.isConnected) return;
       const identity = identityFor(anchor); if (!identity) return;
@@ -127,17 +121,23 @@
       const holder = document.createElement("span"); holder.className = "d-block mt-2";
       const content = document.createElement("span"); content.className = "d-block mt-2 ps-3 border-start";
       content.id = "code-reviews-commit-files-" + (++disclosureId); content.hidden = true; content.setAttribute("aria-live", "polite");
-      const count = document.createElement("span"); count.className = "badge rounded-pill bg-light text-secondary border"; count.textContent = "…";
+      const count = document.createElement("span"); count.className = "badge rounded-pill bg-light text-secondary border"; count.hidden = true;
+      const state = { holder, content, count, identity, serial: 0, started: false };
       const toggle = command("Changed files", "fa-chevron-right", () => {
         content.hidden = !content.hidden;
         toggle.setAttribute("aria-expanded", String(!content.hidden));
         toggle.querySelector("i").className = "fas " + (content.hidden ? "fa-chevron-right" : "fa-chevron-down");
+        if (!content.hidden && !state.started) {
+          // Latch before awaiting: rapid reopen must not refetch or automatically retry a failure.
+          state.started = true;
+          show(state, 0, false);
+        }
       });
       toggle.classList.add("d-inline-flex", "align-items-center", "gap-2");
       toggle.setAttribute("aria-expanded", "false"); toggle.setAttribute("aria-controls", content.id); toggle.append(count);
       holder.append(toggle, content);
       (anchor.closest("p,li,td,th") || anchor.parentElement).append(holder);
-      const state = { holder, content, count, identity, serial: 0 }; states.set(anchor, state); seen.set(key, holder); visibility.observe(anchor);
+      states.set(anchor, state); seen.set(key, holder);
     }
     function scan(node) {
       if (!(node instanceof Element)) return;
@@ -147,17 +147,12 @@
     scan(timeline);
     const mutations = new MutationObserver(records => {
       for (const record of records) {
-        for (const node of record.removedNodes) {
-          if (!(node instanceof Element)) continue;
-          if (node.matches(selector)) visibility.unobserve(node);
-          node.querySelectorAll(selector).forEach(anchor => visibility.unobserve(anchor));
-        }
         for (const node of record.addedNodes) scan(node);
       }
     });
     mutations.observe(timeline, { childList: true, subtree: true });
     // BFCache keeps this same observer/realm; do not disconnect on a persisted pagehide.
-    window.addEventListener("pagehide", event => { if (!event.persisted) { visibility.disconnect(); mutations.disconnect(); } });
+    window.addEventListener("pagehide", event => { if (!event.persisted) mutations.disconnect(); });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, { once: true }); else start();
 }());
