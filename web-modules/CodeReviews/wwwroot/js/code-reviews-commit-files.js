@@ -99,7 +99,8 @@
         const nameHost = document.createElement("span"); row.append(icon, nameHost);
         const name = file.Path.split("/").pop();
         const label = basenames.filter(value => value === name).length > 1 ? file.Path.split("/").slice(-2).join("/") : name;
-        if (file.IsCode && file.StatusCode[0] !== "D" && window.BuffalyFilePresentationProviders) {
+        // The shared registry owns supported file types, including non-code text files.
+        if (file.StatusCode[0] !== "D" && window.BuffalyFilePresentationProviders) {
           try {
             const launch = window.BuffalyFilePresentationProviders.resolve({ Path: result.RepositoryPath.replace(/[\\/]$/, "") + "/" + file.Path });
             const link = document.createElement("a"); link.href = launch.Url; link.textContent = label; link.title = "Open current source: " + file.Path; link.target = "_blank"; link.rel = "noopener noreferrer"; nameHost.append(link);
