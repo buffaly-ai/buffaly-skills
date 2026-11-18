@@ -24,7 +24,10 @@
   registry.register({ id: "csharp-viewer-preference", priority: 5, canOpen: context => context.Extension === ".cs", buildLaunch: preferredLaunch });
   function updateLinks() {
     document.querySelectorAll('a[href]').forEach(anchor => {
-      const url = new URL(anchor.href, window.location.href);
+      // Timeline content can contain malformed non-viewer hrefs; do not abort other links.
+      let url;
+      try { url = new URL(anchor.href, window.location.href); }
+      catch { return; }
       if (url.origin !== window.location.origin || url.pathname !== "/api/web-modules/CSharpViewer/open") return;
       url.searchParams.set("viewer", selectedViewer());
       anchor.setAttribute("href", url.pathname + url.search);
@@ -49,7 +52,10 @@
     const timeline = document.getElementById("opsV2Messages");
     if (!timeline) return;
     timeline.querySelectorAll('a[href]').forEach(anchor => {
-      const url = new URL(anchor.href, window.location.href);
+      // Timeline content can contain malformed non-viewer hrefs; do not abort other links.
+      let url;
+      try { url = new URL(anchor.href, window.location.href); }
+      catch { return; }
       if (url.origin !== window.location.origin || url.pathname !== "/api/web-modules/CSharpViewer/open" || anchor.parentElement?.hasAttribute("data-csharp-viewer-picker")) return;
       const wrapper = document.createElement("span");
       wrapper.className = "dropdown d-inline-flex align-items-center";
