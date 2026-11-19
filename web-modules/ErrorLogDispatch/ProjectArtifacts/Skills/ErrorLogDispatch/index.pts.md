@@ -18,3 +18,15 @@ Implemented the approved separation: routing-only request/action, original curre
 ## 2026-10-20 — Explicit destination contract
 
 ToGetErrorDispatchSession adds destinationKind, existingSessionKey and evidenceQuote; no branch logic added to ProtoScript. Prior owner reuse preserves all session settings; new dedicated children alone receive policy. The typed upsert tool only supports files under active OpsAgent root, not this externally owned package source; scoped SmartPatch used here rather than editing the installed package copy. Existing optional string-argument pattern retained. Validation: module/test build passes20/20; runtime ProtoScript compile and all three staging branches pending.
+
+
+## 2026-11-18 — Explicit original-source parameters on the two thin actions
+
+ToGetErrorDispatchSession and ToDispatchErrorToSession now require sourceMessageKey and pass it directly to their typed request.SourceMessageKey. Descriptions require the original collector User row from this coordinator's persisted history, permit earlier-turn evidence and instruct callers to reuse the same key. Delivery description explicitly keeps AssignedFrame/RoutingReason at 2,000 characters each: full alarm evidence is captured verbatim by code, not pasted into routing fields. No ProtoScript business logic or extra actions added. The typed authoring tool is scoped to the active installed agent root, not this external package; scoped SmartPatch changed only owner source as in the prior contract change.
+
+Validation: serial Release focused tests 13/13 and full package solution tests 32/32 passed, including required parameter/pass-through and exactly-two-actions source assertions plus executable C# evidence/composition tests. No runtime ProtoScript activation/compile or dispatch was performed; installed copies remain unchanged. No deployment, alarm resume or replay. Existing ImageSharp dependency advisories remain.
+
+
+## 2026-11-18 — Explicit error-assignment title on the thin delivery action
+ToDispatchErrorToSession requires errorTitle and forwards request.ErrorTitle; description identifies AssignedFrame as readable reported-error summary and code-owned action/owner/read-only scope, with unchanged separate full evidence/instructions. Retains exactly two thin actions and original SourceMessageKey contract. Source-only scoped patch used because active-root typed authoring cannot target this external package without installed mutation.
+Validation: full serial Release package35/35passed. New test compiles the complete actual skill source in a disposable isolated project against current native facade/signatures with zero compiler diagnostics (only expected missing optional Service root notice). No activation or method execution. This also resolves the earlier owning-source compilation evidence gap; it does not claim installed runtime acceptance. Existing valid Version1sidecar has ownership/phrases only, no stale signature field to regenerate. No live dispatch/replay/deployment.

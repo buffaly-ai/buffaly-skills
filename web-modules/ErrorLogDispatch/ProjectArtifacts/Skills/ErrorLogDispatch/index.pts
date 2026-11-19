@@ -21,11 +21,12 @@ prototype ErrorLogDispatchSkill : SkillEntity
 [SemanticProgram.InfinitivePhrase("to resolve a diagnostic owner session")]
 prototype ToGetErrorDispatchSession : ErrorLogDispatchSkillAction, DispatchAgentCuratedActionRoot
 {
-	Description = @"Resolve WorkingSession (exact incident evidence + recent activity), PriorResearcher (established tree owner, any parent), or NewResearcher. Reuse never changes session settings; only new researchers receive no-companion ErrorDiagnostic/ResetOnLimit policy. Select explicit destinationKind and retain receipt.";
+	Description = @"Resolve WorkingSession (exact incident evidence + recent activity), PriorResearcher (established tree owner, any parent), or NewResearcher. Required sourceMessageKey selects the original collector User message in this coordinator's persisted history, including an earlier turn; reuse the same key for delivery. Reuse never changes session settings; only new researchers receive no-companion ErrorDiagnostic/ResetOnLimit policy. Select explicit destinationKind and retain receipt.";
 
-	function Execute(string parentSessionKey, string dispatchNodePrototypeName, string attachmentName, string childSessionKey, string destinationKind, string existingSessionKey = "", string evidenceQuote = "", string evaluationScope = "Live") : ErrorDispatchSessionReceipt
+	function Execute(string parentSessionKey, string sourceMessageKey, string dispatchNodePrototypeName, string attachmentName, string childSessionKey, string destinationKind, string existingSessionKey = "", string evidenceQuote = "", string evaluationScope = "Live") : ErrorDispatchSessionReceipt
 	{
 		ErrorDispatchSessionRequest request = new ErrorDispatchSessionRequest();
+		request.SourceMessageKey = sourceMessageKey;
 		request.DestinationKind = destinationKind;
 		request.ExistingSessionKey = existingSessionKey;
 		request.EvidenceQuote = evidenceQuote;
@@ -42,11 +43,13 @@ prototype ToGetErrorDispatchSession : ErrorLogDispatchSkillAction, DispatchAgent
 [SemanticProgram.InfinitivePhrase("to queue a diagnostic assignment")]
 prototype ToDispatchErrorToSession : ErrorLogDispatchSkillAction, DispatchAgentCuratedActionRoot
 {
-	Description = @"Deliver saved guidance and original source to the exact typed destination tree attachment; recheck working-session evidence/recency or prior researcher identity. No model-authored assignment or existing-session reconfiguration. Return provenance/kind and actual queue receipt. BuildOnly fails closed.";
+	Description = @"Deliver saved guidance and original source selected by required sourceMessageKey from this coordinator's persisted history, including an earlier turn. Use the same key as destination resolution. Recheck the exact tree attachment and working-session evidence/recency or prior researcher identity. Required errorTitle is a plain readable incident title (max160). assignedFrame is the readable reported-error summary (max2000); routingReason is max2000. Do not paste the full alarm into these fields. Code supplies the action, recipient owner and read-only scope for the summary card. Original evidence and full diagnostic instructions are preserved separately unchanged. No model-authored assignment or existing-session reconfiguration. Return provenance/kind and actual queue receipt. BuildOnly fails closed.";
 
-	function Execute(string sessionKey, string assignedFrame, string dispatchNodePrototypeName, string attachmentName, string routingReason, string evaluationScope = "Live") : ErrorDispatchDeliveryReceipt
+	function Execute(string sessionKey, string sourceMessageKey, string assignedFrame, string dispatchNodePrototypeName, string attachmentName, string routingReason, string errorTitle, string evaluationScope = "Live") : ErrorDispatchDeliveryReceipt
 	{
 		ErrorDispatchDeliveryRequest request = new ErrorDispatchDeliveryRequest();
+		request.ErrorTitle = errorTitle;
+		request.SourceMessageKey = sourceMessageKey;
 		request.SessionKey = sessionKey;
 		request.AssignedFrame = assignedFrame;
 		request.DispatchNodePrototypeName = dispatchNodePrototypeName;
