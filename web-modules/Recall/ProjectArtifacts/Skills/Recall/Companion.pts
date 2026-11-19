@@ -37,7 +37,7 @@ prototype ToReadRecallContext : RecallCompanionAction
 [InfinitivePhrase("to send context to the parent")]
 prototype ToSendRecallContext : RecallCompanionAction
 {
-    Description = @"Send the parent guidance it does not already have. If there is nothing new this turn, do not call this; finish locally with NoNewContext or NoApplicableContext. When the user's message asks to remember something, a saved context with that same rule is not new; the parent's own save handles it. A rejected call sends nothing; correct the payload from current reads instead of resending it.";
-    function Execute(string anchorMessageKey, string contextDeltaJson) : string
-    { return RecallResearch.SendContext(_opsAgent, anchorMessageKey, contextDeltaJson); }
+    Description = @"Send the parent structured markdown feedback: one '### <situation>' item per finding (a context's exact phrase, otherwise 'When ...'), with 'Do:', optional 'Constraints:' and 'Source: context <ContextPrompt> <Revision> | memory <Prototype> | definition <Prototype>' lines; a context's revision is the definition revision ToReadRecallContext returned with the text you used. Call only when you found at least one saved context or saved session memory that applies; if you found nothing, do not call this and finish locally with NoApplicableContext. A call with no context or memory item sends nothing and returns Sent false; that is not an error. Do not resend an item you already sent for this parent. When the user's message asks to remember something, a saved context with that same rule is not new; the parent's own save handles it. Leave that item out; if nothing else is left, do not call this and finish locally with NoNewContext. A rejected call sends nothing, including a context whose revision changed after your read; correct it from current reads instead of resending it.";
+    function Execute(string anchorMessageKey, string feedbackMarkdown) : string
+    { return RecallResearch.SendContext(_opsAgent, anchorMessageKey, feedbackMarkdown); }
 }
