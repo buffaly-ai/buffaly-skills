@@ -1,0 +1,67 @@
+// User-environment counterpart of ../Foundation.pts. Same action roots, skill and #Current service names, so the
+// generated wrappers and the embedded launch (RunProtoScriptMethod FeedingFrenzyJsonWsService#Current.ConfigureAuthorization)
+// bind unchanged. The session binding lives in the FeedingFrenzyUserJsonWs facade: the first ConfigureAuthorization pins
+// the authenticated installation URL for this per-session worker and later calls cannot rebind it. Explicit tenant
+// bindings (#Medek, #Affinity, #Local) are Root diagnostics only and are not available to User sessions.
+
+prototype FeedingFrenzyJsonWsSkillAction : OpsAction
+{
+	Description = @"Base action type for read-oriented Feeding Frenzy JSON WS service tools.";
+}
+
+prototype FeedingFrenzyJsonWsGuardedWriteAction : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"Base action type for narrow Feeding Frenzy JSON WS write tools.";
+}
+
+[SemanticEntity("feeding frenzy json ws skill")]
+prototype FeedingFrenzyJsonWsSkill : SkillEntity
+{
+	Description = "Feeding Frenzy JSON web service skill exposed through role-composed ProtoScript entry points.";
+	ActionRoot = FeedingFrenzyJsonWsSkillAction;
+}
+
+prototype FeedingFrenzyJsonWsService : Service
+{
+	ServiceName = "FeedingFrenzyJsonWsService";
+	Scope = "per-session";
+	Description = @"Feeding Frenzy route-based JSON service for User sessions. Current is configured by the authenticated embedded launch.";
+
+	function ConfigureAuthorization(string BaseUrl, string AuthorizationToken) : string
+	{
+		return FeedingFrenzyUserJsonWs.ConfigureAuthorization(BaseUrl, AuthorizationToken);
+	}
+
+	// Bound by the embedded launch after ConfigureAuthorization with the authenticated user's email. It is the signing
+	// actor assertion Root wrappers read from #Current.AutomationUserEmail; the server still derives the actor from the token.
+	function ConfigureAutomationUser(string Email) : string
+	{
+		return FeedingFrenzyUserJsonWs.ConfigureAutomationUser(Email);
+	}
+
+	function CallBusinessRoute(string routePath, string args) : string
+	{
+		return FeedingFrenzyUserJsonWs.CallBusinessRoute(routePath, args);
+	}
+
+	function CallCallCenterRoute(string routePath, string args) : string
+	{
+		return FeedingFrenzyUserJsonWs.CallCallCenterRoute(routePath, args);
+	}
+
+	function CallUiRoute(string routePath, string args) : string
+	{
+		return FeedingFrenzyUserJsonWs.CallUiRoute(routePath, args);
+	}
+
+	function CallAutomationsRoute(string routePath, string args) : string
+	{
+		return FeedingFrenzyUserJsonWs.CallAutomationsRoute(routePath, args);
+	}
+}
+
+[SemanticEntity("current feeding frenzy session service")]
+partial prototype FeedingFrenzyJsonWsService#Current : FeedingFrenzyJsonWsService
+{
+	Description = "Current Feeding Frenzy installation configured by authenticated embedded session launch.";
+}

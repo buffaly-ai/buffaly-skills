@@ -1,0 +1,58 @@
+// User-environment counterpart of ../UserDocumentSigning.Admin.pts. Hand-written because Root calls the separate
+// FeedingFrenzy.UserSigning.Client assembly, which User source cannot reference. The FeedingFrenzyUserJsonWs facade
+// mirrors SigningClient's arguments, validation order and user-document-signing-requests routes against the pinned
+// session installation, using the automation user the embedded launch bound (ConfigureAutomationUser). The server
+// still derives the actor from the token principal and requires an Administrator email match.
+// Not available to User sessions (documented in GENERATED.md): ToCreateFeedingFrenzyUserSigningDraftFromUploadedMarkdownFile
+// and ToCreateFeedingFrenzyUserSigningDraftFromLocalMarkdownFile, which read worker file paths. Use the inline
+// Markdown action instead.
+
+[SemanticProgram.InfinitivePhrase("to create a feeding frenzy user signing draft from markdown")]
+prototype ToCreateFeedingFrenzyUserSigningDraftFromMarkdown : FeedingFrenzyJsonWsAdminGuardedWriteAction
+{
+	Description = @"Creates a user-owned signing Draft only; never creates a lead, prepares a token, or sends email. ReminderIntervalDays: 0 disables reminders (JSON null), positive values set the interval, negative values are rejected. ProviderSignerUserID is the company countersigner, not UserID.";
+	function Execute(int UserID, string DocumentName, string MarkdownContent, string CustomerLegalName, string RecipientName, string RecipientEmail, string ExpirationDate, int ReminderIntervalDays, int ProviderSignerUserID, string SourceFileName, string AgreementTemplateKey) : string
+	{
+		return FeedingFrenzyUserJsonWs.CreateUserSigningDraftFromMarkdown(UserID, DocumentName, MarkdownContent, CustomerLegalName, RecipientName, RecipientEmail, ExpirationDate, ReminderIntervalDays, ProviderSignerUserID, SourceFileName, AgreementTemplateKey);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to list feeding frenzy user signing requests")]
+prototype ToListFeedingFrenzyUserSigningRequests : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"Read-only user signing inventory through the authorized automation actor; does not prepare tokens or send email.";
+	function Execute(int UserID) : string
+	{
+		return FeedingFrenzyUserJsonWs.ListUserSigningRequests(UserID);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to get a feeding frenzy user signing request")]
+prototype ToGetFeedingFrenzyUserSigningRequest : FeedingFrenzyJsonWsSkillAction
+{
+	Description = @"Read-only signing request inspection; Markdown is included only when IncludeMarkdown is true.";
+	function Execute(int UserDocumentSigningRequestID, bool IncludeMarkdown) : string
+	{
+		return FeedingFrenzyUserJsonWs.GetUserSigningRequest(UserDocumentSigningRequestID, IncludeMarkdown);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to prepare a feeding frenzy user signing request to send")]
+prototype ToPrepareFeedingFrenzyUserSigningRequestToSend : FeedingFrenzyJsonWsAdminGuardedWriteAction
+{
+	Description = @"Explicitly prepares the selected signing request; does not send its email.";
+	function Execute(int UserDocumentSigningRequestID, string Subject, string Message) : string
+	{
+		return FeedingFrenzyUserJsonWs.PrepareUserSigningRequestToSend(UserDocumentSigningRequestID, Subject, Message);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to send a prepared feeding frenzy user signing email")]
+prototype ToSendPreparedFeedingFrenzyUserSigningEmail : FeedingFrenzyJsonWsAdminGuardedWriteAction
+{
+	Description = @"Explicitly sends the already prepared signing email using its exact signing URL.";
+	function Execute(int UserDocumentSigningRequestID, string SigningUrl) : string
+	{
+		return FeedingFrenzyUserJsonWs.SendPreparedUserSigningEmail(UserDocumentSigningRequestID, SigningUrl);
+	}
+}

@@ -13,3 +13,11 @@ Delivered with the other two browser profiles through parent-confirmed Creator S
 
 ## 2026-10-14 — Restore chat initialization with an available model
 Changed only DefaultModelName from gpt-5.5 to gpt-6-astra, preserving medium reasoning, provider, prompt, project, tool roots and flags. The production module failed create-agent-from-project because its live openai/codex_backend catalog omits gpt-5.5 and supports gpt-6-astra/medium. JSON parse and semantic before/after comparison passed, with no unrelated field change; scoped git diff --check passed. No sales advice or role widening was introduced. Production owning SaveAgentProfile failed on the first administrator write due to filesystem access denied, so this profile was not written and live role acceptance is still unproven. Complete production preimage retained. No SMS, core, database, frontend, credential or process change.
+
+## 2026-11-19 - Declared the User entry
+
+- **What:** Added `"UserProjectFilePath": "User.SalesRepresentative.pts"`. `ProjectFilePath`, prompt and role binding are unchanged.
+- **Why:** New authenticated embedded chats for this role run in a Buffaly User environment from that entry; existing Root conversations keep `ProjectFilePath`.
+- **Validation actually performed:** profile tests in `FeedingFrenzyUserEnvironmentTests` (92/92 run): only the two role profiles declare a User entry, and the prompt path is under `Prompts/` and ends `.md`.
+- **Limitation:** proven live only by the staging launch.
+

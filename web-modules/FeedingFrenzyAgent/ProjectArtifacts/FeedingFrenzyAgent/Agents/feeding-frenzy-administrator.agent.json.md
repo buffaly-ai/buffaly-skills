@@ -13,3 +13,11 @@ After the direct runtime writer denied access, parent confirmed the existing Cre
 
 ## 2026-10-14 — Restore chat initialization with an available model
 Changed only DefaultModelName from gpt-5.5 to gpt-6-astra, preserving medium reasoning, provider, prompt, tool roots, project and flags. Actual production Open rejected agent creation because the current openai/codex_backend catalog no longer contains gpt-5.5; actual catalog lists gpt-6-astra supporting medium. JSON parse and semantic before/after comparison passed: only model changed; scoped git diff --check passed. Source correction is validated independently of delivery. Production AgentProfileManagement.SaveAgentProfile failed with access denied on the existing shared profile path; no successful production write or live answer proof yet. No core, frontend, database, SMS or process changes. A complete live profile preimage is retained for rollback; production acceptance remains required after delivery.
+
+## 2026-11-19 - Declared the User entry
+
+- **What:** Added `"UserProjectFilePath": "User.Administrator.pts"`. `ProjectFilePath`, prompt and role binding are unchanged.
+- **Why:** New authenticated embedded chats for this role run in a Buffaly User environment from that entry; existing Root conversations keep `ProjectFilePath`.
+- **Validation actually performed:** profile tests in `FeedingFrenzyUserEnvironmentTests` (92/92 run): only the two role profiles declare a User entry, and the prompt path is under `Prompts/` and ends `.md`.
+- **Limitation:** proven live only by the staging launch.
+

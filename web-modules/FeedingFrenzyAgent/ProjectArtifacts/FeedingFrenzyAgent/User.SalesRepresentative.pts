@@ -1,0 +1,9 @@
+// User-environment entry for feeding-frenzy-sales-representative (profile UserProjectFilePath). New authenticated
+// embedded chats run here; existing Root conversations keep SalesRepresentative.pts.
+include "User.Imports.pts";
+include "User.Annotations.pts";
+include "Core/SharedOntology.pts";
+include "Core/Service.pts";
+include "Skills/FeedingFrenzyJsonWs/User/SalesRepresentative.pts";
+include "Skills/FeedingFrenzyAgent/index.pts";
+include "Nodes/Personal/index.pts";

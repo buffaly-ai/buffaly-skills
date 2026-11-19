@@ -1,0 +1,35 @@
+// User-environment annotations, same contract as the core OpsAgent User.Annotations.pts. The Root Annotations.pts
+// writes through SemanticDatabase/_runtime, which User source may not reach; User reconciliation goes through the facade.
+prototype SemanticProgram
+{
+	function InfinitivePhrase(Prototype prototype, string infinitive) : void
+	{
+		UserAnnotations.Reconcile(prototype);
+	}
+
+	function ScopedInfinitivePhrase(Prototype prototype, string infinitive) : void
+	{
+		UserAnnotations.Reconcile(prototype);
+	}
+
+	function RetractScopedInfinitivePhrase(Prototype prototype, string infinitive) : void
+	{
+		UserAnnotations.Reconcile(prototype);
+	}
+}
+
+function SemanticEntity(Prototype prototype, Prototype semanticEntity) : void
+{
+	UserAnnotations.Reconcile(prototype);
+}
+
+function SemanticTag(Prototype prototype, string tagName, string phrase) : void
+{
+	UserAnnotations.Reconcile(prototype);
+}
+
+// Syntax-only phrase declaration for ContextPrompt definitions. User-source reconciliation ignores it;
+// the context registration owner reads the literal from source and performs and verifies the upsert.
+function SemanticContext(Prototype prototype, string phrase) : void
+{
+}
