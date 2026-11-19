@@ -198,7 +198,7 @@
     "ToSearchSessionFinalAssistantMessages": "ToSearchSessionFinalAssistantMessages.Execute(search: String, maxRows: Int32, searchScope: String, maxMessageScanCount: Int32) : String",
     "ToSearchSessionMessages": "ToSearchSessionMessages.Execute(search: String, maxRows: Int32, searchScope: String, maxMessageScanCount: Int32) : String",
     "ToSearchSessionsByNameOrKey": "ToSearchSessionsByNameOrKey.Execute(search: String, maxCount: Int32, skip: Int32) : List\u00601",
-    "ToSendMessageToSession": "ToSendMessageToSession.Execute(sessionKey: String, instruction: String) : ActiveSessionSteerResult",
+    "ToSendMessageToSession": "ToSendMessageToSession.Execute(sessionKey: String, instruction: String, presentationTitle: String, presentationSummary: String, requestedAction: String, owner: String, scope: String) : ActiveSessionSteerResult",
     "ToSetBuffalySessionParent": "ToSetBuffalySessionParent.Execute(sessionKey: String, parentSessionKey: String) : SessionParentResult",
     "ToUnarchiveBuffalySession": "ToUnarchiveBuffalySession.Execute(sessionKey: String) : SessionStatusResult"
   }

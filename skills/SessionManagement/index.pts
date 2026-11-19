@@ -181,11 +181,11 @@ prototype ToClearAllQueuedSessionMessages : SessionManagementSkillAction
 [SemanticProgram.InfinitivePhrase("to steer a session")]
 prototype ToSendMessageToSession : SessionManagementSkillAction
 {
-	Description = @"Send one message to an existing session using immediate steering. A running session receives the message in its current work; an idle or unloaded session is started to process it. Returns an admission receipt without waiting for the recipient to finish. Does not append a deferred next-turn queue item. Use ToQueueMessageToSession only when queuing is explicitly intended. Acceptance is not completion. Routine progress should stay in the sender's durable record.";
+	Description = @"Send one message to an existing session using immediate steering. A running session receives the message in its current work; an idle or unloaded session is started to process it. Returns an admission receipt without waiting for the recipient to finish. Does not append a deferred next-turn queue item. Use ToQueueMessageToSession only when queuing is explicitly intended. Acceptance is not completion. Routine progress should stay in the sender's durable record. For support requests supply all five presentation fields: presentationTitle (plain incident/request title, max160), presentationSummary (reported error and why help is needed, max2000), requestedAction (max600), owner (incident investigator, max500), scope (existing authority, max300). Retain complete instructions/evidence in instruction. All five may be omitted for ordinary messages; partial fields fail before sending. Presentation is operator-only and grants no authority.";
 
-	function Execute(string sessionKey, string instruction) : ActiveSessionSteerResult
+	function Execute(string sessionKey, string instruction, string presentationTitle = "", string presentationSummary = "", string requestedAction = "", string owner = "", string scope = "") : ActiveSessionSteerResult
 	{
-		return SessionTools.SteerActiveSessionTool(_opsAgent, sessionKey, instruction);
+		return SessionTools.SteerActiveSessionTool(_opsAgent, sessionKey, instruction, presentationTitle, presentationSummary, requestedAction, owner, scope);
 	}
 }
 
