@@ -4,6 +4,7 @@ var EmailWorksValidatorsFields = {
 	
 		MessageKey : {Validators : [Validators.String], InvalidMessage: "Invalid . " + ValidatorDescriptions.Length(1, 255) },
 		SessionName : {Validators : [Validators.String], InvalidMessage: "Invalid SessionName. " + ValidatorDescriptions.Length(1, 255) },
+		ExpectedSourceRevision : {Validators : [Validators.String], InvalidMessage: "Invalid ExpectedSourceRevision. " + ValidatorDescriptions.Length(1, 255) },
 		SessionKey : {Validators : [Validators.String], InvalidMessage: "Invalid SessionKey. " + ValidatorDescriptions.Length(1, 255) },
 		Disposition : {Validators : [Validators.String], InvalidMessage: "Invalid Disposition. " + ValidatorDescriptions.Length(1, 255) },
 		Note : {Validators : [Validators.String], InvalidMessage: "Invalid Note. " + ValidatorDescriptions.Length(1, 255) },
@@ -295,8 +296,8 @@ class EmailWorksService {
         );
     }
 
-    SendAgain(WorkKey, ExpectedDecisionRevision, Note, Callback) {
-        return this.SendAgainObject({ WorkKey:WorkKey,ExpectedDecisionRevision:ExpectedDecisionRevision,Note:Note }, Callback);
+    SendAgain(WorkKey, ExpectedDecisionRevision, ExpectedSourceRevision, Note, Callback) {
+        return this.SendAgainObject({ WorkKey:WorkKey,ExpectedDecisionRevision:ExpectedDecisionRevision,ExpectedSourceRevision:ExpectedSourceRevision,Note:Note }, Callback);
     }
 
     SendAgainObject(oObject, Callback) {
@@ -306,17 +307,17 @@ class EmailWorksService {
         return this._invoke(
             pageUrl,
             "SendAgain",
-            { WorkKey: oObject.WorkKey,ExpectedDecisionRevision: oObject.ExpectedDecisionRevision,Note: oObject.Note },
+            { WorkKey: oObject.WorkKey,ExpectedDecisionRevision: oObject.ExpectedDecisionRevision,ExpectedSourceRevision: oObject.ExpectedSourceRevision,Note: oObject.Note },
             this.SendAgain,
             Callback
         );
     }
 
-    async SendAgainAsync(WorkKey,ExpectedDecisionRevision,Note) {
+    async SendAgainAsync(WorkKey,ExpectedDecisionRevision,ExpectedSourceRevision,Note) {
         return await ObjectUtil.Promisify(
             this,
             this.SendAgain,
-            [ WorkKey,ExpectedDecisionRevision,Note ]
+            [ WorkKey,ExpectedDecisionRevision,ExpectedSourceRevision,Note ]
         );
     }
 
@@ -433,6 +434,7 @@ var EmailWorksValidators = {
     SendAgain : {
             WorkKey : {Validators: [Validators.Text], InvalidMessage: "Invalid WorkKey"} ,
             ExpectedDecisionRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedDecisionRevision"} ,
+            ExpectedSourceRevision : {Validators: [Validators.Text], InvalidMessage: "Invalid ExpectedSourceRevision"} ,
             Note : {Validators: [Validators.Text], InvalidMessage: "Invalid Note"} 
     },
 

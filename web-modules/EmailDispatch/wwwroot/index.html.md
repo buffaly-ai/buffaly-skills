@@ -185,3 +185,7 @@ Shared guidance dialog now presents Analyze only and Dispatch with guidance, wit
 
 ## 2026-11-15 — one-time older-mail archive dialog
 Added shared small confirmation dialog for Archive older emails, retaining existing form/footer/button owners and no new CSS. The button captures one browser-local midnight cutoff and applies only dispatcher visibility; it does not create a daily rule or modify Gmail. Generated EmailObservations client cache advances to0.2.9 and Review script to0.2.31. Source desktop1440/phone390 cancellation, exact cutoff payload and existing local archive browser tests pass in focused8/8 and broader isolated34/34; routine64/64 passes. Installation and real cleanup are separate acceptance steps.
+
+
+## 2026-11-20 — refresh source-bound follow-up client assets
+Bump EmailWorks generated-client and email-dispatch.js cache versions together for required ExpectedSourceRevision submission. Shared markup/styles/dialog ownership unchanged. Source generated-client browser journeys pass at desktop/phone; installed verification follows publication.
