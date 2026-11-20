@@ -47,19 +47,21 @@ static async Task<int> Feedback(HttpClient http, Options o)
     string turnKey = Req(o.TurnKey, "--turn-key");
     string reviewTarget = NormalizeReviewTarget(o.ReviewTarget);
     string reviewMode = NormalizeReviewMode(o.ReviewMode);
-    if (o.DisableLevel2 == false)
-        throw new ArgumentException("Feedback review profiles do not support automatic companions.");
     string feedback = string.IsNullOrWhiteSpace(o.Feedback) ? "neutral" : o.Feedback!.Trim();
     string chips = string.IsNullOrWhiteSpace(o.Chips) ? string.Empty : o.Chips!.Trim();
 	string userInstruction = string.IsNullOrWhiteSpace(o.Instruction) ? string.Empty : o.Instruction!.Trim();
 	string messageText = string.IsNullOrWhiteSpace(o.MessageText) ? string.Empty : o.MessageText!.Trim();
 	string reviewWorkflow = string.IsNullOrWhiteSpace(o.ReviewWorkflow) ? reviewMode : o.ReviewWorkflow!.Trim();
 	string requiredSkill = string.IsNullOrWhiteSpace(o.RequiredSkill) ? string.Empty : o.RequiredSkill!.Trim();
-	string child = string.IsNullOrWhiteSpace(o.Child) ? DefaultFeedbackChildName(source, reviewTarget) : o.Child!;
-    string artifact = FeedbackArtifact(o.SessionsRoot, child, turnKey, reviewTarget);
-    if (HasUsefulArtifact(artifact))
+    bool direct = OfflineCriticFeedbackWorkflow.IsDirect(reviewWorkflow);
+    if (!direct && o.DisableLevel2 == false)
+        throw new ArgumentException("Feedback review profiles do not support automatic companions.");
+    string child = string.IsNullOrWhiteSpace(o.Child) ? OfflineCriticFeedbackWorkflow.DefaultChildName(source, reviewWorkflow) : o.Child!;
+    // A direct question is a normal conversation, not an artifact-producing critic run.
+    string artifact = direct ? string.Empty : FeedbackArtifact(o.SessionsRoot, child, turnKey, reviewTarget);
+    if (!direct && HasUsefulArtifact(artifact))
         artifact = NextVersionedArtifactPath(artifact);
-    string agentName = "buffaly-feedback-review";
+    string agentName = OfflineCriticFeedbackWorkflow.AgentName(reviewWorkflow);
     bool limited = false;
     JsonObject init = Init(o, agentName, child, source, limited: limited, useRunnerModelDefaults: false);
     JsonObject created = await PostAgentService(http, "create-child-session", new JsonObject
@@ -69,27 +71,40 @@ static async Task<int> Feedback(HttpClient http, Options o)
     });
     if (created["Ok"]?.GetValue<bool>() != true || created["SessionKey"]?.GetValue<string>() != child)
         throw new InvalidOperationException("Feedback child creation was rejected: " + created.ToJsonString());
-	string feedbackPrompt = BuildBuffalyFeedbackReviewPrompt(source, child, turnKey, reviewMode, reviewWorkflow, requiredSkill);
-    string instruction = "You are running final-response feedback review for source session `" + source + "`.\n\n"
-        + "Use the full prompt below as your governing instructions. Do not call a prompt-loader action to retrieve it; it is already included here.\n\n"
-        + feedbackPrompt
-        + "\n\n## Runner Binding\n\n"
-        + "Source session key: `" + source + "`\n"
-        + "Critic session key: `" + child + "`\n"
-		+ "Review target: `" + reviewTarget + "`\n"
-		+ "Review mode: `" + reviewMode + "`\n"
-		+ "Review workflow: `" + reviewWorkflow + "`\n"
-		+ "Required skill: `" + requiredSkill + "`\n"
-		+ "Automatic companions: disabled by the feedback-review profile.\n"
-		+ "Selected turn key: `" + turnKey + "`\n"
-		+ "Feedback: `" + feedback + "`\n"
-		+ "Feedback chips: `" + chips + "`\n"
-		+ "User instruction: `" + userInstruction + "`\n"
-		+ "Final assistant message text supplied by the response card:\n\n```markdown\n" + messageText + "\n```\n"
-		+ "Feedback review contract: return the complete feedback review markdown in your final assistant response, starting exactly with `# Offline Critic Feedback Review`.\n"
-		+ "Expected artifact path: `" + artifact + "`\n"
-		+ "Completion event contract: after your review artifact/final markdown is complete and before your final answer, call `ToPublishFeedbackReviewCompletedEvent` with this source session, selected turn key, review metadata, expected artifact path, and a concise result preview.\n"
-		+ "Do not stop with progress only. Do not end by saying you will write the artifact later.";
+    string instruction;
+    if (direct)
+    {
+        instruction = "## User instruction\n\n" + userInstruction
+            + "\n\n## Selected response context\n\n"
+            + "Source session key: `" + source + "`\n"
+            + "Selected turn key: `" + turnKey + "`\n"
+            + "Use tools to inspect this selected session/turn as needed to carry out the user's instruction.\n"
+            + "Selected assistant response (context):\n\n```markdown\n" + messageText + "\n```";
+    }
+    else
+    {
+        string feedbackPrompt = BuildBuffalyFeedbackReviewPrompt(source, child, turnKey, reviewMode, reviewWorkflow, requiredSkill);
+        instruction = "You are running final-response feedback review for source session `" + source + "`.\n\n"
+            + "Use the full prompt below as your governing instructions. Do not call a prompt-loader action to retrieve it; it is already included here.\n\n"
+            + feedbackPrompt
+            + "\n\n## Runner Binding\n\n"
+            + "Source session key: `" + source + "`\n"
+            + "Critic session key: `" + child + "`\n"
+            + "Review target: `" + reviewTarget + "`\n"
+            + "Review mode: `" + reviewMode + "`\n"
+            + "Review workflow: `" + reviewWorkflow + "`\n"
+            + "Required skill: `" + requiredSkill + "`\n"
+            + "Automatic companions: disabled by the feedback-review profile.\n"
+            + "Selected turn key: `" + turnKey + "`\n"
+            + "Feedback: `" + feedback + "`\n"
+            + "Feedback chips: `" + chips + "`\n"
+            + "User instruction: `" + userInstruction + "`\n"
+            + "Final assistant message text supplied by the response card:\n\n```markdown\n" + messageText + "\n```\n"
+            + "Feedback review contract: return the complete feedback review markdown in your final assistant response, starting exactly with `# Offline Critic Feedback Review`.\n"
+            + "Expected artifact path: `" + artifact + "`\n"
+            + "Completion event contract: after your review artifact/final markdown is complete and before your final answer, call `ToPublishFeedbackReviewCompletedEvent` with this source session, selected turn key, review metadata, expected artifact path, and a concise result preview.\n"
+            + "Do not stop with progress only. Do not end by saying you will write the artifact later.";
+    }
     string messageKey = "feedback-" + Guid.NewGuid().ToString("N");
     // Launch means immediate delivery, not deferred QueueInput. The canonical send path starts idle workers.
     JsonObject response = await PostAgentService(http, "steer-active-input", new JsonObject
@@ -103,7 +118,7 @@ static async Task<int> Feedback(HttpClient http, Options o)
     {
         Ok = true, Status = "accepted", SourceSessionKey = source, CriticSessionKey = child,
         ArtifactPath = artifact, ReviewTarget = reviewTarget, ReviewMode = reviewMode,
-        DisableLevel2AutoAttach = true, MessageKey = messageKey,
+        DisableLevel2AutoAttach = !direct, MessageKey = messageKey,
         Message = "Feedback review accepted."
     };
     string admissionJson = JsonSerializer.Serialize(admission, new JsonSerializerOptions(JsonSerializerDefaults.Web));
@@ -208,8 +223,6 @@ static string NormalizeReviewMode(string? value)
     if (normalized.Equals("quality", StringComparison.OrdinalIgnoreCase)) return "quality";
     throw new ArgumentException("Unknown review mode: " + value);
 }
-
-static string DefaultFeedbackChildName(string source, string reviewTarget) => source + " - buffaly feedback review";
 
 static string BuildBuffalyFeedbackReviewPrompt(string source, string child, string turnKey, string reviewMode, string reviewWorkflow, string requiredSkill) =>
 	"# Normal Buffaly Feedback Review\n\n"
