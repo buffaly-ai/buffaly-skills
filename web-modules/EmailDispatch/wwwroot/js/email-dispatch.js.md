@@ -167,3 +167,5 @@ Added Archive older emails in the existing Review command area. Uses shared dial
 
 ## 2026-11-20 — follow-up approves the displayed email
 Shared Send again confirmation captures GetEmail.SourceRevision at open and supplies ExpectedSourceRevision through the generated SendAgain client. Sentence now names the follow-up and email; existing optional note, shared dialog/footer, primary command and error owner retained. Failure reloads current state and restores note without retry. Task walkthrough: send a new instruction to this email's existing destination; Send again is primary, Cancel abandons; sibling normal confirm uses the same dialog and controls. No added layouts/styles/selectors/help. Source browser exact payload/intercepted acceptance and actual stale-source refusal pass at1440/390 with reachable footer and retained note; no business send.
+
+Follow-up label correction in the same release: use Follow-up instructions rather than claiming the note is optional when refreshed source requires new authority. Normal confirmation retains Note to the agent (optional). Same shared label/input; no new field/layout. Browser selector updated; index cache0.2.33.

@@ -189,3 +189,5 @@ Added shared small confirmation dialog for Archive older emails, retaining exist
 
 ## 2026-11-20 — refresh source-bound follow-up client assets
 Bump EmailWorks generated-client and email-dispatch.js cache versions together for required ExpectedSourceRevision submission. Shared markup/styles/dialog ownership unchanged. Source generated-client browser journeys pass at desktop/phone; installed verification follows publication.
+
+Follow-up label correction: script cache0.2.33 loads the context-specific Follow-up instructions label; normal note remains optional. No markup/layout change.
