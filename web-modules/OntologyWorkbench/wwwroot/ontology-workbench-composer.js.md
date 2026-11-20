@@ -17,3 +17,10 @@ The button does not call an API, create a remote session, run extraction, or mod
 - Named ProtoScript links now bypass the configurable standalone launcher and open the installed Prototype Viewer directly.
 - The handler still obtains the originating session from `BuffalyAgentSessionContext.getActiveSessionKey()` and passes it unchanged as `sessionKey`, allowing the viewer's existing cold-session warmup to inspect session-local prototypes.
 - Bumped the module AgentScript version so browsers load the corrected click handler after package activation. Validation: focused and full automated tests plus browser routing/cold-session checks recorded with the delivering commit.
+
+## 2026-11-20 — Route composer text to the Method Runner
+
+- `openWorkbench` now sets the explicit `page=runner` launcher selector while retaining the exact composer message and derived `<active session> - Ontology Workbench` key. It neither clears the composer nor executes a method. The launcher still honors standalone/web-module preferences; default Grammar navigation and direct symbol-viewer navigation are unchanged.
+- The previous viewer fixes never changed this composer destination; updating an unchanged package could not repair it. The companion's earlier Behavior description describes the old Grammar destination, superseded for composer launches by this entry.
+- Incremented the AgentScripts cache token to 20261120.2 and shared visible build to 2026.11.20.2. Functional Node tests execute the actual composer handler, launcher, and runner initialization in both launch modes, including special characters, stale remembered session, validation errors and no automatic requests.
+- Validation: Release solution build succeeded; 56 .NET tests and 18 Node tests pass after updating stale route/build expectations. Live standalone runner loads exact incoming fields and real Run handler; browser found and verified correction of missing shared Markdown dependencies in the runner. Installed activation is recorded separately by the release receipt.

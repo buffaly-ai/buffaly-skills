@@ -22,12 +22,16 @@
 <script src="/js/timeline-card-shared-highlighting.bundle.js?v=20260719.1"></script>
 <script src="/js/timeline-card-contract.js?v=20260629.1"></script>
 <script src="/js/timeline-card-render-core.js?v=20260722.1"></script>
+<script src="/js/plugins/marked/marked.min.js"></script>
+<script src="/js/buffaly-safe-markdown.js"></script>
 <script src="/js/timeline-card-builtins.js?v=20260724.3"></script>
 <script>
 const byId=id=>document.getElementById(id);
 const sessionStorageKey='ontology-method-runner-session-key';
 const apiBase=location.pathname.startsWith('/harness/')?'/harness/api':'/web-modules/OntologyWorkbench/api';
-byId('session').value=localStorage.getItem(sessionStorageKey)||'Ontology Neighborhood Workbench';
+const launchQuery=new URLSearchParams(location.search);
+byId('session').value=launchQuery.get('sessionKey')??localStorage.getItem(sessionStorageKey)??'Ontology Neighborhood Workbench';
+byId('instruction').value=launchQuery.get('message')??'';
 const timelineRenderer=(()=>{const core=window.BuffalyTimelineCardRenderCore,builtins=window.BuffalyTimelineCardBuiltins;if(!core||!builtins)throw new Error('The shared Buffaly timeline Markdown renderer did not load.');const environment=core.createTimelineRenderEnvironment({services:{logger:console,notices:{}}});builtins.register(environment);return{render(markdown,host){const node=core.normalizeTimelineRow({Role:'Assistant',Phase:'final_answer',Format:'markdown',Content:markdown,MessageKey:'ontology-method-result',TurnKey:'ontology-method-result'},'session',environment,'',0);const instance=core.renderTimelineNode(node,environment);host.replaceChildren(instance.root);host.classList.remove('muted')}}})();
 async function post(path,body){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),660000);try{const response=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:controller.signal});const text=await response.text();if(!response.ok)throw new Error(text||`${response.status} ${response.statusText}`);return text}finally{clearTimeout(timer)}}
 byId('run').onclick=async()=>{const button=byId('run'),session=byId('session').value,instruction=byId('instruction').value;if(!session.trim()||!instruction.trim()){byId('status').textContent='Session and concept are required.';byId('status').className='status error';return}localStorage.setItem(sessionStorageKey,session);button.disabled=true;byId('status').textContent='Running method...';byId('status').className='status';byId('result').className='result muted';byId('result').textContent='Working in the bound session. This can take several minutes.';try{const result=await post(apiBase+'/run-method',{SessionKey:session,PrototypeName:byId('method').value,Instruction:instruction,Provider:'openai',Model:byId('model').value,ReasoningLevel:byId('reasoning').value});timelineRenderer.render(result,byId('result'));byId('status').textContent='Complete.'}catch(error){byId('status').textContent=error.name==='AbortError'?'Method timed out.':error.message;byId('status').className='status error';byId('result').textContent='No result returned.'}finally{button.disabled=false}};

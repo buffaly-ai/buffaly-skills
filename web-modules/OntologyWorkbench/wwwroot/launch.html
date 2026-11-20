@@ -9,9 +9,10 @@
   const base=(localStorage.getItem(baseUrlKey)||'https://win.tailf78e41.ts.net:5320').replace(/\/$/,'');
   const query=new URLSearchParams(location.search);
   const viewer=!!query.get('prototypeName');
+  const runner=query.get('page')==='runner';
   const target=mode==='web-module'
-    ?new URL(viewer?'/web-modules/OntologyWorkbench/prototype-viewer':'/web-modules/OntologyWorkbench/workbench',location.origin)
-    :new URL(base+(viewer?'/harness/prototype-viewer':'/harness/'));
+    ?new URL(viewer?'/web-modules/OntologyWorkbench/prototype-viewer':runner?'/web-modules/OntologyWorkbench/method-runner':'/web-modules/OntologyWorkbench/workbench',location.origin)
+    :new URL(base+(viewer?'/harness/prototype-viewer':runner?'/harness/method-runner':'/harness/'));
   query.forEach((value,key)=>target.searchParams.set(key,value));
   if(mode==='standalone')target.searchParams.set('launchSettingsUrl',new URL('/web-modules/OntologyWorkbench/settings.html',location.origin).toString());
   location.replace(target.toString());

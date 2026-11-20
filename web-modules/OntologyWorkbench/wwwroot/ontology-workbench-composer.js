@@ -33,6 +33,7 @@
 
         const workbenchSessionKey = requireSessionKey() + " - Ontology Workbench";
         const url = new URL(launcherUrl, window.location.origin);
+        url.searchParams.set("page", "runner");
         url.searchParams.set("sessionKey", workbenchSessionKey);
         url.searchParams.set("message", message);
         window.open(url.toString(), "_blank", "noopener");
