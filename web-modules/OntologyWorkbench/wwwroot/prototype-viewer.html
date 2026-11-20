@@ -232,10 +232,17 @@
 				await warmSession();
 				byId("viewerStatus").textContent = "Resolving loaded or indexed prototype...";
 				const args = { prototype: prototypeName };
+				const detailsArgs = {
+					prototype: prototypeName,
+					methodName: "Execute",
+					characterOffset: 0,
+					expectedSnapshotHash: "",
+					loadedOnly: false
+				};
 				let details, schema;
 				try {
 					[details, schema] = await Promise.all([
-						runInspectionAction("ToGetPrototypeDetails", args),
+						runInspectionAction("ToGetPrototypeDetails", detailsArgs),
 						runInspectionAction("ToGetPrototypePropertySchema", args)
 					]);
 				} catch (inspectionError) {
