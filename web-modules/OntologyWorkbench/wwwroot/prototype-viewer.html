@@ -165,15 +165,15 @@
 				return lines.join("\n");
 			}
 
-			function renderPromptContent(body, promptText) {
+			function renderPromptContent(body, promptText, titleText = "Prompt instructions", noteText = "Resolved by executing this PromptAction in the already-loaded source session runtime.") {
 				const section = document.createElement("section");
 				section.className = "os-section";
 				const title = document.createElement("div");
 				title.className = "os-section-title";
-				title.textContent = "Prompt instructions";
+				title.textContent = titleText;
 				const note = document.createElement("p");
 				note.className = "os-section-note";
-				note.textContent = "Resolved by executing this PromptAction in the already-loaded source session runtime.";
+				note.textContent = noteText;
 				const content = document.createElement("div");
 				content.className = "os-prompt-content";
 				renderMarkdownViewerContent(decodeTextResult(promptText), content);
@@ -207,6 +207,22 @@
 				return await BuffalyAgentService.RunProtoScriptMethodAsync(sessionKey, "buffaly-agent", prototypeAction, "Execute", JSON.stringify(args));
 			}
 
+			async function tryRenderContextPrompt(inspectionError) {
+				try {
+					const contextPrompt = await runInspectionAction("ToLoadContextPrompt", { contextPromptPrototype: prototypeName });
+					if (requestController.signal.aborted) throw new DOMException("The request was cancelled.", "AbortError");
+					const body = byId("prototypeDetails");
+					body.replaceChildren();
+					renderPromptContent(body, contextPrompt, "Context guidance", "Current saved guidance for this context.");
+					byId("prototypeMeta").textContent = "Exact prototype · ContextPrompt";
+					byId("prototypeBadge").textContent = "ContextPrompt";
+					return true;
+				} catch (contextError) {
+					if (contextError && contextError.name === "AbortError") throw contextError;
+					return false;
+				}
+			}
+
 			async function loadPrototype() {
 				if (!sessionKey) throw new Error("sessionKey is required.");
 				if (!prototypeName) throw new Error("prototypeName is required.");
@@ -216,10 +232,19 @@
 				await warmSession();
 				byId("viewerStatus").textContent = "Resolving loaded or indexed prototype...";
 				const args = { prototype: prototypeName };
-				const [details, schema] = await Promise.all([
-					runInspectionAction("ToGetPrototypeDetails", args),
-					runInspectionAction("ToGetPrototypePropertySchema", args)
-				]);
+				let details, schema;
+				try {
+					[details, schema] = await Promise.all([
+						runInspectionAction("ToGetPrototypeDetails", args),
+						runInspectionAction("ToGetPrototypePropertySchema", args)
+					]);
+				} catch (inspectionError) {
+					if (!await tryRenderContextPrompt(inspectionError)) throw inspectionError;
+					byId("viewerStatus").textContent = "Loaded from session “" + sessionKey + "”.";
+					document.title = friendlyPrototype(prototypeName) + " · Prototype Viewer";
+					byId("prototypeCard").focus();
+					return;
+				}
 				const data = renderOriginalDetails(byId("prototypeDetails"), prototypeName, details, schema);
 				if (isPromptAction(data)) {
 					const prompt = await runInspectionAction("ToGetPrototypePromptInstructions", args);

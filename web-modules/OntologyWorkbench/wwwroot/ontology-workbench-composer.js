@@ -3,6 +3,7 @@
 
     const config = (window.BuffalyWebModuleConfig && window.BuffalyWebModuleConfig.OntologyWorkbench) || {};
     const launcherUrl = "/web-modules/OntologyWorkbench/launch.html";
+    const prototypeViewerUrl = "/web-modules/OntologyWorkbench/prototype-viewer";
 
     function requireComposer() {
         const composer = document.getElementById("txtOpsV2Prompt");
@@ -73,7 +74,7 @@
         if (!symbol) {
             return false;
         }
-        const url = new URL(launcherUrl, window.location.origin);
+        const url = new URL(prototypeViewerUrl, window.location.origin);
         url.searchParams.set("prototypeName", symbol);
         const context = window.BuffalyAgentSessionContext;
         const sessionKey = context && typeof context.getActiveSessionKey === "function"
