@@ -1,5 +1,9 @@
 # Chrome extension version configuration history
 
+## 2026-11-21 — Allocate 0.2.67 for reviewed select presentation repair
+- Synchronized package/lock/manifest versions to distribute ed01a74 without replacing the published0.2.66 bytes. No permissions or dependency changes.
+- Full0.2.67 release gate passes38 argument contracts,29 pointer+140 matrix assertions,old-guard control,page-context bridge,TypeScript,build,ZIP verification and production audit0. This allocates a distribution identity; installed activation and business-page acceptance remain separate.
+
 ## 2026-11-21 — Allocate 0.2.66 for styled selects and terminal dispatch
 - Synchronized manifest.version, package.json and package-lock.json without dependency or permission changes; avoids overwriting released0.2.65 with different bytes.
 - Full release:check passes38 argument contracts,141 Chrome DOM assertions,page context,TypeScript,build,ZIP verification and production audit0. Installed/live behavior remains separate acceptance.

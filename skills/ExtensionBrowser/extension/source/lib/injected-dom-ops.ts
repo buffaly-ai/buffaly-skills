@@ -322,11 +322,11 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
       const presentation = resolveElement(registry, { elementId: presentationId });
       if (!presentation.ok) return fail(presentation.code, presentation.error, registry.documentToken);
       if (presentation.element !== composedParent(el) || ['HTML', 'BODY'].includes(presentation.element.tagName)) return fail('PRESENTATION_MISMATCH', 'Select presentation must be its observed immediate shell.', registry.documentToken);
-      const visible = validateInteractable(presentation.element, 'use select presentation');
+      const visible = validateInteractable(presentation.element, 'use select presentation', 'select-presentation');
       if (!visible.ok) return fail(visible.code, visible.error, registry.documentToken);
       const control = el.getBoundingClientRect(), shell = presentation.element.getBoundingClientRect();
       if (control.left < shell.left - 1 || control.top < shell.top - 1 || control.right > shell.right + 1 || control.bottom > shell.bottom + 1) return fail('PRESENTATION_MISMATCH', 'Native select must overlay its presentation shell.', registry.documentToken);
-      const visibleContent = Array.from(presentation.element.children).some(child => child !== el && ((child.textContent || '').trim().length > 0 || child instanceof SVGElement || child instanceof HTMLImageElement || child instanceof HTMLCanvasElement) && hasRenderedBox(child) && !firstHiddenAncestor(child));
+      const visibleContent = Array.from(presentation.element.children).some(child => child !== el && ((child.textContent || '').trim().length > 0 || child instanceof SVGElement || child instanceof HTMLImageElement || child instanceof HTMLCanvasElement) && hasRenderedBox(child) && !firstHiddenAncestor(child, 'select-presentation'));
       if (!visibleContent) return fail('PRESENTATION_MISMATCH', 'Select shell has no visible presentation beside its native control.', registry.documentToken);
     }
     const interactable = validateInteractable(el, 'select an option in', presentationId ? 'select-surface' : 'direct');
@@ -362,7 +362,7 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
     return { width: window.innerWidth, height: window.innerHeight, scrollX: window.scrollX, scrollY: window.scrollY, devicePixelRatio: window.devicePixelRatio };
   }
 
-  function validateInteractable(el: Element, operation: string, surface: 'direct' | 'select-surface' | 'terminal-proxy' = 'direct'): { ok: true } | { ok: false; code: string; error: string } {
+  function validateInteractable(el: Element, operation: string, surface: 'direct' | 'select-presentation' | 'select-surface' | 'terminal-proxy' = 'direct'): { ok: true } | { ok: false; code: string; error: string } {
     if (!(el instanceof HTMLElement) && !(el instanceof SVGElement)) return { ok: false, code: 'UNSUPPORTED_TARGET', error: `${operation} target is not an HTMLElement/SVGElement.` };
     if (isDisabled(el)) return { ok: false, code: 'ELEMENT_DISABLED', error: `Cannot ${operation} a disabled element.` };
     if (el instanceof HTMLInputElement && el.type === 'hidden') return { ok: false, code: 'ELEMENT_NOT_VISIBLE', error: `Cannot ${operation} a hidden input.` };
@@ -395,15 +395,17 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
     return active;
   }
 
-  function firstHiddenAncestor(el: Element, surface: 'direct' | 'select-surface' | 'terminal-proxy' = 'direct'): HTMLElement | SVGElement | null {
+  function firstHiddenAncestor(el: Element, surface: 'direct' | 'select-presentation' | 'select-surface' | 'terminal-proxy' = 'direct'): HTMLElement | SVGElement | null {
     let current: Element | null = el;
     while (current) {
       if (current instanceof HTMLElement || current instanceof SVGElement) {
         const style = window.getComputedStyle(current);
         // Descendants can restore pointer-events:auto under a none ancestor.
         // The target's computed value already includes unoverridden inheritance.
+        // A select shell proves visible presentation, not pointer reachability;
+        // the native select still requires computed pointer events and hit testing.
         if (current.hasAttribute('hidden') || current.hasAttribute('inert') || current.getAttribute('aria-hidden') === 'true') return current;
-        if ((current === el && (style.visibility === 'hidden' || style.visibility === 'collapse')) || (surface !== 'terminal-proxy' && (current === el && style.pointerEvents === 'none')) || style.display === 'none' || (Number(style.opacity) === 0 && (current !== el || surface === 'direct'))) return current;
+        if ((current === el && (style.visibility === 'hidden' || style.visibility === 'collapse')) || (surface !== 'terminal-proxy' && surface !== 'select-presentation' && (current === el && style.pointerEvents === 'none')) || style.display === 'none' || (Number(style.opacity) === 0 && (current !== el || surface === 'direct' || surface === 'select-presentation'))) return current;
       }
       current = composedParent(current);
     }

@@ -177,19 +177,44 @@ const tests = () => {
     two.addEventListener('input', () => { two.value = ''; });
     rejects('select_option', '#select2', 'READBACK_MISMATCH', args);
   });
+  for (const inherited of [false, true]) run(`styled select pointer override ${inherited ? 'inherited shell' : 'direct shell'}`, `<div id="outer">${styledSelect(1)}${styledSelect(2)}</div>`, () => {
+    const shell = document.querySelector('#shell2'), select = document.querySelector('#select2');
+    document.querySelector(inherited ? '#outer' : '#shell2').style.pointerEvents = 'none';
+    select.style.pointerEvents = 'auto';
+    assert(getComputedStyle(shell).pointerEvents === 'none' && getComputedStyle(select).pointerEvents === 'auto', 'shell none and native auto computed');
+    const bounds = select.getBoundingClientRect();
+    assert(document.elementFromPoint(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2) === select, 'restored native select is actual hit target');
+    let inputs = 0, changes = 0;
+    select.addEventListener('input', e => { inputs++; assert(e.composed, 'override input composed'); });
+    select.addEventListener('change', e => { changes++; assert(!e.composed, 'override change not composed'); document.querySelector('#caption2').textContent = select.value; });
+    const result = call('select_option', { elementId: ref('#select2'), presentationElementId: ref('#shell2'), value: 'CNAME' });
+    assert(result.ok, `select under non-pointer presentation: ${JSON.stringify(result)}`);
+    assert(result.data.value === 'CNAME' && select.value === 'CNAME' && document.querySelector('#select1').value === '' && document.querySelector('#caption2').textContent === 'CNAME' && inputs === 1 && changes === 1, 'override correct row, receipt, events and app state');
+  });
   for (const [name, change] of [
     ['transparent owner', shell => { shell.style.opacity = '0'; }],
+    ['transparent ancestor', shell => { shell.parentElement.style.opacity = '0'; }],
+    ['display none owner', shell => { shell.style.display = 'none'; }],
+    ['visibility hidden owner', shell => { shell.style.visibility = 'hidden'; }],
+    ['zero layout owner', shell => { shell.style.width = '0'; shell.style.height = '0'; }],
     ['hidden owner', shell => { shell.hidden = true; }],
     ['inert owner', shell => { shell.inert = true; }],
     ['aria hidden owner', shell => { shell.setAttribute('aria-hidden', 'true'); }],
-    ['covered surface', shell => { shell.insertAdjacentHTML('beforeend', '<div style="position:absolute;inset:0;background:white"></div>'); }],
+    ['covered surface', shell => { shell.insertAdjacentHTML('beforeend', '<div style="position:absolute;inset:0;background:white;pointer-events:auto"></div>'); }],
     ['pointer disabled', shell => { shell.querySelector('select').style.pointerEvents = 'none'; }],
     ['disabled select', shell => { shell.querySelector('select').disabled = true; }],
     ['empty presentation', shell => { shell.querySelector('span').textContent = ''; }],
-  ]) run(`styled select ${name}`, styledSelect(1), () => {
+  ]) for (const override of [false, true]) run(`styled select ${name}${override ? ' with restored pointer events' : ''}`, `<div>${styledSelect(1)}</div>`, () => {
     const args = { elementId: ref('#select1'), presentationElementId: ref('#shell1'), value: 'CNAME' };
+    if (override) {
+      document.querySelector('#shell1').style.pointerEvents = 'none';
+      document.querySelector('#select1').style.pointerEvents = 'auto';
+    }
+    let events = 0;
+    document.querySelector('#select1').addEventListener('input', () => events++);
+    document.querySelector('#select1').addEventListener('change', () => events++);
     change(document.querySelector('#shell1'));
-    assert(!call('select_option', args).ok && document.querySelector('select').value === '', 'blocked native selection untouched');
+    assert(!call('select_option', args).ok && document.querySelector('select').value === '' && events === 0, 'blocked native selection untouched and no events');
   });
   const terminal = '<div id="terminal" style="position:relative;width:500px;height:100px;background:#eee"><pre id="output">$ </pre><textarea id="proxy" style="position:absolute;left:0;top:0;width:3px;height:1px;min-width:0;min-height:0;padding:0;border:0;margin:0;opacity:0;pointer-events:none"></textarea></div><div id="unrelated" style="width:100px;height:40px">other</div>';
   const terminalArgs = () => ({ inputElementId: ref('#proxy'), terminalElementId: ref('#terminal'), presentationElementId: ref('#output'), text: 'buffaly_terminal_probe' });
