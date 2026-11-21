@@ -24,6 +24,7 @@
     "ToPasteFocusedBrowserText": "Skills/BrowserSession/index.pts",
     "ToPressBrowserSelector": "Skills/BrowserSession/index.pts",
     "ToPressFocusedBrowserKey": "Skills/BrowserSession/index.pts",
+    "ToRetainBrowserForNextTurn": "Skills/BrowserSession/index.pts",
     "ToRunBrowserScript": "Skills/BrowserSession/index.pts",
     "ToRunPlaywrightScript": "Skills/BrowserSession/index.pts",
     "ToTypeBrowserSelector": "Skills/BrowserSession/index.pts",
@@ -59,6 +60,9 @@
     "ToCloseBrowserSession": [
       "to close a browser session",
       "to close a browser subagent"
+    ],
+    "ToRetainBrowserForNextTurn": [
+      "to retain a browser for the next turn"
     ],
     "ToOpenBrowserUrl": [
       "to navigate a browser page",
@@ -152,6 +156,7 @@
     "ToPasteFocusedBrowserText": "ToPasteFocusedBrowserText.Execute(subAgentId: String, expectedFocusedSelector: String, text: String) : String",
     "ToPressBrowserSelector": "ToPressBrowserSelector.Execute(subAgentId: String, selector: String, key: String, timeoutMs: Int32) : String",
     "ToPressFocusedBrowserKey": "ToPressFocusedBrowserKey.Execute(subAgentId: String, expectedFocusedSelector: String, key: String) : String",
+    "ToRetainBrowserForNextTurn": "ToRetainBrowserForNextTurn.Execute(subAgentId: String, minutes: Int32, reason: String) : Prototype",
     "ToRunBrowserScript": "ToRunBrowserScript.Execute(subAgentId: String, script: String, argsJson: String, timeoutMs: Int32, mutationPolicy: String) : String",
     "ToRunPlaywrightScript": "ToRunPlaywrightScript.Execute(subAgentId: String, script: String, argsJson: String, timeoutMs: Int32) : String",
     "ToTypeBrowserSelector": "ToTypeBrowserSelector.Execute(subAgentId: String, selector: String, text: String, clearFirst: Boolean, timeoutMs: Int32) : String",

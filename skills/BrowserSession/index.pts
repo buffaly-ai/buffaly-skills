@@ -1,3 +1,4 @@
+reference Buffaly.Agent.Tools.Browser Buffaly.Agent.Tools.Browser;
 import Buffaly.Agent.Tools.Browser Buffaly.Agent.Tools.Browser.BrowserTools BrowserTools;
 import Buffaly.Agent.Tools.Browser Buffaly.Agent.Tools.Browser.BrowserSessionTools BrowserSessionTools;
 
@@ -104,6 +105,17 @@ prototype ToCloseBrowserSession : BrowserSessionSkillAction
 	function Execute(string subAgentId) : string
 	{
 		return BrowserTools.BrowserSubAgentCloseTool(_opsAgent, subAgentId);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to retain a browser for the next turn")]
+prototype ToRetainBrowserForNextTurn : BrowserSessionSkillAction
+{
+	Description = @"Explicitly retain this session's owned browser for a real next-turn continuation. Requires a reason and a positive duration of at most 1440 minutes. Completion otherwise closes owned tabs and isolated browsers. Failure/cancellation overrides retention; the next turn consumes the lease and must retain again if needed. Never retain finished QA or adopt user/other-session tabs.";
+
+	function Execute(string subAgentId, int minutes, string reason) : Prototype
+	{
+		return BrowserTools.RetainBrowserForNextTurn(_opsAgent, subAgentId, minutes, reason);
 	}
 }
 
