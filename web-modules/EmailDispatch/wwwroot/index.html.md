@@ -200,3 +200,6 @@ Shared script cache identity0.2.17 binds the synchronous local-toggle fix. Fresh
 
 ## 2026-11-21 — analysis-state presentation asset identities
 Shared status script0.2.18 and Review/shared decision script0.2.35 refresh on reload, keeping Not analyzed and absent-row omission coherent. No markup, stylesheet, generated client or business contract change. Focused source21/21 passes; exact installed Express Care screenshot verification follows local canonical update.
+
+## 2026-11-21 — saved-filter return lifecycle asset
+Review script cache0.2.36 loads the saved Show filter on every Review entry and removes the old archive-only forced filter. Markup, styles, selectors, generated clients and other script identities unchanged. UI task remains review matching emails with the existing command groups. Source focused7/7 passed for reload/entry/real synthetic archive and polling; installed screenshots follow canonical package installation.

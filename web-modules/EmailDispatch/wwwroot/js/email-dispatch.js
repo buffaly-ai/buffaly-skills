@@ -21,8 +21,10 @@
   function show(name) { document.querySelectorAll(".ed-view").forEach(view=>view.hidden=view.id!=="view-"+name); const view=document.getElementById("view-"+name);if(view.closest("#conversation-reader"))$("view-conversation").hidden=false; const nav=["conversation","conversations","message"].includes(name)||(name==="email"&&conversationThread)?"conversations":["email","inbox","evidence"].includes(name)?"inbox":name==="rule"?"rules":name; document.querySelectorAll(".ed-nav a").forEach(a=>a.toggleAttribute("aria-current",a.hash==="#"+nav)); document.querySelectorAll('.ed-nav a[aria-current]').forEach(a=>a.setAttribute("aria-current","page")); window.scrollTo(0,0); const heading=$("view-"+name).querySelector("h1"); heading?.focus({preventScroll:true,focusVisible:false}); }
   const inboxGrid=new PagedGrid("inbox","inbox-pager","search", args=>request(EmailObservations,"GetInbox",{AccountKey:"work-main",State:$("state").value,...args}), items=>`<table class="ed-grid Grid"><thead><tr><th class="ed-sender-cell">From</th><th>Email</th><th class="ed-time-cell">Received</th><th class="ed-state-cell">Status</th></tr></thead><tbody>${items.map(item=>{const [name,kind]=EmailDispatchUi.state(item.ReviewState);return `<tr data-row-href="#email/${encodeURIComponent(item.ObservationKey)}"><td class="ed-sender-cell"><span class="ed-cell-secondary" title="${escape(item.Sender)}">${escape(item.Sender)}</span></td><td><a href="#email/${encodeURIComponent(item.ObservationKey)}" title="${escape(item.Subject)}">${escape(item.Subject||"No subject")}</a><span class="ed-cell-secondary ed-mobile-meta">${escape(item.Sender)} · ${escape(date(item.ReceivedUtc))}</span></td><td class="ed-time-cell">${escape(date(item.ReceivedUtc))}</td><td class="ed-state-cell"><span class="ed-status ed-status-${kind}">${escape(name)}</span></td></tr>`;}).join("")}</tbody></table>`,"No emails match. Change the search or filter.");
   const reviewPreferences=new LocalStorage2(), reviewFilterKey="EmailDispatch.work-main.Review.Show";
-  const savedReviewFilter=reviewPreferences.get(reviewFilterKey);
-  if([...$("state").options].some(option=>option.value===savedReviewFilter))$("state").value=savedReviewFilter;
+  function restoreReviewFilter(){
+   const saved=reviewPreferences.get(reviewFilterKey);
+   if([...$("state").options].some(option=>option.value===saved)&&$("state").value!==saved){$("state").value=saved;inboxGrid.skip=0;}
+  }
  // Rule nodes come from the published rule snapshot, so the list never waits on the dispatch agent's session.
  const rulesGrid=new PagedGrid("program","rule-pager","rule-search",args=>request(EmailObservations,"GetRuleNodes",{...args,Search:args.Search??""}),items=>`<table class="ed-grid ed-grid-rules Grid"><thead><tr><th class="ed-rule-name">Rule</th><th>What happens</th><th class="ed-rule-state">Status</th></tr></thead><tbody>${items.map(rule=>`<tr><td><a href="#rule/${encodeURIComponent(rule.PrototypeName)}" title="${escape(rule.EntityName)}">${escape(rule.EntityName)}</a></td><td class="ed-rule-behavior">${escape(behavior(rule))}</td><td><span class="ed-status ed-status-${rule.Outcome==="Disabled"?"neutral":"success"}">${rule.Outcome==="Disabled"?"Off":"Active"}</span></td></tr>`).join("")}</tbody></table>`,"No rules match. To add one, open an email and choose Make this a rule.");
  // Pick a session: Buffaly's recent sessions, server-searched and paged; archived sessions and the dispatch agent are excluded by the server.
@@ -162,7 +164,7 @@
   async function setDisposition(work,disposition) {
    await request(EmailWorks,"SetDisposition",{WorkKey:work.WorkKey,Disposition:disposition});
    inboxGrid.invalidate();
-    if(disposition) { if(conversationThread){location.hash="#thread/"+encodeURIComponent(conversationThread);return;} if($("state").value!=="NeedsAttention") { $("state").value="NeedsAttention"; inboxGrid.skip=0; } location.hash="#inbox"; }
+    if(disposition) { if(conversationThread){location.hash="#thread/"+encodeURIComponent(conversationThread);return;} location.hash="#inbox"; }
    else { await reload(true); notify("Restored to review."); }
   }
   function openConfirm(work,control,repeat=false) { actingWork=work; confirmMethod=repeat?"SendAgain":"ConfirmDispatch"; confirmSourceRevision=selectedEmail.SourceRevision; $("confirm-title").textContent=repeat?"Send again":"Confirm dispatch"; $("confirm-send").lastChild.textContent=repeat?"Send again":"Send"; $("confirm-subject").textContent=selectedEmail.Email.Subject||"No subject"; $("confirm-sentence").textContent=(repeat?"Sends your follow-up and this email to ":"Sends this email to ")+work.Destination+"."; document.querySelector('label[for="confirm-note"]').textContent=repeat?"Follow-up instructions":"Note to the agent (optional)"; $("confirm-note").value=failedInstructions.get(confirmMethod+":"+work.WorkKey)?.Note??""; confirmDialog.open(control); }
@@ -289,7 +291,7 @@
   else if(name==="rule"&&id) await openRule(decodeURIComponent(id));
   else if(name==="evidence") await openEvidence(id&&decodeURIComponent(id),part&&decodeURIComponent(part));
   else if(name==="accounts"){show("accounts");await accounts();}
-   else {show("inbox");inboxGrid.activate();scheduleInbox();if(Date.now()-accountsAt>=10000)await accounts();}
+    else {restoreReviewFilter();show("inbox");inboxGrid.activate();scheduleInbox();if(Date.now()-accountsAt>=10000)await accounts();}
  }
  function submit(id,control,action,background=false){$(id).addEventListener("submit",event=>{event.preventDefault();run(background?null:$(control),action);});}
  function click(id,action,background=false){$(id).addEventListener("click",()=>run(background?null:$(id),action));}
