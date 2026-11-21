@@ -536,7 +536,7 @@
       "SkillName": "Codex",
       "Title": "Codex",
       "Description": "Buffaly skill package for Codex.",
-      "Version": "0.1.3",
+      "Version": "0.1.4",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Codex",
@@ -546,27 +546,27 @@
       "Files": [
         {
           "Path": "index.pts",
-          "Sha256": "cd75eeffb1ffdabdb1f763f0cd6d77c7e105885565bd9778e84eda5ec58e587e"
+          "Sha256": "a3c5e3e341adfee6cf1c274811b781a98a89b51c1020c8056d386a7fc711d6ad"
         },
         {
           "Path": "index.pts.lazy.json",
-          "Sha256": "22e55032262df6c783d4bd4406381c4ef24ee26650239d6680b7d98b20ea5c29"
+          "Sha256": "99636858e911c540d4902404733a666b5c530f652751045be5e5bb4d8e280a23"
+        },
+        {
+          "Path": "index.pts.md",
+          "Sha256": "c980d930a29a7a29ae05c4fb5b8ec827bf9d014fa65b630e89052b9085a79fd4"
         },
         {
           "Path": "PromptActions.pts",
-          "Sha256": "1bacc00cea96f40b9dcce6147cfa6c576c93c1a6826846d20344cdb7ad68cc3f"
+          "Sha256": "42ebb51315269f052256512449a6c90c1ee8585d431067391bcea4372017461b"
+        },
+        {
+          "Path": "PromptActions.pts.md",
+          "Sha256": "e234dc610247fec3d5fb2951c44a590bfef60f9487f737a2f51fd2c54355a9e7"
         },
         {
           "Path": "Prompts/BuildAndInstallLatestCodexEmbeddedInstaller.prompt.md",
           "Sha256": "692aa031c2e8dbad939b426a986d0260f54e6dbdb54068856bb9b1e1d2de6785"
-        },
-        {
-          "Path": "Prompts/CoordinateCodexIncrementalEditAndValidate.prompt.md",
-          "Sha256": "e29f6c080a5d20e7cf3edc1ddb999bcfe7c76d2d3b4d0103f6c04ea9b2fc5924"
-        },
-        {
-          "Path": "Prompts/EditCodeViaCodex.prompt.md",
-          "Sha256": "2394b789381e3e5bf5867628da137f3e93b57199ccadc38c19f9146796de8113"
         },
         {
           "Path": "Prompts/FindCodexThreadIdByName.prompt.md",
