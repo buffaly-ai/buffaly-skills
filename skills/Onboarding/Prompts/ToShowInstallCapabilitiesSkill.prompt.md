@@ -41,7 +41,6 @@ Ground the walkthrough in the Buffaly Navigation popup. Mention these sections a
 
 - Messages Inspector
 - Clips
-- Codex Replay Viewer
 - Worker Manager
 
 Do not invent other cards. The walkthrough may briefly acknowledge Context Prompts, Agents, Services, Ontology, and Inspect as supporting areas, but the opening walkthrough must be centered on the five primary capability areas the user asked for: Skills, Tools, Prompt Actions, Providers, and Installed Modules.
@@ -209,7 +208,6 @@ Cover:
 
 - Messages Inspector: inspect raw session messages.
 - Clips: review captured agent clips.
-- Codex Replay Viewer: replay raw coding-agent logs.
 - Worker Manager: inspect worker routes and worker behavior.
 
 
