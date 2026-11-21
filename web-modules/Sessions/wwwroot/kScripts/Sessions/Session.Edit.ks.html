@@ -8,6 +8,11 @@
 	(return (Sessions.GetSession (ObjectID)))
 }%>
 
+<%redefinefunction SimpleObjectEditPage.UpdateMethodName
+{
+	(return "Sessions.UpdateSessionFromAdminObject")
+}%>
+
 <%redefinefunction SimpleObjectEditPage.AdditionalCommands
 {
 	(returnex {%>
