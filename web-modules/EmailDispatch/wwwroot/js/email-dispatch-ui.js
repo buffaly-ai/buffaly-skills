@@ -56,7 +56,7 @@ window.EmailDispatchUi = (() => {
   return ObjectUtil.Promisify(client, invoke, [values]);
  }
  // icon is a Font Awesome 5 Free class from the UI-STD-01 Rule 3 list (for example fa-check for Confirm).
- function button(label, action, primary = false, icon = "") { const element = text("button", label, "btn " + (primary ? "btn-primary" : "btn-outline-secondary")); element.type = "button"; if (icon) { const glyph = text("i", "", "fas " + icon); glyph.setAttribute("aria-hidden", "true"); element.prepend(glyph); } element.addEventListener("click", () => run(element, action)); return element; }
+ function button(label, action, primary = false, icon = "", busy = true) { const element = text("button", label, "btn " + (primary ? "btn-primary" : "btn-outline-secondary")); element.type = "button"; if (icon) { const glyph = text("i", "", "fas " + icon); glyph.setAttribute("aria-hidden", "true"); element.prepend(glyph); } element.addEventListener("click", () => busy ? run(element, action) : action(element)); return element; }
  // One owner for every dialog (UI-STD-01 Rules 1 and 7). MasterPage's ModalControl needs MasterPage, jQuery and Bootstrap's
  // JavaScript, which the standalone foundation deliberately excludes, so the native <dialog> is used. showModal() makes the
  // page inert and Escape closes it; Tab is kept inside explicitly. Focus moves to the dialog's [autofocus] field, or its first
@@ -81,7 +81,8 @@ window.EmailDispatchUi = (() => {
   // One sandbox sizing/identity owner for Review and Conversations.
    function bindEmailFrame(frame, plain) {
     let token=null, ready=false, textOnly=false;
-    const toggle=button("Show captured text",()=>{textOnly=!textOnly;display();},false,"fa-file-alt");
+    // Local representation choice is synchronous; a spinner would restore the old button label after display().
+    const toggle=button("Show captured text",()=>{textOnly=!textOnly;display();},false,"fa-file-alt",false);
     toggle.hidden=true;
     function display(){
      const formatted=ready&&!textOnly;

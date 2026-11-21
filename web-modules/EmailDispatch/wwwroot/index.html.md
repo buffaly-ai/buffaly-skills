@@ -194,3 +194,6 @@ Follow-up label correction: script cache0.2.33 loads the context-specific Follow
 
 ## 2026-11-20 — reader readiness assets
 Cache identities bumped together for shared CSS and all three reader scripts, so the changed bindEmailFrame contract is loaded coherently. No new markup/layout or API client changes.
+
+## 2026-11-21 — view-toggle correction asset
+Shared script cache identity0.2.17 binds the synchronous local-toggle fix. Freshly rebuilt scoped17/17 pass; installed verification follows canonical publication. Other scripts/style contracts unchanged.
