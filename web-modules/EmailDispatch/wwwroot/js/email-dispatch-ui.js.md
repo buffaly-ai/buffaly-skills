@@ -64,3 +64,6 @@ Shared Pending label now Review pending; Unclassified/AgentEvaluationRequired/Di
 
 ## 2026-11-13 — honest guided-dispatch progress
 Added GuidedDispatchReady shared label Dispatch requested — sending. This is pending admission, not Sent or Accepted. Source browser21/21 and routine64/64 pass; existing decision-owner reason and uncertainty presentation retained. Installed validation follows separately.
+
+## 2026-11-20 — render-ready email fallback
+Shared bindEmailFrame now owns reset/show/mount, token/source/opaque-origin bounded sizing, and captured/formatted view choice for both readers. Captured text stays visible while the sandbox has not reported a positive body size (>16px wrapper-only measurement). Pending iframe consumes no visible space but stays laid out so ResizeObserver can report. The secondary Font Awesome text-view button lives in each existing command group and survives decision rerenders. No transport, sanitizer, CSP or dispatch behavior change. Real reply stalled-script reproduction fails on installed baseline; source reader/navigation/security/viewport coverage passes.

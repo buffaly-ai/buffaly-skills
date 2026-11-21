@@ -931,7 +931,6 @@
           "Buffaly.Agent.ProtoScript.Runtime": "1.0.0",
           "Buffaly.Agent.ProtoScriptAuthoring": "1.0.0",
           "Buffaly.Agent.Runtime.Abstractions": "1.0.0",
-          "Buffaly.Agent.Tools.CodeSearch": "1.0.0",
           "Buffaly.Agent.Tools.Mcp": "1.0.0",
           "Buffaly.Agent.Tools.Platform": "1.0.0",
           "Buffaly.Agent.Tools.Process": "1.0.0",
@@ -1011,29 +1010,6 @@
         },
         "runtime": {
           "Buffaly.Agent.SemanticDatabase.DB.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
-          }
-        }
-      },
-      "Buffaly.Agent.Tools.CodeSearch/1.0.0": {
-        "dependencies": {
-          "Buffaly.Agent.Tools.Http": "1.0.0"
-        },
-        "runtime": {
-          "Buffaly.Agent.Tools.CodeSearch.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
-          }
-        }
-      },
-      "Buffaly.Agent.Tools.Http/1.0.0": {
-        "dependencies": {
-          "Buffaly.Agent.Common": "1.0.0",
-          "Buffaly.Agent.Tools.Secrets": "1.0.0"
-        },
-        "runtime": {
-          "Buffaly.Agent.Tools.Http.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -1989,16 +1965,6 @@
       "sha512": ""
     },
     "Buffaly.Agent.SemanticDatabase.DB/1.0.0": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "Buffaly.Agent.Tools.CodeSearch/1.0.0": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "Buffaly.Agent.Tools.Http/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

@@ -6,7 +6,7 @@ window.EmailConversations = (() => {
  const savedFilter=preferences.get(filterKey);
  if([...filter.options].some(option=>option.value===savedFilter))filter.value=savedFilter;
  function conversationStatus(item){const host=text("div","");host.append(status(item.DispatchState,item.DispatchDestination),text("span",EmailDispatchUi.state(item.ReplyState)[0],"ed-cell-secondary"));return host;}
- let threadId="", loadedThread="", selectedMessage="", bodyToken=null, version=0, canArchive=false, pendingOpen=false;
+  let threadId="", loadedThread="", selectedMessage="", version=0, canArchive=false, pendingOpen=false;
  function appendArchive(commands){
   if(!canArchive)return;
   const id=threadId;
@@ -40,10 +40,10 @@ window.EmailConversations = (() => {
  messagesGrid.OnBeforeRefresh=()=>{loadedThread="";parkReader();messagesGrid.busy(true);};
  messagesGrid.OnComplete=()=>{loadedThread=threadId;messagesGrid.busy(false);markSelected();if(!selectedMessage&&messagesGrid.page.Items.length){selectedMessage=messagesGrid.page.Items.at(-1).MessageId;pendingOpen=true;markSelected();}if(pendingOpen&&selectedMessage){pendingOpen=false;const current=version;run(null,()=>openMessage(threadId,selectedMessage,current));}};
   let show,openReview;
- EmailDispatchUi.bindEmailFrame($("message-html"),()=>bodyToken);
+  const messageBody=EmailDispatchUi.bindEmailFrame($("message-html"),$("message-text"));
  async function openMessage(id,messageId,current){
    show("message");$("back-thread").href="#conversations";$("back-thread").textContent="Back to conversations";$("message-subject").textContent="Message";$("message-facts").replaceChildren();$("message-commands").replaceChildren();
-  $("message-loading").textContent="Loading email…";$("message-html").hidden=true;$("message-html").removeAttribute("srcdoc");$("message-text").textContent="";$("message-text").hidden=false;
+   $("message-loading").textContent="Loading email…";messageBody.reset();$("message-text").textContent="";
   const result=await request(EmailObservations,"GetConversationBody",{AccountKey:"work-main",ThreadId:id,MessageId:messageId});
   if(current!==version)return;
    if(result.ObservationKey){await openReview(result.ObservationKey,id,current,result);return;}
@@ -56,13 +56,14 @@ window.EmailConversations = (() => {
    };
    $("message-commands").append(button("Choose destination and send",()=>prepare("pick"),true,"fa-check"),button("Ask the agent to reconsider",()=>prepare("note"),false,"fa-comment"));
   }
-  appendArchive($("message-commands"));
+   appendArchive($("message-commands"));
+   messageBody.mount($("message-commands"));
   $("message-loading").textContent="";$("message-text").textContent=result.Text||"This message has no readable text.";
-  if(result.Body.HtmlDocument!==null){bodyToken=result.Body.ResizeToken;$("message-html").style.height="600px";$("message-html").srcdoc=result.Body.HtmlDocument;$("message-html").hidden=false;$("message-text").hidden=true;}
+   messageBody.show(result.Body);
  }
   async function route(showView,openDispatch){
    show=showView;openReview=openDispatch;
-   const current=++version;bodyToken=null;conversationGrid.cancelSearch();messagesGrid.cancelSearch();
+    const current=++version;conversationGrid.cancelSearch();messagesGrid.cancelSearch();
   selection.clear();
   const [name,id,messageId]=location.hash.slice(1).split("/");
   if((name==="thread"||name==="message")&&id){threadId=decodeURIComponent(id);selectedMessage=name==="message"&&messageId?decodeURIComponent(messageId):"";pendingOpen=!!selectedMessage;mountReaders();show("conversation");if(name==="message"&&loadedThread===threadId){pendingOpen=false;markSelected();await openMessage(threadId,selectedMessage,current);}else{loadedThread="";canArchive=false;$("thread-subject").textContent="Conversation";$("thread-status").replaceChildren();$("thread-context").hidden=false;$("thread-messages").replaceChildren(text("p","Loading conversation…","ed-empty"));messagesGrid.reset();}}

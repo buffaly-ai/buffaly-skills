@@ -4,7 +4,7 @@
 // he chooses. Every call goes through the generated JsonWs clients; the server owns every guard and state change.
 (() => {
  const {$,text,escape,link,notify,run,request,button,status,date,facts,PagedGrid,dialog}=EmailDispatchUi;
-   let selectedEmail=null, selectedRule=null, ruleSession="", actingWork=null, confirmMethod="ConfirmDispatch", confirmSourceRevision="", pickMode="send", picked=null, pollTimer=0, inboxTimer=0, syncBusy=false, syncAvailable=false, bodyRequest=0, bodyToken=null;
+    let selectedEmail=null, selectedRule=null, ruleSession="", actingWork=null, confirmMethod="ConfirmDispatch", confirmSourceRevision="", pickMode="send", picked=null, pollTimer=0, inboxTimer=0, syncBusy=false, syncAvailable=false, bodyRequest=0;
  // Mirrors EmailDispatchActions.OpenStates and Confirm's state check, so a command is shown only where the server accepts it.
  const openStates=["Pending","Suggested","AutomaticReady","NeedsDestination","Notice","NoAction","Unclassified","Conflict","NeedsReview","Error","PreviouslyHandled","Prepared","AgentEvaluationRequired","PreparationFailed","Disabled"];
   const submissions=new Set(), failedInstructions=new Map();
@@ -79,7 +79,7 @@
     async function openEmail(key,thread=null,conversationVersion=null,presentation=null,action=null) {
    const expectedHash=location.hash;
     $("subject").textContent="Loading email…";$("works").replaceChildren();
-   const bodyVersion=++bodyRequest; bodyToken=null; $("body-html").hidden=true; $("body-html").removeAttribute("srcdoc"); $("body").hidden=false; $("body-loading").hidden=true;
+   const bodyVersion=++bodyRequest; emailBody.reset(); $("body-loading").hidden=true;
    const updated=await request(EmailObservations,"GetEmail",{ObservationKey:key});
    if(location.hash!==expectedHash||bodyVersion!==bodyRequest||(conversationVersion!==null&&!EmailConversations.isCurrent(conversationVersion)))return;
    selectedEmail=updated;emailHash=expectedHash;conversationThread=thread;
@@ -87,7 +87,7 @@
   $("subject").textContent=selectedEmail.Email.Subject||"No subject"; $("sender").textContent=selectedEmail.Email.Sender; $("received").textContent=date(selectedEmail.Email.ReceivedUtc); $("body").textContent=selectedEmail.Frame?selectedEmail.Frame.BodyText||"This message has no readable text.":"This email could not be read. View evidence for details."; $("test").hidden=!selectedEmail.Frame||selectedEmail.Email.ReviewState==="Spam"; $("test-result").textContent="";
    works(); schedule(); $("subject").focus({preventScroll:true,focusVisible:false});
    if(action){const work=selectedEmail.Works.find(isOpen);if(!work)throw new Error("This email's decision changed. Review its current status before acting.");if(action==="pick")openPick("send",work);else if(action==="note")openNote(work);}
-   if(selectedEmail.Frame){if(presentation){const body=presentation.Body;if(body.HtmlDocument!==null){bodyToken=body.ResizeToken;$("body-html").style.height="600px";$("body-html").srcdoc=body.HtmlDocument;$("body-html").hidden=false;$("body").hidden=true;}}else void formattedBody(key,bodyVersion);}
+   if(selectedEmail.Frame){if(presentation)emailBody.show(presentation.Body);else void formattedBody(key,bodyVersion);}
  }
  // Presentation is fetched once per open, not by the decision poll. A late response cannot replace another email.
  async function formattedBody(key,version) {
@@ -95,7 +95,7 @@
   try {
    const body=await request(EmailObservations,"GetFormattedBody",{ObservationKey:key});
     if(version!==bodyRequest||!isCurrentEmail(key)) return;
-   if(body.HtmlDocument!==null) { bodyToken=body.ResizeToken; $("body-html").style.height="600px"; $("body-html").srcdoc=body.HtmlDocument; $("body-html").hidden=false; $("body").hidden=true; }
+   emailBody.show(body);
    loading.hidden=true;
   } catch(error) {
     if(version!==bodyRequest||!isCurrentEmail(key)) return;
@@ -105,7 +105,7 @@
  // Bound auto-expansion: retained vh/percentage CSS can otherwise grow with every parent resize.
  // Larger mail scrolls inside the frame; saturation ends the feedback without discarding content.
  // The opaque-origin frame can report its size only, never commands or arbitrary DOM mutations.
-  EmailDispatchUi.bindEmailFrame($("body-html"),()=>bodyToken);
+  const emailBody=EmailDispatchUi.bindEmailFrame($("body-html"),$("body"));
   async function reload(focus) { const key=selectedEmail.Email.ObservationKey,hash=emailHash; const updated=await request(EmailObservations,"GetEmail",{ObservationKey:key}); if(emailHash!==hash||!isCurrentEmail(key))return; selectedEmail=updated;works(); schedule(); if(focus) $("works").querySelector(".ed-decision")?.focus({preventScroll:true}); }
   // The feed worker and other tabs can change an open decision. While it is actionable or learning is pending the email
  // is re-read every 10 seconds (one bounded GetEmail read), never while a dialog is open, so no Refresh command is needed.
@@ -129,7 +129,8 @@
    let commands=$("works").querySelector(".ed-decision:last-child .ed-actions");
    if(!commands){commands=document.createElement("div");commands.className="ed-actions";($("works").lastElementChild?.classList.contains("ed-decision")?$("works").lastElementChild:$("works")).append(commands);}
    if(conversationThread)EmailConversations.appendArchive(commands);
-   commands.append(evidence);
+    commands.append(evidence);
+    emailBody.mount(commands);
  }
  // Show the saved session and human decision rationale before the email; technical evidence stays separate.
  function decision(work) {

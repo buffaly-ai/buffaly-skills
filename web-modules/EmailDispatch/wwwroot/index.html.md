@@ -191,3 +191,6 @@ Added shared small confirmation dialog for Archive older emails, retaining exist
 Bump EmailWorks generated-client and email-dispatch.js cache versions together for required ExpectedSourceRevision submission. Shared markup/styles/dialog ownership unchanged. Source generated-client browser journeys pass at desktop/phone; installed verification follows publication.
 
 Follow-up label correction: script cache0.2.33 loads the context-specific Follow-up instructions label; normal note remains optional. No markup/layout change.
+
+## 2026-11-20 — reader readiness assets
+Cache identities bumped together for shared CSS and all three reader scripts, so the changed bindEmailFrame contract is loaded coherently. No new markup/layout or API client changes.

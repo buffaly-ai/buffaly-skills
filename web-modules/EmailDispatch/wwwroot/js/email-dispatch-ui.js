@@ -79,9 +79,29 @@ window.EmailDispatchUi = (() => {
   };
  }
   // One sandbox sizing/identity owner for Review and Conversations.
-  function bindEmailFrame(frame, token) {
-   window.addEventListener("message",event=>{const data=event.data;if(event.source!==frame.contentWindow||event.origin!=="null"||!token()||data?.kind!=="email-body-size"||data.token!==token()||!Number.isFinite(data.height)||data.height<1)return;const height=Math.max(120,Math.min(2400,Math.ceil(data.height)+2))+"px";if(frame.style.height!==height)frame.style.height=height;});
-  }
+   function bindEmailFrame(frame, plain) {
+    let token=null, ready=false, textOnly=false;
+    const toggle=button("Show captured text",()=>{textOnly=!textOnly;display();},false,"fa-file-alt");
+    toggle.hidden=true;
+    function display(){
+     const formatted=ready&&!textOnly;
+     frame.classList.toggle("ed-email-frame-pending",!formatted);
+     plain.hidden=formatted;
+     toggle.hidden=!ready;toggle.lastChild.textContent=formatted?"Show captured text":"Show formatted email";
+    }
+    window.addEventListener("message",event=>{
+     const data=event.data;
+     if(event.source!==frame.contentWindow||event.origin!=="null"||!token||data?.kind!=="email-body-size"||data.token!==token||!Number.isFinite(data.height)||data.height<=16)return;
+     const height=Math.max(120,Math.min(2400,Math.ceil(data.height)+2))+"px";
+     if(frame.style.height!==height)frame.style.height=height;
+     ready=true;display();
+    });
+    return {
+     mount(commands){commands.append(toggle);},
+     reset(){token=null;ready=false;textOnly=false;frame.hidden=true;frame.removeAttribute("srcdoc");display();},
+     show(body){if(!body?.HtmlDocument)return;token=body.ResizeToken;ready=false;textOnly=false;display();frame.style.height="600px";frame.srcdoc=body.HtmlDocument;frame.hidden=false;}
+    };
+   }
   const stateNames = {
    GuidedDispatchReady:["Dispatch requested — sending","info"],
    Dispatched:["Dispatched","success"], NotDispatched:["Not dispatched","warning"], DispatchReady:["Ready to dispatch","warning"], DispatchUncertain:["Dispatch uncertain · check delivery","danger"], DispatchRejected:["Dispatch rejected","danger"], DispatchNeedsReview:["Needs dispatch review","warning"], DispatchPriorEvidence:["Prior email found · held","neutral"], DispatchReviewed:["Reviewed · not dispatched","neutral"], DispatchNoAction:["No dispatch needed","neutral"],
