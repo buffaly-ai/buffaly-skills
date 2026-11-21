@@ -1,0 +1,14 @@
+// Restricted IF accounting administrator entry for new User conversations.
+// Existing Root conversations retain IFAccountingAdministrator.pts unchanged.
+reference FeedingFrenzy.Agent.Tools FeedingFrenzy.Agent.Tools;
+include "User.Imports.pts";
+import FeedingFrenzy.Agent.Tools FeedingFrenzy.Agent.Tools.FeedingFrenzyUserAccounting FeedingFrenzyUserAccounting;
+include "User.Annotations.pts";
+include "Core/SharedOntology.pts";
+include "Core/Service.pts";
+include "Skills/FeedingFrenzyJsonWs/User/Administrator.pts";
+include "Skills/FeedingFrenzyAgent/index.pts";
+include "Skills/IntelligenceFactoryAccounting/User/Foundation.pts";
+include "Skills/IntelligenceFactoryAccounting/User/Read.pts";
+include "Skills/IntelligenceFactoryAccounting/User/Review.pts";
+include "Nodes/Personal/index.pts";
