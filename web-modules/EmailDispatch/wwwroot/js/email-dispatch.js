@@ -139,7 +139,8 @@
     const head=document.createElement("div"); head.className="ed-decision-head"; head.append(submissions.has(work.WorkKey)?text("span","Submitting instructions…","ed-status ed-status-info"):status(state,work.Destination));
     section.append(head);
     const reason=work.Source==="Agent"&&!["Pending","GuidedDispatchReady"].includes(work.State)?work.Decision?.Rationale:work.Reason;
-    section.append(EmailDispatchUi.details([["Identified session",work.Destination||"No session selected"],["Decision reason",reason||"No decision reason recorded"]]));
+    const summary=EmailDispatchUi.details([["Identified session",work.Destination],["Decision reason",reason]].filter(([,value])=>value!==null&&value!==undefined&&value!==""));
+    if(summary.rows.length)section.append(summary);
     if(submissions.has(work.WorkKey)) return section;
   const actions=document.createElement("div"); actions.className="ed-actions";
     if(isConfirmable(work)) actions.append(button("Send to "+work.Destination,control=>openConfirm(work,control),true,"fa-check"));

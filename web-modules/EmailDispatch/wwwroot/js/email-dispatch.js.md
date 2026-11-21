@@ -172,3 +172,6 @@ Follow-up label correction in the same release: use Follow-up instructions rathe
 
 ## 2026-11-20 — keep readable text until formatted body is ready
 Review and observed conversation messages use shared email-frame reset/show instead of hiding captured text on HTML receipt. Existing command group mounts the shared view button on each work redraw. Existing hash/request/conversation-version stale-response guards are unchanged. Manual-only commands and poll behavior unchanged; no new API.
+
+## 2026-11-21 — omit absent decision fields, preserve actual decisions
+At Matt's request, decision(work) passes only non-null/non-undefined/nonempty current Destination and reason into the existing shared Inputs table, and does not append an empty table. Removes No session selected/No decision reason recorded filler, not real data. Preserves current-owner reason selection from Nov4 (Agent Decision.Rationale versus Rule/Operator Reason), Superseded evidence, status/commands/guards/poll behavior and both Review/Conversations owner. Initial helper assumption was wrong: details renders all supplied rows, so filtering remains scoped to this decision owner, not unrelated metadata. Source21/21 focused tests pass, including absent/partial/full current fields and all six prior-owner cases. No server/core/schema or real-email effects.

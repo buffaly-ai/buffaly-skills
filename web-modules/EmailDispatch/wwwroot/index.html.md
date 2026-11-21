@@ -197,3 +197,6 @@ Cache identities bumped together for shared CSS and all three reader scripts, so
 
 ## 2026-11-21 — view-toggle correction asset
 Shared script cache identity0.2.17 binds the synchronous local-toggle fix. Freshly rebuilt scoped17/17 pass; installed verification follows canonical publication. Other scripts/style contracts unchanged.
+
+## 2026-11-21 — analysis-state presentation asset identities
+Shared status script0.2.18 and Review/shared decision script0.2.35 refresh on reload, keeping Not analyzed and absent-row omission coherent. No markup, stylesheet, generated client or business contract change. Focused source21/21 passes; exact installed Express Care screenshot verification follows local canonical update.
