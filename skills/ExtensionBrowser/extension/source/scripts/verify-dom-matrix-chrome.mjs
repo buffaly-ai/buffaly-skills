@@ -159,6 +159,100 @@ const tests = () => {
     select.addEventListener('input', () => { select.value = 'a'; });
     rejects('select_option', '#select', 'READBACK_MISMATCH', { value: 'b' });
   });
+  const ref = selector => call('find_elements', { query: selector }).data.elements[0].elementId;
+  const styledSelect = id => `<div id="shell${id}" style="position:relative;width:180px;height:54px"><span id="caption${id}" style="display:block;line-height:54px">Choose</span><select id="select${id}" style="position:absolute;inset:0;margin:0;width:100%;height:100%;opacity:0"><option value="">Choose</option><option value="CNAME">CNAME</option><option disabled value="disabled">Disabled</option></select></div>`;
+  run('transparent native select rows', styledSelect(1) + styledSelect(2), () => {
+    const one = document.querySelector('#select1'), two = document.querySelector('#select2');
+    let inputs = 0, changes = 0;
+    two.addEventListener('input', e => { inputs++; assert(e.composed, 'input composed'); });
+    two.addEventListener('change', e => { changes++; assert(!e.composed, 'native change not composed'); document.querySelector('#caption2').textContent = two.value; });
+    const bounds = two.getBoundingClientRect();
+    assert(document.elementFromPoint(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2) === two, 'native transparent surface hit-tested');
+    rejects('select_option', '#select2', 'ELEMENT_NOT_INTERACTABLE', { value: 'CNAME' });
+    const args = { elementId: ref('#select2'), presentationElementId: ref('#shell2'), value: 'CNAME' };
+    assert(call('select_option', args).ok, 'select with observed presentation succeeds');
+    assert(one.value === '' && two.value === 'CNAME' && document.querySelector('#caption2').textContent === 'CNAME' && inputs === 1 && changes === 1, 'correct row and app readback');
+    assert(!call('select_option', { ...args, presentationElementId: ref('#shell1') }).ok, 'other row presentation rejected');
+    rejects('select_option', '#select2', 'OPTION_DISABLED', { ...args, value: 'disabled' });
+    two.addEventListener('input', () => { two.value = ''; });
+    rejects('select_option', '#select2', 'READBACK_MISMATCH', args);
+  });
+  for (const [name, change] of [
+    ['transparent owner', shell => { shell.style.opacity = '0'; }],
+    ['hidden owner', shell => { shell.hidden = true; }],
+    ['inert owner', shell => { shell.inert = true; }],
+    ['aria hidden owner', shell => { shell.setAttribute('aria-hidden', 'true'); }],
+    ['covered surface', shell => { shell.insertAdjacentHTML('beforeend', '<div style="position:absolute;inset:0;background:white"></div>'); }],
+    ['pointer disabled', shell => { shell.querySelector('select').style.pointerEvents = 'none'; }],
+    ['disabled select', shell => { shell.querySelector('select').disabled = true; }],
+    ['empty presentation', shell => { shell.querySelector('span').textContent = ''; }],
+  ]) run(`styled select ${name}`, styledSelect(1), () => {
+    const args = { elementId: ref('#select1'), presentationElementId: ref('#shell1'), value: 'CNAME' };
+    change(document.querySelector('#shell1'));
+    assert(!call('select_option', args).ok && document.querySelector('select').value === '', 'blocked native selection untouched');
+  });
+  const terminal = '<div id="terminal" style="position:relative;width:500px;height:100px;background:#eee"><pre id="output">$ </pre><textarea id="proxy" style="position:absolute;left:0;top:0;width:3px;height:1px;min-width:0;min-height:0;padding:0;border:0;margin:0;opacity:0;pointer-events:none"></textarea></div><div id="unrelated" style="width:100px;height:40px">other</div>';
+  const terminalArgs = () => ({ inputElementId: ref('#proxy'), terminalElementId: ref('#terminal'), presentationElementId: ref('#output'), text: 'buffaly_terminal_probe' });
+  run('terminal consuming transparent proxy', terminal, () => {
+    const proxy = document.querySelector('#proxy');
+    const received = []; let inputs = 0, keys = 0, changes = 0;
+    proxy.addEventListener('input', () => inputs++);
+    proxy.addEventListener('change', () => changes++);
+    proxy.addEventListener('keydown', () => keys++);
+    proxy.addEventListener('paste', e => { const text = e.clipboardData.getData('text/plain'); received.push(text); document.querySelector('#output').textContent += text; proxy.value = ''; e.preventDefault(); assert(e.composed && !e.isTrusted, 'truthful synthetic composed paste'); });
+    const r = call('terminal_paste_text', terminalArgs());
+    assert(r.ok && r.data.dispatched && r.data.synthetic && !r.data.verified && r.data.delivery === 'unverified', 'dispatch receipt does not claim delivery');
+    assert(received.length === 1 && received[0] === 'buffaly_terminal_probe' && document.querySelector('#output').textContent === '$ buffaly_terminal_probe', 'exactly once terminal-visible text');
+    assert(proxy.value === '' && inputs === 0 && changes === 0 && keys === 0, 'consuming proxy clears without setters/input/change/Enter');
+    assert(!JSON.stringify(r).includes('buffaly_terminal_probe'), 'payload not returned');
+    rejects('type_text', '#proxy', 'ELEMENT_NOT_VISIBLE', { text: 'ordinary hidden input stays blocked' });
+    assert(document.activeElement === proxy, 'proxy focus actual');
+  });
+  for (const kind of ['trusted-only', 'input-only', 'no-listener']) run(`unsupported terminal ${kind}`, terminal, () => {
+    let received = 0;
+    const proxy = document.querySelector('#proxy');
+    if (kind === 'trusted-only') proxy.addEventListener('paste', e => { if (e.isTrusted) received++; });
+    if (kind === 'input-only') proxy.addEventListener('input', () => received++);
+    const r = call('terminal_paste_text', terminalArgs());
+    assert(r.ok && r.data.verified === false && r.data.verifiedNativeAction === false && r.data.delivery === 'unverified' && received === 0, 'no fabricated success or fallback for unsupported consumer');
+  });
+  for (const [name, change] of [
+    ['hidden surface', owner => { owner.style.display = 'none'; }],
+    ['transparent surface', owner => { owner.style.opacity = '0'; }],
+    ['inert surface', owner => { owner.inert = true; }],
+    ['readonly proxy', owner => { owner.querySelector('textarea').readOnly = true; }],
+    ['disabled proxy', owner => { owner.querySelector('textarea').disabled = true; }],
+    ['hidden proxy', owner => { owner.querySelector('textarea').hidden = true; }],
+    ['invisible proxy', owner => { owner.querySelector('textarea').style.visibility = 'hidden'; }],
+    ['zero layout proxy', owner => { owner.querySelector('textarea').style.display = 'none'; }],
+    ['covered surface', owner => { owner.insertAdjacentHTML('beforeend', '<div style="position:absolute;inset:0;background:white"></div>'); }],
+    ['focus refusal', owner => { owner.querySelector('textarea').focus = () => {}; }],
+    ['readonly owner', owner => { owner.setAttribute('aria-readonly', 'true'); }],
+    ['disabled owner', owner => { owner.setAttribute('aria-disabled', 'true'); }],
+    ['disabled intermediate owner', owner => { const inner = document.createElement('div'); inner.setAttribute('aria-disabled', 'true'); owner.append(inner); inner.append(owner.querySelector('textarea')); }],
+    ['transparent intermediate owner', owner => { const inner = document.createElement('div'); inner.style.opacity = '0'; owner.append(inner); inner.append(owner.querySelector('textarea')); }],
+  ]) run(`terminal ${name}`, terminal, () => {
+    const args = terminalArgs(); let events = 0;
+    document.querySelector('#proxy').addEventListener('paste', () => events++);
+    change(document.querySelector('#terminal'));
+    assert(!call('terminal_paste_text', args).ok && events === 0, 'invalid terminal pair receives no event');
+  });
+  run('terminal pair scope and text rejection', terminal, () => {
+    const args = terminalArgs(); let n = 0;
+    document.querySelector('#proxy').addEventListener('paste', () => n++);
+    assert(!call('terminal_paste_text', { ...args, presentationElementId: ref('#unrelated') }).ok, 'unrelated owner rejected');
+    assert(!call('terminal_paste_text', { ...args, inputElementId: args.inputElementId.replace(/:v1:[^:]+:/, ':v1:another:') }).ok, 'cross-document ref rejected');
+    assert(!injectedDomOperation({ operation: 'terminal_paste_text', args, expectedDocumentToken: 'wrong' }).ok, 'pinned token rejected');
+    for (const text of ['', 'no\nsubmit', 'no\rsubmit', '\u001b[A', '\t', '\u007f', '\u2028']) assert(!call('terminal_paste_text', { ...args, text }).ok, 'control text rejected before dispatch');
+    document.querySelector('#proxy').remove();
+    assert(!call('terminal_paste_text', args).ok && n === 0, 'stale target never rebound');
+  });
+  run('terminal shadow composition', '<div id="host"></div>', () => {
+    const root = shadow(terminal); let events = 0;
+    document.querySelector('#host').addEventListener('paste', e => { events++; assert(e.target === document.querySelector('#host'), 'paste retargeted to host'); });
+    const r = call('terminal_paste_text', terminalArgs());
+    assert(r.ok && root.activeElement === root.querySelector('#proxy') && events === 1, 'shadow focus and composed dispatch');
+  });
   const result = document.createElement('pre'); result.id = 'result';
   result.textContent = JSON.stringify({ checks, failures }); document.body.replaceChildren(result);
 };

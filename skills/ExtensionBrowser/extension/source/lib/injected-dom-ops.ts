@@ -3,6 +3,7 @@ export type InjectedDomOperationName =
   | 'find_elements'
   | 'click'
   | 'type_text'
+  | 'terminal_paste_text'
   | 'press_key'
   | 'hover'
   | 'select_option'
@@ -314,7 +315,21 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
     if (!resolved.ok) return fail(resolved.code, resolved.error, registry.documentToken);
     const el = resolved.element;
     if (!(el instanceof HTMLSelectElement)) return fail('UNSUPPORTED_TARGET', `select_option requires a <select> target, got <${el.tagName.toLowerCase()}>.`, registry.documentToken);
-    const interactable = validateInteractable(el, 'select an option in');
+    // A styled native select may itself be transparent above visible presentation.
+    // Only an observed immediate shell, never a force flag, enables this case.
+    const presentationId = stringArg(args, 'presentationElementId');
+    if (presentationId) {
+      const presentation = resolveElement(registry, { elementId: presentationId });
+      if (!presentation.ok) return fail(presentation.code, presentation.error, registry.documentToken);
+      if (presentation.element !== composedParent(el) || ['HTML', 'BODY'].includes(presentation.element.tagName)) return fail('PRESENTATION_MISMATCH', 'Select presentation must be its observed immediate shell.', registry.documentToken);
+      const visible = validateInteractable(presentation.element, 'use select presentation');
+      if (!visible.ok) return fail(visible.code, visible.error, registry.documentToken);
+      const control = el.getBoundingClientRect(), shell = presentation.element.getBoundingClientRect();
+      if (control.left < shell.left - 1 || control.top < shell.top - 1 || control.right > shell.right + 1 || control.bottom > shell.bottom + 1) return fail('PRESENTATION_MISMATCH', 'Native select must overlay its presentation shell.', registry.documentToken);
+      const visibleContent = Array.from(presentation.element.children).some(child => child !== el && ((child.textContent || '').trim().length > 0 || child instanceof SVGElement || child instanceof HTMLImageElement || child instanceof HTMLCanvasElement) && hasRenderedBox(child) && !firstHiddenAncestor(child));
+      if (!visibleContent) return fail('PRESENTATION_MISMATCH', 'Select shell has no visible presentation beside its native control.', registry.documentToken);
+    }
+    const interactable = validateInteractable(el, 'select an option in', presentationId ? 'select-surface' : 'direct');
     if (!interactable.ok) return fail(interactable.code, interactable.error, registry.documentToken);
     const option = Array.from(el.options).find((o) => o.value === value);
     if (!option) return fail('OPTION_NOT_FOUND', `No option with value ${JSON.stringify(value)} exists in the target select.`, registry.documentToken);
@@ -347,17 +362,17 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
     return { width: window.innerWidth, height: window.innerHeight, scrollX: window.scrollX, scrollY: window.scrollY, devicePixelRatio: window.devicePixelRatio };
   }
 
-  function validateInteractable(el: Element, operation: string): { ok: true } | { ok: false; code: string; error: string } {
+  function validateInteractable(el: Element, operation: string, surface: 'direct' | 'select-surface' | 'terminal-proxy' = 'direct'): { ok: true } | { ok: false; code: string; error: string } {
     if (!(el instanceof HTMLElement) && !(el instanceof SVGElement)) return { ok: false, code: 'UNSUPPORTED_TARGET', error: `${operation} target is not an HTMLElement/SVGElement.` };
     if (isDisabled(el)) return { ok: false, code: 'ELEMENT_DISABLED', error: `Cannot ${operation} a disabled element.` };
     if (el instanceof HTMLInputElement && el.type === 'hidden') return { ok: false, code: 'ELEMENT_NOT_VISIBLE', error: `Cannot ${operation} a hidden input.` };
     if (!hasRenderedBox(el)) return { ok: false, code: 'ELEMENT_NOT_VISIBLE', error: `Cannot ${operation} an element with no rendered layout box.` };
     const rect = el.getBoundingClientRect();
     if (rect.width <= 0 || rect.height <= 0) return { ok: false, code: 'ELEMENT_NOT_VISIBLE', error: `Cannot ${operation} an element with empty bounds.` };
-    const hiddenAncestor = firstHiddenAncestor(el);
+    const hiddenAncestor = firstHiddenAncestor(el, surface);
     if (hiddenAncestor) {
       const style = window.getComputedStyle(hiddenAncestor);
-      const reason = style.display === 'none' ? 'display:none' : ['hidden', 'collapse'].includes(style.visibility) ? `visibility:${style.visibility}` : Number(style.opacity) === 0 ? 'opacity:0' : 'pointer-events:none';
+      const reason = hiddenAncestor.hasAttribute('inert') ? 'inert' : hiddenAncestor.hasAttribute('hidden') ? 'hidden' : hiddenAncestor.getAttribute('aria-hidden') === 'true' ? 'aria-hidden:true' : style.display === 'none' ? 'display:none' : ['hidden', 'collapse'].includes(style.visibility) ? `visibility:${style.visibility}` : Number(style.opacity) === 0 ? 'opacity:0' : 'pointer-events:none';
       return { ok: false, code: 'ELEMENT_NOT_INTERACTABLE', error: `Cannot ${operation}: ${hiddenAncestor === el ? 'target' : 'ancestor'} <${hiddenAncestor.tagName.toLowerCase()}> has ${reason}.` };
     }
     return { ok: true };
@@ -380,21 +395,22 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
     return active;
   }
 
-  function firstHiddenAncestor(el: Element): HTMLElement | SVGElement | null {
+  function firstHiddenAncestor(el: Element, surface: 'direct' | 'select-surface' | 'terminal-proxy' = 'direct'): HTMLElement | SVGElement | null {
     let current: Element | null = el;
     while (current) {
       if (current instanceof HTMLElement || current instanceof SVGElement) {
         const style = window.getComputedStyle(current);
         // Descendants can restore pointer-events:auto under a none ancestor.
         // The target's computed value already includes unoverridden inheritance.
-        if ((current === el && (style.visibility === 'hidden' || style.visibility === 'collapse')) || (current === el && style.pointerEvents === 'none') || style.display === 'none' || Number(style.opacity) === 0) return current;
+        if (current.hasAttribute('hidden') || current.hasAttribute('inert') || current.getAttribute('aria-hidden') === 'true') return current;
+        if ((current === el && (style.visibility === 'hidden' || style.visibility === 'collapse')) || (surface !== 'terminal-proxy' && (current === el && style.pointerEvents === 'none')) || style.display === 'none' || (Number(style.opacity) === 0 && (current !== el || surface === 'direct'))) return current;
       }
       current = composedParent(current);
     }
     return null;
   }
 
-  function obstructionAtCenter(el: Element): string | null {
+  function obstructionAtCenter(el: Element, exactSurface = false): string | null {
     (el as HTMLElement).scrollIntoView?.({ block: 'center', inline: 'center' });
     const rect = el.getBoundingClientRect();
     const x = rect.left + rect.width / 2;
@@ -409,6 +425,7 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
       top = inner;
     }
     if (!top) return 'No element is present at target center point.';
+    if (exactSurface) return top === el ? null : `Terminal presentation center is obstructed by <${top.tagName.toLowerCase()}>; observe the actual painted surface, not a container.`;
     for (let hit: Element | null = top; hit; hit = composedParent(hit)) {
       if (hit === el) return null;
     }
@@ -417,6 +434,51 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
 
   function isDisabled(el: Element): boolean {
     return el.matches(':disabled') || el.getAttribute('aria-disabled') === 'true';
+  }
+
+  function terminalPasteText(registry: RegistryState, args: Record<string, unknown>): InjectedDomOperationResult {
+    const text = stringArg(args, 'text');
+    if (text === undefined) return fail('TEXT_REQUIRED', 'terminal_paste_text requires text.', registry.documentToken);
+    // Terminal controls (including escape, tab and DEL) are not plain insertion.
+    if (!text.length || /[\u0000-\u001f\u007f-\u009f\u2028\u2029]/.test(text)) return fail('SUBMISSION_NOT_SUPPORTED', 'Terminal paste requires nonempty text without control characters or line separators; it never submits commands.', registry.documentToken);
+    const inputId = stringArg(args, 'inputElementId'), presentationId = stringArg(args, 'presentationElementId'), terminalId = stringArg(args, 'terminalElementId');
+    if (!inputId || !presentationId || !terminalId) return fail('TARGET_REQUIRED', 'Terminal paste requires observed inputElementId, presentationElementId and terminalElementId references.', registry.documentToken);
+    const input = resolveElement(registry, { elementId: inputId });
+    const presentation = resolveElement(registry, { elementId: presentationId });
+    const terminal = resolveElement(registry, { elementId: terminalId });
+    if (!input.ok) return fail(input.code, input.error, registry.documentToken);
+    if (!presentation.ok) return fail(presentation.code, presentation.error, registry.documentToken);
+    if (!terminal.ok) return fail(terminal.code, terminal.error, registry.documentToken);
+    const proxy = input.element, owner = terminal.element, surface = presentation.element;
+    if (!(proxy instanceof HTMLTextAreaElement)) return fail('UNSUPPORTED_TARGET', 'Terminal input proxy must be a textarea.', registry.documentToken);
+    let ancestor = composedParent(proxy);
+    while (ancestor && ancestor !== owner) ancestor = composedParent(ancestor);
+    if (ancestor !== owner || ['HTML', 'BODY'].includes(owner.tagName)) return fail('PRESENTATION_MISMATCH', 'Terminal surface must be an observed composed owner of this input proxy.', registry.documentToken);
+    ancestor = surface;
+    while (ancestor && ancestor !== owner) ancestor = composedParent(ancestor);
+    if (ancestor !== owner || surface === proxy) return fail('PRESENTATION_MISMATCH', 'Terminal presentation must belong to the same observed terminal owner.', registry.documentToken);
+    if (isReadOnly(proxy) || isReadOnly(owner)) return fail('ELEMENT_READONLY', 'Terminal input or surface is read-only.', registry.documentToken);
+    for (let current: Element | null = proxy; current; current = composedParent(current)) {
+      if (isDisabled(current)) return fail('ELEMENT_DISABLED', 'Terminal input has a disabled composed owner.', registry.documentToken);
+      if (isReadOnly(current)) return fail('ELEMENT_READONLY', 'Terminal input has a read-only composed owner.', registry.documentToken);
+      if (current === owner) break;
+    }
+    const visible = validateInteractable(owner, 'paste into terminal surface');
+    if (!visible.ok) return fail(visible.code, visible.error, registry.documentToken);
+    const painted = validateInteractable(surface, 'use terminal presentation');
+    if (!painted.ok) return fail(painted.code, painted.error, registry.documentToken);
+    const usable = validateInteractable(proxy, 'focus terminal input proxy', 'terminal-proxy');
+    if (!usable.ok) return fail(usable.code, usable.error, registry.documentToken);
+    const obstruction = obstructionAtCenter(surface, true);
+    if (obstruction) return fail('ELEMENT_OBSTRUCTED', obstruction, registry.documentToken);
+    proxy.focus();
+    if (deepActiveElement() !== proxy) return fail('FOCUS_FAILED', 'Terminal input proxy did not receive focus.', registry.documentToken);
+    // Exactly one event, no setter/change/keyboard fallback and no OS clipboard.
+    // Synthetic paste consumption is application-specific: dispatch is not delivery.
+    const data = new DataTransfer();
+    data.setData('text/plain', text);
+    proxy.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true, composed: true }));
+    return ok(registry, { dispatched: true, synthetic: true, verified: false, verifiedNativeAction: false, delivery: 'unverified', length: text.length, inputElementId: inputId, presentationElementId: presentationId, terminalElementId: terminalId, verification: 'One synthetic paste event dispatched. Observe terminal output separately; trusted-input-only or non-paste consumers are unsupported. Do not retry without checking whether text was delivered.' });
   }
 
   function isHiddenForTyping(el: Element): boolean {
@@ -514,6 +576,7 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
       case 'find_elements': return findElements(registry, request.args);
       case 'click': return clickElement(registry, request.args);
       case 'type_text': return typeText(registry, request.args);
+      case 'terminal_paste_text': return terminalPasteText(registry, request.args);
       case 'press_key': return pressKey(registry, request.args);
       case 'hover': return hoverElement(registry, request.args);
       case 'select_option': return selectOption(registry, request.args);

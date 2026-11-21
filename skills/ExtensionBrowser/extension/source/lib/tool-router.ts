@@ -2,7 +2,7 @@ import type { ToolResult, ToolName } from './types';
 import { toolContracts, validateToolArguments } from './tool-contract';
 import type {
   GetPageTextArgs, GetDomSnapshotArgs, ScreenshotArgs, FindElementsArgs,
-  NavigateArgs, ClickArgs, TypeTextArgs, PressKeyArgs, ScrollArgs, WaitArgs,
+  NavigateArgs, ClickArgs, TypeTextArgs, TerminalPasteTextArgs, PressKeyArgs, ScrollArgs, WaitArgs,
   OpenTabArgs, CloseTabArgs, SwitchTabArgs,
   GoBackArgs, GoForwardArgs, HoverArgs, SelectOptionArgs,
   GetAttributeArgs, CheckExistsArgs, GetViewportArgs, ConsoleEventsArgs,
@@ -329,6 +329,11 @@ async function handlePressKey(args: PressKeyArgs): Promise<ToolResult> {
   return executeInjectedDomOperation(tabId, 'press_key', args as unknown as Record<string, unknown>);
 }
 
+async function handleTerminalPasteText(args: TerminalPasteTextArgs): Promise<ToolResult> {
+  const tabId = await resolveTabId(args.tabId);
+  return executeInjectedDomOperation(tabId, 'terminal_paste_text', args as unknown as Record<string, unknown>);
+}
+
 async function handleScroll(args: ScrollArgs): Promise<ToolResult> {
   const tabId = await resolveTabId(args.tabId);
 
@@ -543,7 +548,7 @@ async function handleConsoleEvents(args: ConsoleEventsArgs): Promise<ToolResult>
 // ─── Main Tool Router ───
 
 export async function handleToolCall(tool: string, args: Record<string, unknown>): Promise<ToolResult> {
-  const logId = addLogEntry(tool, args);
+  const logId = addLogEntry(tool, tool === 'terminal_paste_text' ? { ...args, text: '[terminal text omitted]' } : args);
 
   try {
     const invalid = validateToolArguments(tool, args);
@@ -578,6 +583,9 @@ export async function handleToolCall(tool: string, args: Record<string, unknown>
         break;
       case 'type_text':
         result = await handleTypeText(args as unknown as TypeTextArgs);
+        break;
+      case 'terminal_paste_text':
+        result = await handleTerminalPasteText(args as unknown as TerminalPasteTextArgs);
         break;
       case 'press_key':
         result = await handlePressKey(args as unknown as PressKeyArgs);

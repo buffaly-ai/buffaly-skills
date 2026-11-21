@@ -95,6 +95,7 @@ export type ToolName =
   | 'navigate'
   | 'click'
   | 'type_text'
+  | 'terminal_paste_text'
   | 'press_key'
   | 'scroll'
   | 'wait'
@@ -173,6 +174,18 @@ export interface TypeTextArgs {
   useDebugger?: boolean;
 }
 
+// Terminal paste is insertion-only, with separately observed proxy/surface refs.
+export interface TerminalPasteTextArgs {
+  inputElementId: string;
+  presentationElementId: string;
+  terminalElementId: string;
+  text: string;
+  tabId?: number;
+  frameId?: number;
+  documentId?: string;
+  documentToken?: string;
+}
+
 export interface PressKeyArgs {
   key: string;
   modifiers?: number;
@@ -237,6 +250,7 @@ export interface HoverArgs {
 export interface SelectOptionArgs {
   selector?: string;
   elementId?: string;
+  presentationElementId?: string;
   value: string;
   tabId?: number;
   frameId?: number;

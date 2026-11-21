@@ -780,7 +780,7 @@
       "SkillName": "ExtensionBrowser",
       "Title": "Extension Browser",
       "Description": "Buffaly skill package for Extension Browser.",
-      "Version": "0.2.90",
+      "Version": "0.2.91",
       "PackageKind": "OpsAgentProtoScriptSkill",
       "Phrases": [
         "Extension Browser",
@@ -794,7 +794,7 @@
         },
         {
           "Path": "docs/EXTENSION_DOM_CONTRACT.md",
-          "Sha256": "f13ad17a548effaf2633f068a9e5068d80518f5a90f81de0280c00d534eb57e1"
+          "Sha256": "10fe6cf44426fce2f5eb78fa27417b1a74351ffaca546f8649f7f25d3797b2de"
         },
         {
           "Path": "docs/GODADDY-0264-VALIDATION.md",
@@ -805,8 +805,8 @@
           "Sha256": "f11c9a6e16f4af4f20779237ee938110519eec7fcba39423f8b8fe14fbacf8c5"
         },
         {
-          "Path": "extension/release/Buffaly-Browser-Agent-0.2.65-chrome.zip",
-          "Sha256": "00cbbfdb2b23e1b43ad61493f14a58687cfa8c20571d7de8ef726e761b20f70f"
+          "Path": "extension/release/Buffaly-Browser-Agent-0.2.66-chrome.zip",
+          "Sha256": "a2975c296c0b207c0394126c663e89f02552910bace9a92aefcbc4d130e811e3"
         },
         {
           "Path": "extension/source/.gitignore",
@@ -850,11 +850,11 @@
         },
         {
           "Path": "extension/source/lib/injected-dom-ops.ts",
-          "Sha256": "fb582add194c5874cacfd23d1979630c66bbf3521113232c68233e36c7fd2412"
+          "Sha256": "99478ac6771dcf9e34786fd948d7b74d683a5c440cf9fa666f61cf3003ffdab1"
         },
         {
           "Path": "extension/source/lib/injected-dom-ops.ts.md",
-          "Sha256": "0fb6932e2592cf618459440d1fea1eee00af9a788a8145b1f7ac898d522b839e"
+          "Sha256": "86d7d22cea84c0957d0097761460bacf9a8a2472e9819fff8e779380fe251996"
         },
         {
           "Path": "extension/source/lib/safety.ts",
@@ -862,7 +862,11 @@
         },
         {
           "Path": "extension/source/lib/tool-contract.ts",
-          "Sha256": "eedfdd549056e6d4314aa03489928767609b7e8f7a413080cb4e3596cdc57356"
+          "Sha256": "80407ab4ee773cef4a0375c2f483bc1540b9f11bb2648e958fc0eaa819c626b6"
+        },
+        {
+          "Path": "extension/source/lib/tool-contract.ts.md",
+          "Sha256": "4ba8b534af4575cb4a1a912e3e438f62d25661f7135833d9a748d5fa17073a17"
         },
         {
           "Path": "extension/source/lib/tool-log.ts",
@@ -870,19 +874,27 @@
         },
         {
           "Path": "extension/source/lib/tool-router.ts",
-          "Sha256": "77ea0843c45e9ca5ff400971a54c1c68c98f4f39a2056f8e9227d31077b88599"
+          "Sha256": "20ab060b05cbb7dedad586abed158223b050819321838798664d97856a71651c"
+        },
+        {
+          "Path": "extension/source/lib/tool-router.ts.md",
+          "Sha256": "e38f370ba335531780343c19da2c89ba6deebff9127a53fbb2663b4d810833d5"
         },
         {
           "Path": "extension/source/lib/types.ts",
-          "Sha256": "11f5298d93f99fc0c789e054ead471ac4b465915b32f881ba683a840d4bf1064"
+          "Sha256": "c67f9a1397614232f1d5bbcf6c45421a7bba42655044d11a84bac544f9baa522"
+        },
+        {
+          "Path": "extension/source/lib/types.ts.md",
+          "Sha256": "2ca74dfd9a678b324d77cf18e18e002cdd89296362081f9d421d5e006714836f"
         },
         {
           "Path": "extension/source/package-lock.json",
-          "Sha256": "f12330dccea5712a888592b758168581d8ad117e089efebf0355faaf8415d986"
+          "Sha256": "a78c03c31d19c17405c96866e61f44677330d97f7d9530755e49c3977cc275b4"
         },
         {
           "Path": "extension/source/package.json",
-          "Sha256": "aef259f5aacdd213d1d1b16b4afeb697a228f94f725d8ebe9dfc6f9b936f543e"
+          "Sha256": "391e7cae6a1901756200146d49efb7877534d5b43e7bf010d2c13b73419f11cd"
         },
         {
           "Path": "extension/source/PRIVACY.md",
@@ -914,11 +926,11 @@
         },
         {
           "Path": "extension/source/scripts/verify-dom-matrix-chrome.mjs",
-          "Sha256": "2c08699948f691454d1538f2c0e4bf8f94481df4e12f31acf08917becfaa9279"
+          "Sha256": "660a40e5dfb79ec5fd9cb22d5008397d6c3f5a87e92cc09dc3306c1786ddc5ab"
         },
         {
           "Path": "extension/source/scripts/verify-dom-matrix-chrome.mjs.md",
-          "Sha256": "8736974221415555721293fe4cb21ab6dad10700fb5d48f3662d35ff78fb844a"
+          "Sha256": "451a9108fe151ff521cba8c192f6b6f81f9a78617b060ea11a112e8b5695bc07"
         },
         {
           "Path": "extension/source/scripts/verify-pointer-events-chrome.mjs",
@@ -934,7 +946,11 @@
         },
         {
           "Path": "extension/source/scripts/verify-tool-contract.mjs",
-          "Sha256": "6aadfc84e7e2793276fd7d3961e17cbe024f9832cab57058c4dc4ebc5225c514"
+          "Sha256": "d4ef756ec9b54abf0a8fea298163e54675f33fab578f79cf84af2fc2003f2a14"
+        },
+        {
+          "Path": "extension/source/scripts/verify-tool-contract.mjs.md",
+          "Sha256": "d886fe777a08bdab5ccd630af7f8302cb18c14efd4f3712aa02bbb5e64b83e15"
         },
         {
           "Path": "extension/source/tsconfig.json",
@@ -942,11 +958,11 @@
         },
         {
           "Path": "extension/source/wxt.config.ts",
-          "Sha256": "1ee7697385728baf41f98510f4cb09a46d7828b30e1bfb2da639782898fb3d1b"
+          "Sha256": "c13c23aa264ee3263803de96cf492f402576cb33aeffef8992e802314bbf9071"
         },
         {
           "Path": "extension/source/wxt.config.ts.md",
-          "Sha256": "8571a150b92e8a8120574985f68f09ba4d0b0fd806d363cd55c2e962103c5b0c"
+          "Sha256": "a5116cb7543a62aab92f22ea802fb4a4172cc2cbbdf13449df832bca5ea27aa2"
         },
         {
           "Path": "index.pts",

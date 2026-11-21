@@ -14,6 +14,7 @@ export const toolContracts: Record<ToolName, Contract> = {
   navigate: { properties: { tabId: 'number', url: 'string' }, required: ['url'] },
   click: { properties: target, target: true },
   type_text: { properties: { ...target, text: 'string', clear: 'boolean', mode: 'string' }, required: ['text'], target: true },
+  terminal_paste_text: { properties: { ...scope, inputElementId: 'string', presentationElementId: 'string', terminalElementId: 'string', text: 'string' }, required: ['inputElementId', 'presentationElementId', 'terminalElementId', 'text'] },
   press_key: { properties: { ...target, key: 'string', modifiers: 'number', altKey: 'boolean', ctrlKey: 'boolean', metaKey: 'boolean', shiftKey: 'boolean' }, required: ['key'] },
   scroll: { properties: { tabId: 'number', direction: 'string', x: 'number', y: 'number' } },
   wait: { properties: { tabId: 'number', ms: 'number', selector: 'string', timeout: 'number' } },
@@ -23,7 +24,7 @@ export const toolContracts: Record<ToolName, Contract> = {
   attach_debugger: { properties: { tabId: 'number' } }, detach_debugger: { properties: { tabId: 'number' } },
   go_back: { properties: { tabId: 'number' } }, go_forward: { properties: { tabId: 'number' } },
   hover: { properties: target, target: true },
-  select_option: { properties: { ...target, value: 'string' }, required: ['value'], target: true },
+  select_option: { properties: { ...target, presentationElementId: 'string', value: 'string' }, required: ['value'], target: true },
   get_attribute: { properties: { ...target, attributeName: 'string' }, required: ['attributeName'], target: true },
   check_exists: { properties: { ...scope, selector: 'string' }, required: ['selector'] },
   get_viewport: { properties: scope },
@@ -43,6 +44,7 @@ export function validateToolArguments(tool: string, args: Record<string, unknown
     if (typeof value !== contract.properties[name] || (typeof value === 'number' && !Number.isFinite(value))) return fail('INVALID_ARGUMENT_TYPE', `${tool}.${name} must be ${contract.properties[name]}.`);
   }
   if (contract.target && !args.selector && !args.elementId) return fail('TARGET_REQUIRED', `${tool} requires selector or elementId from a fresh observation.`);
+  if (tool === 'terminal_paste_text' && (typeof args.text !== 'string' || !args.text.length || /[\u0000-\u001f\u007f-\u009f\u2028\u2029]/.test(args.text))) return fail('SUBMISSION_NOT_SUPPORTED', 'Terminal paste requires nonempty text without control characters or line separators.');
   for (const name of ['selector', 'query']) {
     if (typeof args[name] === 'string' && /^(text=|xpath=)/.test(args[name] as string)) return fail('INVALID_SELECTOR', `${name} requires CSS, not Playwright text= or xpath= syntax.`);
   }

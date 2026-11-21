@@ -21,5 +21,17 @@ assert.equal(validate('find_elements', { query: 'button', maxResults: NaN }).cod
 assert.equal(validate('get_status', { __boundWindowId: 42 }), undefined);
 assert.equal(validate('toString', {}).code, 'UNKNOWN_TOOL');
 assert.equal(validate('type_text', { selector: 'input', text: '' }), undefined);
-assert.equal(Object.keys(toolContracts).length, 26);
-console.log('PASS: 18 executable argument contract checks');
+assert.equal(Object.keys(toolContracts).length, 27);
+const paste = { inputElementId: 'buffaly-dom-ref:v1:test:1', terminalElementId: 'buffaly-dom-ref:v1:test:2', presentationElementId: 'buffaly-dom-ref:v1:test:3', text: 'nonsecret probe', tabId: 1, frameId: 0, documentId: 'doc', documentToken: 'test' };
+assert.equal(validate('terminal_paste_text', paste), undefined);
+for (const key of ['inputElementId', 'terminalElementId', 'presentationElementId', 'text']) {
+  const args = { ...paste }; delete args[key];
+  assert.equal(validate('terminal_paste_text', args).code, key.toUpperCase() + '_REQUIRED');
+}
+for (const text of ['', '\n', '\r', '\t', '\u001b', '\u0000', '\u007f', '\u0085', '\u2028', '\u2029']) assert.equal(validate('terminal_paste_text', { ...paste, text }).code, 'SUBMISSION_NOT_SUPPORTED');
+assert.equal(validate('terminal_paste_text', { ...paste, force: true }).code, 'UNKNOWN_ARGUMENT');
+assert.equal(validate('terminal_paste_text', { ...paste, selector: 'textarea' }).code, 'UNKNOWN_ARGUMENT');
+assert.equal(validate('type_text', { selector: 'input', text: 'test', presentationElementId: 'ref' }).code, 'UNKNOWN_ARGUMENT');
+assert.equal(validate('select_option', { elementId: 'ref', presentationElementId: 'shell-ref', value: 'CNAME' }), undefined);
+assert.equal(validate('select_option', { elementId: 'ref', force: true, value: 'CNAME' }).code, 'UNKNOWN_ARGUMENT');
+console.log('PASS: 38 executable argument contract checks');
