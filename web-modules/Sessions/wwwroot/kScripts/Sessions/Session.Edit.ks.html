@@ -8,3 +8,24 @@
 	(return (Sessions.GetSession (ObjectID)))
 }%>
 
+<%redefinefunction SimpleObjectEditPage.AdditionalCommands
+{
+	(returnex {%>
+		<a id="lnkChangeSessionParent" class="btn btn-light m-1" hidden><i class="fa fa-cogs"></i> Change parent in Session Details</a>
+	<%})
+}%>
+
+<%redefinefunction SimpleObjectEditPage.AdditionalScripts
+{
+	(returnex {%>
+		<script>
+			Page.AddOnload(function () {
+				if (!oSession.SessionKey) return;
+				const link = document.getElementById("lnkChangeSessionParent");
+				const query = new URLSearchParams({ sessionKey: oSession.SessionKey, tab: "subscriptions" });
+				link.href = "/buffaly-agent?" + query.toString();
+				link.hidden = false;
+			});
+		</script>
+	<%})
+}%>
