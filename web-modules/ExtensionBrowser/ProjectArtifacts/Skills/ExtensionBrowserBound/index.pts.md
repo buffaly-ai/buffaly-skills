@@ -1,5 +1,10 @@
 # ExtensionBrowserBound/index.pts history
 
+## 2026-11-21 — Expose terminal dispatch contract and correct setter ownership
+- ToInvokeBoundExtensionBrowserTool description now includes terminal_paste_text, installed get_status contract discovery, observed select presentation and terminal proxy/owner/painted surface refs, and explicitly unverified synthetic delivery. Corrected the advertised console_events name to match the executable extension contract; no new prototype or lazy sidecar mapping.
+- ToSetSessionExtensionBrowserInstance now calls ExtensionBrowserModuleService so validation/save occurs in the channel-owning web process, not the worker's empty registry. Updated this prototype with the real ProtoScriptPrototypeUpsertTools parser and ProtoScriptAuthoringService.InsertOrUpdatePrototypeDefinition against the standalone owning source. The normal generic upsert action is scoped to OpsAgent and cannot target this repository. No installed copy was edited.
+- Validation: typed parser/upsert succeeded; module contract executable passed;17 separate-process source-linked setter checks passed; final npm release:check passed TypeScript,38 contracts,page-context tests,141 Chrome DOM assertions,build,ZIP and production audit0. No package lifecycle import/live target-project compilation or bound runtime acceptance yet. Existing N1 core compatibility requirement below is unchanged; do not ship this into a pre-N1 target.
+
 Companion history for `ExtensionBrowser.WebModule/ProjectArtifacts/Skills/ExtensionBrowserBound/index.pts`. This file was created on 2026-11-16. Earlier changes to the module are recorded only in git history, including 854a460 (browser-aware context for Chrome conversations), ab18e8c (prompt projected into the runtime context path), a516fa2 (bound session action root) and 92231b1/43a487c (instance routing). The `index.pts.lazy.json` sidecar was added in 96fbe8b.
 
 ## Context phrase moved to the SemanticContext annotation (2026-11-16)
