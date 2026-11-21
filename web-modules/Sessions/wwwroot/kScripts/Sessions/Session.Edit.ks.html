@@ -10,7 +10,7 @@
 
 <%redefinefunction SimpleObjectEditPage.UpdateMethodName
 {
-	(return "Sessions.UpdateSessionFromAdminObject")
+	(return "SessionsAdmin.UpdateSessionFromAdminObject")
 }%>
 
 <%redefinefunction SimpleObjectEditPage.AdditionalCommands
@@ -23,6 +23,7 @@
 <%redefinefunction SimpleObjectEditPage.AdditionalScripts
 {
 	(returnex {%>
+		<script src="/JsonWs/Buffaly.Sessions.Web.SessionsAdmin.ashx.js?v=<%JsVersion%>"></script>
 		<script>
 			Page.AddOnload(function () {
 				if (!oSession.SessionKey) return;

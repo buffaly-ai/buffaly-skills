@@ -10,16 +10,32 @@ if (typeof window === "undefined" || typeof window.SessionsAdminValidatorsFields
 	
 
 
+if (!SessionsAdminValidatorsFields.hasOwnProperty("ProjectName")) {
+	SessionsAdminValidatorsFields.ProjectName = {Validators : [Validators.Text], InvalidMessage: "Invalid ProjectName"};
+}
+	
 if (!SessionsAdminValidatorsFields.hasOwnProperty("FieldName")) {
 	SessionsAdminValidatorsFields.FieldName = {Validators : [Validators.Text], InvalidMessage: "Invalid FieldName"};
+}
+	
+if (!SessionsAdminValidatorsFields.hasOwnProperty("Data")) {
+	SessionsAdminValidatorsFields.Data = {Validators : [Validators.Text], InvalidMessage: "Invalid Data"};
 }
 	
 if (!SessionsAdminValidatorsFields.hasOwnProperty("SortAscending")) {
 	SessionsAdminValidatorsFields.SortAscending = {Validators : [Validators.Text], InvalidMessage: "Invalid SortAscending"};
 }
 	
+if (!SessionsAdminValidatorsFields.hasOwnProperty("Provider")) {
+	SessionsAdminValidatorsFields.Provider = {Validators : [Validators.Text], InvalidMessage: "Invalid Provider"};
+}
+	
 if (!SessionsAdminValidatorsFields.hasOwnProperty("SessionKey")) {
 	SessionsAdminValidatorsFields.SessionKey = {Validators : [Validators.Text], InvalidMessage: "Invalid SessionKey"};
+}
+	
+if (!SessionsAdminValidatorsFields.hasOwnProperty("PromptContext")) {
+	SessionsAdminValidatorsFields.PromptContext = {Validators : [Validators.Text], InvalidMessage: "Invalid PromptContext"};
 }
 	
 if (!SessionsAdminValidatorsFields.hasOwnProperty("Name")) {
@@ -31,7 +47,11 @@ if (!SessionsAdminValidatorsFields.hasOwnProperty("Value")) {
 }
 	
 if (!SessionsAdminValidatorsFields.hasOwnProperty("SessionID")) {
-	SessionsAdminValidatorsFields.SessionID = {Validators : [Validators.Text], InvalidMessage: "Invalid SessionID"};
+	SessionsAdminValidatorsFields.SessionID = {Validators : [Validators.Integer], InvalidMessage: "Invalid SessionID"};
+}
+	
+if (!SessionsAdminValidatorsFields.hasOwnProperty("IsArchived")) {
+	SessionsAdminValidatorsFields.IsArchived = {Validators : [Validators.Boolean], InvalidMessage: "Invalid IsArchived"};
 }
 	
 if (!SessionsAdminValidatorsFields.hasOwnProperty("Sessions")) {
@@ -46,6 +66,14 @@ if (!SessionsAdminValidatorsFields.hasOwnProperty("SkipRows")) {
 	SessionsAdminValidatorsFields.SkipRows = {Validators : [Validators.Text], InvalidMessage: "Invalid SkipRows"};
 }
 	
+if (!SessionsAdminValidatorsFields.hasOwnProperty("AgentName")) {
+	SessionsAdminValidatorsFields.AgentName = {Validators : [Validators.Text], InvalidMessage: "Invalid AgentName"};
+}
+	
+if (!SessionsAdminValidatorsFields.hasOwnProperty("ModelName")) {
+	SessionsAdminValidatorsFields.ModelName = {Validators : [Validators.Text], InvalidMessage: "Invalid ModelName"};
+}
+	
 if (!SessionsAdminValidatorsFields.hasOwnProperty("SortColumn")) {
 	SessionsAdminValidatorsFields.SortColumn = {Validators : [Validators.Text], InvalidMessage: "Invalid SortColumn"};
 }
@@ -56,6 +84,10 @@ if (!SessionsAdminValidatorsFields.hasOwnProperty("Search")) {
 	
 if (!SessionsAdminValidatorsFields.hasOwnProperty("RequestID")) {
 	SessionsAdminValidatorsFields.RequestID = {Validators : [Validators.Text], InvalidMessage: "Invalid RequestID"};
+}
+	
+if (!SessionsAdminValidatorsFields.hasOwnProperty("ReasoningLevel")) {
+	SessionsAdminValidatorsFields.ReasoningLevel = {Validators : [Validators.Text], InvalidMessage: "Invalid ReasoningLevel"};
 }
 	
 if (!SessionsAdminValidatorsFields.hasOwnProperty("NumRows")) {
@@ -76,6 +108,10 @@ if (!SessionsAdminValidatorsFields.hasOwnProperty("DelayMinutes")) {
 	
 if (!SessionsAdminValidatorsFields.hasOwnProperty("PreOptions")) {
 	SessionsAdminValidatorsFields.PreOptions = {Validators : [Validators.Text], InvalidMessage: "Invalid PreOptions"};
+}
+	
+if (!SessionsAdminValidatorsFields.hasOwnProperty("ProjectFilePath")) {
+	SessionsAdminValidatorsFields.ProjectFilePath = {Validators : [Validators.Text], InvalidMessage: "Invalid ProjectFilePath"};
 }
 	
 
@@ -562,6 +598,39 @@ class SessionsAdminService {
         );
     }
 
+    UpdateSessionFromAdmin(SessionID, SessionKey, AgentName, ProjectName, ProjectFilePath, Provider, ModelName, ReasoningLevel, PromptContext, Data, IsArchived, Callback) {
+        return this.UpdateSessionFromAdminObject({ SessionID:SessionID,SessionKey:SessionKey,AgentName:AgentName,ProjectName:ProjectName,ProjectFilePath:ProjectFilePath,Provider:Provider,ModelName:ModelName,ReasoningLevel:ReasoningLevel,PromptContext:PromptContext,Data:Data,IsArchived:IsArchived }, Callback);
+    }
+
+    UpdateSessionFromAdminObject(oObject, Callback) {
+        this._validate(oObject, SessionsAdminValidators.UpdateSessionFromAdmin, this.UpdateSessionFromAdmin.onValidationError);
+
+        var pageUrl = this.Url + "/update-session-from-admin";
+        return this._invoke(
+            pageUrl,
+            "UpdateSessionFromAdmin",
+            { SessionID: oObject.SessionID,SessionKey: oObject.SessionKey,AgentName: oObject.AgentName,ProjectName: oObject.ProjectName,ProjectFilePath: oObject.ProjectFilePath,Provider: oObject.Provider,ModelName: oObject.ModelName,ReasoningLevel: oObject.ReasoningLevel,PromptContext: oObject.PromptContext,Data: oObject.Data,IsArchived: oObject.IsArchived },
+            this.UpdateSessionFromAdmin,
+            Callback
+        );
+    }
+
+    async UpdateSessionFromAdminAsync(SessionID,SessionKey,AgentName,ProjectName,ProjectFilePath,Provider,ModelName,ReasoningLevel,PromptContext,Data,IsArchived) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.UpdateSessionFromAdmin,
+            [ SessionID,SessionKey,AgentName,ProjectName,ProjectFilePath,Provider,ModelName,ReasoningLevel,PromptContext,Data,IsArchived ]
+        );
+    }
+
+    async UpdateSessionFromAdminObjectAsync(oObject) {
+        return await ObjectUtil.Promisify(
+            this,
+            this.UpdateSessionFromAdminObject,
+            [ oObject ]
+        );
+    }
+
 
 
 
@@ -656,6 +725,20 @@ var SessionsAdminValidators = {
             DelayMinutes : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid DelayMinutes"} ,
             LocalDateTime : {Validators: [Validators.Text], InvalidMessage: "Invalid LocalDateTime"} ,
             TimeZoneID : {Validators: [Validators.Text], InvalidMessage: "Invalid TimeZoneID"} 
+    },
+
+    UpdateSessionFromAdmin : {
+            SessionID : {Validators: [Validators.MakeRequired(Validators.Integer)], InvalidMessage: "Invalid SessionID"} ,
+            SessionKey : {Validators: [Validators.Text], InvalidMessage: "Invalid SessionKey"} ,
+            AgentName : {Validators: [Validators.Text], InvalidMessage: "Invalid AgentName"} ,
+            ProjectName : {Validators: [Validators.Text], InvalidMessage: "Invalid ProjectName"} ,
+            ProjectFilePath : {Validators: [Validators.Text], InvalidMessage: "Invalid ProjectFilePath"} ,
+            Provider : {Validators: [Validators.Text], InvalidMessage: "Invalid Provider"} ,
+            ModelName : {Validators: [Validators.Text], InvalidMessage: "Invalid ModelName"} ,
+            ReasoningLevel : {Validators: [Validators.Text], InvalidMessage: "Invalid ReasoningLevel"} ,
+            PromptContext : {Validators: [Validators.Text], InvalidMessage: "Invalid PromptContext"} ,
+            Data : {Validators: [Validators.Text], InvalidMessage: "Invalid Data"} ,
+            IsArchived : {Validators: [Validators.MakeRequired(Validators.Boolean)], InvalidMessage: "Invalid IsArchived"} 
     }
 };
 
