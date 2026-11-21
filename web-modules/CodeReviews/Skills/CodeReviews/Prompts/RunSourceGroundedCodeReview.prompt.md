@@ -11,13 +11,13 @@ Use this workflow when reviewing one specified Buffaly code change set.
 - Review the requested target directly instead of searching for another commit.
 - Use later history only to determine whether a suspected issue was already corrected or made irrelevant.
 - For an interactive review requested directly by a user, return specific findings or a clear no-issue result.
-- For an attached CodeReviews child, notify the source session of material findings or review limitations. Only a fully covered review without findings completes silently.
+- For an attached CodeReviews child, notify the source session only of material actionable findings. Every review without findings completes silently, including reviews with coverage limitations retained in the durable review evidence.
 
 ## Best-effort review policy
 
 Review as much of the exact delivered code as available. A changing task/design, missing guidance, unavailable reader, unreadable file or incomplete page does not justify failing the whole review or discarding findings from other files. Attempt bounded, safe recovery when useful; then continue with independent evidence instead of retrying indefinitely. A useful partial review is preferable to no review.
 
-Submit evidence-backed findings through the normal grouped completion action. When there are no findings in the inspected code, use normal completion without findings; the coverage assessment records unavailable or unverified code/supporting evidence and reports it to the source. Clearly distinguish reviewed code from coverage gaps. Never describe partial coverage as clean, claim unverified conformance, invent a coverage percentage, mix document versions or substitute another commit/turn. Exact delivered target binding remains mandatory. This policy supersedes older all-or-nothing evidence instructions.
+Submit evidence-backed findings through the normal grouped completion action. When there are no findings in the inspected code, use normal completion without findings; the coverage assessment retains unavailable or unverified code/supporting evidence in the saved review and reviewer completion without interrupting the source session. Clearly distinguish reviewed code from coverage gaps. Never describe partial coverage as clean, claim unverified conformance, invent a coverage percentage, mix document versions or substitute another commit/turn. Exact delivered target binding remains mandatory. This policy supersedes older all-or-nothing evidence instructions.
 
 ## Approved Tools
 
@@ -222,7 +222,7 @@ When the instruction supplies an attached turn-level `SourceTurnContextJson`, tr
 - Evaluate the combined result against the exact completed source turn, active task, governing design, and Plan.
 - Use exactly one grouped completion action. Pass the supplied `SourceTurnContextJson` unchanged; it is the authoritative cross-worker binding for the delivered turn. Do not pass separate repository paths, commit SHAs, or source session keys.
 - With material findings, call `ToSubmitCodeReviewTurnFindings` once with the unchanged `SourceTurnContextJson` and consolidated findings-only markdown.
-- With no material findings in the available code, call `ToCompleteCodeReviewTurnWithoutFindings` once with the unchanged `SourceTurnContextJson`. Fully covered clean reviews stay silent; reviews with coverage limitations notify the source and do not claim unreviewed code clean.
+- With no material findings in the available code, call `ToCompleteCodeReviewTurnWithoutFindings` once with the unchanged `SourceTurnContextJson`. Do not notify the source, even when coverage is partial. Preserve limitations in the saved review and reviewer completion; silence is not a claim of complete coverage or verified conformance.
 - Do not call `ToMarkCodeReviewTurnFailed` for changing, unavailable or incomplete evidence. Finish the useful review with findings or explicit limitations. Older callers of that action are completed with limitations rather than discarding available results.
 - Each successful grouped completion action ends the reviewer runtime through its canonical terminal response. Do not generate another final answer or repeat a successful completion action. If the action fails, resolve the reported failure; do not claim completion or emit an empty final answer.
 - Do not call the single-commit completion actions for a turn manifest.
