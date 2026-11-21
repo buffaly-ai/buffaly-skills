@@ -1,5 +1,8 @@
 # Package manifest history
 
+## 2026-11-21 — Select OpenAI when creating an accounting conversation
+Replace the unrecognized `DefaultProviderName` field with the host profile's canonical `Provider` field, keeping `openai` and every other field, including both project entries. With the old key, a new conversation without a request override uses an unscoped provider catalog and fails if an unrelated source fails. The corrected profile scopes that lookup; an explicitly selected broken provider still fails, and existing sessions are not rewritten. Five focused tests passed against the retained Build 1564 SDK (no database or installed settings writes); production acceptance is separate.
+
 ## 2026-10-19 - Register the accounting skill ActionRoot for this profile only
 Set PromptContext=IntelligenceFactoryAccountingSkill. Existing host root composition keeps CRM root and adds this skill's accounting ActionRoot; no core registration change. The prior connected UI lacked all nested accounting tools despite callable runtime methods. Actual runtime enumeration now finds12 accounting actions;55/55 tests pass. Other installation/nonadmin profiles unchanged. Live post-publication proof belongs in the activation receipt.
 
