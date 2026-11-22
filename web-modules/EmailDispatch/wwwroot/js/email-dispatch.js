@@ -167,20 +167,41 @@
     if(disposition) { if(conversationThread){location.hash="#thread/"+encodeURIComponent(conversationThread);return;} location.hash="#inbox"; }
    else { await reload(true); notify("Restored to review."); }
   }
-  function openConfirm(work,control,repeat=false) { actingWork=work; confirmMethod=repeat?"SendAgain":"ConfirmDispatch"; confirmSourceRevision=selectedEmail.SourceRevision; $("confirm-title").textContent=repeat?"Send again":"Confirm dispatch"; $("confirm-send").lastChild.textContent=repeat?"Send again":"Send"; $("confirm-subject").textContent=selectedEmail.Email.Subject||"No subject"; $("confirm-sentence").textContent=(repeat?"Sends your follow-up and this email to ":"Sends this email to ")+work.Destination+"."; document.querySelector('label[for="confirm-note"]').textContent=repeat?"Follow-up instructions":"Note to the agent (optional)"; $("confirm-note").value=failedInstructions.get(confirmMethod+":"+work.WorkKey)?.Note??""; confirmDialog.open(control); }
+  function openConfirm(work,control,repeat=false) { actingWork=work; confirmMethod=repeat?"SendAgain":"ConfirmDispatch"; confirmSourceRevision=selectedEmail.SourceRevision; $("confirm-title").textContent=repeat?"Send again":"Confirm dispatch"; $("confirm-send").lastChild.textContent=repeat?"Send again":"Send"; $("confirm-send-archive").lastChild.textContent=repeat?"Send again and archive":"Send and archive"; $("confirm-subject").textContent=selectedEmail.Email.Subject||"No subject"; $("confirm-sentence").textContent=(repeat?"Sends your follow-up and this email to ":"Sends this email to ")+work.Destination+"."; document.querySelector('label[for="confirm-note"]').textContent=repeat?"Follow-up instructions":"Note to the agent (optional)"; $("confirm-note").value=failedInstructions.get(confirmMethod+":"+work.WorkKey)?.Note??""; confirmDialog.open(control); }
    function openNote(work,control) { actingWork=work; $("note-text").value=failedInstructions.get("DispatchWithGuidance:"+work.WorkKey)?.Note??failedInstructions.get("AddDispatchNote:"+work.WorkKey)?.Note??""; $("note-subject").textContent=selectedEmail.Email.Subject||"No subject"; noteDialog.open(control); }
   function openPick(mode,work,control) { const failed=mode==="send"?failedInstructions.get("PickSession:"+work.WorkKey):null; pickMode=mode; actingWork=work; picked=failed?.Selection??null; $("pick-title").textContent=mode==="send"?"Choose destination and send":"Choose the rule's session"; $("pick-subject").textContent=mode==="send"?(selectedEmail.Email.Subject||"No subject"):selectedRule.EntityName; $("pick-note-field").hidden=mode!=="send"; $("pick-note").value=failed?.Note??""; $("pick-search").value=""; $("pick-confirm").lastChild.textContent=mode==="send"?"Send to selected session":"Use this session"; pickSelection(); pickDialog.open(control); pickGrid.reset(); }
   function pickSelection() { $("pick-count").textContent=picked?"Selected: "+picked.Name:"No session selected"; $("pick-confirm").disabled=!picked; }
   function openCreate(work,control) { actingWork=work;const failed=failedInstructions.get("CreateSessionAndSend:"+work.WorkKey);$("create-subject").textContent=selectedEmail.Email.Subject||"No subject";$("create-name").value=work.Creation?.Name??failed?.SessionName??"";$("create-name").readOnly=!!work.Creation;$("create-note").value=failed?.Note??"";createDialog.open(control); }
  // Reports the work's new state, so a send the destination did not accept is never described as sent.
-  async function submitInstructions(control,method,values,restore) {
-   const work=actingWork, key=selectedEmail.Email.ObservationKey, selection=method==="PickSession"?picked:null;
+  async function submitInstructions(control,method,values,restore,archiveAfterSend=false) {
+   const work=actingWork, key=selectedEmail.Email.ObservationKey, subject=selectedEmail.Email.Subject||"No subject", selection=method==="PickSession"?picked:null;
+   let accepted=false;
    if(submissions.has(work.WorkKey)) return;
    // Capture the exact command before closing: another email/dialog may become active while it runs.
     submissions.add(work.WorkKey); control?.close(); works();
-   notify("Submitting instructions…","Info");
+   if(archiveAfterSend) location.hash="#inbox";
+   else notify("Submitting instructions…","Info");
    try {
       const result=await request(EmailWorks,method,values);
+      if(archiveAfterSend) {
+       // Never hide uncertain/rejected/prior-evidence work. The existing archive owner runs only after admission.
+       accepted=result.Accepted===true;
+       if(!accepted) {
+        failedInstructions.set(method+":"+work.WorkKey,{...values});
+        if(result.Status==="PreviouslyHandled"&&values.Note)failedInstructions.set("SendAgain:"+work.WorkKey,{Note:values.Note});
+        notify(`Not archived: “${subject}”. ${EmailDispatchUi.state(result.Status)[0]}. Open the email to review it.`,"Warning");
+       } else {
+        failedInstructions.delete(method+":"+work.WorkKey);
+        await request(EmailWorks,"SetDisposition",{WorkKey:work.WorkKey,Disposition:"Archived"});
+        EmailConversations.invalidate();
+        notify(`Sent and archived: “${subject}”.`,"Success");
+       }
+       submissions.delete(work.WorkKey);
+       inboxGrid.invalidate();
+       if(!$('view-inbox').hidden)inboxGrid.Refresh(true);
+       if(isCurrentEmail(key)&&!document.querySelector("dialog[open]"))await run(null,()=>reload(false));
+       return;
+      }
       inboxGrid.invalidate();
      if(result.Status==="PreviouslyHandled"&&values.Note)failedInstructions.set("SendAgain:"+work.WorkKey,{Note:values.Note});
     failedInstructions.delete(method+":"+work.WorkKey);
@@ -195,6 +216,16 @@
     else notify(result.Status==="PreviouslyHandled"?"Prior email evidence found. Review the updated decision before sending again.":EmailDispatchUi.state(result.Status)[0]+".",result.Accepted===true?"Success":"Warning");
    } catch(error) {
     submissions.delete(work.WorkKey);
+    if(archiveAfterSend) {
+     // A failed archive must never offer to resend an already accepted delivery; keep the two outcomes distinct.
+     if(!accepted)failedInstructions.set(method+":"+work.WorkKey,{...values});
+     inboxGrid.invalidate();
+     if(!$('view-inbox').hidden)inboxGrid.Refresh(true);
+     console.error("Send and archive failed",error);
+     notify(accepted?`Sent, but not archived: “${subject}”. Open the email and choose Archive; do not send it again.`:`Send could not be confirmed: “${subject}”. Not archived. Open the email to check delivery before trying again.`,"Error");
+     if(isCurrentEmail(key)&&!document.querySelector("dialog[open]"))await run(null,()=>reload(false));
+     return;
+    }
     failedInstructions.set(method+":"+work.WorkKey,{...values,Selection:selection});
      if(isCurrentEmail(key)&&!document.querySelector("dialog[open]")) {
       // A refused command may have changed durable state. Read it before restoring any command.
@@ -296,7 +327,7 @@
  function submit(id,control,action,background=false){$(id).addEventListener("submit",event=>{event.preventDefault();run(background?null:$(control),action);});}
  function click(id,action,background=false){$(id).addEventListener("click",()=>run(background?null:$(id),action));}
   submit("search-form","search-form",()=>inboxGrid.reset());$("state").addEventListener("change",()=>run(null,async()=>{reviewPreferences.set(reviewFilterKey,$("state").value);await inboxGrid.reset();}));submit("rule-search-form","rule-search-form",()=>rulesGrid.reset());
-  submit("confirm-form","confirm-send",()=>{const note=$("confirm-note").value, method=confirmMethod, values={WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,Note:note};if(method==="SendAgain")values.ExpectedSourceRevision=confirmSourceRevision;return submitInstructions(confirmDialog,method,values,work=>{openConfirm(work,null,method==="SendAgain");$("confirm-note").value=note;});},true);
+  $("confirm-form").addEventListener("submit",event=>{event.preventDefault();const archive=event.submitter?.id==="confirm-send-archive",note=$("confirm-note").value,method=confirmMethod,values={WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,Note:note};if(method==="SendAgain")values.ExpectedSourceRevision=confirmSourceRevision;run(null,()=>submitInstructions(confirmDialog,method,values,work=>{openConfirm(work,null,method==="SendAgain");$("confirm-note").value=note;},archive));});
     $("note-form").addEventListener("submit",event=>{event.preventDefault();const note=$("note-text").value,method=event.submitter?.id==="note-dispatch"?"DispatchWithGuidance":"AddDispatchNote";run(null,()=>submitInstructions(noteDialog,method,{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,Note:note},work=>{openNote(work);$("note-text").value=note;}));});
    submit("create-form","create-send",()=>{const name=$("create-name").value,note=$("create-note").value;return submitInstructions(createDialog,"CreateSessionAndSend",{WorkKey:actingWork.WorkKey,ExpectedDecisionRevision:actingWork.DecisionRevision,SessionName:name,Note:note},work=>{openCreate(work);$("create-note").value=note;});},true);
  $("pick-grid").addEventListener("change",event=>{const input=event.target.closest("input[name=pick-session]");if(!input)return;picked={SessionKey:input.value,Name:input.dataset.name};pickSelection();});

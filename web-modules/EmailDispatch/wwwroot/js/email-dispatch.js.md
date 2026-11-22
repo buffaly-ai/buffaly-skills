@@ -1,5 +1,11 @@
 # email-dispatch.js history
 
+## 2026-11-22 — Send and archive without blocking review
+Matt requested a combined confirmation action and immediate return to the message list. submitInstructions now captures an optional archiveAfterSend flag with the exact work/revision/note before closing the shared dialog and navigating to Review. The same generated ConfirmDispatch/SendAgain operation runs once; only Accepted=true invokes existing SetDisposition Archived. No archive on prior evidence, rejection, uncertainty or send failure; archive failure reports accepted-send separately and never retries delivery. Search/filter/page remain owned by the existing inbox grid; completion invalidates current lists and never redirects, reopens another dialog or overwrites another draft. Failed send retains instructions; send-only behavior remains. This is in-tab background submission, not a durable browser-close job. Dispatcher-local archive only, no Gmail write/API/schema/core changes.
+Validation: final source focused16/16 passed, including seven new desktop1440/phone390 success/error/background cases, real synthetic archive persistence/reload, exact payload/one request, other-email editing and existing send-only/dialog/archiving regressions. Initial combined13/16 exposed added-button focus-trap count plus two stale existing test assumptions; updated those assertions without weakening mutation guards. Installed acceptance follows separately.
+
+Final source17/17 includes explicit repeat-and-archive with unchanged ExpectedSourceRevision guard; repeat button says Send again and archive. Routine70/70 passes. Navigation-only sibling regression now isolates external account availability after one provider500/feedback timing failure; production account owner is unchanged.
+
 ## 2026-11-22 — Analyze chooses a session
 Replaced default Analyze note permitting no action with destination selection: primary owner for multi-issue messages, scoped assignment, do not send. UI-STD-01: same single Analyze action and existing manual fallback; no new controls or layouts. Existing explicit-analysis browser test checks exact posted note, one request, no send, Pending request persistence and no repeat on reload. Focused corrected run4/4 passed with fake-agent flow tests; desktop1440/phone390 source screenshots captured. Installed exact-message evidence follows release.
 

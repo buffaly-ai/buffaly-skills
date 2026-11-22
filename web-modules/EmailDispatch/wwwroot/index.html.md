@@ -1,5 +1,9 @@
 # Email Dispatch standalone milestone
 
+## 2026-11-22 — explicit Send and archive confirmation
+Added primary Send and archive beside secondary Send and existing Cancel in the shared confirmation footer; note field, dialog identity and shared button/icon/style owners retained. UI-STD-01 Rule10 task: submit the displayed email with Matt's note and continue reviewing. The two send choices express distinct effects; Cancel sends nothing, Send retains existing behavior, Send and archive returns immediately to Review and archives only after accepted delivery. No extra confirmation, styles or duplicate page control. Script cache key0.2.37.
+Validation: final source focused16/16 passed, including desktop1440/phone390 button geometry/no overflow and four-control focus trap, delayed-response return/list refresh/other-email draft, safe failure outcomes and existing send-only checks. No business message sent. Installed screenshots and receipt verification follow the canonical Local package installation.
+
 ## 2026-11-03 — processed-mail archive discovery and integrated validation
 Renamed the existing Reviewed filter to Processed & archived; its server filter and paging/search contract remain unchanged. Final CSS/behavior cache keys are 0.2.4; UI helper remains 0.2.3. Archive reuses existing local disposition and preserves Gmail and receipts. Combined source-host browser validation passed 3/3: archive/restore with real SQL synthetic fixture at 1440/390, inbox row/check-now safeguards, and long-body detail walkthrough including exact-instruction evidence navigation/reload at desktop/mobile/zoom. This supersedes the sibling's earlier unrun walkthrough limitation for the integrated source, not its accurately recorded historical test outcomes. Installed package validation follows separately.
 
