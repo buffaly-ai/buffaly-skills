@@ -1,4 +1,12 @@
-# Buffaly Browser Agent 0.2.54 / WebModule 0.1.62 validation
+# Buffaly Browser Agent validation
+
+## Chrome 0.2.69: server draft ownership
+
+Linux Computer Use observed a correctly typed staging origin revert to the active Matt.local origin before Save. Production `refreshServers` wrote both live status and the editable origin every ten seconds, on visibility changes, and on manual refresh. Refresh now updates only status. Add and Settings retain their form-owned origin until an explicit edit/open/save operation; authorization reads the selected active server origin rather than a canceled draft. No service-worker storage, grants, server authorization, or session sidebar behavior changes.
+
+`npm run test:server-draft` renders the production React App in real Chrome with mocked Chrome transport (no external server writes). Seventeen assertions cover periodic/manual/visibility refresh, late asynchronous replies, exact Add and Settings saves, cancel/reopen, and active-server authorization after an abandoned draft and server change. Before the fix, this fixture reproduced the origin clobber at its first refresh assertion. It is included in `release:check`. This fixture does not substitute for normal Linux Computer Use staging selection or final live terminal pixels.
+
+## Earlier validation history
 
 0.2.54 / WebModule 0.1.62 make existing ExtensionBrowser conversations server-authoritative and reusable. New `Chrome-<guid>` sessions register in an installation-scoped atomic catalog; the authenticated list route resolves current Buffaly session names and bounded activity metadata; a one-time owner/default-instance-verified reconciliation adopts eligible pre-catalog sessions. Chrome treats successful server lists as authoritative for durable identity and rename metadata, preserves local browser-context convenience state, retains the last successful cache on list failure, and refreshes visible side panels without overlapping requests. Selection continues to open the same immutable SessionKey and never creates a replacement. Focused contract tests and the extension release gate enforce these boundaries.
 

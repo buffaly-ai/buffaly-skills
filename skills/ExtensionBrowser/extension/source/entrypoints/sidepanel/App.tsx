@@ -74,6 +74,7 @@ export default function App() {
   const [showServerSettings, setShowServerSettings] = useState(false);
   const [showDiagnostics, setShowDiagnostics] = useState(false);
   const [serverName, setServerName] = useState('Local Buffaly');
+  // Form draft only. Status refreshes must not own or replace unsaved input.
   const [origin, setOrigin] = useState(defaultOrigin);
   const [microphoneError, setMicrophoneError] = useState<{ name: string; message: string } | null>(null);
   const [microphoneDiagnostic, setMicrophoneDiagnostic] = useState<MicrophoneDiagnostic | null>(null);
@@ -98,7 +99,6 @@ export default function App() {
       if (!response?.ok || !response.data) throw new Error(response?.error || 'Saved Buffaly servers could not be read.');
       setServersStatus(response.data);
       setConnected(response.data.State === 'Ready');
-      if (response.data.ActiveServer) setOrigin(response.data.ActiveServer.Origin);
       return response.data;
     })();
     refreshServersInFlight.current = refresh;
@@ -311,7 +311,7 @@ export default function App() {
   const connect = useCallback(async () => {
     setBusy('connect'); setError('');
     try {
-      const authorization = await chrome.runtime.sendMessage({ type: 'authorize_buffaly_installation', origin, name: serversStatus.ActiveServer?.Name || serverName }) as WorkerResponse<{ Origin: string }> | undefined;
+      const authorization = await chrome.runtime.sendMessage({ type: 'authorize_buffaly_installation', origin: serversStatus.ActiveServer?.Origin || origin, name: serversStatus.ActiveServer?.Name || serverName }) as WorkerResponse<{ Origin: string }> | undefined;
       if (!authorization) throw new Error('The ExtensionBrowser service worker did not answer. Reload the extension and reopen the side panel.');
       if (!authorization.ok || !authorization.data) throw new Error(authorization.error || 'Buffaly authorization failed.');
       const status = await refreshServers();
@@ -328,7 +328,7 @@ export default function App() {
       setConversation(requireDurableConversation(created.data as ConversationBootstrap));
     } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
     finally { setBusy(''); }
-  }, [getBrowserContextId, origin, refreshServers, serverName, serversStatus.ActiveServer?.Name]);
+  }, [getBrowserContextId, origin, refreshServers, serverName, serversStatus.ActiveServer?.Name, serversStatus.ActiveServer?.Origin]);
 
   const newConversation = useCallback(async () => {
     if (!connected) return;
