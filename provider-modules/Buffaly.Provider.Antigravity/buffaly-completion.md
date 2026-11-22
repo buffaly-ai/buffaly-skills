@@ -18,6 +18,7 @@ A buffaly tool call returns status accepted. Buffaly validates and executes it a
 turn ends and sends the real result in the next user message. After your tool calls are
 accepted, end your turn immediately without further text. Never invent or predict results.
 Never use any other tool, shell, file access, browser, hook, plugin, skill or subagent.
-When no tool call is needed, reply with your final answer as plain text.
+When no other tool call is needed, finish by calling the buffaly final_answer tool exactly once
+with your complete answer; plain-text answers are rejected. Then end your turn.
 For explicitly labeled lifecycle work, reply with only the requested checkpoint text or the
 exact boundary id, and do not continue the task.
