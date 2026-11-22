@@ -517,12 +517,16 @@
 	function renderProviderRows(rows) {
 		var body = document.querySelector("[data-provider-rows]");
 		if (!rows || rows.length === 0) {
-			body.innerHTML = emptyRow(8);
+			body.innerHTML = emptyRow(12);
+			OnFormatGrid("usage-provider-grid");
 			return;
 		}
 		body.innerHTML = rows.map(function (row) {
-			return "<tr><td>" + escapeHtml(row.Provider || "(unknown)") + "</td><td>" + escapeHtml(row.ModelName || "(unknown)") + "</td><td>" + escapeHtml(row.Transport || "(unknown)") + "</td><td class=\"text-end\">" + formatNumber(row.Requests) + "</td><td class=\"text-end fw-bold\">" + formatNumber(row.TotalTokens) + "</td><td class=\"text-end\">" + escapeHtml(formatMilliseconds(row.AverageLatencyMs)) + "</td><td class=\"text-end\">" + formatDimension(row.CachedTokens, row.DimensionAvailability.CachedTokensAvailable) + "</td><td class=\"text-end\">" + formatDimension(row.ReasoningTokens, row.DimensionAvailability.ReasoningTokensAvailable) + "</td></tr>";
+			var operation = { completion: "Ordinary reply", corrective_attempts: "Corrective attempts", native_compaction: "Native compaction", unclassified: "Unclassified" }[row.OperationKind];
+			if (!operation) throw new Error("Unknown usage operation category.");
+			return "<tr><td>" + escapeHtml(row.Provider || "(unknown)") + "</td><td>" + escapeHtml(row.ModelName || "(unknown)") + "</td><td>" + escapeHtml(row.Transport || "(unknown)") + "</td><td>" + operation + "</td><td class=\"IntegerNumber text-end\" data-integer=\"" + row.Requests + "\"></td><td class=\"IntegerNumber text-end\" data-integer=\"" + row.InputTokens + "\"></td><td class=\"IntegerNumber text-end\" data-integer=\"" + row.TotalTokens + "\"></td><td class=\"text-end\">" + escapeHtml(formatMilliseconds(row.AverageLatencyMs)) + "</td><td class=\"text-end\">" + formatDimension(row.CachedTokens, row.DimensionAvailability.CachedTokensAvailable) + "</td><td class=\"text-end\">" + (row.DimensionAvailability.CachedTokensAvailable && row.InputTokens > 0 ? formatPercent(row.CachedTokens / row.InputTokens * 100) : "not exposed") + "</td><td class=\"text-end\">" + (row.CacheCreationTokens === null ? "not reported" : "<span class=\"IntegerNumber\" data-integer=\"" + row.CacheCreationTokens + "\"></span>") + "</td><td class=\"text-end\">" + formatDimension(row.ReasoningTokens, row.DimensionAvailability.ReasoningTokensAvailable) + "</td></tr>";
 		}).join("");
+		OnFormatGrid("usage-provider-grid");
 	}
 
 	function renderSessionRows(rows) {

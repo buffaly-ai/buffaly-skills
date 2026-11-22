@@ -14,3 +14,9 @@
 ## 2026-11-06 — Remove eager eviction rendering
 - `loadDashboard` updates only a navigation link to the separate report with range/browser zone/session. Main response/render/clear paths no longer reference progressive-eviction data. Provider/model/transport are not copied because the original statistic does not support them; link omits `run` so opening it is cheap.
 - Validation: Node suite 8/8 in America/New_York exercises actual main script and shared formatter, range/session link propagation, no report fetch, absent eviction rendering, exact totals, errors and optional graphs. C# suite 11/11 and Razor compilation pass with existing warnings. No installed browser/live latency acceptance; no deployment/restart.
+
+
+## 2026-11-22 — Readable operation breakdown
+- `renderProviderRows` labels ordinary replies, corrective attempts, native compaction and explicitly unclassified receipts. Shows input, cache reads, cache/input percentage and nullable cache writes; counts remain ledger rows rather than individual attempts. Unknown operation tokens fail visibly, unknown writes differ from known zero.
+- Provider list now uses existing shared Grid/OnFormatGrid for count cells and empty rebinding; no new formatter/styles, controls, request, client filtering or diagnostic JSON exposed. Existing all-in cards and chart aggregation unchanged.
+- Validation: Node11/11 executes actual renderer/shared formatters, exact historical-style counters, zero/unknown writes and all-in card preservation. Actual-reference C#14/14 passes. No installed authenticated UI or deployment performed; existing page-owned legacy styling outside changed table remains unchanged (UI-STD-01 Principle5 legacy issue, not precedent for new styles).
