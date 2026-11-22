@@ -150,7 +150,7 @@
    const processed=!work.LocalDisposition&&["Accepted","NoAction","Notice","WakeRecorded","PreviouslyHandled"].includes(work.State);
     if(isOpen(work)) {
        const unanalyzed=["Unclassified","AgentEvaluationRequired","Disabled"].includes(work.State);
-       if(unanalyzed) actions.append(button("Analyze email",()=>{actingWork=work;return submitInstructions(null,"AddDispatchNote",{WorkKey:work.WorkKey,ExpectedDecisionRevision:work.DecisionRevision,Note:"Analyze this email and suggest a destination or no action."},current=>openNote(current));},true,"fa-search"));
+       if(unanalyzed) actions.append(button("Analyze email",()=>{actingWork=work;return submitInstructions(null,"AddDispatchNote",{WorkKey:work.WorkKey,ExpectedDecisionRevision:work.DecisionRevision,Note:"Choose the best existing destination session for this email. If it contains multiple issues, select the primary owner and scope the assignment. Do not send."},current=>openNote(current));},true,"fa-search"));
        actions.append(button("Choose destination and send",control=>openPick("send",work,control),!unanalyzed&&!isConfirmable(work)&&!work.CanSendAgain&&work.State!=="Error"));
       actions.append(button(work.Creation?"Continue session creation":"Create session and send",control=>openCreate(work,control)));
      actions.append(button("Ask the agent to reconsider",control=>openNote(work,control),work.State==="Error"));

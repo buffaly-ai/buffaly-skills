@@ -1,5 +1,8 @@
 # email-dispatch.js history
 
+## 2026-11-22 — Analyze chooses a session
+Replaced default Analyze note permitting no action with destination selection: primary owner for multi-issue messages, scoped assignment, do not send. UI-STD-01: same single Analyze action and existing manual fallback; no new controls or layouts. Existing explicit-analysis browser test checks exact posted note, one request, no send, Pending request persistence and no repeat on reload. Focused corrected run4/4 passed with fake-agent flow tests; desktop1440/phone390 source screenshots captured. Installed exact-message evidence follows release.
+
 ## 2026-11-03 — review P2: bound viewport-dependent iframe feedback
 The authenticated resize-message listener clamps finite positive sizes to120..2400px and skips identical assignments, replacing the200000px ignore guard that allowed feedback growth. Retained100vh styling saturates at the ceiling, and the generated document keeps iframe scrolling available for overflow. Content-sized mail still auto-sizes below the ceiling; longer mail scrolls without losing content. Existing source/origin/token guards, per-open lifecycle, captured-text fallback and all dispatch commands are unchanged. UI-STD-01 Rule10: task remains read/review one email; no new commands, help, panels or styles; existing review/navigation commands retain their meaning. Validation: baseline regression4320px/1.5seconds; fixed formatted4/4, combinedUI7/7, routine43/43 pass at1440/390 including final-link access after content growth. Source only; installed package unchanged.
 
