@@ -1,5 +1,9 @@
 # verify-dom-matrix-chrome.mjs history
 
+## 2026-11-22 — Clipped Ace-style terminal prompt regression
+- Added a terminal owner with a separate clipped100px scroller,126px painted layer and tiny transparent sibling proxy, matching the live CloudShell layering that hides its prompt when the surface is unnecessarily centered. Proves initial visible prompt, exactly-once paste consumption and preservation of scrollTop/output position after action. The prior production function reaches143 checks with exactly this new failure; nearest alignment passes all143.
+- npm ci and full release:check pass38 contracts,29 pointer assertions,143 matrix assertions,old-guard control,page-context bridge,TypeScript,build,ZIP and production audit0. Existing negative guards and ordinary DOM behavior remain covered. These fixture results do not replace installed corrected-release screenshot acceptance.
+
 ## 2026-11-21 — Review regression: non-pointer select presentation
 - Added direct and ancestor-inherited pointer-events:none shells with explicit auto on transparent native select. Proves computed styles, actual center hit, correct second-row identity, exactly one composed input/native change, receipt value and visible app caption. Both reproduced the delivered shell-guard failure before production changes; the first correction exposed the same assumption in caption validation, also repaired.
 - Expanded styled-select negatives to run both with normal pointers and with shell-none/select-auto. Added display:none, hidden visibility, zero layout and transparent ancestor; all rejected without value/events. Cover explicitly restores auto so it remains a real pointer obstruction under a none shell; an inheriting none cover is correctly not an obstruction.

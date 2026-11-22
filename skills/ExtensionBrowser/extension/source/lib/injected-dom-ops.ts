@@ -413,7 +413,11 @@ export function injectedDomOperation(request: InjectedDomOperationRequest): Inje
   }
 
   function obstructionAtCenter(el: Element, exactSurface = false): string | null {
-    (el as HTMLElement).scrollIntoView?.({ block: 'center', inline: 'center' });
+    // A terminal's painted layer can slightly exceed its clipped viewport.
+    // Centering an already usable layer scrolls its prompt out of that viewport.
+    // Nearest alignment preserves visible output; the exact center hit is still required.
+    const alignment = exactSurface ? 'nearest' : 'center';
+    (el as HTMLElement).scrollIntoView?.({ block: alignment, inline: alignment });
     const rect = el.getBoundingClientRect();
     const x = rect.left + rect.width / 2;
     const y = rect.top + rect.height / 2;

@@ -233,6 +233,15 @@ const tests = () => {
     rejects('type_text', '#proxy', 'ELEMENT_NOT_VISIBLE', { text: 'ordinary hidden input stays blocked' });
     assert(document.activeElement === proxy, 'proxy focus actual');
   });
+  run('terminal clipped Ace-style surface retains visible prompt', '<div id="terminal" style="position:relative;width:500px;height:100px"><div id="scroller" style="height:100px;overflow:hidden"><pre id="output" style="margin:0;height:126px;background:#eee">$ </pre></div><textarea id="proxy" style="position:absolute;left:30px;top:13px;width:3px;height:1px;padding:0;border:0;opacity:0;pointer-events:none"></textarea></div>', () => {
+    const scroller = document.querySelector('#scroller'), output = document.querySelector('#output');
+    let received = 0;
+    document.querySelector('#proxy').addEventListener('paste', e => { received++; output.textContent += e.clipboardData.getData('text/plain'); e.preventDefault(); });
+    assert(scroller.scrollTop === 0 && output.getBoundingClientRect().top >= scroller.getBoundingClientRect().top, 'prompt initially visible in clipped surface');
+    const r = call('terminal_paste_text', terminalArgs());
+    assert(r.ok && received === 1, 'clipped surface delivers exactly once');
+    assert(scroller.scrollTop === 0 && output.getBoundingClientRect().top >= scroller.getBoundingClientRect().top, 'action must not center an already usable surface and clip its prompt');
+  });
   for (const kind of ['trusted-only', 'input-only', 'no-listener']) run(`unsupported terminal ${kind}`, terminal, () => {
     let received = 0;
     const proxy = document.querySelector('#proxy');
