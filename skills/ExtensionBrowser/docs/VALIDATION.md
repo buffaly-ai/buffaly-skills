@@ -1,5 +1,9 @@
 # Buffaly Browser Agent validation
 
+## Chrome 0.2.70: explicit optional debugger UI
+
+The Agent card previously said 'Enable control when this conversation needs to click or type' and offered a generic Enable button that actually attached chrome.debugger. That contradicted the ordinary no-debugger DOM contract and invited unnecessary escalation. The card now explicitly labels optional debugger access, explains that ordinary DOM clicks/typing/selections do not require it, and labels Attach debugger / Detach debugger actions accurately. Consent, attach/detach behavior, permissions, DOM guards and tool delivery are unchanged. The production React Chrome fixture adds four detached/attached/restored-state copy assertions (21 total). This copy correction is a distinct release, not a replacement of published0.2.69 bytes. Live0.2.69 staging-form acceptance proceeds independently; no staging deploy/reload during active Computer Use input.
+
 ## Chrome 0.2.69: server draft ownership
 
 Linux Computer Use observed a correctly typed staging origin revert to the active Matt.local origin before Save. Production `refreshServers` wrote both live status and the editable origin every ten seconds, on visibility changes, and on manual refresh. Refresh now updates only status. Add and Settings retain their form-owned origin until an explicit edit/open/save operation; authorization reads the selected active server origin rather than a canceled draft. No service-worker storage, grants, server authorization, or session sidebar behavior changes.

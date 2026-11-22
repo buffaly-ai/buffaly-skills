@@ -11,7 +11,7 @@ const setup = () => {
   const event = { addListener() {}, removeListener() {} };
   window.fixture = {
     active: { ServerId: 'matt', Name: 'Matt.local', Origin: 'https://matt.example.test:10584' },
-    reads: 0, saves: [], authorizations: [], periodic: null, release: null, defer: false,
+    reads: 0, saves: [], authorizations: [], periodic: null, release: null, defer: false, debuggerAttached: false,
   };
   const f = window.fixture;
   const status = () => ({ Servers: [{ ...f.active, Authorized: true, Conversations: [] }], ActiveServer: { ...f.active }, State: 'SignInRequired', Version: 'test', ChannelConnected: false, InstallationState: '', LastConnectedUtc: '', RegisteredExtensionVersion: 'test', ToolSchemaVersion: 1 });
@@ -26,7 +26,7 @@ const setup = () => {
         response = { ok: true, data: status() }; break;
       case 'list_extension_browser_instances': response = { ok: true, data: [] }; break;
       case 'get_buffaly_conversation_bootstrap': response = { ok: false }; break;
-      case 'tool_call': response = { ok: true, data: { debuggerAttached: false, activeTab: null } }; break;
+      case 'tool_call': response = { ok: true, data: { debuggerAttached: f.debuggerAttached, activeTab: null } }; break;
       case 'save_buffaly_server':
         f.saves.push(message); f.active = { ServerId: message.serverId || 'staging', Name: message.name, Origin: message.origin };
         response = { ok: true, data: { Server: { ...f.active, Authorized: false, Conversations: [] } } }; break;
@@ -48,6 +48,12 @@ const tests = async () => {
   const checkRefresh = () => document.querySelector('[aria-label="Check selected server"]').click();
   await settle(); await settle();
   assert(f.reads > 0 && f.periodic, 'initial status and real periodic callback installed');
+  assert(document.querySelector('.control-card strong').textContent === 'Optional debugger access', 'debugger must be explicitly optional');
+  assert(document.querySelector('.control-card p').textContent.includes('do not require the debugger') && document.querySelector('.control-card button').textContent === 'Attach debugger', 'ordinary DOM actions must not be labeled debugger-dependent');
+  f.debuggerAttached = true; document.querySelector('[aria-label="Refresh page context"]').click(); await settle();
+  assert(document.querySelector('.control-card strong').textContent === 'Debugger attached' && document.querySelector('.control-card button').textContent === 'Detach debugger', 'attached debugger status and action are explicit');
+  f.debuggerAttached = false; document.querySelector('[aria-label="Refresh page context"]').click(); await settle();
+  assert(document.querySelector('.control-card strong').textContent === 'Optional debugger access', 'detached status restores optional debugger copy');
   button('Add').click(); await settle();
   const draft = 'https://staging.example.test:58210';
   type(input('.add-server', 'Name'), 'Staging 58210'); type(input('.add-server', 'Origin'), draft); await settle();
