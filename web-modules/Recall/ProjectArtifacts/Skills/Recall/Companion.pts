@@ -41,3 +41,10 @@ prototype ToSendRecallContext : RecallCompanionAction
     function Execute(string feedbackMarkdown) : string
     { return RecallResearch.SendContext(_opsAgent, feedbackMarkdown); }
 }
+[InfinitivePhrase("to send reviewed context to the parent")]
+prototype ToSendReviewedRecallContext : RecallCompanionAction
+{
+    Description = @"Only after ToSendRecallContext returns ParentFinalReviewRequired: judge the returned originating parent final answer against your finding. If it would not materially change the answer or required action, finish locally with NoMaterialChange and send nothing. If it warrants reopening, pass the same feedbackMarkdown and a concrete materialImpactReason explaining the correction or important omission. No turn/message key or hash is required. The original result and finding are checked internally; if either changed, the tool returns a fresh ParentFinalReviewRequired without sending. All normal source and companion-control checks still apply.";
+    function Execute(string feedbackMarkdown, string materialImpactReason) : string
+    { return RecallResearch.SendReviewedContext(_opsAgent, feedbackMarkdown, materialImpactReason); }
+}
