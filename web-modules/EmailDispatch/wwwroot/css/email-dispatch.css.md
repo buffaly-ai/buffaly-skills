@@ -1,5 +1,8 @@
 # Email Dispatch shared visual owner
 
+## 2026-11-23 — finger-friendly reader Previous/Next
+Shared ed-record-nav groups native navigation links at the end of the existing reader tools row, using the existing text/theme and Font Awesome chevrons, not a second button style or page-local stylesheet. Links have at least96px width and48px height and wrap with the existing toolbar. Adapt the inline conversation reader's empty-tools suppression to the hidden navigation host so it retains the prior compact layout. Source navigation4/4 and combined UI24/24 pass, including1024x768/768x1024/390x844 touch geometry/no horizontal page overflow and three conversation regressions. Installed screenshots follow activation.
+
 ## 2026-11-23 — finger-friendly list selection
 Shared GridSelection labels have48px minimum tap width/height around native24px checkboxes in56px selection cells. Checked rows share a subtle highlight. Coarse-pointer devices get48px minimum button/filter/search/pager/refresh height; final stylesheet position preserves it over existing compact rules. No new font sizes, icons, per-view stylesheet or checkbox simulation. Reused by Review and Conversations. Source touch3/3 verifies padding taps, native state, header indeterminate, control geometry and no page overflow at1024x768/768x1024/390x844; combined regression18/18 and routine configured70/70 pass. Installed screenshot acceptance follows publication.
 

@@ -1,5 +1,8 @@
 # Email Dispatch standalone milestone
 
+## 2026-11-23 — sequential reading navigation
+Add the single shared email-navigation nav host beside Inbox in the existing reader tools, with meaningful Emails in this list label. Native Previous/Next links are owned by shared JS and stylesheet, shown only for the matching originating Review list, without moving business commands, body, dialogs or evidence. Advance custom stylesheet/helper/Review cache keys coherently to0.2.13/0.2.20/0.2.39. UI-STD-01 task: read consecutive emails in the selected list; no duplicate heading, explanatory panel, page font/style or invented disabled command. Source navigation4/4 and final UI24/24 pass including tablet/phone geometry, boundaries and conversations. Normal installed proof follows publication.
+
 ## 2026-11-23 — tablet selection and bulk-analysis assets
 Advance shared CSS0.2.12, selector helper0.2.19 and Review script0.2.38 cache identities so reload loads finger-friendly selection and Analyze selected coherently. Existing heading command slot, search/filter/paging, dialogs and generated clients unchanged; no page-local controls/styles added. UI task is select emails and request analysis from Review, with existing Archive in the same shared command row. Source touch3/3 and combined regression18/18 plus routine70/70 pass; installed readback/screenshots follow normal Local package activation.
 

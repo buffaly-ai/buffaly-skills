@@ -4,6 +4,8 @@
 .ed-select-target{display:flex;align-items:center;justify-content:center;min-width:48px;min-height:48px;margin:0;cursor:pointer;touch-action:manipulation}
 .ed-select-target input{width:24px;height:24px;margin:0;accent-color:var(--ed-accent);cursor:pointer}
 .ed-grid tbody tr:has(input[data-grid-select]:checked){background:#edf3fd}
+/* Reader navigation stays a link, with a finger-sized target and the shared theme/icon owners. */
+.ed-record-nav{display:flex;align-items:center;gap:1rem;margin-left:auto;flex-wrap:wrap}.ed-message-tools .ed-record-nav a{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-width:96px;min-height:48px;padding:.5rem}
 /* Heading commands share the title baseline; search commands keep their icon and label together. */
 .ed-heading .ed-actions{margin-top:0}.ed-search>.btn{flex:0 0 auto;white-space:nowrap}
 .ed-sync-tools{display:flex;align-items:center;gap:.5rem}.btn.ed-icon-button{padding:.35rem .55rem;min-height:0}.ed-grid tr[data-row-href]{cursor:pointer}
@@ -40,7 +42,7 @@ html[data-keyboard=false] [id^=instruction-]:focus{outline:none}
 
 /* Shared thread workspace: compact message headers with the selected shared reader expanded inline. */
 #conversation-reader .ed-back,#conversation-reader .ed-subject{display:none}
-#conversation-reader .ed-message-tools:has(.ed-back:only-child){display:none}
+#conversation-reader .ed-message-tools:has(.ed-record-nav[hidden]){display:none}
 .ed-grid .ed-thread-open>td{padding:0;vertical-align:top}
 .ed-grid a[aria-current=true]{color:var(--ed-text)}
 #conversation-reader .ed-reading-surface{padding:1rem;}

@@ -131,7 +131,7 @@ window.EmailDispatchUi = (() => {
  class PagedGrid extends JsonWsGrid3 {
   constructor(content, pager, search, load, render, empty) { super(); this.ContentControlID=content; this.PagingControlID=pager; this.SearchControlID=search; this.SkipSize=25; this.load=load; this.render=render; this.empty=empty; this.request=0; this.page={Items:[],HasMore:false}; this.OnBeforeRefresh=()=>this.busy(true); this.OnDataReceived=page=>{this.page=page;return page.Items.length?render(page.Items):`<div class="ed-empty">${empty}</div>`;}; this.OnComplete=()=>this.busy(false); }
   busy(value) { $(this.ContentControlID).setAttribute("aria-busy",String(value));$(this.ContentControlID).inert=value;$(this.PagingControlID).inert=value; }
-  MakeDataRequest(callback) { const request=++this.request; this.m_iConcurrentCalls++; this.load({Search:this.search,SkipRows:this.skip,NumRows:this.SkipSize}).then(page=>{if(request!==this.request){this.m_iConcurrentCalls--;return;}this.loadedAt=Date.now();this.loadedKey=this.viewKey();callback(page,request);}).catch(error=>{this.m_iConcurrentCalls--;if(request!==this.request)return;this.loadedAt=0;this.busy(false);$(this.ContentControlID).replaceChildren(text("p","Could not load this list.","ed-empty"),button("Try again",()=>this.Refresh(true))); notify("Could not load this list. Try again.","Error"); console.error(error);}); }
+   MakeDataRequest(callback) { const request=++this.request,args={Search:this.search,SkipRows:this.skip,NumRows:this.SkipSize,...this.parameters?.()}; this.m_iConcurrentCalls++; this.load(args).then(page=>{if(request!==this.request){this.m_iConcurrentCalls--;return;}this.loadedArgs=args;this.loadedAt=Date.now();this.loadedKey=this.viewKey();callback(page,request);}).catch(error=>{this.m_iConcurrentCalls--;if(request!==this.request)return;this.loadedAt=0;this.busy(false);$(this.ContentControlID).replaceChildren(text("p","Could not load this list.","ed-empty"),button("Try again",()=>this.Refresh(true))); notify("Could not load this list. Try again.","Error"); console.error(error);}); }
   viewKey(){return JSON.stringify([document.getElementById(this.SearchControlID)?.value??"",this.skip,this.extraKey?.()??""]);}
   activate(maxAge=10000){if(!this.loadedAt||document.getElementById(this.ContentControlID).getAttribute("aria-busy")==="true"||this.loadedKey!==this.viewKey()||Date.now()-this.loadedAt>=maxAge)this.Refresh(true);}
   invalidate(){this.loadedAt=0;}
@@ -142,7 +142,40 @@ window.EmailDispatchUi = (() => {
   cancelSearch() { clearTimeout(this.searchTimer);this.searchTimer=0;this.request++; }
   reset() { this.cancelSearch();this.skip=0; this.Refresh(true); }
  }
-  // Gmail's opaque cursors are adapted here, not translated into guessed offsets or downloaded whole-mailbox rows.
+   // A reader retains one bounded list page and its exact server query, never a client-side mailbox filter.
+   class RecordNavigation {
+    constructor(host,load,key,href,select){this.host=document.getElementById(host);this.load=load;this.key=key;this.href=href;this.select=select;this.version=0;this.pages=new Map();}
+    capture(query,page){this.pages.clear();return {Query:{...query},Keys:page.Items.map(this.key),HasMore:page.HasMore};}
+    clear(){this.version++;this.host.replaceChildren();this.host.hidden=true;}
+    async adjacent(position,key,direction){
+     const index=position.Keys.indexOf(key),local=index+direction;
+     if(local>=0&&local<position.Keys.length)return {key:position.Keys[local],position};
+     const query={...position.Query,SkipRows:position.Query.SkipRows+direction*position.Query.NumRows};
+     if(query.SkipRows<0||(direction>0&&!position.HasMore))return null;
+     const cacheKey=JSON.stringify(query);let page=this.pages.get(cacheKey);
+     if(!page){page=await this.load(query);this.pages.set(cacheKey,page);if(this.pages.size>3)this.pages.delete(this.pages.keys().next().value);}
+     const keys=page.Items.map(this.key),anchor=keys.indexOf(key);
+     // A new arrival can move the anchor into the adjacent page; never navigate back to that same email.
+     const target=anchor<0?(direction>0?0:keys.length-1):anchor+direction;
+     if(target<0||target>=keys.length)return null;
+     return {key:keys[target],position:{Query:query,Keys:keys,HasMore:page.HasMore}};
+    }
+    async show(position,key){
+     this.clear();if(!position?.Keys.includes(key))return;
+     const version=this.version;this.host.hidden=false;this.host.append(text("span","Loading navigation…","ed-meta"));
+     try{
+      const targets=await Promise.all([-1,1].map(direction=>this.adjacent(position,key,direction)));
+      if(version!==this.version)return;
+      this.host.replaceChildren();
+      targets.forEach((target,index)=>{if(!target)return;const anchor=link(index?"Next":"Previous",this.href(target.key),"ed-back");anchor.id=index?"email-next":"email-previous";anchor.setAttribute("aria-label",index?"Next email":"Previous email");const icon=text("i","","fas "+(index?"fa-chevron-right":"fa-chevron-left"));icon.setAttribute("aria-hidden","true");index?anchor.append(icon):anchor.prepend(icon);anchor.addEventListener("click",event=>{if(event.button===0&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&!event.altKey)this.select(target.position);});this.host.append(anchor);});
+      this.host.hidden=!this.host.childElementCount;
+     }catch(error){
+      if(version!==this.version)return;
+      console.error("Could not load adjacent records",error);this.host.replaceChildren(button("Retry navigation",()=>{clearNotice();return this.show(position,key);},false,"fa-sync-alt"));notify("Could not load the next or previous email. Retry navigation.","Error");
+     }
+    }
+   }
+   // Gmail's opaque cursors are adapted here, not translated into guessed offsets or downloaded whole-mailbox rows.
   class CursorGrid extends PagedGrid {
    constructor(content,pager,search,load,render,empty) {
     const state={tokens:new Map([[0,""]]),version:0};
@@ -205,5 +238,5 @@ window.EmailDispatchUi = (() => {
       if(active()){notify(failed.length?`${archived} archived. Could not archive: ${failed.join("; ")}. Those emails remain selected. Try Archive selected again.`:`${archived} ${archived===1?"email archived":"emails archived"}.`,failed.length?"Error":"Success");control.refresh();}else control.clear();
      },"fa-archive");
     }
-    return {$,text,escape,link,notify,clearNotice,run,request,button,dialog,state,status,date,facts,details,PagedGrid,CursorGrid,GridSelection,archiveSelection,bindEmailFrame};
+     return {$,text,escape,link,notify,clearNotice,run,request,button,dialog,state,status,date,facts,details,PagedGrid,RecordNavigation,CursorGrid,GridSelection,archiveSelection,bindEmailFrame};
 })();

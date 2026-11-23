@@ -21,7 +21,9 @@
   const confirmDialog=dialog("confirm-dialog"), noteDialog=dialog("note-dialog"), pickDialog=dialog("pick-dialog"), createDialog=dialog("create-dialog"), clearDialog=dialog("clear-dialog");
   function show(name) { document.querySelectorAll(".ed-view").forEach(view=>view.hidden=view.id!=="view-"+name); const view=document.getElementById("view-"+name);if(view.closest("#conversation-reader"))$("view-conversation").hidden=false; const nav=["conversation","conversations","message"].includes(name)||(name==="email"&&conversationThread)?"conversations":["email","inbox","evidence"].includes(name)?"inbox":name==="rule"?"rules":name; document.querySelectorAll(".ed-nav a").forEach(a=>a.toggleAttribute("aria-current",a.hash==="#"+nav)); document.querySelectorAll('.ed-nav a[aria-current]').forEach(a=>a.setAttribute("aria-current","page")); window.scrollTo(0,0); const heading=$("view-"+name).querySelector("h1"); heading?.focus({preventScroll:true,focusVisible:false}); }
   const inboxGrid=new PagedGrid("inbox","inbox-pager","search", args=>request(EmailObservations,"GetInbox",{AccountKey:"work-main",State:$("state").value,...args}), items=>`<table class="ed-grid Grid"><thead><tr><th class="ed-sender-cell">From</th><th>Email</th><th class="ed-time-cell">Received</th><th class="ed-state-cell">Status</th></tr></thead><tbody>${items.map(item=>{const [name,kind]=EmailDispatchUi.state(item.ReviewState);return `<tr data-row-href="#email/${encodeURIComponent(item.ObservationKey)}"><td class="ed-sender-cell"><span class="ed-cell-secondary" title="${escape(item.Sender)}">${escape(item.Sender)}</span></td><td><a href="#email/${encodeURIComponent(item.ObservationKey)}" title="${escape(item.Subject)}">${escape(item.Subject||"No subject")}</a><span class="ed-cell-secondary ed-mobile-meta">${escape(item.Sender)} · ${escape(date(item.ReceivedUtc))}</span></td><td class="ed-time-cell">${escape(date(item.ReceivedUtc))}</td><td class="ed-state-cell"><span class="ed-status ed-status-${kind}">${escape(name)}</span></td></tr>`;}).join("")}</tbody></table>`,"No emails match. Change the search or filter.");
-  const reviewPreferences=new LocalStorage2(), reviewFilterKey="EmailDispatch.work-main.Review.Show";
+   let reviewPosition=null;
+   const emailNavigation=new EmailDispatchUi.RecordNavigation("email-navigation",args=>request(EmailObservations,"GetInbox",args),item=>item.ObservationKey,key=>"#email/"+encodeURIComponent(key),position=>{reviewPosition=position;});
+   const reviewPreferences=new LocalStorage2(), reviewFilterKey="EmailDispatch.work-main.Review.Show";
   function restoreReviewFilter(){
    const saved=reviewPreferences.get(reviewFilterKey);
    if([...$("state").options].some(option=>option.value===saved)&&$("state").value!==saved){$("state").value=saved;inboxGrid.skip=0;}
@@ -33,7 +35,8 @@
  pickGrid.SkipSize=10;
  pickGrid.liveSearch(()=>{picked=null;pickSelection();},()=>$("pick-dialog").open);
  $("pick-dialog").addEventListener("close",()=>pickGrid.cancelSearch());
-  inboxGrid.extraKey=()=>$('state').value;
+   inboxGrid.extraKey=()=>$('state').value;
+   inboxGrid.parameters=()=>({State:$("state").value});
   const inboxSelection=EmailDispatchUi.archiveSelection(inboxGrid,document.getElementById("review-commands"),item=>item.ObservationKey,()=>!$("view-inbox").hidden,async item=>{
    const email=await request(EmailObservations,"GetEmail",{ObservationKey:item.ObservationKey});
    for(const work of email.Works)if(!work.LocalDisposition&&work.State!=="Superseded")await request(EmailWorks,"SetDisposition",{WorkKey:work.WorkKey,Disposition:"Archived"});
@@ -109,7 +112,12 @@
    const updated=await request(EmailObservations,"GetEmail",{ObservationKey:key});
    if(location.hash!==expectedHash||bodyVersion!==bodyRequest||(conversationVersion!==null&&!EmailConversations.isCurrent(conversationVersion)))return;
    selectedEmail=updated;emailHash=expectedHash;conversationThread=thread;
-   $("email-back").href=thread?"#thread/"+encodeURIComponent(thread):"#inbox";$("email-back").textContent=thread?"Back to conversation":"← Inbox";$("email-back").setAttribute("aria-label",thread?"Back to conversation":"Back to inbox");show("email");
+    $("email-back").href=thread?"#thread/"+encodeURIComponent(thread):"#inbox";$("email-back").textContent=thread?"Back to conversation":"← Inbox";$("email-back").setAttribute("aria-label",thread?"Back to conversation":"Back to inbox");show("email");
+    if(!thread&&reviewPosition?.Keys.includes(key)){
+     // Per-history-entry context survives reload/back without changing the email URL or another tab's list.
+     history.replaceState({...history.state,emailReview:reviewPosition},"",location.href);
+     void emailNavigation.show(reviewPosition,key);
+    }
   $("subject").textContent=selectedEmail.Email.Subject||"No subject"; $("sender").textContent=selectedEmail.Email.Sender; $("received").textContent=date(selectedEmail.Email.ReceivedUtc); $("body").textContent=selectedEmail.Frame?selectedEmail.Frame.BodyText||"This message has no readable text.":"This email could not be read. View evidence for details."; $("test").hidden=!selectedEmail.Frame||selectedEmail.Email.ReviewState==="Spam"; $("test-result").textContent="";
    works(); schedule(); $("subject").focus({preventScroll:true,focusVisible:false});
    if(action){const work=selectedEmail.Works.find(isOpen);if(!work)throw new Error("This email's decision changed. Review its current status before acting.");if(action==="pick")openPick("send",work);else if(action==="note")openNote(work);}
@@ -334,19 +342,32 @@
   const label=workKey&&document.getElementById("instruction-"+workKey);
   if(label) { label.scrollIntoView({block:"start"}); label.focus({preventScroll:true,focusVisible:false}); }
  }
-  async function route() {
-   EmailDispatchUi.clearNotice(); clearTimeout(pollTimer); clearTimeout(inboxTimer);
+   function restoreReviewPosition(){
+    if(!reviewPosition)return;
+    $("search").value=reviewPosition.Query.Search;$("state").value=reviewPosition.Query.State;inboxGrid.skip=reviewPosition.Query.SkipRows;
+    reviewPosition=null;
+   }
+   async function route() {
+    EmailDispatchUi.clearNotice(); clearTimeout(pollTimer); clearTimeout(inboxTimer);
+    emailNavigation.clear();
    if(!inboxSelection.running)inboxSelection.clear();
    emailHash=null;conversationThread=null;EmailConversations.cancel();++bodyRequest;
   for(const open of document.querySelectorAll("dialog[open]")) open.close();
   const [name,id,part]=location.hash.slice(1).split("/");
    if(["conversations","thread","message"].includes(name)) await EmailConversations.route(show,openEmail);
-   else if(name==="email"&&id) await openEmail(decodeURIComponent(id));
+    else if(name==="email"&&id){
+     const key=decodeURIComponent(id),saved=history.state?.emailReview;
+     if(!$("view-inbox").hidden&&$("inbox").getAttribute("aria-busy")==="false"&&inboxGrid.loadedArgs&&inboxGrid.page.Items.some(item=>item.ObservationKey===key)){
+      reviewPosition=emailNavigation.capture({AccountKey:"work-main",...inboxGrid.loadedArgs},inboxGrid.page);
+     }else if(saved?.Keys.includes(key))reviewPosition=saved;
+     else if(!reviewPosition?.Keys.includes(key))reviewPosition=null;
+     await openEmail(key);
+    }
    else if(name==="rules"){show("rules");rulesGrid.activate(30000);}
   else if(name==="rule"&&id) await openRule(decodeURIComponent(id));
   else if(name==="evidence") await openEvidence(id&&decodeURIComponent(id),part&&decodeURIComponent(part));
   else if(name==="accounts"){show("accounts");await accounts();}
-    else {restoreReviewFilter();show("inbox");inboxGrid.activate();scheduleInbox();if(Date.now()-accountsAt>=10000)await accounts();}
+     else {restoreReviewPosition();restoreReviewFilter();show("inbox");inboxGrid.activate();scheduleInbox();if(Date.now()-accountsAt>=10000)await accounts();}
  }
  function submit(id,control,action,background=false){$(id).addEventListener("submit",event=>{event.preventDefault();run(background?null:$(control),action);});}
  function click(id,action,background=false){$(id).addEventListener("click",()=>run(background?null:$(id),action));}
