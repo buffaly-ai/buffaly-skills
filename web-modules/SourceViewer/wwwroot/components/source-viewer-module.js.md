@@ -1,3 +1,6 @@
 # SourceViewer interactive component
 
 Registered read-only SourceViewer component for exact file or directory targets. Files use the shared language map and bundled CodeMirror modes with line focus/highlighting. Directories render an immediate, bounded names/types-only list; child paths are derived locally from the displayed directory path and selected name because the public entry DTO does not serialize absolute paths or flags. Directory navigation goes to the standalone view and child files use generic `buffaly://file/open` routing, where the server revalidates access. No recursive reads, file metadata disclosure, mutation, or reparse traversal is provided. Component lifecycle events, error rendering, and system light/dark presentation remain intact.
+
+## 2026-11-23 — Shared syntax presentation
+Core assets now load the same source-syntax.css palette as standalone; language assets load an explicitly declared module-owned adapter after bundled modes. C# receives modern tokens while other language routing, component state, line focus, lifecycle and read-only behavior remain unchanged. SourceHighlighting.cjs passed real mode checks; .NET31/31 and existing standalone Node regressions passed. Embedded component does not add a separate annotation transport.

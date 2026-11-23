@@ -19,6 +19,7 @@
 	let editor = null;
 	let sourceText = null;
 	let previewing = false;
+	let annotations = null;
 	// Apply only explicit one-based line targets; source bytes and the server read contract stay unchanged.
 	function focusRequestedLines() {
 		const fragment = location.hash.match(/^#L([1-9]\d*)(?:-L?([1-9]\d*))?$/);
@@ -34,8 +35,11 @@
 
 	function fail(message) { status.textContent = message; status.classList.add("error"); }
 	function addScript(name) { return new Promise((resolve, reject) => { const script = document.createElement("script"); script.src = "vendor/codemirror/mode/" + name + "/" + name + ".js?v=2"; script.onload = resolve; script.onerror = () => reject(new Error("Could not load Source Viewer syntax mode: " + name)); document.head.appendChild(script); }); }
-	async function loadLanguage(language) { for (const asset of language.assets) await addScript(asset); }
-	function targetUrl(targetPath) { const url = new URL(location.href); url.search = ""; url.searchParams.set("path", targetPath); url.searchParams.set("root", navigationRoot); return url.href; }
+	async function loadLanguage(language) {
+		for (const asset of language.assets) await addScript(asset);
+		if (language.adapter) await new Promise((resolve, reject) => { const script = document.createElement("script"); script.src = "js/" + language.adapter + ".js?v=3"; script.onload = resolve; script.onerror = () => reject(new Error("Could not load source syntax adapter.")); document.head.appendChild(script); });
+	}
+	function targetUrl(targetPath) { const url = new URL(location.href); url.search = ""; url.searchParams.set("path", targetPath); url.searchParams.set("root", navigationRoot); for (const name of ["sourceSessionKey", "sessionKey", "agentSessionKey"]) if (query.has(name)) url.searchParams.set(name, query.get(name)); return url.href; }
 	function genericFileUrl(targetPath) { return "buffaly://file/open?path=" + encodeURIComponent(targetPath); }
 	function childPath(folderPath, name) { return folderPath.replace(/[\\\/]$/, "") + (folderPath.includes("\\") ? "\\" : "/") + name; }
 	function navigateDirectory(targetPath) { location.assign(targetUrl(targetPath)); }
@@ -85,9 +89,15 @@
 		title.textContent = file.name; path.textContent = file.path; kind.textContent = language.label; kind.title = language.name;
 		document.title = file.name + " - Source Viewer";
 		if (downloadUrl) { download.href = downloadUrl; download.hidden = false; }
-		editor = CodeMirror.fromTextArea(document.getElementById("source"), { mode: language.mode, lineNumbers: true, readOnly: true, lineWrapping: false });
+		editor = CodeMirror.fromTextArea(document.getElementById("source"), { mode: language.mode, theme: "source", lineNumbers: true, readOnly: true, lineWrapping: false });
 		sourceText = file.text; editor.setValue(sourceText); copy.disabled = false;
 		focusRequestedLines();
+		const annotationHost = document.getElementById("source-annotations");
+		if (annotationHost && window.BuffalySourceAnnotations) {
+			const sessionKey = query.get("agentSessionKey") || query.get("sourceSessionKey") || query.get("sessionKey") || "";
+			annotations = window.BuffalySourceAnnotations.mount({ editor, file, sessionKey, host: annotationHost, toolbar: document.getElementById("source-annotation-toolbar") });
+			document.getElementById("source-annotation-toolbar").hidden = false;
+		}
 		if (/\.html?$/i.test(file.path)) preview.hidden = false;
 		status.textContent = file.length.toLocaleString() + " bytes | " + language.name + " | Read only";
 	}
@@ -107,6 +117,7 @@
 			finally { preview.disabled = false; }
 		}
 		previewing = !previewing;
+		if (annotations) annotations.setActive(!previewing);
 		editorHost.hidden = previewing;
 		previewHost.hidden = !previewing;
 		preview.textContent = previewing ? "Source" : "Preview";

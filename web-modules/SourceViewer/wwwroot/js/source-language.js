@@ -6,7 +6,7 @@
 		javascript: Object.freeze({ label: "JS", name: "JavaScript", mode: "javascript", assets: ["javascript"] }),
 		typescript: Object.freeze({ label: "TS", name: "TypeScript", mode: Object.freeze({ name: "javascript", typescript: true }), assets: ["javascript"] }),
 		json: Object.freeze({ label: "JSON", name: "JSON", mode: Object.freeze({ name: "javascript", json: true }), assets: ["javascript"] }),
-		csharp: Object.freeze({ label: "C#", name: "C#", mode: "text/x-csharp", assets: ["clike"] }),
+		csharp: Object.freeze({ label: "C#", name: "C#", mode: "source-csharp", assets: ["clike"], adapter: "source-csharp" }),
 		protoscript: Object.freeze({ label: "PTS", name: "ProtoScript", mode: "text/x-protoscript", assets: ["clike", "protoscript"] }),
 		patch: Object.freeze({ label: "PATCH", name: "Patch", mode: "text/x-diff", assets: ["diff"] }),
 		diff: Object.freeze({ label: "DIFF", name: "Diff", mode: "text/x-diff", assets: ["diff"] }),
