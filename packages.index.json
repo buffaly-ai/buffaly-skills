@@ -7101,7 +7101,7 @@
       "PackageType": "WebModule",
       "Title": "Desktop Viewer",
       "Description": "Buffaly Web Module package for Desktop Viewer.",
-      "Version": "0.1.347",
+      "Version": "0.1.348",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/DesktopViewer",
       "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/DesktopViewer",
@@ -7124,7 +7124,7 @@
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "030181b4f74594802977a59773ae865625846dbeeede78b2e24fcc50a4a83aed"
+          "Sha256": "c83f158598d896bd4677b3800c2247d65e059b0ecef4c00c8271712d930dc617"
         },
         {
           "Path": "Buffaly.ClientSites.Common.dll",
@@ -7140,15 +7140,15 @@
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "6a10bb061d9cfb869a9fa5e4d20644f1c50235ea11dd2dc5d6595d7d2bfeb3a3"
+          "Sha256": "e1b5d991e18d03a99721d0e47c3f6a0c4b63b8188458ab51a3dfd7ddb7970d34"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "ee910d2581241b943067337372da066352b14e02ce3c58a10089819963b96fad"
+          "Sha256": "94a2236d417f2913b503396fc45cd51b44bb7eae3bb169e408f7b92efb3cca47"
         },
         {
           "Path": "Buffaly.DesktopAutomation.dll",
-          "Sha256": "2551a6b7f1fbcab11771720f99c94c2d4bd5df8b7e4cad568dab34b354c12327"
+          "Sha256": "e21290ec6461e0571e153d52051eefd6680b1a92d262c6efec96fa9b036bb14d"
         },
         {
           "Path": "Buffaly.DesktopViewer.Web.deps.json",
@@ -7156,7 +7156,7 @@
         },
         {
           "Path": "Buffaly.DesktopViewer.Web.dll",
-          "Sha256": "18f5922c19c2f1121a79ba36e078e376e6f475b891616c01b8c5875570475786"
+          "Sha256": "c33c207412c1659c675a4b11c49ebf465b5ada001974d6d7495981bae2e682fa"
         },
         {
           "Path": "Buffaly.LandingPageRouting.dll",
@@ -7164,7 +7164,7 @@
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "4fb87712f9bcd4cbd6d1a9c83f7514253d780d8d7ef541279e83aed9e5da63d1"
+          "Sha256": "253bc68762ca832a7de8eab009c666bc28e0353a8c26452feff3553f6e1ddcd9"
         },
         {
           "Path": "computer-use/linux/computer_use_bridge.py",
@@ -7361,6 +7361,10 @@
         {
           "Path": "Scripts/20261106_OneTimeSessionWake.sql",
           "Sha256": "dfdddce4f00a5282879210b1f05059effafbc06f8e892e7b13be21d7c9cbcd79"
+        },
+        {
+          "Path": "Scripts/AgentAttentionNavigationAccess.sql",
+          "Sha256": "278ad0e8e6d6bfa25e90b3b0f9de83ff03bc2a6eef213a6967f7e601d3707ae8"
         },
         {
           "Path": "Scripts/AgentNavigationAccess.sql",
@@ -7892,7 +7896,7 @@
         },
         {
           "Path": "Scripts/Sessions_GetPendingAttentionNavigation_Sp.sql",
-          "Sha256": "adb56716b70512c90ce6c694b03f5dd508cc71bcb282c7a57987724d15a48a3e"
+          "Sha256": "8112cdb2ca32ae61046736ba7db424ccefed01a056956ef0aec8eb5b66b64d07"
         },
         {
           "Path": "Scripts/Sessions_GetPendingAttentionSp.sql",
