@@ -11,7 +11,8 @@
   let emailHash=null,conversationThread=null;
   const isCurrentEmail=key=>location.hash===emailHash&&selectedEmail?.Email.ObservationKey===key;
  const isOpen=work=>!submissions.has(work.WorkKey)&&!work.MessageKey&&!work.LocalDisposition&&openStates.includes(work.State);
- const isConfirmable=work=>isOpen(work)&&["Suggested","AutomaticReady"].includes(work.State)&&!!work.Destination;
+  const isConfirmable=work=>isOpen(work)&&["Suggested","AutomaticReady"].includes(work.State)&&!!work.Destination;
+  const analysisNote="Choose the best existing destination session for this email. If it contains multiple issues, select the primary owner and scope the assignment. Do not send.";
  const deciders={Rule:"A rule",Agent:"The dispatch agent",Operator:"You"};
  const learning={Pending:"Waiting to learn from this decision",Learned:"Learned from this decision",Uncertain:"Not learned · the agent was unsure",Failed:"Learning failed"};
   const behaviors={Route:rule=>"Send to "+(rule.WorkSession||"its session"),Processor:()=>"Run its processor",Agent:()=>"Offer agent analysis",Notice:()=>"Record as a notice",Disabled:()=>"Off"};
@@ -36,7 +37,30 @@
   const inboxSelection=EmailDispatchUi.archiveSelection(inboxGrid,document.getElementById("review-commands"),item=>item.ObservationKey,()=>!$("view-inbox").hidden,async item=>{
    const email=await request(EmailObservations,"GetEmail",{ObservationKey:item.ObservationKey});
    for(const work of email.Works)if(!work.LocalDisposition&&work.State!=="Superseded")await request(EmailWorks,"SetDisposition",{WorkKey:work.WorkKey,Disposition:"Archived"});
-  },()=>EmailConversations.invalidate());
+   },()=>EmailConversations.invalidate());
+   inboxSelection.addAction("Analyze selected",async(items,control)=>{
+    let requested=0,pending=0;const failed=[];
+    for(const item of items){try{
+     const email=await request(EmailObservations,"GetEmail",{ObservationKey:item.ObservationKey});
+     const works=email.Works.filter(isOpen);
+     if(!email.Frame||["Spam","Trash"].includes(email.Email.ReviewState)||!works.length)throw new Error("This email is not available for analysis.");
+     let queued=false;
+     for(const work of works){
+      // A pending analysis already has an owning worker; repeated clicks must not append another note.
+      if(work.State==="Pending"){pending++;continue;}
+      submissions.add(work.WorkKey);
+      try{await request(EmailWorks,"AddDispatchNote",{WorkKey:work.WorkKey,ExpectedDecisionRevision:work.DecisionRevision,Note:analysisNote});queued=true;}
+      finally{submissions.delete(work.WorkKey);}
+     }
+     if(queued)requested++;
+     control.selected.delete(item.ObservationKey);
+    }catch(error){failed.push(item.Subject||"No subject");console.error("Email analysis request failed",error);}}
+    inboxGrid.invalidate();EmailConversations.invalidate();
+    if(!$('view-inbox').hidden){
+     notify(`${requested} ${requested===1?"email queued":"emails queued"} for analysis.${pending?" "+pending+" already waiting for analysis.":""}${failed.length?" Could not request analysis: "+failed.join("; ")+". Those emails remain selected.":""}`,failed.length?"Warning":"Success");
+     control.refresh();
+    }else control.clear();
+   },"fa-search",true);
    document.addEventListener("email-archive",()=>inboxGrid.invalidate());
    const archiveOlderDialog=dialog("archive-older-dialog");let archiveBefore=0;
    document.getElementById("review-commands").append(button("Archive older emails",control=>{
@@ -150,7 +174,7 @@
    const processed=!work.LocalDisposition&&["Accepted","NoAction","Notice","WakeRecorded","PreviouslyHandled"].includes(work.State);
     if(isOpen(work)) {
        const unanalyzed=["Unclassified","AgentEvaluationRequired","Disabled"].includes(work.State);
-       if(unanalyzed) actions.append(button("Analyze email",()=>{actingWork=work;return submitInstructions(null,"AddDispatchNote",{WorkKey:work.WorkKey,ExpectedDecisionRevision:work.DecisionRevision,Note:"Choose the best existing destination session for this email. If it contains multiple issues, select the primary owner and scope the assignment. Do not send."},current=>openNote(current));},true,"fa-search"));
+        if(unanalyzed) actions.append(button("Analyze email",()=>{actingWork=work;return submitInstructions(null,"AddDispatchNote",{WorkKey:work.WorkKey,ExpectedDecisionRevision:work.DecisionRevision,Note:analysisNote},current=>openNote(current));},true,"fa-search"));
        actions.append(button("Choose destination and send",control=>openPick("send",work,control),!unanalyzed&&!isConfirmable(work)&&!work.CanSendAgain&&work.State!=="Error"));
       actions.append(button(work.Creation?"Continue session creation":"Create session and send",control=>openCreate(work,control)));
      actions.append(button("Ask the agent to reconsider",control=>openNote(work,control),work.State==="Error"));

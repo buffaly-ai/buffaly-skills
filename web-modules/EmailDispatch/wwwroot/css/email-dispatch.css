@@ -1,4 +1,9 @@
 /* Module-wide visual owner: every task uses these elements; no per-view theme variants. */
+/* Selection is a finger-sized native label, shared by Review and Conversations; links still open records. */
+.ed-grid .ed-pick-cell[data-selection-cell]{width:3.5rem;padding:0 .25rem}
+.ed-select-target{display:flex;align-items:center;justify-content:center;min-width:48px;min-height:48px;margin:0;cursor:pointer;touch-action:manipulation}
+.ed-select-target input{width:24px;height:24px;margin:0;accent-color:var(--ed-accent);cursor:pointer}
+.ed-grid tbody tr:has(input[data-grid-select]:checked){background:#edf3fd}
 /* Heading commands share the title baseline; search commands keep their icon and label together. */
 .ed-heading .ed-actions{margin-top:0}.ed-search>.btn{flex:0 0 auto;white-space:nowrap}
 .ed-sync-tools{display:flex;align-items:center;gap:.5rem}.btn.ed-icon-button{padding:.35rem .55rem;min-height:0}.ed-grid tr[data-row-href]{cursor:pointer}
@@ -43,3 +48,5 @@ html[data-keyboard=false] [id^=instruction-]:focus{outline:none}
 #conversation-reader .ed-message-tools{padding:.5rem 1rem}
 #conversation-reader .ed-message-secondary{margin-left:0}
 #conversation-reader .ed-grid{table-layout:fixed}
+/* After compact base rules so touch devices also get usable filter, search, pager and refresh controls. */
+@media(any-pointer:coarse){.btn,.form-control,.form-select,.btn.ed-icon-button,.ed-message-tools .btn{min-height:48px}.btn.ed-icon-button{min-width:48px}}

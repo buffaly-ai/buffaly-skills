@@ -1,5 +1,8 @@
 # Email Dispatch shared visual owner
 
+## 2026-11-23 — finger-friendly list selection
+Shared GridSelection labels have48px minimum tap width/height around native24px checkboxes in56px selection cells. Checked rows share a subtle highlight. Coarse-pointer devices get48px minimum button/filter/search/pager/refresh height; final stylesheet position preserves it over existing compact rules. No new font sizes, icons, per-view stylesheet or checkbox simulation. Reused by Review and Conversations. Source touch3/3 verifies padding taps, native state, header indeterminate, control geometry and no page overflow at1024x768/768x1024/390x844; combined regression18/18 and routine configured70/70 pass. Installed screenshot acceptance follows publication.
+
 ## 2026-11-03 — sync command and row affordance
 Added shared ed-sync-tools grouping and ed-icon-button compact padding, plus pointer affordance for navigable data-row-href rows. Existing shared type/button/theme/status styles remain; no local font or icon library. Header markup uses a normal button with Font Awesome refresh icon beside status. Focused fixture browser tests 2/2 pass; live visual validation recorded separately.
 

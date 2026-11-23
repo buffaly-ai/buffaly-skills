@@ -1,5 +1,8 @@
 # Email Dispatch standalone milestone
 
+## 2026-11-23 — tablet selection and bulk-analysis assets
+Advance shared CSS0.2.12, selector helper0.2.19 and Review script0.2.38 cache identities so reload loads finger-friendly selection and Analyze selected coherently. Existing heading command slot, search/filter/paging, dialogs and generated clients unchanged; no page-local controls/styles added. UI task is select emails and request analysis from Review, with existing Archive in the same shared command row. Source touch3/3 and combined regression18/18 plus routine70/70 pass; installed readback/screenshots follow normal Local package activation.
+
 ## 2026-11-22 — explicit Send and archive confirmation
 Added primary Send and archive beside secondary Send and existing Cancel in the shared confirmation footer; note field, dialog identity and shared button/icon/style owners retained. UI-STD-01 Rule10 task: submit the displayed email with Matt's note and continue reviewing. The two send choices express distinct effects; Cancel sends nothing, Send retains existing behavior, Send and archive returns immediately to Review and archives only after accepted delivery. No extra confirmation, styles or duplicate page control. Script cache key0.2.37.
 Validation: final source focused16/16 passed, including desktop1440/phone390 button geometry/no overflow and four-control focus trap, delayed-response return/list refresh/other-email draft, safe failure outcomes and existing send-only checks. No business message sent. Installed screenshots and receipt verification follow the canonical Local package installation.

@@ -153,20 +153,24 @@ window.EmailDispatchUi = (() => {
     BindCount(){super.BindCount();const count=document.getElementById(this.PagingControlID).querySelector(".ed-page-range");if(count)count.textContent=`${this.page.Items.length} conversations on this page`;}
   }
    // Opt-in page selection, owned beside paging so no view copies checkbox or lifecycle handling.
-   class GridSelection {
-    constructor(grid,commands,key,label,actionLabel,action,icon=""){
-     this.grid=grid;this.key=key;this.label=label;this.selected=new Map();this.running=false;this.loading=true;this.retain=false;
-     this.count=text("span","","ed-page-range");this.command=button(actionLabel,()=>this.execute(action),true,icon);commands.append(this.count,this.command);
+    class GridSelection {
+     constructor(grid,commands,key,label,actionLabel,action,icon=""){
+      this.grid=grid;this.key=key;this.label=label;this.selected=new Map();this.running=false;this.loading=true;this.retain=false;
+      this.commands=commands;this.actions=[];this.count=text("span","","ed-page-range");commands.append(this.count);this.command=this.addAction(actionLabel,action,icon,true);
      const before=grid.OnBeforeRefresh,complete=grid.OnComplete,busy=grid.busy.bind(grid);
      grid.busy=value=>{busy(value);this.loading=value;this.update();};
      grid.OnBeforeRefresh=()=>{if(!this.retain)this.selected.clear();this.retain=false;before();this.update();};
      grid.OnComplete=()=>{complete();this.render();};
-     this.update();
-    }
-     clear(){this.selected.clear();document.getElementById(this.grid.ContentControlID).querySelectorAll("input[data-grid-select]").forEach(input=>input.checked=false);this.update();}
-    update(){
-     this.count.textContent=this.selected.size?`${this.selected.size} selected`:"";this.command.hidden=!this.selected.size;
-     this.command.disabled=this.running||this.loading;
+      this.update();
+     }
+     addAction(label,action,icon="",primary=false){
+      if(primary)for(const command of this.actions){command.classList.remove("btn-primary");command.classList.add("btn-outline-secondary");}
+      const command=button(label,()=>this.execute(action),primary,icon);this.actions.push(command);this.commands.append(command);this.update();return command;
+     }
+      clear(){this.selected.clear();document.getElementById(this.grid.ContentControlID).querySelectorAll("input[data-grid-select]").forEach(input=>input.checked=false);this.update();}
+     update(){
+      this.count.textContent=this.selected.size?`${this.selected.size} selected`:"";
+      for(const command of this.actions){command.hidden=!this.selected.size;command.disabled=this.running||this.loading;}
      const host=document.getElementById(this.grid.ContentControlID);
      host.inert=this.running||this.loading;document.getElementById(this.grid.PagingControlID).inert=this.running||this.loading;
      const search=document.getElementById(this.grid.SearchControlID)?.closest("form");if(search)search.inert=this.running;
@@ -178,10 +182,12 @@ window.EmailDispatchUi = (() => {
      const ids=new Set(this.grid.page.Items.map(item=>this.key(item)));for(const id of this.selected.keys())if(!ids.has(id))this.selected.delete(id);
       const host=document.getElementById(this.grid.ContentControlID),table=host.querySelector("table");if(!table){this.update();return;}
       host.querySelectorAll(".ed-pick-cell[data-selection-cell]").forEach(cell=>cell.remove());
-     const checkbox=(name)=>{const input=document.createElement("input");input.type="checkbox";input.setAttribute("aria-label",name);return input;};
-      const head=document.createElement("th"),all=checkbox("Select all on this page");all.dataset.gridSelectAll="";head.dataset.selectionCell="";head.className="ed-pick-cell";head.append(all);table.tHead.rows[0].prepend(head);
+      const checkbox=(name)=>{const input=document.createElement("input");input.type="checkbox";input.setAttribute("aria-label",name);return input;};
+      // The native label makes the entire padded target toggle once, without invoking row navigation.
+      const target=input=>{const label=text("label","","ed-select-target");label.append(input);return label;};
+       const head=document.createElement("th"),all=checkbox("Select all on this page");all.dataset.gridSelectAll="";head.dataset.selectionCell="";head.className="ed-pick-cell";head.append(target(all));table.tHead.rows[0].prepend(head);
      all.addEventListener("change",()=>{for(const item of this.grid.page.Items){const id=this.key(item);if(all.checked)this.selected.set(id,item);else this.selected.delete(id);}host.querySelectorAll("input[data-grid-select]").forEach(input=>input.checked=all.checked);this.update();});
-      [...table.tBodies[0].rows].forEach((row,index)=>{const item=this.grid.page.Items[index],id=this.key(item),cell=document.createElement("td"),input=checkbox("Select "+this.label(item));cell.className="ed-pick-cell";cell.dataset.selectionCell="";input.dataset.gridSelect=id;input.checked=this.selected.has(id);input.addEventListener("change",()=>{if(input.checked)this.selected.set(id,item);else this.selected.delete(id);this.update();});cell.append(input);row.prepend(cell);});
+       [...table.tBodies[0].rows].forEach((row,index)=>{const item=this.grid.page.Items[index],id=this.key(item),cell=document.createElement("td"),input=checkbox("Select "+this.label(item));cell.className="ed-pick-cell";cell.dataset.selectionCell="";input.dataset.gridSelect=id;input.checked=this.selected.has(id);input.addEventListener("change",()=>{if(input.checked)this.selected.set(id,item);else this.selected.delete(id);this.update();});cell.append(target(input));row.prepend(cell);});
      this.update();
     }
     async execute(action){if(this.running||this.loading||!this.selected.size)return;this.running=true;this.update();try{await action([...this.selected.values()],this);}finally{this.running=false;this.update();}}
