@@ -4,3 +4,6 @@ Read-only SourceViewer shell for explicit file and directory targets. The shared
 
 ## 2026-11-23 — Source annotation shell
 Loads the shared syntax palette and annotation controller before the standalone viewer. Adds the initially hidden annotation toolbar/dialog host; file loading activates it, directory/HTML preview do not. Asset revisions prevent stale language/script/CSS combinations. Existing sandbox, credentialless iframe and Copy/Close markup retained. Validation: Node suites for annotations/highlighting/line links/preview passed and .NET31/31 passed; installed browser evidence follows in session acceptance record.
+
+## 2026-11-23 — Review correction asset revisions
+Bumps shared CSS and annotation-controller query revisions to 4 for the fail-closed draft-load guard and shared command/icon presentation. No source-reader, caller, sandbox or preview contract changes. Validation: all four Node suites and .NET31/31 passed; local managed-browser fixture loaded this page and the bundled icon fonts for five annotation states. Not installed or validated on staging at this entry.

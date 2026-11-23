@@ -1,3 +1,5 @@
+@import url("../vendor/fontawesome/css/fontawesome.min.css");
+@import url("../vendor/fontawesome/css/solid.min.css");
 :root { color-scheme: light; --border: #cbd5e1; --muted: #64748b; --blue: #2563eb; }
 * { box-sizing: border-box; }
 body { margin: 0; font-family: Inter, "Segoe UI", system-ui, sans-serif; color: #0f172a; background: #f8fafc; }
@@ -10,6 +12,7 @@ body { margin: 0; font-family: Inter, "Segoe UI", system-ui, sans-serif; color: 
 .source-viewer__actions { display: flex; gap: .5rem; }
 .source-viewer button, .source-viewer__download { border: 1px solid #9db8e8; border-radius: 999px; background: #fff; color: #1d4ed8; padding: .4rem .75rem; font-weight: 700; cursor: pointer; text-decoration: none; font-size: .82rem; }
 .source-viewer button:disabled { opacity: .5; cursor: default; }
+.source-viewer button > .fas { margin-inline-end: .4em; }
 .source-viewer__status { padding: .5rem 1rem; color: var(--muted); font-size: .8rem; }
 .source-viewer__status.error { color: #b91c1c; }
 .source-viewer__editor { flex: 1; min-height: 0; border-top: 1px solid var(--border); }
