@@ -2,7 +2,7 @@
     "use strict";
 
     const config = (window.BuffalyWebModuleConfig && window.BuffalyWebModuleConfig.OntologyWorkbench) || {};
-    const launcherUrl = "/web-modules/OntologyWorkbench/launch.html";
+    const methodRunnerUrl = "/web-modules/OntologyWorkbench/method-runner";
     const prototypeViewerUrl = "/web-modules/OntologyWorkbench/prototype-viewer";
 
     function requireComposer() {
@@ -32,8 +32,7 @@
         }
 
         const workbenchSessionKey = requireSessionKey() + " - Ontology Workbench";
-        const url = new URL(launcherUrl, window.location.origin);
-        url.searchParams.set("page", "runner");
+        const url = new URL(methodRunnerUrl, window.location.origin);
         url.searchParams.set("sessionKey", workbenchSessionKey);
         url.searchParams.set("message", message);
         window.open(url.toString(), "_blank", "noopener");
