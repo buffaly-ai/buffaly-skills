@@ -356,9 +356,30 @@ class Desktop:
 				raise NativeError('portal_state_io_error', 'Private grant storage or capture resource operation failed; no automatic retry will occur.') from None
 			raise
 
+	def confirm_null_child(self, parent, index):
+		# GI None also covers decoding failures. Only an exact typed native null reply proves absence.
+		owner, path, _ = self.node_identity(parent)
+		connection = None
+		try:
+			address = self.bus.call_sync('org.a11y.Bus', '/org/a11y/bus', 'org.a11y.Bus', 'GetAddress',
+				None, GLib.VariantType.new('(s)'), Gio.DBusCallFlags.NONE, 5000, None).unpack()[0]
+			connection = Gio.DBusConnection.new_for_address_sync(address,
+				Gio.DBusConnectionFlags.AUTHENTICATION_CLIENT | Gio.DBusConnectionFlags.MESSAGE_BUS_CONNECTION, None, None)
+			child_owner, child_path = connection.call_sync(owner, path, 'org.a11y.atspi.Accessible', 'GetChildAtIndex',
+				GLib.Variant('(i)', (index,)), GLib.VariantType.new('((so))'),
+				Gio.DBusCallFlags.NONE, 5000, None).unpack()[0]
+			if child_owner != owner or child_path != '/org/a11y/atspi/null':
+				raise NativeError('accessibility_tree_changed', 'AT-SPI null child disagrees with the exact provider reply.')
+		except GLib.Error:
+			raise NativeError('accessibility_provider_invalid', 'AT-SPI null child could not be classified by an exact typed provider reply.') from None
+		finally:
+			if connection is not None:
+				connection.close_sync(None)
+
 	def list_apps(self):
+		# Publish bindings atomically; absent native slots are diagnosed but never become targets.
 		apps = []
-		live = set()
+		bindings = {}
 		root = Atspi.get_desktop(0)
 		for i in range(min(root.get_child_count(), 300)):
 			app = root.get_child_at_index(i)
@@ -366,10 +387,14 @@ class Desktop:
 				raise NativeError('accessibility_tree_changed', 'AT-SPI application disappeared during enumeration; list again.')
 			pid = app.get_process_id()
 			windows = []
+			diagnostics = []
 			for j in range(min(app.get_child_count(), 100)):
 				window = app.get_child_at_index(j)
 				if window is None:
-					raise NativeError('accessibility_tree_changed', 'AT-SPI window disappeared during enumeration; list again.')
+					self.confirm_null_child(app, j)
+					diagnostics.append({'Code': 'accessibility_null_window', 'Component': 'AT-SPI',
+						'Message': 'Provider explicitly exports an absent top-level window at child index ' + str(j) + '; no target binding was created.'})
+					continue
 				role = window.get_role()
 				if role not in (Atspi.Role.FRAME, Atspi.Role.DIALOG, Atspi.Role.WINDOW, Atspi.Role.ALERT):
 					continue
@@ -383,13 +408,15 @@ class Desktop:
 					if extents.width <= 0 or extents.height <= 0:
 						continue
 				key = str(pid) + ':' + str(j)
-				live.add(key)
-				if key not in self.windows or self.windows[key][1] != window:
-					self.windows[key] = (uuid.uuid4().hex, window)
-				windows.append({'Id': self.windows[key][0], 'App': str(pid), 'Title': window.get_name() or '', 'ProcessId': pid})
-			if windows:
-				apps.append({'Id': str(pid), 'DisplayName': app.get_name() or '', 'IsRunning': True, 'Windows': windows})
-		self.windows = {key: value for key, value in self.windows.items() if key in live}
+				binding = self.windows.get(key)
+				if binding is None or binding[1] != window:
+					binding = (uuid.uuid4().hex, window)
+				bindings[key] = binding
+				windows.append({'Id': binding[0], 'App': str(pid), 'Title': window.get_name() or '', 'ProcessId': pid})
+			if windows or diagnostics:
+				apps.append({'Id': str(pid), 'DisplayName': app.get_name() or '', 'IsRunning': True,
+					'Windows': windows, 'Diagnostics': diagnostics})
+		self.windows = bindings
 		return apps
 
 	def window(self, id):
@@ -446,6 +473,15 @@ class Desktop:
 					if self.node_identity(node) != identity:
 						raise NativeError('stale_continuation', 'A retained traversal object identity changed.')
 					self.verify_discovery_ancestry(window, node)
+		# Standard AT attributes discovery activates Chromium's native accessibility acquisition;
+		# it does not normalize absent children. Acquire once before portal access or traversal.
+		try:
+			window.clear_cache()
+			attributes = window.get_attributes()
+		except GLib.Error:
+			raise NativeError('accessibility_acquisition_failed', 'AT-SPI attributes acquisition failed.')
+		if attributes is None:
+			raise NativeError('accessibility_acquisition_failed', 'AT-SPI attributes acquisition returned no result.')
 		self.connect()
 		bounds = self.bounds(window)
 		# A full monitor frame remains unscaled; screenshot-relative coordinates map directly to portal coordinates.
@@ -470,7 +506,7 @@ class Desktop:
 			data = png.get_buffer().extract_dup(0, png.get_buffer().get_size())
 		finally:
 			encoder.set_state(Gst.State.NULL)
-		elements, tree, pending, visited = self.read_discovery(window, maximum, budget, search, pending)
+		elements, tree, pending, visited, diagnostics = self.read_discovery(window, maximum, budget, search, pending)
 		# Store native object identities at observation, never reconstruct focus authority from indices.
 		identity = self.node_identity(window)
 		start = self.process_start(identity[2])
@@ -480,6 +516,7 @@ class Desktop:
 		result = {'Window': {'Id': request['WindowId'], 'App': str(window.get_process_id()),
 			'Title': window.get_name() or '', 'ProcessId': window.get_process_id()},
 			'Bounds': bounds, 'Tree': tree, 'Png': base64.b64encode(data).decode('ascii'),
+			'Diagnostics': diagnostics,
 			'Truncated': bool(pending), 'VisitedElements': visited, 'VisitBudgetExhausted': bool(pending) and visited >= budget,
 			'ContinuationToken': continuation,
 			'Width': width, 'Height': height, 'OriginX': self.stream[1][0], 'OriginY': self.stream[1][1]}
@@ -492,12 +529,12 @@ class Desktop:
 
 	def read_elements(self, window):
 		# Existing callers use one bounded default page; observation publishes the truthful metadata separately.
-		elements, tree, _, _ = self.read_discovery(window, 300, 600, '', None)
-		return elements, tree
+		elements, tree, _, _, diagnostics = self.read_discovery(window, 300, 600, '', None)
+		return elements, tree, diagnostics
 
 	def read_discovery(self, window, maximum, budget, search, pending):
 		# Child/sibling cursors keep both native calls and retained references bounded even for very wide trees.
-		elements, lines, visited = {'0': window}, [], 0
+		elements, lines, diagnostics, visited = {'0': window}, [], [], 0
 		pending = [(window, None)] if pending is None else list(pending)
 		while pending and visited < budget and len(lines) < maximum:
 			element, child_index = pending.pop()
@@ -508,7 +545,17 @@ class Desktop:
 				if child_index < element.get_child_count():
 					if child_index + 1 < element.get_child_count():
 						pending.append((element, child_index + 1))
-					pending.append((element.get_child_at_index(child_index), None))
+					child = element.get_child_at_index(child_index)
+					if child is None:
+						# Count absent slots too; never retain None or grant it an element/action binding.
+						visited += 1
+						self.confirm_null_child(element, child_index)
+						owner, path, _ = self.node_identity(element)
+						diagnostics.append({'Code': 'accessibility_null_child', 'Component': 'AT-SPI',
+							'Message': 'Provider explicitly exports an absent child at parent ' + owner + ' ' + path +
+							' index ' + str(child_index) + '; no element binding was created.'})
+					else:
+						pending.append((child, None))
 				continue
 			visited += 1
 			# Exact ancestry/owner checks apply to every retained action target, including filtered pages.
@@ -522,7 +569,7 @@ class Desktop:
 			index = '0' if self.node_identity(element) == self.node_identity(window) else str(len(elements))
 			elements[index] = element
 			lines.append(index + ' ' + element.get_role_name() + ' ' + name)
-		return elements, '\n'.join(lines), pending, visited
+		return elements, '\n'.join(lines), pending, visited, diagnostics
 
 	def verify_discovery_ancestry(self, window, element):
 		# Retained same-process objects may be reparented between pages; reject that before capture.
