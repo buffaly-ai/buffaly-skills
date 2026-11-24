@@ -23581,10 +23581,10 @@
       "PackageType": "WebModule",
       "Title": "Wiki",
       "Description": "Buffaly Web Module package for Wiki.",
-      "Version": "0.1.304",
+      "Version": "0.1.305",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/Buffaly.Agent.Wiki",
-      "SourceUrl": "",
+      "SourceUrl": "https://github.com/buffaly-ai/buffaly-skills/tree/main/web-modules/Buffaly.Agent.Wiki",
       "Phrases": [
         "Wiki",
         "Buffaly.Agent.Wiki"
@@ -23600,11 +23600,11 @@
         },
         {
           "Path": "BasicUtilities.dll",
-          "Sha256": "19ac388b8daa4f2c5efda26a8a1e36e0d35b883b2fd20ed080d17df77188dbcb"
+          "Sha256": "8af0cd45b6bec986e223c3790b59a86918bff0966f1b942a74b3401b5616c68a"
         },
         {
           "Path": "Buffaly.Agent.Common.dll",
-          "Sha256": "9bfc7380d6676a6ee24fe671194dc4b4b5d9a64d62b366d3ebe5bff0baed6788"
+          "Sha256": "5f04fc398cfef57bdb7f9e10e4dcab87ff6ebb2aa34d163ea8a8b536fa5ffac1"
         },
         {
           "Path": "Buffaly.Agent.Wiki.deps.json",
@@ -23612,19 +23612,19 @@
         },
         {
           "Path": "Buffaly.Agent.Wiki.dll",
-          "Sha256": "3b2b288eff79aa3dd33b44345dfa8ead57812c52b549fbf2710759da0086f390"
+          "Sha256": "309e65639d7b9cd6750764ee75835813a289374dcaf3f97e6477cd64c7735780"
         },
         {
           "Path": "Buffaly.DB.Core.dll",
-          "Sha256": "faed81c5158d8530b14e01e96b6d2b020d2cdaeb3a0c93ab44b39b3756f7a586"
+          "Sha256": "4809bc0307d1aad27d35767bb446dd333864147c25dddd327d0d849eb787e1b9"
         },
         {
           "Path": "Buffaly.DB.SqlServer.dll",
-          "Sha256": "6f32ee6f844c428e9937b84b72b7d49ab10b62f3ed528fb1acfbe4b2265705e8"
+          "Sha256": "741596b8b780f3303c3faaf6cc11281c161f9c856e6b488299b676cf98974d2d"
         },
         {
           "Path": "Buffaly.Sessions.DB.dll",
-          "Sha256": "53fad40c66e8284ca5e0dc2005cef352f2572c3ae4e6be2b6eac3249f1059c1b"
+          "Sha256": "00f4b271fc798ef770198076339584352dd7c776497b56dee06baf89ead0058e"
         },
         {
           "Path": "cs/Microsoft.Data.SqlClient.resources.dll",
@@ -23752,15 +23752,15 @@
         },
         {
           "Path": "RooTrax.Cache.dll",
-          "Sha256": "932ead254417f396b21c6592f86c5b057b711ed9b3af0f253cbac23a7804bf25"
+          "Sha256": "248c4bf20a8faff0f0e12a4264d6d76d545e98b7146b0d90ff58570337c416c6"
         },
         {
           "Path": "RooTrax.Common.DB.dll",
-          "Sha256": "d72b39b28f4d34283f43850db095c0a55c357e6c0b28402410a48bcc5fd0e6fc"
+          "Sha256": "b36e54bdbf9a3264d56a820964cf4788aa535b6156d6449b92cd6c7ff9c79e1e"
         },
         {
           "Path": "RooTrax.Common.dll",
-          "Sha256": "2a5aae1e219a5022502e0607e2f462cf7b4b6224a3c80c3bff9b29b397909ad3"
+          "Sha256": "c68dba8348206086fa0cb741547fe47e572596b76bc87437222671c95cfffec2"
         },
         {
           "Path": "runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll",
@@ -23797,6 +23797,10 @@
         {
           "Path": "Scripts/20261106_OneTimeSessionWake.sql",
           "Sha256": "dfdddce4f00a5282879210b1f05059effafbc06f8e892e7b13be21d7c9cbcd79"
+        },
+        {
+          "Path": "Scripts/AgentAttentionNavigationAccess.sql",
+          "Sha256": "278ad0e8e6d6bfa25e90b3b0f9de83ff03bc2a6eef213a6967f7e601d3707ae8"
         },
         {
           "Path": "Scripts/AgentNavigationAccess.sql",
@@ -24056,7 +24060,7 @@
         },
         {
           "Path": "Scripts/GetUsageDashboardProviderModelRowsSp.sql",
-          "Sha256": "9c7a0d58939d87fa5c85848d66cec03706a7dfd79f7043c65b4a4c85e91bc103"
+          "Sha256": "e111ea6b8554a2ac80a5e984beabd2d644bc78752aae46b54cf46b4096c3a52e"
         },
         {
           "Path": "Scripts/GetUsageDashboardSessionRowsSp.sql",
@@ -24323,8 +24327,12 @@
           "Sha256": "9f27afa971c8599e0bc5a1b397dfe18a7d82a35937d2ede315c44753652e352d"
         },
         {
+          "Path": "Scripts/Sessions_GetParentCandidatesSp.sql",
+          "Sha256": "b8409be05aded89f717141ccdd110347670a03f0c7dff311e92924f664eaf7ce"
+        },
+        {
           "Path": "Scripts/Sessions_GetPendingAttentionNavigation_Sp.sql",
-          "Sha256": "adb56716b70512c90ce6c694b03f5dd508cc71bcb282c7a57987724d15a48a3e"
+          "Sha256": "8112cdb2ca32ae61046736ba7db424ccefed01a056956ef0aec8eb5b66b64d07"
         },
         {
           "Path": "Scripts/Sessions_GetPendingAttentionSp.sql",
@@ -24344,7 +24352,7 @@
         },
         {
           "Path": "Scripts/Sessions_GetSidebarRecentNavigationPage_Sp.sql",
-          "Sha256": "54c9d46bd9e80e1e510765145a67fdd621d1c9b0d0ac6131c180d2b46c523df4"
+          "Sha256": "1d16d76d23f1d467fb1e96efaa49bf4f87b67cfeb14501aaa694c3296466369c"
         },
         {
           "Path": "Scripts/Sessions_GetSidebarRecentPageSp.sql",
@@ -24544,7 +24552,7 @@
         },
         {
           "Path": "WebAppUtilities.dll",
-          "Sha256": "97e8a8075e0c0970da95dd484221aa83bf3022f3cdd63f5622285e014d996a06"
+          "Sha256": "2d04ab693f69ee1110510434b8473585c1c3e13eca90ede62dd06a7a0b617637"
         },
         {
           "Path": "zh-Hans/Microsoft.Data.SqlClient.resources.dll",
