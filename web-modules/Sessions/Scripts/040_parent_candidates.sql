@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION "Sessions_GetParentCandidatesSp"(p_search text, p_environment_user_key text, p_selected_key text)
+CREATE OR REPLACE FUNCTION "Sessions_GetParentCandidatesSp"(p_search text, p_environment_user_key text, p_selected_key text, p_offset integer)
 RETURNS TABLE ("SessionID" integer, "SessionKey" text, "SessionName" text)
 LANGUAGE sql STABLE AS $$
     SELECT s.session_id, s.session_key::text, s.session_name::text
@@ -10,5 +10,14 @@ LANGUAGE sql STABLE AS $$
       AND ((p_selected_key IS NOT NULL AND lower(s.session_key) = lower(p_selected_key))
         OR (p_selected_key IS NULL AND (p_search = '' OR
           strpos(lower(s.session_name), lower(p_search)) > 0 OR strpos(lower(s.session_key), lower(p_search)) > 0)))
-    ORDER BY s.last_updated DESC, s.session_id DESC LIMIT 26;
+    ORDER BY CASE WHEN p_search <> '' AND
+        (lower(s.session_key) = lower(p_search) OR lower(s.session_name) = lower(p_search)) THEN 0 ELSE 1 END,
+        s.last_updated DESC, s.session_id DESC LIMIT 26 OFFSET p_offset;
+$$;
+
+-- Preserve existing three-argument callers while the repository uses bounded pages.
+CREATE OR REPLACE FUNCTION "Sessions_GetParentCandidatesSp"(p_search text, p_environment_user_key text, p_selected_key text)
+RETURNS TABLE ("SessionID" integer, "SessionKey" text, "SessionName" text)
+LANGUAGE sql STABLE AS $$
+    SELECT * FROM "Sessions_GetParentCandidatesSp"(p_search, p_environment_user_key, p_selected_key, 0);
 $$;

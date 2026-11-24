@@ -10,7 +10,7 @@ CREATE OR ALTER PROCEDURE [dbo].[GetUsageDashboardProviderModelRowsSp]
 	@SessionID [int]
 AS
 
-	SET NOCOUNT ON
+	SET NOCOUNT ON;
 
 	-- Classify existing Claude receipts without rewriting the ledger or counting attempts as rows.
 	WITH Receipts AS
