@@ -1,0 +1,204 @@
+// Shared User-only source. Package verbatim into each consuming project; never include Root tool wrappers.
+import Buffaly.Agent.Host Buffaly.Agent.Host.UserWorkspaceFacade UserWorkspace;
+reference Buffaly.Agent.Recall UserRecallAssembly;
+import UserRecallAssembly Buffaly.Agent.Recall.UserContextFacade UserContext;
+reference Buffaly.OpenAI.ImageGeneration UserImageAssembly;
+import UserImageAssembly Buffaly.OpenAI.ImageGeneration.UserImageFacade UserImages;
+[SemanticProgram.InfinitivePhrase("to inspect user workspace capabilities")]
+prototype ToGetUserWorkspaceCapabilities : OpsAction
+{
+	function Execute() : string { return UserWorkspace.GetCapabilities(); }
+}
+
+[SemanticProgram.InfinitivePhrase("to write a text artifact")]
+prototype ToWriteTextFileEnsuringDirectoryExists : OpsAction
+{
+	function Execute(string directoryPath, string filePath, string content) : string { return UserWorkspace.WriteText(directoryPath, filePath, content); }
+}
+
+[SemanticProgram.InfinitivePhrase("to append to a text artifact")]
+prototype ToAppendTextFile : OpsAction
+{
+	function Execute(string directoryPath, string filePath, string content) : string { return UserWorkspace.AppendText(directoryPath, filePath, content); }
+}
+
+[SemanticProgram.InfinitivePhrase("to copy an owned text artifact")]
+prototype ToCopyFile : OpsAction
+{
+	function Execute(string sourcePath, string destinationPath, bool overwrite = false, string sourceSessionKey = "") : string { return UserWorkspace.CopyFile(sourceSessionKey, sourcePath, destinationPath, overwrite); }
+}
+
+[SemanticProgram.InfinitivePhrase("to read a private text document")]
+prototype ToReadFileDocument : OpsAction
+{
+	function Execute(string directoryPath, string filePath, int characterOffset = 0, string expectedHash = "", string sessionKey = "") : string { return UserWorkspace.ReadDocument(sessionKey, directoryPath, filePath, characterOffset, expectedHash); }
+}
+
+[SemanticProgram.InfinitivePhrase("to search for private files")]
+prototype ToListFilesInDirectory : OpsAction
+{
+	function Execute(string directoryPath, string pattern = "*", int offset = 0, string expectedHash = "", string sessionKey = "") : string { return UserWorkspace.ListFiles(sessionKey, directoryPath, pattern, offset, expectedHash); }
+}
+
+[SemanticProgram.InfinitivePhrase("to search private directory text")]
+prototype ToSearchTextInDirectoryPage : OpsAction
+{
+	function Execute(string directoryPath, string text, string fileGlob = "", int characterOffset = 0, string expectedHash = "", string sessionKey = "") : string { return UserWorkspace.SearchDirectory(sessionKey, directoryPath, text, fileGlob, characterOffset, expectedHash); }
+}
+
+[SemanticProgram.InfinitivePhrase("to find text within a private file")]
+prototype ToSearchTextInFile : OpsAction
+{
+	function Execute(string directoryPath, string filePath, string text, int offset = 0, string expectedHash = "", string sessionKey = "") : string { return UserWorkspace.SearchFile(sessionKey, directoryPath, filePath, text, offset, expectedHash); }
+}
+
+[SemanticProgram.InfinitivePhrase("to list personal source files")]
+prototype ToListPersonalFiles : OpsAction
+{
+	function Execute(string directory = "Nodes/Personal", int skip = 0) : string { return UserWorkspace.ListPersonalFiles(directory, skip); }
+}
+
+[SemanticProgram.InfinitivePhrase("to read a personal source file")]
+prototype ToReadPersonalFile : OpsAction
+{
+	function Execute(string logicalPath) : string { return UserWorkspace.ReadPersonalFile(logicalPath); }
+}
+
+[SemanticProgram.InfinitivePhrase("to save an owned image artifact")]
+prototype ToSaveUserImage : OpsAction
+{
+	function Execute(string sourcePath, string destinationPath, bool overwrite = false, string sourceSessionKey = "") : string { return UserWorkspace.SaveImage(sourceSessionKey, sourcePath, destinationPath, overwrite); }
+}
+
+[SemanticProgram.InfinitivePhrase("to read an owned image")]
+prototype ToReadUserImage : OpsAction
+{
+	function Execute(string relativePath, string sessionKey = "") : string { return UserWorkspace.ReadImage(sessionKey, relativePath); }
+}
+
+[SemanticProgram.InfinitivePhrase("to generate a private image artifact")]
+prototype ToGenerateImageWithOpenAI : OpsAction
+{
+	function Execute(string prompt, string relativePath, string size = "auto", string quality = "auto", string background = "opaque") : string { return UserImages.Generate(prompt, relativePath, size, quality, background); }
+}
+
+[SemanticProgram.InfinitivePhrase("to edit a private image artifact")]
+prototype ToEditImageWithOpenAI : OpsAction
+{
+	function Execute(string prompt, string sourcePath, string relativePath, string sourceSessionKey = "", string size = "auto", string quality = "auto", string background = "opaque") : string { return UserImages.Edit(prompt, sourceSessionKey, sourcePath, relativePath, size, quality, background); }
+}
+
+[SemanticProgram.InfinitivePhrase("to list all local task statuses")]
+prototype ToListLocalTasks : OpsAction
+{
+	function Execute() : string { return UserWorkspace.ListLocalTasks(true); }
+}
+
+[SemanticProgram.InfinitivePhrase("to list open local task statuses")]
+prototype ToListActiveLocalTasks : OpsAction
+{
+	function Execute() : string { return UserWorkspace.ListLocalTasks(false); }
+}
+
+[SemanticProgram.InfinitivePhrase("to read a local task")]
+prototype ToReadLocalTask : OpsAction
+{
+	function Execute(string taskFileName) : string { return UserWorkspace.ReadLocalTask(taskFileName); }
+}
+
+[SemanticProgram.InfinitivePhrase("to save a local task")]
+prototype ToSaveLocalTask : OpsAction
+{
+	function Execute(string taskFileName, string markdown) : string { return UserWorkspace.SaveLocalTask(taskFileName, markdown); }
+}
+
+[SemanticProgram.InfinitivePhrase("to mark a local task open blocked superseded or closed")]
+prototype ToSetLocalTaskStatus : OpsAction
+{
+	function Execute(string taskFileName, string status, string statusReason) : string { return UserWorkspace.SetLocalTaskStatus(taskFileName, status, statusReason); }
+}
+
+[SemanticProgram.InfinitivePhrase("to read personal instructions")]
+prototype ToReadPersonalization : OpsAction
+{
+	function Execute() : string { return UserWorkspace.ReadPersonalization(); }
+}
+
+[SemanticProgram.InfinitivePhrase("to save personal instructions")]
+prototype ToSavePersonalization : OpsAction
+{
+	function Execute(string markdown) : string { return UserWorkspace.SavePersonalization(markdown); }
+}
+
+[SemanticProgram.InfinitivePhrase("to validate a private prompt skill")]
+prototype ToValidateUserPromptSkill : OpsAction
+{
+	function Execute(string promptActionsFileName, string prototypeDefinition, string promptFileName, string promptText) : string { return UserWorkspace.ValidatePromptSkill(promptActionsFileName, prototypeDefinition, promptFileName, promptText); }
+}
+
+[SemanticProgram.InfinitivePhrase("to get the details of a prototype")]
+prototype ToGetPrototypeDetails : OpsAction
+{
+	function Execute(string prototype, bool loadedOnly = false, string methodName = "Execute", int characterOffset = 0, string expectedSnapshotHash = "") : string { return UserWorkspace.GetPrototypeDetails(prototype, loadedOnly, methodName, characterOffset, expectedSnapshotHash); }
+}
+
+[SemanticProgram.InfinitivePhrase("to get prompt instructions for a prototype")]
+prototype ToGetPrototypePromptInstructions : OpsAction
+{
+	function Execute(string prototype) : string { return UserWorkspace.GetPromptInstructions(prototype); }
+}
+
+[SemanticProgram.InfinitivePhrase("to list registered skills")]
+prototype ToListSkills : OpsAction
+{
+	function Execute() : string { return UserWorkspace.ListSkills(); }
+}
+
+[SemanticProgram.InfinitivePhrase("to list tools for a skill")]
+prototype ToListSkillActions : OpsAction
+{
+	function Execute(string skill) : string { return UserWorkspace.ListSkillActions(skill); }
+}
+
+[SemanticProgram.InfinitivePhrase("to find an owned session by key")]
+prototype ToSearchSessionsByNameOrKey : OpsAction
+{
+	function Execute(string search, int maxCount = 50, int skip = 0) : string { return UserSessions.ListRecentSessions(maxCount, skip, search); }
+}
+
+[SemanticProgram.InfinitivePhrase("to find user messages in an owned session")]
+prototype ToSearchSessionMessages : OpsAction
+{
+	function Execute(string sessionKey, string search, string beforeMessageKey = "", int maxMessageScanCount = 40) : string { return UserSessions.SearchMessages(sessionKey, search, beforeMessageKey, maxMessageScanCount); }
+}
+
+[SemanticProgram.InfinitivePhrase("to remember contextual guidance")]
+prototype ToRememberContextGuidance : OpsAction
+{
+	function Execute(string fileName, string prototypeName, string contextPhrase, string promptText, string expectedRevision = "") : string { return UserContext.Save(fileName, prototypeName, contextPhrase, promptText, expectedRevision); }
+}
+
+[SemanticProgram.InfinitivePhrase("to find contextual guidance for a situation")]
+prototype ToFindContextGuidance : OpsAction
+{
+	function Execute(string situation) : string { return UserContext.Find(situation); }
+}
+
+[SemanticProgram.InfinitivePhrase("to load a situational behavior prompt")]
+prototype ToLoadContextPrompt : OpsAction
+{
+	function Execute(string contextPromptPrototype) : string { return UserContext.Load(contextPromptPrototype); }
+}
+
+[SemanticProgram.InfinitivePhrase("to track work in a local task artifact")]
+prototype ToCreateAndMaintainLocalTask : PromptAction
+{
+	PromptPath = "Core/Prompts/UserWorkspaceTask.prompt.md";
+}
+[SemanticProgram.InfinitivePhrase("to use the buffaly html report style kit")]
+prototype ToReturnHtmlResultInBuffalySkill : PromptAction
+{
+	PromptPath = "Core/Prompts/UserWorkspaceHtml.prompt.md";
+}
+// Startup registration reuses Recall's context owner. No new companion or automatic authoring.
+UserContext.Initialize();

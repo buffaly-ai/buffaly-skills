@@ -1,0 +1,28 @@
+[SemanticProgram.InfinitivePhrase("to remember something")]
+[SemanticProgram.InfinitivePhrase("to remember something in the ontology")]
+[SemanticProgram.InfinitivePhrase("to persist memory as an ontology prototype")]
+[SemanticProgram.InfinitivePhrase("to update or create a memory prototype")]
+[SemanticProgram.InfinitivePhrase("to remember a user preference")]
+[SemanticProgram.InfinitivePhrase("to remember a fact about the user")]
+prototype ToRememberOntologyObjectSkill : PromptAction, CoreAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Core/Prompts/RememberOntologyObject.prompt.md";
+	Description = @"Choose or create the correct ontology base for a fact, preference, contact, environment detail, or other remembered object, then store it as a queryable prototype instance in the correct Buffaly Agent node location. Not for a standing or conditional instruction about future work ('when you X, always Y', 'from now on', 'next time'); save that as context memory with ToRememberContextGuidance when it is available.";
+}
+
+[SemanticProgram.InfinitivePhrase("to remember how to do something")]
+[SemanticProgram.InfinitivePhrase("to remember an operational procedure")]
+[SemanticProgram.InfinitivePhrase("to store procedural memory")]
+[SemanticProgram.InfinitivePhrase("to decide between prompt action and opsaction memory")]
+[SemanticProgram.InfinitivePhrase("to remember a repeatable workflow")]
+prototype ToRememberHowToDoSomethingSkill : PromptAction, CoreAction
+{
+	IsPromptAction = true;
+	SkillKind = "prompt";
+	SkillVersion = "1.0.0";
+	PromptPath = @"Core/Prompts/RememberHowToDoSomething.prompt.md";
+	Description = @"Capture repeatable operational knowledge as reusable Buffaly Agent memory by deciding whether it belongs as prompt guidance, executable ProtoScript action(s), or both, and then storing it through the typed authoring tools. Not for a standing or conditional instruction that only changes what to do when a situation recurs; save that as context memory with ToRememberContextGuidance when it is available.";
+}

@@ -1,0 +1,141 @@
+[SemanticProgram.InfinitivePhrase("to find candidate actions")]
+prototype ToSearchCandidateActions : CoreAction
+{
+	Description = "Find actions in the selected User environment and same-user sessions. Foreign matches must be borrowed before loading; discovery never executes them.";
+	function Execute(string semanticQuery, int maxResults = 5) : string
+	{
+		return UserDiscovery.SearchCandidateActions(semanticQuery, maxResults);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to find candidate entities")]
+prototype ToSearchCandidateEntities : CoreAction
+{
+	Description = "Find entities in the selected User environment and same-user sessions only.";
+	function Execute(string semanticQuery, int maxResults = 8, bool includeParentType = true) : string
+	{
+		return UserDiscovery.SearchCandidateEntities(semanticQuery, maxResults, includeParentType);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to load a protoscript action")]
+prototype ToLoadProtoScriptActionTool : CoreAction
+{
+	Description = "Load an action from this runtime's selected source graph. Loading does not execute the action.";
+	function Execute(string prototypeName) : string
+	{
+		return UserDiscovery.LoadProtoScriptActionTool(prototypeName);
+	}
+}
+[SemanticProgram.InfinitivePhrase("to list loaded protoscript tools")]
+prototype ToListLoadedProtoScriptActionTools : CoreAction
+{
+	function Execute() : string
+	{
+		return UserDiscovery.ListLoadedProtoScriptActionTools();
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to initialize session planning files")]
+prototype ToInitializeSessionPlanAndScratch : CoreAction
+{
+	function Execute() : string { return UserPlan.InitializeSessionPlanAndScratch(); }
+}
+[SemanticProgram.InfinitivePhrase("to read session plan markdown")]
+prototype ToGetSessionPlan : CoreAction
+{
+	function Execute() : string { return UserPlan.GetSessionPlan(); }
+}
+[SemanticProgram.InfinitivePhrase("to read complete session plan markdown")]
+prototype ToGetFullSessionPlan : CoreAction
+{
+	function Execute() : string { return UserPlan.GetFullSessionPlan(); }
+}
+[SemanticProgram.InfinitivePhrase("to start a session plan")]
+prototype ToSetCurrentSessionPlan : CoreAction
+{
+	function Execute(string explanation, string currentStep, string nextStepsJson, string blockedStepsJson) : string
+	{ return UserPlan.SetCurrentSessionPlan(explanation, currentStep, nextStepsJson, blockedStepsJson); }
+}
+[SemanticProgram.InfinitivePhrase("to update plan routing context")]
+prototype ToSetSessionPlanExplanation : CoreAction
+{
+	function Execute(string explanation) : string { return UserPlan.SetSessionPlanExplanation(explanation); }
+}
+[SemanticProgram.InfinitivePhrase("to add a pending plan step")]
+prototype ToAddSessionPlanStep : CoreAction
+{
+	function Execute(string stepText, string note) : string { return UserPlan.AddSessionPlanStep(stepText, note); }
+}
+[SemanticProgram.InfinitivePhrase("to mark a plan step in progress")]
+prototype ToStartSessionPlanStep : CoreAction
+{
+	function Execute(string stepText, string note) : string { return UserPlan.StartSessionPlanStep(stepText, note); }
+}
+[SemanticProgram.InfinitivePhrase("to mark a plan step done")]
+prototype ToCompleteSessionPlanStep : CoreAction
+{
+	function Execute(string stepText, string note) : string { return UserPlan.CompleteSessionPlanStep(stepText, note); }
+}
+[SemanticProgram.InfinitivePhrase("to mark a plan step blocked")]
+prototype ToBlockSessionPlanStep : CoreAction
+{
+	function Execute(string stepText, string note) : string { return UserPlan.BlockSessionPlanStep(stepText, note); }
+}
+[SemanticProgram.InfinitivePhrase("to read complete session scratch markdown")]
+prototype ToGetSessionScratch : CoreAction
+{
+	function Execute() : string { return UserPlan.GetSessionScratch(); }
+}
+[SemanticProgram.InfinitivePhrase("to read recent scratch entries")]
+prototype ToGetRecentSessionScratch : CoreAction
+{
+	function Execute(int maxEntries = 5) : string { return UserPlan.GetRecentSessionScratch(maxEntries); }
+}
+[SemanticProgram.InfinitivePhrase("to add a timestamped scratch entry")]
+prototype ToAppendSessionScratch : CoreAction
+{
+	function Execute(string markdownEntry) : string { return UserPlan.AppendSessionScratch(markdownEntry); }
+}
+[SemanticProgram.InfinitivePhrase("to write session scratch markdown")]
+prototype ToSetSessionScratch : CoreAction
+{
+	function Execute(string markdown) : string { return UserPlan.SetSessionScratch(markdown); }
+}
+
+[SemanticProgram.InfinitivePhrase("to borrow a session action")]
+prototype ToBorrowSessionAction : CoreAction
+{
+	Description = "Borrow an exact action from another persisted session belonging to the same user. Does not execute it. If its destination module is already active, a worker reload is required before activation; retry after reload to register the callable tool.";
+	function Execute(string ownerScope, string prototypeName) : string { return UserBorrow.BorrowSessionAction(ownerScope, prototypeName); }
+}
+[SemanticProgram.InfinitivePhrase("to borrow a session entity")]
+prototype ToBorrowSessionEntity : CoreAction
+{
+	Description = "Borrow an exact entity from another persisted session belonging to the same user. Missing dependencies fail validation; they are not imported automatically.";
+	function Execute(string ownerScope, string prototypeName) : string { return UserBorrow.BorrowSessionEntity(ownerScope, prototypeName); }
+}
+
+[SemanticProgram.InfinitivePhrase("to get recent session turns")]
+prototype ToGetRecentSessionTurns : CoreAction
+{
+	Description = "Read a JSON presentation of canonical recent turns from an owned session. maxTurns defaults to 5 and is capped at 25. Does not load or start the target worker.";
+	function Execute(string sessionKey, int maxTurns = 5) : string { return UserSessions.GetRecentSessionTurns(sessionKey, maxTurns); }
+}
+[SemanticProgram.InfinitivePhrase("to page older session turns")]
+prototype ToGetSessionTurnPage : CoreAction
+{
+	Description = "Read a JSON presentation of older canonical turns from an owned session. skipTurns excludes that many newest turns; advance by returned turn count. The page is capped at 25.";
+	function Execute(string sessionKey, int skipTurns, int maxTurns = 5) : string { return UserSessions.GetSessionTurnPage(sessionKey, skipTurns, maxTurns); }
+}
+[SemanticProgram.InfinitivePhrase("to get details for one session turn")]
+prototype ToGetSessionTurnDetail : CoreAction
+{
+	Description = "Read a JSON presentation of rows for a selected turn in an owned session. maxRows is capped at 200 in this User composition; prefer turn summaries first.";
+	function Execute(string sessionKey, string turnId, int maxRows = 200) : string { return UserSessions.GetSessionTurnDetail(sessionKey, turnId, maxRows); }
+}
+
+[SemanticProgram.InfinitivePhrase("to list persisted recent buffaly sessions")]
+prototype ToListRecentSessions : CoreAction
+{
+	Description = "Read this user's persisted session metadata ordered by activity. The owner-indexed SQL query selects ownership before paging; foreign parent metadata is excluded. maxCount is 1..200; skip is 0..1000 in this POC. Deep cursor paging is deferred; this is not an all-users metadata scan.";
+	function Execute(int maxCount = 50, int skip = 0) : string { return UserSessions.ListRecentSessions(maxCount, skip, ""); }
+}

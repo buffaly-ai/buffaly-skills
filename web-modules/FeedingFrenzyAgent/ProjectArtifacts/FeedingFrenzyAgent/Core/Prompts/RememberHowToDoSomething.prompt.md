@@ -16,6 +16,10 @@ Everything outside `Nodes/Personal` is system-owned for normal agent authoring. 
 
 Inside `Nodes/Personal`, organize intentionally. Search existing personal nodes, choose the closest natural home, and add beside related content. Create a new personal subfolder only when no existing personal node fits and the concept is durable enough to deserve its own home. Do not perform broad personal-node refactors unless the user asks.
 
+## Standing Instructions Are Context Memory
+
+A standing or conditional instruction that only changes what to do when a situation recurs, without describing how to do the work ("when you deploy the Meta site, always deploy all three"), is situational guidance, not a procedure. Save it with `ToRememberContextGuidance` when it is available instead of creating a prompt action. Use this skill when the user describes how to perform the work.
+
 ## Core Principle: Materialize To Executable Knowledge
 
 Prefer executable, deterministic memory over interpretive memory.
@@ -61,7 +65,7 @@ Choose **Both levels** when:
 - You need a high-level orchestrator prompt and one or more new concrete operations.
 - The workflow should be discoverable as a skill and also execute custom steps reliably.
 - You want resilient orchestration, but also want critical steps materialized as deterministic actions.
-- If the workflow depends on Codex edits plus caller-owned validation between steps, prefer a prompt action that explicitly routes through `ToCoordinateCodexIncrementalEditAndValidateSkill`.
+- If the workflow depends on an external editing engine plus caller-owned validation between steps, capture that dependency explicitly; do not route through Codex unless the user specifically requested Codex.
 
 ## What To Do (Concrete Steps)
 

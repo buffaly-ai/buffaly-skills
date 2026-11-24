@@ -6,6 +6,14 @@ You are maintaining Buffaly Agent memory in ProtoScript by modeling information 
 
 Given a fact, preference, contact, environment detail, or other object to remember, make the minimum coherent ontology change so the memory is queryable, semantically correct, and stored in the correct Buffaly Agent node location.
 
+## Standing Instructions Are Context Memory
+
+A standing or conditional instruction about future work says what to do, or avoid, whenever a situation recurs: "when you deploy the Meta site, always deploy all three", "from now on, sign my emails as Matt", "next time you X, do Y". It is situational guidance, not a fact about an object. Do not store it as Notes, aliases or properties on an entity.
+
+1. Save it with `ToRememberContextGuidance`. Use a context phrase that names the situation, and keep the user's words and qualifications in the prompt text.
+2. If the request also states a real fact about an object, store that fact here as well.
+3. If this installation has no context-memory writer, store it here as before and tell the user it will not be recalled automatically when the situation recurs.
+
 ## Hard Rules
 
 1. Search ontology first with `ToSearchCandidateEntities`, `ToGetPrototypeDetails`, `ToGetPrototypeNotes`, or `ToListPrototypeFirstLevelDescendants`. Use file search only after ontology binding, for placement or source-file checks.
