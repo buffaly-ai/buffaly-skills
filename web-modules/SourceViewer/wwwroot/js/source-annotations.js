@@ -16,12 +16,25 @@
 		// Use the host's shared Scribe, including retained-audio recovery and authoritative finalization.
 		find('source-note-remove').insertAdjacentHTML('beforebegin', '<button id="source-note-scribe" type="button" data-scribe-target="source-note-text"><span class="fas fa-microphone" aria-hidden="true"></span><span class="visually-hidden">Start Recording</span></button>');
 		const scribe = root.ScribeAutoInit.getController(find('source-note-scribe'));
+		// CodeMirror's painted multi-line rectangles include blank horizontal scroll space.
+		// Adapt source character endpoints to visible text fragments before shared placement.
+		function selectionRects() {
+			const from = editor.getCursor('from'), to = editor.getCursor('to'), viewport = editor.getViewport();
+			const bounds = editor.getWrapperElement().getBoundingClientRect(), rects = [];
+			for (let line = Math.max(from.line, viewport.from); line <= Math.min(to.line, viewport.to - 1); line++) {
+				const start = editor.charCoords({ line, ch: line === from.line ? from.ch : 0 }, 'window');
+				const end = editor.charCoords({ line, ch: line === to.line ? to.ch : editor.getLine(line).length }, 'window');
+				const left = Math.max(start.left, bounds.left), right = Math.min(end.left, bounds.right);
+				const top = Math.max(start.top, bounds.top), bottom = Math.min(end.bottom, bounds.bottom);
+				rects.push({ left, right, top, bottom, width: right - left, height: bottom - top });
+			}
+			return rects;
+		}
 		function positionSelection() {
 			selectionFrame = 0;
 			add.hidden = true;
 			if (!draftsReady || !active || !selection || dialog.open) return;
-			const rects = Array.from(editor.getWrapperElement().querySelectorAll('.CodeMirror-selected'), node => node.getBoundingClientRect());
-			root.BuffalyAnnotationSelection.position(add, rects);
+			root.BuffalyAnnotationSelection.position(add, selectionRects());
 		}
 		function scheduleSelection() {
 			if (!selectionFrame) selectionFrame = root.requestAnimationFrame(positionSelection);

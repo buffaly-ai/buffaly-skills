@@ -11,3 +11,7 @@ Bumps shared CSS and annotation-controller query revisions to 4 for the fail-clo
 
 ## 2026-11-24 — Shared annotation dependencies
 Loads the existing host /js/scribe.js and linked shared Markdown selection-placement asset before the source annotation controller. Bumps controller/CSS revision to 5. Source selection/draft/queue behavior stays module-owned; capture/transcription is not copied. Staging already exposes the required ScribeAutoInit and stopAndWaitForIdle contract (HTTP 200 source inspection). Validation: four SourceViewer Node suites and 31/31 .NET tests pass; real package build passes and includes the linked asset. No core installation replacement is needed to deliver the linked helper.
+
+
+## 2026-11-24 — Selection-coordinate correction revision
+Bumps source-annotations.js to revision6 after actual staging exposed the oversized CodeMirror multi-line paint rectangle. Other assets/commands and Scribe owner unchanged. SourceAnnotations.cjs passed the actual-text-endpoint regression. Installed proof follows normal extension redeployment.
