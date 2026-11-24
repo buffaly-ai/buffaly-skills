@@ -139,7 +139,9 @@
           : 'The Buffaly microphone window did not load or respond within 30 seconds.';
         finishBrokeredMicrophone(requestId, new Error(message));
       }, 30000);
-      const abort = () => finishBrokeredMicrophone(requestId, signal.reason);
+      // Only the acquisition owner's explicit cancellation is an idle outcome.
+      // Deadline/graph failures and unexpected track AbortErrors remain failures.
+      const abort = () => finishBrokeredMicrophone(requestId, signal.reason, signal.reason?.name === 'AbortError' ? 'cancelled' : 'rejected');
       pendingMicrophones.set(requestId, { resolve, reject, peer, stream, broker, timer, signal, abort, brokerReady: false, brokerAcquiring: false, settled: false });
       if (signal) signal.addEventListener('abort', abort, { once: true });
       // ontrack fires while applying the offer, before ICE/DTLS or audio packets.
@@ -191,13 +193,13 @@
     }, MICROPHONE_RECORDER_FINALIZATION_GRACE_MS);
   }
 
-  function finishBrokeredMicrophone(requestId, error) {
+  function finishBrokeredMicrophone(requestId, error, result = 'rejected') {
     const request = pendingMicrophones.get(requestId);
     if (!request) return;
     if (error) {
       releaseBrokeredMicrophone(requestId);
       request.reject(error);
-      window.parent.postMessage({ type: 'extension_browser_microphone_diagnostic', origin: window.location.origin, policyAllowsMicrophone: null, permissionState: 'broker', result: 'rejected', name: error.name || 'MicrophoneError', message: error.message || String(error) }, '*');
+      window.parent.postMessage({ type: 'extension_browser_microphone_diagnostic', origin: window.location.origin, policyAllowsMicrophone: null, permissionState: 'broker', result, name: error.name || 'MicrophoneError', message: error.message || String(error) }, '*');
       return;
     }
     if (request.settled || request.startingSink) return;
