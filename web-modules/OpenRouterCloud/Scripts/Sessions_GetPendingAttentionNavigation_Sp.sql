@@ -13,11 +13,11 @@ BEGIN
   JSON_QUERY(s.Data,'$.Specialization') AS Specialization,s.NeedsAttention,s.LastNonRunningUtc AS StopStamp,
   CASE WHEN t.TurnKey IS NOT NULL AND t.TurnKey<>N'' AND t.TerminalMessageID IS NULL AND s.State NOT IN(N'Running',N'Unknown') THEN N'Interrupted'
    ELSE CASE m.TerminalOutcomeState WHEN N'Failed' THEN N'Errors' WHEN N'Completed' THEN CASE WHEN m.SavedWorkResume=1 THEN N'Resumed' ELSE N'Completed' END ELSE N'' END END AS AttentionGroup,
-  CONVERT(bit,CASE WHEN JSON_VALUE(s.Data,'$.SidebarProfile.ShowInNextUpdate')=N'false' THEN 0 ELSE 1 END) AS ShowInNextUpdate
+   s.SidebarShowInNextUpdate AS ShowInNextUpdate
  FROM dbo.Sessions s
  OUTER APPLY(SELECT TOP(1) TurnKey,TerminalMessageID FROM dbo.Turns WHERE SessionID=s.SessionID ORDER BY DisplayOrderAtUtc DESC,FirstMessageID DESC)t
  LEFT JOIN dbo.Messages m ON m.MessageID=t.TerminalMessageID AND m.TerminalOutcomeState IS NOT NULL
- WHERE (@EnvironmentUserKey IS NULL OR s.EnvironmentUserKey=@EnvironmentUserKey) AND s.NeedsAttention=1 AND s.IsArchived=0
+  WHERE (@EnvironmentUserKey IS NULL OR s.EnvironmentUserKey=@EnvironmentUserKey) AND s.NeedsAttention=1 AND s.IsArchived=0 AND s.SidebarShowInNextUpdate=1
  ORDER BY CONVERT(datetimeoffset(7),s.LastNonRunningUtc),s.SessionID;
 END
 GO
