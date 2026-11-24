@@ -6,7 +6,7 @@
   <meta name="color-scheme" content="light">
   <title>Repository Viewer</title>
   <link rel="stylesheet" href="/css/icons.min.css">
-  <link rel="stylesheet" href="/web-modules/CSharpViewer/csharp-viewer.css?v=light1">
+  <link rel="stylesheet" href="/web-modules/CSharpViewer/csharp-viewer.css?v=notes1">
 </head>
 <body>
   <svg class="sprite" aria-hidden="true" focusable="false">
@@ -123,6 +123,7 @@
         </div>
         <div class="code-wrap hidden" id="code-wrap" tabindex="0" aria-label="Read-only source code"><div class="lines" id="lines" aria-hidden="true" title="Click a line number to link that line"></div><pre><code id="code"></code></pre></div>
       </div>
+      <div id="workspace-annotations"></div>
     </section>
   </main>
 
@@ -208,6 +209,11 @@
   </dialog>
 
   <script src="/web-modules/CSharpViewer/viewer-commands.js?v=1"></script>
-  <script src="/web-modules/CSharpViewer/csharp-viewer.js?v=ui6"></script>
+  <script src="/web-modules/CSharpViewer/shared/codemirror.js?v=1"></script>
+  <script src="/web-modules/CSharpViewer/shared/clike.js?v=1"></script>
+  <script src="/web-modules/CSharpViewer/shared/source-csharp.js?v=1"></script>
+  <script src="/web-modules/CSharpViewer/shared/source-annotations.js?v=1"></script>
+  <script src="/web-modules/CSharpViewer/viewer-source.js?v=1"></script>
+  <script src="/web-modules/CSharpViewer/csharp-viewer.js?v=notes1"></script>
 </body>
 </html>

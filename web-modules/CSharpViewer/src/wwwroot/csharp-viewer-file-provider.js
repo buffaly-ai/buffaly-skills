@@ -4,6 +4,8 @@
   const registry = window.BuffalyFilePresentationProviders;
   if (!registry || typeof registry.register !== "function") throw new Error("CSharpViewer requires the shell file-presentation registry.");
   const preferenceKey = "buffaly.csharp-viewer.default";
+  // SessionKey on a file context can be the artifact owner. Only the opening page owns the caller.
+  function callingSession() { return new URLSearchParams(window.location.search).get("sessionKey") || ""; }
   function selectedViewer() {
     const value = window.localStorage.getItem(preferenceKey) || "source";
     if (!["source", "repository"].includes(value)) throw new Error("The saved C# viewer selection is invalid.");
@@ -12,6 +14,8 @@
   function preferredLaunch(context) {
     const artifactIdentityPath = context.Path.replace(/\\/g, "/");
     const query = new URLSearchParams({ path: context.Path, viewer: selectedViewer() });
+    const caller = callingSession();
+    if (caller) query.set("agentSessionKey", caller);
     if (context.RootId) { query.set("root", context.RootId); query.set("project", context.ProjectPath || ""); }
     if (context.SessionKey) query.set("sessionKey", context.SessionKey);
     else if (/^artifacts\//.test(artifactIdentityPath)) query.set("sessionKey", new URLSearchParams(window.location.search).get("sessionKey") || "");
@@ -30,6 +34,7 @@
       catch { return; }
       if (url.origin !== window.location.origin || url.pathname !== "/api/web-modules/CSharpViewer/open") return;
       url.searchParams.set("viewer", selectedViewer());
+      if (callingSession()) url.searchParams.set("agentSessionKey", callingSession());
       anchor.setAttribute("href", url.pathname + url.search);
     });
   }
@@ -57,6 +62,7 @@
       try { url = new URL(anchor.href, window.location.href); }
       catch { return; }
       if (url.origin !== window.location.origin || url.pathname !== "/api/web-modules/CSharpViewer/open" || anchor.parentElement?.hasAttribute("data-csharp-viewer-picker")) return;
+      if (callingSession()) { url.searchParams.set("agentSessionKey", callingSession()); anchor.setAttribute("href", url.pathname + url.search); }
       const wrapper = document.createElement("span");
       wrapper.className = "dropdown d-inline-flex align-items-center";
       wrapper.setAttribute("data-csharp-viewer-picker", "");
@@ -117,6 +123,8 @@
     }
     if (!sessionKey || !artifactPath || artifactPath.split("/").some(segment => !segment || segment === "." || segment === "..")) return null;
     const query = new URLSearchParams({ sessionKey, file: artifactPath });
+    const caller = callingSession();
+    if (caller) query.set("agentSessionKey", caller);
     if (context.Line != null) query.set("line", context.Line);
     if (context.EndLine != null) query.set("endLine", context.EndLine);
     return { Url: "/web-modules/CSharpViewer/?" + query.toString() };
@@ -129,6 +137,8 @@
     function relative(value) { return !/^(?:\/|[a-z]:)/i.test(value) && !value.split("/").some(part => part === "." || part === ".." || /[\u0000-\u001f\u007f]/.test(part)); }
     if (!path || !relative(path) || !relative(project)) throw new Error("Project links require contained relative paths.");
     const query = new URLSearchParams({ root: context.RootId, project, file: path });
+    const caller = callingSession();
+    if (caller) query.set("agentSessionKey", caller);
     if (context.Line != null) query.set("line", context.Line);
     if (context.EndLine != null) query.set("endLine", context.EndLine);
     return { Url: "/web-modules/CSharpViewer/?" + query.toString() };

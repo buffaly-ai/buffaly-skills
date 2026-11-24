@@ -1,19 +1,29 @@
 (() => {
   'use strict';
-  // Repository Viewer client. Read-only: every API call is a GET, source text is rendered through textContent
-  // (or the escaping C# highlighter) and nothing in a file is ever executed.
+  // Source APIs remain read-only. Annotation submission alone posts to the existing session queue.
   const $ = id => document.getElementById(id);
   const base = '/api/web-modules/CSharpViewer/';
   const SVG = 'http://www.w3.org/2000/svg';
   const storageKeys = { width:'csharpViewer.explorerWidth', recent:'csharpViewer.recentProjects' };
   const narrow = window.matchMedia('(max-width: 760px)');
   const fileControls = ['copy-link','copy-code','line-input','go-line','wrap-code','find-in-file'];
-  function escapeHtml(value){return value.replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
-  function highlight(source){let output='',index=0;const token=/(\/\*[\s\S]*?\*\/|\/\/[^\n]*|@?"(?:""|\\.|[^"\\])*"|'(?:\\.|[^'\\])+'|\b\d+(?:\.\d+)?\b|\b(?:abstract|as|async|await|base|bool|break|byte|case|catch|char|checked|class|const|continue|decimal|default|delegate|do|double|else|enum|event|explicit|extern|false|finally|fixed|float|for|foreach|goto|if|implicit|in|int|interface|internal|is|lock|long|namespace|new|null|object|operator|out|override|params|partial|private|protected|public|readonly|record|ref|required|return|sbyte|sealed|short|sizeof|stackalloc|static|string|struct|switch|this|throw|true|try|typeof|uint|ulong|unchecked|unsafe|ushort|using|var|virtual|void|volatile|while|with|yield)\b)/g;for(const match of source.matchAll(token)){output+=escapeHtml(source.slice(index,match.index));const text=match[0];let cls='kw';if(text.startsWith('//')||text.startsWith('/*'))cls='comment';else if(text.startsWith('"')||text.startsWith('@"')||text.startsWith("'"))cls='str';else if(/^\d/.test(text))cls='num';output+=`<span class="${cls}">${escapeHtml(text)}</span>`;index=match.index+text.length}return output+escapeHtml(source.slice(index))}
+  const callerSessionKey = new URLSearchParams(location.search).get('agentSessionKey') || '';
+  let annotations = null;
+  function clearAnnotations(){annotations?.dispose();annotations=null;}
+  function mountAnnotations(file){
+    const toolbar=document.createElement('div'),host=document.createElement('div'),notesHost=document.createElement('div');
+    toolbar.className='source-annotation-toolbar';host.className='source-annotation-dialog';notesHost.className='source-annotation-notes';
+    $('outline').after(toolbar);$('workspace-annotations').append(host,notesHost);
+    const scope=state.scope,rootPath=scope.sessionKey?state.sessionRoot:state.roots.find(root=>root.id===scope.rootId)?.path;
+    if(!rootPath)throw new Error('Source identity is unavailable for annotations.');
+    const separator=rootPath.includes('\\')?'\\':'/';
+    const absolute=rootPath.replace(/[\\/]+$/,'')+separator+[scope.sessionKey?'':scope.projectPath,file.path].filter(Boolean).map(part=>part.replace(/[\\/]/g,separator)).join(separator);
+    annotations=window.CSharpViewerSource.mount({file:{...file,path:absolute},sessionKey:callerSessionKey,code:$('code'),host,toolbar,notesHost});
+  }
   const state = { scope:null, label:'', generation:0, tree:[], files:[], current:null, tabs:[], history:[], historyIndex:-1,
     searchId:0, fileId:0, treeId:0, browseId:0, mode:'files', results:[], resultIndex:0, folder:'', ready:false, treeError:'',
     matches:[], matchIndex:-1, focus:false, fullscreenOwned:false, positions:{}, repositories:[], repositoryId:0, repositoryListing:null,
-    rootIds:new Set(), explorerHidden:false, drawerOpen:false, explorerWidth:280, readme:null };
+    rootIds:new Set(), roots:[], sessionRoot:'', explorerHidden:false, drawerOpen:false, explorerWidth:280, readme:null };
   let timer, pending=0;
 
   // ---- Small helpers -------------------------------------------------------------------------------------------
@@ -118,6 +128,7 @@
   }
   function updateLink(path,line){
     const url=new URL(location.href);url.search='';
+    if(callerSessionKey)url.searchParams.set('agentSessionKey',callerSessionKey);
     if(state.scope.sessionKey){url.searchParams.set('sessionKey',state.scope.sessionKey);url.searchParams.set('file','artifacts/'+path);}
     else {url.searchParams.set('root',state.scope.rootId);if(state.scope.projectPath)url.searchParams.set('project',state.scope.projectPath);url.searchParams.set('file',path);}
     url.searchParams.set('line',String(line));history.replaceState(null,'',url);
@@ -262,6 +273,7 @@
     if(scope)$('empty-recent').classList.add('hidden');else renderRecent('empty-recent-list','empty-recent');
   }
   function clearFile(){
+    clearAnnotations();
     state.current=null;$('code').replaceChildren();$('lines').textContent='';breadcrumbHint(state.scope?'No file open':'Open a project to begin');$('metadata').textContent='READ ONLY';
     $('file-kind').classList.add('hidden');$('outline').classList.add('hidden');$('cursor-pos').textContent='';
     $('empty').classList.remove('hidden');$('code-wrap').classList.add('hidden');
@@ -283,9 +295,9 @@
       const file=await api(fileRoute(),fileParameters(path));if(generation!==state.generation||id!==state.fileId)return;
       const csharp=isCSharp(file.path);
       state.current=file;if(!state.tabs.includes(path))state.tabs.push(path);
-      const fragment=document.createDocumentFragment();
-      file.content.split('\n').forEach((value,index)=>{const span=document.createElement('span');span.className='source-line';span.dataset.line=String(index+1);if(csharp)span.innerHTML=highlight(value)||' ';else span.textContent=value||' ';fragment.append(span);});
-      $('code').replaceChildren(fragment);
+      clearAnnotations();
+      if(!window.CSharpViewerSource)throw new Error('Source presentation assets are unavailable. Reload the viewer.');
+      window.CSharpViewerSource.render(file,$('code'));
       $('lines').textContent=Array.from({length:Math.max(file.lineCount,1)},(_,index)=>index+1).join('\n');
       renderBreadcrumb(file.path);
       $('metadata').textContent=`READ ONLY \u00b7 ${language(file.path)}${csharp?'':' (plain text)'} \u00b7 ${file.lineCount.toLocaleString()} lines \u00b7 ${file.size.toLocaleString()} bytes`;
@@ -298,6 +310,7 @@
       state.matches=[];state.matchIndex=-1;$('file-query').value='';$('match-count').textContent='';
       hideNotice();if(narrow.matches&&state.drawerOpen)setDrawer(false);
       renderTabs();jumpTo(Math.min(Math.max(line,1),Math.max(file.lineCount,1)),record);status('Loaded '+file.name);reveal(path).catch(report);
+      mountAnnotations(file);
     }catch(error){if(generation===state.generation&&id===state.fileId)report(error);}
   }
   async function navigateHistory(delta){
@@ -308,6 +321,7 @@
     finishPull();
     if(sameScope(scope,state.scope)&&state.ready&&!initial){$('project-dialog').close();return;}
     const url=new URL(location.href);url.search='';
+    if(callerSessionKey)url.searchParams.set('agentSessionKey',callerSessionKey);
     if(scope.sessionKey)url.searchParams.set('sessionKey',scope.sessionKey);
     else {url.searchParams.set('root',scope.rootId);if(scope.projectPath)url.searchParams.set('project',scope.projectPath);}
     history.replaceState(null,'',url);
@@ -547,12 +561,12 @@
   (async()=>{
     try{
       const roots=await api('roots');for(const root of roots){const option=new Option(`${root.name} \u2014 ${root.path}`,root.id);$('root-select').add(option);}
-      state.rootIds=new Set(roots.map(root=>root.id));renderEmpty();
+      state.roots=roots;state.rootIds=new Set(roots.map(root=>root.id));renderEmpty();
       const params=new URLSearchParams(location.search),sessionKey=params.get('sessionKey'),file=params.get('file');const line=Number(params.get('line')||1);
       if(!Number.isInteger(line)||line<1)throw new Error('Invalid line number.');
       if(sessionKey){
         if(!/^artifacts\/[^/].*/i.test(file||''))throw new Error('A session artifact file path is required.');
-        const root=await api('session-root',{sessionKey});await openScope({sessionKey},root.name,{path:file.replace(/^artifacts\//i,''),line});
+        const root=await api('session-root',{sessionKey});state.sessionRoot=root.path;await openScope({sessionKey},root.name,{path:file.replace(/^artifacts\//i,''),line});
       }else if(params.has('root')){
         const root=roots.find(item=>item.id===params.get('root'));if(!root)throw new Error('The selected source location is unavailable. Open another project.');
         const projectPath=params.get('project')||'';
