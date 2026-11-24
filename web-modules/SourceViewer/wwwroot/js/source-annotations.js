@@ -6,22 +6,37 @@
 		const key = "buffaly:source-notes:" + JSON.stringify([sessionKey, file.path]);
 		const batchKey = key + ":submission";
 		let notes = [], selection = null, editingId = null, busy = false, active = true, hasSubmission = false, draftsReady = false;
-		let markers = [], widgets = [];
-		toolbar.innerHTML = '<span id="source-note-summary" role="status"></span><div class="source-viewer__actions"><button id="source-note-add" type="button" hidden><i class="fas fa-plus" aria-hidden="true"></i>Annotate selection</button><button id="source-note-send" type="button" hidden><i class="fas fa-paper-plane" aria-hidden="true"></i>Send annotations</button></div>';
+		let markers = [], widgets = [], selectionFrame = 0, saving = false, editRevision = 0;
+		toolbar.innerHTML = '<span id="source-note-summary" role="status"></span><div class="source-viewer__actions"><button id="source-note-send" type="button" hidden><i class="fas fa-paper-plane" aria-hidden="true"></i>Send annotations</button></div>';
 		host.innerHTML = '<dialog class="source-viewer__note-dialog" aria-labelledby="source-note-title"><form><h2 id="source-note-title">Add source note</h2><p id="source-note-range"></p><pre id="source-note-snippet"></pre><label for="source-note-text">Note to the agent</label><textarea id="source-note-text" required rows="5"></textarea><p id="source-note-error" role="alert"></p><div class="source-viewer__actions"><button id="source-note-remove" type="button" hidden><i class="fas fa-times" aria-hidden="true"></i>Remove</button><button id="source-note-cancel" type="button"><i class="fas fa-times" aria-hidden="true"></i>Cancel</button><button id="source-note-save" type="submit" class="source-viewer__primary"><i class="fas fa-check" aria-hidden="true"></i>Save note</button></div></form></dialog>';
+		host.insertAdjacentHTML('beforeend', '<button id="source-note-add" class="source-viewer__annotation-selection source-viewer__primary" type="button" hidden><i class="fas fa-plus" aria-hidden="true"></i>Annotate</button>');
 		const find = id => host.querySelector('#' + id) || toolbar.querySelector('#' + id);
 		const summary = find('source-note-summary'), add = find('source-note-add'), send = find('source-note-send');
 		const dialog = host.querySelector('dialog'), text = find('source-note-text'), error = find('source-note-error');
+		// Use the host's shared Scribe, including retained-audio recovery and authoritative finalization.
+		find('source-note-remove').insertAdjacentHTML('beforebegin', '<button id="source-note-scribe" type="button" data-scribe-target="source-note-text"><span class="fas fa-microphone" aria-hidden="true"></span><span class="visually-hidden">Start Recording</span></button>');
+		const scribe = root.ScribeAutoInit.getController(find('source-note-scribe'));
+		function positionSelection() {
+			selectionFrame = 0;
+			add.hidden = true;
+			if (!draftsReady || !active || !selection || dialog.open) return;
+			const rects = Array.from(editor.getWrapperElement().querySelectorAll('.CodeMirror-selected'), node => node.getBoundingClientRect());
+			root.BuffalyAnnotationSelection.position(add, rects);
+		}
+		function scheduleSelection() {
+			if (!selectionFrame) selectionFrame = root.requestAnimationFrame(positionSelection);
+		}
 		function lineLabel(note) { return note.StartLine === note.EndLine ? "Line " + note.StartLine : "Lines " + note.StartLine + "–" + note.EndLine; }
 		function update(message) {
-			add.hidden = !draftsReady || !active || !selection;
+			add.hidden = true;
+			scheduleSelection();
 			send.hidden = !draftsReady || (!notes.length && !hasSubmission) || !sessionKey;
 			add.disabled = !draftsReady;
 			send.disabled = !draftsReady || busy;
-			find('source-note-save').disabled = !draftsReady;
-			find('source-note-remove').disabled = !draftsReady;
+			find('source-note-save').disabled = !draftsReady || saving;
+			find('source-note-remove').disabled = !draftsReady || saving;
 			// One primary command per region: annotate a selection until there is a batch to send.
-			add.classList.toggle('source-viewer__primary', !add.hidden && send.hidden);
+			add.classList.add('source-viewer__primary');
 			send.classList.toggle('source-viewer__primary', !send.hidden);
 			summary.textContent = !draftsReady ? "Could not load saved notes. Reload before adding notes." : busy ? "Sending annotations…" : message || (notes.length ? notes.length + " note" + (notes.length === 1 ? "" : "s") + (sessionKey ? " ready to send." : ". Open this file from a session to send notes.") : sessionKey ? "Select source text to annotate." : "Open this file from a session to send notes.");
 		}
@@ -49,13 +64,19 @@
 			return { FilePath: file.path, StartLine: from.line + 1, EndLine: to.line + (to.ch === 0 && to.line > from.line ? 0 : 1), From: { line: from.line, ch: from.ch }, To: { line: to.line, ch: to.ch }, SelectedText: value, Note: "" };
 		}
 		function open(note) {
-			if (!draftsReady) return;
+			if (!draftsReady || !active || dialog.open) return;
+			editRevision++; add.hidden = true;
 			selection = note; editingId = note.Id || null;
 			find('source-note-title').textContent = editingId ? "Edit source note" : "Add source note";
 			find('source-note-range').textContent = file.name + " · " + lineLabel(note);
 			find('source-note-snippet').textContent = note.SelectedText;
 			text.value = note.Note; error.textContent = ""; find('source-note-remove').hidden = !editingId;
+			// Let Save stop/finalize dictation before testing whether the note is empty.
+			text.required = false;
 			dialog.showModal(); text.focus();
+		}
+		function closeEditor() {
+			editRevision++; saving = false; scribe.cancel(); dialog.close(); update();
 		}
 		function instruction(payload) {
 			const lines = ["Source viewer annotations received from Buffaly.", "", "Path: " + payload.ResolvedPath, "Viewer URL: " + payload.ViewerUrl, ""];
@@ -92,21 +113,41 @@
 				resultMessage = "Send not confirmed. Notes retained; retry to confirm the same submission.";
 			} finally { busy = false; update(resultMessage); }
 		}
+		add.addEventListener('pointerdown', event => event.preventDefault());
 		add.addEventListener('mousedown', event => event.preventDefault());
 		add.addEventListener('click', () => { if (selection) open(selection); });
 		send.addEventListener('click', submit);
-		find('source-note-cancel').addEventListener('click', () => dialog.close());
-		dialog.querySelector('form').addEventListener('submit', event => {
-			event.preventDefault(); if (!draftsReady) { error.textContent = "Reload to recover saved notes before making changes."; return; } if (!selection || !text.value.trim()) { error.textContent = "Enter a note."; return; }
-			const note = Object.assign({}, selection, { Id: editingId || root.crypto.randomUUID(), Note: text.value.trim() });
-			try { persist(notes.filter(item => item.Id !== editingId).concat(note)); dialog.close(); }
-			catch (failure) { error.textContent = "Could not save the draft. Your note is still here."; }
+		find('source-note-cancel').addEventListener('click', closeEditor);
+		dialog.addEventListener('cancel', event => { event.preventDefault(); closeEditor(); });
+		dialog.querySelector('form').addEventListener('submit', async event => {
+			event.preventDefault();
+			if (!draftsReady) { error.textContent = "Reload to recover saved notes before making changes."; return; }
+			if (!dialog.open || saving) return;
+			const revision = editRevision;
+			saving = true; error.textContent = ""; update();
+			try {
+				await scribe.stopAndWaitForIdle();
+				if (revision !== editRevision || !dialog.open) return;
+				if (!selection || !text.value.trim()) { error.textContent = "Enter a note."; return; }
+				const note = Object.assign({}, selection, { Id: editingId || root.crypto.randomUUID(), Note: text.value.trim() });
+				persist(notes.filter(item => item.Id !== editingId).concat(note)); closeEditor();
+			} catch (failure) {
+				if (revision === editRevision) error.textContent = "Could not save the draft. Your note and recording are still here. Retry dictation or save again.";
+			} finally { if (revision === editRevision) { saving = false; update(); } }
 		});
 		find('source-note-remove').addEventListener('click', () => {
-			try { persist(notes.filter(note => note.Id !== editingId)); dialog.close(); }
+			if (saving) return;
+			try { persist(notes.filter(note => note.Id !== editingId)); closeEditor(); }
 			catch (failure) { error.textContent = "Could not remove the draft. Try again."; }
 		});
 		editor.on('cursorActivity', () => { if (!dialog.open) { selection = selected(); update(); } });
+		editor.on('scroll', scheduleSelection);
+		root.addEventListener('scroll', scheduleSelection, true);
+		root.addEventListener('resize', scheduleSelection);
+		if (root.visualViewport) {
+			root.visualViewport.addEventListener('scroll', scheduleSelection);
+			root.visualViewport.addEventListener('resize', scheduleSelection);
+		}
 		try {
 			hasSubmission = !!storage.getItem(batchKey);
 			const saved = JSON.parse(storage.getItem(key) || "[]");
@@ -116,7 +157,7 @@
 			draftsReady = true;
 			update(changed ? "Source changed. Saved notes retain their original selections; review them before sending." : "");
 		} catch (failure) { draftsReady = false; update(); }
-		return { setActive(value) { active = value; toolbar.hidden = !value; if (!value && dialog.open) dialog.close(); update(); } };
+		return { setActive(value) { active = value; toolbar.hidden = !value; if (!value && dialog.open) closeEditor(); update(); } };
 	}
 	root.BuffalySourceAnnotations = Object.freeze({ mount });
 })(window);
