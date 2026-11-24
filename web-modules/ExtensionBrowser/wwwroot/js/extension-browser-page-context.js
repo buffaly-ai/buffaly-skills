@@ -37,6 +37,14 @@
 
   function installMicrophoneDiagnostics() {
     if (typeof navigator === 'undefined' || !navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function') return;
+    // Scribe owns its acquisition deadline and passes an AbortSignal for cancel/timeout/graph failure.
+    // Other getUserMedia callers retain the broker's standalone bounded acquisition behavior.
+    window.BuffalyMicrophoneCapture = {
+      acquire(constraints, signal) {
+        if (!constraints || !constraints.audio || constraints.video) throw new TypeError('The extension microphone provider requires audio-only constraints.');
+        return requestBrokeredMicrophone(signal);
+      }
+    };
     const original = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
     navigator.mediaDevices.getUserMedia = async function (constraints) {
       if (constraints && constraints.audio && !constraints.video) return requestBrokeredMicrophone();
@@ -109,33 +117,48 @@
     } finally { try { audioContext && await audioContext.close(); } catch (_) { } }
   }
 
-  function requestBrokeredMicrophone() {
+  function requestBrokeredMicrophone(signal) {
     return new Promise((resolve, reject) => {
+      if (signal && signal.aborted) { reject(signal.reason); return; }
       const requestId = crypto.randomUUID();
       const peer = new RTCPeerConnection();
       const stream = new MediaStream();
       const brokerUrl = `/web-modules/ExtensionBrowser/microphone?requestId=${encodeURIComponent(requestId)}`;
       const broker = window.open(brokerUrl, `buffaly-microphone-${requestId}`, 'popup,width=520,height=560');
       if (!broker) {
+        peer.close();
         reject(new DOMException('Chrome blocked the Buffaly microphone window.', 'NotAllowedError'));
         return;
       }
-      const timer = window.setTimeout(() => {
+      const timer = signal ? null : window.setTimeout(() => {
         const pending = pendingMicrophones.get(requestId);
-        const message = pending && pending.brokerReady
+        const message = pending && pending.brokerAcquiring
+          ? 'The Buffaly microphone permission or audio connection did not finish within 30 seconds.'
+          : pending && pending.brokerReady
           ? 'The Buffaly microphone window loaded but Enable and test microphone was not clicked within 30 seconds.'
           : 'The Buffaly microphone window did not load or respond within 30 seconds.';
         finishBrokeredMicrophone(requestId, new Error(message));
       }, 30000);
-      pendingMicrophones.set(requestId, { resolve, reject, peer, stream, broker, timer, brokerReady: false });
+      const abort = () => finishBrokeredMicrophone(requestId, signal.reason);
+      pendingMicrophones.set(requestId, { resolve, reject, peer, stream, broker, timer, signal, abort, brokerReady: false, brokerAcquiring: false, settled: false });
+      if (signal) signal.addEventListener('abort', abort, { once: true });
+      // ontrack fires while applying the offer, before ICE/DTLS or audio packets.
+      const acceptAudio = () => {
+        if (peer.connectionState !== 'connected' || !stream.getAudioTracks().some(track => !track.muted && track.readyState === 'live')) return;
+        finishBrokeredMicrophone(requestId, null);
+      };
+      peer.addEventListener('connectionstatechange', () => {
+        if (peer.connectionState === 'failed') finishBrokeredMicrophone(requestId, new Error('The Buffaly microphone audio connection failed.'));
+        else acceptAudio();
+      });
       peer.ontrack = event => {
         const track = event.track;
         const stop = track.stop.bind(track);
         track.stop = () => { scheduleBrokeredMicrophoneRelease(requestId); stop(); };
         stream.addTrack(track);
         track.addEventListener('ended', () => scheduleBrokeredMicrophoneRelease(requestId), { once: true });
-        void reportMicrophoneSignal(stream, 'iframe-receiver');
-        finishBrokeredMicrophone(requestId, null);
+        track.addEventListener('unmute', acceptAudio);
+        acceptAudio();
       };
     });
   }
@@ -144,7 +167,15 @@
     const request = pendingMicrophones.get(requestId);
     if (!request) return;
     pendingMicrophones.delete(requestId);
+    if (request.signal) request.signal.removeEventListener('abort', request.abort);
     window.clearTimeout(request.timer);
+    window.clearTimeout(request.releaseTimer);
+    request.stream.getTracks().forEach(track => track.stop());
+    if (request.sink) {
+      request.sink.pause();
+      request.sink.srcObject = null;
+      request.sink.remove();
+    }
     request.peer.close();
     if (!request.broker.closed) request.broker.postMessage({ type: 'extension_browser_microphone_release', requestId }, window.location.origin);
   }
@@ -152,7 +183,12 @@
   function scheduleBrokeredMicrophoneRelease(requestId) {
     const request = pendingMicrophones.get(requestId);
     if (!request || request.releaseTimer) return;
-    request.releaseTimer = window.setTimeout(() => releaseBrokeredMicrophone(requestId), MICROPHONE_RECORDER_FINALIZATION_GRACE_MS);
+    request.releaseTimer = window.setTimeout(() => {
+      // Only delivered streams have a recorder to finalize. An ended track must
+      // reject an outstanding acquisition before cleanup removes its request.
+      if (!request.settled) finishBrokeredMicrophone(requestId, new DOMException('The Buffaly microphone track ended before capture started.', 'AbortError'));
+      else releaseBrokeredMicrophone(requestId);
+    }, MICROPHONE_RECORDER_FINALIZATION_GRACE_MS);
   }
 
   function finishBrokeredMicrophone(requestId, error) {
@@ -164,9 +200,33 @@
       window.parent.postMessage({ type: 'extension_browser_microphone_diagnostic', origin: window.location.origin, policyAllowsMicrophone: null, permissionState: 'broker', result: 'rejected', name: error.name || 'MicrophoneError', message: error.message || String(error) }, '*');
       return;
     }
-    window.clearTimeout(request.timer);
-    request.resolve(request.stream);
+    if (request.settled || request.startingSink) return;
+    request.startingSink = true;
+    // Chromium does not pull received WebRTC audio into MediaRecorder/Web Audio
+    // until a media sink starts playout. Keep it muted: this is capture, not monitoring.
+    const sink = document.createElement('audio');
+    request.sink = sink;
+    sink.muted = true;
+    sink.srcObject = request.stream;
+    sink.hidden = true;
+    document.body.appendChild(sink);
+    sink.play().then(() => {
+      if (!pendingMicrophones.has(requestId) || request.releaseTimer) return;
+      request.settled = true;
+      if (request.signal) request.signal.removeEventListener('abort', request.abort);
+      window.clearTimeout(request.timer);
+      window.parent.postMessage({ type: 'extension_browser_microphone_diagnostic', origin: window.location.origin, policyAllowsMicrophone: null, permissionState: 'broker', result: 'granted' }, '*');
+      void reportMicrophoneSignal(request.stream, 'iframe-receiver');
+      request.resolve(request.stream);
+    }).catch(error => finishBrokeredMicrophone(requestId, error));
   }
+
+  window.addEventListener('pagehide', () => {
+    for (const [requestId, request] of pendingMicrophones) {
+      if (request.settled) releaseBrokeredMicrophone(requestId);
+      else finishBrokeredMicrophone(requestId, new DOMException('The recording page was unloaded.', 'AbortError'));
+    }
+  });
 
   window.addEventListener('message', (event) => {
     if (!event.data) return;
@@ -176,6 +236,9 @@
         microphone.brokerReady = true;
         window.parent.postMessage({ type: 'extension_browser_microphone_diagnostic', origin: window.location.origin, policyAllowsMicrophone: null, permissionState: 'awaiting-user-gesture', result: 'waiting', message: 'Click Enable and test microphone in the opened Buffaly microphone window.' }, '*');
         try { microphone.broker.focus(); } catch (_) { }
+      } else if (event.data.type === 'extension_browser_microphone_acquiring') {
+        microphone.brokerAcquiring = true;
+        window.parent.postMessage({ type: 'extension_browser_microphone_diagnostic', origin: window.location.origin, policyAllowsMicrophone: null, permissionState: 'broker', result: 'acquiring', message: 'Waiting for Chrome microphone consent and the audio connection.' }, '*');
       } else if (event.data.type === 'extension_browser_microphone_offer') {
         microphone.peer.setRemoteDescription(event.data.offer)
           .then(() => microphone.peer.createAnswer())
