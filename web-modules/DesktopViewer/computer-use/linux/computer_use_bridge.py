@@ -8,6 +8,7 @@ import stat
 import sys
 import threading
 import time
+import traceback
 import uuid
 import gi
 
@@ -922,7 +923,13 @@ def main():
 				response = {'Success': False, 'Value': None, 'Code': error.code, 'Message': str(error)}
 			except Exception as error:
 				# Native library diagnostics may contain method arguments, including restore tokens.
-				response = {'Success': False, 'Value': None, 'Code': 'native_unexpected_error', 'Message': 'Unexpected native failure (' + type(error).__name__ + ').'}
+				# Retain only bounded current-bridge function/line metadata, never paths, source, arguments or locals.
+				locations = [frame.name[:64] + ':' + str(frame.lineno) for frame in
+					traceback.extract_tb(error.__traceback__, limit=32) if frame.filename == __file__][-8:]
+				message = 'Unexpected native failure (' + type(error).__name__ + ').'
+				if locations:
+					message += ' Bridge frames: ' + ', '.join(locations) + '.'
+				response = {'Success': False, 'Value': None, 'Code': 'native_unexpected_error', 'Message': message}
 			print(json.dumps(response), flush=True)
 	finally:
 		desktop.close()
