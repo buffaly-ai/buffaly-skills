@@ -7,7 +7,8 @@ CREATE OR ALTER PROCEDURE [dbo].[Sessions_GetSidebarRecentNavigationPage_Sp]
 	@SkipRows [int],
 	@NumRows [int],
 	-- Omission is the authorized Root inventory, selected only by the typed backend.
-	@EnvironmentUserKey nvarchar(64) = NULL
+	@EnvironmentUserKey nvarchar(64) = NULL,
+	@SnoozedOnly bit = 0
 AS
 	SET NOCOUNT ON;
 
@@ -62,6 +63,8 @@ AS
 		ON		parent.SessionID = sessionRow.ParentSessionID AND (@EnvironmentUserKey IS NULL OR parent.EnvironmentUserKey=@EnvironmentUserKey)
 		WHERE	ISNULL(sessionRow.IsArchived, 0) = 0 AND (@EnvironmentUserKey IS NULL OR sessionRow.EnvironmentUserKey=@EnvironmentUserKey)
 				AND sessionRow.SessionKey NOT IN (N'Browser Profiles', N'browser-profiles')
+				-- Pending pointers include overdue and NeedsAttention wakes; cleared pointers leave this view.
+				AND (@SnoozedOnly = 0 OR sessionRow.PendingWakeProcessID IS NOT NULL)
 				-- Eligibility precedes ranking and lookahead; a display name is not agent identity.
 				AND NOT EXISTS (SELECT 1 FROM #HiddenNavigationSessions hidden WHERE hidden.SessionID = sessionRow.SessionID)
 				AND
