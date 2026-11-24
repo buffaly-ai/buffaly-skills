@@ -15,3 +15,7 @@ Loads the existing host /js/scribe.js and linked shared Markdown selection-place
 
 ## 2026-11-24 — Selection-coordinate correction revision
 Bumps source-annotations.js to revision6 after actual staging exposed the oversized CodeMirror multi-line paint rectangle. Other assets/commands and Scribe owner unchanged. SourceAnnotations.cjs passed the actual-text-endpoint regression. Installed proof follows normal extension redeployment.
+
+
+## 2026-11-24 — Load Scribe's canonical settings dependency
+The real staging speech-pipeline test exposed BuffalyAgentSettingsService undefined during finalization; the controller correctly retained input/audio instead of falsely saving. Load the existing standalone-foundation.js and generated Buffaly.Agent.Web.BuffalyAgentSettingsService client before scribe.js, exactly as the host standalone settings page does. No recorder fork, hand-built voice-settings request or silent configuration defaults. SourceAnnotations.cjs passes a regression asserting foundation -> settings client -> Scribe ordering. Installed actual transcription is retested after normal redeployment.
