@@ -4,9 +4,23 @@
   const registry = window.BuffalyFilePresentationProviders;
   if (!registry || typeof registry.register !== "function") throw new Error("CSharpViewer requires the shell file-presentation registry.");
   const preferenceKey = "buffaly.csharp-viewer.default";
+  // Manifest client configuration belongs to this Buffaly instance, not this browser.
+  // An explicit detached destination selects Repository Viewer; clearing it restores
+  // the existing per-browser Source/Repository choice.
+  function externalViewer() {
+    const configured = window.BuffalyWebModuleConfig?.CSharpViewer?.ViewerBaseUrl;
+    if (configured == null || configured === "") return "";
+    if (typeof configured !== "string") throw new Error("The configured viewer address is invalid.");
+    const url = new URL(configured);
+    if (!["http:", "https:"].includes(url.protocol) || url.username || url.password || url.pathname !== "/" || url.search || url.hash)
+      throw new Error("The configured viewer address must be an HTTP or HTTPS origin.");
+    return url.origin;
+  }
+  function launchUrl(path) { return externalViewer() + path; }
   // SessionKey on a file context can be the artifact owner. Only the opening page owns the caller.
   function callingSession() { return new URLSearchParams(window.location.search).get("sessionKey") || ""; }
   function selectedViewer() {
+    if (externalViewer()) return "repository";
     const value = window.localStorage.getItem(preferenceKey) || "source";
     if (!["source", "repository"].includes(value)) throw new Error("The saved C# viewer selection is invalid.");
     return value;
@@ -23,7 +37,7 @@
     if (artifact) { query.set("sessionKey", artifact[1]); query.set("path", artifact[2]); }
     if (context.Line != null) query.set("line", context.Line);
     if (context.EndLine != null) query.set("endLine", context.EndLine);
-    return { Url: "/api/web-modules/CSharpViewer/open?" + query.toString() };
+    return { Url: launchUrl("/api/web-modules/CSharpViewer/open?") + query.toString() };
   }
   registry.register({ id: "csharp-viewer-preference", priority: 5, canOpen: context => context.Extension === ".cs", buildLaunch: preferredLaunch });
   function updateLinks() {
@@ -32,10 +46,11 @@
       let url;
       try { url = new URL(anchor.href, window.location.href); }
       catch { return; }
-      if (url.origin !== window.location.origin || url.pathname !== "/api/web-modules/CSharpViewer/open") return;
+      if (![window.location.origin, externalViewer()].includes(url.origin) || url.pathname !== "/api/web-modules/CSharpViewer/open") return;
       url.searchParams.set("viewer", selectedViewer());
       if (callingSession()) url.searchParams.set("agentSessionKey", callingSession());
-      anchor.setAttribute("href", url.pathname + url.search);
+      const href = launchUrl(url.pathname + url.search);
+      if (anchor.getAttribute("href") !== href) anchor.setAttribute("href", href);
     });
   }
   let openPicker = null;
@@ -54,6 +69,9 @@
     });
   }
   function attachPickers() {
+    // A configured development destination is the instance choice. Do not show
+    // a contradictory local Source/Repository picker beside that navigation.
+    if (externalViewer()) { updateLinks(); return; }
     const timeline = document.getElementById("opsV2Messages");
     if (!timeline) return;
     timeline.querySelectorAll('a[href]').forEach(anchor => {
@@ -127,7 +145,7 @@
     if (caller) query.set("agentSessionKey", caller);
     if (context.Line != null) query.set("line", context.Line);
     if (context.EndLine != null) query.set("endLine", context.EndLine);
-    return { Url: "/web-modules/CSharpViewer/?" + query.toString() };
+    return { Url: launchUrl("/web-modules/CSharpViewer/?") + query.toString() };
   }
   // Project links must carry the existing root ID and project-relative file contract; never guess from a basename.
   function projectLaunch(context) {
@@ -141,7 +159,7 @@
     if (caller) query.set("agentSessionKey", caller);
     if (context.Line != null) query.set("line", context.Line);
     if (context.EndLine != null) query.set("endLine", context.EndLine);
-    return { Url: "/web-modules/CSharpViewer/?" + query.toString() };
+    return { Url: launchUrl("/web-modules/CSharpViewer/?") + query.toString() };
   }
   registry.register({
     id: "csharp-viewer-session-artifact",

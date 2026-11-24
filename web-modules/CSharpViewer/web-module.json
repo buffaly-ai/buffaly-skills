@@ -7,7 +7,8 @@
     "AssemblyPath": "CSharpViewer/Buffaly.CSharpViewer.dll",
     "TypeName": "Buffaly.CSharpViewer.CSharpViewerWebModule",
     "LoadOrder": 330,
-    "AgentScripts": ["/web-modules/CSharpViewer/csharp-viewer-file-provider.js?v=0.1.5"],
+    "AgentScripts": ["/api/web-modules/CSharpViewer/config.js", "/web-modules/CSharpViewer/csharp-viewer-file-provider.js?v=0.1.6"],
+    "ClientConfig": { "ViewerBaseUrl": "" },
     "Pages": [{ "Name": "Viewer", "DisplayName": "Repository Viewer", "Path": "/web-modules/CSharpViewer/" }]
   }
 }

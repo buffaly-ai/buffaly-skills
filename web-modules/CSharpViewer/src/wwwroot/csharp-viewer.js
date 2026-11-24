@@ -36,7 +36,7 @@
   async function api(route,parameters={}){
     busy(1);
     try{
-      const response=await fetch(base+route+'?'+new URLSearchParams(parameters),{headers:{Accept:'application/json'}});
+      const response=await fetch(base+route+'?'+new URLSearchParams(parameters),{headers:{Accept:'application/json'},cache:'no-store'});
       if(!response.ok){ const body=await response.json().catch(()=>null); throw new Error(body?.errorMessage||`Request failed (${response.status})`); }
       return await response.json();
     }finally{busy(-1);}
@@ -348,10 +348,24 @@
   }
 
   // ---- Project picker ---------------------------------------------------------------------------------------------
-  function picker(){
-    if(!$('root-select').options.length){report(new Error('No approved source locations. Ask an administrator to configure CSHARP_VIEWER_ROOTS.'));return;}
+  let pickerRequest=0,rootsRequest=0;
+  async function refreshRoots(){
+    const request=++rootsRequest,roots=await api('roots');
+    if(request!==rootsRequest)return;
+    const selected=$('root-select').value;
+    $('root-select').replaceChildren();
+    for(const root of roots)$('root-select').add(new Option(`${root.name} \u2014 ${root.path}`,root.id));
+    state.roots=roots;state.rootIds=new Set(roots.map(root=>root.id));
+    if(state.rootIds.has(selected))$('root-select').value=selected;
+  }
+  async function picker(){
+    const request=++pickerRequest;
+    try{await refreshRoots();}catch(error){if(request===pickerRequest)report(error);return;}
+    if(request!==pickerRequest)return;
+    if(!$('root-select').options.length){report(new Error('No approved source locations. Ask an administrator to update viewer folder settings.'));return;}
     if(!$('project-dialog').open)$('project-dialog').showModal();state.folder=state.scope?.sessionKey?'':state.scope?.projectPath||'';
-    if(state.scope?.rootId)$('root-select').value=state.scope.rootId;
+    if(state.rootIds.has(state.scope?.rootId))$('root-select').value=state.scope.rootId;
+    else state.folder='';
     renderRecent('picker-recent-list','picker-recent');
     pickerMode('repositories');loadRepositories();
     if(!narrow.matches)$('repository-filter').focus();
@@ -560,15 +574,14 @@
   setExplorerWidth(Number(load(storageKeys.width,280))||280,false);syncExplorer();
   (async()=>{
     try{
-      const roots=await api('roots');for(const root of roots){const option=new Option(`${root.name} \u2014 ${root.path}`,root.id);$('root-select').add(option);}
-      state.roots=roots;state.rootIds=new Set(roots.map(root=>root.id));renderEmpty();
+      await refreshRoots();renderEmpty();
       const params=new URLSearchParams(location.search),sessionKey=params.get('sessionKey'),file=params.get('file');const line=Number(params.get('line')||1);
       if(!Number.isInteger(line)||line<1)throw new Error('Invalid line number.');
       if(sessionKey){
         if(!/^artifacts\/[^/].*/i.test(file||''))throw new Error('A session artifact file path is required.');
         const root=await api('session-root',{sessionKey});state.sessionRoot=root.path;await openScope({sessionKey},root.name,{path:file.replace(/^artifacts\//i,''),line});
       }else if(params.has('root')){
-        const root=roots.find(item=>item.id===params.get('root'));if(!root)throw new Error('The selected source location is unavailable. Open another project.');
+        const root=state.roots.find(item=>item.id===params.get('root'));if(!root)throw new Error('The selected source location is unavailable. Open another project.');
         const projectPath=params.get('project')||'';
         await openScope({rootId:root.id,projectPath},root.name+(projectPath?' / '+projectPath:''),file?{path:file,line}:null);
       }else picker();
