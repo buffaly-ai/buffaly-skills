@@ -801,7 +801,6 @@
           "Buffaly.Agent.ProtoScript.Runtime": "1.0.0",
           "Buffaly.Agent.ProtoScriptAuthoring": "1.0.0",
           "Buffaly.Agent.Runtime.Abstractions": "1.0.0",
-          "Buffaly.Agent.Tools.CodeSearch": "1.0.0",
           "Buffaly.Agent.Tools.Mcp": "1.0.0",
           "Buffaly.Agent.Tools.Platform": "1.0.0",
           "Buffaly.Agent.Tools.Process": "1.0.0",
@@ -881,29 +880,6 @@
         },
         "runtime": {
           "Buffaly.Agent.SemanticDatabase.DB.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
-          }
-        }
-      },
-      "Buffaly.Agent.Tools.CodeSearch/1.0.0": {
-        "dependencies": {
-          "Buffaly.Agent.Tools.Http": "1.0.0"
-        },
-        "runtime": {
-          "Buffaly.Agent.Tools.CodeSearch.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
-          }
-        }
-      },
-      "Buffaly.Agent.Tools.Http/1.0.0": {
-        "dependencies": {
-          "Buffaly.Agent.Common": "1.0.0",
-          "Buffaly.Agent.Tools.Secrets": "1.0.0"
-        },
-        "runtime": {
-          "Buffaly.Agent.Tools.Http.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -1176,14 +1152,6 @@
           }
         }
       },
-      "Buffaly.AIProviderAPI/1.0.0.0": {
-        "runtime": {
-          "Buffaly.AIProviderAPI.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
-          }
-        }
-      },
       "RooTrax.Git/1.0.0.0": {
         "runtime": {
           "RooTrax.Git.dll": {
@@ -1224,6 +1192,14 @@
           }
         }
       },
+      "Buffaly.AIProviderAPI/1.0.0.0": {
+        "runtime": {
+          "Buffaly.AIProviderAPI.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "Buffaly.SemanticDB/1.0.0.0": {
         "runtime": {
           "Buffaly.SemanticDB.dll": {
@@ -1240,17 +1216,17 @@
           }
         }
       },
-      "Buffaly.Data/1.0.0.0": {
+      "kScript/1.0.0.0": {
         "runtime": {
-          "Buffaly.Data.dll": {
+          "kScript.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         }
       },
-      "kScript/1.0.0.0": {
+      "Buffaly.Data/1.0.0.0": {
         "runtime": {
-          "kScript.dll": {
+          "Buffaly.Data.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -1659,16 +1635,6 @@
       "serviceable": false,
       "sha512": ""
     },
-    "Buffaly.Agent.Tools.CodeSearch/1.0.0": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "Buffaly.Agent.Tools.Http/1.0.0": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
-    },
     "Buffaly.Agent.Tools.Mcp/1.0.0": {
       "type": "project",
       "serviceable": false,
@@ -1804,11 +1770,6 @@
       "serviceable": false,
       "sha512": ""
     },
-    "Buffaly.AIProviderAPI/1.0.0.0": {
-      "type": "reference",
-      "serviceable": false,
-      "sha512": ""
-    },
     "RooTrax.Git/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
@@ -1834,6 +1795,11 @@
       "serviceable": false,
       "sha512": ""
     },
+    "Buffaly.AIProviderAPI/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
     "Buffaly.SemanticDB/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
@@ -1844,12 +1810,12 @@
       "serviceable": false,
       "sha512": ""
     },
-    "Buffaly.Data/1.0.0.0": {
+    "kScript/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
     },
-    "kScript/1.0.0.0": {
+    "Buffaly.Data/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
