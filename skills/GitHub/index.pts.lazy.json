@@ -133,5 +133,32 @@
     "ToListGitHubReposForOrg": "ToListGitHubReposForOrg.Execute(orgName: String) : String",
     "ToRunGitTagReleaseInSolution": "ToRunGitTagReleaseInSolution.Execute(solutionDirectory: String, tagName: String) : String",
     "ToUpdateGitHubIssue": "ToUpdateGitHubIssue.Execute(orgName: String, repoName: String, issueNumber: Int32, title: String, body: String, addLabelsCsv: String, addAssigneesCsv: String) : String"
+  },
+  "ActionDescriptions": {
+    "ToAddGitHubCommitComment": "to add github commit comment\norgName/repoName - repository owner and name. commitSha - commit SHA. commentBody - comment text. agentSessionName - originating agent session name.",
+    "ToAddGitHubIssueComment": "to add github issue comment\norgName/repoName - repository owner and name. issueNumber - issue number. commentBody - comment text. agentSessionName - originating agent session name.",
+    "ToCheckGitHubOrgAccess": "to check github organization access\norgName - GitHub organization name. Returns access status for the organization.",
+    "ToCloseGitHubIssue": "to close github issue\norgName/repoName - repository owner and name. issueNumber - issue number to close.",
+    "ToCommitAndPushScopedChanges": "to commit and push scoped changes\nstartPath - path inside a git repository. pathspec - scoped pathspec. commitMessage - commit message. remote - remote name.",
+    "ToCreateGitHubIssue": "to create github issue\norgName/repoName - repository owner and name. title/body - issue content. labelsCsv/assigneesCsv - comma-separated labels and assignees. agentSessionName - originating agent session name.",
+    "ToCreatePrivateGitHubRepoInOrg": "to create a private github repository in an organization\norgName - GitHub organization name. repoName - repository name to create as private.",
+    "ToGetGitCurrentBranch": "to get git current branch\nstartPath - path inside a git repository. Returns the current branch.",
+    "ToGetGitDiff": "to get git diff\nstartPath - path inside a git repository. target - revision to compare with, default HEAD. maxLines - maximum output lines, default 500.",
+    "ToGetGitHeadSha": "to get git head sha\nstartPath - path inside a git repository. Returns the current HEAD SHA.",
+    "ToGetGitHubAuthStatus": "to get github auth status\nReturns the current GitHub authentication status.",
+    "ToGetGitHubCommitComments": "to get github commit comments\norgName/repoName - repository owner and name. commitSha - commit SHA to read comments for.",
+    "ToGetGitHubIssue": "to get github issue\norgName/repoName - repository owner and name. issueNumber - issue number to read.",
+    "ToGetGitLog": "to get git log\nstartPath - path inside a git repository. maxEntries - maximum commits, default 10 and maximum 100.",
+    "ToGetGitRepoRoot": "to get git repository root\nstartPath - path inside a git repository. Returns the repository root.",
+    "ToGetGitShow": "to get git show\nstartPath - path inside a git repository. commitSha - commit or revision to show. maxLines - maximum output lines, default 500.",
+    "ToGetGitStatusPorcelain": "to get git status porcelain\nstartPath - path inside a git repository. pathspec - scoped pathspec for status.",
+    "ToGitAddPathspec": "to git add a pathspec\nstartPath - path inside a git repository. pathspec - scoped pathspec to stage.",
+    "ToGitCommit": "to git commit staged changes\nstartPath - path inside a git repository. message - commit message.",
+    "ToGitPushBranch": "to git push branch\nstartPath - path inside a git repository. remote - remote name. branch - branch to push.",
+    "ToInitializeAndPushSolutionRepository": "to initialize and push solution repository\nsolutionDirectory - local solution directory. solutionName/repositoryName/organizationName identify the solution and GitHub repository. cloneUrl - repository clone URL. branchName - branch to initialize and push.",
+    "ToListGitHubIssues": "to list github issues\norgName/repoName - repository owner and name. state, labelsCsv, and assignee filter returned issues.",
+    "ToListGitHubReposForOrg": "to list github repositories for an organization\norgName - GitHub organization name. Returns repositories available for the organization.",
+    "ToRunGitTagReleaseInSolution": "to run git tag release in solution\nsolutionDirectory - solution directory. tagName - release tag to create and push.",
+    "ToUpdateGitHubIssue": "to update github issue\norgName/repoName - repository owner and name. issueNumber - issue number. title/body update content. addLabelsCsv/addAssigneesCsv add labels and assignees."
   }
 }

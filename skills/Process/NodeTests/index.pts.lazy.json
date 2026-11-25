@@ -11,5 +11,8 @@
   },
   "ActionSignatures": {
     "ToRunNodeTestFile": "ToRunNodeTestFile.Execute(testFilePath: String, workingDirectory: String, timeoutSeconds: Int32) : String"
+  },
+  "ActionDescriptions": {
+    "ToRunNodeTestFile": "to run JavaScript node test files\nRun an existing JavaScript file with node, without a shell. Returns ExitCode, TimedOut, stdout and stderr. timeoutSeconds must be positive. Does not force node --test; the selected file owns its test runner."
   }
 }

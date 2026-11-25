@@ -109,5 +109,21 @@
     "ToSetUpInitialOntologySkill": "ToSetUpInitialOntologySkill.Execute() : String",
     "ToShowInstallCapabilitiesSkill": "ToShowInstallCapabilitiesSkill.Execute() : String",
     "ToTeachBuffalySomethingUsefulSkill": "ToTeachBuffalySomethingUsefulSkill.Execute() : String"
+  },
+  "ActionDescriptions": {
+    "OnboardingPromptAction": "Base action type for Buffaly onboarding prompt workflows.",
+    "ToConnectFirstToolSkill": "to start my first Buffaly integration\nGuide a new user through choosing and starting their first useful Buffaly integration, such as GitHub, Google Workspace, Tailscale, or Codex.",
+    "ToConnectGitHubToBuffalySkill": "to set up GitHub in Buffaly\nGuide a new user through connecting GitHub to Buffaly and deciding which repositories Buffaly should remember.",
+    "ToConnectGoogleWorkspaceToBuffalySkill": "to use Google Docs and Sheets with Buffaly\nGuide a new user through connecting Google Workspace concepts, documents, sheets, and account access to Buffaly.",
+    "ToCreateCSharpSkillWalkthroughSkill": "to create native C# code for Buffaly\nGuide a user through understanding how Buffaly can be extended with native compiled C# code loaded at runtime.",
+    "ToCreateFirstBuffalyTaskSkill": "to start my first task in Buffaly\nGuide a new user through turning a real goal into a bounded Buffaly task with evidence and acceptance criteria.",
+    "ToCreatePromptSkillWalkthroughSkill": "to create my first prompt skill\nGuide a user through the first level of extending Buffaly by creating reusable prompt skills with progressive examples.",
+    "ToCreateProtoScriptSkillWalkthroughSkill": "to create my first ProtoScript action\nGuide a user through creating ProtoScript actions as deterministic compiled glue code for orchestrating existing tools.",
+    "ToExplainBuffalySelfModificationSkill": "to see how Buffaly adds tools to itself\nExplain Buffaly\u0027s self-extension model in beginner-friendly language across prompts, ProtoScript, and C# code.",
+    "ToExposeBuffalyThroughTailscaleSkill": "to make Buffaly reachable through Tailscale\nGuide a new user through understanding and planning secure Buffaly access through Tailscale.",
+    "ToSetUpCodexInsideBuffalySkill": "to connect coding help to Buffaly\nGuide a new user through using Codex inside Buffaly for repository inspection, edits, validation, and commits.",
+    "ToSetUpInitialOntologySkill": "to help Buffaly understand my work\nGuide a new user through Buffaly\u0027s first setup by explaining Buffaly, collecting initial entities, prompt actions, and preferences, confirming them, and routing them through the appropriate remember workflows.",
+    "ToShowInstallCapabilitiesSkill": "to understand the Buffaly navigation capabilities screen\nGuide a new user through the Buffaly Navigation capabilities screen, explaining installed skills, tools, prompt actions, context prompts, agents, providers, services, modules, ontology, and inspection surfaces in outcome-oriented language.",
+    "ToTeachBuffalySomethingUsefulSkill": "to remember something useful in Buffaly\nGuide a new user through teaching Buffaly one useful object, preference, or repeatable workflow."
   }
 }

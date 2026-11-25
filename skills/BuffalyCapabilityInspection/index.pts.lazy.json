@@ -57,5 +57,14 @@
     "ToListInstalledCapabilitySkills": "ToListInstalledCapabilitySkills.Execute(includeDisabled: Boolean) : String",
     "ToListInstalledCapabilityTools": "ToListInstalledCapabilityTools.Execute(skillName: String, maxResults: Int32) : String",
     "ToListInstalledCapabilityWebModules": "ToListInstalledCapabilityWebModules.Execute() : String"
+  },
+  "ActionDescriptions": {
+    "ToGetInstalledCapabilitiesOverview": "to count installed skills tools prompt actions providers and web modules\nReturns secret-safe JSON summarizing installed Skills, Tools, Prompt Actions, Providers, and Web Modules.",
+    "ToInventorySkillIncludeModes": "to inspect skill include sidecars and receipts\nReturns deterministic JSON for every skill route in Skills/index.pts, including eager/lazy mode and whether the matching lazy sidecar and package receipt exist.",
+    "ToListInstalledCapabilityPromptActions": "to inspect installed prompt skills\nmaxResults - maximum rows to return, 1 through 500. Returns secret-safe JSON for prompt actions and prompt paths.",
+    "ToListInstalledCapabilityProviders": "to inspect provider capability status\nReturns secret-safe JSON for provider families, enabled/configured state, model counts, and provider module status. Secret values are never included.",
+    "ToListInstalledCapabilitySkills": "to inspect installed capability skills\nincludeDisabled - set true to include installed but disabled skills. Returns secret-safe JSON with skill descriptions and tool counts.",
+    "ToListInstalledCapabilityTools": "to inspect installed capability tools\nskillName - optional exact SkillName filter. maxResults - maximum rows to return, 1 through 500. Returns secret-safe JSON for executable tools.",
+    "ToListInstalledCapabilityWebModules": "to inspect installed module pages\nReturns JSON for installed web modules, enabled state, and declared UI pages."
   }
 }

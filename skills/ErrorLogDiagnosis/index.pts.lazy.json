@@ -23,5 +23,10 @@
     "ToSearchErrorMemories": "ToSearchErrorMemories.Execute(query: String, maxResults: Int32) : Collection",
     "ToSearchErrorMemoriesInCategory": "ToSearchErrorMemoriesInCategory.Execute(query: String, categoryPrototypeName: String, maxResults: Int32) : Collection",
     "ToValidateErrorMemoryDefinition": "ToValidateErrorMemoryDefinition.Execute(prototypeDefinition: String, definitionKind: String) : String"
+  },
+  "ActionDescriptions": {
+    "ToSearchErrorMemories": "to search local error memories\nSearches only the current session\u0027s scoped Error Memory semantic tag and returns bounded candidates under ErrorMemoryRoot. query - stable error message query. maxResults - candidate limit clamped to 1-25.",
+    "ToSearchErrorMemoriesInCategory": "to search local error memories within a category\nSearches only the current session\u0027s scoped Error Memory tag under one ErrorMemoryRoot descendant. query - stable error message query. categoryPrototypeName - exact local ontology category prototype. maxResults - candidate limit clamped to 1-25.",
+    "ToValidateErrorMemoryDefinition": "to validate an error memory taxonomy definition\nValidates one recursive Error Memory taxonomy branch or routable leaf before NLMemory persistence. prototypeDefinition - exactly one raw ProtoScript definition. definitionKind - Branch or Leaf. Parents may be any depth beneath ErrorMemoryRoot; leaves require scoped Error Memory tags and routing verification fields."
   }
 }

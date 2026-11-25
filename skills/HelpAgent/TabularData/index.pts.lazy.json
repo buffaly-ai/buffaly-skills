@@ -73,5 +73,18 @@
     "ToLoadBasicCsvWalkthroughSampleData": "ToLoadBasicCsvWalkthroughSampleData.Execute() : Prototype",
     "ToSummarizeBasicCsvWalkthroughAppointmentsByClinic": "ToSummarizeBasicCsvWalkthroughAppointmentsByClinic.Execute() : Prototype",
     "ToSummarizeBasicCsvWalkthroughReadyAppointmentsByClinic": "ToSummarizeBasicCsvWalkthroughReadyAppointmentsByClinic.Execute() : Prototype"
+  },
+  "ActionDescriptions": {
+    "ToExportBasicCsvWalkthroughCurrentView": "Export the validated Ready appointments view for the Basic CSV walkthrough after the user confirms export. Uses shared CsvDataSource and TabularData helpers.",
+    "ToFilterBasicCsvWalkthroughCardiologyBalanceDue": "Return Cardiology appointments with a balance due from the sample DataTable using the shared TabularData filter and sort functions.",
+    "ToFilterBasicCsvWalkthroughHighPriorityAppointments": "Return High priority appointments from the sample DataTable using the shared TabularData filter and sort functions.",
+    "ToFilterBasicCsvWalkthroughMedicareOver250": "Return Medicare appointments with estimated cost over $250 from the sample DataTable using the shared TabularData filter and sort functions.",
+    "ToFilterBasicCsvWalkthroughNext30DaysNotCancelled": "Return next-30-days appointments excluding cancelled rows from the sample DataTable using the shared TabularData filter and sort functions.",
+    "ToFilterBasicCsvWalkthroughReadyAppointments": "Return Ready appointments from the sample DataTable using the shared TabularData filter and sort functions.",
+    "ToGetBasicCsvWalkthroughSampleFilePath": "Return the local disk path for the synthetic medical CSV sample used by the Basic CSV Download \u002B Export walkthrough.",
+    "ToGetBasicCsvWalkthroughSampleUrl": "Return the public GitHub URL for the synthetic medical CSV sample used by the Basic CSV Download \u002B Export walkthrough. The sample is currently shipped on disk; a public URL is not configured yet.",
+    "ToLoadBasicCsvWalkthroughSampleData": "Load the synthetic medical CSV data for the Basic CSV Download \u002B Export walkthrough and return a native DataTable reference. Uses the shared CSV data source function; no preview JSON is produced here.",
+    "ToSummarizeBasicCsvWalkthroughAppointmentsByClinic": "Return appointment counts by clinic using the shared TabularData group-count function.",
+    "ToSummarizeBasicCsvWalkthroughReadyAppointmentsByClinic": "Return Ready appointment counts by clinic using the shared TabularData filter and group-count functions."
   }
 }

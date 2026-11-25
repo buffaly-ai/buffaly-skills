@@ -36,5 +36,12 @@
     "ToStartHeartbeatSubscription": "ToStartHeartbeatSubscription.Execute(sessionKey: String, message: String) : String",
     "ToStartHeartbeatSubscriptionWithOptions": "ToStartHeartbeatSubscriptionWithOptions.Execute(sessionKey: String, message: String, intervalSeconds: Int32, maxCount: Int32) : String",
     "ToStopHeartbeatSubscription": "ToStopHeartbeatSubscription.Execute(jobId: String) : String"
+  },
+  "ActionDescriptions": {
+    "ToGetHeartbeatStatus": "to get heartbeat status\nsourceSessionKey - optional source session key filter. Use empty string for all jobs.",
+    "ToGetHeartbeatSubscriptions": "to get heartbeat service subscriptions\nReturn active heartbeat jobs and heartbeat.service session-event subscriptions.",
+    "ToStartHeartbeatSubscription": "to send heartbeat events to a session\nsessionKey - subscriber session receiving heartbeat events. message - payload text included in heartbeat callback.",
+    "ToStartHeartbeatSubscriptionWithOptions": "to configure heartbeat interval and count\nsessionKey - subscriber session receiving heartbeat events. message - payload text included in heartbeat callback. intervalSeconds - seconds between ticks. maxCount - number of heartbeat ticks to send.",
+    "ToStopHeartbeatSubscription": "to stop a heartbeat subscription\njobId - heartbeat job id returned by start/status methods."
   }
 }

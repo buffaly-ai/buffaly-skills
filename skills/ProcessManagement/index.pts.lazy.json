@@ -90,5 +90,22 @@
     "ToRunIntervalProcessNow": "ToRunIntervalProcessNow.Execute(processID: Int32) : String",
     "ToTriggerScheduledTaskNow": "ToTriggerScheduledTaskNow.Execute(processName: String, triggerKey: String) : String",
     "ToValidateBuffalyProcessConfiguration": "ToValidateBuffalyProcessConfiguration.Execute(processID: Int32) : String"
+  },
+  "ActionDescriptions": {
+    "ToAddDeterministicScheduledTask": "to add a deterministic scheduled task\nGuide creation of deterministic scheduled ProtoScript tasks that do not call an LLM or use model tokens.",
+    "ToAddRecurringProcess": "to create an interval system process\nCreates or updates an interval-driven process. processName, handlerAssembly, handlerType, and runEveryMinutes are required. runDataJson may be empty.",
+    "ToAddScheduledTask": "to create an external scheduled task\nCreates or updates an external prompt-driven scheduled task. handlerAssembly, handlerType, processName, sessionKey, promptContext, and instruction are required. createChildSession controls whether each run creates a child session.",
+    "ToDiagnoseBuffalyProcessFailure": "to troubleshoot a Buffaly process failure\nRead-only guided diagnosis of one process\u0027s last-run state, bounded logs, configuration, and known dependency health. Never prints secrets or enables, disables, triggers, or repairs the process.",
+    "ToDisableBuffalyProcess": "to disable a scheduled task\nprocessID - numeric Processes.ProcessID to disable.",
+    "ToEnableBuffalyProcess": "to enable a scheduled task\nprocessID - numeric Processes.ProcessID to enable.",
+    "ToExplainHowToAddRecurringProcess": "to explain how to add a recurring process\nExplain and guide creation of a recurring interval system process using ProcessManagement tools.\n\nBefore SSM, discover typed tools/APIs, inspect contracts and load suitable tools. Prefer them; justify SSM in the approval request only if alternatives cannot meet the need. Existing approvals and restrictions apply.",
+    "ToExplainHowToAddScheduledTask": "to explain how to add a scheduled task\nExplain and guide creation of an external prompt-driven scheduled task using ProcessManagement tools.\n\nBefore SSM, discover typed tools/APIs, inspect contracts and load suitable tools. Prefer them; justify SSM in the approval request only if alternatives cannot meet the need. Existing approvals and restrictions apply.",
+    "ToGetBuffalyProcessDetails": "to inspect a scheduled process\nprocessID - numeric Processes.ProcessID to inspect.",
+    "ToListBuffalyProcesses": "to list all process rows\nLists all Buffaly processes as compact summaries without raw RunData. Use ToGetBuffalyProcessDetails for full row data, validation, and raw RunData.",
+    "ToListRecurringProcesses": "to list interval system processes\nLists interval-driven recurring processes as compact summaries: ProcessID, ProcessName, status flags, timing, handler, SessionKey, and PromptContext. Use ToGetBuffalyProcessDetails for raw RunData/details.",
+    "ToListScheduledTasks": "to list external scheduled tasks\nLists externally triggered scheduled tasks as compact summaries: ProcessID, ProcessName, status flags, timing, handler, SessionKey, and PromptContext. Use ToGetBuffalyProcessDetails for raw RunData/details.",
+    "ToRunIntervalProcessNow": "to manually run an interval system process\nRuns only an enabled process whose Action is IntervalSystemProcess. ExternalScheduledTask rows must use ToTriggerScheduledTaskNow. processID - numeric Processes.ProcessID to run immediately.",
+    "ToTriggerScheduledTaskNow": "to run an external scheduled task now\nRuns only a process whose Action is ExternalScheduledTask. Do not use this action for IntervalSystemProcess rows; use ToRunIntervalProcessNow instead. processName - exact external scheduled-task name. triggerKey may be empty when the row has no ExternalTriggerKey configured.",
+    "ToValidateBuffalyProcessConfiguration": "to validate a scheduled process\nprocessID - numeric Processes.ProcessID to validate."
   }
 }

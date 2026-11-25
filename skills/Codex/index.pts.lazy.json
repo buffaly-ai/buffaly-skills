@@ -22,5 +22,10 @@
     "CodexPromptAction": "CodexPromptAction.Execute() : String",
     "ToFindCodexThreadIdByNameSkill": "ToFindCodexThreadIdByNameSkill.Execute() : String",
     "ToGetCodexUsageResetCredits": "ToGetCodexUsageResetCredits.Execute() : String"
+  },
+  "ActionDescriptions": {
+    "CodexPromptAction": "Base action type for Codex prompt workflows.",
+    "ToFindCodexThreadIdByNameSkill": "to lookup codex thread id from thread name\nLoads the trusted workflow to resolve Codex threadId values from local session index records.",
+    "ToGetCodexUsageResetCredits": "to check codex reset credits\nReturns available Codex usage reset credits for the currently logged-in ChatGPT/Codex account. This action is read-only and does not redeem or consume credits."
   }
 }

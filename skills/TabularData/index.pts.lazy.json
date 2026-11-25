@@ -57,5 +57,16 @@
     "ToPreviewDataTablePage": "ToPreviewDataTablePage.Execute(table: DataTable, offset: Int32, limit: Int32) : String",
     "ToSelectDataTableColumns": "ToSelectDataTableColumns.Execute(table: DataTable, columnsJson: String) : Prototype",
     "ToSortDataTableRows": "ToSortDataTableRows.Execute(table: DataTable, sortJson: String) : Prototype"
+  },
+  "ActionDescriptions": {
+    "ToDescribeDataTable": "to describe a native datatable\ntable - native DataTable reference. Returns compact schema/count JSON without full rows.",
+    "ToFilterDataTableRows": "to filter native datatable rows\ntable - native DataTable reference. filtersJson - JSON array of filter specs using PascalCase properties, for example [{\u0022\u0022Column\u0022\u0022:\u0022\u0022title\u0022\u0022,\u0022\u0022Operator\u0022\u0022:\u0022\u0022Contains\u0022\u0022,\u0022\u0022Value\u0022\u0022:\u0022\u0022FairPath\u0022\u0022}]. Operators: Equals, NotEquals, Contains, StartsWith, EndsWith, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, IsNull, IsNotNull. Multiple filters are ANDed. Returns a native DataTable reference.",
+    "ToGetDataTableSchemaJson": "to get native datatable schema json\ntable - native DataTable reference. Returns schema JSON without full rows.",
+    "ToLoadCsvFileAsDataTable": "to load a csv file as a native datatable\npath - disk path to a CSV file. Returns a native DataTable reference for typed chaining.",
+    "ToLoadCsvUrlAsDataTable": "to download a csv url as a native datatable\nurl - CSV URL to download directly into memory. Returns a native DataTable reference for typed chaining.",
+    "ToPreviewDataTable": "to preview a native datatable\ntable - native DataTable reference. maxRows - maximum preview rows. Returns ProtoScriptPreviewGrid JSON text.",
+    "ToPreviewDataTablePage": "to preview a native datatable page\ntable - native DataTable reference. offset - zero-based row offset. limit - page size. Returns ProtoScriptPreviewGrid JSON text for that page.",
+    "ToSelectDataTableColumns": "to select native datatable columns\ntable - native DataTable reference. columnsJson - JSON string array of exact column names, for example [\u0022\u0022source\u0022\u0022,\u0022\u0022title\u0022\u0022,\u0022\u0022meetingDate\u0022\u0022]. Returns a native DataTable reference.",
+    "ToSortDataTableRows": "to sort native datatable rows\ntable - native DataTable reference. sortJson - JSON array of sort specs using PascalCase properties, for example [{\u0022\u0022Column\u0022\u0022:\u0022\u0022meetingDate\u0022\u0022,\u0022\u0022Direction\u0022\u0022:\u0022\u0022Descending\u0022\u0022},{\u0022\u0022Column\u0022\u0022:\u0022\u0022title\u0022\u0022,\u0022\u0022Direction\u0022\u0022:\u0022\u0022Ascending\u0022\u0022}]. Direction must be Ascending or Descending. Multiple sort items are applied in order. Returns a native DataTable reference."
   }
 }

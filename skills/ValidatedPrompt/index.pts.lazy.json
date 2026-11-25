@@ -48,5 +48,14 @@
     "ToRunValidatedPromptSkill": "ToRunValidatedPromptSkill.Execute(validatedPromptActionName: String, userInput: String, maxAttempts: Int32) : String",
     "ToRunValidatedPromptSkillFromSessionFile": "ToRunValidatedPromptSkillFromSessionFile.Execute(validatedPromptActionName: String, userInputRelativePath: String, maxAttempts: Int32) : String",
     "ToSummarizeTextInOneSentenceSkill": "ToSummarizeTextInOneSentenceSkill.Execute(userInput: String, maxAttempts: Int32) : String"
+  },
+  "ActionDescriptions": {
+    "ToDebugEchoValidatedPromptStringBinding": "to debug validated prompt string binding\nDiagnostic action for direct ProtoScript method string binding. Returns the input length and leading text.",
+    "ToGenerateWorkflowReportNarrativeSkill": "to summarize a workflow run report\nGenerate a human-readable narrative summary from a buffaly.workflowRunReport.v1 JSON document without changing deterministic workflow status.",
+    "ToGenerateWorkflowReportNarrativeValidatedSkill": "to validate a workflow report narrative summary\nGenerate and validate a narrative summary from a buffaly.workflowRunReport.v1 JSON document while treating the JSON as the source of truth.",
+    "ToInspectValidatedPromptActionDefinition": "to inspect a validated prompt action definition\nvalidatedPromptActionName - prototype name for one ValidatedPromptAction. Returns resolution details for debugging deployed validated prompt definitions.",
+    "ToRunValidatedPromptSkill": "to execute a validated prompt action\nvalidatedPromptActionName - prototype name for one ValidatedPromptAction. userInput - input for the work prompt. maxAttempts - maximum validation attempts. Child session selection is controlled by the ValidatedPromptAction.ChildSessionScope setting and defaults to per-parent; this action intentionally does not expose raw child session keys.",
+    "ToRunValidatedPromptSkillFromSessionFile": "to execute a validated prompt action using a staged input file\nvalidatedPromptActionName - prototype name for one ValidatedPromptAction. userInputRelativePath - file path under the current session directory containing the full user input. maxAttempts - maximum validation attempts. Child session selection is controlled by the ValidatedPromptAction.ChildSessionScope setting and defaults to per-parent; this action intentionally does not expose raw child session keys.",
+    "ToSummarizeTextInOneSentenceSkill": "to summarize text in exactly one faithful sentence\nSummarize provided text in exactly one faithful sentence without adding facts."
   }
 }

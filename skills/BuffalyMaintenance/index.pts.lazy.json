@@ -119,5 +119,23 @@
     "ToUploadBuffalyErrorAndDebugLogs": "ToUploadBuffalyErrorAndDebugLogs.Execute() : String",
     "ToUploadBuffalyErrorLogs": "ToUploadBuffalyErrorLogs.Execute() : String",
     "ToUploadCurrentSessionLogs": "ToUploadCurrentSessionLogs.Execute(includeDebug: Boolean) : String"
+  },
+  "ActionDescriptions": {
+    "ToAddToolApprovalRequiredString": "to add an approval required command match\nvalue - exact command or argument substring that should require approval when used by command/process execution tools. Creates the DB-backed policy feature from defaults when missing.",
+    "ToApplyBuffalyUpdate": "to download and apply the latest buffaly update\nDownloads and launches the configured Buffaly update path. This is a high-impact action and requires explicit user confirmation before execution.",
+    "ToCheckBuffalyUpdate": "to check if buffaly can be updated\nChecks configured Buffaly update metadata using system-owned settings. Does not download or apply updates.",
+    "ToClearBuffalyLogs": "to prune buffaly error and debug logs\nDeletes Buffaly *.log files older than OlderThanMinutes across all discovered log directories (primary \u002B secondary roots from resolver). Default 60. Returns the standard Buffaly maintenance JSON result envelope (deleted count, bytes freed, list of affected files, warnings). This is a high-impact destructive action. Agent behavior must require explicit user confirmation before calling.",
+    "ToDownloadLatestBuffalyInstaller": "to cache the latest buffaly installer\nDownloads the latest configured Buffaly installer and validates SHA-256 when configured. Does not launch or apply it.",
+    "ToEnsureToolExecutionPolicyConfigured": "to create the database backed tool execution policy\nCreates the DB-backed Tool Execution Policy Feature from compiled defaults when missing. Returns the resulting policy summary.",
+    "ToGetBuffalyLogPath": "to resolve buffaly diagnostics log directory\nReturns JSON text containing the primary Buffaly log directory and discovered log directories. No parameters are required.",
+    "ToGetBuffalyMaintenanceStatus": "to check buffaly update and log status\nReturns JSON text with version, update availability, log path state, recent error count, and warnings.",
+    "ToGetBuffalyVersion": "to check what version of buffaly is installed\nReturns JSON text containing resolved install root, installed version, and warnings. No parameters are required.",
+    "ToLaunchLatestBuffalyInstaller": "to update buffaly using the latest installer\nDownloads if needed and launches the latest Buffaly installer through the system-owned update path. Agent behavior should require user confirmation before calling this action.",
+    "ToPreviewClearBuffalyLogs": "to dry-run clear old buffaly logs\nDry-run version of log clearing. Returns the same data shape as ToClearBuffalyLogs but performs no deletions. Use this before calling the destructive version.",
+    "ToRemoveToolApprovalRequiredString": "to remove an approval required command match\nvalue - exact command or argument substring to remove from approval-required rules. Creates the DB-backed policy feature from defaults when missing.",
+    "ToShowToolExecutionPolicy": "to inspect hard deny and approval required tool policy\nReturns JSON showing the active tool execution policy source, hard-deny rules, approval-required rules, approval text, and approval timeout.",
+    "ToUploadBuffalyErrorAndDebugLogs": "to upload buffaly debug logs\nUploads discovered Buffaly error and debug logs to Herd using system-owned instance identity, Herd URL, and upload caps.",
+    "ToUploadBuffalyErrorLogs": "to upload local buffaly errors\nUploads discovered Buffaly error logs to Herd using system-owned instance identity, Herd URL, and upload caps.",
+    "ToUploadCurrentSessionLogs": "to upload this session diagnostics\nUploads current-session logs to Herd. includeDebug=false uploads errors only; includeDebug=true includes debug logs."
   }
 }

@@ -22,5 +22,9 @@
   "ActionSignatures": {
     "ToGetServiceHierarchy": "ToGetServiceHierarchy.Execute() : Prototype",
     "ToListServices": "ToListServices.Execute() : Collection"
+  },
+  "ActionDescriptions": {
+    "ToGetServiceHierarchy": "to inspect the recursive service tree\nReturns the recursive service hierarchy rooted at the Service base prototype so singleton and per-binding services can be inspected as a tree.",
+    "ToListServices": "to enumerate protoscript services\nReturns the full recursive flat list of available ProtoScript-backed services by reading all descendants of the Service base prototype."
   }
 }

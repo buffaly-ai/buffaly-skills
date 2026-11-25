@@ -42,5 +42,13 @@
     "ToSemanticConversationSearchFindHybridConversationsForQueryWithinUtcRange": "ToSemanticConversationSearchFindHybridConversationsForQueryWithinUtcRange.Execute(query: String, topConversations: Int32, topFragmentsPerConversation: Int32, startUtc: String, endUtc: String) : String",
     "ToSemanticConversationSearchFindTopConversationsForQuery": "ToSemanticConversationSearchFindTopConversationsForQuery.Execute(query: String, topConversations: Int32, topFragmentsPerConversation: Int32) : String",
     "ToSemanticConversationSearchResolveSessionFromSemanticFragment": "ToSemanticConversationSearchResolveSessionFromSemanticFragment.Execute(fragmentID: Int32) : String"
+  },
+  "ActionDescriptions": {
+    "ToSemanticConversationSearchFindExactConversationsForQuery": "to search conversations for an exact text query\nSearches historical conversations using exact fragment text search and returns grouped session matches.",
+    "ToSemanticConversationSearchFindExactConversationsForQueryWithinUtcRange": "to search conversations for exact text within a UTC time range\nSearches historical conversations within an explicit UTC time range using exact fragment text search and returns grouped session matches.",
+    "ToSemanticConversationSearchFindHybridConversationsForQuery": "to search conversations with hybrid exact and semantic matching\nSearches historical conversations using combined semantic similarity and exact fragment text search, then returns grouped session matches.",
+    "ToSemanticConversationSearchFindHybridConversationsForQueryWithinUtcRange": "to search conversations with hybrid exact and semantic matching within a UTC time range\nSearches historical conversations within an explicit UTC time range using combined semantic similarity and exact fragment text search, then returns grouped session matches.",
+    "ToSemanticConversationSearchFindTopConversationsForQuery": "to search conversations for a semantic query\nSearches historical conversations and returns ranked conversation summaries for a query.",
+    "ToSemanticConversationSearchResolveSessionFromSemanticFragment": "to resolve a conversation session from a semantic fragment\nResolves the parent session for a fragment id."
   }
 }

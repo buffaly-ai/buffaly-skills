@@ -33,5 +33,11 @@
     "ToSummarizeSessionHistoryForDateRange": "ToSummarizeSessionHistoryForDateRange.Execute(sessionKey: String, startUtc: String, endUtc: String, carryContext: String) : String",
     "ToSummarizeSessionSinceLastCompaction": "ToSummarizeSessionSinceLastCompaction.Execute(sessionKey: String, carryContext: String) : String",
     "ToSummarizeSinceLastCompaction": "ToSummarizeSinceLastCompaction.Execute(sessionKey: String, carryContext: String) : String"
+  },
+  "ActionDescriptions": {
+    "ToSummarizeSessionHistory": "to build a rolling summary from session history pages\nSlow recap tool. Do not use for routine session inspection, child-session progress, or latest-result retrieval; prefer SessionManagement turn-summary tools such as ToGetMostRecentSessionTurn first. sessionKey - target session key. startUtc/endUtc - required ISO UTC bounds. carryContext - optional prior summary context used for chaining.",
+    "ToSummarizeSessionHistoryForDateRange": "to summarize session timeline between two utc timestamps\nSlow recap tool. Do not use for routine session inspection, child-session progress, or latest-result retrieval; prefer SessionManagement turn-summary tools such as ToGetMostRecentSessionTurn first. sessionKey - target session key. startUtc/endUtc - ISO UTC bounds. carryContext - optional prior summary context.",
+    "ToSummarizeSessionSinceLastCompaction": "to summarize current session timeline\nSlow recap tool. Do not use for routine session inspection, child-session progress, or latest-result retrieval; prefer SessionManagement turn-summary tools such as ToGetMostRecentSessionTurn first. sessionKey - target session key. carryContext - optional prior summary context used for chaining.",
+    "ToSummarizeSinceLastCompaction": "to summarize session since last compaction\nSlow recap tool. Do not use for routine session inspection, child-session progress, or latest-result retrieval; prefer SessionManagement turn-summary tools such as ToGetMostRecentSessionTurn first. sessionKey - target session key. carryContext - optional prior summary context."
   }
 }

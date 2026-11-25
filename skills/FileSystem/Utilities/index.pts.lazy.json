@@ -17,5 +17,9 @@
   "ActionSignatures": {
     "ToFindAncestorInstructionFiles": "ToFindAncestorInstructionFiles.Execute(startPath: String, fileName: String) : String",
     "ToVerifyClaimedFileHashes": "ToVerifyClaimedFileHashes.Execute(directoryPath: String, claimedHashPairs: String) : String"
+  },
+  "ActionDescriptions": {
+    "ToFindAncestorInstructionFiles": "to find ancestor instruction files for a path\nstartPath - existing file or directory. fileName - one instruction filename, such as AGENTS.md. Returns nearest-first matching ancestor paths; does not read their content.",
+    "ToVerifyClaimedFileHashes": "to verify claimed file hashes against actual bytes\ndirectoryPath - existing base directory. claimedHashPairs - path=SHA256 claims separated by semicolons or newlines; absolute paths also allowed. Returns per-file Match/Mismatch/Missing and AllMatch. Empty or malformed claims fail explicitly."
   }
 }
