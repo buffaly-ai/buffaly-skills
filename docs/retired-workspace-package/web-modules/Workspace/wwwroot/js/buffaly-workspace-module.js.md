@@ -23,3 +23,7 @@
 
 - Added `sessionStorage`-backed cached rendering for the workspace index and workbench summary so reloads can paint the last response immediately while refreshing in the background.
 - Preserved the live WebModule endpoints as the authoritative source; browser cache is only a fast fallback and is replaced after each successful fetch.
+
+
+## 2026-11-25 — Retire the unused Workspace package
+Preserved this original package history while removing all executable/compressed payloads, the module manifest and catalog membership to match the retired owning source. Source data and installed files are untouched. Validation: retirement regression4/4 and canonical version/hash checks pass; no package/profile depends on the retired identity. No deployment or phone-latency cure is claimed.

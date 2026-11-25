@@ -12,3 +12,7 @@
 - Uses the existing current-workspace summary and guarded artifact endpoint; it does not copy or synchronize session artifacts.
 - Supports live file search and open, browser-local important-file pins, the configured parent skill and actions, composer preparation, and linked-session navigation.
 - Opens from the compact Workspace drawer or `workspaceView=workbench` URL state and removes itself cleanly when returning to chat.
+
+
+## 2026-11-25 — Retire the unused Workspace package
+Preserved this original package history while removing all executable/compressed payloads, the module manifest and catalog membership to match the retired owning source. Source data and installed files are untouched. Validation: retirement regression4/4 and canonical version/hash checks pass; no package/profile depends on the retired identity. No deployment or phone-latency cure is claimed.

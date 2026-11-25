@@ -10076,7 +10076,7 @@
       "PackageType": "WebModule",
       "Title": "Feeding Frenzy Web Property Editor Agent",
       "Description": "Buffaly Web Module package for Feeding Frenzy Web Property Editor Agent.",
-      "Version": "0.3.142",
+      "Version": "0.3.143",
       "PackageKind": "BuffalyWebModule",
       "SourcePath": "web-modules/WebPropertyEditorAgent",
       "SourceUrl": "",
@@ -10467,19 +10467,15 @@
         },
         {
           "Path": "web-module.json",
-          "Sha256": "1b2ebddf8a8afdd89e9bd2a284e8ed4f76a9ee654354ad7b3ac3eb83282bc519"
+          "Sha256": "bc6712a22a457f8e988de52c13777b740c8d21bce1b901f8ee194c85a56076f5"
         },
         {
-          "Path": "web-property-editor-context.css",
-          "Sha256": "13ced0ec3854cd5e1bc6f35130999194aeebe5132929f3c99a80ddaa385be974"
-        },
-        {
-          "Path": "web-property-editor-context.js",
-          "Sha256": "f4e587d24ef1b04717b2ad8b2c103abc06618238bfa214ddfe26f7f865862fe0"
+          "Path": "web-property-editor-context.css.md",
+          "Sha256": "c87c907a49da1ba98da384c54d2aef047a65c3568147688e4448b88ec44e17ef"
         },
         {
           "Path": "web-property-editor-context.js.md",
-          "Sha256": "f00636979d87e915dcf571183df341aca0a28230d32014bd09cc04a924a15f13"
+          "Sha256": "481da4cda9c33b8446fd9833b3917036bcb823383b555ad6d9672e35bdba861e"
         },
         {
           "Path": "WebAppUtilities.dll",
@@ -24561,165 +24557,6 @@
         {
           "Path": "zh-Hant/Microsoft.Data.SqlClient.resources.dll",
           "Sha256": "6a045428a176c4a42518ef6918b93ba0ee4a126dd15b523cc123bb14cad55e21"
-        }
-      ],
-      "ProjectArtifacts": [],
-      "Dependencies": [],
-      "RelatedWikiSlugs": [],
-      "Prerequisites": [],
-      "RequiresRestart": true,
-      "RequiresPreStartInstall": true,
-      "PreStartCleanupPaths": []
-    },
-    {
-      "PackageId": "Workspace",
-      "PackageType": "WebModule",
-      "Title": "Workspace",
-      "Description": "Buffaly Web Module package for Workspace.",
-      "Version": "0.1.110",
-      "PackageKind": "BuffalyWebModule",
-      "SourcePath": "web-modules/Workspace",
-      "SourceUrl": "",
-      "Phrases": [
-        "Workspace",
-        "Workspace"
-      ],
-      "Files": [
-        {
-          "Path": "Buffaly.Agent.Web.Common.dll",
-          "Sha256": "3df5348778cce409c05c25c9277fd4a5e6b8b6dea81e6aa5240e2217495a6490"
-        },
-        {
-          "Path": "Buffaly.Agent.Workspaces.Web.deps.json",
-          "Sha256": "30fe5d0032e7f25687308d93cea252d67b83f238485576af655af53196c396f9"
-        },
-        {
-          "Path": "Buffaly.Agent.Workspaces.Web.dll",
-          "Sha256": "9f324424e8cf7f742999f5ae007b883fe4f56d233c81d1dd307d52fd7027b713"
-        },
-        {
-          "Path": "web-module.json",
-          "Sha256": "2beea16900a0f325dc5795d35eaddac8fa1b6e0ef5ac660c4dd89be6618c854b"
-        },
-        {
-          "Path": "wwwroot/css/buffaly-workspace-session-ui.css",
-          "Sha256": "b9430afb2c04c9de915c1c0aa6e3d9cd3a351c4764aaff6c3f7de2034feb363d"
-        },
-        {
-          "Path": "wwwroot/css/buffaly-workspace-session-ui.css.br",
-          "Sha256": "668b7b0fcb3b9d1fc222d1f1c810c9cadef1fc618236008111ee0e46a487e798"
-        },
-        {
-          "Path": "wwwroot/css/buffaly-workspace-session-ui.css.gz",
-          "Sha256": "b0b3810fc65ef3a614d5d6207929bed2b31f9be0abeb49716799368a73fb2770"
-        },
-        {
-          "Path": "wwwroot/js/buffaly-workspace-module.js",
-          "Sha256": "61f7a3b301d9e80ed6a3c752b3a3250e70ea83a68235c4e138ff8f1e7a052d67"
-        },
-        {
-          "Path": "wwwroot/js/buffaly-workspace-module.js.br",
-          "Sha256": "a80223a731cfd6290536a97905f3b68908acb2036f9d4810f46fc2b90affe830"
-        },
-        {
-          "Path": "wwwroot/js/buffaly-workspace-module.js.gz",
-          "Sha256": "fe07e04a049a3c11313285ed4f3601160459b83e0e4a41b2f82ec195c05a69e9"
-        },
-        {
-          "Path": "wwwroot/js/buffaly-workspace-module.js.md",
-          "Sha256": "f3f953e7f4da505973e352242212bb9d9e8710ba3b88e23be6368c731e88f3ef"
-        },
-        {
-          "Path": "wwwroot/js/buffaly-workspace-module.js.md.br",
-          "Sha256": "a9a00e88a015cf76281131d9fb9448ff60dacda90a68d24cee2dd2debf108854"
-        },
-        {
-          "Path": "wwwroot/js/buffaly-workspace-module.js.md.gz",
-          "Sha256": "95adaf13cbf5578d42f5a6508c0fd844292a8d70959f16a87b6f4159f3f1e8e1"
-        },
-        {
-          "Path": "wwwroot/js/buffaly-workspace-session-ui.js",
-          "Sha256": "b5220fadd1b177409c292c886712ba507fdd13efcb49695ccc087341c6ed1df8"
-        },
-        {
-          "Path": "wwwroot/js/buffaly-workspace-session-ui.js.br",
-          "Sha256": "6ce5bfcfa2af64553183755f72afd25ef9a7a6d33c51523f2856d59a2dd31c9e"
-        },
-        {
-          "Path": "wwwroot/js/buffaly-workspace-session-ui.js.gz",
-          "Sha256": "d971966ed3a71830a6d5b7d3298f9342665db1814fed65510e055759b41f9fbd"
-        },
-        {
-          "Path": "wwwroot/js/buffaly-workspace-session-ui.js.md",
-          "Sha256": "523be30a09f3d85ffc15f792a9316f9af37b7830e280e220ecd31b2ea1865c75"
-        },
-        {
-          "Path": "wwwroot/js/buffaly-workspace-session-ui.js.md.br",
-          "Sha256": "8367152de31c53e2c72b6190fa6f5702c24eaa113ea158c6943e535717c1794a"
-        },
-        {
-          "Path": "wwwroot/js/buffaly-workspace-session-ui.js.md.gz",
-          "Sha256": "1ba703b74466661b6759572d1fe88426005b3e4bcd94eb07c028bcffd2009cba"
-        },
-        {
-          "Path": "wwwroot/js/buffaly-workspace-workbench.js",
-          "Sha256": "238e37b1d6d52f5c6e4b0d52229bbf3338f7e76d7471975503ef0138c453f056"
-        },
-        {
-          "Path": "wwwroot/js/buffaly-workspace-workbench.js.br",
-          "Sha256": "8bf3185726ee4e30c2d915a7e388be95acde35ae7118431ff81801ef2ffe9c6a"
-        },
-        {
-          "Path": "wwwroot/js/buffaly-workspace-workbench.js.gz",
-          "Sha256": "4be5232ffe9d4c050f7165fbac57a90db6d00b7f5d31a67ffece530e1203004a"
-        },
-        {
-          "Path": "wwwroot/js/buffaly-workspace-workbench.js.md",
-          "Sha256": "09cc4d6b06f18068eaea6899d03a341db776674524d1eb53e2c56c838465e463"
-        },
-        {
-          "Path": "wwwroot/js/buffaly-workspace-workbench.js.md.br",
-          "Sha256": "d0f5970fae2133f6648fc5725810fc6f897f298987c0c64f259ab28fe07a4feb"
-        },
-        {
-          "Path": "wwwroot/js/buffaly-workspace-workbench.js.md.gz",
-          "Sha256": "5f9e1649ef1d12713bc3a1ed366846e55098221b092fbc127aff55a4280c5751"
-        },
-        {
-          "Path": "wwwroot/workspace-index.html",
-          "Sha256": "7b21077cff91c8f89b6c2a66e86721dd4c926e9fee70dcc7f40f4997744d179d"
-        },
-        {
-          "Path": "wwwroot/workspace-index.html.br",
-          "Sha256": "f42260f1361fc5b69eb650871a14f482f474c6a8383ca69c0487f42d234d434b"
-        },
-        {
-          "Path": "wwwroot/workspace-index.html.gz",
-          "Sha256": "0b2d63e1a9be162f5cf967f91a592a8909eab6da75265a5adffb3ce62c214895"
-        },
-        {
-          "Path": "wwwroot/workspace-pages.md",
-          "Sha256": "a1d6aa192fae35331eb87da1a5b06c93b936b51998c64db940898705cdceea0d"
-        },
-        {
-          "Path": "wwwroot/workspace-pages.md.br",
-          "Sha256": "eefe60ae4be0e10257e58c7224185eba5729cd2deb15d4d25988ca51d3db9948"
-        },
-        {
-          "Path": "wwwroot/workspace-pages.md.gz",
-          "Sha256": "859f2268d676c00fc2399e90e6373dbbd2f8a43453a15cdf81b0817970c1f1f4"
-        },
-        {
-          "Path": "wwwroot/workspace-workbench.html",
-          "Sha256": "2fd14b106ee25df56b1c45d0dc7bceb85d4eb3c63b77ca90ef5b4e3170afd8ba"
-        },
-        {
-          "Path": "wwwroot/workspace-workbench.html.br",
-          "Sha256": "eb8815f491c5279ad60871cf109e0db3f86a3e25e7b3b389b0af25fe5c1b5b76"
-        },
-        {
-          "Path": "wwwroot/workspace-workbench.html.gz",
-          "Sha256": "828071cab23ac3de0a0910a851e90caaa8632dadc66a7476d640507d85dcfa3a"
         }
       ],
       "ProjectArtifacts": [],
