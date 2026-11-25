@@ -1,7 +1,7 @@
 param([string]$RepoRoot = (Split-Path $PSScriptRoot -Parent))
 $ErrorActionPreference = 'Stop'
 
-# Verify the exact retired package identity without installing, starting or contacting any runtime.
+# Verify retired module absence and the subsequently approved optional-skill baseline retirement without installing any runtime.
 $packages = (Get-Content -LiteralPath (Join-Path $RepoRoot 'packages.index.json') -Raw | ConvertFrom-Json).Packages
 if (@($packages | Where-Object { $_.PackageType -ceq 'WebModule' -and $_.PackageId -ceq 'CodexEmbedded' }).Count) {
     throw 'Retired CodexEmbedded module remains indexed.'
@@ -11,7 +11,7 @@ if (Test-Path -LiteralPath (Join-Path $RepoRoot 'web-modules/CodexEmbedded')) {
 }
 $skills = (Get-Content -LiteralPath (Join-Path $RepoRoot 'skills.index.json') -Raw | ConvertFrom-Json).Skills
 if (@($skills | Where-Object { $_.SkillName -ceq 'Codex' }).Count -ne 1) {
-    throw 'Independent Codex skill was removed or duplicated.'
+    throw 'Historical Codex package availability changed outside the profile-only retirement batch.'
 }
 
 . (Join-Path $PSScriptRoot 'New-ExtensionProfileLock.ps1')
@@ -24,14 +24,17 @@ try {
         if (@($profile.Packages | Where-Object { $_.PackageType -ceq 'WebModule' -and $_.PackageId -ceq 'CodexEmbedded' }).Count) {
             throw "$name selects the retired module."
         }
-        if (@($profile.Packages | Where-Object { $_.PackageType -ceq 'Skill' -and $_.PackageId -ceq 'Codex' }).Count -ne 1) {
-            throw "$name lost the independent Codex skill."
+        if (@($profile.Packages | Where-Object { $_.PackageType -ceq 'Skill' -and $_.PackageId -ceq 'Codex' }).Count) {
+            throw "$name selects the retired optional Codex skill."
         }
         foreach ($lockFile in @(Get-ChildItem -LiteralPath (Join-Path $RepoRoot 'profiles') -Filter "$name*.profile.lock.json")) {
             $lockText = [IO.File]::ReadAllText($lockFile.FullName)
             $snapshot = $lockText | ConvertFrom-Json
             if (@($snapshot.Packages | Where-Object { $_.PackageType -ceq 'WebModule' -and $_.PackageId -ceq 'CodexEmbedded' }).Count) {
                 throw "$($lockFile.Name) locks the retired module."
+            }
+            if (@($snapshot.Packages | Where-Object { $_.PackageType -ceq 'Skill' -and $_.PackageId -ceq 'Codex' }).Count) {
+                throw "$($lockFile.Name) locks the retired optional Codex skill."
             }
             $commit = [string]$snapshot.RepositoryCommit
             if ($commit -cnotmatch '^[0-9a-f]{40}$') { throw 'Lock must pin an exact repository commit.' }
@@ -64,4 +67,4 @@ try {
 finally {
     if (Test-Path -LiteralPath $fixtureRoot) { Remove-Item -LiteralPath $fixtureRoot -Recurse -Force }
 }
-'PASS: retired module absent from catalog, payload, profiles and seven reproducible pinned locks; independent Codex skill retained.'
+'PASS: retired module absent; optional Codex skill absent from both baselines and seven reproducible pinned locks; historical package payload and normal model transport unchanged.'
