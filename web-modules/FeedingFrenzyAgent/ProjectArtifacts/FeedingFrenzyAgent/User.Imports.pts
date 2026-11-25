@@ -1,9 +1,11 @@
 // User-environment imports for the Feeding Frenzy role entries (User.SalesRepresentative.pts, User.Administrator.pts).
 // Same contract as the core OpsAgent User.Imports.pts plus the two opted-in Feeding Frenzy facades. User source may
-// import only Prototype/String/Bool/Int/Double wrappers and [UserEnvironmentFacade] types (UserSharedGraph).
+// import only Prototype/String/Bool/Int/Double wrappers, the JsonObject argument value, and [UserEnvironmentFacade] types (UserSharedGraph).
 reference Ontology Ontology;
 reference Ontology.Simulation Ontology.Simulation;
 reference Buffaly.Agent.Host Buffaly.Agent.Host;
+reference BasicUtilities BasicUtilities;
+import BasicUtilities BasicUtilities.JsonObject JsonObject;
 reference FeedingFrenzy.Agent.Tools FeedingFrenzy.Agent.Tools;
 import Ontology Ontology.Prototype Prototype;
 import Ontology.Simulation Ontology.Simulation.StringWrapper String;
