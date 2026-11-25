@@ -35,6 +35,12 @@ Provides DLL-backed Ops actions for Google Workspace OAuth, Gmail, Drive, Docs, 
 - `ToGetNewGoogleWorkspaceMessagesSinceId(accountKey, scopePreset, sinceMessageId, maxResults)`
 - `ToSendGoogleWorkspaceEmail(accountKey, scopePreset, from, to, subject, htmlBody, cc, bcc, replyTo, extraHeadersJson)`
 - `ToCreateGoogleWorkspaceDraft(accountKey, scopePreset, from, to, subject, htmlBody, threadId, cc, bcc, replyTo, extraHeadersJson)`
+- `ToSendGoogleWorkspaceEmailWithInlineImages(accountKey, scopePreset, from, to, subject, htmlBody, inlineImagesJson, cc, bcc, replyTo, extraHeadersJson)`
+- `ToCreateGoogleWorkspaceDraftWithInlineImages(accountKey, scopePreset, from, to, subject, htmlBody, inlineImagesJson, threadId, cc, bcc, replyTo, extraHeadersJson)`
+- `ToReplyToGoogleWorkspaceMessageWithInlineImages(accountKey, scopePreset, messageId, from, to, htmlBody, inlineImagesJson, cc, bcc)`
+
+For embedded screenshots, use these image-capable actions rather than Drive hyperlinks. `inlineImagesJson` is a strict array of `{contentId,fileName,mediaType,contentBase64}`. HTML must reference every supplied image with `img src="cid:contentId"`. Supported signatures: PNG/JPEG/GIF/WebP; 1–20 images, 10 MiB per image, 20 MiB total. No remote fetching. MIME content headers are owned by the composer. Validate source bytes and CID references before sending; after a send is accepted, inspect the returned message rather than resending. Reply mismatch remains an already-sent outcome. Original HTML-only actions retain their contracts.
+
 - `ToGetGoogleWorkspaceThread(accountKey, scopePreset, threadId)`
 - `ToModifyGoogleWorkspaceMessageLabels(accountKey, scopePreset, messageId, addLabelIdsJson, removeLabelIdsJson)`
 - `ToTrashGoogleWorkspaceMessage(accountKey, scopePreset, messageId)`

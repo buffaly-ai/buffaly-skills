@@ -174,6 +174,42 @@ prototype ToReplyToGoogleWorkspaceMessage : GoogleWorkspaceSkillAction
 	}
 }
 
+[SemanticProgram.InfinitivePhrase("to send a gmail email with inline images")]
+prototype ToSendGoogleWorkspaceEmailWithInlineImages : GoogleWorkspaceSkillAction
+{
+	Description = @"Send once with embedded image bytes, not external links. inlineImagesJson is an array of {contentId,fileName,mediaType,contentBase64}; HTML must contain img src=cid:contentId. PNG/JPEG/GIF/WebP, 1..20 images, 10 MiB each/20 MiB total. Scope defaults to gmail.send. Other optional strings may be empty. Returns sent ID; do not retry an accepted send.";
+	function Execute(string accountKey, string scopePreset, string from, string to, string subject, string htmlBody, string inlineImagesJson, string cc, string bcc, string replyTo, string extraHeadersJson) : string
+	{
+		return GoogleWorkspaceServiceHost.SendEmailWithInlineImages(
+			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey), scopePreset,
+			from, to, subject, htmlBody, inlineImagesJson, cc, bcc, replyTo, extraHeadersJson);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to create a gmail draft with inline images")]
+prototype ToCreateGoogleWorkspaceDraftWithInlineImages : GoogleWorkspaceSkillAction
+{
+	Description = @"Create an unsent draft with embedded images. inlineImagesJson uses {contentId,fileName,mediaType,contentBase64}; HTML references matching img src=cid:contentId. Scope defaults to gmail.send; threadId and other optional strings may be empty.";
+	function Execute(string accountKey, string scopePreset, string from, string to, string subject, string htmlBody, string inlineImagesJson, string threadId, string cc, string bcc, string replyTo, string extraHeadersJson) : string
+	{
+		return GoogleWorkspaceServiceHost.CreateDraftWithInlineImages(
+			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey), scopePreset,
+			from, to, subject, htmlBody, inlineImagesJson, threadId, cc, bcc, replyTo, extraHeadersJson);
+	}
+}
+
+[SemanticProgram.InfinitivePhrase("to reply to a gmail message with inline images")]
+prototype ToReplyToGoogleWorkspaceMessageWithInlineImages : GoogleWorkspaceSkillAction
+{
+	Description = @"Reply in the original Gmail thread with embedded images. messageId is the original Gmail ID; inlineImagesJson uses {contentId,fileName,mediaType,contentBase64}; HTML references matching img src=cid:contentId. Scope defaults to gmail.reply (read+send). sent_threading_mismatch is already sent: do not resend.";
+	function Execute(string accountKey, string scopePreset, string messageId, string from, string to, string htmlBody, string inlineImagesJson, string cc, string bcc) : string
+	{
+		return GoogleWorkspaceServiceHost.ReplyToMessageWithInlineImages(
+			GoogleWorkspaceService.NormalizeGoogleWorkspaceAccountKey(accountKey), scopePreset,
+			messageId, from, to, htmlBody, inlineImagesJson, cc, bcc);
+	}
+}
+
 [SemanticProgram.InfinitivePhrase("to create a gmail draft")]
 [SemanticProgram.InfinitivePhrase("to create a google workspace email draft")]
 prototype ToCreateGoogleWorkspaceDraft : GoogleWorkspaceSkillAction
