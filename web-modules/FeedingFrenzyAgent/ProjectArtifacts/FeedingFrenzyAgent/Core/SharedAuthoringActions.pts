@@ -3,7 +3,7 @@
 prototype ToInsertOrUpdatePrototypeDefinition : ProtoScriptAction
 {
 	Description = @"fileName - target .pts file name relative to the Buffaly Agent project root.
-prototypeDefinition - complete valid ProtoScript prototype block text to parse and upsert.
+prototypeDefinition - exactly one standalone valid ProtoScript prototype block to parse and upsert, never multiple declarations or a whole source file. When adding a new reusable base and an instance, save the base first in one call, then save the instance in a separate call to the same file; the upsert preserves other definitions.
 This is a low-level typed ProtoScript editing tool. Do not edit `.pts` files directly when this tool can perform the change.
 For ontology memory facts/preferences/objects, prefer `ToRememberOntologyObjectSkill` first so placement and prototype shape are chosen correctly.
 For procedural memory, prompt workflows, or repeatable operational knowledge, prefer `ToRememberHowToDoSomethingSkill` first.

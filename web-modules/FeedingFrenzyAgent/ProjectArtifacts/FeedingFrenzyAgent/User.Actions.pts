@@ -1,7 +1,7 @@
 [SemanticProgram.InfinitivePhrase("to find candidate actions")]
 prototype ToSearchCandidateActions : CoreAction
 {
-	Description = "Find actions in the selected User environment and same-user sessions. Foreign matches must be borrowed before loading; discovery never executes them.";
+	Description = "Find actions in the selected User environment and same-user sessions. semanticQuery must be one clean infinitive phrase such as 'to create a report', not a symbol or a compound request. Read the returned Description and Signature before choosing arguments. Copy relevant foreign matches with ToKeepSessionPrototype before invoking with ToRunAction; discovery never executes them. Root and other users are excluded.";
 	function Execute(string semanticQuery, int maxResults = 5) : string
 	{
 		return UserDiscovery.SearchCandidateActions(semanticQuery, maxResults);
@@ -16,95 +16,109 @@ prototype ToSearchCandidateEntities : CoreAction
 		return UserDiscovery.SearchCandidateEntities(semanticQuery, maxResults, includeParentType);
 	}
 }
-[SemanticProgram.InfinitivePhrase("to load a protoscript action")]
-prototype ToLoadProtoScriptActionTool : CoreAction
+[SemanticProgram.InfinitivePhrase("to run a discovered action")]
+prototype ToRunAction : CoreAction
 {
-	Description = "Load an action from this runtime's selected source graph. Loading does not execute the action.";
-	function Execute(string prototypeName) : string
+	Description = "Run a discovered action in this User environment without changing the tool catalog. Pass the exact LoadPrototypeName and a JSON object args with every parameter from Signature. Uses the same policy, approval, cancellation and result contract as a direct call. Does not grant Root or other-user capabilities.";
+	function Execute(string prototypeName, JsonObject args) : string
 	{
-		return UserDiscovery.LoadProtoScriptActionTool(prototypeName);
+		return UserDiscovery.RunAction(prototypeName, args);
 	}
 }
-[SemanticProgram.InfinitivePhrase("to list loaded protoscript tools")]
-prototype ToListLoadedProtoScriptActionTools : CoreAction
+[SemanticProgram.InfinitivePhrase("to keep a session prototype")]
+prototype ToKeepSessionPrototype : CoreAction
 {
-	function Execute() : string
+	Description = "Copy a self-contained Action or Entity from another session owned by this same User. kind must be Action or Entity. Rejects Root and other users before reading source. Does not register or execute a tool. An active destination may require worker reload; after activation run an action through ToRunAction.";
+	function Execute(string ownerScope, string prototypeName, string kind) : string
 	{
-		return UserDiscovery.ListLoadedProtoScriptActionTools();
+		return UserBorrow.KeepSessionPrototype(ownerScope, prototypeName, kind);
 	}
 }
 
 [SemanticProgram.InfinitivePhrase("to initialize session planning files")]
 prototype ToInitializeSessionPlanAndScratch : CoreAction
 {
+	Description = "Create this conversation's Plan.md and Scratch.md if missing; leave existing content intact. After interruption, read the current user request and these files to resume the correct route. Does not create a durable Task.";
 	function Execute() : string { return UserPlan.InitializeSessionPlanAndScratch(); }
 }
 [SemanticProgram.InfinitivePhrase("to read session plan markdown")]
 prototype ToGetSessionPlan : CoreAction
 {
+	Description = "Read this conversation's current Plan projection: explanation plus in-progress, pending and blocked steps. Completed steps and Notes are omitted; use ToGetFullSessionPlan when that history is needed.";
 	function Execute() : string { return UserPlan.GetSessionPlan(); }
 }
 [SemanticProgram.InfinitivePhrase("to read complete session plan markdown")]
 prototype ToGetFullSessionPlan : CoreAction
 {
+	Description = "Read this conversation's complete canonical Plan.md, including completed steps and Notes. Plan steps describe the immediate route; durable acceptance criteria belong in a Local Task.";
 	function Execute() : string { return UserPlan.GetFullSessionPlan(); }
 }
 [SemanticProgram.InfinitivePhrase("to start a session plan")]
 prototype ToSetCurrentSessionPlan : CoreAction
 {
+	Description = "Atomically set this conversation's immediate execution plan. explanation is required; currentStep is the active step or empty. nextStepsJson and blockedStepsJson are JSON-encoded string arrays, for example [] or [\"Review files\"], not comma-separated prose or objects. This replaces the Plan, not a durable Task or Scratch.";
 	function Execute(string explanation, string currentStep, string nextStepsJson, string blockedStepsJson) : string
 	{ return UserPlan.SetCurrentSessionPlan(explanation, currentStep, nextStepsJson, blockedStepsJson); }
 }
 [SemanticProgram.InfinitivePhrase("to update plan routing context")]
 prototype ToSetSessionPlanExplanation : CoreAction
 {
+	Description = "Replace only the explanation of this conversation's current Plan with a short routing summary. Does not replace or complete its steps.";
 	function Execute(string explanation) : string { return UserPlan.SetSessionPlanExplanation(explanation); }
 }
 [SemanticProgram.InfinitivePhrase("to add a pending plan step")]
 prototype ToAddSessionPlanStep : CoreAction
 {
+	Description = "Add stepText as a pending step in this conversation's Plan; note is a short reason or empty. Plan steps are distinct from durable Tasks.";
 	function Execute(string stepText, string note) : string { return UserPlan.AddSessionPlanStep(stepText, note); }
 }
 [SemanticProgram.InfinitivePhrase("to mark a plan step in progress")]
 prototype ToStartSessionPlanStep : CoreAction
 {
+	Description = "Mark an existing current-conversation Plan step in progress. stepText must match its exact existing text; note is a short progress note or empty.";
 	function Execute(string stepText, string note) : string { return UserPlan.StartSessionPlanStep(stepText, note); }
 }
 [SemanticProgram.InfinitivePhrase("to mark a plan step done")]
 prototype ToCompleteSessionPlanStep : CoreAction
 {
+	Description = "Mark an existing current-conversation Plan step complete using its exact stepText; note records actual completion evidence or is empty. This does not close a Local Task.";
 	function Execute(string stepText, string note) : string { return UserPlan.CompleteSessionPlanStep(stepText, note); }
 }
 [SemanticProgram.InfinitivePhrase("to mark a plan step blocked")]
 prototype ToBlockSessionPlanStep : CoreAction
 {
+	Description = "Mark an existing current-conversation Plan step blocked using its exact stepText; note explains the verified blocker. Do not mark unrelated independent steps blocked.";
 	function Execute(string stepText, string note) : string { return UserPlan.BlockSessionPlanStep(stepText, note); }
 }
 [SemanticProgram.InfinitivePhrase("to read complete session scratch markdown")]
 prototype ToGetSessionScratch : CoreAction
 {
+	Description = "Read the complete current-conversation Scratch.md, creating its empty template if missing. Scratch is the working evidence notebook, not the Plan or a durable Task.";
 	function Execute() : string { return UserPlan.GetSessionScratch(); }
 }
 [SemanticProgram.InfinitivePhrase("to read recent scratch entries")]
 prototype ToGetRecentSessionScratch : CoreAction
 {
+	Description = "Read a bounded tail of timestamped Scratch entries without changing the complete notebook. maxEntries defaults to 5 and must be 1..25. This is not proof that older evidence is absent; use ToGetSessionScratch when needed.";
 	function Execute(int maxEntries = 5) : string { return UserPlan.GetRecentSessionScratch(maxEntries); }
 }
 [SemanticProgram.InfinitivePhrase("to add a timestamped scratch entry")]
 prototype ToAppendSessionScratch : CoreAction
 {
+	Description = "Append markdownEntry as a timestamped evidence/working note to this conversation's Scratch.md, creating the notebook if missing. Keep compact facts and observations; this does not change Plan steps.";
 	function Execute(string markdownEntry) : string { return UserPlan.AppendSessionScratch(markdownEntry); }
 }
 [SemanticProgram.InfinitivePhrase("to write session scratch markdown")]
 prototype ToSetSessionScratch : CoreAction
 {
+	Description = "Atomically replace this conversation's complete Scratch.md with nonempty markdown. Read the existing notebook first and preserve evidence still needed; use ToAppendSessionScratch for an ordinary additional note.";
 	function Execute(string markdown) : string { return UserPlan.SetSessionScratch(markdown); }
 }
 
 [SemanticProgram.InfinitivePhrase("to borrow a session action")]
 prototype ToBorrowSessionAction : CoreAction
 {
-	Description = "Borrow an exact action from another persisted session belonging to the same user. Does not execute it. If its destination module is already active, a worker reload is required before activation; retry after reload to register the callable tool.";
+	Description = "Copy an exact action from another persisted session belonging to the same User, never Root or another user. Does not register or execute it. If its destination module is already active, a worker reload is required before activation. Run the copied action through ToRunAction.";
 	function Execute(string ownerScope, string prototypeName) : string { return UserBorrow.BorrowSessionAction(ownerScope, prototypeName); }
 }
 [SemanticProgram.InfinitivePhrase("to borrow a session entity")]
@@ -117,20 +131,20 @@ prototype ToBorrowSessionEntity : CoreAction
 [SemanticProgram.InfinitivePhrase("to get recent session turns")]
 prototype ToGetRecentSessionTurns : CoreAction
 {
-	Description = "Read a JSON presentation of canonical recent turns from an owned session. maxTurns defaults to 5 and is capped at 25. Does not load or start the target worker.";
-	function Execute(string sessionKey, int maxTurns = 5) : string { return UserSessions.GetRecentSessionTurns(sessionKey, maxTurns); }
+	Description = "Read owned recent turns as JSON text pages: Text, NextOffset, Eof, SnapshotHash. Start characterOffset=0, expectedHash empty; continue with the returned offset/hash and identical sessionKey/maxTurns until Eof, concatenating Text before interpreting the complete JSON. A changed snapshot fails explicitly; restart at zero. maxTurns defaults to 5 and is capped at 25. Does not load or start the target worker.";
+	function Execute(string sessionKey, int maxTurns = 5, int characterOffset = 0, string expectedHash = "") : string { return UserSessions.GetRecentSessionTurns(sessionKey, maxTurns, characterOffset, expectedHash); }
 }
 [SemanticProgram.InfinitivePhrase("to page older session turns")]
 prototype ToGetSessionTurnPage : CoreAction
 {
-	Description = "Read a JSON presentation of older canonical turns from an owned session. skipTurns excludes that many newest turns; advance by returned turn count. The page is capped at 25.";
-	function Execute(string sessionKey, int skipTurns, int maxTurns = 5) : string { return UserSessions.GetSessionTurnPage(sessionKey, skipTurns, maxTurns); }
+	Description = "Read owned older turns as JSON text pages: Text, NextOffset, Eof, SnapshotHash. Start characterOffset=0, expectedHash empty; follow the returned offset/hash with identical sessionKey/skipTurns/maxTurns until Eof and concatenate Text into the complete JSON result. A changed snapshot requires restart at zero. Only then advance skipTurns by the returned turn count to request older turns. The turn page is capped at 25.";
+	function Execute(string sessionKey, int skipTurns, int maxTurns = 5, int characterOffset = 0, string expectedHash = "") : string { return UserSessions.GetSessionTurnPage(sessionKey, skipTurns, maxTurns, characterOffset, expectedHash); }
 }
 [SemanticProgram.InfinitivePhrase("to get details for one session turn")]
 prototype ToGetSessionTurnDetail : CoreAction
 {
-	Description = "Read a JSON presentation of rows for a selected turn in an owned session. maxRows is capped at 200 in this User composition; prefer turn summaries first.";
-	function Execute(string sessionKey, string turnId, int maxRows = 200) : string { return UserSessions.GetSessionTurnDetail(sessionKey, turnId, maxRows); }
+	Description = "Read owned selected-turn rows as JSON text pages: Text, NextOffset, Eof, SnapshotHash. Start characterOffset=0, expectedHash empty; follow the returned offset/hash with identical sessionKey/turnId/maxRows until Eof and concatenate Text before interpreting the complete JSON. A changed snapshot requires restart at zero. maxRows caps row selection at 200, not text length; the completed JSON can still report HasMore rows. Prefer turn summaries first.";
+	function Execute(string sessionKey, string turnId, int maxRows = 200, int characterOffset = 0, string expectedHash = "") : string { return UserSessions.GetSessionTurnDetail(sessionKey, turnId, maxRows, characterOffset, expectedHash); }
 }
 
 [SemanticProgram.InfinitivePhrase("to list persisted recent buffaly sessions")]
