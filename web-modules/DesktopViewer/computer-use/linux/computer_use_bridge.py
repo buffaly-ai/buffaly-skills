@@ -378,14 +378,16 @@ class Desktop:
 				connection.close_sync(None)
 
 	def list_apps(self):
-		# Publish bindings atomically; absent native slots are diagnosed but never become targets.
+		# Refresh each enumerated object, never its unbudgeted descendants; publish bindings atomically.
 		apps = []
 		bindings = {}
 		root = Atspi.get_desktop(0)
+		root.clear_cache_single()
 		for i in range(min(root.get_child_count(), 300)):
 			app = root.get_child_at_index(i)
 			if app is None:
 				raise NativeError('accessibility_tree_changed', 'AT-SPI application disappeared during enumeration; list again.')
+			app.clear_cache_single()
 			pid = app.get_process_id()
 			windows = []
 			diagnostics = []
@@ -396,6 +398,7 @@ class Desktop:
 					diagnostics.append({'Code': 'accessibility_null_window', 'Component': 'AT-SPI',
 						'Message': 'Provider explicitly exports an absent top-level window at child index ' + str(j) + '; no target binding was created.'})
 					continue
+				window.clear_cache_single()
 				role = window.get_role()
 				if role not in (Atspi.Role.FRAME, Atspi.Role.DIALOG, Atspi.Role.WINDOW, Atspi.Role.ALERT):
 					continue
@@ -477,7 +480,7 @@ class Desktop:
 		# Standard AT attributes discovery activates Chromium's native accessibility acquisition;
 		# it does not normalize absent children. Acquire once before portal access or traversal.
 		try:
-			window.clear_cache()
+			window.clear_cache_single()
 			attributes = window.get_attributes()
 		except GLib.Error:
 			raise NativeError('accessibility_acquisition_failed', 'AT-SPI attributes acquisition failed.')
@@ -534,14 +537,14 @@ class Desktop:
 		return elements, tree, diagnostics
 
 	def read_discovery(self, window, maximum, budget, search, pending):
-		# Child/sibling cursors keep both native calls and retained references bounded even for very wide trees.
+		# Single-object refresh and child/sibling cursors never walk unadmitted cached descendants.
 		elements, lines, diagnostics, visited = {'0': window}, [], [], 0
 		pending = [(window, None)] if pending is None else list(pending)
 		while pending and visited < budget and len(lines) < maximum:
 			element, child_index = pending.pop()
 			if element is None:
 				raise NativeError('accessibility_tree_changed', 'AT-SPI child disappeared during observation; observe again.')
-			element.clear_cache()
+			element.clear_cache_single()
 			if child_index is not None:
 				if child_index < element.get_child_count():
 					if child_index + 1 < element.get_child_count():
@@ -573,12 +576,12 @@ class Desktop:
 		return elements, '\n'.join(lines), pending, visited, diagnostics
 
 	def verify_discovery_ancestry(self, window, element):
-		# Retained same-process objects may be reparented between pages; reject that before capture.
+		# Refresh only the bounded ancestry chain; reject reparenting before capture.
 		expected, seen = self.node_identity(window), set()
 		for _ in range(2000):
 			if element is None:
 				break
-			element.clear_cache()
+			element.clear_cache_single()
 			identity = self.node_identity(element)
 			if identity == expected:
 				return
@@ -604,9 +607,9 @@ class Desktop:
 			raise NativeError('target_closed', 'Target process lifetime is unavailable.') from None
 
 	def verify_focus_identity(self, window, element, binding, element_identity):
-		# Revalidate both references and ancestry without consulting the mutable pid:index window map.
-		window.clear_cache()
-		element.clear_cache()
+		# Refresh only retained references/ancestors, not subtrees or the mutable pid:index window map.
+		window.clear_cache_single()
+		element.clear_cache_single()
 		if self.node_identity(window) != binding[0] or self.process_start(binding[0][2]) != binding[1] or self.node_identity(element) != element_identity:
 			raise NativeError('stale_observation', 'Observed native focus identity changed.')
 		if window.get_state_set().contains(Atspi.StateType.DEFUNCT) or element.get_state_set().contains(Atspi.StateType.DEFUNCT):
@@ -615,7 +618,7 @@ class Desktop:
 		for _ in range(32):
 			if current is None:
 				break
-			current.clear_cache()
+			current.clear_cache_single()
 			if self.node_identity(current) == binding[0]:
 				return
 			current = current.get_parent()
@@ -688,7 +691,7 @@ class Desktop:
 			node, depth = stack.pop()
 			if node is None:
 				raise NativeError('accessibility_tree_changed', 'Alert descendant disappeared.')
-			node.clear_cache()
+			node.clear_cache_single()
 			native_id = self.node_identity(node)
 			if depth > 20 or len(visited) >= 300 or native_id in visited:
 				raise NativeError('alert_focus_unverifiable', 'Alert focus traversal is truncated or cyclic.')
