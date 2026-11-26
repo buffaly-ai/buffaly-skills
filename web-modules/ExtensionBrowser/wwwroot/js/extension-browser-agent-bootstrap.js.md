@@ -1,0 +1,7 @@
+# extension-browser-agent-bootstrap.js history
+
+## 2026-11-26 — Load the Agent bridge only in embedded sidepanels
+
+Added the module-owned parser-time bootstrap. It returns before any bridge request unless presentation=sidepanel and the Agent is embedded. In the supported context it requires parser-time execution and a canonical 16-character SHA-256 prefix from its own script URL, then inserts the existing bridge synchronously. The main Agent page still fetches this small context gate, not the full bridge. No feature-specific logic was added to core; the full bridge, microphone, rename, trusted parent messaging and Send UserState contracts are unchanged. The manifest and build owner bind both bootstrap and bridge versions to final bytes, so a bridge update cannot be hidden behind an unchanged bootstrap cache token.
+
+Validation: scripts/verify-page-context.mjs passes all four top-level/embedded and ordinary/sidepanel combinations, missing/invalid version and late-load failures, and actual bridge execution before subsequent Agent initialization. Existing provider/trusted-parent checks pass; the owning WebModule test/build verifies both packaged tokens. npm ci and full release:check pass, including real Chrome synthetic audio/finalization, microphone UI and DOM/server-draft regressions. These are fixture results, not proof of real microphone consent or transcription. Installed activation is tracked in the source-session report.
