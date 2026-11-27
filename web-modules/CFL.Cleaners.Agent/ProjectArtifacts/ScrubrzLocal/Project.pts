@@ -1,4 +1,6 @@
-include "../ChatIntegration/ChatWorker.pts";
-include "../../CoreLite/CoreLite.pts";
 prototype ScrubrzLocalActionRoot : OpsAction;
 prototype ScrubrzLocalEntityRoot : SemanticEntityBase;
+
+include "../../CoreLite/CoreLite.pts";
+
+include "../ChatIntegration/ChatWorker.pts";

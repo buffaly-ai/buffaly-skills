@@ -1,5 +1,3 @@
-include "../ChatIntegration/ChatWorker.pts";
-include "../../CoreLite/CoreLite.pts";
 reference CFL.Cleaners.Agent;
 reference BasicUtilities;
 import CFL.Cleaners.Agent CFL.Cleaners.Agent.CflTools CflTools;
@@ -97,3 +95,7 @@ prototype CFLStaffWorker
 		return CflTools.ReconcileStaff(_opsAgent, OperationKey);
 	}
 }
+
+include "../../CoreLite/CoreLite.pts";
+
+include "../ChatIntegration/ChatWorker.pts";
